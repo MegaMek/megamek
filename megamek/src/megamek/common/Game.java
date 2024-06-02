@@ -107,9 +107,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
 
-//    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<>();
-    private int lastDeploymentRound = 0;
-
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
     private Vector<Minefield> vibrabombs = new Vector<>();
     private Vector<AttackHandler> attacks = new Vector<>();
@@ -700,11 +697,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     @Override
     public GamePhase getPhase() {
         return phase;
-    }
-
-    @Override
-    public void receivePhase(GamePhase phase) {
-        setPhase(phase);
     }
 
     @Override

@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 Tank
 </UnitType>
@@ -24,46 +15,13 @@ Prowler Multi-Terrain Vehicle
 2587
 </mul id:>
 
-<Tonnage>
-55
-</Tonnage>
+<year>
+2863
+</year>
 
-<cruiseMP>
-4
-</cruiseMP>
-
-#Order is Tank/VTOL/LST
-<Armor>
-25
-23
-23
-18
-23
-</Armor>
-
-<Front Equipment>
-ISSRM2
-</Front Equipment>
-
-<Turret Equipment>
-ISLRM10
-ISMediumLaser
-ISMediumLaser
-</Turret Equipment>
-
-<Body Equipment>
-ISLRM10 Ammo
-ISSRM2 Ammo
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-ISFullyAmphibiousChassis
-</Body Equipment>
+<originalBuildYear>
+2863
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -73,26 +31,67 @@ IS Level 3
 Missile Boat
 </role>
 
-<year>
-2863
-</year>
+<motion_type>
+Tracked
+</motion_type>
 
-<source>
-TRO: 3085
-</source>
+<transporters>
+cargobay:1.0:1:0::-1:0
+cargobay:1.0:1:1::-1:0
+cargobay:1.0:1:2::-1:0
+cargobay:1.0:1:3::-1:0
+cargobay:1.0:1:4::-1:0
+cargobay:1.0:1:5::-1:0
+cargobay:1.0:1:6::-1:0
+cargobay:1.0:1:7::-1:0
+</transporters>
 
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
+<cruiseMP>
+4
+</cruiseMP>
 
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-Tracked
-</motion_type>
+<armor>
+25
+23
+23
+18
+23
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-10
+IS Ammo SRM-2
+ISFullyAmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+SRM 2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 10
+Medium Laser
+Medium Laser
+</Turret Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+55.0
+</tonnage>
+

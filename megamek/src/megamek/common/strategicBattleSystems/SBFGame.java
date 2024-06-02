@@ -22,13 +22,13 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
-import java.util.Map;
 
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
@@ -41,7 +41,6 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
     private final List<GameTurn> turnList = new ArrayList<>();
-
 
     @Override
     public PlayerTurn getTurn() {
@@ -61,6 +60,13 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     @Override
     public void setPhase(GamePhase phase) {
         this.phase = phase;
+    }
+
+    @Override
+    public void receivePhase(GamePhase phase) {
+        GamePhase oldPhase = this.phase;
+        setPhase(phase);
+        fireGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
     }
 
     @Override

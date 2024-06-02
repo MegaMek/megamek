@@ -156,7 +156,7 @@ public abstract class AbstractClient implements IClient {
             }
 
             if (!host.equals(MMConstants.LOCALHOST)) {
-                getIGame().fireGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
+                getGame().fireGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
     }
@@ -185,7 +185,7 @@ public abstract class AbstractClient implements IClient {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        send(new Packet(PacketCommand.PLAYER_UPDATE, getIGame().getPlayer(localPlayerNumber)));
+        send(new Packet(PacketCommand.PLAYER_UPDATE, getGame().getPlayer(localPlayerNumber)));
     }
 
     /**
@@ -217,9 +217,9 @@ public abstract class AbstractClient implements IClient {
         int pindex = c.getIntValue(0);
         Player newPlayer = (Player) c.getObject(1);
         if (!playerExists(newPlayer.getId())) {
-            getIGame().addPlayer(pindex, newPlayer);
+            getGame().addPlayer(pindex, newPlayer);
         } else {
-            getIGame().setPlayer(pindex, newPlayer);
+            getGame().setPlayer(pindex, newPlayer);
         }
     }
 
@@ -301,11 +301,11 @@ public abstract class AbstractClient implements IClient {
     protected void receiveUnitReplace(Packet packet) {
         @SuppressWarnings(value = "unchecked")
         List<Force> forces = (List<Force>) packet.getObject(1);
-        forces.forEach(force -> getIGame().getForces().replace(force.getId(), force));
+        forces.forEach(force -> getGame().getForces().replace(force.getId(), force));
 
         @SuppressWarnings(value = "unchecked")
         List<InGameObject> units = (List<InGameObject>) packet.getObject(0);
-        getIGame().replaceUnits(units);
+        getGame().replaceUnits(units);
     }
 
     /**
@@ -441,25 +441,25 @@ public abstract class AbstractClient implements IClient {
                 Player player = getPlayer(packet.getIntValue(0));
                 if (player != null) {
                     player.setDone(packet.getBooleanValue(1));
-                    getIGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
+                    getGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
                 }
                 break;
             case PLAYER_REMOVE:
                 bots.values().removeIf(bot -> bot.localPlayerNumber == packet.getIntValue(0));
-                getIGame().removePlayer(packet.getIntValue(0));
+                getGame().removePlayer(packet.getIntValue(0));
                 break;
             case CHAT:
                 possiblyWriteToLog((String) packet.getObject(0));
-                getIGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
+                getGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
                 break;
             case ENTITY_ADD:
                 receiveUnitReplace(packet);
                 break;
             case SENDING_BOARD:
-                getIGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
+                getGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
                 break;
             case ROUND_UPDATE:
-                getIGame().setCurrentRound(packet.getIntValue(0));
+                getGame().setCurrentRound(packet.getIntValue(0));
                 break;
             case PHASE_CHANGE:
                 changePhase((GamePhase) packet.getObject(0));
@@ -485,7 +485,7 @@ public abstract class AbstractClient implements IClient {
      * Changes the game phase, and the displays that go along with it.
      */
     public void changePhase(GamePhase phase) {
-        getIGame().receivePhase(phase);
+        getGame().receivePhase(phase);
         switch (phase) {
             case STARTING_SCENARIO:
             case EXCHANGE:

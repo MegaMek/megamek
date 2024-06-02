@@ -212,7 +212,7 @@ public class BoardEditor extends JPanel
     public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
     boolean isDragging = false;
     private Component bvc;
-    private final CommonMenuBar menuBar = new CommonMenuBar(this);
+    private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForBoardEditor();
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private JDialog minimapW;
@@ -1735,10 +1735,10 @@ public class BoardEditor extends JPanel
      * be shown.
      */
     private void validateBoard(boolean showPositiveResult) {
-        StringBuffer errBuff = new StringBuffer();
-        board.isValid(errBuff);
-        if ((errBuff.length() > 0) || showPositiveResult) {
-            showBoardValidationReport(errBuff);
+        List<String> errors = new ArrayList<>();
+        board.isValid(errors);
+        if ((!errors.isEmpty()) || showPositiveResult) {
+            showBoardValidationReport(errors);
         }
     }
 
@@ -1746,12 +1746,12 @@ public class BoardEditor extends JPanel
      * Shows a board validation report dialog, reporting either
      * the contents of errBuff or that the board has no errors.
      */
-    private void showBoardValidationReport(StringBuffer errBuff) {
+    private void showBoardValidationReport(List<String> errors) {
         ignoreHotKeys = true;
-        if ((errBuff != null) && errBuff.length() > 0) {
+        if ((errors != null) && !errors.isEmpty()) {
             String title = Messages.getString("BoardEditor.invalidBoard.title");
             String msg = Messages.getString("BoardEditor.invalidBoard.report");
-            msg += errBuff;
+            msg += String.join("\n", errors);
             JTextArea textArea = new JTextArea(msg);
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setLineWrap(true);
@@ -2295,7 +2295,7 @@ public class BoardEditor extends JPanel
 
         StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
                 .at(BoardView.HEX_W / 2, BoardView.HEX_H / 2).color(guip.getWarningColor())
-                .outline(Color.WHITE, 1).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
+                .outline(Color.WHITE, 1).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
 
         @Override
         public void paintComponent(Graphics g) {
@@ -2315,11 +2315,10 @@ public class BoardEditor extends JPanel
                 g.setColor(getForeground());
                 g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9));
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70);
-                StringBuffer errBuf = new StringBuffer();
-                if (!curHex.isValid(errBuf)) {
+                List<String> errors = new ArrayList<>();
+                if (!curHex.isValid(errors)) {
                     invalidString.draw(g);
-                    String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
-                    tooltip = tooltip.replace("\n", "<br>");
+                    String tooltip = Messages.getString("BoardEditor.invalidHex") + String.join("<BR>", errors);
                     setToolTipText(tooltip);
                 } else {
                     setToolTipText(null);

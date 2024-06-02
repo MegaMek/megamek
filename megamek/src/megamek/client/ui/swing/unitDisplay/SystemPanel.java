@@ -260,7 +260,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
             return m;
         }
         if (cs.getMount2() != null) {
-            ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplay.getClientGUI().frame,
+            ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplay.getClientGUI().getFrame(),
                     Messages.getString("MechDisplay.SelectMulti.title"),
                     Messages.getString("MechDisplay.SelectMulti.question"),
                     new String[] { cs.getMount().getName(),

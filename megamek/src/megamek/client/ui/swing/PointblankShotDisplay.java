@@ -277,7 +277,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         refreshAll();
 
         if (clientgui.getClient().getGame().getEntity(en) != null) {
-            cen = en;
+            currentEntity = en;
             clientgui.setSelectedEntityNum(en);
             clientgui.getUnitDisplay().displayEntity(ce());
 
@@ -301,7 +301,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        clientgui.getBoardView().clearFiringSolutionData();
+        clientgui.clearTemporarySprites();
     }
 
     /**
@@ -310,8 +310,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     @Override
     public void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
-        clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearFieldOfFire();
+        clientgui.clearTemporarySprites();
 
         butDone.setEnabled(true);
         if (numButtonGroups > 1) {
@@ -334,16 +334,15 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
-        cen = Entity.NONE;
+        currentEntity = Entity.NONE;
         target(null);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearStrafingCoords();
-        clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearFieldOfFire();
+        clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
@@ -493,10 +492,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // If the user picked a hex along the flight path, server needs to know
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
-            Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(cen);
+            Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(currentEntity);
             if (targetPos != null) {
                 clientgui.getClient().sendPlayerPickedPassThrough(
-                        ((Entity) target).getId(), cen, targetPos);
+                        ((Entity) target).getId(), currentEntity, targetPos);
             }
         }
 
@@ -542,10 +541,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target)))) {
-            waa = new WeaponAttackAction(cen, target.getTargetType(),
+            waa = new WeaponAttackAction(currentEntity, target.getTargetType(),
                     target.getId(), weaponNum);
         } else {
-            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+            waa = new ArtilleryAttackAction(currentEntity, target.getTargetType(),
                     target.getId(), weaponNum, game);
         }
 
@@ -641,7 +640,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             target = t;
         }
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
-            Coords targetPos = Compute.getClosestFlightPath(cen, ce().getPosition(), (Entity) target);
+            Coords targetPos = Compute.getClosestFlightPath(currentEntity, ce().getPosition(), (Entity) target);
             clientgui.getBoardView().cursor(targetPos);
         }
         ash.setAimingMode();
@@ -667,20 +666,20 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);
                 ash.setEnableAll(aiming);
                 if (aiming) {
-                    toHit = WeaponAttackAction.toHit(game, cen, target,
+                    toHit = WeaponAttackAction.toHit(game, currentEntity, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true, -1);
                     clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
 
                 } else {
-                    toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
+                    toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false, false,
                             null, null, false, true, -1);
                     clientgui.getUnitDisplay().wPan.setTarget(target, null);
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
-                toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
+                toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
                         AimingMode.NONE, false, false, null,
                         null, false, true, -1);
                 clientgui.getUnitDisplay().wPan.setTarget(target, null);
@@ -879,7 +878,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     @Override
     public void clear() {
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
-            ((Entity) target).setPlayerPickedPassThrough(cen, null);
+            ((Entity) target).setPlayerPickedPassThrough(currentEntity, null);
         }
         clearAttacks();
         clientgui.getBoardView().select(null);

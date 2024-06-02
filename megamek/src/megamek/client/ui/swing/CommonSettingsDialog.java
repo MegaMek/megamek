@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing;
 
+import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -167,6 +168,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
+    private ColourSelectorButton csbOkColor;
     private ColourSelectorButton csbMyUnitColor;
     private ColourSelectorButton csbAllyUnitColor;
     private ColourSelectorButton csbEnemyColor;
@@ -209,6 +211,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox useCamoOverlay = new JCheckBox(Messages.getString("CommonSettingsDialog.useCamoOverlay"));
     private final JCheckBox useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter"));
     private final JCheckBox useAutoCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useAutoCenter"));
+    private final JCheckBox useAutoSelectNext = new JCheckBox(Messages.getString("CommonSettingsDialog.useAutoSelectNext"));
     private final JCheckBox levelhighlight = new JCheckBox(Messages.getString("CommonSettingsDialog.levelHighlight"));
     private final JCheckBox shadowMap = new JCheckBox(Messages.getString("CommonSettingsDialog.useShadowMap"));
     private final JCheckBox hexInclines = new JCheckBox(Messages.getString("CommonSettingsDialog.useInclines"));
@@ -637,6 +640,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip")));
         comps.add(checkboxEntry(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip")));
         comps.add(checkboxEntry(useAutoCenter, Messages.getString("CommonSettingsDialog.useAutoCenter.tooltip")));
+        comps.add(checkboxEntry(useAutoSelectNext, Messages.getString("CommonSettingsDialog.useAutoSelectNext.tooltip")));
 
         row = new ArrayList<>();
         csbUnitTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTextColor"));
@@ -1525,7 +1529,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         JButton userDirChooser = new JButton("...");
         userDirChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
         userDirChooser.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
-        JButton userDirHelp = new JButton("Help");
+        JButton userDirHelp = new JButton(new FlatHelpButtonIcon());
+        userDirHelp.putClientProperty("JButton.buttonType", "help");
         try {
             String helpTitle = Messages.getString("UserDirHelpDialog.title");
             URL helpFile = new File(MMConstants.USER_DIR_README_FILE).toURI().toURL();
@@ -1583,6 +1588,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbPrecautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PrecautionColor"));
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
         row.add(csbPrecautionColor);
+        csbOkColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.OkColor"));
+        csbOkColor.setColour(GUIP.getOkColor());
+        row.add(csbOkColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1788,6 +1796,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             hexInclines.setSelected(GUIP.getHexInclines());
             useSoftCenter.setSelected(GUIP.getSoftCenter());
             useAutoCenter.setSelected(GUIP.getAutoCenter());
+            useAutoSelectNext.setSelected(GUIP.getAutoSelectNextUnit());
             entityOwnerColor.setSelected(GUIP.getUnitLabelBorder());
             teamColoring.setSelected(GUIP.getTeamColoring());
 
@@ -1929,6 +1938,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbWarningColor.setColour(GUIP.getWarningColor());
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
+        csbOkColor.setColour(GUIP.getOkColor());
 
         csbMyUnitColor.setColour(GUIP.getMyUnitColor());
         csbAllyUnitColor.setColour(GUIP.getAllyUnitColor());
@@ -2112,6 +2122,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
+        GUIP.setOkColor(csbOkColor.getColour());
 
         GUIP.setMyUnitColor(csbMyUnitColor.getColour());
         GUIP.setAllyUnitColor(csbAllyUnitColor.getColour());
@@ -2245,6 +2256,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setHexInclines(hexInclines.isSelected());
         GUIP.setSoftcenter(useSoftCenter.isSelected());
         GUIP.setAutocenter(useAutoCenter.isSelected());
+        GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
 

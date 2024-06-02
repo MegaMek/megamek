@@ -1494,40 +1494,32 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Method that checks to see if our capital missile bay is in bearings-only mode
+     * @return True if our capital missile bay is in bearings-only mode
      * Only available in space games
-     * @return
      */
     public boolean isInBearingsOnlyMode() {
-        if ((curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT))
-                && getEntity().isSpaceborne()) {
-            return true;
-        }
-        return false;
+        return (curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT))
+                && getEntity().isSpaceborne();
     }
 
     /**
-     * Method that checks to see if our capital missile bay is in waypoint launch mode
+     * @return True if our capital missile bay is in waypoint launch mode
      * Only available in space games
-     * @return
      */
     public boolean isInWaypointLaunchMode() {
-        if ((curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
+        return (curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT))
-            && getEntity().isSpaceborne()) {
-            return true;
-        }
-        return false;
+                && getEntity().isSpaceborne();
     }
 
     /**
@@ -1680,9 +1672,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 + ")";
 
         List<String> state = new ArrayList<>();
-        if (linked != null) state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
-        if (linkedBy != null) state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
-        if (crossLinkedBy != null) state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
+        if (linked != null) {
+            if (linked.getEntity().getId() != entity.getId()) {
+                state.add("Linked: [" + linked.getEntity() + ":" + linked.getEntity().getEquipment().indexOf(linked) + "]");
+            } else {
+                state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
+            }
+        }
+        if (linkedBy != null) {
+            if (linkedBy.getEntity().getId() != entity.getId()) {
+                state.add("LinkedBy: [" + linkedBy.getEntity() + ":" + linkedBy.getEntity().getEquipment().indexOf(linkedBy) + "]");
+            } else {
+                state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
+            }
+        }
+        if (crossLinkedBy != null) {
+            if (crossLinkedBy.getEntity().getId() != entity.getId()) {
+                state.add("CrossLinkedBy: [" + crossLinkedBy.getEntity() + ":" + crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) + "]");
+            } else {
+                state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
+            }
+        }
         if (linkedBayId != -1) state.add("LinkedBay: [" + linkedBayId + "]");
         state.addAll(bayComponentsToString());
         if (type instanceof AmmoType) {
@@ -1699,7 +1709,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (facing != -1) state.add("Facing: " + facing);
         if (!quirks.activeQuirks().isEmpty()) state.add("Quirks: " + quirks.getOptionList("/"));
         if (weaponGroup) state.add("Group");
-        if (nweapons != 1) state.add("#Weapons: " + nweapons);
+        if (nweapons != 1 || weaponGroup) state.add("#Weapons: " + nweapons);
         if (size != 1) state.add("Size: " + size);
         return intro + " { " + String.join(", ", state) + " }";
     }

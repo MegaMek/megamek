@@ -50,9 +50,7 @@ public final class FontHandler {
      * read from the GraphicsEnvironment once and then not updated while the application is running.
      */
     public static List<String> getAvailableNonSymbolFonts() {
-        if (!instance.initialized) {
-            initialize();
-        }
+        ensureInitialization();
         return instance.nonSymbolFontNames;
     }
 
@@ -61,9 +59,7 @@ public final class FontHandler {
      * then not updated while the application is running.
      */
     public static List<String> getAvailableFonts() {
-        if (!instance.initialized) {
-            initialize();
-        }
+        ensureInitialization();
         return instance.allFontNames;
     }
 
@@ -88,6 +84,7 @@ public final class FontHandler {
      * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
      */
     public static Font symbolFont() {
+        ensureInitialization();
         return new Font("Material Symbols Rounded", Font.PLAIN, 12);
     }
 
@@ -97,13 +94,14 @@ public final class FontHandler {
      *
      * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
      */
-    public static Font getNotoFont() {
+    public static Font notoFont() {
+        ensureInitialization();
         return new Font("Noto Sans", Font.PLAIN, 14);
     }
 
     private void initializeFonts() {
         LogManager.getLogger().info("Loading fonts from " + MMConstants.FONT_DIRECTORY);
-        parseFontsInDirectory(new File(MMConstants.FONT_DIRECTORY));
+        parseFontsInDirectory(MMConstants.FONT_DIRECTORY);
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
@@ -143,11 +141,17 @@ public final class FontHandler {
             try (InputStream fis = new FileInputStream(fontFile)) {
                 Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
                 if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font)) {
-                    LogManager.getLogger().error("Failed to register font " + fontFile);
+                    LogManager.getLogger().warn("Failed to register font " + fontFile);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to read font ", ex);
+                LogManager.getLogger().warn("Failed to read font ", ex);
             }
+        }
+    }
+
+    private static void ensureInitialization() {
+        if (!instance.initialized) {
+            initialize();
         }
     }
 }

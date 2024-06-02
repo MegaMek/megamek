@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,6 +20,7 @@ package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -30,8 +31,123 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BLKDropshipFileTest {
 
-    private static String newFormatDSwithMixedBA = String.join(
-            System.getProperty("line.separator"),
+    /**
+     *  Load a string of BLK-style blocks as an InputStream and create a new DropShip
+     *  produces the desired mix of tech, specifically with Clan tech and IS BA bays.
+     */
+    private Dropship loadDropshipFromString(String strOfBLK) throws Exception {
+
+        // Create InputStream from string
+        InputStream is = new ByteArrayInputStream(strOfBLK.getBytes());
+
+        // Instantiate bb with string
+        BuildingBlock bb = new BuildingBlock(is);
+
+        // Instantiate Dropship with bb
+        IMechLoader loader = new BLKDropshipFile(bb);
+
+        // Get Entity
+        Entity m_entity = loader.getEntity();
+
+        return (Dropship) m_entity;
+    }
+
+    /**
+     *  Helper to troll through bays looking for a specific combination.
+     *  Can be extended as needed.
+     */
+    private boolean confirmBayTypeinBays(Vector<Bay> bays, String type) {
+        boolean found = false;
+        for(Bay b: bays) {
+            switch(type) {
+                case "BA_IS":
+                    if (b instanceof BattleArmorBay) {
+                        found = !b.isClan();
+                    }
+                    break;
+                case "BA_CLAN":
+                    if (b instanceof BattleArmorBay) {
+                        found = b.isClan();
+                    }
+                    break;
+                case "BA_CS":
+                    if (b instanceof BattleArmorBay) {
+                        found = ((BattleArmorBay) b).isComStar();
+                    }
+                    break;
+            }
+            if (found) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @BeforeAll
+    public static void initialize() {
+        EquipmentType.initializeTypes();
+    }
+
+    @Test
+    public void testLoadNewFormatDSHasMixedBATechLevels() {
+        boolean parsed = false;
+        boolean mixedTech = false;
+        boolean ISBACorrect = false;
+        boolean ClanBACorrect = false;
+        boolean ComStarBACorrect = false;
+        Vector<Bay> bays;
+
+        try {
+            Dropship ds = loadDropshipFromString(newFormatDSwithMixedBA);
+            parsed = true;
+            mixedTech = ds.isMixedTech() && ds.isClan(); // confirm mixed-tech Clan design
+            bays = ds.getTransportBays();
+            ISBACorrect = confirmBayTypeinBays(bays, "BA_IS");
+            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
+            ComStarBACorrect = confirmBayTypeinBays(bays, "BA_CS");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        assertTrue(parsed);
+        assertTrue(mixedTech);
+        assertTrue(ISBACorrect);
+        assertTrue(ClanBACorrect);
+        assertTrue(ComStarBACorrect);
+    }
+
+    @Test
+    public void testLoadOldFormatClanDSHasClanBATech() {
+        // We want to verify that the correct tech type is applied to non-mixed
+        // Clan BA bays when loading old-format files.
+        boolean parsed = false;
+        boolean mixedTech = false;
+        boolean clan = false;
+        boolean ClanBACorrect = false;
+        boolean ISBAExists = false;
+        Vector<Bay> bays;
+
+        try {
+            Dropship ds = loadDropshipFromString(oldFormatClanDSwithBA);
+            parsed = true;
+            mixedTech = ds.isMixedTech();   // confirm not mixed tech
+            clan = ds.isClan();             // confirm clan tech base
+            bays = ds.getTransportBays();
+            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
+            ISBAExists = confirmBayTypeinBays(bays, "BA_IS");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        assertTrue(parsed);
+        assertTrue(clan);
+        assertFalse(mixedTech);
+        assertTrue(ClanBACorrect);
+        assertFalse(ISBAExists);
+    }
+
+    //region DS definitions
+    private static final String newFormatDSwithMixedBA = String.join(
+            System.lineSeparator(),
             "<BlockVersion>",
             "1",
             "</BlockVersion>",
@@ -139,10 +255,10 @@ public class BLKDropshipFileTest {
             "<escape_pod>",
             "0",
             "</escape_pod>"
-            );
+    );
 
-    private static String oldFormatClanDSwithBA = String.join(
-            System.getProperty("line.separator"),
+    private static final String oldFormatClanDSwithBA = String.join(
+            System.lineSeparator(),
             "<BlockVersion>",
             "1",
             "</BlockVersion>",
@@ -249,112 +365,5 @@ public class BLKDropshipFileTest {
             "0",
             "</escape_pod>"
     );
-    private Dropship loadDropshipFromString(String strOfBLK) throws Exception {
-        /**
-         *  Load a string of BLK-style blocks as an InputStream and create a new DropShip
-         *  produces the desired mix of tech, specifically with Clan tech and IS BA bays.
-         */
-
-        // Create InputStream from string
-        InputStream is = new ByteArrayInputStream(strOfBLK.getBytes());
-
-        // Instantiate bb with string
-        BuildingBlock bb = new BuildingBlock(is);
-
-        // Instantiate Dropship with bb
-        IMechLoader loader = new BLKDropshipFile(bb);
-
-        // Get Entity
-        Entity m_entity = loader.getEntity();
-
-        return (Dropship) m_entity;
-
-    }
-
-    private boolean confirmBayTypeinBays(Vector<Bay> bays, String type){
-        /**
-         *  Helper to troll through bays looking for a specific combination.
-         *  Can be extended as needed.
-         */
-        boolean found = false;
-        for(Bay b: bays){
-            switch(type) {
-                case "BA_IS":
-                    if(b instanceof BattleArmorBay) {
-                        found = !b.isClan();
-                    }
-                    break;
-                case "BA_CLAN":
-                    if(b instanceof BattleArmorBay) {
-                        found = b.isClan();
-                    }
-                    break;
-                case "BA_CS":
-                    if(b instanceof BattleArmorBay) {
-                        found = ((BattleArmorBay) b).isComStar();
-                    }
-                    break;
-            }
-            if(found){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Test
-    public void testLoadNewFormatDSHasMixedBATechLevels() {
-        boolean parsed = false;
-        boolean mixedTech = false;
-        boolean ISBACorrect = false;
-        boolean ClanBACorrect = false;
-        boolean ComStarBACorrect = false;
-        Vector<Bay> bays = null;
-
-        try{
-            Dropship ds = loadDropshipFromString(newFormatDSwithMixedBA);
-            parsed = true;
-            mixedTech = ds.isMixedTech() && ds.isClan(); // confirm mixed-tech Clan design
-            bays = ds.getTransportBays();
-            ISBACorrect = confirmBayTypeinBays(bays, "BA_IS");
-            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
-            ComStarBACorrect = confirmBayTypeinBays(bays, "BA_CS");
-        } catch (Exception e){
-        }
-        assertTrue(parsed);
-        assertTrue(mixedTech);
-        assertTrue(ISBACorrect);
-        assertTrue(ClanBACorrect);
-        assertTrue(ComStarBACorrect);
-
-    }
-    @Test
-    public void testLoadOldFormatClanDSHasClanBATech() {
-        // We want to verify that the correct tech type is applied to non-mixed
-        // Clan BA bays when loading old-format files.
-        boolean parsed = false;
-        boolean mixedTech = false;
-        boolean clan = false;
-        boolean ClanBACorrect = false;
-        boolean ISBAExists = false;
-        Vector<Bay> bays = null;
-
-        try{
-            Dropship ds = loadDropshipFromString(oldFormatClanDSwithBA);
-            parsed = true;
-            mixedTech = ds.isMixedTech();   // confirm not mixed tech
-            clan = ds.isClan();             // confirm clan tech base
-            bays = ds.getTransportBays();
-            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
-            ISBAExists = confirmBayTypeinBays(bays, "BA_IS");
-        } catch (Exception e){
-        }
-        assertTrue(parsed);
-        assertTrue(clan);
-        assertFalse(mixedTech);
-        assertTrue(ClanBACorrect);
-        assertFalse(ISBAExists);
-
-    }
+    //endregion
 }

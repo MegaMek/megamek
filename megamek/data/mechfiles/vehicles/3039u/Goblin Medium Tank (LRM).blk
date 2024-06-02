@@ -109,7 +109,7 @@ Indicass,Leximon,New Syrtis,Terra
 </primaryFactory>
 
 <systemManufacturers>
-CHASSIS:Unlknown
+CHASSIS:Unknown
 ENGINE:LongWay 180 ICE
 ARMOR:ProtecTech 9
 COMMUNICATIONS:CommuTech XL

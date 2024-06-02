@@ -2976,14 +2976,6 @@ public class GameManager extends AbstractGameManager {
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
 
-        // Update the loading unit's passenger count, if it's a large craft
-        if ((loader instanceof SmallCraft) || (loader instanceof Jumpship)) {
-            // Don't add DropShip crew to a JumpShip or station's passenger list
-            if (!unit.isLargeCraft()) {
-                loader.setNPassenger(loader.getNPassenger() + unit.getCrew().getSize());
-            }
-        }
-
         // Update the loaded unit.
         entityUpdate(unit.getId());
         entityUpdate(loader.getId());
@@ -3245,14 +3237,6 @@ public class GameManager extends AbstractGameManager {
         if (duringDeployment) {
             unit.setUnloaded(false);
             unit.setDone(false);
-        }
-
-        //Update the transport unit's passenger count, if it's a large craft
-        if (unloader instanceof SmallCraft || unloader instanceof Jumpship) {
-            //Don't add dropship crew to a jumpship or station's passenger list
-            if (!unit.isLargeCraft()) {
-                unloader.setNPassenger(Math.max(0, unloader.getNPassenger() - unit.getCrew().getSize()));
-            }
         }
 
         // Update the unloaded unit.
@@ -28088,7 +28072,7 @@ public class GameManager extends AbstractGameManager {
      *                  in base path).
      * @param sizes     Where to store the discovered board sizes
      */
-    private void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
+    private static void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
         if (searchDir == null) {
             throw new IllegalArgumentException("must provide searchDir");
         }
@@ -28127,7 +28111,7 @@ public class GameManager extends AbstractGameManager {
      *
      * @return A Set containing all the available board sizes.
      */
-    private Set<BoardDimensions> getBoardSizes() {
+    public static Set<BoardDimensions> getBoardSizes() {
         TreeSet<BoardDimensions> board_sizes = new TreeSet<>();
 
         File boards_dir = Configuration.boardsDir();

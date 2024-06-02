@@ -789,7 +789,7 @@ public class MtfFile implements IMechLoader {
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these? Key on Type
-                        Mounted m = hSharedEquip.get(etype);
+                        Mounted<?> m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
                             mech.addCritical(loc, new CriticalSlot(m));
@@ -800,11 +800,11 @@ public class MtfFile implements IMechLoader {
                                               isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
-                    } else if (etype instanceof  MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
+                    } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
                         // Targeting computers are special, they need to be loaded like spreadable equipment, but they aren't spreadable
-                        Mounted m = hSharedEquip.get(etype);
+                        Mounted<?> m = hSharedEquip.get(etype);
                         if (m == null) {
-                            m = mech.addTargCompWithoutSlots(etype, loc, isOmniPod, isArmored);
+                            m = mech.addTargCompWithoutSlots((MiscType) etype, loc, isOmniPod, isArmored);
                             hSharedEquip.put(etype, m);
                         }
                         mech.addCritical(loc, new CriticalSlot(m));

@@ -67,7 +67,7 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     public PlayerSettingsDialog(ClientGUI cg, Client cl, BoardView bv) {
-        super(cg.frame, "PlayerSettingsDialog", "PlayerSettingsDialog.title");
+        super(cg.getFrame(), "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
         clientgui = cg;
         this.bv = bv;
@@ -636,7 +636,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             // Bot settings button
             if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
                 BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
-                var bcd = new BotConfigDialog(clientgui.frame, client.getLocalPlayer().getName(), behavior, clientgui);
+                var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior, clientgui);
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());

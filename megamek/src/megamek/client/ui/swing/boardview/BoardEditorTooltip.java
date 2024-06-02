@@ -77,7 +77,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
         StringBuilder result = new StringBuilder();
         result.append(guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()));
-        result.append("<FONT FACE=" + FontHandler.getNotoFont().getName() + ">");
+        result.append("<FONT FACE=" + FontHandler.notoFont().getName() + ">");
 
         // Coordinates and level
         result.append(colorHTML("Hex: ", GUIP.getToolTipLightFGColor()))
@@ -122,13 +122,12 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         }
 
         // Invalid hex notification
-        StringBuffer errBuff = new StringBuffer();
-        if (!hex.isValid(errBuff)) {
-            String errors = errBuff.toString().replace("\n", "<BR>");
+        List<String> errors = new ArrayList<>();
+        if (!hex.isValid(errors)) {
             result.append(paragraphHTMLOpen(padding))
                     .append(guiScaledFontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
                     .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
-                    .append(errors)
+                    .append(String.join("<BR>", errors))
                     .append("</p>");
         }
 

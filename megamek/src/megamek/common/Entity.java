@@ -37,6 +37,7 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.DiscordFormat;
 import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -3789,6 +3790,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (mounted instanceof MiscMounted) {
             miscList.add((MiscMounted) mounted);
         }
+        if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
+                && !(mounted instanceof WeaponMounted)) {
+            LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
+        }
     }
 
     private void addOneshotAmmo(Mounted<?> mounted) throws LocationFullException {
@@ -4556,6 +4561,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the CriticalSlots in the given location as a list. The returned list can be empty
+     * depending on the unit and the chosen slot but not null. The entries are not filtered in
+     * any way (could be null although that is probably an error in the internal representation
+     * of the unit.)
+     *
+     * @param location The location, e.g. Mech.LOC_HEAD
+     * @return A list of CriticalSlots in that location, possibly empty
+     */
+    public List<CriticalSlot> getCriticalSlots(int location) {
+        List<CriticalSlot> result = new ArrayList<>();
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            result.add(getCritical(location, slot));
+        }
+        return result;
     }
 
     /**
@@ -8893,7 +8915,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String getUnusedString() {
-        return getUnusedString(false);
+        return getUnusedString(ViewFormatting.NONE);
     }
 
     @Override
@@ -8924,8 +8946,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean ishtml) {
-        StringBuffer result = new StringBuffer();
+    public String getUnusedString(ViewFormatting formatting) {
+        StringBuilder result = new StringBuilder();
 
         // Walk through this entity's transport components;
         // add all of their string to ours.
@@ -8938,10 +8960,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((next instanceof DockingCollar) && ((DockingCollar) next).isDamaged()) {
                 continue;
             }
-            if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+            if (formatting == ViewFormatting.HTML && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
                 result.append("<font color='red'>")
                     .append(next.getUnusedString())
                     .append("</font>");
+            } else if (formatting == ViewFormatting.DISCORD && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+                result.append(DiscordFormat.RED.format())
+                    .append(next.getUnusedString())
+                    .append(DiscordFormat.RESET.format());
             } else {
                 result.append(next.getUnusedString());
             }
@@ -8955,7 +8981,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                if (ishtml) {
+                if (formatting == ViewFormatting.HTML) {
                     result.append("<br>");
                 } else {
                     result.append("\n");
@@ -9382,7 +9408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String toString() {
-        return "Entity [" + getDisplayName() + ", " + getId() + "]";
+        return "Entity [" + getDisplayName() + ", ID: " + getId() + "]";
     }
 
     /**
@@ -14227,65 +14253,84 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void loadQuirks(List<QuirkEntry> quirks) {
         // Load all the unit's quirks.
-        for (QuirkEntry q : quirks) {
+        for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
-            if (StringUtility.isNullOrBlank(q.getLocation())) {
+            if (StringUtility.isNullOrBlank(quirkEntry.getLocation())) {
                 // Activate the unit quirk.
-                if (getQuirks().getOption(q.getQuirk()) == null) {
+                if (getQuirks().getOption(quirkEntry.getQuirk()) == null) {
                     LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                            q, getChassis(), getModel()));
+                            quirkEntry, getChassis(), getModel()));
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);
-                continue;
+                getQuirks().getOption(quirkEntry.getQuirk()).setValue(true);
+            } else {
+                assignWeaponQuirk(quirkEntry);
             }
-
-            // Get the weapon in the indicated location and slot.
-            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
-            if (cs == null) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
-                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
-                continue;
-            }
-            Mounted<?> m = cs.getMount();
-            if (m == null) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
-                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
-                continue;
-            }
-
-            // Make sure this is a weapon.
-            if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
-                        q, getChassis(), getModel(), m.getName()));
-                continue;
-            }
-
-            // Make sure it is the weapon we expect.
-            boolean matchFound = false;
-            Enumeration<String> typeNames = m.getType().getNames();
-            while (typeNames.hasMoreElements()) {
-                String typeName = typeNames.nextElement();
-                if (typeName.equals(q.getWeaponName())) {
-                    matchFound = true;
-                    break;
-                }
-            }
-
-            if (!matchFound) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
-                        q, getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
-                continue;
-            }
-
-            // Activate the weapon quirk.
-            if (m.getQuirks().getOption(q.getQuirk()) == null) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                        q, getChassis(), getModel()));
-                continue;
-            }
-            m.getQuirks().getOption(q.getQuirk()).setValue(true);
         }
+    }
+
+    /**
+     * Returns the Mounted that is referred to by the quirkEntry (which must be a weapon quirk).
+     * //FIXME: This is very specialized code that is only needed because we need to identify a weapon
+     * in the blk/mtf file. It might be better to write the weaponquirk directly to the weapon,
+     * removing the need to find it. Note the override in ProtoMech that doesnt use crit slots.
+     * For meks, this is challenge as the specific weapon in a location must
+     * still be addressed.
+     *
+     * @param quirkEntry The weapon quirk entry
+     * @return The Mounted at the specified location
+     */
+    protected Mounted<?> getEquipmentForWeaponQuirk(QuirkEntry quirkEntry) {
+        // Get the weapon in the indicated location and slot.
+        CriticalSlot cs = getCritical(getLocationFromAbbr(quirkEntry.getLocation()), quirkEntry.getSlot());
+        if (cs != null) {
+            return cs.getMount();
+        } else {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
+                    quirkEntry, getChassis(), getModel(), quirkEntry.getLocation(), quirkEntry.getSlot()));
+            return null;
+        }
+    }
+
+    protected void assignWeaponQuirk(QuirkEntry quirkEntry) {
+        Mounted<?> m = getEquipmentForWeaponQuirk(quirkEntry);
+        if (m == null) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
+                    quirkEntry, getChassis(), getModel(), quirkEntry.getLocation(), quirkEntry.getSlot()));
+            return;
+        }
+
+        // Make sure this is a weapon.
+        if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
+                    quirkEntry, getChassis(), getModel(), m.getName()));
+            return;
+        }
+
+        // Make sure it is the weapon we expect.
+        boolean matchFound = false;
+        Enumeration<String> typeNames = m.getType().getNames();
+        while (typeNames.hasMoreElements()) {
+            String typeName = typeNames.nextElement();
+            if (typeName.equals(quirkEntry.getWeaponName())) {
+                matchFound = true;
+                break;
+            }
+        }
+
+        if (!matchFound) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
+                    quirkEntry, getChassis(), getModel(), m.getType().getName(), quirkEntry.getWeaponName()));
+            return;
+        }
+
+        // Activate the weapon quirk.
+        if (m.getQuirks().getOption(quirkEntry.getQuirk()) == null) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+                    quirkEntry, getChassis(), getModel()));
+            return;
+        }
+        m.getQuirks().getOption(quirkEntry.getQuirk()).setValue(true);
     }
 
     @Override

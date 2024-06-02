@@ -246,7 +246,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
-                this.ammoId);
+                UNASSIGNED);
     }
 
     /**
@@ -259,7 +259,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
-                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(), evenIfAlreadyFired, this.ammoId);
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
+                evenIfAlreadyFired, ammoId);
     }
 
     public ToHitData toHit(Game game, List<ECMInfo> allECMInfo) {
@@ -267,13 +268,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
-                allECMInfo, false, this.ammoId);
+                allECMInfo, false, ammoId);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
         // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, Entity.LOC_NONE, AimingMode.NONE,
-                false, false, null, null, isStrafing, false, UNASSIGNED);
+                false, false, null, null, isStrafing,
+                false, UNASSIGNED);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
@@ -289,16 +291,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                   Targetable originalTarget, boolean isStrafing, boolean isPointblankShot,
                                   int ammoId) {
         return toHitCalc(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
-                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, false, ammoId);
+                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null,
+                false, ammoId);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                   boolean exchangeSwarmTarget, Targetable oldTarget,
-                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, boolean evenIfAlreadyFired,
-                                  int ammoId) {
+                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot,
+                                  boolean evenIfAlreadyFired, int ammoId) {
         return toHitCalc(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
-                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, evenIfAlreadyFired, ammoId);
+                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null,
+                evenIfAlreadyFired, ammoId);
     }
 
     /**
@@ -5354,12 +5358,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
 
     @Override
-    public String toDisplayableString(Client client) {
+    public String toAccessibilityDescription(Client client) {
         if (null == client || null == getTarget(client.getGame())) {
             LogManager.getLogger().warn("Unable to construct WAA displayable string due to null reference");
             return "Attacking Null Target with id " + getTargetId() + " using Weapon with id " + weaponId;
         }
-        return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
+        return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " +
+                getEntity(client.getGame()).getEquipment(weaponId).getName();
     }
 
     @Override

@@ -1,6 +1,6 @@
 ${fullName}
 <#if includeFluff>
-<#include "fluff.ftlh">
+<#include "fluff.ftl">
 </#if>
   
 Type: ${chassis}

@@ -16,9 +16,7 @@ package megamek.client.ratgenerator;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
@@ -42,6 +40,8 @@ public class ModelRecord extends AbstractUnitRecord {
     public static final int NETWORK_BOOSTED_MASTER = NETWORK_C3_MASTER | NETWORK_BOOSTED;
 
     private MechSummary mechSummary;
+
+    private boolean primitive;
     private boolean starLeague;
     private int weightClass;
     private EntityMovementMode movementMode;
@@ -102,6 +102,15 @@ public class ModelRecord extends AbstractUnitRecord {
     @Override
     public boolean isClan() {
         return clan;
+    }
+
+    /**
+     * Unit contains at least some primitive technology, without any advanced tech.
+     * Testing is not extensive, there may be units that are not properly flagged.
+     * @return   true, if unit contains no advanced tech and at least some primitive tech
+     */
+    public boolean isPrimitive() {
+        return primitive;
     }
 
     public boolean isSL() {
@@ -269,7 +278,29 @@ public class ModelRecord extends AbstractUnitRecord {
         int apRating = 0;
         int apThreshold = 6;
         double ammoBV = 0.0;
+
+        // Base technology checks
+
         boolean losTech = false;
+        boolean base_primitive = false;
+
+        clan = ms.isClan();
+
+        // Check if the base unit is primitive
+        if (!clan &&
+                unitType != UnitType.INFANTRY &&
+                unitType != UnitType.BATTLE_ARMOR &&
+                unitType != UnitType.PROTOMEK &&
+                unitType != UnitType.WARSHIP) {
+            base_primitive = isUnitPrimitive(ms);
+        }
+        // If the unit is not Clan or primitive, then check for if it is lostech (advanced)
+        if (!clan &&
+                !base_primitive &&
+                unitType <= UnitType.AEROSPACEFIGHTER &&
+                unitType != UnitType.INFANTRY) {
+            losTech = unitHasLostech(ms, false);
+        }
 
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
 
@@ -286,8 +317,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 continue;
             }
 
-            if (!eq.isAvailableIn(3000, false)) {
-                //FIXME: needs to filter out primitive
+            // Only check for lostech equipment if it hasn't already been found
+            if (!losTech && !eq.isAvailableIn(3000, false)) {
                 losTech = true;
             }
 
@@ -408,6 +439,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
             // Various non-weapon equipment
             } else if (eq instanceof MiscType) {
+
                 if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;
                 } else if (eq.hasFlag(MiscType.F_C3S)) {
@@ -421,11 +453,12 @@ public class ModelRecord extends AbstractUnitRecord {
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
                 }
+
             }
         }
 
-        // Calculate BV proportions for all ground units, VTOL, blue water naval, and
-        // fixed wing aircraft. Exclude Small craft, DropShips, and large space craft.
+        // Calculate BV proportions for all ground units, VTOL, blue water naval, gun emplacements
+        // and fixed wing aircraft. Exclude Small craft, DropShips, and large space craft.
         if (totalBV > 0 && unitType <= UnitType.AEROSPACEFIGHTER) {
             flak = flakBV / totalBV;
             artilleryBVProportion = artilleryBV/totalBV;
@@ -450,19 +483,255 @@ public class ModelRecord extends AbstractUnitRecord {
                 weightClass = EntityWeightClass.WEIGHT_COLOSSAL;
             }
         }
-        clan = ms.isClan();
-        if (megamek.common.Engine.getEngineTypeByString(ms.getEngineName()) == megamek.common.Engine.XL_ENGINE
-                || ms.getArmorType().contains(EquipmentType.T_ARMOR_FERRO_FIBROUS)
-                || ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
-            losTech = true;
-        }
+
         starLeague = losTech && !clan;
+
         speed = ms.getWalkMp();
         if (ms.getJumpMp() > 0) {
             speed++;
         }
 
     }
+
+    /**
+     * Units are considered primitive if they have no advanced tech and at least some primitive
+     * tech. The check is not exhaustive so some niche units may not be flagged properly.
+     * @param ms   Unit data
+     * @return   true if unit has primitive tech and no advanced tech
+     */
+    private boolean isUnitPrimitive (MechSummary ms) {
+
+        boolean hasPrimitive = false;
+
+        // Some unit types will not be built with primitive technology
+        if (unitType == UnitType.INFANTRY ||
+                unitType == UnitType.BATTLE_ARMOR ||
+                unitType == UnitType.PROTOMEK ||
+                unitType == UnitType.WARSHIP) {
+            return false;
+        }
+
+        // Primitive engines are not identified, so check for use of advanced types
+        int engine_type = ms.getEngineType();
+        if (unitType != UnitType.GUN_EMPLACEMENT &&
+                (engine_type == Engine.XL_ENGINE ||
+                engine_type == Engine.LIGHT_ENGINE ||
+                engine_type == Engine.XXL_ENGINE ||
+                engine_type == Engine.COMPACT_ENGINE)) {
+            return false;
+        }
+
+        // Primitive gyros are not identified, so check for use of advanced types
+        if (unitType == UnitType.MEK) {
+            int gyro_type = ms.getGyroType();
+            if (gyro_type >= Mech.GYRO_COMPACT) {
+                return false;
+            }
+        }
+
+        // Primitive structure is not identified, so check for use of advanced types
+        if (unitType == UnitType.MEK &&
+                ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
+                ms.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
+            return false;
+        }
+        hasPrimitive = (ms.getInternalsType() == EquipmentType.T_STRUCTURE_INDUSTRIAL);
+
+        // If standard, industrial, or primitive armor is not present, then it must be advanced
+        HashSet<Integer> armor_type = ms.getArmorType();
+        if (unitType <= UnitType.NAVAL &&
+                !armor_type.contains(EquipmentType.T_ARMOR_STANDARD) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_INDUSTRIAL) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
+            return false;
+        } else if ((unitType == UnitType.CONV_FIGHTER ||
+                unitType == UnitType.AEROSPACEFIGHTER) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_STANDARD) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+            return false;
+        }
+        if (armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
+                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
+                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+            hasPrimitive = true;
+        }
+
+        // Cockpit control systems
+        int cockpit_type = ms.getCockpitType();
+        if (unitType == UnitType.MEK) {
+            if (cockpit_type != Mech.COCKPIT_STANDARD &&
+                    cockpit_type != Mech.COCKPIT_INDUSTRIAL &&
+                    cockpit_type != Mech.COCKPIT_PRIMITIVE &&
+                    cockpit_type != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+                return false;
+            } else if (cockpit_type == Mech.COCKPIT_PRIMITIVE ||
+                    cockpit_type == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+                hasPrimitive = true;
+            }
+        } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+            if (cockpit_type == Aero.COCKPIT_SMALL ||
+                    cockpit_type == Aero.COCKPIT_COMMAND_CONSOLE) {
+                return false;
+            } else if (cockpit_type == Aero.COCKPIT_PRIMITIVE) {
+                hasPrimitive = true;
+            }
+        }
+
+        // If the unit has any primitive tech and nothing but standard tech, it is considered
+        // primitive
+        return hasPrimitive;
+    }
+
+    /**
+     * Checks that unit has at least one piece of primitive tech for basic unit components such as
+     * engine, frame, and armor. The check is not extensive so some units may include a niche item
+     * even though they are not flagged as such.
+     * @param ms   Unit data
+     * @return     true if unit contains primitive basic equipment
+     */
+    private boolean unitHasPrimitiveTech(MechSummary ms) {
+
+        // Some unit types will not be built with primitive technology
+        if (unitType == UnitType.INFANTRY ||
+                unitType == UnitType.BATTLE_ARMOR ||
+                unitType == UnitType.PROTOMEK ||
+                unitType == UnitType.WARSHIP) {
+            return false;
+        }
+
+        // Check for non-advanced engines
+        int engine_type = ms.getEngineType();
+        if (unitType == UnitType.MEK &&
+                (engine_type == Engine.COMBUSTION_ENGINE ||
+                engine_type == Engine.FISSION
+                || engine_type == Engine.BATTERY)) {
+            return true;
+        } else if ((unitType == UnitType.TANK ||
+                unitType == UnitType.CONV_FIGHTER ||
+                unitType == UnitType.AEROSPACEFIGHTER) &&
+                engine_type == Engine.FISSION) {
+            return true;
+        }
+
+        // Armor
+        HashSet<Integer> armor_type = ms.getArmorType();
+        if (armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
+                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
+                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+            return true;
+        }
+
+        // Cockpit/control systems
+        if (unitType == UnitType.MEK &&
+                (ms.getCockpitType() == Mech.COCKPIT_PRIMITIVE ||
+                        ms.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+            return true;
+        } else if ((unitType == UnitType.CONV_FIGHTER ||
+                unitType == UnitType.AEROSPACEFIGHTER) && ms.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+
+
+    /**
+     * Check if unit is built with advanced technology. This only checks the basic components,
+     * not any mounted equipment such as weapons.
+     * @param ms         unit data
+     * @param sl_only    true to only check original Star League tech - XL engine, ES internals,
+     *                   FF armor
+     * @return           true if unit has at least one piece of basic technology
+     */
+    private boolean unitHasLostech (MechSummary ms, boolean sl_only) {
+
+        // Some units are always considered advanced
+        if (unitType == UnitType.BATTLE_ARMOR ||
+                unitType == UnitType.PROTOMEK ||
+                unitType == UnitType.WARSHIP) {
+            return true;
+        }
+
+        // Conventional infantry are always basic tech
+        if (unitType == UnitType.INFANTRY) {
+            return false;
+        }
+
+        // Engine check. Star League is limited to XL.
+        if (unitType == UnitType.MEK ||
+                unitType == UnitType.TANK ||
+                unitType == UnitType.VTOL ||
+                unitType == UnitType.CONV_FIGHTER ||
+                unitType == UnitType.AEROSPACEFIGHTER) {
+            if (sl_only) {
+                if (ms.getEngineType() == Engine.XL_ENGINE) {
+                    return true;
+                }
+            } else if (ms.getEngineType() >= Engine.XL_ENGINE &&
+                    ms.getEngineType() <= Engine.COMPACT_ENGINE &&
+                    ms.getEngineType() != Engine.FUEL_CELL) {
+                return true;
+            }
+        }
+
+        // Gyro. Star League has no advanced gyro types.
+        if (unitType == UnitType.MEK && !sl_only) {
+            int gyro_type = ms.getGyroType();
+            if (gyro_type >= Mech.GYRO_COMPACT) {
+                return true;
+            }
+        }
+
+        // Structure. Star League is limited endosteel.
+        if (unitType == UnitType.MEK) {
+            if (sl_only && ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
+                return true;
+            } else if (ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
+                    ms.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
+                return true;
+            }
+        }
+
+        // Armor. Star League is limited to simple ferro-fibrous.
+        HashSet<Integer> armor_type = ms.getArmorType();
+        int base_armor = (int)armor_type.toArray()[0];
+        if (unitType <= UnitType.NAVAL) {
+            if (sl_only && base_armor == EquipmentType.T_ARMOR_FERRO_FIBROUS) {
+                return true;
+            } else if ((base_armor >= EquipmentType.T_ARMOR_FERRO_FIBROUS &&
+                    base_armor <= EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO) ||
+                    base_armor == EquipmentType.T_ARMOR_FERRO_LAMELLOR ||
+                    (base_armor >= EquipmentType.T_ARMOR_STEALTH_VEHICLE &&
+                            base_armor <= EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
+                return true;
+            }
+        }
+
+        // Cockpit. Star League is limited to command consoles.
+        int cockpit_type = ms.getCockpitType();
+        if (unitType == UnitType.MEK) {
+            if (sl_only && cockpit_type == Mech.COCKPIT_COMMAND_CONSOLE) {
+                return true;
+            } else if (cockpit_type != Mech.COCKPIT_STANDARD &&
+                    cockpit_type != Mech.COCKPIT_PRIMITIVE &&
+                    cockpit_type != Mech.COCKPIT_INDUSTRIAL &&
+                    cockpit_type != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+                return true;
+            }
+        } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+            if (cockpit_type != Aero.COCKPIT_STANDARD &&
+                    cockpit_type != Aero.COCKPIT_PRIMITIVE) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Get a BV modifier for a weapon for use against airborne targets

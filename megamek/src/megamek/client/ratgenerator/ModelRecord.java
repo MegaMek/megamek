@@ -347,6 +347,23 @@ public class ModelRecord extends AbstractUnitRecord {
             if (eq instanceof WeaponType) {
                 totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
 
+                // Check for C3 master units. These are bit-masked values.
+                if (eq.hasFlag(WeaponType.F_C3M)) {
+                    networkMask |= NETWORK_C3_MASTER;
+                    if (ms.getEquipmentQuantities().get(i) > 1) {
+                        networkMask |= NETWORK_COMPANY_COMMAND;
+                    }
+                    losTech = true;
+                    continue;
+                } else if (eq.hasFlag(WeaponType.F_C3MBS)) {
+                    networkMask |= NETWORK_BOOSTED_MASTER;
+                    if (ms.getEquipmentQuantities().get(i) > 1) {
+                        networkMask |= NETWORK_COMPANY_COMMAND;
+                    }
+                    losTech = true;
+                    continue;
+                }
+
                 // Check for use against airborne targets. Ignore small craft, DropShips, and other
                 // large space craft.
                 if (unitType < UnitType.SMALL_CRAFT &&
@@ -444,21 +461,6 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Add the spotter role to all units which carry TAG
                 if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
-                    losTech = true;
-                }
-
-                // Check for C3 master units. These are bit-masked values.
-                if (eq.hasFlag(WeaponType.F_C3M)) {
-                    networkMask |= NETWORK_C3_MASTER;
-                    if (ms.getEquipmentQuantities().get(i) > 1) {
-                        networkMask |= NETWORK_COMPANY_COMMAND;
-                    }
-                    losTech = true;
-                } else if (eq.hasFlag(WeaponType.F_C3MBS)) {
-                    networkMask |= NETWORK_BOOSTED_MASTER;
-                    if (ms.getEquipmentQuantities().get(i) > 1) {
-                        networkMask |= NETWORK_COMPANY_COMMAND;
-                    }
                     losTech = true;
                 }
 

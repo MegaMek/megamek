@@ -162,8 +162,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     protected Map<TargetingCommand, MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
-    private int cen = Entity.NONE; // current entity number
-
     private Targetable target; // target
 
     // is the shift key held?
@@ -257,9 +255,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this, this::prevWeapon);
 
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
+                () -> selectEntity(clientgui.getClient().getNextEntityNum(currentEntity)));
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
+                () -> selectEntity(clientgui.getClient().getPrevEntityNum(currentEntity)));
 
         controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this, this::jumpToNextTarget);
         controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this, this::jumpToPrevTarget);
@@ -312,7 +310,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      */
     private void selectEntity(int en) {
         // clear any previously considered attacks
-        if (en != cen) {
+        if (en != currentEntity) {
             clearAttacks();
             refreshAll();
         }
@@ -323,7 +321,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (client.getGame().getEntity(en) != null) {
 
-            cen = en;
+            currentEntity = en;
             clientgui.setSelectedEntityNum(en);
 
             // If the selected entity is not on the board, use the next one.
@@ -336,7 +334,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
                     if (null != clientgui.getClient().getGame()
                             .getEntity(nextId).getPosition()) {
-                        cen = nextId;
+                        currentEntity = nextId;
                         break;
                     }
 
@@ -442,7 +440,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
-        cen = Entity.NONE;
+        currentEntity = Entity.NONE;
         target(null);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
@@ -494,7 +492,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         // send change to the server
         int nMode = m.switchMode(forward);
-        clientgui.getClient().sendModeChange(cen, wn, nMode);
+        clientgui.getClient().sendModeChange(currentEntity, wn, nMode);
 
         // notify the player
         if (m.canInstantSwitch(nMode)) {
@@ -548,7 +546,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         removeTempAttacks();
 
         // send out attacks
-        clientgui.getClient().sendAttackData(cen, attacks.toVector());
+        clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
 
         // clear queue
         removeAllAttacks();
@@ -565,12 +563,12 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
-        if (!SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null)) {
+        if (!SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), currentEntity, target, null)) {
             return;
         }
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(currentEntity, target.getTargetType(), target.getId());
         addAttack(saa);
 
         // and add it into the game, temporarily
@@ -601,7 +599,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             doSearchlight();
         }
 
-        WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
+        WeaponAttackAction waa = new WeaponAttackAction(currentEntity, target.getTargetType(),
                 target.getId(), weaponNum);
         Game game = clientgui.getClient().getGame();
         int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
@@ -610,7 +608,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                         && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target))) {
-            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+            waa = new ArtilleryAttackAction(currentEntity, target.getTargetType(),
                     target.getId(), weaponNum, clientgui.getClient().getGame());
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {
@@ -743,7 +741,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      */
     private void removeTempAttacks() {
         // remove temporary attacks from game & board
-        clientgui.getClient().getGame().removeActionsFor(cen);
+        clientgui.getClient().getGame().removeActionsFor(currentEntity);
         clientgui.getBoardView().removeAttacksFor(ce());
     }
 
@@ -795,7 +793,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        if ( (cen != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+        if ( (currentEntity != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
                 && (target != null) && (weaponId != -1)) {
             ToHitData toHit;
             Mounted m = ce().getEquipment(weaponId);
@@ -806,7 +804,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
 
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
-                    cen, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
+                    currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
             String flightTimeText = "";
             if (isArtilleryAttack) {
@@ -969,7 +967,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
-            addAttack(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         }
@@ -987,23 +985,16 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         if (twistDir == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
-            addAttack(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         } else if (twistDir == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
-            addAttack(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         }
-    }
-
-    /**
-     * Returns the current entity.
-     */
-    Entity ce() {
-        return clientgui.getClient().getGame().getEntity(cen);
     }
 
     //
@@ -1160,7 +1151,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (clientgui.getClient().getGame().getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
+                if (currentEntity == Entity.NONE) {
                     beginMyTurn();
                 }
                 String t = (phase.isTargeting()) ? Messages.getString("TargetingPhaseDisplay.its_your_turn") :
@@ -1216,7 +1207,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT_TARG.getCmd())) {
             jumpToNextTarget();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_FLIP_ARMS.getCmd())) {
@@ -1231,7 +1222,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
                         Messages.getString("MovementDisplay.EscapeDialog.message"))) {
             clear();
-            addAttack(new DisengageAction(cen));
+            addAttack(new DisengageAction(currentEntity));
             ready();
         }
     }
@@ -1247,7 +1238,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         clearAttacks();
         ce().setArmsFlipped(armsFlipped);
-        addAttack(new FlipArmsAction(cen, armsFlipped));
+        addAttack(new FlipArmsAction(currentEntity, armsFlipped));
         updateTarget();
         refreshAll();
     }
@@ -1257,7 +1248,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 && (target != null)
                 && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
-                && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null));
+                && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), currentEntity, target, null));
     }
 
     private void setFireEnabled(boolean enabled) {

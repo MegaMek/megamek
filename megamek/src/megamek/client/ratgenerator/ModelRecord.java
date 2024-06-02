@@ -97,13 +97,12 @@ public class ModelRecord extends AbstractUnitRecord {
         longRange = 0.0;
     }
 
-    public ModelRecord(MechSummary ms) {
-        this(ms.getFullChassis(), ms.getModel());
-        mechSummary = ms;
-        introYear = ms.getYear();
+    public ModelRecord(MechSummary unitData) {
+        this(unitData.getFullChassis(), unitData.getModel());
+        mechSummary = unitData;
+        introYear = unitData.getYear();
 
-        analyzeModel(ms);
-
+        analyzeModel(unitData);
     }
 
     public String getModel() {
@@ -222,11 +221,11 @@ public class ModelRecord extends AbstractUnitRecord {
         return mechSummary;
     }
 
-    public void addRoles(String str) {
-        if (str.isBlank()) {
+    public void addRoles(String newRoles) {
+        if (newRoles.isBlank()) {
             roles.clear();
         } else {
-            String[] fields = str.split(",");
+            String[] fields = newRoles.split(",");
             for (String role : fields) {
                 MissionRole mr = MissionRole.parseRole(role);
                 if (mr != null) {
@@ -239,27 +238,27 @@ public class ModelRecord extends AbstractUnitRecord {
         }
     }
 
-    public void setRequiredUnits(String str) {
-        String[] subfields = str.split(",");
+    public void setRequiredUnits(String requiredUnitNames) {
+        String[] subfields = requiredUnitNames.split(",");
         for (String unit : subfields) {
             if (unit.startsWith("req:")) {
-                requiredUnits.add(unit.replace("req:", ""));
+                this.requiredUnits.add(unit.replace("req:", ""));
             } else {
                 deployedWith.add(unit);
             }
         }
     }
 
-    public void setExcludedFactions(String str) {
-        excludedFactions.clear();
-        String[] fields = str.split(",");
+    public void setExcludedFactions(String excludedFactions) {
+        this.excludedFactions.clear();
+        String[] fields = excludedFactions.split(",");
         for (String faction : fields) {
-            excludedFactions.add(faction);
+            this.excludedFactions.add(faction);
         }
     }
 
-    public boolean factionIsExcluded(FactionRecord fRec) {
-        return excludedFactions.contains(fRec.getKey());
+    public boolean factionIsExcluded(FactionRecord checkFaction) {
+        return excludedFactions.contains(checkFaction.getKey());
     }
 
     public boolean factionIsExcluded(String faction, String subfaction) {
@@ -279,16 +278,16 @@ public class ModelRecord extends AbstractUnitRecord {
         return mechanizedBA;
     }
 
-    public void setMechanizedBA(boolean mech) {
-        mechanizedBA = mech;
+    public void setMechanizedBA(boolean flag) {
+        mechanizedBA = flag;
     }
 
     public boolean hasMagClamp() {
         return magClamp;
     }
 
-    public void setMagClamp(boolean magClamp) {
-        this.magClamp = magClamp;
+    public void setMagClamp(boolean flag) {
+        this.magClamp = flag;
     }
 
     public boolean getAntiMek(){
@@ -299,25 +298,25 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * Checks the equipment carried by this unit and summarizes it in a variety of easy to access
      * data
-     * @param ms   Data for unit
+     * @param unitData   Data for unit
      */
-    private void analyzeModel (MechSummary ms) {
+    private void analyzeModel (MechSummary unitData) {
 
         // Basic unit type and movement
-        unitType = parseUnitType(ms.getUnitType());
+        unitType = parseUnitType(unitData.getUnitType());
         if (unitType == UnitType.MEK) {
 
             movementMode = EntityMovementMode.BIPED;
-            if (ms.isQuadMek()) {
+            if (unitData.isQuadMek()) {
                 isQuad = true;
                 movementMode = EntityMovementMode.QUAD;
-            } else if (ms.isTripodMek()) {
+            } else if (unitData.isTripodMek()) {
                 isTripod = true;
                 movementMode = EntityMovementMode.TRIPOD;
             }
 
         } else {
-            movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
+            movementMode = EntityMovementMode.parseFromString(unitData.getUnitSubType().toLowerCase());
         }
 
         if (unitType == UnitType.MEK ||
@@ -325,25 +324,25 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType == UnitType.VTOL ||
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) {
-            omni = ms.getOmni();
+            omni = unitData.getOmni();
         }
 
-        speed = ms.getWalkMp();
-        if (ms.getJumpMp() > 0) {
+        speed = unitData.getWalkMp();
+        if (unitData.getJumpMp() > 0) {
             canJump = true;
             speed++;
         }
 
-        weightClass = ms.getWeightClass();
+        weightClass = unitData.getWeightClass();
         // Adjust weight class for support vehicles
         if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            if (ms.getTons() <= 39) {
+            if (unitData.getTons() <= 39) {
                 weightClass = EntityWeightClass.WEIGHT_LIGHT;
-            } else if (ms.getTons() <= 59) {
+            } else if (unitData.getTons() <= 59) {
                 weightClass = EntityWeightClass.WEIGHT_MEDIUM;
-            } else if (ms.getTons() <= 79) {
+            } else if (unitData.getTons() <= 79) {
                 weightClass = EntityWeightClass.WEIGHT_HEAVY;
-            } else if (ms.getTons() <= 100) {
+            } else if (unitData.getTons() <= 100) {
                 weightClass = EntityWeightClass.WEIGHT_ASSAULT;
             } else {
                 weightClass = EntityWeightClass.WEIGHT_COLOSSAL;
@@ -364,7 +363,7 @@ public class ModelRecord extends AbstractUnitRecord {
         boolean losTech = false;
         boolean basePrimitive = false;
 
-        clan = ms.isClan();
+        clan = unitData.isClan();
 
         // Check if the base unit is primitive
         if (!clan &&
@@ -372,27 +371,27 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType != UnitType.BATTLE_ARMOR &&
                 unitType != UnitType.PROTOMEK &&
                 unitType != UnitType.WARSHIP) {
-            basePrimitive = isUnitPrimitive(ms);
+            basePrimitive = isUnitPrimitive(unitData);
         }
         // If the unit is not Clan or primitive, then check for if it is lostech (advanced)
         if (!clan &&
                 !basePrimitive &&
                 unitType <= UnitType.AEROSPACEFIGHTER &&
                 unitType != UnitType.INFANTRY) {
-            losTech = unitHasLostech(ms, false);
+            losTech = unitHasLostech(unitData, false);
         }
 
-        for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+        for (int i = 0; i < unitData.getEquipmentNames().size(); i++) {
 
             //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
             //is that there is a null equipment name.
-            if (null == ms.getEquipmentNames().get(i)) {
+            if (null == unitData.getEquipmentNames().get(i)) {
                 LogManager.getLogger().error(
                         "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
-                                + ms.getName() + ", index " + i);
+                                + unitData.getName() + ", index " + i);
                 continue;
             }
-            EquipmentType eq = EquipmentType.get(ms.getEquipmentNames().get(i));
+            EquipmentType eq = EquipmentType.get(unitData.getEquipmentNames().get(i));
             if (eq == null) {
                 continue;
             }
@@ -403,19 +402,19 @@ public class ModelRecord extends AbstractUnitRecord {
             }
 
             if (eq instanceof WeaponType) {
-                totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                totalBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
 
                 // Check for C3 master units. These are bit-masked values.
                 if (eq.hasFlag(WeaponType.F_C3M)) {
                     networkMask |= NETWORK_C3_MASTER;
-                    if (ms.getEquipmentQuantities().get(i) > 1) {
+                    if (unitData.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
                     losTech = true;
                     continue;
                 } else if (eq.hasFlag(WeaponType.F_C3MBS)) {
                     networkMask |= NETWORK_BOOSTED_MASTER;
-                    if (ms.getEquipmentQuantities().get(i) > 1) {
+                    if (unitData.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
                     losTech = true;
@@ -429,14 +428,14 @@ public class ModelRecord extends AbstractUnitRecord {
                         !(eq instanceof SwarmWeaponAttack) &&
                         !(eq instanceof LegAttack) &&
                         !(eq instanceof StopSwarmAttack)) {
-                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Check for artillery weapons. Ignore aerospace fighters, small craft, and large
                 // space craft.
                 if (unitType <= UnitType.CONV_FIGHTER &&
                         eq instanceof ArtilleryWeapon) {
-                    artilleryBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                    artilleryBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
@@ -494,7 +493,7 @@ public class ModelRecord extends AbstractUnitRecord {
                     }
 
                     if  (ammoFactor > 0.0 && ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
-                        ammoBV += eq.getBV(null) * ammoFactor * ms.getEquipmentQuantities().get(i);
+                        ammoBV += eq.getBV(null) * ammoFactor * unitData.getEquipmentQuantities().get(i);
                     }
 
                 }
@@ -502,7 +501,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Total up BV for weapons capable of attacking at the longest ranges or using
                 // indirect fire. Ignore small craft, DropShips, and other space craft.
                 if (unitType < UnitType.SMALL_CRAFT) {
-                    lrBV += getLongRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                    lrBV += getLongRangeModifier(eq) * eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
@@ -513,7 +512,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         !(eq instanceof SwarmWeaponAttack) &&
                         !(eq instanceof LegAttack) &&
                         !(eq instanceof StopSwarmAttack)) {
-                    srBV += getShortRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                    srBV += getShortRangeModifier(eq) * eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Add the spotter role to all units which carry TAG
@@ -600,10 +599,10 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * Units are considered primitive if they have no advanced tech and at least some primitive
      * tech. The check is not exhaustive so some niche units may not be flagged properly.
-     * @param ms   Unit data
+     * @param unitData   Unit data
      * @return   true if unit has primitive tech and no advanced tech
      */
-    private boolean isUnitPrimitive (MechSummary ms) {
+    private boolean isUnitPrimitive (MechSummary unitData) {
 
         boolean hasPrimitive = false;
 
@@ -616,7 +615,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Primitive engines are not identified, so check for use of advanced types
-        int engine_type = ms.getEngineType();
+        int engine_type = unitData.getEngineType();
         if (unitType != UnitType.GUN_EMPLACEMENT &&
                 unitType != UnitType.SMALL_CRAFT &&
                 unitType != UnitType.DROPSHIP &&
@@ -630,23 +629,23 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Primitive gyros are not identified, so check for use of advanced types
         if (unitType == UnitType.MEK) {
-            if (ms.getGyroType() >= Mech.GYRO_COMPACT) {
+            if (unitData.getGyroType() >= Mech.GYRO_COMPACT) {
                 return false;
             }
         }
 
         // Primitive structure is not identified, so check for use of advanced types
         if (unitType == UnitType.MEK) {
-            if (ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
-                ms.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
+            if (unitData.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
+                unitData.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
                 return false;
             }
-            hasPrimitive = (ms.getInternalsType() == EquipmentType.T_STRUCTURE_INDUSTRIAL);
+            hasPrimitive = (unitData.getInternalsType() == EquipmentType.T_STRUCTURE_INDUSTRIAL);
         }
 
 
         // If standard, industrial, or primitive armor is not present, then it must be advanced
-        HashSet<Integer> checkArmor = ms.getArmorType();
+        HashSet<Integer> checkArmor = unitData.getArmorType();
         if (unitType <= UnitType.NAVAL &&
                 !checkArmor.contains(EquipmentType.T_ARMOR_STANDARD) &&
                 !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) &&
@@ -670,7 +669,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Cockpit control systems
-        int checkCockpit = ms.getCockpitType();
+        int checkCockpit = unitData.getCockpitType();
         if (unitType == UnitType.MEK) {
             if (checkCockpit != Mech.COCKPIT_STANDARD &&
                     checkCockpit != Mech.COCKPIT_INDUSTRIAL &&
@@ -699,10 +698,10 @@ public class ModelRecord extends AbstractUnitRecord {
      * Checks that unit has at least one piece of primitive tech for basic unit components such as
      * engine, frame, and armor. The check is not extensive so some units may include a niche item
      * even though they are not flagged as such.
-     * @param ms   Unit data
+     * @param unitData   Unit data
      * @return     true if unit contains primitive basic equipment
      */
-    private boolean unitHasPrimitiveTech(MechSummary ms) {
+    private boolean unitHasPrimitiveTech(MechSummary unitData) {
 
         // Some unit types will not be built with primitive technology
         if (unitType == UnitType.INFANTRY ||
@@ -713,7 +712,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Check for non-advanced engines
-        int checkEngine = ms.getEngineType();
+        int checkEngine = unitData.getEngineType();
         if (unitType == UnitType.MEK &&
                 (checkEngine == Engine.COMBUSTION_ENGINE ||
                         checkEngine == Engine.FISSION ||
@@ -727,7 +726,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Armor
-        HashSet<Integer> checkArmor = ms.getArmorType();
+        HashSet<Integer> checkArmor = unitData.getArmorType();
         if (checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
                 checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
                 checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
@@ -736,11 +735,11 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Cockpit/control systems
         if (unitType == UnitType.MEK &&
-                (ms.getCockpitType() == Mech.COCKPIT_PRIMITIVE ||
-                        ms.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+                (unitData.getCockpitType() == Mech.COCKPIT_PRIMITIVE ||
+                        unitData.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             return true;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
-                unitType == UnitType.AEROSPACEFIGHTER) && ms.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
+                unitType == UnitType.AEROSPACEFIGHTER) && unitData.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
             return true;
         }
 
@@ -753,12 +752,12 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * Check if unit is built with advanced technology. This only checks the basic components,
      * not any mounted equipment such as weapons.
-     * @param ms         unit data
-     * @param slOnly    true to only check original Star League tech - XL engine, ES internals,
+     * @param unitData         unit data
+     * @param starLeagueOnly    true to only check original Star League tech - XL engine, ES internals,
      *                   FF armor
      * @return           true if unit has at least one piece of basic technology
      */
-    private boolean unitHasLostech (MechSummary ms, boolean slOnly) {
+    private boolean unitHasLostech (MechSummary unitData, boolean starLeagueOnly) {
 
         // Some units are always considered advanced
         if (unitType == UnitType.BATTLE_ARMOR ||
@@ -778,38 +777,38 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType == UnitType.VTOL ||
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) {
-            if (slOnly) {
-                if (ms.getEngineType() == Engine.XL_ENGINE) {
+            if (starLeagueOnly) {
+                if (unitData.getEngineType() == Engine.XL_ENGINE) {
                     return true;
                 }
-            } else if (ms.getEngineType() >= Engine.XL_ENGINE &&
-                    ms.getEngineType() <= Engine.COMPACT_ENGINE &&
-                    ms.getEngineType() != Engine.FUEL_CELL) {
+            } else if (unitData.getEngineType() >= Engine.XL_ENGINE &&
+                    unitData.getEngineType() <= Engine.COMPACT_ENGINE &&
+                    unitData.getEngineType() != Engine.FUEL_CELL) {
                 return true;
             }
         }
 
         // Gyro. Star League has no advanced gyro types.
-        if (unitType == UnitType.MEK && !slOnly) {
-            if (ms.getGyroType() >= Mech.GYRO_COMPACT) {
+        if (unitType == UnitType.MEK && !starLeagueOnly) {
+            if (unitData.getGyroType() >= Mech.GYRO_COMPACT) {
                 return true;
             }
         }
 
         // Structure. Star League is limited endosteel.
         if (unitType == UnitType.MEK) {
-            if (slOnly && ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
+            if (starLeagueOnly && unitData.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
                 return true;
-            } else if (ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
-                    ms.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
+            } else if (unitData.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
+                    unitData.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
                 return true;
             }
         }
 
         // Armor. Star League is limited to simple ferro-fibrous.
-        int checkArmor = (int) (ms.getArmorType().toArray()[0]);
+        int checkArmor = (int) (unitData.getArmorType().toArray()[0]);
         if (unitType <= UnitType.NAVAL) {
-            if (slOnly && checkArmor == EquipmentType.T_ARMOR_FERRO_FIBROUS) {
+            if (starLeagueOnly && checkArmor == EquipmentType.T_ARMOR_FERRO_FIBROUS) {
                 return true;
             } else if ((checkArmor >= EquipmentType.T_ARMOR_FERRO_FIBROUS &&
                     checkArmor <= EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO) ||
@@ -821,9 +820,9 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Cockpit. Star League is limited to command consoles.
-        int checkCockpit = ms.getCockpitType();
+        int checkCockpit = unitData.getCockpitType();
         if (unitType == UnitType.MEK) {
-            if (slOnly && checkCockpit == Mech.COCKPIT_COMMAND_CONSOLE) {
+            if (starLeagueOnly && checkCockpit == Mech.COCKPIT_COMMAND_CONSOLE) {
                 return true;
             } else if (checkCockpit != Mech.COCKPIT_STANDARD &&
                     checkCockpit != Mech.COCKPIT_PRIMITIVE &&

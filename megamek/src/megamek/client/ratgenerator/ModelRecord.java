@@ -58,6 +58,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
     private double srBVProportion; // Proportion of weapons BV with short range
     private int speed;
+    private boolean canJump;
     private double ammoRequirement; //used to determine suitability for raider role
     private boolean incendiary; //used to determine suitability for incindiary role
     private boolean apWeapons; //used to determine suitability for anti-infantry role
@@ -168,6 +169,10 @@ public class ModelRecord extends AbstractUnitRecord {
         return speed;
     }
 
+    public boolean getJump() {
+        return canJump;
+    }
+
     public double getAmmoRequirement() {
         return ammoRequirement;
     }
@@ -265,6 +270,7 @@ public class ModelRecord extends AbstractUnitRecord {
      */
     private void analyzeModel (MechSummary ms) {
 
+        // Basic unit type and movement
         if (unitType == UnitType.MEK) {
             //TODO: id quads and tripods
             movementMode = EntityMovementMode.BIPED;
@@ -278,6 +284,12 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) {
             omni = ms.getOmni();
+        }
+
+        speed = ms.getWalkMp();
+        if (ms.getJumpMp() > 0) {
+            canJump = true;
+            speed++;
         }
 
         double totalBV = 0.0;
@@ -513,10 +525,6 @@ public class ModelRecord extends AbstractUnitRecord {
         primitive = base_primitive && !losTech && !clan;
         retrotech = base_primitive && (losTech || clan);
 
-        speed = ms.getWalkMp();
-        if (ms.getJumpMp() > 0) {
-            speed++;
-        }
 
     }
 

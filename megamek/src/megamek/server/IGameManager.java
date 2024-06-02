@@ -85,10 +85,9 @@ public interface IGameManager {
     /**
      * save the game and send it to the specified connection
      *
-     * @param connId     The <code>int</code> connection id to send to
-     * @param sFile      The <code>String</code> filename to use
-     * @param sLocalPath The <code>String</code> path to the file to be used on the
-     *                   client
+     * @param connId The connection id to send to
+     * @param fileName The filename to use
+     * @param localPath The path to the file to be used on the client
      */
     void sendSaveGame(int connId, String fileName, String localPath);
 

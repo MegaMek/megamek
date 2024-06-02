@@ -44,7 +44,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
 
     @Override
-    public GameTurn getTurn() {
+    public PlayerTurn getTurn() {
         return null;
     }
 
@@ -220,7 +220,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     /**
      * Changes to the next turn, returning it.
      */
-    public GameTurn changeToNextTurn() {
+    public PlayerTurn changeToNextTurn() {
         turnIndex++;
         return getTurn();
     }

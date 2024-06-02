@@ -394,7 +394,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
-        if ((turn instanceof GameTurn.TriggerAPPodTurn) && (null != ce())) {
+        if ((turn instanceof TriggerAPPodTurn) && (null != ce())) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
@@ -404,10 +404,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 addAttack(actions.nextElement());
             }
             ready();
-        } else if ((turn instanceof GameTurn.TriggerBPodTurn) && (null != ce())) {
+        } else if ((turn instanceof TriggerBPodTurn) && (null != ce())) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-                    ((GameTurn.TriggerBPodTurn) turn).getAttackType());
+                    ((TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
            removeAllAttacks();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();

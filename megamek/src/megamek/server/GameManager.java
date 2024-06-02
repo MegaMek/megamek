@@ -1303,13 +1303,13 @@ public class GameManager extends AbstractGameManager {
         // other unit types can move in the current turn.
         int multiMask = 0;
         if (infMoveMulti && infMoved) {
-            multiMask = GameTurn.CLASS_INFANTRY;
+            multiMask = EntityClassTurn.CLASS_INFANTRY;
         } else if (protosMoveMulti && protosMoved) {
-            multiMask = GameTurn.CLASS_PROTOMECH;
+            multiMask = EntityClassTurn.CLASS_PROTOMECH;
         } else if (tanksMoveMulti && tanksMoved) {
-            multiMask = GameTurn.CLASS_TANK;
+            multiMask = EntityClassTurn.CLASS_TANK;
         } else if (meksMoveMulti && meksMoved) {
-            multiMask = GameTurn.CLASS_MECH;
+            multiMask = EntityClassTurn.CLASS_MECH;
         }
 
         // In certain cases, a new SpecificEntityTurn could have been added for
@@ -1321,8 +1321,8 @@ public class GameManager extends AbstractGameManager {
         boolean usedEntityNotDone = false;
         if ((turnIndex + 1) < turnVector.size()) {
             GameTurn nextTurn = turnVector.get(turnIndex + 1);
-            if (nextTurn instanceof GameTurn.SpecificEntityTurn) {
-                GameTurn.SpecificEntityTurn seTurn = (GameTurn.SpecificEntityTurn) nextTurn;
+            if (nextTurn instanceof SpecificEntityTurn) {
+                SpecificEntityTurn seTurn = (SpecificEntityTurn) nextTurn;
                 if ((entityUsed != null) && (seTurn.getEntityNum() == entityUsed.getId())) {
                     turnIndex++;
                     usedEntityNotDone = true;
@@ -1361,7 +1361,7 @@ public class GameManager extends AbstractGameManager {
 
             // Add the correct number of turns for the ProtoMech unit number.
             for (int i = 0; i < protoTurns; i++) {
-                GameTurn newTurn = new GameTurn.UnitNumberTurn(playerId, movingUnit);
+                GameTurn newTurn = new UnitNumberTurn(playerId, movingUnit);
                 newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
@@ -1389,7 +1389,7 @@ public class GameManager extends AbstractGameManager {
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
-                GameTurn newTurn = new GameTurn.EntityClassTurn(playerId, multiMask);
+                GameTurn newTurn = new EntityClassTurn(playerId, multiMask);
                 newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
@@ -1407,7 +1407,7 @@ public class GameManager extends AbstractGameManager {
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreVeeTurns; i++) {
-                GameTurn newTurn = new GameTurn.EntityClassTurn(playerId, multiMask);
+                GameTurn newTurn = new EntityClassTurn(playerId, multiMask);
                 newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
@@ -1425,7 +1425,7 @@ public class GameManager extends AbstractGameManager {
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreMekTurns; i++) {
-                GameTurn newTurn = new GameTurn.EntityClassTurn(playerId, multiMask);
+                GameTurn newTurn = new EntityClassTurn(playerId, multiMask);
                 newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
@@ -1884,7 +1884,7 @@ public class GameManager extends AbstractGameManager {
         // this is the player sending the packet
         Player current = game.getPlayer(connectionId);
 
-        if (game.getTurn().getPlayerId() != current.getId()) {
+        if (game.getTurn().playerId() != current.getId()) {
             // this player is not the current player, so just ignore this
             // command!
             return;
@@ -1916,9 +1916,9 @@ public class GameManager extends AbstractGameManager {
                 GameTurn turn = game.getTurn();
                 // not entirely necessary. As we will also check this for the
                 // activity of the button but to be sure do it on the server too.
-                boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
-                        && !(turn instanceof GameTurn.UnitNumberTurn)
-                        && !(turn instanceof GameTurn.UnloadStrandedTurn);
+                boolean isGeneralMoveTurn = !(turn instanceof SpecificEntityTurn)
+                        && !(turn instanceof UnitNumberTurn)
+                        && !(turn instanceof UnloadStrandedTurn);
                 if (!isGeneralMoveTurn) {
                     // if this is not a general turn the player cannot forward his turn.
                     return;
@@ -1928,10 +1928,10 @@ public class GameManager extends AbstractGameManager {
                 // turn it is exchanged with is the same kind of turn!
                 // in fact this requires an access function to the mask of an
                 // EntityClassTurn.
-                boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
+                boolean isEntityClassTurn = (turn instanceof EntityClassTurn);
                 int classMask = 0;
                 if (isEntityClassTurn) {
-                    classMask = ((GameTurn.EntityClassTurn) turn).getTurnCode();
+                    classMask = ((EntityClassTurn) turn).getTurnCode();
                 }
 
                 boolean switched = false;
@@ -1944,9 +1944,9 @@ public class GameManager extends AbstractGameManager {
                         nextTurnId = i;
                         if (isEntityClassTurn) {
                             // if we had an EntityClassTurn
-                            if ((turns.get(i) instanceof GameTurn.EntityClassTurn)) {
+                            if ((turns.get(i) instanceof EntityClassTurn)) {
                                 // and found another EntityClassTurn
-                                if (!(((GameTurn.EntityClassTurn) turns.get(i)).getTurnCode() == classMask)) {
+                                if (!(((EntityClassTurn) turns.get(i)).getTurnCode() == classMask)) {
                                     // both have to refer to the SAME class(es) or
                                     // they need to be rejected.
                                     continue;
@@ -2001,7 +2001,7 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        Player player = game.getPlayer(nextTurn.getPlayerId());
+        Player player = game.getPlayer(nextTurn.playerId());
 
         if ((player != null) && (game.getEntitiesOwnedBy(player) == 0)) {
             endCurrentTurn(null);
@@ -2094,7 +2094,7 @@ public class GameManager extends AbstractGameManager {
         if (null == turn) {
             return false;
         }
-        Player player = game.getPlayer(turn.getPlayerId());
+        Player player = game.getPlayer(turn.playerId());
         return (null == player) || player.isGhost() || (game.getFirstEntity() == null);
     }
 
@@ -2212,7 +2212,7 @@ public class GameManager extends AbstractGameManager {
                 // is the movement phase.
                 turns = new Vector<>(team_order.getTotalTurns()
                         + team_order.getEvenTurns() + 1);
-                turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
+                turns.addElement(new UnloadStrandedTurn(strandedUnits));
             }
         }
         return turns;
@@ -2281,9 +2281,9 @@ public class GameManager extends AbstractGameManager {
             Entity e = (Entity) team_order.nextElement();
             if (e.isSelectableThisTurn()) {
                 if (!protosMoveMulti && (e instanceof Protomech) && (e.getUnitNumber() != Entity.NONE)) {
-                    turns.addElement(new GameTurn.UnitNumberTurn(e.getOwnerId(), e.getUnitNumber()));
+                    turns.addElement(new UnitNumberTurn(e.getOwnerId(), e.getUnitNumber()));
                 } else {
-                    turns.addElement(new GameTurn.SpecificEntityTurn(e.getOwnerId(), e.getId()));
+                    turns.addElement(new SpecificEntityTurn(e.getOwnerId(), e.getId()));
                 }
             }
         }
@@ -2330,11 +2330,11 @@ public class GameManager extends AbstractGameManager {
 
         int evenMask = 0;
         if (infMoveEven) {
-            evenMask += GameTurn.CLASS_INFANTRY;
+            evenMask += EntityClassTurn.CLASS_INFANTRY;
         }
 
         if (protosMoveEven) {
-            evenMask += GameTurn.CLASS_PROTOMECH;
+            evenMask += EntityClassTurn.CLASS_PROTOMECH;
         }
         // Reset all of the Players' turn category counts
         for (Enumeration<Player> loop = game.getPlayers(); loop.hasMoreElements(); ) {
@@ -2415,7 +2415,7 @@ public class GameManager extends AbstractGameManager {
                     if (infMoveEven) {
                         player.incrementEvenTurns();
                     } else if (infMoveMulti) {
-                        player.incrementMultiTurns(GameTurn.CLASS_INFANTRY);
+                        player.incrementMultiTurns(EntityClassTurn.CLASS_INFANTRY);
                     } else {
                         player.incrementOtherTurns();
                     }
@@ -2424,15 +2424,15 @@ public class GameManager extends AbstractGameManager {
                         if (protosMoveEven) {
                             player.incrementEvenTurns();
                         } else if (protosMoveMulti) {
-                            player.incrementMultiTurns(GameTurn.CLASS_PROTOMECH);
+                            player.incrementMultiTurns(EntityClassTurn.CLASS_PROTOMECH);
                         } else {
                             player.incrementOtherTurns();
                         }
                     }
                 } else if ((entity instanceof Tank) && !(entity instanceof GunEmplacement) && tankMoveByLance) {
-                    player.incrementMultiTurns(GameTurn.CLASS_TANK);
+                    player.incrementMultiTurns(EntityClassTurn.CLASS_TANK);
                 } else if ((entity instanceof Mech) && mekMoveByLance) {
-                    player.incrementMultiTurns(GameTurn.CLASS_MECH);
+                    player.incrementMultiTurns(EntityClassTurn.CLASS_MECH);
                 } else {
                     player.incrementOtherTurns();
                 }
@@ -2514,9 +2514,9 @@ public class GameManager extends AbstractGameManager {
             // Record this team for the next move.
             prevTeam = team;
 
-            int aeroMask = GameTurn.CLASS_AERO + GameTurn.CLASS_SMALL_CRAFT
-                    + GameTurn.CLASS_DROPSHIP + GameTurn.CLASS_JUMPSHIP
-                    + GameTurn.CLASS_WARSHIP + GameTurn.CLASS_SPACE_STATION;
+            int aeroMask = EntityClassTurn.CLASS_AERO + EntityClassTurn.CLASS_SMALL_CRAFT
+                    + EntityClassTurn.CLASS_DROPSHIP + EntityClassTurn.CLASS_JUMPSHIP
+                    + EntityClassTurn.CLASS_WARSHIP + EntityClassTurn.CLASS_SPACE_STATION;
             GameTurn turn;
             Player player;
             if (withinTeamTurns.hasMoreNormalElements()) {
@@ -2526,7 +2526,7 @@ public class GameManager extends AbstractGameManager {
                 // If we've added all "normal" turns, allocate turns
                 // for the infantry and/or ProtoMechs moving even.
                 if (numTurn >= team_order.getTotalTurns()) {
-                    turn = new GameTurn.EntityClassTurn(player.getId(), evenMask);
+                    turn = new EntityClassTurn(player.getId(), evenMask);
                 }
                 // If either Infantry or ProtoMechs move even, only allow
                 // the other classes to move during the "normal" turn.
@@ -2536,14 +2536,14 @@ public class GameManager extends AbstractGameManager {
                     if (getGame().getPhase().isMovement() || getGame().getPhase().isDeployment()) {
                         newMask += aeroMask;
                     }
-                    turn = new GameTurn.EntityClassTurn(player.getId(), ~newMask);
+                    turn = new EntityClassTurn(player.getId(), ~newMask);
                 } else {
                     // Otherwise, let anyone move... well, almost anybody; Aero don't get normal
                     // turns during the movement phase
                     if (getGame().getPhase().isMovement() || getGame().getPhase().isDeployment()) {
-                        turn = new GameTurn.EntityClassTurn(player.getId(), ~aeroMask);
+                        turn = new EntityClassTurn(player.getId(), ~aeroMask);
                     } else if (getGame().getPhase().isPremovement() || getGame().getPhase().isPrefiring()){
-                        turn = new GameTurn.PrephaseTurn(player.getId());
+                        turn = new PrephaseTurn(player.getId());
                     } else {
                         turn = new GameTurn(player.getId());
                     }
@@ -2551,27 +2551,27 @@ public class GameManager extends AbstractGameManager {
                 turns.addElement(turn);
             } else if (withinTeamTurns.hasMoreSpaceStationElements()) {
                 player = (Player) withinTeamTurns.nextSpaceStationElement();
-                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_SPACE_STATION);
+                turn = new EntityClassTurn(player.getId(), EntityClassTurn.CLASS_SPACE_STATION);
                 turns.addElement(turn);
             } else if (withinTeamTurns.hasMoreJumpshipElements()) {
                 player = (Player) withinTeamTurns.nextJumpshipElement();
-                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_JUMPSHIP);
+                turn = new EntityClassTurn(player.getId(), EntityClassTurn.CLASS_JUMPSHIP);
                 turns.addElement(turn);
             } else if (withinTeamTurns.hasMoreWarshipElements()) {
                 player = (Player) withinTeamTurns.nextWarshipElement();
-                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_WARSHIP);
+                turn = new EntityClassTurn(player.getId(), EntityClassTurn.CLASS_WARSHIP);
                 turns.addElement(turn);
             } else if (withinTeamTurns.hasMoreDropshipElements()) {
                 player = (Player) withinTeamTurns.nextDropshipElement();
-                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_DROPSHIP);
+                turn = new EntityClassTurn(player.getId(), EntityClassTurn.CLASS_DROPSHIP);
                 turns.addElement(turn);
             } else if (withinTeamTurns.hasMoreSmallCraftElements()) {
                 player = (Player) withinTeamTurns.nextSmallCraftElement();
-                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_SMALL_CRAFT);
+                turn = new EntityClassTurn(player.getId(), EntityClassTurn.CLASS_SMALL_CRAFT);
                 turns.addElement(turn);
             } else if (withinTeamTurns.hasMoreAeroElements()) {
                 player = (Player) withinTeamTurns.nextAeroElement();
-                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_AERO);
+                turn = new EntityClassTurn(player.getId(), EntityClassTurn.CLASS_AERO);
                 turns.addElement(turn);
             }
 
@@ -2580,7 +2580,7 @@ public class GameManager extends AbstractGameManager {
             // "even" turns to help with loading infantry in deployment.
             while ((numEven > 0) && withinTeamTurns.hasMoreEvenElements()) {
                 Player evenPlayer = (Player) withinTeamTurns.nextEvenElement();
-                turns.addElement(new GameTurn.EntityClassTurn(evenPlayer.getId(), evenMask));
+                turns.addElement(new EntityClassTurn(evenPlayer.getId(), evenMask));
                 numEven--;
             }
         }
@@ -2628,8 +2628,8 @@ public class GameManager extends AbstractGameManager {
             addReport(r);
             for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
                 GameTurn t = e.nextElement();
-                if (t instanceof GameTurn.SpecificEntityTurn) {
-                    Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
+                if (t instanceof SpecificEntityTurn) {
+                    Entity entity = game.getEntity(((SpecificEntityTurn) t).getEntityNum());
                     if (entity.getDeployRound() <= game.getRoundCount()) {
                         r = new Report(1045);
                         r.subject = entity.getId();
@@ -2638,7 +2638,7 @@ public class GameManager extends AbstractGameManager {
                         addReport(r);
                     }
                 } else {
-                    Player player = game.getPlayer(t.getPlayerId());
+                    Player player = game.getPlayer(t.playerId());
                     if (null != player) {
                         r = new Report(1050, Report.PUBLIC);
                         r.add(player.getColorForPlayer());
@@ -2685,7 +2685,7 @@ public class GameManager extends AbstractGameManager {
                 boolean hasEven = false;
                 for (Enumeration<GameTurn> i = game.getTurns(); i.hasMoreElements(); ) {
                     GameTurn turn = i.nextElement();
-                    Player player = game.getPlayer(turn.getPlayerId());
+                    Player player = game.getPlayer(turn.playerId());
                     if (null != player) {
                         r.add(player.getName());
                         if (player.getEvenTurns() > 0) {
@@ -3488,11 +3488,11 @@ public class GameManager extends AbstractGameManager {
         int turnMask;
         List<GameTurn> turnVector = game.getTurnsList();
         if (unit instanceof Dropship) {
-            turnMask = GameTurn.CLASS_DROPSHIP;
+            turnMask = EntityClassTurn.CLASS_DROPSHIP;
         } else if (unit instanceof SmallCraft) {
-            turnMask = GameTurn.CLASS_SMALL_CRAFT;
+            turnMask = EntityClassTurn.CLASS_SMALL_CRAFT;
         } else {
-            turnMask = GameTurn.CLASS_AERO;
+            turnMask = EntityClassTurn.CLASS_AERO;
         }
         // Add one, otherwise we consider the turn we're currently processing
         int turnInsertIdx = game.getTurnIndex() + 1;
@@ -3506,7 +3506,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // ok add another turn for the unloaded entity so that it can move
-        GameTurn newTurn = new GameTurn.EntityClassTurn(unit.getOwner().getId(), turnMask);
+        GameTurn newTurn = new EntityClassTurn(unit.getOwner().getId(), turnMask);
         game.insertTurnAfter(newTurn, turnInsertIdx);
         // brief everybody on the turn update
         send(packetHelper.createTurnVectorPacket());
@@ -4358,7 +4358,7 @@ public class GameManager extends AbstractGameManager {
                     entity.setPosition(nextPos);
                 }
                 for (Entity e : avoidedChargeUnits) {
-                    GameTurn newTurn = new GameTurn.SpecificEntityTurn(e.getOwner().getId(), e.getId());
+                    GameTurn newTurn = new SpecificEntityTurn(e.getOwner().getId(), e.getId());
                     // Prevents adding extra turns for multi-turns
                     newTurn.setMultiTurn(true);
                     game.insertNextTurn(newTurn);
@@ -7408,7 +7408,7 @@ public class GameManager extends AbstractGameManager {
                     // continue to unload units
                     if (!entity.getUnitsUnloadableFromBays().isEmpty()) {
                         dropshipStillUnloading = true;
-                        GameTurn newTurn = new GameTurn.SpecificEntityTurn(
+                        GameTurn newTurn = new SpecificEntityTurn(
                                 entity.getOwner().getId(), entity.getId());
                         // Need to set the new turn's multiTurn state
                         newTurn.setMultiTurn(true);
@@ -7416,7 +7416,7 @@ public class GameManager extends AbstractGameManager {
                     }
                     // ok add another turn for the unloaded entity so that it can move
                     if (!(unloaded instanceof Infantry)) {
-                        GameTurn newTurn = new GameTurn.SpecificEntityTurn(
+                        GameTurn newTurn = new SpecificEntityTurn(
                                 ((Entity) unloaded).getOwner().getId(),
                                 ((Entity) unloaded).getId());
                         // Need to set the new turn's multiTurn state
@@ -8328,7 +8328,7 @@ public class GameManager extends AbstractGameManager {
             entity.setDone(false);
             entity.setTurnInterrupted(true);
 
-            GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
+            GameTurn newTurn = new SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
             // Need to set the new turn's multiTurn state
             newTurn.setMultiTurn(true);
             game.insertNextTurn(newTurn);
@@ -12083,7 +12083,7 @@ public class GameManager extends AbstractGameManager {
             }
             LogManager.getLogger().error(msg);
             send(connId, packetHelper.createTurnVectorPacket());
-            send(connId, packetHelper.createTurnIndexPacket(turn.getPlayerId()));
+            send(connId, packetHelper.createTurnIndexPacket(turn.playerId()));
             return;
         }
 
@@ -12154,7 +12154,7 @@ public class GameManager extends AbstractGameManager {
         // Now need to add a turn for the unloaded unit, to be taken immediately
         // Turn forced to be immediate to avoid messy turn ordering issues
         // (aka, how do we add the turn with individual initiative?)
-        game.insertTurnAfter(new GameTurn.SpecificEntityTurn(
+        game.insertTurnAfter(new SpecificEntityTurn(
                 loaded.getOwnerId(), loaded.getId()), game.getTurnIndex() - 1);
         //game.insertNextTurn(new GameTurn.SpecificEntityTurn(
         //        loaded.getOwnerId(), loaded.getId()));
@@ -12441,7 +12441,7 @@ public class GameManager extends AbstractGameManager {
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
             send(connId, packetHelper.createTurnVectorPacket());
-            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerId()));
+            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
             return;
         }
 
@@ -12483,7 +12483,7 @@ public class GameManager extends AbstractGameManager {
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
             send(connId, packetHelper.createTurnVectorPacket());
-            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerId()));
+            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
             return;
         }
 
@@ -12509,8 +12509,8 @@ public class GameManager extends AbstractGameManager {
         }
 
         // Not **all** actions take up the entity's turn.
-        boolean setDone = !((game.getTurn() instanceof GameTurn.TriggerAPPodTurn)
-                || (game.getTurn() instanceof GameTurn.TriggerBPodTurn));
+        boolean setDone = !((game.getTurn() instanceof TriggerAPPodTurn)
+                || (game.getTurn() instanceof TriggerBPodTurn));
         for (EntityAction ea : vector) {
             // is this the right entity?
             if (ea.getEntityId() != entity.getId()) {
@@ -12549,7 +12549,7 @@ public class GameManager extends AbstractGameManager {
                             // Yup. Insert a game turn to handle AP pods.
                             // ASSUMPTION : AP pod declarations come
                             // immediately after the attack declaration.
-                            game.insertNextTurn(new GameTurn.TriggerAPPodTurn(target.getOwnerId(),
+                            game.insertNextTurn(new TriggerAPPodTurn(target.getOwnerId(),
                                     target.getId()));
                             send(packetHelper.createTurnVectorPacket());
 
@@ -12566,7 +12566,7 @@ public class GameManager extends AbstractGameManager {
                             // Yup. Insert a game turn to handle B pods.
                             // ASSUMPTION : B pod declarations come
                             // immediately after the attack declaration.
-                            game.insertNextTurn(new GameTurn.TriggerBPodTurn(target.getOwnerId(),
+                            game.insertNextTurn(new TriggerBPodTurn(target.getOwnerId(),
                                     target.getId(), weaponName));
                             send(packetHelper.createTurnVectorPacket());
 
@@ -12601,7 +12601,7 @@ public class GameManager extends AbstractGameManager {
                     }
                     // If defender is able, add a turn to declare counterattack
                     if (!def.isImmobile()) {
-                        game.insertNextTurn(new GameTurn.CounterGrappleTurn(def.getOwnerId(), def.getId()));
+                        game.insertNextTurn(new CounterGrappleTurn(def.getOwnerId(), def.getId()));
                         send(packetHelper.createTurnVectorPacket());
                     }
                 }
@@ -31324,7 +31324,7 @@ public class GameManager extends AbstractGameManager {
      * the current turn.
      */
     private void receiveUnloadStranded(Packet packet, int connId) {
-        GameTurn.UnloadStrandedTurn turn;
+        UnloadStrandedTurn turn;
         final Player player = game.getPlayer(connId);
         int[] entityIds = (int[]) packet.getObject(0);
         Vector<Player> declared;
@@ -31340,8 +31340,8 @@ public class GameManager extends AbstractGameManager {
         }
 
         // Are we in an "unload stranded entities" turn?
-        if (getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn) {
-            turn = (GameTurn.UnloadStrandedTurn) getGame().getTurn();
+        if (getGame().getTurn() instanceof UnloadStrandedTurn) {
+            turn = (UnloadStrandedTurn) getGame().getTurn();
         } else {
             LogManager.getLogger().error("Server got unload stranded packet out of sequence");
             sendServerChat(player.getName() + " should not be sending 'unload stranded entity' packets at this time.");

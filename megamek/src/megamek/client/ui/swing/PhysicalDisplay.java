@@ -264,9 +264,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.maybeShowUnitDisplay();
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
-        if (turn instanceof GameTurn.CounterGrappleTurn) {
+        if (turn instanceof CounterGrappleTurn) {
             disableButtons();
-            selectEntity(((GameTurn.CounterGrappleTurn) turn).getEntityNum());
+            selectEntity(((CounterGrappleTurn) turn).getEntityNum());
             grapple(true);
             ready();
         } else {

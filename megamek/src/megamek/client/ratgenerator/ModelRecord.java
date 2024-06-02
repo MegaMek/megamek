@@ -420,8 +420,9 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Add the spotter role to all units which carry TAG
-                if (eq.hasFlag(WeaponType.F_TAG)) {
+                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
+                    losTech = true;
                 }
 
                 // Check for C3 master units. These are bit-masked values.

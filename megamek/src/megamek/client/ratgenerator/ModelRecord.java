@@ -788,7 +788,8 @@ public class ModelRecord extends AbstractUnitRecord {
 
 
     /**
-     * Get a BV modifier for a weapon for use against airborne targets
+     * Get a BV modifier for a weapon for use against airborne targets. Slightly different checks
+     * are provided for fixed wing aircraft for air-to-air combat use
      * @param check_weapon
      * @return   Relative value from zero (not useful) to 1
      */
@@ -819,7 +820,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_SBGAUSS ||
                 check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMk2PortableAAWeapon) {
             return very_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+        } else if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon ||
+                check_weapon instanceof megamek.common.weapons.missiles.RLWeapon) {
             return ineffective;
         } else if (((WeaponType) check_weapon).getLongRange() >= 16) {
             return somewhat_effective;

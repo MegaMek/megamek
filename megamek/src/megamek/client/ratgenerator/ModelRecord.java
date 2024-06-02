@@ -25,7 +25,6 @@ import megamek.common.weapons.srms.SRMWeapon;
 
 import org.apache.logging.log4j.LogManager;
 
-import megamek.codeUtilities.MathUtility;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -70,12 +69,12 @@ public class ModelRecord extends AbstractUnitRecord {
     private double flakBVProportion; //proportion of weapon BV that can fire flak ammo
 
     private double artilleryBVProportion;
-    private double longRange; // Proportion of weapons BV with long range and/or indirect fire
+    private double lrBVProportion; // Proportion of weapons BV with long range and/or indirect fire
 
     private double srBVProportion; // Proportion of weapons BV with short range
     private int speed;
     private boolean canJump;
-    private double ammoRequirement; //used to determine suitability for raider role
+    private double ammoBVProportion; // Proportion of weapons BV requiring ammo
     private boolean incendiary; //used to determine suitability for incindiary role
     private boolean apWeapons; //used to determine suitability for anti-infantry role
 
@@ -95,7 +94,7 @@ public class ModelRecord extends AbstractUnitRecord {
         excludedFactions = new ArrayList<>();
         networkMask = NETWORK_NONE;
         flakBVProportion = 0.0;
-        longRange = 0.0;
+        lrBVProportion = 0.0;
     }
 
     public ModelRecord(MechSummary unitData) {
@@ -174,16 +173,13 @@ public class ModelRecord extends AbstractUnitRecord {
     public double getFlak() {
         return flakBVProportion;
     }
-    public void setFlak(double newProportion) {
-        flakBVProportion = MathUtility.clamp(newProportion, 0, 1);
-    }
 
     public double getArtilleryProportion () {
         return artilleryBVProportion;
     }
 
     public double getLongRange() {
-        return longRange;
+        return lrBVProportion;
     }
 
     public double getSRProportion() {
@@ -199,7 +195,7 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public double getAmmoRequirement() {
-        return ammoRequirement;
+        return ammoBVProportion;
     }
 
     public boolean hasIncendiaryWeapon() {
@@ -210,10 +206,18 @@ public class ModelRecord extends AbstractUnitRecord {
         return apWeapons;
     }
 
+    /**
+     * Unit is a remotely operated drone
+     * @return
+     */
     public boolean getIsRemoteDrone () {
         return isRemoteDrone;
     }
 
+    /**
+     * Unit is an independently operating drone
+     * @return
+     */
     public boolean getIsRobotDrone () {
         return isRobotDrone;
     }
@@ -288,7 +292,7 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public void setMagClamp(boolean flag) {
-        this.magClamp = flag;
+        magClamp = flag;
     }
 
     public boolean getAntiMek(){
@@ -335,6 +339,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         weightClass = unitData.getWeightClass();
+
         // Adjust weight class for support vehicles
         if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             if (unitData.getTons() <= 39) {
@@ -582,9 +587,9 @@ public class ModelRecord extends AbstractUnitRecord {
         if (totalBV > 0 && unitType <= UnitType.AEROSPACEFIGHTER) {
             flakBVProportion = flakBV / totalBV;
             artilleryBVProportion = artilleryBV/totalBV;
-            longRange = lrBV / totalBV;
+            lrBVProportion = lrBV / totalBV;
             srBVProportion = srBV / totalBV;
-            ammoRequirement = ammoBV / totalBV;
+            ammoBVProportion = ammoBV / totalBV;
 
             apWeapons = apRating >= apThreshold;
         }

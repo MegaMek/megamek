@@ -14,9 +14,22 @@
 package megamek.client.ratgenerator;
 
 import megamek.common.*;
+import megamek.common.weapons.*;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.flamers.FlamerWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.mgs.MGWeapon;
+import megamek.common.weapons.missiles.ATMWeapon;
+import megamek.common.weapons.missiles.MMLWeapon;
+import megamek.common.weapons.srms.SRMWeapon;
+
 import org.apache.logging.log4j.LogManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
@@ -349,7 +362,7 @@ public class ModelRecord extends AbstractUnitRecord {
         // Base technology checks
 
         boolean losTech = false;
-        boolean base_primitive = false;
+        boolean basePrimitive = false;
 
         clan = ms.isClan();
 
@@ -359,11 +372,11 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType != UnitType.BATTLE_ARMOR &&
                 unitType != UnitType.PROTOMEK &&
                 unitType != UnitType.WARSHIP) {
-            base_primitive = isUnitPrimitive(ms);
+            basePrimitive = isUnitPrimitive(ms);
         }
         // If the unit is not Clan or primitive, then check for if it is lostech (advanced)
         if (!clan &&
-                !base_primitive &&
+                !basePrimitive &&
                 unitType <= UnitType.AEROSPACEFIGHTER &&
                 unitType != UnitType.INFANTRY) {
             losTech = unitHasLostech(ms, false);
@@ -412,17 +425,17 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Check for use against airborne targets. Ignore small craft, DropShips, and other
                 // large space craft.
                 if (unitType < UnitType.SMALL_CRAFT &&
-                        !(eq instanceof megamek.common.weapons.SwarmAttack) &&
-                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
-                        !(eq instanceof megamek.common.weapons.LegAttack) &&
-                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
+                        !(eq instanceof SwarmAttack) &&
+                        !(eq instanceof SwarmWeaponAttack) &&
+                        !(eq instanceof LegAttack) &&
+                        !(eq instanceof StopSwarmAttack)) {
                     flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
                 // Check for artillery weapons. Ignore aerospace fighters, small craft, and large
                 // space craft.
                 if (unitType <= UnitType.CONV_FIGHTER &&
-                        eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
+                        eq instanceof ArtilleryWeapon) {
                     artilleryBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
@@ -430,7 +443,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 // and space-going units
                 if (!incendiary &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
-                    if (eq instanceof megamek.common.weapons.flamers.FlamerWeapon ||
+                    if (eq instanceof FlamerWeapon ||
                             eq instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon ||
                             eq instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
                             eq instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
@@ -458,8 +471,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 // attacks. This will also pick up battle armor that must first jettison equipment.
                 if (!canAntiMek &&
                         (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR)) {
-                    canAntiMek = (eq instanceof megamek.common.weapons.LegAttack ||
-                            eq instanceof megamek.common.weapons.SwarmAttack);
+                    canAntiMek = (eq instanceof LegAttack ||
+                            eq instanceof SwarmAttack);
                 }
 
                 // Total up BV for weapons that require ammo. Streak-type missile systems get a
@@ -475,7 +488,7 @@ public class ModelRecord extends AbstractUnitRecord {
                     }
 
                     if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
-                        if (eq instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+                        if (eq instanceof InfantryWeapon) {
                             ammoFactor = 0.0;
                         }
                     }
@@ -495,11 +508,11 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
                 // DropShips, and other space craft. Also skip anti-Mech attacks.
                 if (unitType < UnitType.SMALL_CRAFT &&
-                        !(eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon) &&
-                        !(eq instanceof megamek.common.weapons.SwarmAttack) &&
-                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
-                        !(eq instanceof megamek.common.weapons.LegAttack) &&
-                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
+                        !(eq instanceof ArtilleryWeapon) &&
+                        !(eq instanceof SwarmAttack) &&
+                        !(eq instanceof SwarmWeaponAttack) &&
+                        !(eq instanceof LegAttack) &&
+                        !(eq instanceof StopSwarmAttack)) {
                     srBV += getShortRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
@@ -578,8 +591,8 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Categorize by technology type
         starLeague = losTech && !clan;
-        primitive = base_primitive && !losTech && !clan;
-        retrotech = base_primitive && (losTech || clan);
+        primitive = basePrimitive && !losTech && !clan;
+        retrotech = basePrimitive && (losTech || clan);
 
 
     }
@@ -623,54 +636,56 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Primitive structure is not identified, so check for use of advanced types
-        if (unitType == UnitType.MEK &&
-                ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
+        if (unitType == UnitType.MEK) {
+            if (ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
                 ms.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
-            return false;
+                return false;
+            }
+            hasPrimitive = (ms.getInternalsType() == EquipmentType.T_STRUCTURE_INDUSTRIAL);
         }
-        hasPrimitive = (ms.getInternalsType() == EquipmentType.T_STRUCTURE_INDUSTRIAL);
+
 
         // If standard, industrial, or primitive armor is not present, then it must be advanced
-        HashSet<Integer> armor_type = ms.getArmorType();
+        HashSet<Integer> checkArmor = ms.getArmorType();
         if (unitType <= UnitType.NAVAL &&
-                !armor_type.contains(EquipmentType.T_ARMOR_STANDARD) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_INDUSTRIAL) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
+                !checkArmor.contains(EquipmentType.T_ARMOR_STANDARD) &&
+                !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) &&
+                !checkArmor.contains(EquipmentType.T_ARMOR_INDUSTRIAL) &&
+                !checkArmor.contains(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
             return false;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER ||
                 unitType == UnitType.SMALL_CRAFT ||
                 unitType == UnitType.DROPSHIP) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_STANDARD) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_AEROSPACE) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) &&
-                !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+                !checkArmor.contains(EquipmentType.T_ARMOR_STANDARD) &&
+                !checkArmor.contains(EquipmentType.T_ARMOR_AEROSPACE) &&
+                !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) &&
+                !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
             return false;
         }
-        if (armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
-                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
-                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+        if (checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
+                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
+                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
             hasPrimitive = true;
         }
 
         // Cockpit control systems
-        int cockpit_type = ms.getCockpitType();
+        int checkCockpit = ms.getCockpitType();
         if (unitType == UnitType.MEK) {
-            if (cockpit_type != Mech.COCKPIT_STANDARD &&
-                    cockpit_type != Mech.COCKPIT_INDUSTRIAL &&
-                    cockpit_type != Mech.COCKPIT_PRIMITIVE &&
-                    cockpit_type != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            if (checkCockpit != Mech.COCKPIT_STANDARD &&
+                    checkCockpit != Mech.COCKPIT_INDUSTRIAL &&
+                    checkCockpit != Mech.COCKPIT_PRIMITIVE &&
+                    checkCockpit != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 return false;
-            } else if (cockpit_type == Mech.COCKPIT_PRIMITIVE ||
-                    cockpit_type == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            } else if (checkCockpit == Mech.COCKPIT_PRIMITIVE ||
+                    checkCockpit == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 hasPrimitive = true;
             }
         } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (cockpit_type == Aero.COCKPIT_SMALL ||
-                    cockpit_type == Aero.COCKPIT_COMMAND_CONSOLE) {
+            if (checkCockpit == Aero.COCKPIT_SMALL ||
+                    checkCockpit == Aero.COCKPIT_COMMAND_CONSOLE) {
                 return false;
-            } else if (cockpit_type == Aero.COCKPIT_PRIMITIVE) {
+            } else if (checkCockpit == Aero.COCKPIT_PRIMITIVE) {
                 hasPrimitive = true;
             }
         }
@@ -698,24 +713,24 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Check for non-advanced engines
-        int engine_type = ms.getEngineType();
+        int checkEngine = ms.getEngineType();
         if (unitType == UnitType.MEK &&
-                (engine_type == Engine.COMBUSTION_ENGINE ||
-                        engine_type == Engine.FISSION ||
-                        engine_type == Engine.BATTERY)) {
+                (checkEngine == Engine.COMBUSTION_ENGINE ||
+                        checkEngine == Engine.FISSION ||
+                        checkEngine == Engine.BATTERY)) {
             return true;
         } else if ((unitType == UnitType.TANK ||
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) &&
-                engine_type == Engine.FISSION) {
+                checkEngine == Engine.FISSION) {
             return true;
         }
 
         // Armor
-        HashSet<Integer> armor_type = ms.getArmorType();
-        if (armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
-                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
-                armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+        HashSet<Integer> checkArmor = ms.getArmorType();
+        if (checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
+                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
+                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
             return true;
         }
 
@@ -739,11 +754,11 @@ public class ModelRecord extends AbstractUnitRecord {
      * Check if unit is built with advanced technology. This only checks the basic components,
      * not any mounted equipment such as weapons.
      * @param ms         unit data
-     * @param sl_only    true to only check original Star League tech - XL engine, ES internals,
+     * @param slOnly    true to only check original Star League tech - XL engine, ES internals,
      *                   FF armor
      * @return           true if unit has at least one piece of basic technology
      */
-    private boolean unitHasLostech (MechSummary ms, boolean sl_only) {
+    private boolean unitHasLostech (MechSummary ms, boolean slOnly) {
 
         // Some units are always considered advanced
         if (unitType == UnitType.BATTLE_ARMOR ||
@@ -763,7 +778,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType == UnitType.VTOL ||
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) {
-            if (sl_only) {
+            if (slOnly) {
                 if (ms.getEngineType() == Engine.XL_ENGINE) {
                     return true;
                 }
@@ -775,7 +790,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Gyro. Star League has no advanced gyro types.
-        if (unitType == UnitType.MEK && !sl_only) {
+        if (unitType == UnitType.MEK && !slOnly) {
             if (ms.getGyroType() >= Mech.GYRO_COMPACT) {
                 return true;
             }
@@ -783,7 +798,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Structure. Star League is limited endosteel.
         if (unitType == UnitType.MEK) {
-            if (sl_only && ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
+            if (slOnly && ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
                 return true;
             } else if (ms.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
                     ms.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
@@ -792,34 +807,33 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Armor. Star League is limited to simple ferro-fibrous.
-        HashSet<Integer> armor_type = ms.getArmorType();
-        int base_armor = (int)armor_type.toArray()[0];
+        int checkArmor = (int) (ms.getArmorType().toArray()[0]);
         if (unitType <= UnitType.NAVAL) {
-            if (sl_only && base_armor == EquipmentType.T_ARMOR_FERRO_FIBROUS) {
+            if (slOnly && checkArmor == EquipmentType.T_ARMOR_FERRO_FIBROUS) {
                 return true;
-            } else if ((base_armor >= EquipmentType.T_ARMOR_FERRO_FIBROUS &&
-                    base_armor <= EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO) ||
-                    base_armor == EquipmentType.T_ARMOR_FERRO_LAMELLOR ||
-                    (base_armor >= EquipmentType.T_ARMOR_STEALTH_VEHICLE &&
-                            base_armor <= EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
+            } else if ((checkArmor >= EquipmentType.T_ARMOR_FERRO_FIBROUS &&
+                    checkArmor <= EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO) ||
+                    checkArmor == EquipmentType.T_ARMOR_FERRO_LAMELLOR ||
+                    (checkArmor >= EquipmentType.T_ARMOR_STEALTH_VEHICLE &&
+                            checkArmor <= EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
                 return true;
             }
         }
 
         // Cockpit. Star League is limited to command consoles.
-        int cockpit_type = ms.getCockpitType();
+        int checkCockpit = ms.getCockpitType();
         if (unitType == UnitType.MEK) {
-            if (sl_only && cockpit_type == Mech.COCKPIT_COMMAND_CONSOLE) {
+            if (slOnly && checkCockpit == Mech.COCKPIT_COMMAND_CONSOLE) {
                 return true;
-            } else if (cockpit_type != Mech.COCKPIT_STANDARD &&
-                    cockpit_type != Mech.COCKPIT_PRIMITIVE &&
-                    cockpit_type != Mech.COCKPIT_INDUSTRIAL &&
-                    cockpit_type != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            } else if (checkCockpit != Mech.COCKPIT_STANDARD &&
+                    checkCockpit != Mech.COCKPIT_PRIMITIVE &&
+                    checkCockpit != Mech.COCKPIT_INDUSTRIAL &&
+                    checkCockpit != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 return true;
             }
         } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (cockpit_type != Aero.COCKPIT_STANDARD &&
-                    cockpit_type != Aero.COCKPIT_PRIMITIVE) {
+            if (checkCockpit != Aero.COCKPIT_STANDARD &&
+                    checkCockpit != Aero.COCKPIT_PRIMITIVE) {
                 return true;
             }
         }
@@ -831,43 +845,43 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * Get a BV modifier for a weapon for use against airborne targets. Slightly different checks
      * are provided for fixed wing aircraft for air-to-air combat use
-     * @param check_weapon
+     * @param checkWeapon
      * @return   Relative value from zero (not useful) to 1
      */
-    private double getFlakBVModifier(EquipmentType check_weapon) {
+    private double getFlakBVModifier(EquipmentType checkWeapon) {
 
-        double very_effective = 1.0;
-        double somewhat_effective = 0.5;
-        double not_effective = 0.2;
+        double veryEffective = 1.0;
+        double somewhatEffective = 0.5;
+        double notEffective = 0.2;
         double ineffective = 0.0;
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_AC_LBX ||
-                    ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_HAG ||
-                    ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_SBGAUSS) {
-                return very_effective;
-            } else if (((WeaponType) check_weapon).getMedAV() >= 10) {
-                return somewhat_effective;
+            if (((Weapon) checkWeapon).getAmmoType() == AmmoType.T_AC_LBX ||
+                    ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_HAG ||
+                    ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_SBGAUSS) {
+                return veryEffective;
+            } else if (((WeaponType) checkWeapon).getMedAV() >= 10) {
+                return somewhatEffective;
             } else {
                 return ineffective;
             }
         }
 
-        if (check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
-            return somewhat_effective;
+        if (checkWeapon instanceof ArtilleryWeapon) {
+            return somewhatEffective;
         }
-        if (((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_AC_LBX ||
-                ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_HAG ||
-                ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_SBGAUSS ||
-                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMk2PortableAAWeapon) {
-            return very_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon ||
-                check_weapon instanceof megamek.common.weapons.missiles.RLWeapon) {
+        if (((Weapon) checkWeapon).getAmmoType() == AmmoType.T_AC_LBX ||
+                ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_HAG ||
+                ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_SBGAUSS ||
+                checkWeapon instanceof megamek.common.weapons.infantry.InfantrySupportMk2PortableAAWeapon) {
+            return veryEffective;
+        } else if (checkWeapon instanceof InfantryWeapon ||
+                checkWeapon instanceof megamek.common.weapons.missiles.RLWeapon) {
             return ineffective;
-        } else if (((WeaponType) check_weapon).getLongRange() >= 16) {
-            return somewhat_effective;
-        } else if (((WeaponType) check_weapon).getMediumRange() >= 8) {
-            return not_effective;
+        } else if (((WeaponType) checkWeapon).getLongRange() >= 16) {
+            return somewhatEffective;
+        } else if (((WeaponType) checkWeapon).getMediumRange() >= 8) {
+            return notEffective;
         }
 
         return ineffective;
@@ -876,50 +890,50 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * Evaluates weapons for how effective they are against conventional infantry.
      * Checks are organized to promote early exit for common weapons rather than by value.
-     * @param test_weapon  Weapon to check
+     * @param checkWeapon  Weapon to check
      * @return             Relative value, 0 is ineffective, higher is more effective
      */
-    private int getAPRating(EquipmentType check_weapon) {
-        int extremely_effective = 6;
-        int very_effective = 4;
-        int somewhat_effective = 2;
-        int not_effective = 1;
+    private int getAPRating(EquipmentType checkWeapon) {
+        int extremelyEffective = 6;
+        int veryEffective = 4;
+        int somewhatEffective = 2;
+        int notEffective = 1;
         int ineffective = 0;
 
         // Common weapons
-        if (check_weapon instanceof megamek.common.weapons.mgs.MGWeapon) {
-            return very_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.srms.SRMWeapon ||
-                check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon) {
-            return somewhat_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.flamers.FlamerWeapon) {
-            return extremely_effective;
+        if (checkWeapon instanceof MGWeapon) {
+            return veryEffective;
+        } else if (checkWeapon instanceof SRMWeapon ||
+                checkWeapon instanceof MMLWeapon) {
+            return somewhatEffective;
+        } else if (checkWeapon instanceof FlamerWeapon) {
+            return extremelyEffective;
         }
 
         // Weapons only found in later eras
-        if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon) {
-            return not_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
-            return extremely_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon) {
-            return extremely_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.battlearmor.CLBAMGBearhunterSuperheavy) {
-            return extremely_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
-                check_weapon instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
-            return very_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.gaussrifles.CLAPGaussRifle) {
-            return very_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.lasers.ISPulseLaserSmall ||
-                    check_weapon instanceof megamek.common.weapons.lasers.CLPulseLaserSmall) {
-            return very_effective;
+        if (checkWeapon instanceof InfantryWeapon) {
+            return notEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
+            return extremelyEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon) {
+            return extremelyEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.CLBAMGBearhunterSuperheavy) {
+            return extremelyEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
+                checkWeapon instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
+            return veryEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.gaussrifles.CLAPGaussRifle) {
+            return veryEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.lasers.ISPulseLaserSmall ||
+                    checkWeapon instanceof megamek.common.weapons.lasers.CLPulseLaserSmall) {
+            return veryEffective;
         }
 
         // Uncommon weapons
-        if (check_weapon instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
-            return not_effective;
-        } else if (check_weapon instanceof megamek.common.weapons.mortars.MekMortarWeapon) {
-            return not_effective;
+        if (checkWeapon instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
+            return notEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.mortars.MekMortarWeapon) {
+            return notEffective;
         }
 
         return ineffective;
@@ -927,10 +941,10 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Get a BV modifier for a weapon for use at long range
-     * @param check_weapon   Weapon to check
+     * @param checkWeapon   Weapon to check
      * @return   between zero (not a long ranged weapon) and 1
      */
-    private double getLongRangeModifier(EquipmentType check_weapon) {
+    private double getLongRangeModifier(EquipmentType checkWeapon) {
 
         double fullRange = 1.0;
         double partialRange = 0.8;
@@ -938,10 +952,10 @@ public class ModelRecord extends AbstractUnitRecord {
         double shortRange = 0.0;
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((WeaponType) check_weapon).getExtAV() > 0 ||
-                    ((WeaponType) check_weapon).getLongAV() > 0 ||
-                    check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
-                    check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
+            if (((WeaponType) checkWeapon).getExtAV() > 0 ||
+                    ((WeaponType) checkWeapon).getLongAV() > 0 ||
+                    checkWeapon instanceof MMLWeapon ||
+                    checkWeapon instanceof ATMWeapon) {
                 return fullRange;
             } else {
                 return shortRange;
@@ -949,20 +963,20 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Quick and dirty check for most indirect fire weapons
-        boolean isIndirect = ((WeaponType) check_weapon).hasIndirectFire();
+        boolean isIndirect = ((WeaponType) checkWeapon).hasIndirectFire();
 
-        if (((WeaponType) check_weapon).getLongRange() >= 20 ||
-                check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon ||
-                check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
-                check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
+        if (((WeaponType) checkWeapon).getLongRange() >= 20 ||
+                checkWeapon instanceof ArtilleryWeapon ||
+                checkWeapon instanceof MMLWeapon ||
+                checkWeapon instanceof ATMWeapon) {
             return fullRange;
-        } else if (((WeaponType) check_weapon).getMediumRange() >= 14) {
+        } else if (((WeaponType) checkWeapon).getMediumRange() >= 14) {
             if (isIndirect) {
                 return fullRange;
             } else {
                 return partialRange;
             }
-        } else if (((WeaponType) check_weapon).getMediumRange() >= 12) {
+        } else if (((WeaponType) checkWeapon).getMediumRange() >= 12) {
             if (isIndirect) {
                 return partialRange;
             } else {
@@ -977,43 +991,43 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Get a BV modifier for a weapon for use at short range
-     * @param check_weapon   Weapon to check
+     * @param checkWeapon   Weapon to check
      * @return   between zero (not a short ranged weapon) and 1
      */
-    private  double getShortRangeModifier (EquipmentType check_weapon) {
+    private  double getShortRangeModifier (EquipmentType checkWeapon) {
 
         double shortRange = 1.0;
         double mediumRange = 0.6;
         double longRange = 0.0;
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((WeaponType) check_weapon).getMedAV() == 0 ||
-                    check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
-                    check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
+            if (((WeaponType) checkWeapon).getMedAV() == 0 ||
+                    checkWeapon instanceof MMLWeapon ||
+                    checkWeapon instanceof ATMWeapon) {
                 return shortRange;
-            } else if (((WeaponType) check_weapon).getLongAV() == 0) {
+            } else if (((WeaponType) checkWeapon).getLongAV() == 0) {
                 return mediumRange;
             } else {
                 return longRange;
             }
         }
 
-        if (((WeaponType) check_weapon).getMinimumRange() <= 0)
+        if (((WeaponType) checkWeapon).getMinimumRange() <= 0)
         {
-            if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon) {
-                if (((WeaponType) check_weapon).getLongRange() <= 6){
+            if (checkWeapon instanceof InfantryWeapon) {
+                if (((WeaponType) checkWeapon).getLongRange() <= 6){
                     return shortRange;
-                } else if (((WeaponType) check_weapon).getLongRange() <= 12) {
+                } else if (((WeaponType) checkWeapon).getLongRange() <= 12) {
                     return mediumRange;
                 }
             }
-            if (((WeaponType) check_weapon).getLongRange() <= 15 ||
-                    check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
-                    check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
+            if (((WeaponType) checkWeapon).getLongRange() <= 15 ||
+                    checkWeapon instanceof MMLWeapon ||
+                    checkWeapon instanceof ATMWeapon) {
                 return shortRange;
             }
-        } else if (((WeaponType) check_weapon).getMinimumRange() <= 3) {
-            if (((WeaponType) check_weapon).getLongRange() <= 15) {
+        } else if (((WeaponType) checkWeapon).getMinimumRange() <= 3) {
+            if (((WeaponType) checkWeapon).getLongRange() <= 15) {
                 return mediumRange;
             }
         }

@@ -46,6 +46,8 @@ public class ModelRecord extends AbstractUnitRecord {
     private boolean starLeague;
     private int weightClass;
     private EntityMovementMode movementMode;
+    private boolean isQuad;
+    private boolean isTripod;
     private EnumSet<MissionRole> roles;
     private ArrayList<String> deployedWith;
     private ArrayList<String> requiredUnits;
@@ -68,6 +70,9 @@ public class ModelRecord extends AbstractUnitRecord {
 
     private boolean canAntiMek = false;
 
+    private boolean isRemoteDrone;
+    private boolean isRobotDrone;
+
     public ModelRecord(String chassis, String model) {
         super(chassis);
         roles = EnumSet.noneOf(MissionRole.class);
@@ -82,7 +87,6 @@ public class ModelRecord extends AbstractUnitRecord {
     public ModelRecord(MechSummary ms) {
         this(ms.getFullChassis(), ms.getModel());
         mechSummary = ms;
-        unitType = parseUnitType(ms.getUnitType());
         introYear = ms.getYear();
 
         analyzeModel(ms);
@@ -99,6 +103,14 @@ public class ModelRecord extends AbstractUnitRecord {
 
     public EntityMovementMode getMovementMode() {
         return movementMode;
+    }
+
+    public boolean getIsQuad() {
+        return isQuad;
+    }
+
+    public boolean getIsTripod () {
+        return isTripod;
     }
 
     @Override
@@ -183,6 +195,14 @@ public class ModelRecord extends AbstractUnitRecord {
 
     public boolean hasAPWeapons() {
         return apWeapons;
+    }
+
+    public boolean getIsRemoteDrone () {
+        return isRemoteDrone;
+    }
+
+    public boolean getIsRobotDrone () {
+        return isRobotDrone;
     }
 
     public MechSummary getMechSummary() {
@@ -271,9 +291,18 @@ public class ModelRecord extends AbstractUnitRecord {
     private void analyzeModel (MechSummary ms) {
 
         // Basic unit type and movement
+        unitType = parseUnitType(ms.getUnitType());
         if (unitType == UnitType.MEK) {
-            //TODO: id quads and tripods
+
             movementMode = EntityMovementMode.BIPED;
+            if (ms.isQuadMek()) {
+                isQuad = true;
+                movementMode = EntityMovementMode.QUAD;
+            } else if (ms.isTripodMek()) {
+                isTripod = true;
+                movementMode = EntityMovementMode.TRIPOD;
+            }
+
         } else {
             movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
         }
@@ -494,7 +523,8 @@ public class ModelRecord extends AbstractUnitRecord {
                         eq.hasFlag(MiscType.F_TARGCOMP) ||
                         eq.hasFlag(MiscType.F_ARTEMIS) ||
                         eq.hasFlag(MiscType.F_ARTEMIS_V) ||
-                        eq.hasFlag(MiscType.F_APOLLO)) {
+                        eq.hasFlag(MiscType.F_APOLLO) ||
+                        eq.hasFlag((MiscType.F_MASC))) {
                     losTech = true;
                 }
                 if (eq.hasFlag(MiscType.F_C3S)) {
@@ -513,6 +543,14 @@ public class ModelRecord extends AbstractUnitRecord {
                     apRating++;
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
+                    losTech = true;
+                } else if (eq.hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                    isRemoteDrone = true;
+                    losTech = true;
+                } else if (eq.hasFlag(MiscType.F_SRCS) ||
+                        eq.hasFlag(MiscType.F_SASRCS)) {
+                    isRemoteDrone = true;
+                    isRobotDrone = true;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;

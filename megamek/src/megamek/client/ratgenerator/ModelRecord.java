@@ -469,12 +469,14 @@ public class ModelRecord extends AbstractUnitRecord {
                         eq.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) ||
                         eq.hasFlag(MiscType.F_LASER_HEAT_SINK) ||
                         eq.hasFlag(MiscType.F_COMPACT_HEAT_SINK) ||
-                        eq.hasFlag(MiscType.F_RADICAL_HEATSINK) ||
                         eq.hasFlag(MiscType.F_ECM) ||
                         eq.hasFlag(MiscType.F_ANGEL_ECM) ||
                         eq.hasFlag(MiscType.F_BAP) ||
                         eq.hasFlag(MiscType.F_BLOODHOUND) ||
-                        eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                        eq.hasFlag(MiscType.F_TARGCOMP) ||
+                        eq.hasFlag(MiscType.F_ARTEMIS) ||
+                        eq.hasFlag(MiscType.F_ARTEMIS_V) ||
+                        eq.hasFlag(MiscType.F_APOLLO)) {
                     losTech = true;
                 }
                 if (eq.hasFlag(MiscType.F_C3S)) {
@@ -489,11 +491,17 @@ public class ModelRecord extends AbstractUnitRecord {
                 } else if (eq.hasFlag(MiscType.F_NOVA)) {
                     networkMask |= NETWORK_NOVA;
                     losTech = true;
+                } else if (eq.hasFlag(MiscType.F_AP_POD)) {
+                    apRating++;
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;
+                    losTech = true;
+                // Save a bit of time, anything introduced after this date is assumed to be
+                // advanced
+                } else if (!losTech && (eq.getIntroductionDate() >= 3067)) {
                     losTech = true;
                 }
 

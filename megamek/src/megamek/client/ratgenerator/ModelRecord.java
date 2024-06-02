@@ -341,7 +341,11 @@ public class ModelRecord extends AbstractUnitRecord {
         weightClass = unitData.getWeightClass();
 
         // Adjust weight class for support vehicles
-        if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if ((unitType == UnitType.TANK ||
+                unitType == UnitType.VTOL ||
+                unitType == UnitType.NAVAL ||
+                unitType == UnitType.CONV_FIGHTER) &&
+                weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             if (unitData.getTons() <= 39) {
                 weightClass = EntityWeightClass.WEIGHT_LIGHT;
             } else if (unitData.getTons() <= 59) {

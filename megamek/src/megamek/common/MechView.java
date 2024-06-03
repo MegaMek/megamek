@@ -119,8 +119,7 @@ public class MechView {
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
      *                         equipment-only cost for conventional infantry for MekHQ.
-     * @param html             If true, produces output formatted as html. If false, formats output
-     *                         as plain text.
+     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
     public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
                     final ViewFormatting formatting) {
@@ -136,8 +135,7 @@ public class MechView {
      *                         equipment-only cost for conventional infantry for MekHQ.
      * @param ignorePilotBV    If true then the BV calculation is done without including the pilot
      *                         BV modifiers
-     * @param html             If true, produces output formatted as html. If false, formats output
-     *                         as plain text.
+     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
     public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
                     final boolean ignorePilotBV, final ViewFormatting formatting) {

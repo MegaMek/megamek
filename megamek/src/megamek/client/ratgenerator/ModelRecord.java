@@ -429,7 +429,6 @@ public class ModelRecord extends AbstractUnitRecord {
             losTech = unitHasLostech(unitData, false);
         }
 
-
         for (int i = 0; i < unitData.getEquipmentNames().size(); i++) {
 
             //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
@@ -550,7 +549,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         ammoFactor = 0.1;
                     }
 
-                    ammoBV += ammoFactor * eq.getBV(null) * ammoFactor *
+                    ammoBV += eq.getBV(null) * ammoFactor *
                             unitData.getEquipmentQuantities().get(i);
 
                 }
@@ -606,6 +605,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
                     losTech = true;
+                } else if (eq.hasFlag(MiscType.F_VIBROCLAW)) {
+                    apRating += 2;
                 } else if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE)) {
                     shortRangeBV += 2.5;
                     totalWeaponBV += 2.5;
@@ -617,9 +618,8 @@ public class ModelRecord extends AbstractUnitRecord {
                     remoteDrone = true;
                     robotDrone = true;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_UMU)) {
-                    movementMode = EntityMovementMode.BIPED_SWIM;
-                    losTech = true;
+                } else if (eq.hasFlag(MiscType.F_SPACE_ADAPTATION)) {
+                    roles.add(MissionRole.MARINE);
                 // Save a bit of time, anything introduced after this date is assumed to be
                 // advanced
                 } else if (!losTech && (eq.getIntroductionDate() >= 3067)) {

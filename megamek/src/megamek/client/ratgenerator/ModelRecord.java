@@ -434,8 +434,29 @@ public class ModelRecord extends AbstractUnitRecord {
                 losTech = true;
             }
 
+            boolean isAntiMechAttack = false;
+
             if (eq instanceof WeaponType) {
                 totalBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
+
+                // Flag units that are capable of making anti-Mech attacks
+                if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
+                    isAntiMechAttack = eq instanceof SwarmAttack ||
+                            eq instanceof SwarmWeaponAttack ||
+                            eq instanceof LegAttack ||
+                            eq instanceof StopSwarmAttack;
+                    canAntiMek = canAntiMek || isAntiMechAttack;
+                    if (isAntiMechAttack) {
+                        continue;
+                    }
+                }
+
+                // Add the spotter role to all units which carry TAG
+                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
+                    roles.add(MissionRole.SPOTTER);
+                    losTech = true;
+                    continue;
+                }
 
                 // Check for C3 master units. These are bit-masked values.
                 if (eq.hasFlag(WeaponType.F_C3M)) {
@@ -456,19 +477,14 @@ public class ModelRecord extends AbstractUnitRecord {
 
                 // Check for use against airborne targets. Ignore small craft, DropShips, and other
                 // large space craft.
-                if (unitType < UnitType.SMALL_CRAFT &&
-                        !(eq instanceof SwarmAttack) &&
-                        !(eq instanceof SwarmWeaponAttack) &&
-                        !(eq instanceof LegAttack) &&
-                        !(eq instanceof StopSwarmAttack)) {
+                if (unitType < UnitType.SMALL_CRAFT) {
                     flakBV += getFlakBVModifier(eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Check for artillery weapons. Ignore aerospace fighters, small craft, and large
                 // space craft.
-                if (unitType <= UnitType.CONV_FIGHTER &&
-                        eq instanceof ArtilleryWeapon) {
+                if (unitType <= UnitType.CONV_FIGHTER && eq instanceof ArtilleryWeapon) {
                     artilleryBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
                 }
 
@@ -500,13 +516,6 @@ public class ModelRecord extends AbstractUnitRecord {
                     apRating += getAPRating(eq);
                 }
 
-                // Check if a conventional infantry or battle armor unit can perform anti-Mech
-                // attacks. This will also pick up battle armor that must first jettison equipment.
-                if (!canAntiMek &&
-                        (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR)) {
-                    canAntiMek = (eq instanceof LegAttack ||
-                            eq instanceof SwarmAttack);
-                }
 
                 // Total up BV for weapons that require ammo. Streak-type missile systems get a
                 // discount. Ignore small craft, DropShips, and large space craft. Ignore infantry
@@ -543,20 +552,9 @@ public class ModelRecord extends AbstractUnitRecord {
 
                 // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
                 // DropShips, and other space craft. Also skip anti-Mech attacks.
-                if (unitType < UnitType.SMALL_CRAFT &&
-                        !(eq instanceof ArtilleryWeapon) &&
-                        !(eq instanceof SwarmAttack) &&
-                        !(eq instanceof SwarmWeaponAttack) &&
-                        !(eq instanceof LegAttack) &&
-                        !(eq instanceof StopSwarmAttack)) {
+                if (unitType < UnitType.SMALL_CRAFT) {
                     shortRangeBV += getShortRangeModifier(eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
-                }
-
-                // Add the spotter role to all units which carry TAG
-                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
-                    roles.add(MissionRole.SPOTTER);
-                    losTech = true;
                 }
 
             // Various non-weapon equipment
@@ -576,8 +574,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         eq.hasFlag(MiscType.F_APOLLO) ||
                         eq.hasFlag((MiscType.F_MASC))) {
                     losTech = true;
-                }
-                if (eq.hasFlag(MiscType.F_C3S)) {
+                } else if (eq.hasFlag(MiscType.F_C3S)) {
                     networkMask |= NETWORK_C3_SLAVE;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_C3I)) {
@@ -784,8 +781,6 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
 
-
-
     /**
      * Check if unit is built with advanced technology. This only checks the basic components,
      * not any mounted equipment such as weapons.
@@ -879,7 +874,6 @@ public class ModelRecord extends AbstractUnitRecord {
 
         return false;
     }
-
 
     /**
      * Get a BV modifier for a weapon for use against airborne targets

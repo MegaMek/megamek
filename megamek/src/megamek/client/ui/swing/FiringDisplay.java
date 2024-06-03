@@ -1473,16 +1473,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     /**
-     * Refreshes all displays.
+     * Make any necessary updates in the GUI after a new action has been added.
      */
-    protected void resetDisplays() {
+    protected void updateForNewAction() {
         if (ce() == null) {
             return;
         }
         clientgui.getBoardView().redrawEntity(ce());
-        clientgui.getUnitDisplay().displayEntity(ce());
-        clientgui.getUnitDisplay().showPanel("weapons");
-        clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         if (ce().isMakingVTOLGroundAttack()) {
             updateVTOLGroundTarget();
         }
@@ -1701,7 +1698,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             clientgui.setFiringArcFacing(ce());
-            refreshAll();
+            updateForNewAction();
         }
     }
 

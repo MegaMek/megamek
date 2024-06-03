@@ -57,34 +57,34 @@ public class ModelRecord extends AbstractUnitRecord {
     private boolean primitive;
     private boolean retrotech;
     private boolean starLeague;
+
     private int weightClass;
     private EntityMovementMode movementMode;
     private boolean isQuad;
     private boolean isTripod;
+    private boolean remoteDrone;
+    private boolean robotDrone;
+
     private EnumSet<MissionRole> roles;
     private ArrayList<String> deployedWith;
     private ArrayList<String> requiredUnits;
     private ArrayList<String> excludedFactions;
     private int networkMask;
-    private double flakBVProportion; //proportion of weapon BV that can fire flak ammo
 
+    private double flakBVProportion;
     private double artilleryBVProportion;
-    private double lrBVProportion; // Proportion of weapons BV with long range and/or indirect fire
+    private double lrBVProportion;
+    private double srBVProportion;
+    private double ammoBVProportion;
+    private boolean incendiary;
+    private boolean apWeapons;
 
-    private double srBVProportion; // Proportion of weapons BV with short range
     private int speed;
     private boolean canJump;
-    private double ammoBVProportion; // Proportion of weapons BV requiring ammo
-    private boolean incendiary; //used to determine suitability for incindiary role
-    private boolean apWeapons; //used to determine suitability for anti-infantry role
 
     private boolean mechanizedBA;
     private boolean magClamp;
-
-    private boolean canAntiMek = false;
-
-    private boolean isRemoteDrone;
-    private boolean isRobotDrone;
+    private boolean canAntiMek;
 
     public ModelRecord(String chassis, String model) {
         super(chassis);
@@ -93,8 +93,6 @@ public class ModelRecord extends AbstractUnitRecord {
         requiredUnits = new ArrayList<>();
         excludedFactions = new ArrayList<>();
         networkMask = NETWORK_NONE;
-        flakBVProportion = 0.0;
-        lrBVProportion = 0.0;
     }
 
     public ModelRecord(MechSummary unitData) {
@@ -148,6 +146,10 @@ public class ModelRecord extends AbstractUnitRecord {
         return retrotech;
     }
 
+    /**
+     * Unit has advanced IS-base technology
+     * @return
+     */
     public boolean isSL() {
         return starLeague;
     }
@@ -170,18 +172,35 @@ public class ModelRecord extends AbstractUnitRecord {
     public void setNetwork(int network) {
         this.networkMask = network;
     }
+
+    /**
+     * Proportion of total weapons BV that is optimized against airborne targets
+     * @return   between zero (none) and 1.0 (all weapons)
+     */
     public double getFlak() {
         return flakBVProportion;
     }
 
+    /**
+     * Proportion of total weapons BV that is artillery
+     * @return   between zero (none) and 1.0 (all weapons)
+     */
     public double getArtilleryProportion () {
         return artilleryBVProportion;
     }
 
+    /**
+     * Proportion of total weapons BV that is best at long range
+     * @return   between zero (none) and 1.0 (all weapons)
+     */
     public double getLongRange() {
         return lrBVProportion;
     }
 
+    /**
+     * Proportion of total weapons BV that is best at short range
+     * @return   between zero (none) and 1.o (all weapons)
+     */
     public double getSRProportion() {
         return srBVProportion;
     }
@@ -194,6 +213,10 @@ public class ModelRecord extends AbstractUnitRecord {
         return canJump;
     }
 
+    /**
+     * Proportion of total weapons BV that is dependent on ammunition
+     * @return   between zero (none) and 1.0 (all weapons)
+     */
     public double getAmmoRequirement() {
         return ammoBVProportion;
     }
@@ -208,18 +231,18 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Unit is a remotely operated drone
-     * @return
+     * @return   true if unit has remote drone operation equipment
      */
-    public boolean getIsRemoteDrone () {
-        return isRemoteDrone;
+    public boolean isRemoteDrone () {
+        return remoteDrone;
     }
 
     /**
      * Unit is an independently operating drone
-     * @return
+     * @return   true if unit has robotic operations system
      */
-    public boolean getIsRobotDrone () {
-        return isRobotDrone;
+    public boolean isRobotDrone () {
+        return robotDrone;
     }
 
     public MechSummary getMechSummary() {
@@ -362,8 +385,8 @@ public class ModelRecord extends AbstractUnitRecord {
         double totalBV = 0.0;
         double flakBV = 0.0;
         double artilleryBV = 0.0;
-        double lrBV = 0.0;
-        double srBV = 0.0;
+        double longRangeBV = 0.0;
+        double shortRangeBV = 0.0;
         int apRating = 0;
         int apThreshold = 6;
         double ammoBV = 0.0;
@@ -438,7 +461,8 @@ public class ModelRecord extends AbstractUnitRecord {
                         !(eq instanceof SwarmWeaponAttack) &&
                         !(eq instanceof LegAttack) &&
                         !(eq instanceof StopSwarmAttack)) {
-                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
+                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) *
+                            unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Check for artillery weapons. Ignore aerospace fighters, small craft, and large
@@ -502,8 +526,10 @@ public class ModelRecord extends AbstractUnitRecord {
                         }
                     }
 
-                    if  (ammoFactor > 0.0 && ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
-                        ammoBV += eq.getBV(null) * ammoFactor * unitData.getEquipmentQuantities().get(i);
+                    if  (ammoFactor > 0.0 &&
+                            ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
+                        ammoBV += eq.getBV(null) * ammoFactor *
+                                unitData.getEquipmentQuantities().get(i);
                     }
 
                 }
@@ -511,7 +537,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Total up BV for weapons capable of attacking at the longest ranges or using
                 // indirect fire. Ignore small craft, DropShips, and other space craft.
                 if (unitType < UnitType.SMALL_CRAFT) {
-                    lrBV += getLongRangeModifier(eq) * eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
+                    longRangeBV += getLongRangeModifier(eq) * eq.getBV(null) *
+                            unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
@@ -522,7 +549,8 @@ public class ModelRecord extends AbstractUnitRecord {
                         !(eq instanceof SwarmWeaponAttack) &&
                         !(eq instanceof LegAttack) &&
                         !(eq instanceof StopSwarmAttack)) {
-                    srBV += getShortRangeModifier(eq) * eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
+                    shortRangeBV += getShortRangeModifier(eq) * eq.getBV(null) *
+                            unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Add the spotter role to all units which carry TAG
@@ -567,12 +595,12 @@ public class ModelRecord extends AbstractUnitRecord {
                     magClamp = true;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-                    isRemoteDrone = true;
+                    remoteDrone = true;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_SRCS) ||
                         eq.hasFlag(MiscType.F_SASRCS)) {
-                    isRemoteDrone = true;
-                    isRobotDrone = true;
+                    remoteDrone = true;
+                    robotDrone = true;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;
@@ -591,8 +619,8 @@ public class ModelRecord extends AbstractUnitRecord {
         if (totalBV > 0 && unitType <= UnitType.AEROSPACEFIGHTER) {
             flakBVProportion = flakBV / totalBV;
             artilleryBVProportion = artilleryBV/totalBV;
-            lrBVProportion = lrBV / totalBV;
-            srBVProportion = srBV / totalBV;
+            lrBVProportion = longRangeBV / totalBV;
+            srBVProportion = shortRangeBV / totalBV;
             ammoBVProportion = ammoBV / totalBV;
 
             apWeapons = apRating >= apThreshold;
@@ -602,7 +630,6 @@ public class ModelRecord extends AbstractUnitRecord {
         starLeague = losTech && !clan;
         primitive = basePrimitive && !losTech && !clan;
         retrotech = basePrimitive && (losTech || clan);
-
 
     }
 
@@ -653,28 +680,27 @@ public class ModelRecord extends AbstractUnitRecord {
             hasPrimitive = (unitData.getInternalsType() == EquipmentType.T_STRUCTURE_INDUSTRIAL);
         }
 
-
         // If standard, industrial, or primitive armor is not present, then it must be advanced
-        HashSet<Integer> checkArmor = unitData.getArmorType();
+        int checkArmor = (int) (unitData.getArmorType().toArray()[0]);
         if (unitType <= UnitType.NAVAL &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_STANDARD) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_INDUSTRIAL) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
+                checkArmor != EquipmentType.T_ARMOR_STANDARD &&
+                checkArmor != EquipmentType.T_ARMOR_PRIMITIVE &&
+                checkArmor != EquipmentType.T_ARMOR_INDUSTRIAL &&
+                checkArmor != EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL) {
             return false;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER ||
                 unitType == UnitType.SMALL_CRAFT ||
                 unitType == UnitType.DROPSHIP) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_STANDARD) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_AEROSPACE) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) &&
-                !checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+                checkArmor != EquipmentType.T_ARMOR_STANDARD &&
+                checkArmor != EquipmentType.T_ARMOR_AEROSPACE &&
+                checkArmor != EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER &&
+                checkArmor != EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
             return false;
         }
-        if (checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
-                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
-                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+        if (checkArmor == EquipmentType.T_ARMOR_PRIMITIVE ||
+                checkArmor == EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER ||
+                checkArmor == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
             hasPrimitive = true;
         }
 
@@ -736,10 +762,10 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Armor
-        HashSet<Integer> checkArmor = unitData.getArmorType();
-        if (checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE) ||
-                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) ||
-                checkArmor.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
+        int checkArmor = (int) (unitData.getArmorType().toArray()[0]);
+        if (checkArmor == EquipmentType.T_ARMOR_PRIMITIVE ||
+                checkArmor == EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER ||
+                checkArmor == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
             return true;
         }
 
@@ -749,7 +775,8 @@ public class ModelRecord extends AbstractUnitRecord {
                         unitData.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             return true;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
-                unitType == UnitType.AEROSPACEFIGHTER) && unitData.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
+                unitType == UnitType.AEROSPACEFIGHTER) &&
+                unitData.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
             return true;
         }
 
@@ -763,7 +790,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * Check if unit is built with advanced technology. This only checks the basic components,
      * not any mounted equipment such as weapons.
      * @param unitData         unit data
-     * @param starLeagueOnly    true to only check original Star League tech - XL engine, ES internals,
+     * @param starLeagueOnly   true to only check original Star League tech - XL engine, ES internals,
      *                   FF armor
      * @return           true if unit has at least one piece of basic technology
      */
@@ -787,13 +814,14 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType == UnitType.VTOL ||
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) {
+            int checkEngine = unitData.getEngineType();
             if (starLeagueOnly) {
-                if (unitData.getEngineType() == Engine.XL_ENGINE) {
+                if (checkEngine == Engine.XL_ENGINE) {
                     return true;
                 }
-            } else if (unitData.getEngineType() >= Engine.XL_ENGINE &&
-                    unitData.getEngineType() <= Engine.COMPACT_ENGINE &&
-                    unitData.getEngineType() != Engine.FUEL_CELL) {
+            } else if (checkEngine >= Engine.XL_ENGINE &&
+                    checkEngine <= Engine.COMPACT_ENGINE &&
+                    checkEngine != Engine.FUEL_CELL) {
                 return true;
             }
         }
@@ -807,7 +835,8 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Structure. Star League is limited endosteel.
         if (unitType == UnitType.MEK) {
-            if (starLeagueOnly && unitData.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
+            if (starLeagueOnly &&
+                    unitData.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
                 return true;
             } else if (unitData.getInternalsType() >= EquipmentType.T_STRUCTURE_ENDO_STEEL &&
                     unitData.getInternalsType() <= EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
@@ -840,7 +869,8 @@ public class ModelRecord extends AbstractUnitRecord {
                     checkCockpit != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 return true;
             }
-        } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+        } else if (unitType == UnitType.CONV_FIGHTER ||
+                unitType == UnitType.AEROSPACEFIGHTER) {
             if (checkCockpit != Aero.COCKPIT_STANDARD &&
                     checkCockpit != Aero.COCKPIT_PRIMITIVE) {
                 return true;
@@ -852,10 +882,9 @@ public class ModelRecord extends AbstractUnitRecord {
 
 
     /**
-     * Get a BV modifier for a weapon for use against airborne targets. Slightly different checks
-     * are provided for fixed wing aircraft for air-to-air combat use
-     * @param checkWeapon
-     * @return   Relative value from zero (not useful) to 1
+     * Get a BV modifier for a weapon for use against airborne targets
+     * @param checkWeapon   weapon to check
+     * @return              Relative value from zero (not useful) to 1
      */
     private double getFlakBVModifier(EquipmentType checkWeapon) {
 
@@ -864,12 +893,15 @@ public class ModelRecord extends AbstractUnitRecord {
         double notEffective = 0.2;
         double ineffective = 0.0;
 
+        // Use a limited version for checking air-to-air capability, including potential for
+        // thresholding heavily armored targets
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
             if (((Weapon) checkWeapon).getAmmoType() == AmmoType.T_AC_LBX ||
                     ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_HAG ||
                     ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_SBGAUSS) {
                 return veryEffective;
-            } else if (((WeaponType) checkWeapon).getMedAV() >= 10) {
+            } else if (((WeaponType) checkWeapon).getMedAV() >= 10 ||
+                    ((WeaponType) checkWeapon).getShortAV() >= 15) {
                 return somewhatEffective;
             } else {
                 return ineffective;
@@ -898,7 +930,6 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Evaluates weapons for how effective they are against conventional infantry.
-     * Checks are organized to promote early exit for common weapons rather than by value.
      * @param checkWeapon  Weapon to check
      * @return             Relative value, 0 is ineffective, higher is more effective
      */
@@ -909,7 +940,6 @@ public class ModelRecord extends AbstractUnitRecord {
         int notEffective = 1;
         int ineffective = 0;
 
-        // Common weapons
         if (checkWeapon instanceof MGWeapon) {
             return veryEffective;
         } else if (checkWeapon instanceof SRMWeapon ||
@@ -919,26 +949,28 @@ public class ModelRecord extends AbstractUnitRecord {
             return extremelyEffective;
         }
 
-        // Weapons only found in later eras
         if (checkWeapon instanceof InfantryWeapon) {
             return notEffective;
         } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
             return extremelyEffective;
         } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon) {
             return extremelyEffective;
+        } else if (checkWeapon instanceof megamek.common.weapons.gaussrifles.GaussWeapon) {
+            if (checkWeapon instanceof megamek.common.weapons.gaussrifles.CLAPGaussRifle) {
+                return veryEffective;
+            } else {
+                return ineffective;
+            }
         } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.CLBAMGBearhunterSuperheavy) {
             return extremelyEffective;
         } else if (checkWeapon instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
                 checkWeapon instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
-            return veryEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.gaussrifles.CLAPGaussRifle) {
             return veryEffective;
         } else if (checkWeapon instanceof megamek.common.weapons.lasers.ISPulseLaserSmall ||
                     checkWeapon instanceof megamek.common.weapons.lasers.CLPulseLaserSmall) {
             return veryEffective;
         }
 
-        // Uncommon weapons
         if (checkWeapon instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
             return notEffective;
         } else if (checkWeapon instanceof megamek.common.weapons.mortars.MekMortarWeapon) {
@@ -971,9 +1003,7 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         }
 
-        // Quick and dirty check for most indirect fire weapons
         boolean isIndirect = ((WeaponType) checkWeapon).hasIndirectFire();
-
         if (((WeaponType) checkWeapon).getLongRange() >= 20 ||
                 checkWeapon instanceof ArtilleryWeapon ||
                 checkWeapon instanceof MMLWeapon ||

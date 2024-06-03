@@ -53,7 +53,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5515: Remove code remnant from internal bomb bay development that added cargo bays for cargo containers
 + PR #5525: Force generator data updates to basic APCs, recovery vehicles, and some civilian units to make them no longer appear in combat OpFor units
 + PR #5531: Harjel can now be added to support vehicles in accordance with the rules
-+ PR #5533: Units can now be copied to clipboard with discord-formatting applied
++ PR #5533, #5544: Units can now be copied to clipboard with discord-formatting applied
 + Data: Fixes for #5514, #5469, #5460, #5223, #5194 (again), #5162
 + Fix #5504: Aeros that do not require fuel should now (finally) be able to move and not show warnings
 + Fix #5523: Fighter Squadrons are able to fire ammo weapons again

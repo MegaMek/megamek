@@ -27,7 +27,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -78,6 +77,7 @@ public class ModelRecord extends AbstractUnitRecord {
     private double ammoBVProportion;
     private boolean incendiary;
     private boolean apWeapons;
+    private boolean unarmed;
 
     private int speed;
     private boolean canJump;
@@ -229,6 +229,14 @@ public class ModelRecord extends AbstractUnitRecord {
         return apWeapons;
     }
 
+    /***
+     *
+     * @return   true if unit has no BV invested in weapons
+     */
+    public boolean isUnarmed () {
+        return unarmed;
+    }
+
     /**
      * Unit is a remotely operated drone
      * @return   true if unit has remote drone operation equipment
@@ -356,9 +364,16 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         speed = unitData.getWalkMp();
-        if (unitData.getJumpMp() > 0) {
+        // Limit jump checks to units which can actually jump
+        if (unitType <= UnitType.PROTOMEK &&
+                unitData.getJumpMp() > 0) {
+            int jumpDistance = unitData.getJumpMp();
             canJump = true;
-            speed++;
+            if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
+                speed = Math.max(speed, jumpDistance);
+            } else {
+                speed = Math.max(jumpDistance, (speed + 1));
+            }
         }
 
         weightClass = unitData.getWeightClass();
@@ -382,7 +397,7 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         }
 
-        double totalBV = 0.0;
+        double totalWeaponBV = 0.0;
         double flakBV = 0.0;
         double artilleryBV = 0.0;
         double longRangeBV = 0.0;
@@ -414,6 +429,7 @@ public class ModelRecord extends AbstractUnitRecord {
             losTech = unitHasLostech(unitData, false);
         }
 
+
         for (int i = 0; i < unitData.getEquipmentNames().size(); i++) {
 
             //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
@@ -434,14 +450,12 @@ public class ModelRecord extends AbstractUnitRecord {
                 losTech = true;
             }
 
-            boolean isAntiMechAttack = false;
-
             if (eq instanceof WeaponType) {
-                totalBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
 
-                // Flag units that are capable of making anti-Mech attacks
+                // Flag units that are capable of making anti-Mech attacks. Don't bother making
+                // any other tests for these.
                 if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
-                    isAntiMechAttack = eq instanceof SwarmAttack ||
+                    boolean isAntiMechAttack = eq instanceof SwarmAttack ||
                             eq instanceof SwarmWeaponAttack ||
                             eq instanceof LegAttack ||
                             eq instanceof StopSwarmAttack;
@@ -457,6 +471,8 @@ public class ModelRecord extends AbstractUnitRecord {
                     losTech = true;
                     continue;
                 }
+
+                totalWeaponBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
 
                 // Check for C3 master units. These are bit-masked values.
                 if (eq.hasFlag(WeaponType.F_C3M)) {
@@ -516,11 +532,12 @@ public class ModelRecord extends AbstractUnitRecord {
                     apRating += getAPRating(eq);
                 }
 
-
                 // Total up BV for weapons that require ammo. Streak-type missile systems get a
                 // discount. Ignore small craft, DropShips, and large space craft. Ignore infantry
                 // weapons except for field guns.
-                if (unitType < UnitType.SMALL_CRAFT) {
+                if (unitType < UnitType.SMALL_CRAFT &&
+                        ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA &&
+                        !(eq instanceof InfantryWeapon)) {
                     double ammoFactor = 1.0;
 
                     if (eq instanceof megamek.common.weapons.srms.StreakSRMWeapon ||
@@ -529,17 +546,12 @@ public class ModelRecord extends AbstractUnitRecord {
                         ammoFactor = 0.4;
                     }
 
-                    if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
-                        if (eq instanceof InfantryWeapon) {
-                            ammoFactor = 0.0;
-                        }
+                    if (eq.hasFlag(WeaponType.F_ONESHOT)) {
+                        ammoFactor = 0.1;
                     }
 
-                    if  (ammoFactor > 0.0 &&
-                            ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
-                        ammoBV += eq.getBV(null) * ammoFactor *
-                                unitData.getEquipmentQuantities().get(i);
-                    }
+                    ammoBV += ammoFactor * eq.getBV(null) * ammoFactor *
+                            unitData.getEquipmentQuantities().get(i);
 
                 }
 
@@ -574,6 +586,9 @@ public class ModelRecord extends AbstractUnitRecord {
                         eq.hasFlag(MiscType.F_APOLLO) ||
                         eq.hasFlag((MiscType.F_MASC))) {
                     losTech = true;
+                } else if (eq.hasFlag(MiscType.F_CLUB)) {
+                    shortRangeBV += unitData.getTons() * 0.3;
+                    totalWeaponBV += unitData.getTons() * 0.3;
                 } else if (eq.hasFlag(MiscType.F_C3S)) {
                     networkMask |= NETWORK_C3_SLAVE;
                     losTech = true;
@@ -591,6 +606,9 @@ public class ModelRecord extends AbstractUnitRecord {
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
                     losTech = true;
+                } else if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE)) {
+                    shortRangeBV += 2.5;
+                    totalWeaponBV += 2.5;
                 } else if (eq.hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
                     remoteDrone = true;
                     losTech = true;
@@ -613,14 +631,18 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Calculate BV proportions for all ground units, VTOL, blue water naval, gun emplacements
         // and fixed wing aircraft. Exclude Small craft, DropShips, and large space craft.
-        if (totalBV > 0 && unitType <= UnitType.AEROSPACEFIGHTER) {
-            flakBVProportion = flakBV / totalBV;
-            artilleryBVProportion = artilleryBV/totalBV;
-            lrBVProportion = longRangeBV / totalBV;
-            srBVProportion = shortRangeBV / totalBV;
-            ammoBVProportion = ammoBV / totalBV;
+        if (unitType <= UnitType.AEROSPACEFIGHTER) {
+            if (totalWeaponBV > 0) {
+                flakBVProportion = flakBV / totalWeaponBV;
+                artilleryBVProportion = artilleryBV / totalWeaponBV;
+                lrBVProportion = longRangeBV / totalWeaponBV;
+                srBVProportion = shortRangeBV / totalWeaponBV;
+                ammoBVProportion = ammoBV / totalWeaponBV;
 
-            apWeapons = apRating >= apThreshold;
+                apWeapons = apRating >= apThreshold;
+            } else {
+                unarmed = true;
+            }
         }
 
         // Categorize by technology type

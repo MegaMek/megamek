@@ -172,6 +172,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return object instanceof SBFFormation || object instanceof AlphaStrikeElement || object instanceof SBFUnit;
     }
 
+    @Override
     public void setLastPhase(GamePhase lastPhase) {
         this.lastPhase = lastPhase;
     }
@@ -219,6 +220,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      * Returns the current list of turns. The returned list is unmodifiable but not a deep copy. If you're
      * not the SBFGameManager, don't even think about changing any of the turns.
      */
+    @Override
     public List<GameTurn> getTurnsList() {
         return Collections.unmodifiableList(turnList);
     }

@@ -95,7 +95,7 @@ public interface IGame {
      * Sets the previous game phase to the given phase.
      * This method is intended for the GameManager.
      *
-     * @param phase The phase to be remembered as the previous phase.
+     * @param lastPhase The phase to be remembered as the previous phase.
      */
     void setLastPhase(GamePhase lastPhase);
 

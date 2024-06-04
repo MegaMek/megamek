@@ -680,6 +680,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().playerId()), prevPlayerId));
     }
 
+    @Override
     public List<GameTurn> getTurnsList() {
         return Collections.unmodifiableList(turnVector);
     }

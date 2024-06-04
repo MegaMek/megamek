@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class TWPhasePreparationManager {
 
@@ -68,7 +69,7 @@ public class TWPhasePreparationManager {
                 gameManager.rollInitiative();
                 //Cockpit command consoles that switched crew on the previous round are ineligible for force
                 // commander initiative bonus. Now that initiative is rolled, clear the flag.
-                gameManager.getGame().getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
+                gameManager.getGame().getEntitiesVector().forEach(e -> e.getCrew().resetActedFlag());
 
                 if (!gameManager.getGame().shouldDeployThisRound()) {
                     gameManager.incrementAndSendGameRound();
@@ -100,16 +101,13 @@ public class TWPhasePreparationManager {
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
 
-                Enumeration<Player> e = gameManager.getGame().getPlayers();
-                Vector<GameTurn> turns = new Vector<>();
-                while (e.hasMoreElements()) {
-                    Player p = e.nextElement();
-                    if (p.hasMinefields() && gameManager.getGame().getBoard().onGround()) {
-                        GameTurn gt = new GameTurn(p.getId());
-                        turns.addElement(gt);
-                    }
+                if (gameManager.getGame().getBoard().onGround()) {
+                    gameManager.getGame().setTurnVector(gameManager.getGame().getPlayersList().stream()
+                            .filter(Player::hasMinefields)
+                            .map(p -> new GameTurn(p.getId()))
+                            .collect(Collectors.toList()));
                 }
-                gameManager.getGame().setTurnVector(turns);
+
                 gameManager.getGame().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
@@ -120,32 +118,17 @@ public class TWPhasePreparationManager {
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
 
-                Enumeration<Player> players = gameManager.getGame().getPlayers();
-                Vector<GameTurn> turn = new Vector<>();
-
-                // Walk through the players of the game, and add
-                // a turn for all players with artillery weapons.
-                while (players.hasMoreElements()) {
-                    // Get the next player.
-                    final Player p = players.nextElement();
-
+                Vector<GameTurn> artyTurns = new Vector<>();
+                for (Player player : gameManager.getGame().getPlayersList()) {
                     // Does the player have any artillery-equipped units?
-                    EntitySelector playerArtySelector = new EntitySelector() {
-                        private Player owner = p;
-
-                        @Override
-                        public boolean accept(Entity entity) {
-                            return owner.equals(entity.getOwner()) && entity.isEligibleForArtyAutoHitHexes();
-                        }
-                    };
+                    EntitySelector playerArtySelector = entity -> player.equals(entity.getOwner())
+                            && entity.isEligibleForArtyAutoHitHexes();
 
                     if (gameManager.getGame().getSelectedEntities(playerArtySelector).hasNext()) {
-                        // Yes, the player has arty-equipped units.
-                        GameTurn gt = new GameTurn(p.getId());
-                        turn.addElement(gt);
+                        artyTurns.addElement(new GameTurn(player.getId()));
                     }
                 }
-                gameManager.getGame().setTurnVector(turn);
+                gameManager.getGame().setTurnVector(artyTurns);
                 gameManager.getGame().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
@@ -253,8 +236,7 @@ public class TWPhasePreparationManager {
                 gameManager.getGame().addReports(gameManager.getvPhaseReport());
                 // Before we send the full entities packet we need to loop
                 // through the fighters in squadrons and damage them.
-                for (Iterator<Entity> ents = gameManager.getGame().getEntities(); ents.hasNext(); ) {
-                    Entity entity = ents.next();
+                for (Entity entity : gameManager.getGame().getEntitiesVector()) {
                     if ((entity.isFighter()) && !(entity instanceof FighterSquadron)) {
                         if (entity.isPartOfFighterSquadron() || entity.isCapitalFighter()) {
                             ((IAero) entity).doDisbandDamage();

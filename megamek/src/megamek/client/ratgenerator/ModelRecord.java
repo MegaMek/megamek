@@ -506,7 +506,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Check for use against airborne targets. Ignore small craft, DropShips, and other
                 // large space craft.
                 if (unitType < UnitType.SMALL_CRAFT) {
-                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) *
+                    flakBV += getFlakBVModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
                 }
 
@@ -541,7 +541,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 // already high enough.
                 if (apRating < apThreshold &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
-                    apRating += getAPRating(eq);
+                    apRating += getAPRating((WeaponType) eq);
                 }
 
                 // Total up BV for weapons that require ammo. Streak-type missile systems get a
@@ -570,14 +570,14 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Total up BV for weapons capable of attacking at the longest ranges or using
                 // indirect fire. Ignore small craft, DropShips, and other space craft.
                 if (unitType < UnitType.SMALL_CRAFT) {
-                    longRangeBV += getLongRangeModifier(eq) * eq.getBV(null) *
+                    longRangeBV += getLongRangeModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
                 // DropShips, and other space craft. Also skip anti-Mech attacks.
                 if (unitType < UnitType.SMALL_CRAFT) {
-                    shortRangeBV += getShortRangeModifier(eq) * eq.getBV(null) *
+                    shortRangeBV += getShortRangeModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
                 }
 
@@ -915,7 +915,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param checkWeapon   weapon to check
      * @return              Relative value from zero (not useful) to 1
      */
-    private double getFlakBVModifier(EquipmentType checkWeapon) {
+    private double getFlakBVModifier(WeaponType checkWeapon) {
 
         double veryEffective = 1.0;
         double somewhatEffective = 0.5;
@@ -925,12 +925,12 @@ public class ModelRecord extends AbstractUnitRecord {
         // Use a limited version for checking air-to-air capability, including potential for
         // thresholding heavily armored targets
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((Weapon) checkWeapon).getAmmoType() == AmmoType.T_AC_LBX ||
-                    ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_HAG ||
-                    ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_SBGAUSS) {
+            if (checkWeapon.getAmmoType() == AmmoType.T_AC_LBX ||
+                    checkWeapon.getAmmoType() == AmmoType.T_HAG ||
+                    checkWeapon.getAmmoType() == AmmoType.T_SBGAUSS) {
                 return veryEffective;
-            } else if (((WeaponType) checkWeapon).getMedAV() >= 10 ||
-                    ((WeaponType) checkWeapon).getShortAV() >= 15) {
+            } else if (checkWeapon.getMedAV() >= 10 ||
+                    checkWeapon.getShortAV() >= 15) {
                 return somewhatEffective;
             } else {
                 return ineffective;
@@ -940,17 +940,17 @@ public class ModelRecord extends AbstractUnitRecord {
         if (checkWeapon instanceof ArtilleryWeapon) {
             return somewhatEffective;
         }
-        if (((Weapon) checkWeapon).getAmmoType() == AmmoType.T_AC_LBX ||
-                ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_HAG ||
-                ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_SBGAUSS ||
+        if (checkWeapon.getAmmoType() == AmmoType.T_AC_LBX ||
+                checkWeapon.getAmmoType() == AmmoType.T_HAG ||
+                checkWeapon.getAmmoType() == AmmoType.T_SBGAUSS ||
                 checkWeapon instanceof InfantrySupportMk2PortableAAWeapon) {
             return veryEffective;
         } else if (checkWeapon instanceof InfantryWeapon ||
                 checkWeapon instanceof RLWeapon) {
             return ineffective;
-        } else if (((WeaponType) checkWeapon).getLongRange() >= 16) {
+        } else if (checkWeapon.getLongRange() >= 16) {
             return somewhatEffective;
-        } else if (((WeaponType) checkWeapon).getMediumRange() >= 8) {
+        } else if (checkWeapon.getMediumRange() >= 8) {
             return notEffective;
         }
 
@@ -962,7 +962,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param checkWeapon  Weapon to check
      * @return             Relative value, 0 is ineffective, higher is more effective
      */
-    private int getAPRating(EquipmentType checkWeapon) {
+    private int getAPRating(WeaponType checkWeapon) {
         int extremelyEffective = 6;
         int veryEffective = 4;
         int somewhatEffective = 2;
@@ -1014,7 +1014,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param checkWeapon   Weapon to check
      * @return   between zero (not a long ranged weapon) and 1
      */
-    private double getLongRangeModifier(EquipmentType checkWeapon) {
+    private double getLongRangeModifier(WeaponType checkWeapon) {
 
         double fullRange = 1.0;
         double partialRange = 0.8;
@@ -1022,8 +1022,8 @@ public class ModelRecord extends AbstractUnitRecord {
         double shortRange = 0.0;
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((WeaponType) checkWeapon).getExtAV() > 0 ||
-                    ((WeaponType) checkWeapon).getLongAV() > 0 ||
+            if (checkWeapon.getExtAV() > 0 ||
+                    checkWeapon.getLongAV() > 0 ||
                     checkWeapon instanceof MMLWeapon ||
                     checkWeapon instanceof ATMWeapon) {
                 return fullRange;
@@ -1032,19 +1032,19 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         }
 
-        boolean isIndirect = ((WeaponType) checkWeapon).hasIndirectFire();
-        if (((WeaponType) checkWeapon).getLongRange() >= 20 ||
+        boolean isIndirect = checkWeapon.hasIndirectFire();
+        if (checkWeapon.getLongRange() >= 20 ||
                 checkWeapon instanceof ArtilleryWeapon ||
                 checkWeapon instanceof MMLWeapon ||
                 checkWeapon instanceof ATMWeapon) {
             return fullRange;
-        } else if (((WeaponType) checkWeapon).getMediumRange() >= 14) {
+        } else if (checkWeapon.getMediumRange() >= 14) {
             if (isIndirect) {
                 return fullRange;
             } else {
                 return partialRange;
             }
-        } else if (((WeaponType) checkWeapon).getMediumRange() >= 12) {
+        } else if (checkWeapon.getMediumRange() >= 12) {
             if (isIndirect) {
                 return partialRange;
             } else {
@@ -1062,40 +1062,40 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param checkWeapon   Weapon to check
      * @return   between zero (not a short ranged weapon) and 1
      */
-    private double getShortRangeModifier (EquipmentType checkWeapon) {
+    private double getShortRangeModifier (WeaponType checkWeapon) {
 
         double shortRange = 1.0;
         double mediumRange = 0.6;
         double longRange = 0.0;
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((WeaponType) checkWeapon).getMedAV() == 0 ||
+            if (checkWeapon.getMedAV() == 0 ||
                     checkWeapon instanceof MMLWeapon ||
                     checkWeapon instanceof ATMWeapon) {
                 return shortRange;
-            } else if (((WeaponType) checkWeapon).getLongAV() == 0) {
+            } else if (checkWeapon.getLongAV() == 0) {
                 return mediumRange;
             } else {
                 return longRange;
             }
         }
 
-        if (((WeaponType) checkWeapon).getMinimumRange() <= 0)
+        if (checkWeapon.getMinimumRange() <= 0)
         {
             if (checkWeapon instanceof InfantryWeapon) {
-                if (((WeaponType) checkWeapon).getLongRange() <= 6) {
+                if (checkWeapon.getLongRange() <= 6) {
                     return shortRange;
-                } else if (((WeaponType) checkWeapon).getLongRange() <= 12) {
+                } else if (checkWeapon.getLongRange() <= 12) {
                     return mediumRange;
                 }
             }
-            if (((WeaponType) checkWeapon).getLongRange() <= 15 ||
+            if (checkWeapon.getLongRange() <= 15 ||
                     checkWeapon instanceof MMLWeapon ||
                     checkWeapon instanceof ATMWeapon) {
                 return shortRange;
             }
-        } else if (((WeaponType) checkWeapon).getMinimumRange() <= 3) {
-            if (((WeaponType) checkWeapon).getLongRange() <= 15) {
+        } else if (checkWeapon.getMinimumRange() <= 3) {
+            if (checkWeapon.getLongRange() <= 15) {
                 return mediumRange;
             }
         }

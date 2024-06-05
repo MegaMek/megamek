@@ -16,12 +16,27 @@ package megamek.client.ratgenerator;
 import megamek.common.*;
 import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.battlearmor.BAFlamerWeapon;
+import megamek.common.weapons.battlearmor.BAMGWeapon;
+import megamek.common.weapons.battlearmor.CLBAMGBearhunterSuperheavy;
+import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.flamers.FlamerWeapon;
+import megamek.common.weapons.gaussrifles.CLAPGaussRifle;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.infantry.InfantrySupportMk2PortableAAWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.lasers.CLPulseLaserSmall;
+import megamek.common.weapons.lasers.ISPulseLaserSmall;
+import megamek.common.weapons.lrms.StreakLRMWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
+import megamek.common.weapons.missiles.RLWeapon;
+import megamek.common.weapons.mortars.MekMortarWeapon;
+import megamek.common.weapons.ppc.CLPlasmaCannon;
+import megamek.common.weapons.ppc.ISPlasmaRifle;
 import megamek.common.weapons.srms.SRMWeapon;
+import megamek.common.weapons.srms.StreakSRMWeapon;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -506,9 +521,9 @@ public class ModelRecord extends AbstractUnitRecord {
                 if (!incendiary &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
                     if (eq instanceof FlamerWeapon ||
-                            eq instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon ||
-                            eq instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
-                            eq instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
+                            eq instanceof BAFlamerWeapon ||
+                            eq instanceof ISPlasmaRifle ||
+                            eq instanceof CLPlasmaCannon) {
                         incendiary = true;
                     }
                     // Some missile types are capable of being loaded with infernos, which are
@@ -533,12 +548,12 @@ public class ModelRecord extends AbstractUnitRecord {
                 // discount. Ignore small craft, DropShips, and large space craft. Ignore infantry
                 // weapons except for field guns.
                 if (unitType < UnitType.SMALL_CRAFT &&
-                        ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA &&
+                        ((WeaponType) eq).getAmmoType() > AmmoType.T_NA &&
                         !(eq instanceof InfantryWeapon)) {
                     double ammoFactor = 1.0;
 
-                    if (eq instanceof megamek.common.weapons.srms.StreakSRMWeapon ||
-                            eq instanceof megamek.common.weapons.lrms.StreakLRMWeapon ||
+                    if (eq instanceof StreakSRMWeapon ||
+                            eq instanceof StreakLRMWeapon ||
                             ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
                         ammoFactor = 0.4;
                     }
@@ -928,10 +943,10 @@ public class ModelRecord extends AbstractUnitRecord {
         if (((Weapon) checkWeapon).getAmmoType() == AmmoType.T_AC_LBX ||
                 ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_HAG ||
                 ((Weapon) checkWeapon).getAmmoType() == AmmoType.T_SBGAUSS ||
-                checkWeapon instanceof megamek.common.weapons.infantry.InfantrySupportMk2PortableAAWeapon) {
+                checkWeapon instanceof InfantrySupportMk2PortableAAWeapon) {
             return veryEffective;
         } else if (checkWeapon instanceof InfantryWeapon ||
-                checkWeapon instanceof megamek.common.weapons.missiles.RLWeapon) {
+                checkWeapon instanceof RLWeapon) {
             return ineffective;
         } else if (((WeaponType) checkWeapon).getLongRange() >= 16) {
             return somewhatEffective;
@@ -965,29 +980,29 @@ public class ModelRecord extends AbstractUnitRecord {
 
         if (checkWeapon instanceof InfantryWeapon) {
             return notEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
+        } else if (checkWeapon instanceof BAMGWeapon) {
             return extremelyEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon) {
+        } else if (checkWeapon instanceof BAFlamerWeapon) {
             return extremelyEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.gaussrifles.GaussWeapon) {
-            if (checkWeapon instanceof megamek.common.weapons.gaussrifles.CLAPGaussRifle) {
+        } else if (checkWeapon instanceof GaussWeapon) {
+            if (checkWeapon instanceof CLAPGaussRifle) {
                 return veryEffective;
             } else {
                 return ineffective;
             }
-        } else if (checkWeapon instanceof megamek.common.weapons.battlearmor.CLBAMGBearhunterSuperheavy) {
+        } else if (checkWeapon instanceof CLBAMGBearhunterSuperheavy) {
             return extremelyEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
-                checkWeapon instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
+        } else if (checkWeapon instanceof ISPlasmaRifle ||
+                checkWeapon instanceof CLPlasmaCannon) {
             return veryEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.lasers.ISPulseLaserSmall ||
-                    checkWeapon instanceof megamek.common.weapons.lasers.CLPulseLaserSmall) {
+        } else if (checkWeapon instanceof ISPulseLaserSmall ||
+                    checkWeapon instanceof CLPulseLaserSmall) {
             return veryEffective;
         }
 
-        if (checkWeapon instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
+        if (checkWeapon instanceof BPodWeapon) {
             return notEffective;
-        } else if (checkWeapon instanceof megamek.common.weapons.mortars.MekMortarWeapon) {
+        } else if (checkWeapon instanceof MekMortarWeapon) {
             return notEffective;
         }
 

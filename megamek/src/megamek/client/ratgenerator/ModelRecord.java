@@ -1047,7 +1047,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param checkWeapon   Weapon to check
      * @return   between zero (not a short ranged weapon) and 1
      */
-    private  double getShortRangeModifier (EquipmentType checkWeapon) {
+    private double getShortRangeModifier (EquipmentType checkWeapon) {
 
         double shortRange = 1.0;
         double mediumRange = 0.6;
@@ -1068,7 +1068,7 @@ public class ModelRecord extends AbstractUnitRecord {
         if (((WeaponType) checkWeapon).getMinimumRange() <= 0)
         {
             if (checkWeapon instanceof InfantryWeapon) {
-                if (((WeaponType) checkWeapon).getLongRange() <= 6){
+                if (((WeaponType) checkWeapon).getLongRange() <= 6) {
                     return shortRange;
                 } else if (((WeaponType) checkWeapon).getLongRange() <= 12) {
                     return mediumRange;

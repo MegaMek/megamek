@@ -80,7 +80,6 @@ public class ModelRecord extends AbstractUnitRecord {
     private boolean unarmed;
 
     private int speed;
-    private boolean canJump;
 
     private boolean mechanizedBA;
     private boolean magClamp;
@@ -210,7 +209,7 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public boolean getJump() {
-        return canJump;
+        return mechSummary.getJumpMp() > 0;
     }
 
     /**
@@ -368,7 +367,6 @@ public class ModelRecord extends AbstractUnitRecord {
         if (unitType <= UnitType.PROTOMEK &&
                 unitData.getJumpMp() > 0) {
             int jumpDistance = unitData.getJumpMp();
-            canJump = true;
             if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
                 speed = Math.max(speed, jumpDistance);
             } else {

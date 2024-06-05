@@ -204,7 +204,14 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     /**
-     * Proportion of total weapons BV that is best at long range
+     * Proportion of total weapons BV that is capable of attacking targets at longer ranges.
+     * Units with values of 0.75 or higher are mostly armed with weapons that can hit targets at
+     * 15+ hexes, have a minimum range, and potentially fire indirectly in ground combat; or
+     * reach long/extreme range in air or space combat.
+     * Complementary to getSRProportion() - where one is high and the other is low, the unit is
+     * specialized for that range bracket. If both values are similar the unit is well balanced
+     * between long and short ranged capabilities.
+     * TODO: rename for consistency and clarity
      * @return   between zero (none) and 1.0 (all weapons)
      */
     public double getLongRange() {
@@ -212,8 +219,14 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     /**
-     * Proportion of total weapons BV that is best at short range
-     * @return   between zero (none) and 1.o (all weapons)
+     * Proportion of total weapons BV that is limited to attacking targets at close range.
+     * Units with values of 0.75 or higher are mostly armed with weapons that have a long range
+     * of less than 12 hexes and do not have a minimum range in ground combat, or are limited to
+     * short range in air/space combat.
+     * Complementary to getLongRange() - where one is high and the other is low, the unit is
+     * specialized for that range bracket. If both values are similar the unit is well balanced
+     * between long and short ranged capabilities.
+     * @return   between zero (none) and 1.0 (all weapons)
      */
     public double getSRProportion() {
         return srBVProportion;

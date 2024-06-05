@@ -72,7 +72,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             String sTerrain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
-            if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
+            if ((selectedEntity != null) && (selectedEntity.getPosition() != null) && !selectedEntity.isOffBoard()) {
                 int distance = selectedEntity.getPosition().distance(coords);
                 if (distance == 1) {
                     sTerrain += Messages.getString("BoardView1.Tooltip.Distance1");

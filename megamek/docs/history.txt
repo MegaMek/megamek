@@ -57,6 +57,12 @@ MEGAMEK VERSION HISTORY:
 + Data: Fixes for #5514, #5469, #5460, #5223, #5194 (again), #5162
 + Fix #5504: Aeros that do not require fuel should now (finally) be able to move and not show warnings
 + Fix #5523: Fighter Squadrons are able to fire ammo weapons again
++ PR #5553: (Possible) fix to dedicated server loading issues (related to #5539)
++ Fix #5547: Fixing a bug coming from a duplicate artillery overlay added to the game map
++ Fix #5548: Fixing a bug trying to get line of sight issues for the tooltip
++ Fix #5542: Fixing the game not progressing to a round that has reinforcements
++ PR #5550: The default state of Edge usage is now "true" (also in MHQ)
++ PR #5549: ModelRecord unit analysis has been upgraded and expanded
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

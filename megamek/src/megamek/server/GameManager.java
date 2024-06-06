@@ -1865,10 +1865,8 @@ public class GameManager extends AbstractGameManager {
                 // commander initiative bonus. Now that initiative is rolled, clear the flag.
                 game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
-                if (!game.shouldDeployThisRound()) {
-                    incrementAndSendGameRound();
-                    asService.performRollingAutosave(this);
-                }
+                incrementAndSendGameRound();
+                asService.performRollingAutosave(this);
 
                 // setIneligible(phase);
                 determineTurnOrder(phase);

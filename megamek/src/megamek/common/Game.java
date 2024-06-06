@@ -1319,7 +1319,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public synchronized void reset() {
         uuid = UUID.randomUUID();
 
-        currentRound = 0;
+        currentRound = -1;
 
         inGameObjects.clear();
         entityPosLookup.clear();

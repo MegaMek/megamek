@@ -71,7 +71,10 @@ public abstract class AbstractGame implements IGame {
      */
     private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
 
-    protected int currentRound = 0;
+    /**
+     * The round counter. It gets incremented before initiative; round 0 is initial deployment only.
+     */
+    protected int currentRound = -1;
 
     @Override
     public Forces getForces() {

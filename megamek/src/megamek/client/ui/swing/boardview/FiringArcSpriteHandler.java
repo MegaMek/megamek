@@ -57,6 +57,32 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         game = clientGUI.getClient().getGame();
     }
 
+    public void update(Entity entity, WeaponMounted weapon, MovePath movePath) {
+        firingEntity = entity;
+        firingPosition = movePath.getFinalCoords();
+        isUnderWater = testUnderWater(movePath);
+        int weaponId = entity.getEquipmentNum(weapon);
+        arc = firingEntity.getWeaponArc(weaponId);
+        updateFacing(weapon, movePath.getFinalFacing());
+        findRanges(weapon);
+        renewSprites();
+    }
+
+    public void update(Entity entity, WeaponMounted weapon) {
+        update(entity, weapon, entity.getPosition());
+    }
+
+    public void update(Entity entity, WeaponMounted weapon, Coords position) {
+        firingEntity = entity;
+        firingPosition = position;
+        isUnderWater = testUnderWater();
+        int weaponId = entity.getEquipmentNum(weapon);
+        arc = firingEntity.getWeaponArc(weaponId);
+        updateFacing(weapon);
+        findRanges(weapon);
+        renewSprites();
+    }
+
     /**
      * Updates the facing that is used for aligning the field of fire.
      * Does not change the assumed unit, position weapon and arc.
@@ -99,16 +125,16 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * @param firingEntity the unit carrying the weapon to consider
      * @param weapon the weapon to consider
      */
-    public void updateSelectedWeapon(Entity firingEntity, WeaponMounted weapon) {
-        this.firingEntity = firingEntity;
-        arc = firingEntity.getWeaponArc(clientGUI.getSelectedWeaponId());
-        findRanges(weapon);
-        if (firingPosition == null) {
-            firingPosition = firingEntity.getPosition();
-            updateFacing(weapon);
-        }
-        renewSprites();
-    }
+//    public void updateSelectedWeapon(Entity firingEntity, WeaponMounted weapon) {
+//        this.firingEntity = firingEntity;
+//        arc = firingEntity.getWeaponArc(clientGUI.getSelectedWeaponId());
+//        findRanges(weapon);
+//        if (firingPosition == null) {
+//            firingPosition = firingEntity.getPosition();
+//            updateFacing(weapon);
+//        }
+//        renewSprites();
+//    }
 
     /**
      * Clears the sprites and resets the cached values so no new sprites are drawn at this time. As this
@@ -129,7 +155,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     public void renewSprites() {
         clear();
         if (!GUIP.getShowFieldOfFire() || (firingEntity == null) || (firingPosition == null)
-                || firingEntity.isOffBoard() || !clientGUI.hasSelectedWeapon()) {
+                || firingEntity.isOffBoard() || clientGUI.getDisplayedWeapon().isEmpty()) {
             return;
         }
 
@@ -258,6 +284,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     private void updateFacing(WeaponMounted weapon) {
+        if (firingEntity == null) {
+            return;
+        }
         facing = firingEntity.getFacing();
         if (game.getPhase().isFiring()) {
             if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
@@ -277,6 +306,32 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 facing = firingEntity.getSecondaryFacing();
             }
         }
+    }
+
+    private void updateFacing(WeaponMounted weapon, int assumedFacing) {
+        if (firingEntity == null) {
+            return;
+        }
+        facing = firingEntity.getFacing();
+        if (game.getPhase().isFiring()) {
+            if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
+                facing = firingEntity.getSecondaryFacing();
+            }
+            // If this is mech with turrets, check to see if the weapon is on a turret.
+            if ((firingEntity instanceof Mech) && (weapon.isMechTurretMounted())) {
+                // facing is currently adjusted for mek torso twist and facing, adjust for turret facing.
+                facing = (weapon.getFacing() + facing) % 6;
+            }
+            // If this is a tank with dual turrets, check to see if the weapon is a second turret.
+            if ((firingEntity instanceof Tank) && (weapon.getLocation() == ((Tank) firingEntity).getLocTurret2())) {
+                facing = ((Tank) firingEntity).getDualTurretFacing();
+            }
+        } else if (game.getPhase().isTargeting()) {
+            if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
+                facing = firingEntity.getSecondaryFacing();
+            }
+        }
+        facing = (assumedFacing + facing - firingEntity.getFacing() + 6) % 6;
     }
 
     private void findRanges(WeaponMounted weapon) {
@@ -394,15 +449,44 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * @param movePath The movement path that is considered for the selected unit
      */
     private boolean testUnderWater(MovePath movePath) {
-        if ((firingEntity == null) || (movePath == null) || !clientGUI.hasSelectedWeapon()) {
+        if ((firingEntity == null) || (movePath == null) || clientGUI.getDisplayedWeapon().isEmpty()) {
             return false;
         }
 
-        int location = clientGUI.getSelectedWeapon().getLocation();
+        int location = clientGUI.getDisplayedWeapon().get().getLocation();
         Hex hex = game.getBoard().getHex(movePath.getFinalCoords());
+        if (hex == null) {
+            return false;
+        }
         int waterDepth = hex.terrainLevel(Terrains.WATER);
 
         if ((waterDepth > 0) && !movePath.isJumping() && (movePath.getFinalElevation() < 0)) {
+            if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {
+                return firingEntity.locationIsLeg(location);
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return True when, for the present firingEntity and firingPosition, the currently selected weapon
+     * ends up being underwater.
+     */
+    private boolean testUnderWater() {
+        if ((firingEntity == null) || clientGUI.getDisplayedWeapon().isEmpty() || (firingPosition == null)) {
+            return false;
+        }
+
+        int location = clientGUI.getDisplayedWeapon().get().getLocation();
+        Hex hex = game.getBoard().getHex(firingPosition);
+        if (hex == null) {
+            return false;
+        }
+        int waterDepth = hex.terrainLevel(Terrains.WATER);
+
+        if ((waterDepth > 0) && (firingEntity.getElevation() < 0)) {
             if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {
                 return firingEntity.locationIsLeg(location);
             } else {

@@ -85,8 +85,6 @@ import java.util.*;
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, IPreferenceChangeListener, MechDisplayListener {
     // region Variable Declarations
-    public static final int WEAPON_NONE = -1;
-
     // region action commands
     // region main menu
     // Note: anything located in menu bars is not located here but in their menu
@@ -241,7 +239,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private JPanel panA1;
     private JPanel panA2;
 
-    public UnitDisplay unitDisplay;
+    private final UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
 
     public ForceDisplayPanel forceDisplayPanel;
@@ -316,16 +314,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private final Map<String, JComponent> phaseComponents = new HashMap<>();
 
     /**
-     * Current Selected entity
-     */
-    private int selectedEntityNum = Entity.NONE;
-
-    /**
-     * The currently selected weapon on the currently selected entity (if any), WEAPON_NONE otherwise
-     */
-    private int selectedWeapon = WEAPON_NONE;
-
-    /**
      * Flag that indicates whether hotkeys should be ignored or not. This is
      * used for disabling hot keys when various dialogs are displayed.
      */
@@ -363,6 +351,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
         audioService.loadSoundFiles();
+
+        unitDisplay = new UnitDisplay(this, controller);
     }
 
     public BoardView getBoardView() {
@@ -371,10 +361,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public UnitDisplay getUnitDisplay() {
         return unitDisplay;
-    }
-
-    public void setUnitDisplay(final UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
     }
 
     public UnitDisplayDialog getUnitDisplayDialog() {
@@ -549,8 +535,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        setUnitDisplay(new UnitDisplay(this, controller));
-        getUnitDisplay().addMechDisplayListener(this);
+        unitDisplay.addMechDisplayListener(this);
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
@@ -2543,18 +2528,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * @return Returns the selectedEntityNum.
-     */
-    public int getSelectedEntityNum() {
-        return selectedEntityNum;
-    }
-
-    /**
      * @param selectedEntityNum The selectedEntityNum to set.
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
-        this.selectedEntityNum = selectedEntityNum;
-        clearSelectedWeapon();
         bv.selectEntity(client.getGame().getEntity(selectedEntityNum));
     }
 
@@ -2905,42 +2881,52 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         firingSolutionSpriteHandler.showFiringSolutions(entity);
     }
 
+    public JPanel getMainPanel() {
+        return clientGuiPanel;
+    }
+
+    /**
+     * @return The unit currently shown in the Unit Display. Note: This can be a another unit than the one that
+     * is selected to move or fire.
+     */
+    @Nullable public Entity getDisplayedUnit() {
+        return unitDisplay.getCurrentEntity();
+    }
+
+    /**
+     * Returns the weapon that is currently selected in the Unit Display. The selection can be void for various
+     * reasons, therefore this returns it as an Optional.
+     * Note: this method does some additional checks to avoid bugs where the weapon of the same ID on the unit
+     * is different from the selected weapon or is not even present on the unit. Also, the displayed unit
+     * is checked to be an active unit (i.e. can be found in game.getEntity()). It will log an error and return
+     * null otherwise. Using the returned weapon should be fairly safe.
+     *
+     * @return The weapon that is currently selected in the Unit Display, if any
+     */
+    public Optional<WeaponMounted> getDisplayedWeapon() {
+        WeaponMounted weapon = unitDisplay.wPan.getSelectedWeapon();
+        if ((getDisplayedUnit() == null) || (weapon == null)
+                || (client.getGame().getEntity(getDisplayedUnit().getId()) == null)) {
+            return Optional.empty();
+        }
+        Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplay.wPan.getSelectedWeaponNum());
+        if (weaponOnUnit == weapon) {
+            return Optional.of(weapon);
+        } else {
+            LogManager.getLogger().error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",
+                    unitDisplay.wPan.getSelectedWeaponNum(), getDisplayedUnit());
+            return Optional.empty();
+        }
+    }
+
     @Override
     public void weaponSelected(MechDisplayEvent b) {
         setSelectedEntityNum(b.getEntityId());
-        setSelectedWeapon(b.getWeaponId());
-        firingArcSpriteHandler.updateSelectedWeapon(b.getEntity(), getSelectedWeapon());
-    }
-
-    private void setSelectedWeapon(int equipmentNumber) {
-        selectedWeapon = equipmentNumber;
-    }
-
-    private void clearSelectedWeapon() {
-        selectedWeapon = WEAPON_NONE;
-    }
-
-    public int getSelectedWeaponId() {
-        return selectedWeapon;
-    }
-
-    @Nullable
-    public WeaponMounted getSelectedWeapon() {
-        return hasSelectedWeapon() ? (WeaponMounted) getSelectedUnit().getEquipment(selectedWeapon) : null;
-    }
-
-    @Nullable
-    @Override
-    public Entity getSelectedUnit() {
-        return client.getGame().getEntity(selectedEntityNum);
-    }
-
-    public boolean hasSelectedWeapon() {
-        return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
-    }
-
-    public JPanel getMainPanel() {
-        return clientGuiPanel;
+        if (getDisplayedWeapon().isPresent()) {
+            firingArcSpriteHandler.update(b.getEntity(), getDisplayedWeapon().get());
+        } else {
+            clearFieldOfFire();
+        }
     }
 
     /**
@@ -2951,10 +2937,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * @param entity The unit to take the facing from if it is the currently viewed unit
      * @param movePath A planned movement path to take the end position from
      */
-    public void setFiringArcPosition(Entity entity, MovePath movePath) {
-        // Only update when the selected weapon is on the unit that's moving
-        if (entity.getId() == getSelectedEntityNum()) {
-            firingArcSpriteHandler.updatePosition(movePath);
+    public void updateFiringArc(Entity entity, MovePath movePath) {
+        // Only update when the unit that's moving is shown in the unit display
+        if ((entity != null) && entity.equals(getDisplayedUnit()) && getDisplayedWeapon().isPresent()) {
+            firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), movePath);
         }
     }
 
@@ -2964,27 +2950,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * not the one for which a weapon field of fire is currently shown).
      *
      * @param entity The unit to take the facing from if it is the currently viewed unit
-     * @param coords The position to center the field of fire on
      */
-    public void setFiringArcPosition(Entity entity, Coords coords) {
-        // Only update when the selected weapon is on the unit that's changing position
-        if (entity.getId() == getSelectedEntityNum()) {
-            firingArcSpriteHandler.updatePosition(coords);
-        }
-    }
-
-    /**
-     * Updates the facing used for showing the field of fire to either the basic facing of the given unit
-     * or the secondary facing, depending on the currently selected weapon.
-     * This method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown) or if there is no weapon selected.
-     *
-     * @param entity The unit to take the facing from if it is the currently viewed unit
-     */
-    public void setFiringArcFacing(Entity entity) {
-        // Only update when the selected weapon is on the unit that's changing its facing
-        if ((entity.getId() == getSelectedEntityNum()) && hasSelectedWeapon()) {
-            firingArcSpriteHandler.updateWeaponFacing(getSelectedWeapon());
+    public void updateFiringArc(Entity entity) {
+        // Only update when the unit that's updated is shown in the unit display
+        if ((entity != null) && entity.equals(getDisplayedUnit()) && getDisplayedWeapon().isPresent()) {
+            firingArcSpriteHandler.update(entity, getDisplayedWeapon().get());
         }
     }
 

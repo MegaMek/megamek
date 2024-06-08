@@ -444,7 +444,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity currentEntity = ce();
         if (currentEntity != null) {
             computeMovementEnvelope(currentEntity);
-            clientgui.setFiringArcPosition(currentEntity, currentEntity.getPosition());
+            clientgui.updateFiringArc(currentEntity);
         }
         updateMove();
     }
@@ -1226,7 +1226,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
-        clientgui.setFiringArcPosition(ce, cmd);
+        clientgui.updateFiringArc(ce, cmd);
         clientgui.showSensorRanges(ce, cmd.getFinalCoords());
         computeCFWarningHexes(ce);
 
@@ -1314,7 +1314,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().select(cmd.getFinalCoords());
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
-            clientgui.setFiringArcPosition(entity, cmd);
+            clientgui.updateFiringArc(entity, cmd);
             clientgui.showSensorRanges(entity, cmd.getFinalCoords());
 
             //FIXME what is this
@@ -1827,7 +1827,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
-        clientgui.setFiringArcPosition(ce(), cmd);
+        clientgui.updateFiringArc(ce(), cmd);
     }
 
     //

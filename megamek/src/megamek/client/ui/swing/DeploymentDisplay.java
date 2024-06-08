@@ -226,7 +226,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.getUnitDisplay().displayEntity(ce());
             clientgui.getUnitDisplay().showPanel("movement");
-            clientgui.setFiringArcPosition(ce(), ce().getPosition());
+            clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
         } else {
@@ -515,7 +515,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.getBoardView().redrawEntity(ce());
-            clientgui.setFiringArcFacing(ce());
+            clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             turnMode = false;
         } else if (ce().isBoardProhibited(board.getType())) {
@@ -581,7 +581,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setPosition(moveto);
 
             clientgui.getBoardView().redrawEntity(ce());
-            clientgui.setFiringArcPosition(ce(), moveto);
+            clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);

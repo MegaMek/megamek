@@ -1697,7 +1697,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clearAttacks();
             addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
-            clientgui.setFiringArcFacing(ce());
+            clientgui.updateFiringArc(ce());
             updateForNewAction();
         }
     }

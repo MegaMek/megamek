@@ -1070,7 +1070,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         g2.setTransform(saveTransform);
         
         // Create a colored circle if this is the selected unit
-        Entity se = (clientGui == null) ? null : game.getEntity(clientGui.getSelectedEntityNum());
+        Entity se = (clientGui == null) ? null : clientGui.getDisplayedUnit();
         
         if (entity == se) {
             int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;

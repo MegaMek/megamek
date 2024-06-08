@@ -63,6 +63,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #5542: Fixing the game not progressing to a round that has reinforcements
 + PR #5550: The default state of Edge usage is now "true" (also in MHQ)
 + PR #5549: ModelRecord unit analysis has been upgraded and expanded
++ Fix #5556: Fixing Nameplates
++ Fix #5394: Fixing a logo file name
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

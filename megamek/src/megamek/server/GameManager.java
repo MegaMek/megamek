@@ -145,6 +145,7 @@ public class GameManager extends AbstractGameManager {
     private final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
     public GameManager() {
+        EquipmentType.initializeTypes();
         game.getOptions().initialize();
         game.getOptions().loadOptions();
 

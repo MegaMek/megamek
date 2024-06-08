@@ -508,8 +508,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             cb2 = new ChatterBox2(this, bv, controller);
             bv.addOverlay(cb2);
             bv.getPanel().addKeyListener(cb2);
-            offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(new UnitOverview(this));
+            offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(offBoardOverlay);
 
             boardViewsContainer.setName(CG_BOARDVIEW);
@@ -543,7 +543,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         layoutFrame();
         menuBar.addActionListener(this);
-        offBoardOverlay = new OffBoardTargetOverlay(this);
 
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);

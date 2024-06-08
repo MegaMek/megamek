@@ -19,6 +19,12 @@
 
 package megamek.common;
 
+/**
+ * Enum of valid formatting styles, to use with MechView objects
+ * HTML: contains HTML markup
+ * Discord: Contains Discord markup and formatting
+ * None: plain text
+ */
 public enum ViewFormatting {
     HTML, NONE, DISCORD
 }

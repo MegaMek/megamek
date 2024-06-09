@@ -628,9 +628,15 @@ public class TeamLoadoutGenerator {
     public void reconfigureTeam(Game g, Team team, String faction, MunitionTree mt) {
         // configure team according to MunitionTree
         for (Player p: team.players()) {
+            ArrayList<Entity> aeros = new ArrayList<>();
             for (Entity e : g.getPlayerEntities(p, false)){
-                reconfigureEntity(e, mt, faction);
+                if (e.isAero()) {
+                    aeros.add(e);
+                } else {
+                    reconfigureEntity(e, mt, faction);
+                }
             }
+            populateAeroBombs(aeros, this.allowedYear, true);
         }
     }
 
@@ -686,6 +692,12 @@ public class TeamLoadoutGenerator {
         }
     }
     //endregion reconfigureEntity
+
+    //region reconfigureAero
+    public void reconfigureAero(Entity e, MunitionTree mt, String faction) {
+
+    }
+    //endregion reconfigureAero
 
     //region iterativelyLoadAmmo
     private void iterativelyLoadAmmo(

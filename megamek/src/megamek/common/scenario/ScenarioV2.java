@@ -99,7 +99,7 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public IGame createGame() throws IOException, ScenarioLoaderException {
-        LogManager.getLogger().info("Loading scenario from " + scenariofile);
+        LogManager.getLogger().info("Loading scenario from {}", scenariofile);
         IGame game = selectGameType();
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
@@ -119,6 +119,8 @@ public class ScenarioV2 implements Scenario {
             twGame.setVictoryContext(new HashMap<>());
             twGame.createVictoryConditions();
         }
+
+        // TODO: check the game for inconsistencies such as units outside board coordinates
         return game;
     }
 
@@ -230,6 +232,8 @@ public class ScenarioV2 implements Scenario {
                     ((SBFGame) game).addUnit(unit);
                 }
             }
+            // TODO: look at unit individual camo and see if it's a file in the scenario directory; the entity parsers
+            // cannot handle this as they don't know it's a scenario
         }
 
         return result;
@@ -241,7 +245,7 @@ public class ScenarioV2 implements Scenario {
         }
         JsonNode mapNode = node.get(MAP);
         // "map: Xyz.board" will directly load that board with no modifiers
-        if (!mapNode.textValue().isBlank()) {
+        if (!mapNode.isContainerNode()) {
             return loadBoard(mapNode.textValue());
         }
 

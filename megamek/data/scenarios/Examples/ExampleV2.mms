@@ -3,7 +3,7 @@
 #
 
 MMSVersion: 2                               # Required to be recognized as a Scenario file of this format
-name: Example Scenario V2                   # Required title of the scenario; displayed in the scenario chooser
+name: V2_test                   # Required title of the scenario; displayed in the scenario chooser
 gametype: SBF                               # default: TW; other values: AS, BF, SBF
 planet: Bellatrix                           # default: show no planet info
 
@@ -25,20 +25,37 @@ singleplayer: yes                           # default: yes; the first player is 
 
 # Game Map -------------------------------------------------------------------------------------------
 map:
-  boardcolumns: 2                           # a 2x1 map
-  boardrows: 1
+  boardcolumns: 2                           # a 2x1 map, default: 1
+  boardrows: 1                              # default: 1
   boards:
   - board1.board                            # all files are first searched relative to the scenario file, and
   - board2.board                            # if not found there, then relative to the appropriate data/... directory
 
 # OR for a single board:
-# board: theBoard.board
+# map: theBoard.board
 
 ## Directories to choose random boards from
 ## RandomDirs=Map Set 2,Map Set 3,Map Set 4,Map Set 5,Map Set 6,Map Set 7
 ## Maps can be specified by name.  The order is left-to-right, top-to-bottom
 ## Any unspecified boards will be set to RANDOM
 ## Maps=RANDOM,RANDOM
+
+# Multiple maps
+maps:
+  - boardcolumns: 2                           # a 2x1 map, default: 1
+    boardrows: 1                              # default: 1
+    boards:
+      - board1.board
+      - board2.board
+    id: 1
+  - type: lowaltitude
+    width: 65
+    height: 35
+  - type: space
+    width: 20
+    height: 20
+
+
 
 
 # Game Options -------------------------------------------------------------------------------------------
@@ -87,32 +104,61 @@ factions:
     camo: clans/wolf/Alpha Galaxy.jpg         # image file, relative to the scenario file, or in data/camos otherwise
                                               # use slashes
     units:
-    - include: Annihilator ANH-13.mmu
-      # at: [7, 4]                            # alternative way to indicate position
-      x: 7                                    # position, indicates that the unit is deployed
-      y: 4                                    # must have both x and y or neither
-      elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
-      altitude: 8                             # default: 5 for aero
-      status: prone, hidden                   # default: none; other values: shutdown, hulldown
-      offboard: N                             # default: not offboard; values: N, E, S, W
-      crew:                                   # default: unnamed 4/5 pilot
-        name: Cpt. Frederic Nguyen
-        piloting: 4
-        gunnery: 3
-    - type: ASElement                         # default: TW standard unit
-      fullname: Atlas AS7-D
-      x: 5
-      y: 3
-      reinforce: 2                            # default: deploy at start; here: reinforce at the start of round 2
-                                              # cannot be combined with a position
-      crew:
-        name: Cpt. Rhonda Snord
-        piloting: 4
-        gunnery: 3
+#    - include: Annihilator ANH-13.mmu
+      - fullname: Atlas AS7-D
+        # type: TW_UNIT                         # default: TW_UNIT other: ASElement
+        # pre-deployed:
+        at: [7, 4]                            # position 0704 (pre-deployed)
+  #      x: 7                                 # alternative way to give position
+  #      y: 4                                    # must have both x and y or neither
+        # NOT pre-deployed:
+        deploymentround: 2                    # default: deploy at start; here: reinforce at the start of round 2
+        # ---
+#        elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
+#        altitude: 8                             # default: 5 for aero
+        status: prone, hidden                   # default: none; values: shutdown, hulldown, prone, hidden
+        offboard: N                             # default: not offboard; values: N, E, S, W
+        crew:                                   # default: unnamed 4/5 pilot
+          name: Cpt. Frederic Nguyen
+          piloting: 4
+          gunnery: 3
+      - type: ASElement                         # default: TW standard unit
+        fullname: Atlas AS7-D
+        x: 5
+        y: 3
+                                                # cannot be combined with a position
+        crew:
+          name: Cpt. Rhonda Snord
+          piloting: 4
+          gunnery: 3
 
   - name: "Player B"
     home: "E"
-
+    units:
+      #    - include: Annihilator ANH-13.mmu
+      - fullname: Schrek PPC Carrier
+        type: TW_UNIT
+        at: [7, 4]                            # alternative way to indicate position
+        #      x: 7                                    # position, indicates that the unit is deployed
+        #      y: 4                                    # must have both x and y or neither
+        elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
+        altitude: 8                             # default: 5 for aero
+        status: prone, hidden                   # default: none; other values: shutdown, hulldown
+        offboard: N                             # default: not offboard; values: N, E, S, W
+        crew:                                   # default: unnamed 4/5 pilot
+          name: Cpt. Frederic Nguyen
+          piloting: 4
+          gunnery: 3
+      - type: ASElement                         # default: TW standard unit
+        fullname: Atlas AS7-D
+        x: 5
+        y: 3
+        reinforce: 2                            # default: deploy at start; here: reinforce at the start of round 2
+        # cannot be combined with a position
+        crew:
+          name: Cpt. Rhonda Snord
+          piloting: 4
+          gunnery: 3
 
 triggers:
   - message:

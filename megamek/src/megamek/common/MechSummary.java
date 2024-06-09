@@ -1328,6 +1328,27 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         }
     }
 
+    /**
+     * Loads and returns the entity for the given full name. If the entity cannot be loaded, the error is logged
+     * and null is returned. This is a shortcut for first loading the MechSummary using
+     * {@link MechSummaryCache#getMech(String)} and then {@link #loadEntity()}.
+     *
+     * @return The loaded entity or null in case of an error
+     */
+    public static @Nullable Entity loadEntity(String fullName) {
+        try {
+            MechSummary ms = MechSummaryCache.getInstance().getMech(fullName);
+            if (ms != null) {
+                return new MechFileParser(ms.sourceFile, ms.entryName).getEntity();
+            } else {
+                LogManager.getLogger().error("MechSummary entry not found for {}", fullName);
+            }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return getName();

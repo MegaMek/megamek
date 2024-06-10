@@ -1,8 +1,4 @@
-#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
-<BlockVersion>
-1
-</BlockVersion>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 VTOL
 </UnitType>
@@ -40,7 +36,7 @@ VTOL
 </motion_type>
 
 <transporters>
-cargobay:0.5:1:0::-1:0
+cargobay:0.5:1:1::-1:0
 </transporters>
 
 <cruiseMP>
@@ -70,7 +66,6 @@ cargobay:0.5:1:0::-1:0
 <Body Equipment>
 ISGuardianECMSuite
 BeagleActiveProbe
-Cargo:SIZE:0.5
 </Body Equipment>
 
 <Front Equipment>

@@ -6977,7 +6977,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 120000;
-        misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = false;
         misc.bv = 0;
         misc.rulesRefs = "288, TO";

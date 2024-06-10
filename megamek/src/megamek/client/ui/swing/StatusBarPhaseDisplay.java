@@ -102,7 +102,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
-        this.clientgui = cg;
+        clientgui = cg;
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
         getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
             @Override
@@ -159,7 +159,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected abstract void setButtonsTooltips();
 
     protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
-        String reuslt  = "";
+        String result  = "";
         String ttKey = keyPrefix + cmd + ".tooltip";
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
@@ -173,9 +173,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         }
         if (!toolTip.isEmpty()) {
             String b = "<BODY>" + toolTip + "</BODY>";
-            reuslt = "<HTML>" + b + "</HTML>";
+            result = "<HTML>" + b + "</HTML>";
         }
-        return reuslt;
+        return result;
     }
 
     /**

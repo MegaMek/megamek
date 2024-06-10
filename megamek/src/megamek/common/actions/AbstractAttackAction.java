@@ -220,4 +220,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         return (target == null) ? "Attacking Null Target with id " + getTargetId()
                 : "Attacking " + target.getDisplayName();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "; Target type/ID: " + targetType + "/" + targetId;
+    }
 }

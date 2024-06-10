@@ -99,7 +99,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.INFANTRY_FOOT_CAV, false);
         addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false);
 
-        // Unofficial      
+        // Unofficial
         addOption(adv, OptionsConstants.UNOFF_EI_IMPLANT, false);
         addOption(adv, OptionsConstants.UNOFF_GUNNERY_LASER, false);
         addOption(adv, OptionsConstants.UNOFF_GUNNERY_MISSILE, false);
@@ -116,34 +116,34 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, "edge", 0);
         /* different edge triggers */
         // Mech Triggers
-        addOption(edge, "edge_when_headhit", false);
-        addOption(edge, "edge_when_tac", false);
-        addOption(edge, "edge_when_ko", false);
-        addOption(edge, "edge_when_explosion", false);
-        addOption(edge, "edge_when_masc_fails", false);
+        addOption(edge, "edge_when_headhit", true);
+        addOption(edge, "edge_when_tac", true);
+        addOption(edge, "edge_when_ko", true);
+        addOption(edge, "edge_when_explosion", true);
+        addOption(edge, "edge_when_masc_fails", true);
         //Aero Triggers
-        addOption(edge, "edge_when_aero_alt_loss", false);
-        addOption(edge, "edge_when_aero_explosion", false);
-        addOption(edge, "edge_when_aero_ko", false);
-        addOption(edge, "edge_when_aero_lucky_crit", false);
-        addOption(edge, "edge_when_aero_nuke_crit", false);
-        addOption(edge, "edge_when_aero_unit_cargo_lost", false);
-        
+        addOption(edge, "edge_when_aero_alt_loss", true);
+        addOption(edge, "edge_when_aero_explosion", true);
+        addOption(edge, "edge_when_aero_ko", true);
+        addOption(edge, "edge_when_aero_lucky_crit", true);
+        addOption(edge, "edge_when_aero_nuke_crit", true);
+        addOption(edge, "edge_when_aero_unit_cargo_lost", true);
+
         addOption(edge, OptionsConstants.EDGE, 0);
-        // different edge triggers 
+        // different edge triggers
         //Mech Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_TAC, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_KO, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, false);
+        addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_TAC, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_KO, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, true);
         //Aero Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_KO, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, false);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, false);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_KO, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES);
@@ -151,7 +151,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_COMM_IMPLANT, false);
         //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false);
-        //TODO - -1 bonus when spotting for LRMs and moving through mines. 
+        //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false);
         addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false);
         addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false);
@@ -163,7 +163,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false);
         addOption(md, OptionsConstants.MD_DERMAL_CAMO_ARMOR, false);
         addOption(md, OptionsConstants.MD_TSM_IMPLANT, false);
-        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false);  
+        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false);
         addOption(md, OptionsConstants.MD_VDNI, false);
         addOption(md, OptionsConstants.MD_BVDNI, false);
         addOption(md, OptionsConstants.MD_PROTO_DNI, false);
@@ -176,13 +176,13 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_GLIDER, false);
         addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
         addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
-        
+
         //TODO - Prototype DNI IO pg 83
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     @Override

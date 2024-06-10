@@ -111,6 +111,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                     throw new IllegalArgumentException("Illegal facing: " + facing + " for entity " + entity);
                 }
                 entity.setFacing(facing);
+                entity.setSecondaryFacing(facing, false);
             }
         }
     }

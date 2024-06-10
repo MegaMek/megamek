@@ -27,6 +27,7 @@ import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
+import megamek.common.jacksonadapters.BoardDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -42,6 +43,7 @@ public class ScenarioV2 implements Scenario {
 
     private static final String DEPLOY = "deploy";
     private static final String MAP = "map";
+    private static final String MAPS = "maps";
     private static final String COLUMNS = "columns";
     private static final String ROWS = "rows";
     private static final String UNITS = "units";
@@ -240,33 +242,39 @@ public class ScenarioV2 implements Scenario {
     }
 
     private Board createBoard() throws ScenarioLoaderException {
-        if (!node.has(MAP)) {
+        if (!node.has(MAP) && !node.has(MAPS)) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
         }
         JsonNode mapNode = node.get(MAP);
-        // "map: Xyz.board" will directly load that board with no modifiers
-        if (!mapNode.isContainerNode()) {
-            return loadBoard(mapNode.textValue());
+        if (mapNode == null) {
+            mapNode = node.get(MAPS);
         }
 
-        //TODO: Board handling - this is incomplete, compare ScenarioV1
+        return BoardDeserializer.parseBoard(mapNode, scenarioDirectory());
 
-        // more complex map setup
-        int mapWidth = 16;
-        int mapHeight = 17;
-        int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
-        int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
-
-        // load available boards
-        // basically copied from Server.java. Should get moved somewhere neutral
-        List<String> boards = new ArrayList<>();
-
-        // Find subdirectories given in the scenario file
-        List<String> allDirs = new LinkedList<>();
-        // "" entry stands for the boards base directory
-        allDirs.add("");
-
-        return null;
+//        // "map: Xyz.board" will directly load that board with no modifiers
+//        if (!mapNode.isContainerNode()) {
+//            return loadBoard(mapNode.textValue());
+//        }
+//
+//        //TODO: Board handling - this is incomplete, compare ScenarioV1
+//
+//        // more complex map setup
+//        int mapWidth = 16;
+//        int mapHeight = 17;
+//        int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
+//        int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
+//
+//        // load available boards
+//        // basically copied from Server.java. Should get moved somewhere neutral
+//        List<String> boards = new ArrayList<>();
+//
+//        // Find subdirectories given in the scenario file
+//        List<String> allDirs = new LinkedList<>();
+//        // "" entry stands for the boards base directory
+//        allDirs.add("");
+//
+//        return null;
     }
 
     private Board loadBoard(String fileName) throws ScenarioLoaderException {

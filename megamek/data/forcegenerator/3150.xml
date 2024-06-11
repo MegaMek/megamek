@@ -6719,8 +6719,8 @@
 			<availability>General:7</availability>
 		</model>
 		<model name='(AC20)'>
-			<roles>field_gun</roles>
-			<availability>General:7</availability>
+			<roles>urban,field_gun</roles>
+			<availability>General:5</availability>
 		</model>
 		<model name='(AC5)'>
 			<roles>anti_aircraft,field_gun</roles>

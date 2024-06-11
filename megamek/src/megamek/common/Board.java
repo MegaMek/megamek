@@ -201,16 +201,36 @@ public class Board implements Serializable {
      * @param height the height of the board
      * @return the new board, ready to be used
      */
-    public static Board newAtmosphericBoard(int width, int height) {
+    public static Board getSkyBoard(int width, int height) {
         Hex[] data = new Hex[width * height];
         int index = 0;
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                data[index++] = new Hex(0, "", "", new Coords(w, h));
+                data[index++] = new Hex(0, "sky:1", "", new Coords(w, h));
             }
         }
         Board result = new Board(width, height, data);
         result.setType(Board.T_ATMOSPHERE);
+        return result;
+    }
+
+    /**
+     * Returns a new space board of the given size.
+     *
+     * @param width the width of the board
+     * @param height the height of the board
+     * @return the new board, ready to be used
+     */
+    public static Board getSpaceBoard(int width, int height) {
+        Hex[] data = new Hex[width * height];
+        int index = 0;
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                data[index++] = new Hex(0, "space:1", "", new Coords(w, h));
+            }
+        }
+        Board result = new Board(width, height, data);
+        result.setType(Board.T_SPACE);
         return result;
     }
     //endregion Constructors

@@ -35,6 +35,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     private static final String TYPE = "type";
     private static final String LOW_ALTITUDE = "lowaltitude";
     private static final String ATMOSPHERIC = "atmospheric";
+    private static final String SKY = "sky";
     private static final String SPACE = "space";
     private static final String HIGH_ALTITUDE = "highaltitude";
     private static final String RADAR = "radar";
@@ -77,13 +78,18 @@ public class BoardDeserializer extends StdDeserializer<Board> {
         if (mapNode.has(TYPE)) {
             String type = mapNode.get(TYPE).asText();
             board = new Board(mapWidth, mapHeight);
-            if (type.equals(ATMOSPHERIC) || type.equals(LOW_ALTITUDE)) {
-                return Board.newAtmosphericBoard(mapWidth, mapHeight);
-            } else if (type.equals(SPACE)) {
-                board.setType(Board.T_SPACE);
-            } else if (type.equals(HIGH_ALTITUDE)) {
-                //TODO: dont have that type yet
-                board.setType(Board.T_SPACE);
+            switch (type) {
+                case SKY:
+                    return Board.getSkyBoard(mapWidth, mapHeight);
+                case ATMOSPHERIC:
+                case LOW_ALTITUDE:
+                    return Board.getSkyBoard(mapWidth, mapHeight);
+                case SPACE:
+                    return Board.getSpaceBoard(mapWidth, mapHeight);
+                case HIGH_ALTITUDE:
+                    //TODO: dont have that type yet
+                    board.setType(Board.T_SPACE);
+                    break;
             }
             return board;
         }

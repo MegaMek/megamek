@@ -1330,7 +1330,6 @@
 	<chassis name='Ajax Assault Tank' unitType='Tank'>
 		<availability>ROS:2,FS:2</availability>
 		<model name='(Sealed)'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 	</chassis>
@@ -2955,7 +2954,6 @@
 			<availability>General:3+,DC:3+</availability>
 		</model>
 		<model name='BHKU-OU'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='BHKU-OX'>
@@ -5157,7 +5155,6 @@
 			<availability>General:4</availability>
 		</model>
 		<model name='3'>
-			<roles>marine</roles>
 			<availability>General:3</availability>
 		</model>
 		<model name='4'>
@@ -6108,7 +6105,6 @@
 			<availability>LA:2</availability>
 		</model>
 		<model name='FNR-6U'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 	</chassis>
@@ -6543,7 +6539,6 @@
 			<availability>CLAN:4,IS:3,DC:3</availability>
 		</model>
 		<model name='FS9-OU'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='FS9-OX'>
@@ -7273,7 +7268,6 @@
 			<availability>RA:4</availability>
 		</model>
 		<model name='3'>
-			<roles>marine</roles>
 			<availability>RA:4</availability>
 		</model>
 	</chassis>
@@ -11973,7 +11967,7 @@
 	<chassis name='Motorized Sub Platoon' unitType='Infantry'>
 		<availability>IS:1,FS:3,Periphery:1</availability>
 		<model name='(Laser SCUBA)'>
-			<roles>specops,marine</roles>
+			<roles>specops</roles>
 			<availability>IS:9</availability>
 		</model>
 	</chassis>
@@ -17539,7 +17533,6 @@
 			<availability>CHH:8,CW:8,CNC:8,CJF:8</availability>
 		</model>
 		<model name='U'>
-			<roles>marine</roles>
 			<availability>CLAN:2</availability>
 		</model>
 	</chassis>

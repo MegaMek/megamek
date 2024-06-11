@@ -2859,7 +2859,6 @@
 			<availability>General:2+,DC:2+</availability>
 		</model>
 		<model name='BHKU-OU'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='BHKU-OX'>
@@ -6148,7 +6147,6 @@
 			<availability>CLAN:4,IS:1+,DC:1+</availability>
 		</model>
 		<model name='FS9-OU'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='FS9-OX'>
@@ -11292,7 +11290,7 @@
 	<chassis name='Motorized Sub Platoon' unitType='Infantry'>
 		<availability>IS:1,FS:3,Periphery:1</availability>
 		<model name='(Laser SCUBA)'>
-			<roles>specops,marine</roles>
+			<roles>specops</roles>
 			<availability>IS:9</availability>
 		</model>
 	</chassis>
@@ -16359,7 +16357,6 @@
 			<availability>CHH:8,CW:8,CNC:8,CJF:8,CCO:8</availability>
 		</model>
 		<model name='U'>
-			<roles>marine</roles>
 			<availability>CLAN:2</availability>
 		</model>
 		<model name='X'>

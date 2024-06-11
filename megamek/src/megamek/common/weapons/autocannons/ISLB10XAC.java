@@ -38,8 +38,8 @@ public class ISLB10XAC extends LBXACWeapon {
         this.criticals = 6;
         this.bv = 148;
         this.cost = 400000;
-        this.shortAV = 10;
-        this.medAV = 10;
+        this.shortAV = 6;
+        this.medAV = 6;
         this.maxRange = RANGE_MED;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

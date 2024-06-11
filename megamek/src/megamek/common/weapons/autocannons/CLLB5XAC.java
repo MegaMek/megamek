@@ -40,9 +40,9 @@ public class CLLB5XAC extends LBXACWeapon {
         criticals = 4;
         bv = 93;
         cost = 250000;
-        shortAV = 5;
-        medAV = 5;
-        longAV = 5;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
         maxRange = RANGE_LONG;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

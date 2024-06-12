@@ -50,28 +50,27 @@ class FactionRecordTest {
         createRavenAlliance();
 
         // Taken from 3150 xml
-        String xmlString = """
-<?xml version='1.0' encoding='UTF-8'?>
-<!-- Era 3150-->
-<ratgen>
-    <factions>
-        <faction key='RA'>
-            <pctOmni>0,0,0,48,100</pctOmni>
-            <pctClan>70,70,95,100,100</pctClan>
-            <pctSL>30,30,5,0,0</pctSL>
-            <pctOmni unitType='AeroSpaceFighter'>0,0,10,75,100</pctOmni>
-            <pctClan unitType='AeroSpaceFighter'>80,80,100,100,100</pctClan>
-            <pctSL unitType='AeroSpaceFighter'>20,0,0,0,0</pctSL>
-            <pctClan unitType='Vehicle'>15,0,45,45,45</pctClan>
-            <pctSL unitType='Vehicle'>85,0,55,55,55</pctSL>
-            <techMargin>16</techMargin>
-            <salvage pct='10'>FS:4,DC:10</salvage>
-        </faction>
-    </factions>
-    <units>
-    </units>
-</ratgen>
-""";
+        String xmlString = String.join("\n",
+"<?xml version='1.0' encoding='UTF-8'?>",
+"<!-- Era 3150-->",
+"<ratgen>",
+"    <factions>",
+"        <faction key='RA'>",
+"            <pctOmni>0,0,0,48,100</pctOmni>",
+"            <pctClan>70,70,95,100,100</pctClan>",
+"            <pctSL>30,30,5,0,0</pctSL>",
+"            <pctOmni unitType='AeroSpaceFighter'>0,0,10,75,100</pctOmni>",
+"            <pctClan unitType='AeroSpaceFighter'>80,80,100,100,100</pctClan>",
+"            <pctSL unitType='AeroSpaceFighter'>20,0,0,0,0</pctSL>",
+"            <pctClan unitType='Vehicle'>15,0,45,45,45</pctClan>",
+"            <pctSL unitType='Vehicle'>85,0,55,55,55</pctSL>",
+"            <techMargin>16</techMargin>",
+"            <salvage pct='10'>FS:4,DC:10</salvage>",
+"        </faction>",
+"    </factions>",
+"    <units>",
+"    </units>",
+"</ratgen>");
         ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
         Document xmlDoc = db.parse(bais);
 

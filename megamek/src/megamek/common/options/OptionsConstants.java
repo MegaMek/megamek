@@ -332,6 +332,7 @@ public class OptionsConstants {
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
     public static final String ADVANCED_BLACK_ICE= "black_ice";
+    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS= "lightning_storm_targets_units";
     public static final String ADVANCED_DOUBLE_BLIND = "double_blind";
     public static final String ADVANCED_SINGLE_BLIND_BOTS = "single_blind_bots";
     public static final String ADVANCED_TACOPS_SENSORS = "tacops_sensors";

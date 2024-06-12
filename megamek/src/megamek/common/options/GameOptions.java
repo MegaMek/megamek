@@ -118,6 +118,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true);
         addOption(advancedRules, OptionsConstants.ADVANCED_BLACK_ICE, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false);

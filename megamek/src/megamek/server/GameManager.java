@@ -1982,10 +1982,7 @@ public class GameManager extends AbstractGameManager {
                 resetEntityPhase(phase);
                 clearReports();
                 resolveHeat();
-                PlanetaryConditions conditions = game.getPlanetaryConditions();
-                if (conditions.isBlowingSandActive()) {
-                    addReport(resolveBlowingSandDamage());
-                }
+                resolveWeather();
                 addReport(resolveControlRolls());
                 addReport(checkForTraitors());
                 // write End Phase header
@@ -18688,6 +18685,16 @@ public class GameManager extends AbstractGameManager {
         return psr;
     }
 
+    private void resolveWeather() {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.isBlowingSandActive()) {
+            addReport(resolveBlowingSandDamage());
+        }
+        if (conditions.getWeather().isLightningStorm()) {
+            addReport(resolveLightningStormDamage());
+        }
+    }
+
     /**
      * Each mech sinks the amount of heat appropriate to its current heat
      * capacity.
@@ -34660,6 +34667,105 @@ public class GameManager extends AbstractGameManager {
 
     public List<SmokeCloud> getSmokeCloudList() {
         return game.getSmokeCloudList();
+    }
+
+    /**
+     * Check to see if Lightning Storm caused damage
+     * TO:AR 6th ed. p. 57
+     * */
+    private Vector<Report> resolveLightningStormDamage() {
+        Vector<Report> vFullReport = new Vector<>();
+        Roll roll = Compute.rollD6(1);
+
+        if (roll.getIntValue() > 0) {
+            Report.addNewline(vFullReport);
+            vFullReport.add(new Report(5620, Report.PUBLIC));
+
+            Roll rollNumber = Compute.rollD6(1);
+            int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
+
+            for (int i = 0; i < numberOfStrikes; i++) {
+                Roll rollType = Compute.rollD6(1);
+                int damage;
+                switch (rollType.getIntValue()) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        damage = 5;
+                        break;
+                    case 4:
+                    case 5:
+                        damage = 10;
+                        break;
+                    default:
+                        damage = 15;
+                }
+
+                Coords coords;
+
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS)) {
+                    List<Entity> entities = game.getEntitiesVector();
+                    int index = Compute.randomInt(entities.size());
+                    coords = entities.get(index).getPosition();
+                } else {
+                    int x = Compute.randomInt(game.getBoard().getWidth());
+                    int y = Compute.randomInt(game.getBoard().getHeight());
+                    coords = new Coords(x, y);
+                }
+
+                Report r;
+                r = new Report(5621);
+                r.add(coords.getBoardNum());
+                vFullReport.add(r);
+
+                lightningStormDamage(coords, damage, vFullReport);
+
+                if (rollType.getIntValue() == 6) {
+                    for (Coords locationAdjacent : coords.allAdjacent()) {
+                        if (game.getBoard().getHex(locationAdjacent) != null) {
+                            r = new Report(5622);
+                            r.add(locationAdjacent.getBoardNum());
+                            vFullReport.add(r);
+
+                            lightningStormDamage(locationAdjacent, 5, vFullReport);
+                        }
+                    }
+                }
+            }
+        }
+
+        return vFullReport;
+    }
+
+    private void lightningStormDamage(Coords coords, int damage, Vector<Report> vFullReport) {
+        Vector<Report> newReports = tryClearHex(coords, damage, Entity.NONE);
+        vFullReport.addAll(newReports);
+
+        Building bldg = game.getBoard().getBuildingAt(coords);
+        if (bldg != null) {
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);
+            vFullReport.addAll(buildingReport);
+        }
+
+        List<Entity> hitEntities = game.getEntitiesVector().stream()
+                .filter(e -> e.getPosition().equals(coords)
+                        && !(e instanceof GunEmplacement))
+                .collect(Collectors.toList());
+
+        for (Entity entity : hitEntities) {
+            int entityDamage = damage;
+            if ((bldg != null)
+                    && (Compute.isInBuilding(game, entity))) {
+                entityDamage = bldg.getAbosrbedDamage(entityDamage, coords);
+            }
+            if (entityDamage > 0) {
+                ToHitData toHit = new ToHitData();
+                toHit.setSideTable(ToHitData.SIDE_RANDOM);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
+                Vector<Report> entityReport = damageEntity(entity, hit, entityDamage);
+                vFullReport.addAll(entityReport);
+            }
+        }
     }
 
     /**

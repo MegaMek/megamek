@@ -59,20 +59,21 @@ public class UnitTable {
      * found, generates it and adds it to the cache.
      * This method is provided as a convenience for when there are no excluded roles.
      *
-     * @param faction - The faction for which to generate a table
-     * @param unitType - a UnitType constant
-     * @param year - the game year
-     * @param rating - the unit's equipment rating; if null, the table is not adjusted for unit rating.
-     * @param weightClasses - a collection of EntityWeightClass constants to include in the table;
-     * if null or empty all weight classes are included
-     * @param networkMask - a ModelRecord.NETWORK_* constant
-     * @param movementModes - the movement modes allowed to appear in the table; if null or empty, no filtering
-     * is applied.
-     * @param roles - the roles for which to adjust the availability
-     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is &lt;= 4
-     * @param deployingFaction - when using the salvage/isorla mechanism, any omni unit will select
-     * the configuration based on the faction actually deploying
-     * @return - a table containing the available units and their relative weights
+     * @param faction        The faction the table filters for
+     * @param unitType       {@link megamek.common.UnitType} constant with the type of unit
+     * @param year           the game year
+     * @param rating         the unit's equipment rating; if null, the table is not adjusted for unit rating.
+     * @param weightClasses  a collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
+     *                       if null or empty all weight classes are included
+     * @param networkMask    One of the {@link MOdelRecord} NETWORK constants, for filtering various C3 systems
+     * @param movementModes  the movement modes covered by the table, null/empty for all modes
+     * @param roles          {@link MissionRole} types the units should qualify for, null/empty for no role
+     *                       filtering
+     * @param roleStrictness how strongly to apply roles, zero for none/minimal with higher being more
+     *                       restrictive; typically no higher than 5
+     * @param deployingFaction when using the salvage/isorla mechanism, any omni unit will select
+     *                         the configuration based on the faction actually deploying
+     * @return               table containing units which fit all parameters and their relative weights
      */
     public static UnitTable findTable (FactionRecord faction,
                                        int unitType,
@@ -93,18 +94,23 @@ public class UnitTable {
 
     /**
      * Overloaded method, with additional argument for excluded roles
-     * @param faction
-     * @param unitType
-     * @param year
-     * @param rating
-     * @param weightClasses
-     * @param networkMask
-     * @param movementModes
-     * @param roles
-     * @param rolesExcluded
-     * @param roleStrictness
-     * @param deployingFaction
-     * @return
+     * @param faction        The faction the table filters for
+     * @param unitType       {@link megamek.common.UnitType} constant with the type of unit
+     * @param year           the game year
+     * @param rating         the unit's equipment rating; if null, the table is not adjusted for unit rating.
+     * @param weightClassesa collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
+     *                       if null or empty all weight classes are included
+     * @param networkMask    One of the {@link MOdelRecord} NETWORK constants, for filtering various C3 systems
+     * @param movementModes  the movement modes covered by the table, null/empty for all modes
+     * @param roles          {@link MissionRole} types the units should qualify for, null/empty for no role
+     *                       filtering
+     * @param rolesExcluded  {@link MissionRole} types the units should not contain, null empty to
+     *                       allow all roles
+     * @param roleStrictness how strongly to apply roles, zero for none/minimal with higher being more
+     *                       restrictive; typically no higher than 5
+     * @param deployingFaction when using the salvage/isorla mechanism, any omni unit will select
+     *                         the configuration based on the faction actually deploying
+     * @return               table containing units which fit all parameters and their relative weights
      */
     public static UnitTable findTable (FactionRecord faction,
                                        int unitType,

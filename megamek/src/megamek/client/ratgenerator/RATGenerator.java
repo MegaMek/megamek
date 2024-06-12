@@ -414,11 +414,50 @@ public class RATGenerator {
                 + (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
     }
 
-    public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
-            String rating, Collection<Integer> weightClasses, int networkMask,
-            Collection<EntityMovementMode> movementModes,
-            Collection<MissionRole> roles, int roleStrictness,
-            FactionRecord user) {
+
+    /**
+     * Convenience overload method provided for generating a table with no excluded roles
+     */
+    public List<UnitTable.TableEntry> generateTable (FactionRecord fRec,
+                                                     int unitType,
+                                                     int year,
+                                                     String rating,
+                                                     Collection<Integer> weightClasses,
+                                                     int networkMask,
+                                                     Collection<EntityMovementMode> movementModes,
+                                                     Collection<MissionRole> roles,
+                                                     int roleStrictness,
+                                                     FactionRecord user) {
+        return generateTable(fRec, unitType, year, rating, weightClasses, networkMask,
+                movementModes, roles, null, roleStrictness, user);
+    }
+
+    /**
+     *
+     * @param fRec
+     * @param unitType
+     * @param year
+     * @param rating
+     * @param weightClasses
+     * @param networkMask
+     * @param movementModes
+     * @param roles
+     * @param rolesExcluded
+     * @param roleStrictness
+     * @param user
+     * @return
+     */
+    public List<UnitTable.TableEntry> generateTable (FactionRecord fRec,
+                                                     int unitType,
+                                                     int year,
+                                                     String rating,
+                                                     Collection<Integer> weightClasses,
+                                                     int networkMask,
+                                                     Collection<EntityMovementMode> movementModes,
+                                                     Collection<MissionRole> roles,
+                                                     Collection<MissionRole> rolesExcluded,
+                                                     int roleStrictness,
+                                                     FactionRecord user) {
         HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
         HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
 

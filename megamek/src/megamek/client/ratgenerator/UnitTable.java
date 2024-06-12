@@ -57,6 +57,7 @@ public class UnitTable {
     /**
      * Checks the cache for a previously generated table meeting the criteria. If none is
      * found, generates it and adds it to the cache.
+     * This method is provided as a convenience for when there are no excluded roles.
      *
      * @param faction - The faction for which to generate a table
      * @param unitType - a UnitType constant
@@ -87,6 +88,38 @@ public class UnitTable {
         // FIXME: pass in the excluded roles collection
         Parameters params = new Parameters(faction, unitType, year, rating, weightClasses, networkMask,
                 movementModes, roles, null, roleStrictness, deployingFaction);
+        return findTable(params);
+    }
+
+    /**
+     * Overloaded method, with additional argument for excluded roles
+     * @param faction
+     * @param unitType
+     * @param year
+     * @param rating
+     * @param weightClasses
+     * @param networkMask
+     * @param movementModes
+     * @param roles
+     * @param rolesExcluded
+     * @param roleStrictness
+     * @param deployingFaction
+     * @return
+     */
+    public static UnitTable findTable (FactionRecord faction,
+                                       int unitType,
+                                       int year,
+                                       String rating,
+                                       Collection<Integer> weightClasses,
+                                       int networkMask,
+                                       Collection<EntityMovementMode> movementModes,
+                                       Collection<MissionRole> roles,
+                                       Collection<MissionRole> rolesExcluded,
+                                       int roleStrictness,
+                                       FactionRecord deployingFaction) {
+        Objects.requireNonNull(faction);
+        Parameters params = new Parameters(faction, unitType, year, rating, weightClasses, networkMask,
+                movementModes, roles, rolesExcluded, roleStrictness, deployingFaction);
         return findTable(params);
     }
 
@@ -139,22 +172,31 @@ public class UnitTable {
     int salvagePct;
 
     /**
-     * Initializes table based on values provided by key
+     * Initializes table based on restrictions provided by a Parameters object
      *
-     * @param key - a structure providing the parameters for generating the table
+     * @param key   a {@link Parameters} structure providing the parameters for generating the table
      */
-    protected UnitTable(Parameters key) {
+    protected UnitTable (Parameters key) {
         this.key = key;
         /*
          * Generate the RAT, then go through it to build the NavigableMaps that
          * will be used for random selection.
          */
         if (key.getFaction() != null ) {
+
+            // Simple check if the faction is active now
             if (key.getFaction().isActiveInYear(key.getYear())) {
+
                 List<TableEntry> table = RATGenerator.getInstance().generateTable(key.getFaction(),
-                        key.getUnitType(), key.getYear(), key.getRating(), key.getWeightClasses(),
-                        key.getNetworkMask(), key.getMovementModes(),
-                        key.getRoles(), key.getRoleStrictness(), key.getDeployingFaction());
+                        key.getUnitType(),
+                        key.getYear(),
+                        key.getRating(),
+                        key.getWeightClasses(),
+                        key.getNetworkMask(),
+                        key.getMovementModes(),
+                        key.getRoles(),
+                        key.getRoleStrictness(),
+                        key.getDeployingFaction());
                 Collections.sort(table);
 
                 table.forEach(te -> {

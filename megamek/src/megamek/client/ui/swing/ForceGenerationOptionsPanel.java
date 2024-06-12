@@ -1202,6 +1202,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     .boxed().collect(Collectors.toList()),
                     ModelRecord.NETWORK_NONE, EnumSet.noneOf(EntityMovementMode.class),
                     ft.getMissionRoles(),
+                    null,
                     2, getFaction());
             params.add(p);
             int numUnits = getNumUnits();

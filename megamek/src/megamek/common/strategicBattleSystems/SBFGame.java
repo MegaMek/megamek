@@ -209,7 +209,9 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Sets the current turn vector
+     * Sets the current list of turns to the given one, replacing any currently present turns.
+     *
+     * @param newTurns The new list of turns to use
      */
     public void setTurns(List<GameTurn> newTurns) {
         turnList.clear();

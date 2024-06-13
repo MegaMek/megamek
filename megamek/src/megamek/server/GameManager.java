@@ -555,7 +555,7 @@ public class GameManager extends AbstractGameManager {
             }
 
             if (getGame().getPhase().usesTurns() && getGame().hasMoreTurns()) {
-                send(connId, packetHelper.createTurnVectorPacket());
+                send(connId, packetHelper.createTurnListPacket());
                 send(connId, packetHelper.createTurnIndexPacket(connId));
             } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
                 endCurrentPhase();
@@ -849,7 +849,7 @@ public class GameManager extends AbstractGameManager {
             // If we removed a unit during the movement phase that hasn't moved, remove its turn.
             if (getGame().getPhase().isMovement() && entity.isSelectableThisTurn()) {
                 getGame().removeTurnFor(entity);
-                send(packetHelper.createTurnVectorPacket());
+                send(packetHelper.createTurnListPacket());
             }
             entityUpdate(entity.getId());
             game.removeEntity(entity.getId(), condition);
@@ -1435,7 +1435,7 @@ public class GameManager extends AbstractGameManager {
 
         // brief everybody on the turn update, if they changed
         if (turnsChanged) {
-            send(packetHelper.createTurnVectorPacket());
+            send(packetHelper.createTurnListPacket());
         }
 
         // move along
@@ -1965,7 +1965,7 @@ public class GameManager extends AbstractGameManager {
                 if (switched) {
                     game.swapTurnOrder(currentTurnIndex, nextTurnId);
                     // update the turn packages for all players.
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
                     send(packetHelper.createTurnIndexPacket(connectionId));
                     return;
                 }
@@ -2294,7 +2294,7 @@ public class GameManager extends AbstractGameManager {
         game.resetTurnIndex();
 
         // send turns to all players
-        send(packetHelper.createTurnVectorPacket());
+        send(packetHelper.createTurnListPacket());
     }
 
     /**
@@ -2591,7 +2591,7 @@ public class GameManager extends AbstractGameManager {
         game.resetTurnIndex();
 
         // send turns to all players
-        send(packetHelper.createTurnVectorPacket());
+        send(packetHelper.createTurnListPacket());
     }
 
     /**
@@ -2924,7 +2924,7 @@ public class GameManager extends AbstractGameManager {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
-            send(packetHelper.createTurnVectorPacket());
+            send(packetHelper.createTurnListPacket());
         }
 
         // Fighter Squadrons may become too big for the bay they're parked in
@@ -2994,7 +2994,7 @@ public class GameManager extends AbstractGameManager {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
-            send(packetHelper.createTurnVectorPacket());
+            send(packetHelper.createTurnListPacket());
         }
 
         loader.towUnit(unit.getId());
@@ -3494,7 +3494,7 @@ public class GameManager extends AbstractGameManager {
         GameTurn newTurn = new EntityClassTurn(unit.getOwner().getId(), turnMask);
         game.insertTurnAfter(newTurn, turnInsertIdx);
         // brief everybody on the turn update
-        send(packetHelper.createTurnVectorPacket());
+        send(packetHelper.createTurnListPacket());
 
         return true;
     }
@@ -3674,7 +3674,7 @@ public class GameManager extends AbstractGameManager {
 
         // Did we update the turns?
         if (bTurnsChanged) {
-            send(packetHelper.createTurnVectorPacket());
+            send(packetHelper.createTurnListPacket());
         }
 
         // Are there any building updates?
@@ -3846,7 +3846,7 @@ public class GameManager extends AbstractGameManager {
                         if (!swarmer.isDone()) {
                             game.removeTurnFor(swarmer);
                             swarmer.setDone(true);
-                            send(packetHelper.createTurnVectorPacket());
+                            send(packetHelper.createTurnListPacket());
                         }
                         game.removeEntity(swarmer.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
                         send(createRemoveEntityPacket(swarmer.getId(), IEntityRemovalConditions.REMOVE_PUSHED));
@@ -4321,7 +4321,7 @@ public class GameManager extends AbstractGameManager {
                         if (!target.isDone()) {
                             // Dead entities don't take turns.
                             game.removeTurnFor(target);
-                            send(packetHelper.createTurnVectorPacket());
+                            send(packetHelper.createTurnListPacket());
                         } // End target-still-to-move
 
                         // Clean out the entity.
@@ -4347,7 +4347,7 @@ public class GameManager extends AbstractGameManager {
                     // Prevents adding extra turns for multi-turns
                     newTurn.setMultiTurn(true);
                     game.insertNextTurn(newTurn);
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
                 }
             }
 
@@ -4853,7 +4853,7 @@ public class GameManager extends AbstractGameManager {
                         vel--;
                     }
                     game.removeTurnFor(target);
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
                     processMovement(target, md, null);
                     // for some reason it is not clearing out turn
                 } else {
@@ -4895,7 +4895,7 @@ public class GameManager extends AbstractGameManager {
             if (!target.isDone()) {
                 // Dead entities don't take turns.
                 game.removeTurnFor(target);
-                send(packetHelper.createTurnVectorPacket());
+                send(packetHelper.createTurnListPacket());
             } // End target-still-to-move
             // Clean out the entity.
             target.setDestroyed(true);
@@ -5326,7 +5326,7 @@ public class GameManager extends AbstractGameManager {
             if (!swarmer.isDone()) {
                 // Dead entities don't take turns.
                 game.removeTurnFor(swarmer);
-                send(packetHelper.createTurnVectorPacket());
+                send(packetHelper.createTurnListPacket());
 
             } // End swarmer-still-to-move
 
@@ -7119,7 +7119,7 @@ public class GameManager extends AbstractGameManager {
 
                     // Dead entities don't take turns.
                     game.removeTurnFor(swarmer);
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
 
                     // Return the original status.
                     swarmer.setDone(true);
@@ -7409,7 +7409,7 @@ public class GameManager extends AbstractGameManager {
                         game.insertNextTurn(newTurn);
                     }
                     // brief everybody on the turn update
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
                 }
             }
 
@@ -7954,7 +7954,7 @@ public class GameManager extends AbstractGameManager {
             } else {
                 // Dislodged swarmers don't get turns.
                 game.removeTurnFor(swarmer);
-                send(packetHelper.createTurnVectorPacket());
+                send(packetHelper.createTurnListPacket());
 
                 // Update the report and the swarmer's status.
                 r.choose(true);
@@ -8177,7 +8177,7 @@ public class GameManager extends AbstractGameManager {
                 } else {
                     // Dislodged swarmers don't get turns.
                     game.removeTurnFor(swarmer);
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
 
                     // Update the report and the swarmer's status.
                     r.choose(true);
@@ -8318,7 +8318,7 @@ public class GameManager extends AbstractGameManager {
             newTurn.setMultiTurn(true);
             game.insertNextTurn(newTurn);
             // brief everybody on the turn update
-            send(packetHelper.createTurnVectorPacket());
+            send(packetHelper.createTurnListPacket());
 
             // let everyone know about what just happened
             if (vPhaseReport.size() > 1) {
@@ -11322,7 +11322,7 @@ public class GameManager extends AbstractGameManager {
         if (!swarmer.isDone()) {
             game.removeTurnFor(swarmer);
             swarmer.setDone(true);
-            send(packetHelper.createTurnVectorPacket());
+            send(packetHelper.createTurnListPacket());
         }
 
         // Update the report and cause a fall.
@@ -11690,9 +11690,9 @@ public class GameManager extends AbstractGameManager {
                 // May need to remove a turn for this Entity
                 if (game.getPhase().isMovement() && !entity.isDone() && (turnsRemoved == 0)) {
                     game.removeTurnFor(entity);
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
                 } else if (turnsRemoved > 0) {
-                    send(packetHelper.createTurnVectorPacket());
+                    send(packetHelper.createTurnListPacket());
                 }
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED));
@@ -12067,7 +12067,7 @@ public class GameManager extends AbstractGameManager {
                 msg += ", Entity was null!";
             }
             LogManager.getLogger().error(msg);
-            send(connId, packetHelper.createTurnVectorPacket());
+            send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket(turn.playerId()));
             return;
         }
@@ -12125,7 +12125,7 @@ public class GameManager extends AbstractGameManager {
                 msg += ", Entity was null!";
             }
             LogManager.getLogger().error(msg);
-            send(connId, packetHelper.createTurnVectorPacket());
+            send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket(connId));
             return;
         }
@@ -12143,7 +12143,7 @@ public class GameManager extends AbstractGameManager {
                 loaded.getOwnerId(), loaded.getId()), game.getTurnIndex() - 1);
         //game.insertNextTurn(new GameTurn.SpecificEntityTurn(
         //        loaded.getOwnerId(), loaded.getId()));
-        send(packetHelper.createTurnVectorPacket());
+        send(packetHelper.createTurnListPacket());
     }
 
 
@@ -12425,7 +12425,7 @@ public class GameManager extends AbstractGameManager {
                     "Server got invalid packet from Connection %s, Entity %s, %s Turn",
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
-            send(connId, packetHelper.createTurnVectorPacket());
+            send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
             return;
         }
@@ -12467,7 +12467,7 @@ public class GameManager extends AbstractGameManager {
                     "Server got invalid attack packet from Connection %s, Entity %s, %s Turn",
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
-            send(connId, packetHelper.createTurnVectorPacket());
+            send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
             return;
         }
@@ -12536,7 +12536,7 @@ public class GameManager extends AbstractGameManager {
                             // immediately after the attack declaration.
                             game.insertNextTurn(new TriggerAPPodTurn(target.getOwnerId(),
                                     target.getId()));
-                            send(packetHelper.createTurnVectorPacket());
+                            send(packetHelper.createTurnListPacket());
 
                             // We can stop looking.
                             break;
@@ -12553,7 +12553,7 @@ public class GameManager extends AbstractGameManager {
                             // immediately after the attack declaration.
                             game.insertNextTurn(new TriggerBPodTurn(target.getOwnerId(),
                                     target.getId(), weaponName));
-                            send(packetHelper.createTurnVectorPacket());
+                            send(packetHelper.createTurnListPacket());
 
                             // We can stop looking.
                             break;
@@ -12587,7 +12587,7 @@ public class GameManager extends AbstractGameManager {
                     // If defender is able, add a turn to declare counterattack
                     if (!def.isImmobile()) {
                         game.insertNextTurn(new CounterGrappleTurn(def.getOwnerId(), def.getId()));
-                        send(packetHelper.createTurnVectorPacket());
+                        send(packetHelper.createTurnListPacket());
                     }
                 }
             }
@@ -27624,7 +27624,7 @@ public class GameManager extends AbstractGameManager {
             if (!swarmer.isDone()) {
                 game.removeTurnFor(swarmer);
                 swarmer.setDone(true);
-                send(packetHelper.createTurnVectorPacket());
+                send(packetHelper.createTurnListPacket());
             }
         } // End dislodge-infantry
 

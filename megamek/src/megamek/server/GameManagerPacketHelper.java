@@ -97,7 +97,7 @@ class GameManagerPacketHelper {
     /**
      * @return A packet containing the current list of player turns.
      */
-    Packet createTurnVectorPacket() {
+    Packet createTurnListPacket() {
         return new Packet(PacketCommand.SENDING_TURNS, game().getTurnsList());
     }
 

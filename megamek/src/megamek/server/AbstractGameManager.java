@@ -209,6 +209,6 @@ abstract class AbstractGameManager implements IGameManager {
      * @see IGame#getTurnsList()
      */
     void sendCurrentTurns() {
-        send(packetHelper.createTurnVectorPacket());
+        send(packetHelper.createTurnListPacket());
     }
 }

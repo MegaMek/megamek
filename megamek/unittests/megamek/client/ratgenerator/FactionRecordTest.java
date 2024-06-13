@@ -71,6 +71,7 @@ class FactionRecordTest {
 "    <units>",
 "    </units>",
 "</ratgen>");
+
         ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
         Document xmlDoc = db.parse(bais);
 
@@ -95,7 +96,7 @@ class FactionRecordTest {
         pct = fr.findPctTech(FactionRecord.TechCategory.CLAN_AERO, 3151, 0);
         assertEquals(80, pct);
 
-        // Assert Clan ASF value
+        // Assert SL/IS ASF value
         pct = fr.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, 3151, 0);
         assertEquals(20, pct);
     }

@@ -44,8 +44,6 @@ public class ScenarioV2 implements Scenario {
     private static final String DEPLOY = "deploy";
     private static final String MAP = "map";
     private static final String MAPS = "maps";
-    private static final String COLUMNS = "columns";
-    private static final String ROWS = "rows";
     private static final String UNITS = "units";
 
     private final JsonNode node;
@@ -157,8 +155,6 @@ public class ScenarioV2 implements Scenario {
                 return new ASGame();
             case SBF:
                 return new SBFGame();
-//            case GAMETYPE_BF:
-//                return new BFGame();
             default:
                 return new Game();
         }
@@ -250,6 +246,7 @@ public class ScenarioV2 implements Scenario {
             mapNode = node.get(MAPS);
         }
 
+        //TODO: currently, the first parsed board is used
         return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
     }
 

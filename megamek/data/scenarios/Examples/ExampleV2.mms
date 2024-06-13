@@ -39,13 +39,13 @@ map:
   file: AGoAC Maps/16x17 Grassland 2.board
 
 # surprise board from the given boards; require board nodes (file:)
-# can modify individual or all
+# can modify individually and total
 map:
   surprise:
     - file: AGoAC Maps/16x17 Grassland 2.board
       modify: rotate
-    - file: AGoAC Maps/16x17 Grassland 2.board
-    - file: AGoAC Maps/16x17 Grassland 2.board
+    - file: AGoAC Maps/16x17 Grassland 3.board
+    - file: AGoAC Maps/16x17 Grassland 4.board
   modify: rotate
 
 # add modifiers to a single board

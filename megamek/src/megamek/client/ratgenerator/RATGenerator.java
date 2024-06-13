@@ -523,7 +523,6 @@ public class RATGenerator {
             if (ar == null) {
                 continue;
             }
-            // FIXME: experimental/intro/early modifier calculation is suspect
             double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
             cAv = interpolate(cAv,
                     cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
@@ -532,8 +531,18 @@ public class RATGenerator {
                 // FIXME: this is counting models that are not yet available, which skews availability
                 //  (denominator line 559)
                 //  The method for generating weight needs an overload for filtering
-                double totalModelWeight = cRec.totalModelWeight(early,
-                        cRec.isOmni() ? user : fRec);
+//                double totalModelWeight = cRec.totalModelWeight(early,
+//                        cRec.isOmni() ? user : fRec);
+                double totalModelWeight = cRec.totalFilteredModelWeight(early,
+                        cRec.isOmni() ? user : fRec,
+                        ratingLevel,
+                        year,
+                        weightClasses,
+                        networkMask,
+                        movementModes,
+                        roleStrictness,
+                        roles,
+                        rolesExcluded);
                 for (ModelRecord mRec : cRec.getModels()) {
 
                     // FIXME: introduction year should be acceptable (<=), but it looks like there
@@ -555,9 +564,7 @@ public class RATGenerator {
                     if (rolesExcluded != null && mRec.getRoles().stream().anyMatch(rolesExcluded::contains)) {
                         continue;
                     }
-                    // FIXME: experimental/intro/early modifier calculation is suspect
                     double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
-                    // FIXME: experimental/intro/early modifier calculation is suspect
                     mAv = interpolate(mAv,
                             mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
                             Math.max(early, mRec.getIntroYear()), late, year);

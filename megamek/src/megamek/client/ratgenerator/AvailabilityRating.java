@@ -107,13 +107,26 @@ public class AvailabilityRating {
         return availability;
     }
 
-    public int adjustForRating(int rating, int numLevels) {
-        if (rating < 0 || ratingAdjustment == 0) {
+    /**
+     * Return the availability taking into account +/- modifiers and a supplied rating. For example,
+     * an availability of 5+ will return 5 for an A-rating, 4 for a B rating, and so on; an
+     * availability of 5- will return 5 for an F-rating, 4 for a D-rating, and so on.
+     * @param rating     numerical equivalent of rating value, from 0 to numLevels - 1
+     * @param numLevels  how many ratings are in this system
+     * @return           availability rating, modified for the provided rating; may return values
+     *                   less than zero
+     */
+    public int adjustForRating (int rating, int numLevels) {
+        if (rating < 0 ||
+                ratingAdjustment == 0 ||
+                rating > numLevels - 1) {
             return availability;
         } else if (ratingAdjustment < 0) {
+            // '-' modifier provides a 0 modifier at the lowest rating
             return availability - rating;
         } else {
-            return availability - (numLevels - rating);
+            // '+' modifier provides a 0 modifier at the highest rating
+            return availability - ((numLevels - 1) - rating);
         }
     }
 

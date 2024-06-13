@@ -1,7 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.49.20-SNAPSHOT
-+ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
++ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301, #5441: Aerospace units now show a much improved flight path indicator when planning their movement; use MM's symbol font for indicator symbols, also for Collapse Warnings
@@ -61,10 +61,13 @@ MEGAMEK VERSION HISTORY:
 + Fix #5547: Fixing a bug coming from a duplicate artillery overlay added to the game map
 + Fix #5548: Fixing a bug trying to get line of sight issues for the tooltip
 + Fix #5542: Fixing the game not progressing to a round that has reinforcements
-+ PR #5550: The default state of Edge usage is now "true" (also in MHQ)
++ PR #5550, PR #5562: The default state of Edge usage is now "true" (also in MHQ)
 + PR #5549: ModelRecord unit analysis has been upgraded and expanded
 + Fix #5556: Fixing Nameplates
 + Fix #5394: Fixing a logo file name
++ PR #5560: The setting to show unit sprites in reports now defaults to off, as this has turned out to be resource intensive
++ PR #5567: Princess has learned to be careful on black ice (provided she has seen its presence)
++ PR #5568: Internal changes to FactionRecord to parse AeroSpaceFighter entries correctly
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

@@ -250,44 +250,7 @@ public class ScenarioV2 implements Scenario {
             mapNode = node.get(MAPS);
         }
 
-        return BoardDeserializer.parseBoard(mapNode, scenarioDirectory());
-
-//        // "map: Xyz.board" will directly load that board with no modifiers
-//        if (!mapNode.isContainerNode()) {
-//            return loadBoard(mapNode.textValue());
-//        }
-//
-//        //TODO: Board handling - this is incomplete, compare ScenarioV1
-//
-//        // more complex map setup
-//        int mapWidth = 16;
-//        int mapHeight = 17;
-//        int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
-//        int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
-//
-//        // load available boards
-//        // basically copied from Server.java. Should get moved somewhere neutral
-//        List<String> boards = new ArrayList<>();
-//
-//        // Find subdirectories given in the scenario file
-//        List<String> allDirs = new LinkedList<>();
-//        // "" entry stands for the boards base directory
-//        allDirs.add("");
-//
-//        return null;
-    }
-
-    private Board loadBoard(String fileName) throws ScenarioLoaderException {
-        File boardFile = new File(scenarioDirectory(), fileName);
-        if (!boardFile.exists()) {
-            boardFile = new File(Configuration.boardsDir(), fileName);
-            if (!boardFile.exists()) {
-                throw new ScenarioLoaderException("ScenarioLoaderException.nonexistentBoard", fileName);
-            }
-        }
-        Board result = new Board();
-        result.load(boardFile);
-        return result;
+        return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
     }
 
     private File scenarioDirectory() {

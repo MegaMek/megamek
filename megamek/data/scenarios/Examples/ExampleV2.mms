@@ -26,29 +26,72 @@ singleplayer: yes                           # default: yes; the first player is 
 # Game Map -------------------------------------------------------------------------------------------
 map:
   boardcolumns: 2                           # a 2x1 map, default: 1
-  boardrows: 1                              # default: 1
+#  boardrows: 1                              # default: 1
   boards:
-  - board1.board                            # all files are first searched relative to the scenario file, and
-  - board2.board                            # if not found there, then relative to the appropriate data/... directory
+    - board1.board                            # all files are first searched relative to the scenario file, and
+    - board2.board                            # if not found there, then relative to the appropriate data/... directory
 
 # OR for a single board:
-# map: theBoard.board
+map: AGoAC Maps/16x17 Grassland 2.board
 
-## Directories to choose random boards from
-## RandomDirs=Map Set 2,Map Set 3,Map Set 4,Map Set 5,Map Set 6,Map Set 7
-## Maps can be specified by name.  The order is left-to-right, top-to-bottom
-## Any unspecified boards will be set to RANDOM
-## Maps=RANDOM,RANDOM
+# OR "board node"
+map:
+  file: AGoAC Maps/16x17 Grassland 2.board
+
+# surprise board from the given boards; require board nodes (file:)
+# can modify individual or all
+map:
+  surprise:
+    - file: AGoAC Maps/16x17 Grassland 2.board
+      modify: rotate
+    - file: AGoAC Maps/16x17 Grassland 2.board
+    - file: AGoAC Maps/16x17 Grassland 2.board
+  modify: rotate
+
+# add modifiers to a single board
+map:
+  file: AGoAC Maps/16x17 Grassland 2.board
+  modify: rotate
+
+# atmospheric map without terrain
+map:
+  type: sky
+  width: 65
+  height: 35
+
+# space map
+map:
+  type: space
+  width: 65
+  height: 35
+
+# combined map with surprise maps
+# when combining maps, full board nodes must be used (file:)
+map:
+  cols: 1
+  boards:
+    - file: unofficial/SimonLandmine/TheValley/30x15 TheValley-NorthEnd.board
+    - surprise:
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Open1.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Open2.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Open3.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Open4.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Open5.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Quarry.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Forest.board
+        - unofficial/SimonLandmine/TheValley/30x15 TheValley-Forest2.board
+    - file: unofficial/SimonLandmine/TheValley/30x15 TheValley-SouthEnd1.board
 
 # Multiple maps
-maps:
+maps:                                        # map and maps are 100% synonymous
+  - file: AGoAC Maps/16x17 Grassland 2.board
   - boardcolumns: 2                           # a 2x1 map, default: 1
     boardrows: 1                              # default: 1
     boards:
       - board1.board
       - board2.board
     id: 1
-  - type: lowaltitude
+  - type: sky                         # sky is atmospheric without terrain
     width: 65
     height: 35
   - type: space
@@ -56,6 +99,12 @@ maps:
     height: 20
 
 
+# old comments:
+## Directories to choose random boards from
+## RandomDirs=Map Set 2,Map Set 3,Map Set 4,Map Set 5,Map Set 6,Map Set 7
+## Maps can be specified by name.  The order is left-to-right, top-to-bottom
+## Any unspecified boards will be set to RANDOM
+## Maps=RANDOM,RANDOM
 
 
 # Game Options -------------------------------------------------------------------------------------------

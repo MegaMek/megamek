@@ -523,14 +523,21 @@ public class RATGenerator {
             if (ar == null) {
                 continue;
             }
+            // FIXME: experimental/intro/early modifier calculation is suspect
             double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
             cAv = interpolate(cAv,
                     cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
                     Math.max(early, cRec.getIntroYear()), late, year);
             if (cAv > 0) {
+                // FIXME: this is counting models that are not yet available, which skews availability
+                //  (denominator line 559)
+                //  The method for generating weight needs an overload for filtering
                 double totalModelWeight = cRec.totalModelWeight(early,
                         cRec.isOmni() ? user : fRec);
                 for (ModelRecord mRec : cRec.getModels()) {
+
+                    // FIXME: introduction year should be acceptable (<=), but it looks like there
+                    //  should be a two-year grace period for pre-production/experimental?
                     if (mRec.getIntroYear() > year
                             || (!weightClasses.isEmpty()
                                     && !weightClasses.contains(mRec.getWeightClass()))
@@ -548,7 +555,9 @@ public class RATGenerator {
                     if (rolesExcluded != null && mRec.getRoles().stream().anyMatch(rolesExcluded::contains)) {
                         continue;
                     }
+                    // FIXME: experimental/intro/early modifier calculation is suspect
                     double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+                    // FIXME: experimental/intro/early modifier calculation is suspect
                     mAv = interpolate(mAv,
                             mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
                             Math.max(early, mRec.getIntroYear()), late, year);

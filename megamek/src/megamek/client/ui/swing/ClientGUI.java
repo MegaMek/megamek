@@ -1934,7 +1934,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             // If we've added reinforcements, then we need to set the round deployment up again.
             if (addedUnits && reinforce) {
-                client.getGame().setupRoundDeployment();
+                client.getGame().setupDeployment();
                 client.sendResetRoundDeployment();
             }
         } else {

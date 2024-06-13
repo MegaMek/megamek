@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractGame implements IGame {
 
+    private static final int AWAITING_FIRST_TURN = -1;
+
     /** The players present in the game mapped to their id as key */
     protected final ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
 
@@ -75,6 +77,8 @@ public abstract class AbstractGame implements IGame {
      * The round counter. It gets incremented before initiative; round 0 is initial deployment only.
      */
     protected int currentRound = -1;
+
+    protected int turnIndex = AWAITING_FIRST_TURN;
 
     @Override
     public Forces getForces() {
@@ -207,29 +211,6 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * Returns true when the current game phase should be played, meaning it is played in the current type
-     * of game and there are possible actions in it in the present game state.
-     * The result may be different in other rounds.
-     *
-     * @return True when the current phase should be skipped entirely in this round
-     * @see #shouldSkipCurrentPhase()
-     */
-    public abstract boolean isCurrentPhasePlayable();
-
-    /**
-     * Returns true when the current game phase should be skipped, either because it is not played at
-     * all in the current type of game or because the present game state dictates that there can be no
-     * actions in it. The result may be different in other rounds. This is the opposite of
-     * {@link #isCurrentPhasePlayable()}.
-     *
-     * @return True when the current phase should be skipped entirely in this round
-     * @see #isCurrentPhasePlayable()
-     */
-    public boolean shouldSkipCurrentPhase() {
-        return !isCurrentPhasePlayable();
-    }
-
-    /**
      * Empties the list of pending EntityActions completely.
      * @see #getActionsVector()
      */
@@ -268,7 +249,13 @@ public abstract class AbstractGame implements IGame {
         fireGameEvent(new GameNewActionEvent(this, action));
     }
 
-    public void setupRoundDeployment() {
+    /**
+     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game
+     * that are undeployed (that includes returning units or reinforcements) together with the game
+     * round that they are supposed to deploy on. This method can be called at any time in the game
+     * and will assemble deployment according to the present game state.
+     */
+    public void setupDeployment() {
         deploymentTable.clear();
         for (Deployable unit : deployableInGameObjects()) {
             if (!unit.isDeployed()) {
@@ -308,5 +295,17 @@ public abstract class AbstractGame implements IGame {
      */
     public void clearDeploymentThisRound() {
         deploymentTable.remove(currentRound);
+    }
+
+    /**
+     * Resets the turn index to {@link #AWAITING_FIRST_TURN}
+     */
+    public void resetTurnIndex() {
+        turnIndex = AWAITING_FIRST_TURN;
+    }
+
+    @Override
+    public int getTurnIndex() {
+        return turnIndex;
     }
 }

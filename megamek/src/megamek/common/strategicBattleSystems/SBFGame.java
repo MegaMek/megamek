@@ -28,9 +28,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Map;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
@@ -42,16 +40,11 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private GamePhase lastPhase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
+    private final List<GameTurn> turnList = new ArrayList<>();
 
     @Override
-    public GameTurn getTurn() {
+    public PlayerTurn getTurn() {
         return null;
-    }
-
-    @Override
-    public boolean hasMoreTurns() {
-        // stub
-        return false;
     }
 
     @Override
@@ -179,6 +172,11 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return object instanceof SBFFormation || object instanceof AlphaStrikeElement || object instanceof SBFUnit;
     }
 
+    @Override
+    public void setLastPhase(GamePhase lastPhase) {
+        this.lastPhase = lastPhase;
+    }
+
     /**
      * Adds the given reports this game's reports.
      *
@@ -206,7 +204,34 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         gameReport.replaceAllReports(newReports);
     }
 
-    public void setLastPhase(GamePhase lastPhase) {
-        this.lastPhase = lastPhase;
+    public void clearTurns() {
+        turnList.clear();
+    }
+
+    /**
+     * Sets the current list of turns to the given one, replacing any currently present turns.
+     *
+     * @param newTurns The new list of turns to use
+     */
+    public void setTurns(List<GameTurn> newTurns) {
+        turnList.clear();
+        turnList.addAll(newTurns);
+    }
+
+    /**
+     * Returns the current list of turns. The returned list is unmodifiable but not a deep copy. If you're
+     * not the SBFGameManager, don't even think about changing any of the turns.
+     */
+    @Override
+    public List<GameTurn> getTurnsList() {
+        return Collections.unmodifiableList(turnList);
+    }
+
+    /**
+     * Changes to the next turn, returning it.
+     */
+    public PlayerTurn changeToNextTurn() {
+        turnIndex++;
+        return getTurn();
     }
 }

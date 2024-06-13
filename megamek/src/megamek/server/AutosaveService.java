@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.service;
+package megamek.server;
 
 import megamek.MMConstants;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -35,20 +34,21 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AutosaveService {
-    public final String FILENAME_FORMAT = "Round-%d-autosave%s.sav.gz";
+class AutosaveService {
 
-    //region Constructors
-    public AutosaveService() {
+    public static final String FILENAME_FORMAT = "Round-%d-autosave%s.sav.gz";
 
+    private final AbstractGameManager gameManager;
+
+    AutosaveService(AbstractGameManager gameManager) {
+        this.gameManager = gameManager;
     }
-    //endregion Constructors
 
-    public void performRollingAutosave(final GameManager gameManager) {
+    public void performRollingAutosave() {
         final int maxNumberAutosaves = gameManager.getGame().getOptions().intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
         if (maxNumberAutosaves > 0) {
             try {
-                final String fileName = getAutosaveFilename(gameManager);
+                final String fileName = getAutosaveFilename();
                 if (!StringUtility.isNullOrBlank(fileName)) {
                     gameManager.saveGame(fileName, gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
                 } else {
@@ -60,7 +60,7 @@ public class AutosaveService {
         }
     }
 
-    private @Nullable String getAutosaveFilename(final GameManager gameManager) {
+    private @Nullable String getAutosaveFilename() {
         // Get all autosave files in ascending order of date creation
         final String savesDirectoryPath = MMConstants.SAVEGAME_DIR;
         final File folder = new File(savesDirectoryPath);
@@ -79,7 +79,7 @@ public class AutosaveService {
                 if (autosaveFiles.get(index).delete()) {
                     autosaveFiles.remove(index);
                 } else {
-                    LogManager.getLogger().error("Unable to delete file " + autosaveFiles.get(index).getName());
+                    LogManager.getLogger().error("Unable to delete file {}", autosaveFiles.get(index).getName());
                     index++;
                 }
             }
@@ -88,13 +88,12 @@ public class AutosaveService {
             String fileName = null;
 
             boolean repeatedName = true;
-            index = 1;
             String localDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(
                             PreferenceManager.getClientPreferences().getStampFormat()));
             while (repeatedName) {
                 fileName = String.format(
                         FILENAME_FORMAT,
-                        gameManager.getGame().getRoundCount(),
+                        gameManager.getGame().getCurrentRound(),
                         localDateTime
                 );
 

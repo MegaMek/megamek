@@ -429,7 +429,7 @@ public class RATGenerator {
                                                      int roleStrictness,
                                                      FactionRecord user) {
         return generateTable(fRec, unitType, year, rating, weightClasses, networkMask,
-                movementModes, roles, null, roleStrictness, user);
+                movementModes, roles, new ArrayList<>(), roleStrictness, user);
     }
 
     /**
@@ -543,6 +543,9 @@ public class RATGenerator {
                     }
                     ar = findModelAvailabilityRecord(early, mRec.getKey(), fRec);
                     if ((ar == null) || (ar.getAvailability() == 0)) {
+                        continue;
+                    }
+                    if (rolesExcluded != null && mRec.getRoles().stream().anyMatch(rolesExcluded::contains)) {
                         continue;
                     }
                     double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);

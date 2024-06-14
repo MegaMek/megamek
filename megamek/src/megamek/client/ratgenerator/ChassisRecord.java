@@ -150,11 +150,12 @@ public class ChassisRecord extends AbstractUnitRecord {
 
             // If the model is considered available, convert the value to a weight and add it
             // to the total
-            AvailabilityRating modelAvRating = generator.findModelAvailabilityRecord(era, curModel.getKey(), factionEraData);
+            AvailabilityRating modelAvRating = generator.findModelAvailabilityRecord(era,
+                    curModel.getKey(), factionEraData);
             if (modelAvRating != null) {
 
-
-                Double adjustedAvRating = (double) curModel.calcAvailability(modelAvRating, rating, 5, year); // (double) modelAvRating.adjustForRating(rating, 5);
+                Double adjustedAvRating = (double) curModel.calcAvailability(modelAvRating,
+                        rating, 5, year);
 
                 adjustedAvRating = MissionRole.adjustAvailabilityByRole(adjustedAvRating, roles, curModel, year, roleStrictness);
                 if (adjustedAvRating != null && adjustedAvRating > 0) {

@@ -433,6 +433,10 @@ public class RATGenerator {
     }
 
     /**
+     * Generate a weighted random selection table of full units (chassis + model) for random
+     * selection, suing the provided settings.
+     * VTOLs may be included with ground vehicles by selecting the TANK unit type and VTOL
+     * movement type.
      *
      * @param fRec
      * @param unitType
@@ -499,6 +503,7 @@ public class RATGenerator {
             ratingLevel = factionRatings.indexOf(rating);
         }
 
+        // Iterate through each chassis
         for (String chassisKey : chassisIndex.get(early).keySet()) {
             ChassisRecord cRec = chassis.get(chassisKey);
             if (cRec == null) {
@@ -511,28 +516,31 @@ public class RATGenerator {
                 cRec.setUnitType(UnitType.AEROSPACEFIGHTER);
             }
 
+            // Skip if the unit type does not match
             if (cRec.getUnitType() != unitType &&
-                    !(unitType == UnitType.TANK
-                        && cRec.getUnitType() == UnitType.VTOL
-                        && movementModes.contains(EntityMovementMode.VTOL))) {
+                    !(unitType == UnitType.TANK &&
+                            cRec.getUnitType() == UnitType.VTOL &&
+                            movementModes.contains(EntityMovementMode.VTOL))) {
                 continue;
             }
 
-            AvailabilityRating ar = findChassisAvailabilityRecord(early,
-                        chassisKey, fRec, year);
+            // Get the availability rating of the current chassis and modify for rating and pre/
+            // early production status
+            AvailabilityRating ar = findChassisAvailabilityRecord(early, chassisKey, fRec, year);
             if (ar == null) {
                 continue;
             }
             double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
             cAv = interpolate(cAv,
                     cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-                    Math.max(early, cRec.getIntroYear()), late, year);
+                    Math.max(early, cRec.getIntroYear()),
+                    late,
+                    year);
             if (cAv > 0) {
-                // FIXME: this is counting models that are not yet available, which skews availability
-                //  (denominator line 559)
-                //  The method for generating weight needs an overload for filtering
-//                double totalModelWeight = cRec.totalModelWeight(early,
-//                        cRec.isOmni() ? user : fRec);
+
+                // Calculate the total random selection weight of all models, filtering out those
+                // which are not applicable. If the total is 0.0 (or close to it) there are no
+                // suitable models for this chassis.
                 double totalModelWeight = cRec.totalFilteredModelWeight(early,
                         cRec.isOmni() ? user : fRec,
                         ratingLevel,
@@ -543,31 +551,53 @@ public class RATGenerator {
                         roleStrictness,
                         roles,
                         rolesExcluded);
+
+                if (totalModelWeight <= 0.01) {
+                    continue;
+                }
+
+                // Get the random selection weight for each specific model
                 for (ModelRecord mRec : cRec.getModels()) {
 
-                    // FIXME: introduction year should be acceptable (<=), but it looks like there
-                    //  should be a two-year grace period for pre-production/experimental?
-                    if (mRec.getIntroYear() > year
-                            || (!weightClasses.isEmpty()
-                                    && !weightClasses.contains(mRec.getWeightClass()))
-                            || (networkMask & mRec.getNetworkMask()) != networkMask) {
+                    // Skip models that are at least two years from official introduction, and those
+                    // that do not match the required weight classes
+                    if (year < (mRec.getIntroYear() - 2) ||
+                            (!weightClasses.isEmpty() && !weightClasses.contains(mRec.getWeightClass()))) {
                         continue;
                     }
 
+                    // Skip models that do not use one of the requested movement types
                     if (!movementModes.isEmpty() && !movementModes.contains(mRec.getMovementMode())) {
                         continue;
                     }
+
+                    // Skip any models that have roles which are being excluded
+                    if (rolesExcluded != null && mRec.getRoles().stream().anyMatch(rolesExcluded::contains)) {
+                        continue;
+                    }
+
+                    // Skip any models that do not have the requested C3 system
+                    if ((networkMask & mRec.getNetworkMask()) != networkMask) {
+                        continue;
+                    }
+
+                    // Get the availability rating of the model
                     ar = findModelAvailabilityRecord(early, mRec.getKey(), fRec);
                     if ((ar == null) || (ar.getAvailability() == 0)) {
                         continue;
                     }
-                    if (rolesExcluded != null && mRec.getRoles().stream().anyMatch(rolesExcluded::contains)) {
-                        continue;
-                    }
+
+                    // Get the availability of the model relative to others of the same chassis,
+                    // including modifiers for rating (+/- indicator) and pre-early production
                     double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+
+                    // If needed, interpolate
                     mAv = interpolate(mAv,
                             mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-                            Math.max(early, mRec.getIntroYear()), late, year);
+                            Math.max(early, mRec.getIntroYear()),
+                            late,
+                            year);
+
                     Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
                     if (adjMAv != null) {
                         double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight

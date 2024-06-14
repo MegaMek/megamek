@@ -24,6 +24,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
+import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -59,6 +60,7 @@ public class MechView {
     interface ViewElement {
         String toPlainText();
         String toHTML();
+        String toDiscord();
     }
 
     private Entity entity;
@@ -84,7 +86,7 @@ public class MechView {
     private List<ViewElement> sFluff = new ArrayList<>();
     private List<ViewElement> sInvalid = new ArrayList<>();
 
-    private final boolean html;
+    private final ViewFormatting formatting;
 
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
@@ -94,7 +96,7 @@ public class MechView {
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      */
     public MechView(Entity entity, boolean showDetail) {
-        this(entity, showDetail, false, true);
+        this(entity, showDetail, false, ViewFormatting.HTML);
     }
 
     /**
@@ -107,7 +109,7 @@ public class MechView {
      *                         equipment-only cost for conventional infantry for MekHQ.
      */
     public MechView(Entity entity, boolean showDetail, boolean useAlternateCost) {
-        this(entity, showDetail, useAlternateCost, true);
+        this(entity, showDetail, useAlternateCost, ViewFormatting.HTML);
     }
 
     /**
@@ -117,12 +119,11 @@ public class MechView {
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
      *                         equipment-only cost for conventional infantry for MekHQ.
-     * @param html             If true, produces output formatted as html. If false, formats output
-     *                         as plain text.
+     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
     public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
-                    final boolean html) {
-        this(entity, showDetail, useAlternateCost, (entity.getCrew() == null), html);
+                    final ViewFormatting formatting) {
+        this(entity, showDetail, useAlternateCost, (entity.getCrew() == null), formatting);
     }
 
     /**
@@ -134,13 +135,12 @@ public class MechView {
      *                         equipment-only cost for conventional infantry for MekHQ.
      * @param ignorePilotBV    If true then the BV calculation is done without including the pilot
      *                         BV modifiers
-     * @param html             If true, produces output formatted as html. If false, formats output
-     *                         as plain text.
+     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
     public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
-                    final boolean ignorePilotBV, final boolean html) {
+                    final boolean ignorePilotBV, final ViewFormatting formatting) {
         this.entity = entity;
-        this.html = html;
+        this.formatting = formatting;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
         isBA = entity instanceof BattleArmor;
@@ -576,8 +576,20 @@ public class MechView {
      * @return        The formatted data.
      */
     private String getReadout(List<ViewElement> section) {
-        Function<ViewElement,String> mapper = html?
-                ViewElement::toHTML : ViewElement::toPlainText;
+        Function<ViewElement,String> mapper;
+        switch (formatting) {
+            case HTML:
+                mapper = ViewElement::toHTML;
+                break;
+            case NONE:
+                mapper = ViewElement::toPlainText;
+                break;
+            case DISCORD:
+                mapper = ViewElement::toDiscord;
+                break;
+            default:
+                throw new IllegalStateException("Impossible");
+        }
         return section.stream().map(mapper).collect(Collectors.joining());
     }
 
@@ -620,6 +632,9 @@ public class MechView {
      * @return The data from the fluff section.
      */
     public String getMechReadoutFluff() {
+        if (formatting == ViewFormatting.DISCORD) {
+            return "";
+        }
         return getReadout(sFluff);
     }
 
@@ -639,11 +654,14 @@ public class MechView {
         String preStart = "";
         String preEnd = "";
 
-        if (html && (fontName != null)) {
+        if (formatting == ViewFormatting.HTML && (fontName != null)) {
             docStart = "<div style=\"font-family:" + fontName + ";\">";
             docEnd = "</div>";
             preStart = "<PRE style=\"font-family:" + fontName + ";\">";
             preEnd = "</PRE>";
+        } else if (formatting == ViewFormatting.DISCORD) {
+            docStart = "```ansi\n";
+            docEnd = "```";
         }
         return docStart + getMechReadoutHead()
                 + getMechReadoutBasic() + getMechReadoutLoadout()
@@ -714,12 +732,12 @@ public class MechView {
 
                 }
                 String[] row = {entity.getLocationName(loc),
-                        renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc), html),
+                        renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc), formatting),
                         "", "", "" };
 
                 if (IArmorState.ARMOR_NA != entity.getArmorForReal(loc)) {
                     row[2] = renderArmor(entity.getArmorForReal(loc),
-                            entity.getOArmor(loc), html);
+                            entity.getOArmor(loc), formatting);
                 }
                 if (entity.hasPatchworkArmor()) {
                     row[3] = ArmorType.forEntity(entity, loc).getName();
@@ -731,7 +749,7 @@ public class MechView {
                 if (entity.hasRearArmor(loc)) {
                     row = new String[] { entity.getLocationName(loc) + " (rear)", "",
                             renderArmor(entity.getArmorForReal(loc, true),
-                                    entity.getOArmor(loc, true), html), "", ""};
+                                    entity.getOArmor(loc, true), formatting), "", ""};
                     locTable.addRow(row);
                 }
             }
@@ -746,7 +764,7 @@ public class MechView {
         List<ViewElement> retVal = new ArrayList<>();
 
         retVal.add(new LabeledElement(Messages.getString("MechView.SI"),
-                renderArmor(a.getSI(), a.get0SI(), html)));
+                renderArmor(a.getSI(), a.get0SI(), formatting)));
 
         // if it is a jumpship get sail and KF integrity
         if (isJumpship) {
@@ -800,7 +818,7 @@ public class MechView {
                 String[] row = { entity.getLocationName(loc), "", "" };
                 if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
                     row[1] = renderArmor(entity.getArmor(loc),
-                            entity.getOArmor(loc), html);
+                            entity.getOArmor(loc), formatting);
                 }
                 if (entity.hasPatchworkArmor()) {
                     row[2] = Messages.getString("MechView."
@@ -1086,14 +1104,14 @@ public class MechView {
             retVal.add(miscTable);
         }
 
-        String transportersString = entity.getUnusedString(html);
+        String transportersString = entity.getUnusedString(formatting);
         if (!transportersString.isBlank()) {
             retVal.add(new SingleLine());
             // Reformat the list to a table to keep the formatting similar between blocks
             TableElement transportTable = new TableElement(1);
             transportTable.setColNames(Messages.getString("MechView.CarryingCapacity"));
             transportTable.setJustification(TableElement.JUSTIFIED_LEFT);
-            String separator = html ? "<br>" : "\r\n";
+            String separator = formatting == ViewFormatting.HTML ? "<br>" : "\n";
             String[] transportersLines = transportersString.split(separator);
             for (String line : transportersLines) {
                 transportTable.addRow(line);
@@ -1144,22 +1162,44 @@ public class MechView {
         return new EmptyElement();
     }
 
-    private static String renderArmor(int nArmor, int origArmor, boolean html) {
+    private static String renderArmor(int nArmor, int origArmor, ViewFormatting formatting) {
         double percentRemaining = ((double) nArmor) / ((double) origArmor);
         String armor = Integer.toString(nArmor);
-        if (!html) {
-            if (percentRemaining < 0) {
-                return "X";
-            } else {
-                return armor;
-            }
+
+        String warnBegin;
+        String warnEnd;
+        String cautionBegin;
+        String cautionEnd;
+
+        switch (formatting) {
+            case HTML:
+                warnBegin = "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + '>';
+                warnEnd = "</FONT>";
+                cautionBegin = "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getCautionColor()) + '>';
+                cautionEnd = "</FONT>";
+                break;
+            case NONE:
+                warnBegin = "";
+                warnEnd = "";
+                cautionBegin = "";
+                cautionEnd = "";
+                break;
+            case DISCORD:
+                warnBegin = DiscordFormat.RED.format();
+                warnEnd = DiscordFormat.RESET.format();
+                cautionBegin = DiscordFormat.YELLOW.format();
+                cautionEnd = DiscordFormat.RESET.format();
+                break;
+            default:
+                throw new IllegalStateException("Impossible");
         }
+
         if (percentRemaining < 0) {
-            return "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + ">X</FONT>";
+            return warnBegin + 'X' + warnEnd;
         } else if (percentRemaining <= .25) {
-            return "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + ">" + armor + "</FONT>";
+            return warnBegin + armor + warnEnd;
         } else if (percentRemaining < 1.00) {
-            return "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getCautionColor()) + ">" + armor + "</FONT>";
+            return cautionBegin + armor + cautionEnd;
         } else {
             return armor;
         }
@@ -1180,10 +1220,15 @@ public class MechView {
             return "";
         }
 
+        @Override
+        public String toDiscord() {
+            return "";
+        }
+
     }
 
     /**
-     * Basic one-line entry consisting of a label, a colon, and a value. In html the label is bold.
+     * Basic one-line entry consisting of a label, a colon, and a value. In html and discord the label is bold.
      *
      */
     private static class LabeledElement implements ViewElement {
@@ -1201,19 +1246,28 @@ public class MechView {
                     .replaceAll("<[Pp]> *", "\n\n")
                     .replaceAll("</[Pp]> *", "\n")
                     .replaceAll("<[^>]*>", "");
-            return label + ": " + htmlCleanedText + "\n";
+            return label + ": " + htmlCleanedText + '\n';
         }
 
         @Override
         public String toHTML() {
             return "<b>" + label + "</b>: " + value + "<br>";
         }
+
+        @Override
+        public String toDiscord() {
+            String htmlCleanedText = value.replaceAll("<[Bb][Rr]> *", "\n")
+                .replaceAll("<[Pp]> *", "\n\n")
+                .replaceAll("</[Pp]> *", "\n")
+                .replaceAll("<[^>]*>", "");
+            return DiscordFormat.BOLD.format() + label + DiscordFormat.RESET.format() + ": " + htmlCleanedText + '\n';
+        }
     }
 
     /**
      * Data laid out in a table with named columns. The columns are left-justified by default,
      * but justification can be set for columns individually. Plain text output requires a monospace
-     * font to line up correctly. For HTML output the background color of an individual row can be set.
+     * font to line up correctly. For HTML and discord output the background color of an individual row can be set.
      *
      */
     private static class TableElement implements ViewElement {
@@ -1374,10 +1428,47 @@ public class MechView {
             sb.append("</table>\n");
             return sb.toString();
         }
+
+        @Override
+        public String toDiscord() {
+            final String COL_PADDING = "  ";
+            StringBuilder sb = new StringBuilder();
+            sb.append(DiscordFormat.UNDERLINE.format());
+            for (int col = 0; col < colNames.length; col++) {
+                sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
+                if (col < colNames.length - 1) {
+                    sb.append(COL_PADDING);
+                }
+            }
+            sb.append(DiscordFormat.RESET.format());
+            sb.append("\n");
+            for (int r = 0; r < data.size(); r++) {
+                if (colors.containsKey(r)) {
+                    try {
+                        sb.append(DiscordFormat.valueOf(colors.get(r).toUpperCase()).format());
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                final String[] row = data.get(r);
+                for (int col = 0; col < row.length; col++) {
+                    sb.append(justify(justification[col], row[col], colWidth.get(col)));
+                    if (col < row.length - 1) {
+                        sb.append(COL_PADDING);
+                    }
+                }
+                if (colors.containsKey(r)) {
+                    try {
+                        var ignored = DiscordFormat.valueOf(colors.get(r).toUpperCase()).format();
+                        sb.append(DiscordFormat.RESET.format());
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
     }
 
     /**
-     * Displays a label (bold for html output) followed by a column of items
+     * Displays a label (bold for html and discord output) followed by a column of items
      *
      */
     private static class ItemList implements ViewElement {
@@ -1417,6 +1508,18 @@ public class MechView {
             }
             return sb.toString();
         }
+
+        @Override
+        public String toDiscord() {
+            StringBuilder sb = new StringBuilder();
+            if (null != heading) {
+                sb.append(DiscordFormat.BOLD.format()).append(heading).append(DiscordFormat.RESET.format()).append('\n');
+            }
+            for (String item : data) {
+                sb.append(item).append("\n");
+            }
+            return sb.toString();
+        }
     }
 
     /**
@@ -1442,6 +1545,11 @@ public class MechView {
         @Override
         public String toHTML() {
             return value + "<br/>\n";
+        }
+
+        @Override
+        public String toDiscord() {
+            return toPlainText();
         }
     }
 
@@ -1477,6 +1585,12 @@ public class MechView {
             String result = label.isBlank() ? "" : "<B>" + label + "</B>: ";
             return result + "<A HREF=" + address + ">" + displayText + "</A><BR>";
         }
+
+        @Override
+        public String toDiscord() {
+            String result = label.isBlank() ? "" : DiscordFormat.BOLD.format() + label + ": " + DiscordFormat.RESET.format();
+            return result + displayText + "\n";
+        }
     }
 
     /**
@@ -1499,6 +1613,11 @@ public class MechView {
         public String toHTML() {
             return "<font size=\"+1\"><b>" + title + "</b></font><br/>\n";
         }
+
+        @Override
+        public String toDiscord() {
+            return DiscordFormat.BOLD.format() + DiscordFormat.UNDERLINE.format() + title + DiscordFormat.RESET.format() + '\n';
+        }
     }
 
     /**
@@ -1507,10 +1626,15 @@ public class MechView {
      * @return A String that is used to mark the beginning of a warning.
      */
     private String warningStart() {
-        if (html) {
-            return "<font color=\"red\">";
-        } else {
-            return "*";
+        switch (formatting) {
+            case HTML:
+                return "<font color=\"red\">";
+            case NONE:
+                return "*";
+            case DISCORD:
+                return DiscordFormat.RED.format();
+            default:
+                throw new IllegalStateException("Impossible");
         }
     }
 
@@ -1519,10 +1643,15 @@ public class MechView {
      * @return A String that is used to mark the end of a warning.
      */
     private String warningEnd() {
-        if (html) {
-            return "</font>";
-        } else {
-            return "*";
+        switch (formatting) {
+            case HTML:
+                return "</font>";
+            case NONE:
+                return "*";
+            case DISCORD:
+                return DiscordFormat.RESET.format();
+            default:
+                throw new IllegalStateException("Impossible");
         }
     }
 
@@ -1532,10 +1661,15 @@ public class MechView {
      * @return The starting element for italicized text.
      */
     private String italicsStart() {
-        if (html) {
-            return "<i>";
-        } else {
-            return "";
+        switch (formatting) {
+            case HTML:
+                return "<i>";
+            case NONE:
+                return "";
+            case DISCORD:
+                return DiscordFormat.UNDERLINE.format();
+            default:
+                throw new IllegalStateException("Impossible");
         }
     }
 
@@ -1544,10 +1678,15 @@ public class MechView {
      * @return The ending element for italicized text.
      */
     private String italicsEnd() {
-        if (html) {
-            return "</i>";
-        } else {
-            return "";
+        switch (formatting) {
+            case HTML:
+                return "</i>";
+            case NONE:
+                return "";
+            case DISCORD:
+                return DiscordFormat.RESET.format();
+            default:
+                throw new IllegalStateException("Impossible");
         }
     }
 }

@@ -44,7 +44,6 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      */
     abstract protected String getSkipTurnButtonLabel();
 
-
     @Override
     protected void updateDonePanel() {
         if (attacks.isEmpty() || ((attacks.size() == 1) && (attacks.firstElement() instanceof TorsoTwistAction))) {

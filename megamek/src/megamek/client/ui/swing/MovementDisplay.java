@@ -27,7 +27,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
-import megamek.common.GameTurn.UnloadStrandedTurn;
+import megamek.common.UnloadStrandedTurn;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -310,7 +310,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private Map<MoveCommand, MegamekButton> buttons;
 
     // let's keep track of what we're moving, too
-    private int cen = Entity.NONE; // current entity number
     private MovePath cmd; // considering movement data
 
     // what "gear" is our mech in?
@@ -517,9 +516,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP, this, this::undoLastStep);
 
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
+                () -> selectEntity(clientgui.getClient().getNextEntityNum(currentEntity)));
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
+                () -> selectEntity(clientgui.getClient().getPrevEntityNum(currentEntity)));
 
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::cancel);
         controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this, this::performToggleMovemode);
@@ -641,7 +640,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce);
         }
 
-        cen = en;
+        currentEntity = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
 
@@ -989,7 +988,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         MovePath possible = cmd.clone();
         possible.clipToPossible();
-        if (possible.length() == 0) {
+        if ((possible.length() == 0) || (ce() == null)) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
         } else if (!possible.isMoveLegal()) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
@@ -1109,7 +1108,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && (next.getOwnerId() != ce.getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
-        cen = Entity.NONE;
+        currentEntity = Entity.NONE;
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         // Return the highlight sprite back to its original color
@@ -1671,21 +1670,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce().hasUMU()) {
             clientgui.getClient().sendUpdateEntity(ce());
         }
-        clientgui.getClient().moveEntity(cen, cmd);
+        clientgui.getClient().moveEntity(currentEntity, cmd);
         if (ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();
-    }
-
-    /**
-     * Returns the current entity.
-     */
-    private synchronized Entity ce() {
-        if (clientgui != null) {
-            return clientgui.getClient().getGame().getEntity(cen);
-        }
-        return null;
     }
 
     /**
@@ -1915,7 +1904,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                 addStepToMovePath(MoveStepType.RAM);
 
-                ToHitData toHit = new RamAttackAction(cen,
+                ToHitData toHit = new RamAttackAction(currentEntity,
                         target.getTargetType(), target.getId(),
                         target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -1966,11 +1955,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // check if it's a valid charge
                 ToHitData toHit = null;
                 if (ce.isAirborneVTOLorWIGE()) {
-                    toHit = new AirmechRamAttackAction(cen,
+                    toHit = new AirmechRamAttackAction(currentEntity,
                             target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 } else {
-                    toHit = new ChargeAttackAction(cen,
+                    toHit = new ChargeAttackAction(currentEntity,
                             target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 }
@@ -2039,7 +2028,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
 
                 // check if it's a valid DFA
-                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient().getGame(), cen, target, cmd);
+                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
                     if (clientgui.doYesNoDialog(
@@ -4304,7 +4293,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
-            } else if (cen == Entity.NONE) {
+            } else if (currentEntity == Entity.NONE) {
                 setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
                 beginMyTurn();
             }
@@ -4510,7 +4499,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final String actionCmd = ev.getActionCommand();
         final AbstractOptions opts = clientgui.getClient().getGame().getOptions();
         if (actionCmd.equals(MoveCommand.MOVE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
         } else if (actionCmd.equals(
                 MoveCommand.MOVE_FORWARD_INI.getCmd())) {
             selectNextPlayer();
@@ -4549,7 +4538,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // ready() was cancelled (ie, not all Velocity is spent), if it
                 // is cancelled we have to ensure the UNJAM_RAC step is removed,
                 // otherwise it can fire multiple times.
-                if (cen != Entity.NONE) {
+                if (currentEntity != Entity.NONE) {
                     cmd.removeLastStep();
                 }
             }

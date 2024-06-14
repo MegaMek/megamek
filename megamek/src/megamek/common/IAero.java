@@ -146,6 +146,13 @@ public interface IAero {
 
     double getFuelPointsPerTon();
 
+    /**
+     * @return True when this aero requires fuel to move. Note that the result is undefined when
+     * the unit has no engine. Callers should consider this case themselves. Also note that
+     * this method does not check whether fuel use as a game option is active, only if the unit
+     * technically requires fuel to move. For example, returns false for solar powered prop-driven
+     * fixed wing support (TM p129).
+     */
     default boolean requiresFuel() {
         return true;
     }
@@ -776,7 +783,7 @@ public interface IAero {
 
     default int getFuelUsed(int thrust) {
         Entity entity = (Entity) this;
-        if (entity.hasEngine() && entity.getEngine().isSolar()) {
+        if (!entity.hasEngine() || !requiresFuel()) {
             return 0;
         } else {
             int overThrust = Math.max(thrust - entity.getWalkMP(), 0);

@@ -788,7 +788,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                               Terrains.ICE,
                                               Terrains.WATER,
                                               Terrains.BUILDING,
-                                              Terrains.BRIDGE));
+                                              Terrains.BRIDGE,
+                                              Terrains.BLACK_ICE));
 
         int[] terrainTypes = hex.getTerrainTypes();
         Set<Integer> hazards = new HashSet<>();
@@ -830,6 +831,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
                 case Terrains.BRIDGE:
                     hazardValue += calcBridgeHazard(movingUnit, hex, step, jumpLanding, board, logMsg);
+                    break;
+                case Terrains.BLACK_ICE:
+                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
                     break;
             }
         }

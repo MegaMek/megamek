@@ -66,7 +66,7 @@ public class ConvFighter extends AeroSpaceFighter {
 
     @Override
     public int getFuelUsed(int thrust) {
-        if (!hasEngine() || getEngine().isSolar()) {
+        if (!hasEngine() || !requiresFuel()) {
             return 0;
         }
         int overThrust = Math.max(thrust - getWalkMP(), 0);

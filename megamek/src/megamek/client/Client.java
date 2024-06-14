@@ -226,7 +226,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
      * Can I unload entities stranded on immobile transports?
      */
     public boolean canUnloadStranded() {
-        return (game.getTurn() instanceof GameTurn.UnloadStrandedTurn)
+        return (game.getTurn() instanceof UnloadStrandedTurn)
                 && game.getTurn().isValid(localPlayerNumber, game);
     }
 

@@ -46,7 +46,6 @@ class EntitySprite extends Sprite {
     private static final int MAX_TMM_PIPS = 6;
     private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
     private static final boolean DIRECT = true;
-    private static final Color LABEL_TEXT_COLOR = Color.WHITE;
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
@@ -77,7 +76,7 @@ class EntitySprite extends Sprite {
             "Wheeled", "Command", "Standard", "Hover", "Hovercraft", "Mechanized",
             "(Standard)", "Platoon", "Transport", "Vehicle", "Air",
             "Assault", "Mobile", "Platform", "Battle Armor", "Vessel", "Infantry",
-            "Fighting", "Fire", "Suport", "Reconnaissance", "Fast");
+            "Fighting", "Fire", "Support", "Reconnaissance", "Fast");
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -114,20 +113,20 @@ class EntitySprite extends Sprite {
                 case ABBREV:
                     return (entity instanceof Mech) ? entity.getModel() : abbreviateUnitName(standardLabelName());
                 case CHASSIS:
-                    return reduceVehicleName(entity.getChassis());
+                    return reduceVehicleName(entity);
                 case NICKNAME:
                     if (!pilotNick().isBlank()) {
                         return "\"" + pilotNick().toUpperCase() + "\"";
                     } else if (!unitNick().isBlank()) {
-                        return "\'" + unitNick() + "\'";
+                        return "'" + unitNick() + "'";
                     } else {
-                        return reduceVehicleName(entity.getChassis());
+                        return reduceVehicleName(entity);
                     }
                 case ONLY_NICKNAME:
                     if (!pilotNick().isBlank()) {
                         return "\"" + pilotNick().toUpperCase() + "\"";
                     } else if (!unitNick().isBlank()) {
-                        return "\'" + unitNick() + "\'";
+                        return "'" + unitNick() + "'";
                     } else {
                         return "";
                     }
@@ -143,15 +142,19 @@ class EntitySprite extends Sprite {
      * until something is encountered that is not contained in that list.
      * On Mech names this will typically have no effect.
      */
-    private static String reduceVehicleName(String unitName) {
-        String[] tokens = unitName.split(" ");
-        int i = tokens.length - 1;
-        for ( ; i > 0; i--) {
-            if (!REMOVABLE_NAME_PARTS.contains(tokens[i])) {
-                break;
+    private static String reduceVehicleName(Entity entity) {
+        if (!entity.isVehicle()) {
+            return entity.getChassis();
+        } else {
+            String[] tokens = entity.getChassis().split(" ");
+            int i = tokens.length - 1;
+            for (; i > 0; i--) {
+                if (!REMOVABLE_NAME_PARTS.contains(tokens[i])) {
+                    break;
+                }
             }
+            return String.join(" ", Arrays.copyOfRange(tokens, 0, i + 1));
         }
-        return String.join(" ", Arrays.copyOfRange(tokens, 0, i + 1));
     }
 
     /** Returns the string with some content shortened like Battle Armor -> BA */
@@ -621,7 +624,7 @@ class EntitySprite extends Sprite {
                     stStr.add(new Status(GUIP.getCautionColor(), "ROLLED"));
                 }
 
-                if ((a.getCurrentFuel() <= 0) && entity.hasEngine() && !entity.getEngine().isSolar()) {
+                if ((a.getCurrentFuel() <= 0) && a.requiresFuel()) {
                     stStr.add(new Status(GUIP.getWarningColor(), "FUEL"));
                 }
 

@@ -71,7 +71,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER);
-            Integer numMekMultis = turns_multi.get(GameTurn.CLASS_MECH);
+            Integer numMekMultis = turns_multi.get(EntityClassTurn.CLASS_MECH);
             if (numMekMultis != null) {
                 turns += (int) Math.ceil(numMekMultis / lanceSize);
             }
@@ -79,7 +79,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER);
-            Integer numTankMultis = turns_multi.get(GameTurn.CLASS_TANK);
+            Integer numTankMultis = turns_multi.get(EntityClassTurn.CLASS_TANK);
             if (numTankMultis != null) {
                 turns += (int) Math.ceil(numTankMultis / lanceSize);
             }
@@ -87,7 +87,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         if (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
-            Integer numProtoMultis = turns_multi.get(GameTurn.CLASS_PROTOMECH);
+            Integer numProtoMultis = turns_multi.get(EntityClassTurn.CLASS_PROTOMECH);
             if (numProtoMultis != null) {
                 turns += (int) Math.ceil(numProtoMultis / lanceSize);
             }
@@ -95,7 +95,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         if (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
-            Integer numInfMultis = turns_multi.get(GameTurn.CLASS_INFANTRY);
+            Integer numInfMultis = turns_multi.get(EntityClassTurn.CLASS_INFANTRY);
             if (numInfMultis != null) {
                 turns += (int) Math.ceil(numInfMultis / lanceSize);
             }

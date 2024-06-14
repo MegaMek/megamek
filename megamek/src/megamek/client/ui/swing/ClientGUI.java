@@ -494,8 +494,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             cb2 = new ChatterBox2(this, bv, controller);
             bv.addOverlay(cb2);
             bv.getPanel().addKeyListener(cb2);
-            offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(new UnitOverview(this));
+            offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(offBoardOverlay);
 
             boardViewsContainer.setName(CG_BOARDVIEW);
@@ -529,7 +529,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         layoutFrame();
         menuBar.addActionListener(this);
-        offBoardOverlay = new OffBoardTargetOverlay(this);
 
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
@@ -1920,7 +1919,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             // If we've added reinforcements, then we need to set the round deployment up again.
             if (addedUnits && reinforce) {
-                client.getGame().setupRoundDeployment();
+                client.getGame().setupDeployment();
                 client.sendResetRoundDeployment();
             }
         } else {
@@ -2950,7 +2949,18 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         else
         do nothing
 
-         */
+    @Nullable
+    @Override
+    public Entity getSelectedUnit() {
+        return client.getGame().getEntity(selectedEntityNum);
+    }
+
+    public boolean hasSelectedWeapon() {
+        return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
+    }
+
+    public JPanel getMainPanel() {
+        return clientGuiPanel;
     }
 
     /**

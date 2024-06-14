@@ -25,6 +25,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
@@ -1204,12 +1205,8 @@ public class Infantry extends Entity {
     }
 
     public void setArmorKit(EquipmentType armorKit) {
-        List<Mounted> toRemove = getEquipment().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
-                .collect(toList());
-        getEquipment().removeAll(toRemove);
-        getMisc().removeAll(toRemove);
-        if (armorKit != null && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
+        removeArmorKits();
+        if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
             try {
                 addEquipment(armorKit, LOC_INFANTRY);
             } catch (LocationFullException ex) {
@@ -1223,6 +1220,24 @@ public class Infantry extends Entity {
             sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
         }
         calcDamageDivisor();
+    }
+
+    private void removeArmorKits() {
+        List<MiscMounted> toRemove = getEquipment().stream()
+                .filter(m -> m instanceof MiscMounted)
+                .map(m -> (MiscMounted) m)
+                .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .collect(toList());
+
+        getEquipment().removeAll(toRemove);
+        getMisc().removeAll(toRemove);
+
+        for (CriticalSlot slot : getCriticalSlots(Infantry.LOC_INFANTRY)) {
+            if ((slot != null) && (slot.getMount() instanceof MiscMounted)
+                    && toRemove.contains((MiscMounted) slot.getMount())) {
+                removeCriticals(Infantry.LOC_INFANTRY, slot);
+            }
+        }
     }
 
     public double calcDamageDivisor() {

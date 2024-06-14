@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 Tank
 </UnitType>
@@ -16,9 +7,9 @@ Tank
 Praetorian Mobile Strategic Command HQ
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 6957
@@ -27,6 +18,10 @@ Praetorian Mobile Strategic Command HQ
 <year>
 3091
 </year>
+
+<originalBuildYear>
+3091
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -39,6 +34,10 @@ Scout
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+cargobay:1.0:1:0::-1:0
+</transporters>
 
 <cruiseMP>
 4
@@ -65,8 +64,7 @@ Tracked
 </armor>
 
 <Body Equipment>
-Communications Equipment (10 ton)
-Cargo (1 ton)
+Communications Equipment:SIZE:10.0
 ISArmoredMotiveSystem
 </Body Equipment>
 
@@ -96,3 +94,4 @@ Era Digest: Dark Age
 <tonnage>
 60.0
 </tonnage>
+

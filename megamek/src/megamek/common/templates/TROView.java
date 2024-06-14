@@ -53,7 +53,7 @@ public class TROView {
     protected TROView() {
     }
 
-    public static TROView createView(Entity entity, boolean html) {
+    public static TROView createView(Entity entity, ViewFormatting formatting) {
         TROView view;
         if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
             view = new MechTROView((Mech) entity);
@@ -77,10 +77,10 @@ public class TROView {
         } else {
             view = new TROView();
         }
-        if (null != view.getTemplateFileName(html)) {
+        if (null != view.getTemplateFileName(formatting == ViewFormatting.HTML)) {
             try {
                 view.template = TemplateConfiguration.getInstance()
-                        .getTemplate("tro/" + view.getTemplateFileName(html));
+                        .getTemplate("tro/" + view.getTemplateFileName(formatting == ViewFormatting.HTML));
             } catch (final IOException e) {
                 LogManager.getLogger().error("", e);
             }

@@ -33,6 +33,7 @@ public class ReconfigurationParameters {
     public HashSet<String> enemyFactions = new HashSet<String>();
 
     // Friendly stats
+    public String friendlyFaction = "";
     public long friendlyCount = 0;
     public long friendlyTAGs = 0;
     public long friendlyNARCs = 0;

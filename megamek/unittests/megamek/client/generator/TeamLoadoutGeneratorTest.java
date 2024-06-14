@@ -6,6 +6,7 @@ import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.client.generator.ReconfigurationParameters;
 import megamek.common.options.*;
+import org.apache.commons.collections.IteratorUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -473,7 +474,9 @@ class TeamLoadoutGeneratorTest {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
 
         // Have the Munition Tree generator use our pre-made mwc so we can see its changes
-        MunitionTree mt = tlg.generateMunitionTree(rp, team, "", mwc);
+
+        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
+        MunitionTree mt = tlg.generateMunitionTree(rp, ownTeamEntities, "", mwc);
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
         assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));

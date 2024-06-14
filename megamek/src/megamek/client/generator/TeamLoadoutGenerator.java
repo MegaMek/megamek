@@ -9,7 +9,6 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Light;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -299,23 +298,44 @@ public class TeamLoadoutGenerator {
      * @return ReconfigurationParameters with information about enemy and friendly forces
      */
     public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, Team t) {
-        ReconfigurationParameters rp = new ReconfigurationParameters();
-
-        // Get our own side's numbers for comparison
         ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(t));
-        rp.friendlyCount = ownTeamEntities.size();
+        ArrayList<Entity> etEntities = new ArrayList<Entity>();
+        ArrayList<String> enemyFactions = new ArrayList<>();
+        boolean doubleBlind = gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
 
-        // If our team can see other teams...
-        if (!gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-            // This team can see the opponent teams; set appropriate options
-            for (Team et: g.getTeams()) {
+        // This team can see the opponent teams; set appropriate options
+        if (!doubleBlind) {
+            for (Team et : g.getTeams()) {
                 if (!et.isEnemyOf(t)) {
                     continue;
                 }
+                enemyFactions.add(et.getFaction());
+                etEntities.addAll((ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et)));
+            }
+        }
+        return generateParameters(ownTeamEntities, etEntities, enemyFactions, doubleBlind, darkEnvironment);
+    }
 
-                rp.enemyFactions.add(et.getFaction());
-                ArrayList<Entity> etEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et));
-                rp.enemyCount += etEntities.size();
+    public static ReconfigurationParameters generateParameters(
+            ArrayList<Entity> ownTeamEntities,
+            ArrayList<Entity> etEntities,
+            ArrayList<String> enemyFactions,
+            boolean doubleBlind,
+            boolean darkEnvironment
+    ) {
+        ReconfigurationParameters rp = new ReconfigurationParameters();
+
+        // Get our own side's numbers for comparison
+        rp.friendlyCount = ownTeamEntities.size();
+
+        // Estimate enemy count for ammo count purposes; may include observers.  The fog of war!
+        rp.enemyCount = etEntities.size();
+
+        // If our team can see other teams...
+        if (!doubleBlind) {
+                rp.enemiesVisible = true;
+                rp.enemyFactions.addAll(enemyFactions);
                 rp.enemyFliers += checkForFliers(etEntities);
                 rp.enemyBombers += checkForBombers(etEntities);
                 rp.enemyInfantry += checkForInfantry(etEntities);
@@ -331,13 +351,9 @@ public class TeamLoadoutGenerator {
                 rp.enemyFastMovers += checkForFastMovers(etEntities);
                 rp.enemyOffBoard = checkForOffboard(etEntities);
                 rp.enemyECMCount = checkForECM(etEntities);
-            }
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
             rp.enemiesVisible = false;
-
-            // Estimate enemy count for ammo count purposes; may include observers.  The fog of war!
-            rp.enemyCount = g.getEntitiesVector().size() - ownTeamEntities.size();
         }
 
         // Friendly force info
@@ -351,14 +367,19 @@ public class TeamLoadoutGenerator {
         rp.friendlyBattleArmor = checkForBattleArmor(ownTeamEntities);
 
         // General parameters
-        rp.darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
+        rp.darkEnvironment = darkEnvironment;
 
         return rp;
     }
     //endregion generateParameters
 
+    //region AC Imperative mutators
+    private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        setAC20Imperatives(e, mt, rp);
+    }
+
     // Set low-ammo-count AC20 carriers to use Caseless exclusively.
-    private static boolean setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+    private static boolean setAC20Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
         int ac20Count = 0;
         int ac20Ammo = 0;
         ac20Count = (int) e.getWeaponList().stream()
@@ -410,7 +431,8 @@ public class TeamLoadoutGenerator {
     public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
         // Based on various requirements from rp, set weights for some ammo types over others
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        return generateMunitionTree(rp, t, defaultSettingsFile, mwc);
+        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
+        return generateMunitionTree(rp, ownTeamEntities, defaultSettingsFile, mwc);
     }
 
     /**
@@ -422,7 +444,7 @@ public class TeamLoadoutGenerator {
      * @param defaultSettingsFile
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile, MunitionWeightCollection mwc) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> ownTeamEntities, String defaultSettingsFile, MunitionWeightCollection mwc) {
 
         MunitionTree mt = (defaultSettingsFile == null | defaultSettingsFile.isBlank()) ?
                 new MunitionTree() : new MunitionTree(defaultSettingsFile);
@@ -533,9 +555,9 @@ public class TeamLoadoutGenerator {
         }
 
         // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
-        if (t.getFaction().equals("FS") && rp.enemyFactions.contains("CC")
+        if (rp.friendlyFaction.equals("FS") && rp.enemyFactions.contains("CC")
                 && (3028 <= rp.allowedYear && rp.allowedYear <= 3050)) {
-            ArrayList<String> tsmOnly = new ArrayList(List.of("Anti-TSM"));
+            ArrayList<String> tsmOnly = new ArrayList<String>(List.of("Anti-TSM"));
             mwc.increaseMunitions(tsmOnly);
             mwc.increaseMunitions(tsmOnly);
             mwc.increaseMunitions(tsmOnly);
@@ -552,7 +574,6 @@ public class TeamLoadoutGenerator {
         applyWeightsToMunitionTree(mwc, mt);
 
         // Handle individual cases like Artemis LRMs, AC/20s with limited ammo, etc.
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
         for (Entity e : ownTeamEntities) {
             // Set certain imperatives based on weapon types, due to low ammo count / low utility
             setACImperatives(e, mt, rp);
@@ -854,6 +875,10 @@ public class TeamLoadoutGenerator {
      * for technological availability.
      */
     public static void populateAeroBombs(List<Entity> entityList, int year, boolean groundMap) {
+        if (entityList == null || entityList.size() < 1) {
+            return;
+        }
+
         int maxBombers = Compute.randomInt(entityList.size()) + 1;
         int numBombers = 0;
 

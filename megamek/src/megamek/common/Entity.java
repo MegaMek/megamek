@@ -3791,7 +3791,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             miscList.add((MiscMounted) mounted);
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
-                && !(mounted instanceof WeaponMounted) && !(mounted instanceof InfantryWeaponMounted)) {
+                && !(mounted instanceof WeaponMounted)) {
             LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
         }
     }
@@ -4561,6 +4561,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the CriticalSlots in the given location as a list. The returned list can be empty
+     * depending on the unit and the chosen slot but not null. The entries are not filtered in
+     * any way (could be null although that is probably an error in the internal representation
+     * of the unit.)
+     *
+     * @param location The location, e.g. Mech.LOC_HEAD
+     * @return A list of CriticalSlots in that location, possibly empty
+     */
+    public List<CriticalSlot> getCriticalSlots(int location) {
+        List<CriticalSlot> result = new ArrayList<>();
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            result.add(getCritical(location, slot));
+        }
+        return result;
     }
 
     /**
@@ -9391,7 +9408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String toString() {
-        return "Entity [" + getDisplayName() + ", " + getId() + "]";
+        return "Entity [" + getDisplayName() + ", ID: " + getId() + "]";
     }
 
     /**

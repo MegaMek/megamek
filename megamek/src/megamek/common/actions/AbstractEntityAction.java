@@ -19,6 +19,8 @@
  */
 package megamek.common.actions;
 
+import megamek.common.Game;
+
 import java.io.Serializable;
 
 /**
@@ -36,5 +38,10 @@ public abstract class AbstractEntityAction implements Serializable, EntityAction
     @Override
     public int getEntityId() {
         return entityId;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getClass().getSimpleName() + "]: Unit ID " + entityId;
     }
 }

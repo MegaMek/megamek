@@ -51,6 +51,8 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     protected final MegamekButton butDone;
 
     private final DistractableDelegate distractableDelegate = new DistractableDelegate();
+
+    /** The IClientgui that this display is a part of. Cannot be null. */
     private final IClientGUI clientgui;
 
     /**

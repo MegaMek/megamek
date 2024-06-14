@@ -161,12 +161,14 @@ ProtoMek
 VTOL
 Naval
 ConventionalFighter
-Aero
+AeroSpaceFighter
 Small Craft
 Dropship
 Jumpship
 Warship
- Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter, Aero, Small Craft, Dropship, Jumpship, Warship. Needed to distinguish between different unit types that have the same name, such as Centurion or Eagle (both of which can apply to either a Mek or an ASF).
+Space Station
+
+This is required to distinguish between different unit types that have the same name, such as Centurion or Eagle (both of which can apply to either a Mek or an ASF).
 
 'omni' attribute: can be either 'Clan' or 'IS'. For non-omnis it is absent. Needed to distinguish between omni and fixed-configuration variants, since omnis taken as salvage/isorla use the operating faction to determine which configuration is used. Clan and IS must be stated to distinguish between the Clan Battle Cobra and the ComStar copy.
 
@@ -174,63 +176,282 @@ Warship
 
 'model' node: There is one model node for each variant in use during the year range.
 
-    'name' attribute: the name of the variant. The full unit name is chassis name + model name,separated by a space.
+    'name' attribute: the name of the variant/model. The full unit name is chassis name + model name, separated by a space.
 
-    'role' element: comma-separated list of roles the variant was designed for.
-        comma-separated list of roles the variant was designed for. Supported values are:
-        fire_support - focus on long range firepower
-        sr_fire_support - focus on short range firepower
-        infantry_support or inf_support - commonly found supporting infantry formations
-        ew_support - carries additional electronics for ECM, scanning, or command functions
+    'role' element: comma-separated list of roles the variant was designed for, or nothing for general use. Supported values are:
+
+        fire_support
+        Use: combat unit with long range weapons
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval
+        Notes: may also be applied to units with quirks such as Improved Targeting (Long)
+
+        sr_fire_support
+        Use: combat unit with short range weapons
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval
+        Notes: may also be applied to units with quirks such as Improved Targeting (Short)
+
+        ew_support
+        Use: combat unit with ECM, active probe, or other electronic warfare equipment
+        Unit types: Mek, Tank, ProtoMek, VTOL, Naval, Small Craft
+
         spotter - carries TAG or equivalent, such as C3 master
-        incendiary - can easily set fires
-        mag_clamp - battle armor or ProtoMek with magnetic clamps
-        artillery - carries tube artillery or artillery cannon
-        missile_artillery - carries missile artillery, typically Arrow IV
-        minesweeper - can clear mines
-        minelayer - can lay mines
-        anti_aircraft - special anti-aircraft targeting or flak-coded weapons
-        anti_infantry - focus on fighting conventional infantry
-        apc - vehicle can carry infantry or battle armor internally
-        specops - more focus on stealth than combat
-        urban - normally used for urban combat
-        recon - speed and detection gear over firepower
-        cavalry - speed and firepower
-        command - has 'Command Mek' quirk, C3 master, or is otherwise commonly used as a commanders ride
-        raider - focus on speed and ammo independence
-        engineer - various combat support engineering roles, such as fieldworks and bridge layers
-        cargo - primarily a cargo mover, or has large cargo capacity
-        support - primary role is noncombat
-        civilian - non-military vehicles
-        training - historically used for training purposes rather than regular combat
-        bomber - focus on bomb delivery
-        interceptor - focus on attacking other aerospace units
-        ground_support - focus on ground units
-        assault - focus on heavy firepower
-        escort - small craft and fighters designed to protect others
-        mech_carrier - has Mek bays
-        asf_carrier - has aerospace bays
-        vee_carrier - has vehicle bays
-        infantry_carrier - has infantry bays
-        troop_carrier - has both infantry and vehicle bays
-        ba_carrier - has battle armor bays
-        mechanized_ba - eligible to be carried by Omni units as mechanized BA
-        tug - has tug adaptor
-        pocket_warship - pocket warship DropShip
-        corvette - WarShip class
-        destroyer - WarShip class
-        frigate - WarShip class
-        cruiser - WarShip class
-        battleship - WarShip class
-        marine - conventional infantry that can fight in vacuum
-        mountaineer - conventional infantry with mountaineer specialty
-        xct - conventional infantry that can survive hostile environments
-        paratrooper - conventional non-jump infantry that can be air dropped
-        anti_mek - conventional infantry that can perform anti-mek attacks
-        field_gun - motorized or mechanized infantry with a towed ballistic or artillery weapon
+        Use: combat unit with TAG, or suitable for spotting for indirect fire
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter
+
+        incendiary
+        Use: combat unit with weapons that can easily start fires
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek
+
+        artillery
+        Use: combat support unit with non-missile artillery, and infantry with field artillery
+        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, Small Craft, Dropship
+        Notes: when this is the only role, the unit is only generated when the ARTILLERY role is specifically
+                called for.
+
+        missile_artillery
+        Use: combat support unit with missile artillery, frequently loaded with homing rounds
+        Unit Types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, Small Craft, Dropship
+        Notes: when this is the only role, the unit is only generated when the ARTILLERY or MISSILE_ARTILLERY
+                roles are specifically used.
+
+        mixed_artillery
+        Use: combat unit with either tube or missile artillery
+        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, Small Craft, Dropship
+        Notes: use in place of artillery or missile_artillery roles for units which carry artillery but may
+                also be deployed as combat units
+
+        anti_aircraft
+        Use: combat unit with weapons suitable for shooting airborne VTOL and fixed wing targets
+        Unit types: Mek, Tank, Infantry, Naval
+        Notes: may be applied to conventional infantry equipped with field guns, and units with the
+                Anti-Aircraft Targeting quirk
+
+        apc
+        Use: combat unit with infantry bay
+        Unit types: Tank, VTOL
+        Notes: small craft and larger vessels should use the infantry_carrier role
+
+        specops
+        Use: combat unit with attributes suitable for special operations, such as stealth gear
+        Unit types: Mek, Tank, Infantry, BattleArmor, VTOL
+        Notes: typically applied to low availability stealthy units, so they have higher availability when
+                a special operations formation is specifically generated
+
+        urban
+        Use: combat unit optimized for urban combat
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek
+        Notes: typically applied to units with wheeled motive type
+
+        anti_infantry
+        Use: combat unit optimized for use against conventional infantry
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL
+        Notes: typically applied to units with multiple anti-personnel weapons
+
+        inf_support/infantry_support
+        Use: combat unit optimized for supporting conventional infantry
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL
+        Notes: typically applied to units that provide heavier fire support for infantry
+
+        recon
+        Use: combat unit optimized for speed over firepower
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter,
+                    AeroSpaceFighter, Small Craft, Dropship
+        Notes: typically applied to units with active probe or similar detection equipment, and
+                units with faster than normal speed for their class
+
+        cavalry
+        Use: combat units with high speed and above average firepower
+        Unit types: Mek, Tank, ProtoMek
+        Notes: typically applied to heavier hovercraft and similar fast, well armed units
+
+        raider
+        Use: mobile units with ammo independence
+        Unit types: Mek, Tank, ProtoMek, VTOL
+        Notes: typically applied to units with energy weapons or otherwise suited for operating
+                without reloading for extended periods
+
+        mechanized_ba
+        Use: combat battle armor that is capable of riding on omni units using mechanized battle armor rules
+        Unit types: BattleArmor
+        Notes: not used, the 'mechanized' attribute on the model element is the preferred use
+
+        mag_clamp
+        Use: the unit can mount non-omni units using mechanized battle armor rules
+        Unit types: BattleArmor, ProtoMek
+        Notes: applied to units which carry mag clamp equipment which allows them to be carried
+                by other non-omni units
+
+        marine
+        Use: conventional infantry and battle armor suited for space combat
+        Unit types: BattleArmor, Infantry
+        Notes: applies to battle armor with the space operations adaptation gear, and infantry with
+                advanced rules combat space suits and Marine specialization
+
+        mountaineer
+        Use: conventional infantry with the Mountaineer specialization
+        Unit types: Infantry
+
+        xct
+        Use: conventional infantry suitable for combat in hostile environment and weather
+        Unit types: Infantry
+        Notes: typically applied to units with advanced rules hostile environment armor and XCT
+                specialization
+
+        paratrooper
+        Use: combat infantry suitable for air dropping
+        Unit types: Infantry
+        Notes: typically applied to foot infantry with the Paratrooper specialization, may also
+                apply to other infantry types that are considered 'airmobile' i.e. light enough
+                for easy air transport.
+
+        anti_mek
+        Use: infantry with equipment for making anti-Mech attacks
+        Unit types: Infantry
+        Notes: typically applied to foot, jump, or motorized infantry that are built with anti-Mech
+                equipment, may be applied to units which do not have the gear but are still allowed
+                to make such attacks
+
+        field_gun
+        Use: combat infantry equipped with field guns (not field artillery)
+        Unit types: Infantry
+        Notes: typically applied to infantry equipped with ballistic field guns. Field artillery
+                uses the artillery, missile_artillery, or mixed_artillery roles. instead of this one.
+
+        command
+        Use: combat or combat support command unit
+        Unit types: Mek, Tank, VTOL, Naval, ConventionalFighter, Small Craft
+        Notes: typically applied to command and control units, such as those equipped with C3 master
+                equipment, command console cockpits, communications gear, or have the Command Mek
+                quirk
+
+        training
+        Use: combat or combat support unit frequently used for cadets/trainees
+        Unit types: Mek, Tank, VTOL, Naval, ConventionalFighter
+        Notes: usually based on fluff/lore rather than equipment
+
+        engineer
+        Use: combat support unit equipped for engineering work
+        Unit types: Mek, Tank, Infantry
+        Notes: units with this role will be generated along with regular combat units unless the
+                support role is added
+
+        minesweeper
+        Use: unit is equipped to clear mines
+        Unit types: Tank, BattleArmor, Infantry
+        Notes: typically applied to infantry units with the Minesweeping Engineers specialization,
+                and battle armor equipped with mine clearance actuators
+
+        minelayer
+        Use: unit is equipped to lay mines
+        Unit types: Tank, BattleArmor, Infantry
+        Notes: typically applied to units which carry mine dispensers. Vehicles frequently loaded
+                with FASCAM ammo may also be given this role.
+
+        support
+        Use: non-combat military unit used to provide support rather than weapons
+        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, AeroSpaceFighter,
+                    Small Craft, Dropship, Jumpship, Space Station
+        Notes: units with this role are excluded when generating general combat forces. Typically
+                used for military non-combat units rather than civilian.
+
+        cargo
+        Use: civilian or non-combat military units with more than token cargo space
+        Unit types: Tank, VTOL, Naval, ConventionalFighter, Small Craft, Dropship, Jumpship, Warship,
+                    Space Station
+        Notes: units with this role will generate along with regular combat units unless the support
+                or civilian roles are added. Units with specific unit bays should use the various
+                *_carrier roles.
+
+        civilian
+        Use: non-military vehicles
+        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, AeroSpaceFighter,
+                    Small Craft, Dropship, Jumpship, Space Station
+        Notes: units with this role are excluded when generating general combat forces, and only generated
+                when specifically generating units with the role. Typically used for civilian/non-military
+                vehicles.
+
+        bomber
+        Use: combat units specialized in carrying bombs/external ordnance
+        Unit types: ConventionalFighter, AeroSpaceFighter
+        Notes: fixed wing aircraft with no weapons, external hardpoints, or otherwise normally used for
+                bombing rather than strike/strafing attacks
+
+        interceptor
+        Use: combat units for fighting other fixed wing aircraft
+        Unit types: ConventionalFighter, AeroSpaceFighter
+        Notes: typically applied to fixed wing aircraft that are specialized in air/space superiority
+
+        ground_support
+        Use: combat units for attacking ground targets
+        Unit types: ConventionalFighter, AeroSpaceFighter, Small Craft
+        Notes: typically applied to units that are more frequently used in ground attack rather than
+                air/space combat
+
+        escort
+        Use: combat units for protecting other air/space units
+        Unit types: ConventionalFighter, AeroSpaceFighter, Small Craft
+        Notes: typically used on small craft
+
+        infantry_carrier
+        Use: unit has bays for transporting conventional infantry
+        Unit types: Small Craft, Dropship
+        Notes: use troop_carrier role on WarShips
+
+        ba_carrier
+        Use: unit has bays for transporting battle armor
+        Unit types: Small Craft, Dropship
+        Notes: use troop_carrier role on WarShips
+
+        mech_carrier
+        Use: unit has bays for transporting Mechs
+        Unit types: Dropship
+        Notes: use troop_carrier role on WarShips
+
+        protomech_carrier
+        Use: unit has bays for transporting ProtoMechs
+        Unit types: Dropship
+        Notes: use troop_carrier role on WarShips
+
+        asf_carrier
+        Use: unit has bays for transporting fixed wing aircraft
+        Unit types: Dropship, Warship
+
+        vee_carrier
+        Use: unit has bays for transporting ground vehicles
+        Unit types: Dropship
+
+        troop_carrier
+        Use: unit has bays for transporting multiple types of ground units
+        Unit types: Dropship, Warship
+        Notes: DropShips may also use multiple roles with the specific bay types
+
+        assault
+        Use: attack ships
+        Unit types: Small Craft, Dropship
+        Notes: typically applied to assault DropShips
+
+        pocket_warship
+        Use: Pocket WarShip and assault DropShips intended to stand against larger targets
+        Unit types: Dropship
+
+        tug
+        Use: DropShips with a tug adaptor for moving disabled ships
+        Unit types: Dropship
+        Notes: units with this role generate along with combat units unless the support or civilian
+                roles are also added
+
+        corvette
+        destroyer
+        frigate
+        cruiser
+        battleship
+        Use: rough hull classes for WarShips
+        Unit types: Warship
+        Notes: WarShip hull classes are not strictly defined so these are based more on lore/source
+                material than displacement
 
     'deployedWith' element: not used by RAT Generator, but provided for utilities that might want to use RAT Generator as a back end to build larger forces. Lists other units this one is frequently deployed with. Prefixing the other unit name with "req:" indicates that it is required (e.g. LongTom and its trailers). Units that are deployed independently can indicate this by using "solo" instead of another unit name.
 
     'availability' element: same as in the chassis element
 
-    'mechanized' element: 'true' for BattleArmor that qualifies for the mechanized BattleArmor rules
+    'mechanized' attribute: 'true' for BattleArmor that qualifies for the mechanized BattleArmor rules

@@ -317,9 +317,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         Game game = clientgui.getClient().getGame();
         List<String> nextPlayerNames = new ArrayList<>();
         int turnIndex = game.getTurnIndex();
-        List<GameTurn> gameTurns = game.getTurnVector();
+        List<GameTurn> gameTurns = game.getTurnsList();
         for (int i = turnIndex + 1; (i < gameTurns.size()) && (nextPlayerNames.size() < playerCountToShow); i++) {
-            nextPlayerNames.add(game.getPlayer(gameTurns.get(i).getPlayerNum()).getName());
+            nextPlayerNames.add(game.getPlayer(gameTurns.get(i).playerId()).getName());
         }
         if (!nextPlayerNames.isEmpty()) {
             String playerList = String.join(", ", nextPlayerNames);

@@ -2929,6 +2929,27 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    public void updateFiringArc2(Entity entity) {
+        if ((entity == null) || (getDisplayedUnit() == null)) {
+            clearFieldOfFire();
+        }
+        if (currPhaseDisplay instanceof ActionPhaseDisplay) {
+            Entity selectedEntity = ((MovementDisplay)currPhaseDisplay).cen
+        }
+        if (entity.equals(getDisplayedUnit())
+        if movementphase
+        movecommand != null
+        update with movecommand; position, facing, underwater
+        if firingphase
+        update from entity (secondary facing)
+
+        else if entity == viewedUnit
+        update from viewedUnit
+
+        else
+        do nothing
+    }
+
     /**
      * Updates the position used for showing the field of fire to the end point of the given movepath. This
      * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
@@ -2938,6 +2959,28 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * @param movePath A planned movement path to take the end position from
      */
     public void updateFiringArc(Entity entity, MovePath movePath) {
+
+        /*
+
+        if entity == selectedUnit
+            if movementphase
+               movecommand != null
+                   update with movecommand; position, facing, underwater
+            if firingphase
+               update from entity (secondary facing)
+
+        else if entity == viewedUnit
+            update from viewedUnit
+
+        else
+            do nothing
+
+
+
+
+
+
+        */
         // Only update when the unit that's moving is shown in the unit display
         if ((entity != null) && entity.equals(getDisplayedUnit()) && getDisplayedWeapon().isPresent()) {
             firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), movePath);

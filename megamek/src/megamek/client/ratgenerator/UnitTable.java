@@ -86,9 +86,8 @@ public class UnitTable {
                                        int roleStrictness,
                                        FactionRecord deployingFaction) {
         Objects.requireNonNull(faction);
-        // FIXME: pass in the excluded roles collection
         Parameters params = new Parameters(faction, unitType, year, rating, weightClasses, networkMask,
-                movementModes, roles, null, roleStrictness, deployingFaction);
+                movementModes, roles, new ArrayList<>(), roleStrictness, deployingFaction);
         return findTable(params);
     }
 

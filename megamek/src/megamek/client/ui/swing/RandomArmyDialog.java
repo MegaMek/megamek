@@ -771,7 +771,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                             ModelRecord.NETWORK_NONE,
                             EnumSet.noneOf(EntityMovementMode.class),
                             EnumSet.noneOf(MissionRole.class),
-                            null,
+                            new ArrayList<>(),
                             0, fRec));
                     List<Integer> numUnits = new ArrayList<>();
                     numUnits.add(m_pFormationOptions.getNumUnits());
@@ -784,7 +784,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                     ModelRecord.NETWORK_NONE,
                                     EnumSet.noneOf(EntityMovementMode.class),
                                     EnumSet.noneOf(MissionRole.class),
-                                    null,
+                                    new ArrayList<>(),
                                     0, fRec));
                             numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                         } else if (m_pFormationOptions.getBooleanOption("mechBA")) {
@@ -812,7 +812,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                         ModelRecord.NETWORK_NONE,
                                         EnumSet.noneOf(EntityMovementMode.class),
                                         EnumSet.of(MissionRole.MECHANIZED_BA),
-                                        null,0, fRec);
+                                        new ArrayList<>(),0, fRec);
                                 List<MechSummary> ba = ft.generateFormation(p,
                                         m_pFormationOptions.getIntegerOption("numOtherUnits"),
                                         ModelRecord.NETWORK_NONE, true);

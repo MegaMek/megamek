@@ -183,7 +183,7 @@ type of city instead.
 
 **Cliffs** - chance of 2+ level elevation changes, if you have enough elevation already
 
-**Woods** - higher settings have more and larger tree patchs and more heavy woods
+**Woods** - higher settings have more and larger tree patches and more heavy woods
 
 **Roughs** - higher settings have more and larger rough patches
 

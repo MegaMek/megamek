@@ -2933,9 +2933,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if ((entity == null) || (getDisplayedUnit() == null)) {
             clearFieldOfFire();
         }
-        if (currPhaseDisplay instanceof ActionPhaseDisplay) {
-            Entity selectedEntity = ((MovementDisplay)currPhaseDisplay).cen
-        }
+//        if (currPhaseDisplay instanceof ActionPhaseDisplay) {
+//            Entity selectedEntity = ((MovementDisplay)currPhaseDisplay).cen
+//        }
+        /*
         if (entity.equals(getDisplayedUnit())
         if movementphase
         movecommand != null
@@ -2948,6 +2949,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         else
         do nothing
+
+         */
     }
 
     /**

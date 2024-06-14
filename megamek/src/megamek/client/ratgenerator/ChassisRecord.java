@@ -110,6 +110,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     public int totalFilteredModelWeight (int era,
                                          FactionRecord factionEraData,
                                          int rating,
+                                         int ratingCounts,
                                          int year,
                                          Collection<Integer> weightFilter,
                                          int networkFilter,
@@ -155,7 +156,7 @@ public class ChassisRecord extends AbstractUnitRecord {
             if (modelAvRating != null) {
 
                 Double adjustedAvRating = (double) curModel.calcAvailability(modelAvRating,
-                        rating, 5, year);
+                        rating, ratingCounts, year);
 
                 adjustedAvRating = MissionRole.adjustAvailabilityByRole(adjustedAvRating, roles, curModel, year, roleStrictness);
                 if (adjustedAvRating != null && adjustedAvRating > 0) {

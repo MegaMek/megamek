@@ -42,9 +42,7 @@ public class AbstractUnitRecord {
     /**
      * Returns availability value modified for rating differential on +/- rating, and adjusted for
      * the first few years before introduction (field experiments, etc.) and immediately after
-     * introduction (production lines working out problems).
-     *
-     * rating differential
+     * introduction (low rate initial production).
      *
      * @param initialAv        AvailabilityRating for the chassis or model.
      * @param formationRating  force equipment rating.

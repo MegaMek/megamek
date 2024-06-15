@@ -308,4 +308,9 @@ public abstract class AbstractGame implements IGame {
     public int getTurnIndex() {
         return turnIndex;
     }
+
+    @Override
+    public int getNextEntityId() {
+        return inGameObjects.isEmpty() ? 0 : Collections.max(inGameObjects.keySet()) + 1;
+    }
 }

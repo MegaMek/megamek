@@ -126,11 +126,6 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     @Override
-    public int getNextEntityId() {
-        return Collections.max(inGameObjects.keySet()) + 1;
-    }
-
-    @Override
     public void replaceUnits(List<InGameObject> units) {
 
     }

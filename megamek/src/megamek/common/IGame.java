@@ -232,7 +232,9 @@ public interface IGame {
 
     // UNITS //////////////
 
-    /** @return The next free id for InGameObjects (units and others). */
+    /**
+     * @return The next free ID for InGameObjects (unit/entity/formation/others).
+     */
     int getNextEntityId();
 
     /**

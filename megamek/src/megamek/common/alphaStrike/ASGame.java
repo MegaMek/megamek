@@ -124,11 +124,6 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public int getNextEntityId() {
-        return 0;
-    }
-
-    @Override
     public void replaceUnits(List<InGameObject> units) {
 
     }

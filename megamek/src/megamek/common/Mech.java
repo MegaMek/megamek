@@ -1509,19 +1509,6 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Returns the about of heat that the entity can sink each turn.
-     */
-    @Override
-    public int getHeatCapacity() {
-        return getHeatCapacity(true, true);
-    }
-
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSink) {
-        return getHeatCapacity(true, radicalHeatSink);
-    }
-
-    /**
      * Returns the name of the heat sinks mounted on this 'mech.
      *
      * @return
@@ -1541,6 +1528,19 @@ public abstract class Mech extends Entity {
 
         // if a mech has no heat sink equipment, we pretend like it has standard heat sinks.
         return "Heat Sink";
+    }
+
+    /**
+     * Returns the about of heat that the entity can sink each turn.
+     */
+    @Override
+    public int getHeatCapacity() {
+        return getHeatCapacity(true, true);
+    }
+
+    @Override
+    public int getHeatCapacity(boolean radicalHeatSink) {
+        return getHeatCapacity(true, radicalHeatSink);
     }
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {

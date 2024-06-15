@@ -1271,7 +1271,6 @@
 	<chassis name='Ajax Assault Tank' unitType='Tank'>
 		<availability>ROS:2,FS:2</availability>
 		<model name='(Sealed)'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 	</chassis>
@@ -2837,7 +2836,6 @@
 			<availability>General:3+,DC:3+</availability>
 		</model>
 		<model name='BHKU-OU'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='BHKU-OX'>
@@ -4957,7 +4955,6 @@
 			<availability>General:4</availability>
 		</model>
 		<model name='3'>
-			<roles>marine</roles>
 			<availability>General:3</availability>
 		</model>
 		<model name='4'>
@@ -5866,7 +5863,6 @@
 			<availability>ROS:2,General:2</availability>
 		</model>
 		<model name='FNR-6U'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 	</chassis>
@@ -6050,21 +6046,21 @@
 		</model>
 	</chassis>
 	<chassis name='Field Gunners' unitType='Infantry'>
-		<availability>IS:1,Periphery:1</availability>
+		<availability>IS:4,Periphery:2</availability>
 		<model name='(AC10)'>
 			<roles>field_gun</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='(AC2)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>General:7</availability>
 		</model>
 		<model name='(AC20)'>
-			<roles>field_gun</roles>
-			<availability>General:7</availability>
+			<roles>urban,field_gun</roles>
+			<availability>General:5</availability>
 		</model>
 		<model name='(AC5)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='(Gauss)'>
@@ -6080,11 +6076,11 @@
 			<availability>IS:4</availability>
 		</model>
 		<model name='(LBX10)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>IS:6</availability>
 		</model>
 		<model name='(LBX2)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>IS:6</availability>
 		</model>
 		<model name='(LBX20)'>
@@ -6127,7 +6123,6 @@
 	<chassis name='Field Medic' unitType='Infantry'>
 		<availability>IS:4,Periphery:4</availability>
 		<model name='Magistracy Medical Corp'>
-			<roles>inf_support</roles>
 			<availability>General:4</availability>
 		</model>
 	</chassis>
@@ -6261,7 +6256,6 @@
 			<availability>CLAN:4,IS:2+,DC:2+</availability>
 		</model>
 		<model name='FS9-OU'>
-			<roles>marine</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='FS9-OX'>
@@ -6346,7 +6340,7 @@
 		</model>
 	</chassis>
 	<chassis name='Foot Ballistic Rifle' unitType='Infantry'>
-		<availability>IS:10-,Periphery:10-,BAN:10-</availability>
+		<availability>ROS:10-,IS:3-,Periphery:3-</availability>
 		<model name='Hastati V'>
 			<availability>General:10-</availability>
 		</model>
@@ -6966,7 +6960,6 @@
 			<availability>RA:4</availability>
 		</model>
 		<model name='3'>
-			<roles>marine</roles>
 			<availability>RA:4</availability>
 		</model>
 	</chassis>
@@ -11499,7 +11492,7 @@
 	<chassis name='Motorized Sub Platoon' unitType='Infantry'>
 		<availability>IS:1,FS:3,Periphery:1</availability>
 		<model name='(Laser SCUBA)'>
-			<roles>specops,marine</roles>
+			<roles>specops</roles>
 			<availability>IS:9</availability>
 		</model>
 	</chassis>
@@ -16842,7 +16835,6 @@
 			<availability>CHH:8,CW:8,CNC:8,CJF:8,CCO:8</availability>
 		</model>
 		<model name='U'>
-			<roles>marine</roles>
 			<availability>CLAN:2</availability>
 		</model>
 	</chassis>

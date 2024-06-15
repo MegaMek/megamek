@@ -5404,16 +5404,28 @@ public abstract class Mech extends Entity {
         return isCarefulStanding;
     }
 
+    /**
+     * How many times TacOps coolant failure has occurred, which is also the reduction in heat
+     * sinking capacity
+     */
     @Override
     public int getCoolantFailureAmount() {
         return heatSinkCoolantFailureFactor;
     }
 
+    /**
+     * Modify the number of TacOps coolant failures. May be positive to indicate additional
+     * failures, or negative to indicate coolant being refreshed from an outside source.
+     * @param amount  Amount to change the value, typical value is 1
+     */
     @Override
     public void addCoolantFailureAmount(int amount) {
         heatSinkCoolantFailureFactor += amount;
     }
 
+    /**
+     * Reset count of TacOps coolant failures to zero (no loss)
+     */
     @Override
     public void resetCoolantFailureAmount() {
         heatSinkCoolantFailureFactor = 0;

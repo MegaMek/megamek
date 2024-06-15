@@ -1467,6 +1467,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
         updateTarget();
         updateDonePanel();
+        clientgui.updateFiringArc(ce());
     }
 
     /**
@@ -1619,7 +1620,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clientgui.getUnitDisplay().wPan.clearToHit();
         }
 
-        if ((weaponId != -1) && (ce() != null) && !isStrafing) {
+        if ((clientgui.getDisplayedUnit() != null) && (clientgui.getDisplayedUnit().equals(ce()))
+                && !isStrafing && (weaponId != -1)) {
             adaptFireModeEnabled(ce().getEquipment(weaponId));
         } else {
             setFireModeEnabled(false);
@@ -1692,7 +1694,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     private void addTorsoTwistAction(int direction) {
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
-            addAttack(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
             clientgui.updateFiringArc(ce());
             updateForNewAction();

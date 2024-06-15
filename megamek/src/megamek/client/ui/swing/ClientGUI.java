@@ -2921,97 +2921,40 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void weaponSelected(MechDisplayEvent b) {
         setSelectedEntityNum(b.getEntityId());
-        if (getDisplayedWeapon().isPresent()) {
-            firingArcSpriteHandler.update(b.getEntity(), getDisplayedWeapon().get());
-        } else {
-            clearFieldOfFire();
-        }
-    }
-
-    public void updateFiringArc2(Entity entity) {
-        if ((entity == null) || (getDisplayedUnit() == null)) {
-            clearFieldOfFire();
-        }
-//        if (currPhaseDisplay instanceof ActionPhaseDisplay) {
-//            Entity selectedEntity = ((MovementDisplay)currPhaseDisplay).cen
-//        }
-        /*
-        if (entity.equals(getDisplayedUnit())
-        if movementphase
-        movecommand != null
-        update with movecommand; position, facing, underwater
-        if firingphase
-        update from entity (secondary facing)
-
-        else if entity == viewedUnit
-        update from viewedUnit
-
-        else
-        do nothing
-
-    @Nullable
-    @Override
-    public Entity getSelectedUnit() {
-        return client.getGame().getEntity(selectedEntityNum);
-    }
-
-    public boolean hasSelectedWeapon() {
-        return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
-    }
-
-    public JPanel getMainPanel() {
-        return clientGuiPanel;
+        updateFiringArc(b.getEntity());
     }
 
     /**
-     * Updates the position used for showing the field of fire to the end point of the given movepath. This
-     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown).
+     * Updates the shown firing arc. The given entity should be the one that has taken an action
+     * such as moving or torso twisting or the unit whose selected weapon has changed.
+     * This method will check if the given unit is the one displayed in the unit viewer and/or
+     * the currently acting unit and update or remove the firinc arcs accordingly.
      *
-     * @param entity The unit to take the facing from if it is the currently viewed unit
-     * @param movePath A planned movement path to take the end position from
-     */
-    public void updateFiringArc(Entity entity, MovePath movePath) {
-
-        /*
-
-        if entity == selectedUnit
-            if movementphase
-               movecommand != null
-                   update with movecommand; position, facing, underwater
-            if firingphase
-               update from entity (secondary facing)
-
-        else if entity == viewedUnit
-            update from viewedUnit
-
-        else
-            do nothing
-
-
-
-
-
-
-        */
-        // Only update when the unit that's moving is shown in the unit display
-        if ((entity != null) && entity.equals(getDisplayedUnit()) && getDisplayedWeapon().isPresent()) {
-            firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), movePath);
-        }
-    }
-
-    /**
-     * Updates the position used for showing the field of fire to the given position. This
-     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown).
-     *
-     * @param entity The unit to take the facing from if it is the currently viewed unit
+     * @param entity The unit that has acted or is otherwise the origin of the update
      */
     public void updateFiringArc(Entity entity) {
-        // Only update when the unit that's updated is shown in the unit display
-        if ((entity != null) && entity.equals(getDisplayedUnit()) && getDisplayedWeapon().isPresent()) {
-            firingArcSpriteHandler.update(entity, getDisplayedWeapon().get());
+        if ((entity == null) || (getDisplayedUnit() == null) || getDisplayedWeapon().isEmpty()) {
+            // with no unit given or no unit displayed or no weapon selected, clear the firing arcs
+            clearFieldOfFire();
+            return;
+
+        } else if (!entity.equals(getDisplayedUnit())) {
+            // the update is not for the displayed unit; therefore do not update the firing arc
+            return;
         }
+
+
+        if (curPanel instanceof MovementDisplay) {
+            MovementDisplay md = (MovementDisplay) curPanel;
+            if (entity.getId() == md.currentEntity) {
+                firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), md.getPlannedMovement());
+                return;
+            }
+        }
+
+        // not in an ActionPhase - or - the unit is not the acting unit:
+        // show for viewed entity, no move or actions to be taken into account
+        firingArcSpriteHandler.update(entity, getDisplayedWeapon().get());
     }
 
     /**

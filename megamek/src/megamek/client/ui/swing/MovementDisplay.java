@@ -1225,7 +1225,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
-        clientgui.updateFiringArc(ce, cmd);
+        clientgui.updateFiringArc(ce);
         clientgui.showSensorRanges(ce, cmd.getFinalCoords());
         computeCFWarningHexes(ce);
 
@@ -1313,7 +1313,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().select(cmd.getFinalCoords());
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
-            clientgui.updateFiringArc(entity, cmd);
+            clientgui.updateFiringArc(entity);
             clientgui.showSensorRanges(entity, cmd.getFinalCoords());
 
             //FIXME what is this
@@ -1816,7 +1816,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
-        clientgui.updateFiringArc(ce(), cmd);
+        clientgui.updateFiringArc(ce());
     }
 
     //
@@ -5704,5 +5704,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Shortcut to clientgui.getClient().getGame(). */
     private Game game() {
         return clientgui.getClient().getGame();
+    }
+
+    @Nullable
+    public MovePath getPlannedMovement() {
+        return cmd;
     }
 }

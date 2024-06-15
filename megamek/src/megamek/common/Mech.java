@@ -1587,6 +1587,13 @@ public abstract class Mech extends Entity {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
 
+        // If the tacops option for coolant failure is enabled, include reductions for
+        // coolant failure
+        if (game != null &&
+                game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)) {
+            capacity -= heatSinkCoolantFailureFactor;
+        }
+
         return Math.max(capacity, 0);
     }
 

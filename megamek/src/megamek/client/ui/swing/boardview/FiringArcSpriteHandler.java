@@ -421,25 +421,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * @param movePath The movement path that is considered for the selected unit
      */
     private boolean testUnderWater(MovePath movePath) {
-        if ((firingEntity == null) || (movePath == null) || clientGUI.getDisplayedWeapon().isEmpty()) {
-            return false;
-        }
-
-        int location = clientGUI.getDisplayedWeapon().get().getLocation();
-        Hex hex = game.getBoard().getHex(movePath.getFinalCoords());
-        if (hex == null) {
-            return false;
-        }
-        int waterDepth = hex.terrainLevel(Terrains.WATER);
-
-        if ((waterDepth > 0) && !movePath.isJumping() && (movePath.getFinalElevation() < 0)) {
-            if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {
-                return firingEntity.locationIsLeg(location);
-            } else {
-                return true;
-            }
-        }
-        return false;
+        return (movePath != null) && testUnderWater(movePath.getFinalCoords(),
+                !movePath.isJumping(), movePath.getFinalElevation());
     }
 
     /**
@@ -447,18 +430,24 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * ends up being underwater.
      */
     private boolean testUnderWater() {
-        if ((firingEntity == null) || clientGUI.getDisplayedWeapon().isEmpty() || (firingPosition == null)) {
+        return testUnderWater(firingPosition, true, firingEntity.getElevation());
+    }
+
+    /**
+     * @return True when, at the given position and elevation and when allowSubmerge is true,
+     * the currently selected weapon ends up being underwater
+     */
+    private boolean testUnderWater(Coords position, boolean allowSubmerge, int unitElevation) {
+        if ((firingEntity == null) || clientGUI.getDisplayedWeapon().isEmpty() || (position == null)
+                || (game.getBoard().getHex(position) == null)) {
             return false;
         }
 
         int location = clientGUI.getDisplayedWeapon().get().getLocation();
-        Hex hex = game.getBoard().getHex(firingPosition);
-        if (hex == null) {
-            return false;
-        }
+        Hex hex = game.getBoard().getHex(position);
         int waterDepth = hex.terrainLevel(Terrains.WATER);
 
-        if ((waterDepth > 0) && (firingEntity.getElevation() < 0)) {
+        if ((waterDepth > 0) && allowSubmerge && (unitElevation < 0)) {
             if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {
                 return firingEntity.locationIsLeg(location);
             } else {

@@ -38,6 +38,8 @@ import static megamek.common.jacksonadapters.SBFFormationSerializer.UNITS;
  */
 public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
 
+    private static final String ID = "id";
+
     public SBFFormationDeserializer() {
         this(null);
     }
@@ -61,6 +63,10 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
                 .map(o -> (SBFUnit) o)
                 .forEach(formation::addUnit);
         SBFFormationConverter.calculateStatsFromUnits(formation);
+
+        if (node.has(ID)) {
+            formation.setId(node.get(ID).intValue());
+        }
         return formation;
     }
 }

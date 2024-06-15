@@ -18707,8 +18707,10 @@ public class GameManager extends AbstractGameManager {
                 }
             }
 
+            // If the TacOps coolant failure rule is in use, only test for coolant failure when
+            // there is capacity to lose
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)
-                    && (entity.getHeatCapacity() > entity.getCoolantFailureAmount())
+                    && (entity.getHeatCapacity() > 0)
                     && (entity.heat >= 5)) {
                 Roll diceRoll = Compute.rollD6(2);
                 int hitNumber = 10;

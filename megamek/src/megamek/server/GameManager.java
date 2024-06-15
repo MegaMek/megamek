@@ -18707,11 +18707,13 @@ public class GameManager extends AbstractGameManager {
                 }
             }
 
-            // If the TacOps coolant failure rule is in use, only test for coolant failure when
-            // there is capacity to lose
+            // If the TacOps coolant failure rule is in use, check for coolant failure. If the
+            // heat sink capacity has already been offset by previous coolant failures, further
+            // reductions in capacity will have no effect.
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)
-                    && (entity.getHeatCapacity() > 0)
-                    && (entity.heat >= 5)) {
+                    && (entity.heat >= 5)
+                    && (entity.getCoolantFailureAmount() < ((Mech) entity).getNumberOfSinks() *
+                    (((Mech) entity).hasDoubleHeatSinks() ? 2 : 1))) {
                 Roll diceRoll = Compute.rollD6(2);
                 int hitNumber = 10;
                 hitNumber -= Math.max(0, (int) Math.ceil(entity.heat / 5.0) - 2);

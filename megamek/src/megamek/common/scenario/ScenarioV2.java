@@ -172,7 +172,7 @@ public class ScenarioV2 implements Scenario {
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
-        int entityId = 0;
+//        int entityId = 0;
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
             MMUReader.requireFields("Player", playerNode, NAME, UNITS);
@@ -205,19 +205,22 @@ public class ScenarioV2 implements Scenario {
 
             JsonNode unitsNode = playerNode.get(UNITS);
             if (game instanceof Game) {
-                List<Entity> entities = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
+                List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
                         .filter(o -> o instanceof Entity)
                         .map(o -> (Entity) o)
                         .collect(Collectors.toList());
-                for (Entity entity : entities) {
-                    entity.setOwner(player);
-                    entity.setId(entityId);
-                    ++ entityId;
-                    ((Game) game).addEntity(entity);
+                int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                for (Entity unit : units) {
+                    unit.setOwner(player);
+                    if (unit.getId() == Entity.NONE) {
+                        unit.setId(entityId);
+                        entityId++;
+                    }
+                    ((Game) game).addEntity(unit);
                     // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
                     // they're not on a space map.
-                    if (entity.isLargeCraft() && !entity.isAirborne()) {
-                        entity.setAltitude(0);
+                    if (unit.isLargeCraft() && !unit.isAirborne()) {
+                        unit.setAltitude(0);
                     }
                 }
             } else if (game instanceof SBFGame) {
@@ -225,7 +228,12 @@ public class ScenarioV2 implements Scenario {
                         .filter(o -> o instanceof InGameObject)
                         .map(o -> (InGameObject) o)
                         .collect(Collectors.toList());
+                int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
                 for (InGameObject unit : units) {
+                    if (unit.getId() == Entity.NONE) {
+                        unit.setId(entityId);
+                        entityId++;
+                    }
                     unit.setOwnerId(player.getId());
                     ((SBFGame) game).addUnit(unit);
                 }
@@ -233,6 +241,10 @@ public class ScenarioV2 implements Scenario {
         }
 
         return result;
+    }
+
+    private int smallestFreeUnitID(List<? extends InGameObject> units) {
+        return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
     private Board createBoard() throws ScenarioLoaderException {

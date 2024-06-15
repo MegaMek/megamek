@@ -35,6 +35,7 @@ import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFFormationDeserializer;
 import megamek.common.jacksonadapters.SBFFormationSerializer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +52,7 @@ import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 @JsonSerialize(using = SBFFormationSerializer.class)
 @JsonDeserialize(using = SBFFormationDeserializer.class)
 public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable,
-        Deployable {
+        Deployable, Serializable {
 
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
@@ -67,7 +68,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int morale;
     private int skill;
     private int pointValue;
-    private CalculationReport conversionReport = new DummyCalculationReport();
+    private transient CalculationReport conversionReport = new DummyCalculationReport();
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
     private String forceString = "";
@@ -423,5 +424,25 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      */
     public void setDeployed(boolean deployed) {
         isDeployed = deployed;
+    }
+
+    /**
+     * Two formations are equal if their ids are equal
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final SBFFormation other = (SBFFormation) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

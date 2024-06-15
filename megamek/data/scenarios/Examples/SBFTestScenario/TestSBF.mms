@@ -17,13 +17,15 @@ factions:
   camo: Clans/Wolf/Alpha Galaxy/Alpha Galaxy.jpg
 
   units:
-  - include: Noble's Company.mmu
+    - include: Noble's Company.mmu
+      id: 3
 
 - name: 1st Air Cavalry, Federated Suns
   deploy: "S"
   camo: Federated Suns\Arcadian Cuirassiers\Arcadian Cuirassiers.jpg
   units:
-  - include: Romy's Company.mmu
+    - include: Romy's Company.mmu
+      id: 7
 
 
 

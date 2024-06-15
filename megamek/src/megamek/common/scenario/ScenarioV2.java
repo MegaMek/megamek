@@ -172,7 +172,6 @@ public class ScenarioV2 implements Scenario {
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
-//        int entityId = 0;
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
             MMUReader.requireFields("Player", playerNode, NAME, UNITS);

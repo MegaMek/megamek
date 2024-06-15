@@ -69,8 +69,6 @@ public class Client extends AbstractClient implements IClientCommandHandler {
      */
     protected final Game game = new Game();
 
-    // Hashtable for storing image tags containing base64Text src
-    private Hashtable<Integer, String> imgCache;
     private BoardView bv;
     private Coords currentHex;
     private Set<BoardDimensions> availableSizes = new TreeSet<>();

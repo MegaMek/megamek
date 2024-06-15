@@ -42,6 +42,11 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
     private final List<GameTurn> turnList = new ArrayList<>();
 
+    /**
+     * Contains all units that have left the game by any means.
+     */
+    private final List<InGameObject> graveyard = new ArrayList<>();
+
     @Override
     public PlayerTurn getTurn() {
         return null;
@@ -229,4 +234,22 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         turnIndex++;
         return getTurn();
     }
+
+    public List<InGameObject> getGraveyard() {
+        return graveyard;
+    }
+
+    public void setUnitList(List<InGameObject> units) {
+        inGameObjects.clear();
+        for (InGameObject unit : units) {
+            int id = unit.getId();
+            inGameObjects.put(id, unit);
+        }
+    }
+
+    public void setGraveyard(List<InGameObject> graveyard) {
+        this.graveyard.clear();
+        this.graveyard.addAll(graveyard);
+    }
+
 }

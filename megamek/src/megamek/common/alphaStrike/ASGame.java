@@ -129,6 +129,11 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
+    public List<InGameObject> getGraveyard() {
+        return null;
+    }
+
+    @Override
     public ReportEntry getNewReport(int messageId) {
         return new Report(messageId);
     }

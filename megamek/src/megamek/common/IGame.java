@@ -164,6 +164,13 @@ public interface IGame {
     /** @return The Forces present in this game. Can be empty, but not null. */
     Forces getForces();
 
+    /**
+     * Replaces the game's Forces with the given forces.
+     *
+     * @param forces The new Forces object to use
+     */
+    void setForces(Forces forces);
+
     // PLAYERS //////////////
 
     /**
@@ -267,6 +274,14 @@ public interface IGame {
      * @param units The units to add or use as a replacement for current units.
      */
     void replaceUnits(List<InGameObject> units);
+
+
+
+    /**
+     * @return a list of units that are destroyed or otherwise no longer part of the game. These
+     * should have a reason for their removal set.
+     */
+    List<InGameObject> getGraveyard();
 
     //region Board
 

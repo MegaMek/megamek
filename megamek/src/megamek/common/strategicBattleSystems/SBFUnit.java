@@ -28,6 +28,7 @@ import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFUnitDeserializer;
 import megamek.common.jacksonadapters.SBFUnitSerializer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +42,8 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 @JsonRootName(value = "SBFUnit")
 @JsonSerialize(using = SBFUnitSerializer.class)
 @JsonDeserialize(using = SBFUnitDeserializer.class)
-public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, BattleForceSUAFormatter {
+public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, BattleForceSUAFormatter,
+        Serializable {
 
     private String name = "Unknown";
     private SBFElementType type = SBFElementType.UNKNOWN;

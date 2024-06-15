@@ -313,4 +313,10 @@ public abstract class AbstractGame implements IGame {
     public int getNextEntityId() {
         return inGameObjects.isEmpty() ? 0 : Collections.max(inGameObjects.keySet()) + 1;
     }
+
+    @Override
+    public synchronized void setForces(Forces fs) {
+        forces = fs;
+        forces.setGame(this);
+    }
 }

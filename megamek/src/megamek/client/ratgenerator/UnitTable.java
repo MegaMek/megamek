@@ -97,9 +97,9 @@ public class UnitTable {
      * @param unitType       {@link megamek.common.UnitType} constant with the type of unit
      * @param year           the game year
      * @param rating         the unit's equipment rating; if null, the table is not adjusted for unit rating.
-     * @param weightClassesa collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
+     * @param weightClasses  collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
      *                       if null or empty all weight classes are included
-     * @param networkMask    One of the {@link MOdelRecord} NETWORK constants, for filtering various C3 systems
+     * @param networkMask    One of the {@link ModelRecord} NETWORK constants, for filtering various C3 systems
      * @param movementModes  the movement modes covered by the table, null/empty for all modes
      * @param roles          {@link MissionRole} types the units should qualify for, null/empty for no role
      *                       filtering

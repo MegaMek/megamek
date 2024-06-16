@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.common.Coords;
 
 import javax.swing.*;
@@ -43,9 +44,9 @@ public class BoardViewPanel extends JPanel implements Scrollable {
         Coords hexCoords = boardView.getCoordsAt(event.getPoint());
         Point point = boardView.getCentreHexLocation(hexCoords);
         // add board padding
-        point.translate(BoardView.HEX_W, BoardView.HEX_H);
+        point.translate(HexTileset.HEX_W, HexTileset.HEX_H);
         // move to the right of the current hex
-        point.translate((int) (BoardView.HEX_W * boardView.scale * 0.75), (int) (-BoardView.HEX_H / 4 * boardView.scale));
+        point.translate((int) (HexTileset.HEX_W * boardView.scale * 0.75), (int) (-HexTileset.HEX_H / 4 * boardView.scale));
         return new Point(point.x, point.y);
     }
 
@@ -70,8 +71,8 @@ public class BoardViewPanel extends JPanel implements Scrollable {
         // for purposes of drawing the tiled background icon. However, we also need the scrollable
         // client to be as big as the board plus the pad size.
         return new Dimension(
-                Math.max(boardView.getBoardSize().width + (2 * BoardView.HEX_W), boardView.getComponent().getWidth()),
-                Math.max(boardView.getBoardSize().height + (2 * BoardView.HEX_W), boardView.getComponent().getHeight()));
+                Math.max(boardView.getBoardSize().width + (2 * HexTileset.HEX_W), boardView.getComponent().getWidth()),
+                Math.max(boardView.getBoardSize().height + (2 * HexTileset.HEX_W), boardView.getComponent().getHeight()));
     }
 
     @Override

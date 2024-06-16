@@ -7,6 +7,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.common.Entity;
 
 /**
@@ -80,31 +81,31 @@ class C3Sprite extends Sprite {
         c3Poly = new Polygon();
         c3Poly.addPoint(
                 a.x
-                        + (int) ((this.bv.scale * (BoardView.HEX_W / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_W / 2)) - (int) Math
                                 .round(Math.sin(an) * lw)),
                 a.y
-                        + (int) ((this.bv.scale * (BoardView.HEX_H / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_H / 2)) + (int) Math
                                 .round(Math.cos(an) * lw)));
         c3Poly.addPoint(
                 a.x
-                        + (int) ((this.bv.scale * (BoardView.HEX_W / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_W / 2)) + (int) Math
                                 .round(Math.sin(an) * lw)),
                 a.y
-                        + (int) ((this.bv.scale * (BoardView.HEX_H / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_H / 2)) - (int) Math
                                 .round(Math.cos(an) * lw)));
         c3Poly.addPoint(
                 t.x
-                        + (int) ((this.bv.scale * (BoardView.HEX_W / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_W / 2)) + (int) Math
                                 .round(Math.sin(an) * lw)),
                 t.y
-                        + (int) ((this.bv.scale * (BoardView.HEX_H / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_H / 2)) - (int) Math
                                 .round(Math.cos(an) * lw)));
         c3Poly.addPoint(
                 t.x
-                        + (int) ((this.bv.scale * (BoardView.HEX_W / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_W / 2)) - (int) Math
                                 .round(Math.sin(an) * lw)),
                 t.y
-                        + (int) ((this.bv.scale * (BoardView.HEX_H / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (HexTileset.HEX_H / 2)) + (int) Math
                                 .round(Math.cos(an) * lw)));
     }
 

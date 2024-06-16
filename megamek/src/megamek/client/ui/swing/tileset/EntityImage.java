@@ -16,6 +16,7 @@
 package megamek.client.ui.swing.tileset;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
@@ -121,7 +122,6 @@ public class EntityImage {
     private Camouflage camouflage;
     protected Image[] facings = new Image[6];
     private Image[] wreckFacings = new Image[6];
-    private Component parent;
     /** The damage level, from none to crippled. */
     private final int dmgLevel;
     /** The tonnage of the unit. */
@@ -144,44 +144,48 @@ public class EntityImage {
     private final int unitElevation;
 
 
-    public static EntityImage createIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
-        return createIcon(base, null, camouflage, comp, entity, -1, true);
+    public static EntityImage createIcon(Image base, Camouflage camouflage, Entity entity) {
+        return createIcon(base, null, camouflage, entity, -1, true);
     }
 
-    public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
-        return createIcon(base, null, camouflage, comp, entity, -1, true);
+    public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Entity entity) {
+        return createIcon(base, null, camouflage, entity, -1, true);
     }
 
-    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
                                          Entity entity, int secondaryPos) {
-        return createIcon(base, wreck, camouflage, comp, entity, secondaryPos, false);
+        return createIcon(base, wreck, camouflage, entity, secondaryPos, false);
     }
 
-    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
                                          Entity entity, int secondaryPos, boolean preview) {
         if (entity instanceof FighterSquadron) {
-            return new FighterSquadronIcon(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+            return new FighterSquadronIcon(base, wreck, camouflage, entity, secondaryPos, preview);
         } else {
-            return new EntityImage(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+            return new EntityImage(base, wreck, camouflage, entity, secondaryPos, preview);
         }
     }
 
-    // Used by MHQ
+    @SuppressWarnings("unused") // Used by MHQ
     public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
-        this(base, null, camouflage, comp, entity, -1, true);
+        this(base, null, camouflage, entity, -1, true);
     }
 
-    // Used by MHQ
+    @SuppressWarnings("unused") // Used by MHQ
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos) {
-        this(base, wreck, camouflage, comp, entity, secondaryPos, false);
+        this(base, wreck, camouflage, entity, secondaryPos, false);
+    }
+
+    public EntityImage(Image base, Image wreck, Camouflage camouflage,
+                       Entity entity, int secondaryPos, boolean preview) {
+        this(base, wreck, camouflage, null, entity, secondaryPos, preview);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos, boolean preview) {
         this.base = base;
         setCamouflage(camouflage);
-        parent = comp;
         this.wreck = wreck;
         this.dmgLevel = calculateDamageLevel(entity);
         // hack: gun emplacements are pretty beefy but have weight 0
@@ -296,8 +300,8 @@ public class EntityImage {
 
     /** Rotates a given unit image into direction dir. */
     protected BufferedImage rotateImage(Image img, int dir) {
-        double cx = base.getWidth(parent) / 2.0;
-        double cy = base.getHeight(parent) / 2.0;
+        double cx = base.getWidth(null) / 2.0;
+        double cy = base.getHeight(null) / 2.0;
         AffineTransformOp xform = new AffineTransformOp(
                 AffineTransform.getRotateInstance(
                         (-Math.PI / 3) * (6 - dir), cx, cy),
@@ -416,8 +420,8 @@ public class EntityImage {
                 }
             }
         }
-        
-        Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
+        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH);
+        Image result = Toolkit.getDefaultToolkit().createImage(producer);
         return ImageUtil.createAcceleratedImage(result);
     }
 
@@ -560,9 +564,9 @@ public class EntityImage {
                 pUnit[i] = (alp << 24) | (red << 16) | (grn << 8) | blu;
             }
         }
-        
-        Image temp = parent.createImage(new MemoryImageSource(IMG_WIDTH,
-                IMG_HEIGHT, pUnit, 0, IMG_WIDTH));
+
+        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pUnit, 0, IMG_WIDTH);
+        Image temp = Toolkit.getDefaultToolkit().createImage(producer);
         return ImageUtil.createAcceleratedImage(temp);
     }
     

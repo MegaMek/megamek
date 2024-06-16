@@ -324,7 +324,7 @@ public class ForceDescriptor {
         for (ForceDescriptor sub : subs) {
             paramCount.merge(new UnitTable.Parameters(sub.getFactionRec(),
                     sub.getUnitType(), sub.getYear(), sub.ratGeneratorRating(), null, networkMask,
-                    sub.getMovementModes(), sub.getRoles(), new ArrayList<>(), 0, sub.getFactionRec()), 1, Integer::sum);
+                    sub.getMovementModes(), sub.getRoles(), 0, sub.getFactionRec()), 1, Integer::sum);
         }
 
         List<UnitTable.Parameters> params = new ArrayList<>();

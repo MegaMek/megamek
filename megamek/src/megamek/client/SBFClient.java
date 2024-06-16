@@ -142,8 +142,8 @@ public class SBFClient extends AbstractClient {
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
                 game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                imgCache != null && !imgCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
-            ImageUtil.createDoubleBlindHiddenImage(imgCache);
+                iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+            ImageUtil.createDoubleBlindHiddenImage(iconCache);
         }
     }
 
@@ -155,13 +155,13 @@ public class SBFClient extends AbstractClient {
             return;
         }
 
-        imgCache.remove(unit.getId());
+        iconCache.remove(unit.getId());
         if (getTargetImage(unit) != null) {
             // convert image to base64, add to the <img> tag and store in cache
             BufferedImage image = ImageUtil.getScaledImage(getTargetImage(unit), 56, 48);
             String base64Text = ImageUtil.base64TextEncodeImage(image);
             String img = "<img src='data:image/png;base64," + base64Text + "'>";
-            imgCache.put(unit.getId(), img);
+            iconCache.put(unit.getId(), img);
         }
     }
 

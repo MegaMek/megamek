@@ -70,8 +70,8 @@ public abstract class AbstractClient implements IClient {
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     protected Map<String, AbstractClient> bots = new TreeMap<>(String::compareTo);
 
-    // Hashtable for storing image tags containing base64Text src
-    protected Map<Integer, String> imgCache = new HashMap<>();
+    // Image cache for storing unit icons in as base64 with the unit ID as key
+    protected Map<Integer, String> iconCache = new HashMap<>();
 
     /**
      * Construct a client which will try to connect. If the connection fails, it

@@ -16,6 +16,7 @@ package megamek.client.commands;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -35,11 +36,8 @@ public class FireCommand extends ClientCommand {
 
     private Vector<AbstractEntityAction> attacks;
 
-    /**
-     * @param client
-     */
-    public FireCommand(Client client) {
-        super(client, "fire", "used to shoot. See #fire HELP for more details.");
+    public FireCommand(ClientGUI clientGUI) {
+        super(clientGUI, "fire", "used to shoot. See #fire HELP for more details.");
         attacks = new Vector<>();
     }
 

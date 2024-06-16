@@ -502,6 +502,36 @@ public class UnitTable {
                            int networkMask,
                            Collection<EntityMovementMode> movementModes,
                            Collection<MissionRole> roles,
+                           int roleStrictness,
+                           FactionRecord deployingFaction) {
+            this.faction = faction;
+            this.unitType = unitType;
+            this.year = year;
+            this.rating = rating;
+            this.weightClasses = weightClasses == null?
+                    new ArrayList<>() : new ArrayList<>(weightClasses);
+            this.networkMask = networkMask;
+
+            this.movementModes = ((movementModes == null) || movementModes.isEmpty()) ?
+                    EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
+
+            this.roles = ((roles == null) || roles.isEmpty()) ?
+                    EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
+
+            this.rolesExcluded = EnumSet.noneOf((MissionRole.class));
+
+            this.roleStrictness = roleStrictness;
+            this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
+        }
+
+        public Parameters (FactionRecord faction,
+                           int unitType,
+                           int year,
+                           String rating,
+                           Collection<Integer> weightClasses,
+                           int networkMask,
+                           Collection<EntityMovementMode> movementModes,
+                           Collection<MissionRole> roles,
                            Collection<MissionRole> rolesExcluded,
                            int roleStrictness,
                            FactionRecord deployingFaction) {

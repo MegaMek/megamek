@@ -354,7 +354,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().getGame().addGameListener(this);
             clientgui.getBoardView().addBoardViewListener(this);
             clientgui.getClient().getGame().setupTeams();
-            clientgui.getBoardView().getPanel().addKeyListener(this);
         }
 
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase"));
@@ -1634,9 +1633,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return false;
     }
 
-    /**
-     * Sends a data packet indicating the chosen movement.
-     */
     @Override
     public synchronized void ready() {
         if (ce() == null) {
@@ -5680,9 +5676,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         if (clientgui != null) {

@@ -53,7 +53,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_ASSAULTDROP("assaultDrop"),
         DEPLOY_DOCK("deployDock");
 
-        public String cmd;
+        public final String cmd;
 
         /**
          * Priority that determines this buttons order
@@ -90,13 +90,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             String msg_next= Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
 
-            switch (this) {
-                case DEPLOY_NEXT:
-                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
-                    break;
-                default:
-                    break;
+            if (this == DeployCommand.DEPLOY_NEXT) {
+                result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
             }
 
             return result;
@@ -133,6 +129,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
+
     @Override
     protected void setButtonsTooltips() {
         for (DeployCommand cmd : DeployCommand.values()) {
@@ -341,7 +338,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         return false;
     }
 
-    /** Sends a deployment to the server. */
     @Override
     public void ready() {
         final Game game = clientgui.getClient().getGame();

@@ -387,96 +387,38 @@ public class RATGenerator {
     }
 
     /**
-     * Interpolates a value for a year, given values for earlier and later years. If one of the two
-     * values is null, it is treated as 0. If both values are null, null is also returned.
-     * This is primarily intended to work between the early and late years, but can be used with
-     * a target year earlier or later.
+     * Given values for two years, interpolates or extrapolates value for another given year.
+     * If one of the two values is null, it is treated as 0.
      *
-     * @param inputEarly  Value for earlier year
-     * @param inputLate   Value for later year
-     * @param yearEarly   Earlier year
-     * @param yearLate    Later year
-     * @param testYear    Intermediate year to interpolate value for
-     * @return       double between the two values, proportionally scaled for the relationship
-     *               between the early, test, and late years. Returns null if both early and late
-     *               years are null.
-     * @throws       IllegalArgumentException if yearLate is earlier than yearEarly
+     * @param av1 The first value.
+     * @param av2 The second value.
+     * @param year1 The year for the first value.
+     * @param year2 The year for the second value.
+     * @param now The year for which to calculate a value.
+     * @return The value for the year in question. Returns null if av1 and av2 are both null.
      */
-    private Double interpolate (Number inputEarly, Number inputLate, int yearEarly, int yearLate, int testYear) {
-
-        // Calculations are only valid if the boundary years are in the correct order
-        if (yearEarly > yearLate) {
-            throw new IllegalArgumentException(String.format("Interpolation requires correctly ordered early (%d) and late (%d) years.", yearEarly, yearLate));
-        }
-
-        if ((inputEarly == null && inputLate == null)) {
+    private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
+        if (av1 == null && av2 == null) {
             return null;
         }
-
-        // No point interpolating if the years or values are the same value
-        if (yearEarly == yearLate) {
-            return inputEarly == null ? 0.0 : inputEarly.doubleValue();
+        if (av1 == null) {
+            av1 = 0.0;
         }
-
-        double valueEarly = inputEarly == null ? 0.0 : inputEarly.doubleValue();
-        double valueLate = inputLate == null ? 0.0 : inputLate.doubleValue();
-
-        if (valueEarly == valueLate) {
-            return valueEarly;
+        if (av2 == null) {
+            av2 = 0.0;
         }
-
-        return valueEarly +
-                (valueLate - valueEarly) * (testYear - yearEarly) / (yearLate - yearEarly);
+        if (year1 == year2) {
+            return av1.doubleValue();
+        }
+        return av1.doubleValue()
+                + (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
     }
 
-
-    /**
-     * Convenience overload method provided for generating a table with no excluded roles
-     */
-    public List<UnitTable.TableEntry> generateTable (FactionRecord fRec,
-                                                     int unitType,
-                                                     int year,
-                                                     String rating,
-                                                     Collection<Integer> weightClasses,
-                                                     int networkMask,
-                                                     Collection<EntityMovementMode> movementModes,
-                                                     Collection<MissionRole> roles,
-                                                     int roleStrictness,
-                                                     FactionRecord user) {
-        return generateTable(fRec, unitType, year, rating, weightClasses, networkMask,
-                movementModes, roles, new ArrayList<>(), roleStrictness, user);
-    }
-
-    /**
-     * Generate a weighted random selection table of full units (chassis + model) for random
-     * selection, suing the provided settings.
-     * VTOLs may be included with ground vehicles by selecting the TANK unit type and VTOL
-     * movement type.
-     *
-     * @param fRec
-     * @param unitType
-     * @param year
-     * @param rating
-     * @param weightClasses
-     * @param networkMask
-     * @param movementModes
-     * @param roles
-     * @param rolesExcluded
-     * @param roleStrictness
-     * @param user
-     * @return
-     */
-    public List<UnitTable.TableEntry> generateTable (FactionRecord fRec,
-                                                     int unitType,
-                                                     int year,
-                                                     String rating,
-                                                     Collection<Integer> weightClasses,
-                                                     int networkMask,
-                                                     Collection<EntityMovementMode> movementModes,
-                                                     Collection<MissionRole> roles,
-                                                     Collection<MissionRole> rolesExcluded,
-                                                     int roleStrictness,
-                                                     FactionRecord user) {
+    public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
+            String rating, Collection<Integer> weightClasses, int networkMask,
+            Collection<EntityMovementMode> movementModes,
+            Collection<MissionRole> roles, int roleStrictness,
+            FactionRecord user) {
         HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
         HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
 
@@ -518,7 +460,6 @@ public class RATGenerator {
             ratingLevel = factionRatings.indexOf(rating);
         }
 
-        // Iterate through each chassis
         for (String chassisKey : chassisIndex.get(early).keySet()) {
             ChassisRecord cRec = chassis.get(chassisKey);
             if (cRec == null) {
@@ -531,106 +472,44 @@ public class RATGenerator {
                 cRec.setUnitType(UnitType.AEROSPACEFIGHTER);
             }
 
-            // Skip if the unit type does not match
             if (cRec.getUnitType() != unitType &&
-                    !(unitType == UnitType.TANK &&
-                            cRec.getUnitType() == UnitType.VTOL &&
-                            movementModes.contains(EntityMovementMode.VTOL))) {
+                    !(unitType == UnitType.TANK
+                        && cRec.getUnitType() == UnitType.VTOL
+                        && movementModes.contains(EntityMovementMode.VTOL))) {
                 continue;
             }
 
-            // Get the availability rating of the current chassis and modify for rating and pre/
-            // early production status
-            AvailabilityRating ar = findChassisAvailabilityRecord(early, chassisKey, fRec, year);
+            AvailabilityRating ar = findChassisAvailabilityRecord(early,
+                        chassisKey, fRec, year);
             if (ar == null) {
                 continue;
             }
-            double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, year);
-
-            // If the current year is somewhere between era data sets, the availability may need
-            // interpolation
-            if (early.intValue() != late.intValue()) {
-                Double interpolated = interpolate(
-                        early < cRec.introYear - 2 ? 0 : cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early),
-                        cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-                        early,
-                        late,
-                        year);
-                if (interpolated != null) {
-                    cAv = interpolated;
-                }
-            }
-
+            double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+            cAv = interpolate(cAv,
+                    cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
+                    Math.max(early, cRec.getIntroYear()), late, year);
             if (cAv > 0) {
-
-                // Calculate the total random selection weight of all models, filtering out those
-                // which are not applicable. If the total is 0.0 (or close to it) there are no
-                // suitable models for this chassis.
-                double totalModelWeight = cRec.totalFilteredModelWeight(early,
-                        cRec.isOmni() ? user : fRec,
-                        ratingLevel,
-                        numRatingLevels,
-                        year,
-                        weightClasses,
-                        networkMask,
-                        movementModes,
-                        roleStrictness,
-                        roles,
-                        rolesExcluded);
-
-                if (totalModelWeight <= 0.01) {
-                    continue;
-                }
-
-                // Get the random selection weight for each specific model
+                double totalModelWeight = cRec.totalModelWeight(early,
+                        cRec.isOmni() ? user : fRec);
                 for (ModelRecord mRec : cRec.getModels()) {
-
-                    // Skip models that are at least two years from official introduction, and those
-                    // that do not match the required weight classes
-                    if (year < (mRec.getIntroYear() - 2) ||
-                            (!weightClasses.isEmpty() && !weightClasses.contains(mRec.getWeightClass()))) {
+                    if (mRec.getIntroYear() > year
+                            || (!weightClasses.isEmpty()
+                                    && !weightClasses.contains(mRec.getWeightClass()))
+                            || (networkMask & mRec.getNetworkMask()) != networkMask) {
                         continue;
                     }
 
-                    // Skip models that do not use one of the requested movement types
                     if (!movementModes.isEmpty() && !movementModes.contains(mRec.getMovementMode())) {
                         continue;
                     }
-
-                    // Skip any models that have roles which are being excluded
-                    if (rolesExcluded != null && mRec.getRoles().stream().anyMatch(rolesExcluded::contains)) {
-                        continue;
-                    }
-
-                    // Skip any models that do not have the requested C3 system
-                    if ((networkMask & mRec.getNetworkMask()) != networkMask) {
-                        continue;
-                    }
-
-                    // Get the availability rating data for this model
                     ar = findModelAvailabilityRecord(early, mRec.getKey(), fRec);
                     if ((ar == null) || (ar.getAvailability() == 0)) {
                         continue;
                     }
-
-                    // Get the availability value of the model, including modifiers for rating
-                    // (+/- indicator) and pre/early production
-                    double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, year);
-
-                    // If the current year is between era data sets, the availability may need
-                    // interpolation
-                    if (early.intValue() != late.intValue()) {
-                        Double interpolated = interpolate(
-                                early < mRec.getIntroYear() - 2 ? 0 : mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early),
-                                mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-                                early,
-                                late,
-                                year);
-                        if (interpolated != null) {
-                            mAv = interpolated;
-                        }
-                    }
-
+                    double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+                    mAv = interpolate(mAv,
+                            mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
+                            Math.max(early, mRec.getIntroYear()), late, year);
                     Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
                     if (adjMAv != null) {
                         double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight

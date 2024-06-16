@@ -25,7 +25,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5431: Internal Code changes: Methods have been added to generate an average BV value for a unit of a given type and weight for use in generating forces
 + Fix #5439: BA Partial Wing bonus not properly computed outside of games with atmosphere, breaking MML Jump MP display
 + Data: Thank you Derv for the updated Map, but also the restoration of the original NBT (Netbattletech) maps this adds over 400 new maps!
-+ PR #5444, #5522: BoardView Sprite separation
++ PR #5444, #5522, #5573: BoardView Sprite separation
 + PR #5442: Add null check for turn timer when stopping
 + PR #5451: Expose map settings methods for use in MekHQ
 + Fix #1502: Ignore armortype slots in other-equipment cost calculation

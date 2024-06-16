@@ -49,8 +49,6 @@ public interface IClientGUI {
      */
     void die();
 
-    InGameObject getSelectedUnit();
-
     IClient getClient();
 
     JComponent turnTimerComponent();

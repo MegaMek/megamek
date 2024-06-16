@@ -1397,13 +1397,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         strafingCoords.clear();
         clientgui.getBoardView().clearStrafingCoords();
 
-        // We may not have an entity selected yet (race condition).
+        // We may not have an entity selected
         if (ce() == null) {
             return;
         }
 
         // remove attacks, set weapons available again
-        for( EntityAction o : attacks) {
+        for (EntityAction o : attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
@@ -1463,7 +1463,23 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getUnitDisplay().showPanel("weapons");
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         if (ce().isMakingVTOLGroundAttack()) {
-            this.updateVTOLGroundTarget();
+            updateVTOLGroundTarget();
+        }
+        updateTarget();
+        updateDonePanel();
+        clientgui.updateFiringArc(ce());
+    }
+
+    /**
+     * Make any necessary updates in the GUI after a new action has been added.
+     */
+    protected void updateForNewAction() {
+        if (ce() == null) {
+            return;
+        }
+        clientgui.getBoardView().redrawEntity(ce());
+        if (ce().isMakingVTOLGroundAttack()) {
+            updateVTOLGroundTarget();
         }
         updateTarget();
         updateDonePanel();
@@ -1604,7 +1620,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clientgui.getUnitDisplay().wPan.clearToHit();
         }
 
-        if ((weaponId != -1) && (ce() != null) && !isStrafing) {
+        if ((clientgui.getDisplayedUnit() != null) && (clientgui.getDisplayedUnit().equals(ce()))
+                && !isStrafing && (weaponId != -1)) {
             adaptFireModeEnabled(ce().getEquipment(weaponId));
         } else {
             setFireModeEnabled(false);
@@ -1649,47 +1666,38 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      * Torso twist in the proper direction.
      */
     void torsoTwist(Coords twistTarget) {
-        if (ce().getAlreadyTwisted()) {
+        if ((ce() == null) || ce().getAlreadyTwisted()) {
             return;
         }
         int direction = ce().getFacing();
-
         if (twistTarget != null) {
             direction = ce().clipSecondaryFacing(ce().getPosition().direction(twistTarget));
         }
+        addTorsoTwistAction(direction);
+    }
 
+    /**
+     * Adds a torso twist (a.k.a. secondary facing change) to the pending actions. This first
+     * clears out any existing attacks!
+     *
+     * @param twistDir 0 for twisting to the left, 1 to the right
+     */
+    void torsoTwist(int twistDir) {
+        if ((ce() == null) || ce().getAlreadyTwisted() || ((twistDir != 0) && (twistDir != 1))) {
+            return;
+        }
+        int twistModifier = (twistDir == 0) ? 5 : 7;
+        int direction = ce().clipSecondaryFacing((ce().getSecondaryFacing() + twistModifier) % 6);
+        addTorsoTwistAction(direction);
+    }
+
+    private void addTorsoTwistAction(int direction) {
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
-            refreshAll();
-        }
-    }
-
-    /**
-     * Torso twist to the left or right
-     *
-     * @param twistDir An <code>int</code> specifying wether we're twisting left or
-     *                 right, 0 if we're twisting to the left, 1 if to the right.
-     */
-
-    void torsoTwist(int twistDir) {
-        if (ce().getAlreadyTwisted()) {
-            return;
-        }
-        int direction = ce().getSecondaryFacing();
-        if (twistDir == 0) {
-            clearAttacks();
-            direction = ce().clipSecondaryFacing((direction + 5) % 6);
-            addAttack(new TorsoTwistAction(currentEntity, direction));
-            ce().setSecondaryFacing(direction);
-            refreshAll();
-        } else if (twistDir == 1) {
-            clearAttacks();
-            direction = ce().clipSecondaryFacing((direction + 7) % 6);
-            addAttack(new TorsoTwistAction(currentEntity, direction));
-            ce().setSecondaryFacing(direction);
-            refreshAll();
+            clientgui.updateFiringArc(ce());
+            updateForNewAction();
         }
     }
 

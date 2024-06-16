@@ -70,7 +70,7 @@ public class MapMenu extends JPopupMenu {
         board = client.getBoard();
         this.client = client;
         this.gui = gui;
-        selectedEntity = myEntity = game.getEntity(gui.getSelectedEntityNum());
+        selectedEntity = myEntity = gui.getDisplayedUnit();
 
         hasMenu = createMenu();
         // make popups not consume mouse events outside them

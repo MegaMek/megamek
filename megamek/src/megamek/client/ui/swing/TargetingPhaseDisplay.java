@@ -775,6 +775,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getUnitDisplay().showPanel("weapons");
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         updateTarget();
+        clientgui.updateFiringArc(ce());
     }
 
     /**

@@ -316,7 +316,7 @@ public final class SBFGameManager extends AbstractGameManager {
 
     /**
      * Filters an entity vector according to LOS
-     * this is currently a copy of GameManager's method. Will require some rework, maybe in Compute
+     * this is currently a copy of GameManager's method. Will require some rework
      */
     private List<InGameObject> filterEntities(Player viewer,
                                         List<InGameObject> activeUnits,
@@ -324,16 +324,16 @@ public final class SBFGameManager extends AbstractGameManager {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
-        Vector<InGameObject> vCanSee = new Vector<>();
-        Vector<InGameObject> vMyEntities = new Vector<>();
+        List<InGameObject> visibleUnits = new Vector<>();
+        List<InGameObject> myUnits = new ArrayList<>(activeUnits);
         boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
 
-        return activeUnits;
         // If they can see all, return the input list
-//        if (viewer.canIgnoreDoubleBlind()) {
-//            return activeUnits;
-//        }
+        if (viewer.canIgnoreDoubleBlind()) {
+            return activeUnits;
+        }
 
+        return activeUnits;
 //        List<ECMInfo> allECMInfo = null;
 //        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
 //            allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
@@ -341,24 +341,24 @@ public final class SBFGameManager extends AbstractGameManager {
 
         // If they're an observer, they can see anything seen by any enemy.
 //        if (viewer.isObserver()) {
-//            vMyEntities.addAll(activeUnits);
-//            for (InGameObject a : vMyEntities) {
-//                for (InGameObject b : vMyEntities) {
+//            myUnits.addAll(activeUnits);
+//            for (InGameObject a : myUnits) {
+//                for (InGameObject b : myUnits) {
 //                    if (a.isEnemyOf(b)
 //                            && Compute.canSee(game, b, a, true, null, allECMInfo)) {
-//                        addVisibleEntity(vCanSee, a);
+//                        addVisibleEntity(visibleUnits, a);
 //                        break;
 //                    }
 //                }
 //            }
-//            return vCanSee;
+//            return visibleUnits;
 //        }
 //
 //        // If they aren't an observer and can't see all, create the list of
 //        // "friendly" units.
 //        for (InGameObject e : activeUnits) {
 //            if ((e.getOwner() == viewer) || (bTeamVision && !e.getOwner().isEnemyOf(viewer))) {
-//                vMyEntities.addElement(e);
+//                myUnits.addElement(e);
 //            }
 //        }
 //
@@ -366,8 +366,8 @@ public final class SBFGameManager extends AbstractGameManager {
 //        // or whether or not any friendly unit can see them.
 //        for (InGameObject e : activeUnits) {
 //            // If it's their own unit, obviously, they can see it.
-//            if (vMyEntities.contains(e)) {
-//                addVisibleEntity(vCanSee, e);
+//            if (myUnits.contains(e)) {
+//                addVisibleEntity(visibleUnits, e);
 //                continue;
 //            } else if (e.isHidden()) {
 //                // If it's NOT friendly and is hidden, they can't see it, period.
@@ -375,11 +375,11 @@ public final class SBFGameManager extends AbstractGameManager {
 //                continue;
 //            } else if (e.isOffBoardObserved(viewer.getTeam())) {
 //                // if it's hostile and has been observed for counter-battery fire, we can "see" it
-//                addVisibleEntity(vCanSee, e);
+//                addVisibleEntity(visibleUnits, e);
 //                continue;
 //            }
 //
-//            for (InGameObject spotter : vMyEntities) {
+//            for (InGameObject spotter : myUnits) {
 //
 //                // If they're off-board, skip it; they can't see anything.
 //                if (spotter.isOffBoard()) {
@@ -395,7 +395,7 @@ public final class SBFGameManager extends AbstractGameManager {
 //                }
 //                // Otherwise, if they can see the entity in question
 //                if (Compute.canSee(game, spotter, e, true, los, allECMInfo)) {
-//                    addVisibleEntity(vCanSee, e);
+//                    addVisibleEntity(visibleUnits, e);
 //                    break;
 //                }
 //
@@ -408,13 +408,13 @@ public final class SBFGameManager extends AbstractGameManager {
 //                    int ecmRange = e.getECMRange();
 //                    Coords pos = e.getPosition();
 //                    if (pos.distance(spotter.getPosition()) <= ecmRange) {
-//                        addVisibleEntity(vCanSee, e);
+//                        addVisibleEntity(visibleUnits, e);
 //                    }
 //                }
 //            }
 //        }
 //
-//        return vCanSee;
+//        return visibleUnits;
     }
 
 }

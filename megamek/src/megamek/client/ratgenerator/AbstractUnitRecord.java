@@ -40,25 +40,31 @@ public class AbstractUnitRecord {
     }
 
     /**
-     * Adjusts availability rating for the first couple years after introduction.
+     * Returns availability value modified for rating differential on +/- rating, and adjusted for
+     * the first few years before introduction (field experiments, etc.) and immediately after
+     * introduction (low rate initial production).
      *
-     * @param ar The AvailabilityRecord for the chassis or model.
-     * @param rating The force equipment rating.
-     * @param ratingLevels The number of equipment rating levels used by the faction.
-     * @param year The game year
-     * @return The adjusted availability rating.
+     * @param initialAv        AvailabilityRating for the chassis or model.
+     * @param formationRating  force equipment rating.
+     * @param ratingLevels     number of equipment rating levels used by the faction.
+     * @param year             game year
+     * @return                 adjusted availability rating.
      */
-    public int calcAvailability(AvailabilityRating ar, int rating, int ratingLevels, int year) {
-        int retVal = ar.adjustForRating(rating, ratingLevels);
+    public int calcAvailability(AvailabilityRating initialAv, int formationRating, int ratingLevels, int year) {
+        int avRating = initialAv.adjustForRating(formationRating, ratingLevels);
 
-        if (introYear == year) {
-            retVal -= 2;
+        if (year < introYear - 2) {
+            return 0;
+        } else if (year <= introYear) {
+            avRating -= 2;
+        } else if (year <= introYear + 1) {
+            avRating -= 1;
         }
-        if (introYear == year + 1) {
-            retVal -= 1;
-        }
-        return Math.max(retVal, 0);
+
+        return Math.max(avRating, 0);
     }
+
+
 
     public String getChassis() {
         return chassis;

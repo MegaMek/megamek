@@ -770,7 +770,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                             m_pFormationOptions.getRating(), null,
                             ModelRecord.NETWORK_NONE,
                             EnumSet.noneOf(EntityMovementMode.class),
-                            EnumSet.noneOf(MissionRole.class), 0, fRec));
+                            EnumSet.noneOf(MissionRole.class),
+                            new ArrayList<>(),
+                            0, fRec));
                     List<Integer> numUnits = new ArrayList<>();
                     numUnits.add(m_pFormationOptions.getNumUnits());
 
@@ -781,7 +783,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                     m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                     ModelRecord.NETWORK_NONE,
                                     EnumSet.noneOf(EntityMovementMode.class),
-                                    EnumSet.noneOf(MissionRole.class), 0, fRec));
+                                    EnumSet.noneOf(MissionRole.class),
+                                    new ArrayList<>(),
+                                    0, fRec));
                             numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                         } else if (m_pFormationOptions.getBooleanOption("mechBA")) {
                             // Make sure at least a number units equals to the number of BA points/squads are omni
@@ -807,7 +811,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                         m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                         ModelRecord.NETWORK_NONE,
                                         EnumSet.noneOf(EntityMovementMode.class),
-                                        EnumSet.of(MissionRole.MECHANIZED_BA), 0, fRec);
+                                        EnumSet.of(MissionRole.MECHANIZED_BA),
+                                        new ArrayList<>(),0, fRec);
                                 List<MechSummary> ba = ft.generateFormation(p,
                                         m_pFormationOptions.getIntegerOption("numOtherUnits"),
                                         ModelRecord.NETWORK_NONE, true);

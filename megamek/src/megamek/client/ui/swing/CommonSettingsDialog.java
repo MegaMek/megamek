@@ -2420,7 +2420,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             }
 
             if ((unitDisplayNonTabbedChanged) && (clientgui != null)) {
-                clientgui.unitDisplay.setDisplayNonTabbed();
+                clientgui.getUnitDisplay().setDisplayNonTabbed();
             }
         }
 

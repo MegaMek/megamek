@@ -49,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
  * PrephaseDisplay for revealing hidden units. This occurs before Move and Firing
  */
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements
-        KeyListener, ItemListener, ListSelectionListener {
+        ItemListener, ListSelectionListener {
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
@@ -180,11 +180,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
-        clientgui.getBoardView().getPanel().addKeyListener(this);
-
         // mech display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
-        clientgui.getUnitDisplay().wPan.weaponList.addKeyListener(this);
     }
 
     @Override
@@ -269,10 +266,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         butDone.setEnabled(true);
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
     @Override
     public void ready() {
         // stop further input (hopefully)

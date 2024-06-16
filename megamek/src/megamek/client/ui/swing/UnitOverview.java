@@ -168,8 +168,8 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
                 graph.setColor(oldColor);
             }
-            
-            Entity se = clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
+
+            Entity se = clientgui.getDisplayedUnit();
             if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIP.getUnitSelectedColor());

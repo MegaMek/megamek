@@ -674,7 +674,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(MINI_REPORT_COLOR_MISS, new Color(0x808080));
         setDefault(MINI_REPORT_COLOR_INFO, new Color(0x0000FF));
         setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
-        store.setDefault(MINI_ROUND_REPORT_SPRITES, false);
+        store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
 
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);

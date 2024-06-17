@@ -21,6 +21,7 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.FiringPlanCalculationParameters.Builder;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
@@ -29,6 +30,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
@@ -41,6 +43,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.SwarmAttack;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -629,22 +632,22 @@ public class Princess extends BotClient {
                     boolean isAimedShot = false;
                     boolean isCalledShot = false;
                     int advancedTargetingThreshold = ToHitData.IMPOSSIBLE;
+                    int maxTargetNumber = 10;
                     int aimLocation = Mech.LOC_NONE;
                     int locationDestruction = 999;
-                    int calledUpDown = ToHitData.HIT_NORMAL;
-                    int calledLeftRight = ToHitData.SIDE_FRONT;
+                    int calledShotDirection = CalledShot.CALLED_NONE;
 
                     Targetable candidate = plan.get(0).getTarget();
-                    if (shooter.getUnitType() < UnitType.GUN_EMPLACEMENT &&
+                    if (shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT &&
                             shooter.getUnitType() != UnitType.NAVAL &&
-                            plan.get(0).getTarget().getTargetType() == UnitType.MEK &&
+                            candidate.getTargetType() == UnitType.MEK &&
                             plan.stream().allMatch(curAttack -> curAttack.getTarget().getId() == candidate.getId())) {
 
                         // Determine the type of advanced targeting
                         if (candidate.isImmobile()) {
                             // Aimed shot at immobile target, without relying on targeting computer
                             isShutdownShot = true;
-                        } else if (shooter.hasTargComp()) {
+                        } else if (shooter.hasTargComp() && plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
                             // Aimed shot at active target using targeting computer
                             isAimedShot = true;
                         }
@@ -652,7 +655,7 @@ public class Princess extends BotClient {
                         // Call shot high/low/left/right if game option is set and no partial cover
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
                                 !candidate.isImmobile() &&
-                                plan.get(0).calcToHit().getCover() == LosEffects.COVER_NONE) {
+                                plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
                             isCalledShot = true;
                         }
 
@@ -663,26 +666,53 @@ public class Princess extends BotClient {
                     // Get location and maximum allowed target number for aimed shots
                     if (isShutdownShot || isAimedShot) {
 
-                        // Determine if the shot is front or back arc
+                        // Determine if the shot is front or back for torso armor
                         boolean rearShot = plan.get(0).getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
                         // Get a preferred location with the least armor, limiting to torsos and
-                        // legs and preferring right to left
-                        int lowestArmor = -1;
-                        List<Integer> rankedLocations = new ArrayList<>(
-                                Arrays.asList(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT, Mech.LOC_RLEG, Mech.LOC_LLEG)
-                        );
+                        // legs and preferring right to left (most arm weapons are on the right or
+                        // symmetrical)
+                        int lowestArmor = 1000;
+
+
+
+//                        List<Integer> rankedLocations = new ArrayList<>(
+//                                Arrays.asList(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT, Mech.LOC_RLEG, Mech.LOC_LLEG)
+//                        );
+
+
+                        List<Integer> rankedLocations = new ArrayList<>();
+
+                        if (mechCandidate.getInternal(Mech.LOC_RT) > 0) {
+                            rankedLocations.add(Mech.LOC_RT);
+                        } else if (mechCandidate.getInternal(Mech.LOC_LT) > 0) {
+                            rankedLocations.add(Mech.LOC_LT);
+                        }
+
+                        if (!rankedLocations.contains(Mech.LOC_LT)) {
+                            if (mechCandidate.getInternal(Mech.LOC_LT) > 0) {
+                                rankedLocations.add((Mech.LOC_LT));
+                            }
+                        }
+
+                        rankedLocations.add(Mech.LOC_CT);
+                        rankedLocations.add(Mech.LOC_RLEG);
+                        rankedLocations.add(Mech.LOC_LLEG);
+
+
 
                         for (int curLocation : rankedLocations) {
-
-                            if (lowestArmor > (mechCandidate.hasRearArmor(curLocation) ?
+                            if (mechCandidate.getInternal(curLocation) > 0 &&
+                                    lowestArmor > (mechCandidate.hasRearArmor(curLocation) ?
                                     mechCandidate.getArmor(curLocation, rearShot) :
                                     mechCandidate.getArmor(curLocation))) {
-                                lowestArmor = (mechCandidate.hasRearArmor(curLocation) ?
+
+                                lowestArmor = Math.max(mechCandidate.hasRearArmor(curLocation) ?
                                         mechCandidate.getArmor(curLocation, rearShot) :
-                                        mechCandidate.getArmor(curLocation));
+                                        mechCandidate.getArmor(curLocation), 0);
                                 aimLocation = curLocation;
                                 locationDestruction = lowestArmor + mechCandidate.getInternal(aimLocation);
+
                             }
                         }
 
@@ -703,7 +733,7 @@ public class Princess extends BotClient {
                             // Set the maximum target number. Despite the name, the Self
                             // Preservation setting controls whether Princess takes risky shots or
                             // not.
-                            advancedTargetingThreshold = Math.max(7 - getBehaviorSettings().getSelfPreservationIndex(), 2);
+                            advancedTargetingThreshold = Math.max(maxTargetNumber - getBehaviorSettings().getSelfPreservationIndex(), 2);
 
                             // If the total structure + armor of the location is very low this is
                             // a better risk so increase the maximum slightly
@@ -717,13 +747,9 @@ public class Princess extends BotClient {
                         // bother checking for called shots
                         int penetratorCount = 0;
                         for (WeaponFireInfo curFire : plan ) {
-                            if (curFire.getWeapon().getType().hasFlag(WeaponType.F_DIRECT_FIRE) &&
-                                    !curFire.getWeapon().getType().hasFlag(WeaponType.F_PULSE) &&
-                                    advancedTargetingThreshold >= (curFire.getToHit().getValue() + 3) &&
-                                    curFire.getExpectedDamageOnHit() > lowestArmor) {
-
-                                if (curFire.getWeapon().getLinkedAmmo().)
-
+                            if (advancedTargetingThreshold >= (curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3)) &&
+                                    curFire.getMaxDamage() > lowestArmor &&
+                                    Compute.allowAimedShotWith(curFire.getWeapon(), AimingMode.TARGETING_COMPUTER)) {
                                 penetratorCount++;
                             }
                         }
@@ -740,47 +766,44 @@ public class Princess extends BotClient {
 
                         // If the target is being shot in a side arc, set the call direction
                         // even further in that direction for rear shots
-                        int attackSide = plan.get(0).getToHit().getHitTable();
-                        if (attackSide == ToHitData.SIDE_LEFT) {
-                            calledLeftRight = ToHitData.SIDE_RIGHT;
-                        } else if (attackSide == ToHitData.SIDE_RIGHT) {
-                            calledLeftRight = ToHitData.SIDE_LEFT;
+                        int attackSide = plan.get(0).getToHit().getSideTable();
+                        if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REARLEFT) {
+                            calledShotDirection = CalledShot.CALLED_RIGHT;
+                        } else if (attackSide == ToHitData.SIDE_RIGHT || attackSide == ToHitData.SIDE_REARRIGHT) {
+                            calledShotDirection = CalledShot.CALLED_LEFT;
                         }
 
                         // If the attack is from the front or rear consider aiming high for targets
-                        // with damaged head armor OR low torso armor, or low for fast targets or
+                        // with damaged head armor or low torso armor, or low for fast targets or
                         // with high speed
                         if (attackSide == ToHitData.SIDE_FRONT || attackSide == ToHitData.SIDE_REAR) {
 
                             double averageTorsoArmor = 0.0;
-                            if (plan.get(0).getToHit().getSideTable() == ToHitData.SIDE_REAR) {
-                                averageTorsoArmor = (IntStream.of(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT).map(i -> mechCandidate.getArmor(i, true)).sum()) / 3.0;
+                            if (attackSide == ToHitData.SIDE_REAR) {
+                                averageTorsoArmor = (IntStream.of(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT).map(i -> Math.max(mechCandidate.getArmor(i, true), 0)).sum()) / 3.0;
                             } else {
-                                averageTorsoArmor = (IntStream.of(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT).map(i -> mechCandidate.getArmor(i, false)).sum()) / 3.0;
+                                averageTorsoArmor = (IntStream.of(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT).map(i -> Math.max(mechCandidate.getArmor(i, false), 0)).sum()) / 3.0;
                             }
 
-                            double averageLegArmor = (mechCandidate.getArmor(Mech.LOC_RLEG) + mechCandidate.getArmor(Mech.LOC_LLEG)) / 2.0;
+                            double averageLegArmor = (Math.max(mechCandidate.getArmor(Mech.LOC_RLEG), 0) +
+                                    Math.max(mechCandidate.getArmor(Mech.LOC_LLEG), 0)) / 2.0;
 
                             if (mechCandidate.getArmor(Mech.LOC_HEAD) <= 5 ||
                                     (averageTorsoArmor < 10 && averageTorsoArmor < averageLegArmor)) {
-                                calledUpDown = ToHitData.HIT_ABOVE;
+                                calledShotDirection = CalledShot.CALLED_HIGH;
                             } else if (averageLegArmor < 10 ||
                                     mechCandidate.getWalkMP() >= 6 ||
                                     mechCandidate.getJumpMP() >= 5) {
-                                calledUpDown = ToHitData.HIT_BELOW;
+                                calledShotDirection = CalledShot.CALLED_LOW;
                             }
 
                         }
 
+                        if (calledShotDirection != CalledShot.CALLED_NONE) {
 
-                        if (calledUpDown == ToHitData.HIT_NORMAL && calledLeftRight == ToHitData.SIDE_FRONT) {
-                            isCalledShot = false;
-                        } else {
                             // Set the target roll maximum. Despite the name, the Self Preservation
                             // setting controls whether Princess takes risky shots or not.
-                            advancedTargetingThreshold = Math.max(7 - getBehaviorSettings().getSelfPreservationIndex(), 2);
-
-
+                            advancedTargetingThreshold = Math.max(maxTargetNumber - getBehaviorSettings().getSelfPreservationIndex(), 2);
                         }
 
                     }
@@ -798,23 +821,54 @@ public class Princess extends BotClient {
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
 
+                        int offset = 0;
 
                         // If the target is a Mech and the attack is not anti-Mech or artillery
+                        if (shot.getTarget().getTargetType() == UnitType.MEK &&
+                                !Objects.equals(shot.getWeapon().getShortName(), Infantry.SWARM_MEK) &&
+                                !Objects.equals(shot.getWeapon().getShortName(), Infantry.STOP_SWARM)) {
 
                             // If set for aimed shots, and the weapon can make aimed shots
+                            if ((isShutdownShot || isAimedShot) &&
+                                    Compute.allowAimedShotWith(shot.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
 
                                 // If the weapon damage is greater than the location destruction
-                                // value, decrease the maximum target number slightly
+                                // value, increase the maximum target number slightly
+                                if (shot.getMaxDamage() > locationDestruction) {
+                                    offset = 1;
+                                }
 
                                 // If the target number is considered viable set attack as aimed
                                 // at the provided location
+                                if ((shot.getToHit().getValue() + (isShutdownShot ? 0 : 3)) <= (advancedTargetingThreshold + offset)) {
+                                    shot.getAction().setAimingMode(isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER);
+                                    shot.getAction().setAimedLocation(aimLocation);
+                                }
 
-                            // If set for called shots
 
-                                // If the weapon uses the cluster table, reduce the maximum target
-                                // number slightly
+                            } else if (isCalledShot && calledShotDirection != CalledShot.CALLED_NONE) {
+
+                                // If the weapon uses the cluster table, increase the maximum target
+                                // number
+
+                                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                                    offset = 2;
+                                }
 
                                 // If the target number is considered viable set attack as called
+                                if ((shot.getToHit().getValue() + 3) <= (advancedTargetingThreshold + offset)) {
+                                    shot.getWeapon().getCalledShot().setCall(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
+                                    //ToHitData attackData = shot.getToHit();
+                                    //attackData.setSideTable(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
+                                    sendCalledShotChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()));
+                                }
+
+                            }
+
+
+
+                        }
+
 
 
 

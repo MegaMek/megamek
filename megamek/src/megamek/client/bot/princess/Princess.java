@@ -655,7 +655,9 @@ public class Princess extends BotClient {
                         // Call shot high/low/left/right if game option is set and no partial cover
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
                                 !candidate.isImmobile() &&
-                                plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
+                                plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE &&
+                                ((shooter.isInfantry() || shooter.isBattleArmor()) &&
+                                        plan.get(0).getWeapon().getShortName() != Infantry.SWARM_WEAPON_MEK)   ) {
                             isCalledShot = true;
                         }
 
@@ -676,12 +678,24 @@ public class Princess extends BotClient {
 
 
 
-//                        List<Integer> rankedLocations = new ArrayList<>(
-//                                Arrays.asList(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT, Mech.LOC_RLEG, Mech.LOC_LLEG)
-//                        );
 
 
                         List<Integer> rankedLocations = new ArrayList<>();
+
+                        // Best bet for infantry is to target the head, but if it's too difficult
+                        // use standard lowest armor selection
+                        boolean infantryHeadShot = false;
+                        if (shooter.isInfantry() || shooter.isBattleArmor()) {
+                            infantryHeadShot = true;
+                            aimLocation = Mech.LOC_HEAD;
+                            lowestArmor = mechCandidate.getArmor(Mech.LOC_HEAD);
+                            locationDestruction = lowestArmor + mechCandidate.getInternal(Mech.LOC_HEAD);
+                            if (plan.stream().anyMatch(curFire -> curFire.getToHit().getValue() + 3 > Math.max(maxTargetNumber - getBehaviorSettings().getSelfPreservationIndex(), 2))) {
+                                aimLocation = Mech.LOC_NONE;
+                                lowestArmor = 1000;
+                            }
+                        }
+
 
                         if (mechCandidate.getInternal(Mech.LOC_RT) > 0) {
                             rankedLocations.add(Mech.LOC_RT);
@@ -722,11 +736,6 @@ public class Princess extends BotClient {
                             // at immobile targets
                             advancedTargetingThreshold = 12;
 
-                            // Infantry at close range will aim for the head
-                            if (shooter.getUnitType() == UnitType.INFANTRY && plan.get(0).calcToHit().getRange() <= 1) {
-                                advancedTargetingThreshold = 9;
-                                aimLocation = Mech.LOC_HEAD;
-                            }
 
                         } else {
 
@@ -857,15 +866,13 @@ public class Princess extends BotClient {
 
                                 // If the target number is considered viable set attack as called
                                 if ((shot.getToHit().getValue() + 3) <= (advancedTargetingThreshold + offset)) {
-                                    shot.getWeapon().getCalledShot().setCall(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
+                                    shot.getWeapon().getCalledShot().setCall(calledShotDirection);
                                     //ToHitData attackData = shot.getToHit();
                                     //attackData.setSideTable(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
                                     sendCalledShotChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()));
                                 }
 
                             }
-
-
 
                         }
 

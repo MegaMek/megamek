@@ -655,10 +655,10 @@ public class Princess extends BotClient {
                         // Call shot high/low/left/right if game option is set and no partial cover
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
                                 !candidate.isImmobile() &&
-                                plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE &&
-                                ((shooter.isInfantry() || shooter.isBattleArmor()) &&
-                                        plan.get(0).getWeapon().getShortName() != Infantry.SWARM_WEAPON_MEK)   ) {
-                            isCalledShot = true;
+                                plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
+
+                            isCalledShot = (!shooter.isInfantry() && !shooter.isBattleArmor()) ||
+                                    plan.get(0).getWeapon().getShortName() != Infantry.SWARM_WEAPON_MEK;
                         }
 
                     }
@@ -691,11 +691,11 @@ public class Princess extends BotClient {
                             lowestArmor = mechCandidate.getArmor(Mech.LOC_HEAD);
                             locationDestruction = lowestArmor + mechCandidate.getInternal(Mech.LOC_HEAD);
                             if (plan.stream().anyMatch(curFire -> curFire.getToHit().getValue() + 3 > Math.max(maxTargetNumber - getBehaviorSettings().getSelfPreservationIndex(), 2))) {
+                                infantryHeadShot = false;
                                 aimLocation = Mech.LOC_NONE;
                                 lowestArmor = 1000;
                             }
                         }
-
 
                         if (mechCandidate.getInternal(Mech.LOC_RT) > 0) {
                             rankedLocations.add(Mech.LOC_RT);
@@ -713,20 +713,20 @@ public class Princess extends BotClient {
                         rankedLocations.add(Mech.LOC_RLEG);
                         rankedLocations.add(Mech.LOC_LLEG);
 
+                        if (!infantryHeadShot) {
+                            for (int curLocation : rankedLocations) {
+                                if (mechCandidate.getInternal(curLocation) > 0 &&
+                                        lowestArmor > (mechCandidate.hasRearArmor(curLocation) ?
+                                                mechCandidate.getArmor(curLocation, rearShot) :
+                                                mechCandidate.getArmor(curLocation))) {
 
+                                    lowestArmor = Math.max(mechCandidate.hasRearArmor(curLocation) ?
+                                            mechCandidate.getArmor(curLocation, rearShot) :
+                                            mechCandidate.getArmor(curLocation), 0);
+                                    aimLocation = curLocation;
+                                    locationDestruction = lowestArmor + mechCandidate.getInternal(aimLocation);
 
-                        for (int curLocation : rankedLocations) {
-                            if (mechCandidate.getInternal(curLocation) > 0 &&
-                                    lowestArmor > (mechCandidate.hasRearArmor(curLocation) ?
-                                    mechCandidate.getArmor(curLocation, rearShot) :
-                                    mechCandidate.getArmor(curLocation))) {
-
-                                lowestArmor = Math.max(mechCandidate.hasRearArmor(curLocation) ?
-                                        mechCandidate.getArmor(curLocation, rearShot) :
-                                        mechCandidate.getArmor(curLocation), 0);
-                                aimLocation = curLocation;
-                                locationDestruction = lowestArmor + mechCandidate.getInternal(aimLocation);
-
+                                }
                             }
                         }
 
@@ -754,18 +754,20 @@ public class Princess extends BotClient {
 
                         // If aimed shots are more likely to breach the target location, then don't
                         // bother checking for called shots
-                        int penetratorCount = 0;
-                        for (WeaponFireInfo curFire : plan ) {
-                            if (advancedTargetingThreshold >= (curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3)) &&
-                                    curFire.getMaxDamage() > lowestArmor &&
-                                    Compute.allowAimedShotWith(curFire.getWeapon(), AimingMode.TARGETING_COMPUTER)) {
-                                penetratorCount++;
+                        if (!shooter.isInfantry() && !shooter.isBattleArmor()) {
+                            int penetratorCount = 0;
+                            for (WeaponFireInfo curFire : plan) {
+                                if (advancedTargetingThreshold >= (curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3)) &&
+                                        curFire.getMaxDamage() > lowestArmor &&
+                                        Compute.allowAimedShotWith(curFire.getWeapon(), AimingMode.TARGETING_COMPUTER)) {
+                                    penetratorCount++;
+                                }
                             }
-                        }
-                        if ((double) penetratorCount / plan.size() > 0.4) {
-                            isCalledShot = false;
-                        } else if (penetratorCount == 0) {
-                            isAimedShot = false;
+                            if ((double) penetratorCount / plan.size() > 0.4) {
+                                isCalledShot = false;
+                            } else if (penetratorCount == 0) {
+                                isAimedShot = false;
+                            }
                         }
 
                     }
@@ -843,7 +845,9 @@ public class Princess extends BotClient {
 
                                 // If the weapon damage is greater than the location destruction
                                 // value, increase the maximum target number slightly
-                                if (shot.getMaxDamage() > locationDestruction) {
+                                if (!shooter.isInfantry() &&
+                                        !shooter.isBattleArmor() &&
+                                        shot.getMaxDamage() > locationDestruction) {
                                     offset = 1;
                                 }
 

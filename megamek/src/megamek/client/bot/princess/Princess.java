@@ -54,6 +54,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Princess extends BotClient {
     private static final char PLUS = '+';
@@ -655,13 +656,15 @@ public class Princess extends BotClient {
                             isAimedShot = true;
                         }
 
-                        // Call shot high/low/left/right if game option is set and no partial cover
+                        // Call shot high/low/left/right if game option is set and no partial cover. Do not call
+                        // shots for anti-Mech attacks, except leg attacks.
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
                                 !mechCandidate.isImmobile() &&
                                 plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
 
                             isCalledShot = !shooter.isInfantry() ||
-                                    plan.get(0).getWeapon().getShortName() != Infantry.SWARM_WEAPON_MEK;
+                                    (Stream.of(Infantry.SWARM_WEAPON_MEK, Infantry.SWARM_MEK, Infantry.STOP_SWARM).
+                                            allMatch(s -> plan.get(0).getWeapon().getShortName() != s));
                         }
 
                         // Get location and maximum allowed target number for aimed shots

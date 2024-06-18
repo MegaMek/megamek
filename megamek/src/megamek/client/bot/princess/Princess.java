@@ -676,7 +676,7 @@ public class Princess extends BotClient {
 
                             if (aimLocation != Mech.LOC_NONE) {
 
-                                int lowestArmor = mechCandidate.getArmor(aimLocation, rearShot);
+                                int lowestArmor = Math.max(mechCandidate.getArmor(aimLocation, rearShot), 0);
                                 locationDestruction = mechCandidate.getInternal(aimLocation) + lowestArmor;
 
                                 // Set the maximum target number based on Princess behavior. Despite the
@@ -1089,6 +1089,17 @@ public class Princess extends BotClient {
                 lowestArmor = 1000;
             } else {
                 return aimLocation;
+            }
+        }
+
+        // Consider arm locations if they have a 'big' weapon
+        for (WeaponMounted curWeapon : target.getWeaponList()) {
+            if (curWeapon.getType().getDamage(5) >= 10) {
+                if (!rankedLocations.contains(Mech.LOC_RARM) && curWeapon.getLocation() == Mech.LOC_RARM) {
+                    rankedLocations.add(Mech.LOC_RARM);
+                } else if (!rankedLocations.contains(Mech.LOC_LARM) && curWeapon.getLocation() == Mech.LOC_LARM) {
+                    rankedLocations.add(Mech.LOC_LARM);
+                }
             }
         }
 

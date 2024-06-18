@@ -1076,14 +1076,14 @@ public class Princess extends BotClient {
                                               boolean includeHead) {
         int aimLocation = Mech.LOC_NONE;
 
-        // Get a preferred location with the least armor, limiting to torsos and
-        // legs and preferring right to left (most arm weapons are on the right or
-        // symmetrical)
         int lowestArmor = 1000;
         List<Integer> rankedLocations = new ArrayList<>();
 
         // Aiming for the head can only be done against an immobile Mech, and takes a penalty.
-        if (includeHead && target.isImmobile()) {
+        // Don't aim for the head if this is a leg attach.
+        if (includeHead &&
+                target.isImmobile() &&
+                planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
             aimLocation = Mech.LOC_HEAD;
             lowestArmor = target.getArmor(Mech.LOC_HEAD);
             if (planOfAttack.stream().anyMatch(curFire -> curFire.getToHit().getValue() + 7 >
@@ -1095,31 +1095,34 @@ public class Princess extends BotClient {
             }
         }
 
-        // Consider arm locations if they have a 'big' weapon
-        for (WeaponMounted curWeapon : target.getWeaponList()) {
-            if (curWeapon.getType().getDamage(5) >= 10) {
-                if (!rankedLocations.contains(Mech.LOC_RARM) && curWeapon.getLocation() == Mech.LOC_RARM) {
-                    rankedLocations.add(Mech.LOC_RARM);
-                } else if (!rankedLocations.contains(Mech.LOC_LARM) && curWeapon.getLocation() == Mech.LOC_LARM) {
-                    rankedLocations.add(Mech.LOC_LARM);
+        if (planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
+
+            // Consider arm locations if they have a 'big' weapon
+            for (WeaponMounted curWeapon : target.getWeaponList()) {
+                if (curWeapon.getType().getDamage(5) >= 10) {
+                    if (!rankedLocations.contains(Mech.LOC_RARM) && curWeapon.getLocation() == Mech.LOC_RARM) {
+                        rankedLocations.add(Mech.LOC_RARM);
+                    } else if (!rankedLocations.contains(Mech.LOC_LARM) && curWeapon.getLocation() == Mech.LOC_LARM) {
+                        rankedLocations.add(Mech.LOC_LARM);
+                    }
                 }
             }
-        }
 
-        // Favor right torso over left, except if right torso is completely gone
-        if (target.getInternal(Mech.LOC_RT) > 0) {
-            rankedLocations.add(Mech.LOC_RT);
-        } else if (target.getInternal(Mech.LOC_LT) > 0) {
-            rankedLocations.add(Mech.LOC_LT);
-        }
-
-        if (!rankedLocations.contains(Mech.LOC_LT)) {
-            if (target.getInternal(Mech.LOC_LT) > 0) {
-                rankedLocations.add((Mech.LOC_LT));
+            // Favor right torso over left, except if right torso is completely gone
+            if (target.getInternal(Mech.LOC_RT) > 0) {
+                rankedLocations.add(Mech.LOC_RT);
+            } else if (target.getInternal(Mech.LOC_LT) > 0) {
+                rankedLocations.add(Mech.LOC_LT);
             }
-        }
 
-        rankedLocations.add(Mech.LOC_CT);
+            if (!rankedLocations.contains(Mech.LOC_LT)) {
+                if (target.getInternal(Mech.LOC_LT) > 0) {
+                    rankedLocations.add((Mech.LOC_LT));
+                }
+            }
+
+            rankedLocations.add(Mech.LOC_CT);
+        }
 
         // Favor right leg over left due to damage transfer to right torso, except if right leg is
         // completely gone
@@ -1134,10 +1137,6 @@ public class Princess extends BotClient {
                 rankedLocations.add(Mech.LOC_LLEG);
             }
         }
-
-
-        rankedLocations.add(Mech.LOC_RLEG);
-        rankedLocations.add(Mech.LOC_LLEG);
 
         // Select the most vulnerable location
         for (int curLocation : rankedLocations) {

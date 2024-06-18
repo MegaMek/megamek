@@ -640,7 +640,7 @@ public class Princess extends BotClient {
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
                     int targetID = plan.get(0).getTarget().getId();
-                    if (shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT &&
+                    if (shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT && //FIXME: ejected MechWarriors and vehicle crews need to be excluded
                             shooter.getUnitType() != UnitType.NAVAL &&
                             plan.get(0).getTarget().getTargetType() == UnitType.MEK &&
                             plan.stream().allMatch(curAttack -> curAttack.getTarget().getId() == targetID)) {

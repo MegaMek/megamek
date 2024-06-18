@@ -871,9 +871,10 @@ public class Princess extends BotClient {
                                 // If the target number is considered viable set attack as called
                                 if ((shot.getToHit().getValue() + 3) <= (advancedTargetingThreshold + offset)) {
                                     shot.getWeapon().getCalledShot().setCall(calledShotDirection);
-                                    //ToHitData attackData = shot.getToHit();
-                                    //attackData.setSideTable(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
-                                    sendCalledShotChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()));
+                                    // FIXME: try stepping through called shot settings, with and without to-hit side table modification
+//                                    shot.getToHit().setSideTable(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
+                                    sendCalledShotChange(shooter.getId(), shot.getWeaponAttackAction().getWeaponId());
+//                                    sendCalledShotChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()));
                                 }
 
                             }

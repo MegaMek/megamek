@@ -1092,6 +1092,7 @@ public class Princess extends BotClient {
             }
         }
 
+        // Favor right torso over left, except if right torso is completely gone
         if (target.getInternal(Mech.LOC_RT) > 0) {
             rankedLocations.add(Mech.LOC_RT);
         } else if (target.getInternal(Mech.LOC_LT) > 0) {
@@ -1105,6 +1106,22 @@ public class Princess extends BotClient {
         }
 
         rankedLocations.add(Mech.LOC_CT);
+
+        // Favor right leg over left due to damage transfer to right torso, except if right leg is
+        // completely gone
+        if (target.getInternal(Mech.LOC_RLEG) > 0) {
+            rankedLocations.add(Mech.LOC_RLEG);
+        } else if (target.getInternal(Mech.LOC_LLEG) > 0) {
+            rankedLocations.add(Mech.LOC_LLEG);
+        }
+
+        if (!rankedLocations.contains(Mech.LOC_LLEG)) {
+            if (target.getInternal(Mech.LOC_LLEG) > 0) {
+                rankedLocations.add(Mech.LOC_LLEG);
+            }
+        }
+
+
         rankedLocations.add(Mech.LOC_RLEG);
         rankedLocations.add(Mech.LOC_LLEG);
 

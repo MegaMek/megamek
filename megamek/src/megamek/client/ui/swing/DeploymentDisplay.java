@@ -53,7 +53,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_ASSAULTDROP("assaultDrop"),
         DEPLOY_DOCK("deployDock");
 
-        public String cmd;
+        public final String cmd;
 
         /**
          * Priority that determines this buttons order
@@ -90,13 +90,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             String msg_next= Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
 
-            switch (this) {
-                case DEPLOY_NEXT:
-                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
-                    break;
-                default:
-                    break;
+            if (this == DeployCommand.DEPLOY_NEXT) {
+                result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
             }
 
             return result;
@@ -133,6 +129,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
+
     @Override
     protected void setButtonsTooltips() {
         for (DeployCommand cmd : DeployCommand.values()) {
@@ -226,7 +223,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.getUnitDisplay().displayEntity(ce());
             clientgui.getUnitDisplay().showPanel("movement");
-            clientgui.setFiringArcPosition(ce(), ce().getPosition());
+            clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
         } else {
@@ -341,7 +338,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         return false;
     }
 
-    /** Sends a deployment to the server. */
     @Override
     public void ready() {
         final Game game = clientgui.getClient().getGame();
@@ -515,7 +511,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.getBoardView().redrawEntity(ce());
-            clientgui.setFiringArcFacing(ce());
+            clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             turnMode = false;
         } else if (ce().isBoardProhibited(board.getType())) {
@@ -581,7 +577,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setPosition(moveto);
 
             clientgui.getBoardView().redrawEntity(ce());
-            clientgui.setFiringArcPosition(ce(), moveto);
+            clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);

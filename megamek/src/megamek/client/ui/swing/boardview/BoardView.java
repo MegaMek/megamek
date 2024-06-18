@@ -1398,7 +1398,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     @Nullable
     private Mounted<?> selectedWeapon() {
-        return (clientgui != null) ? clientgui.getSelectedWeapon() : null;
+        return (clientgui != null) ? clientgui.getDisplayedWeapon().orElse(null) : null;
     }
 
     /**
@@ -5050,7 +5050,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     @Nullable
     Entity getSelectedEntity() {
-        return clientgui != null ? clientgui.getSelectedUnit() : null;
+        return clientgui != null ? clientgui.getDisplayedUnit() : null;
     }
 
     FovHighlightingAndDarkening getFovHighlighting() {

@@ -156,11 +156,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         client.getGame().removeGameListener(gameListener);
     }
 
-    @Override
-    public InGameObject getSelectedUnit() {
-        return null;
-    }
-
     protected void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
 //        if (curPanel instanceof BoardViewListener) {

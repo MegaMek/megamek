@@ -1125,15 +1125,17 @@ public class Princess extends BotClient {
         rankedLocations.add(Mech.LOC_RLEG);
         rankedLocations.add(Mech.LOC_LLEG);
 
+        // Select the most vulnerable location
         for (int curLocation : rankedLocations) {
-            if (target.getInternal(curLocation) > 0 &&
-                    lowestArmor > (target.hasRearArmor(curLocation) ?
-                            target.getArmor(curLocation, rearAttack) :
-                            target.getArmor(curLocation))) {
+            int locationArmor = Math.max(target.hasRearArmor(curLocation) ?
+                    target.getArmor(curLocation, rearAttack) :
+                    target.getArmor(curLocation), 0);
 
-                lowestArmor = Math.max(target.hasRearArmor(curLocation) ?
-                        target.getArmor(curLocation, rearAttack) :
-                        target.getArmor(curLocation), 0);
+            if (target.getInternal(curLocation) > 0 &&
+                    (lowestArmor > locationArmor ||
+                            lowestArmor + target.getInternal(aimLocation) > target.getInternal(curLocation) + locationArmor)) {
+
+                lowestArmor = locationArmor;
                 aimLocation = curLocation;
 
             }

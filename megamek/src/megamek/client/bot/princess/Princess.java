@@ -1159,6 +1159,14 @@ public class Princess extends BotClient {
                 aimLocation = curLocation;
 
             }
+
+            // Doesn't get any better than a troso with no armor
+            if (lowestArmor == 0 &&
+                    (aimLocation == Mech.LOC_RT ||
+                            aimLocation == Mech.LOC_LT ||
+                            aimLocation == Mech.LOC_CT)) {
+                break;
+            }
         }
 
         return aimLocation;

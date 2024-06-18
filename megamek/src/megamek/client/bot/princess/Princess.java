@@ -746,62 +746,13 @@ public class Princess extends BotClient {
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
 
-                        setAttackAsAimedOrCalled(shot, advancedTargetingThreshold, aimLocation, calledShotDirection, locationDestruction);
-
-                        /*
-                        int offset = 0;
-
-                        // If the target is a Mech and the attack is not anti-Mech or artillery
-                        if (shot.getTarget().getTargetType() == UnitType.MEK &&
-                                !Objects.equals(shot.getWeapon().getShortName(), Infantry.SWARM_MEK) &&
-                                !Objects.equals(shot.getWeapon().getShortName(), Infantry.STOP_SWARM)) {
-
-                            // If set for aimed shots, and the weapon can make aimed shots
-                            if ((isShutdownShot || isAimedShot) &&
-                                    Compute.allowAimedShotWith(shot.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
-
-                                // If the weapon damage is greater than the location destruction
-                                // value, increase the maximum target number slightly
-                                if (!shooter.isInfantry() &&
-                                        !shooter.isBattleArmor() &&
-                                        shot.getMaxDamage() > locationDestruction) {
-                                    offset = 1;
-                                }
-
-                                // If the target number is considered viable set attack as aimed
-                                // at the provided location
-                                if ((shot.getToHit().getValue() + (isShutdownShot ? 0 : 3)) <= (advancedTargetingThreshold + offset)) {
-                                    shot.getAction().setAimingMode(isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER);
-                                    shot.getAction().setAimedLocation(aimLocation);
-                                }
-
-
-                            } else if (isCalledShot && calledShotDirection != CalledShot.CALLED_NONE) {
-
-                                // If the weapon uses the cluster table, increase the maximum target
-                                // number
-
-                                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
-                                    offset = 2;
-                                }
-
-                                // If the target number is considered viable set attack as called
-                                if ((shot.getToHit().getValue() + 3) <= (advancedTargetingThreshold + offset)) {
-                                    shot.getWeapon().getCalledShot().setCall(calledShotDirection);
-                                    // FIXME: try stepping through called shot settings, with and without to-hit side table modification
-//                                    shot.getToHit().setSideTable(Compute.targetSideTable(shooter, shot.getTarget(), calledShotDirection));
-                                    sendCalledShotChange(shooter.getId(), shot.getWeaponAttackAction().getWeaponId());
-//                                    sendCalledShotChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()));
-                                }
-
-                            }
-
+                        if (aimLocation != Mech.LOC_NONE || calledShotDirection != CalledShot.CALLED_NONE) {
+                            setAttackAsAimedOrCalled(shot,
+                                    advancedTargetingThreshold,
+                                    aimLocation,
+                                    calledShotDirection,
+                                    locationDestruction);
                         }
-
-                        */
-
-
-
                         if (shot.getUpdatedFiringMode() != null) {
                             super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
                         }

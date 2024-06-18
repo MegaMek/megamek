@@ -1102,7 +1102,7 @@ public class Princess extends BotClient {
                 if (curWeapon.getType().getDamage(5) >= 10) {
                     if (!rankedLocations.contains(Mech.LOC_RARM) &&
                             curWeapon.getLocation() == Mech.LOC_RARM &&
-                            target.getInternal(Mech.LOC_RARM) >0) {
+                            target.getInternal(Mech.LOC_RARM) > 0) {
                         rankedLocations.add(Mech.LOC_RARM);
                     } else if (!rankedLocations.contains(Mech.LOC_LARM) &&
                             curWeapon.getLocation() == Mech.LOC_LARM &&
@@ -1160,7 +1160,7 @@ public class Princess extends BotClient {
 
             }
 
-            // Doesn't get any better than a troso with no armor
+            // Doesn't get any better than a torso with no armor
             if (lowestArmor == 0 &&
                     (aimLocation == Mech.LOC_RT ||
                             aimLocation == Mech.LOC_LT ||
@@ -1222,7 +1222,8 @@ public class Princess extends BotClient {
 
     /**
      * If a shot meets criteria, set it as aimed or called.  {@code aimLocation} and {@code
-     * calledShotDirection} are mutually exclusive; if both are used, aimed shot is used.
+     * calledShotDirection} are not mutually exclusive - if both are provided, weapons which
+     * cannot make an aimed shot will make a called shot instead
      * @param shot   Single-weapon attack action
      * @param maximumTargetThreshold maximum target number (including aiming penalty) that is
      *                               considered acceptable

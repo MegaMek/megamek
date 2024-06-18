@@ -663,7 +663,7 @@ public class Princess extends BotClient {
                                 plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
 
                             isCalledShot = !shooter.isInfantry() ||
-                                    (Stream.of(Infantry.SWARM_WEAPON_MEK, Infantry.SWARM_MEK, Infantry.STOP_SWARM).
+                                    (Stream.of(Infantry.LEG_ATTACK, Infantry.SWARM_WEAPON_MEK, Infantry.SWARM_MEK, Infantry.STOP_SWARM).
                                             allMatch(s -> plan.get(0).getWeapon().getShortName() != s));
                         }
 

@@ -1100,11 +1100,18 @@ public class Princess extends BotClient {
             // Consider arm locations if they have a 'big' weapon
             for (WeaponMounted curWeapon : target.getWeaponList()) {
                 if (curWeapon.getType().getDamage(5) >= 10) {
-                    if (!rankedLocations.contains(Mech.LOC_RARM) && curWeapon.getLocation() == Mech.LOC_RARM) {
+                    if (!rankedLocations.contains(Mech.LOC_RARM) &&
+                            curWeapon.getLocation() == Mech.LOC_RARM &&
+                            target.getInternal(Mech.LOC_RARM) >0) {
                         rankedLocations.add(Mech.LOC_RARM);
-                    } else if (!rankedLocations.contains(Mech.LOC_LARM) && curWeapon.getLocation() == Mech.LOC_LARM) {
+                    } else if (!rankedLocations.contains(Mech.LOC_LARM) &&
+                            curWeapon.getLocation() == Mech.LOC_LARM &&
+                            target.getInternal(Mech.LOC_LARM) > 0) {
                         rankedLocations.add(Mech.LOC_LARM);
                     }
+                }
+                if (rankedLocations.contains(Mech.LOC_RARM) && rankedLocations.contains(Mech.LOC_LARM)) {
+                    break;
                 }
             }
 

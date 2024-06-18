@@ -700,7 +700,7 @@ public class Princess extends BotClient {
                                     int penetratorCount = 0;
                                     for (WeaponFireInfo curFire : plan) {
                                         if (advancedTargetingThreshold >= (curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3)) &&
-                                                curFire.getMaxDamage() > lowestArmor &&
+                                                lowestArmor - curFire.getMaxDamage() <= 5 &&
                                                 Compute.allowAimedShotWith(curFire.getWeapon(), AimingMode.TARGETING_COMPUTER)) {
                                             penetratorCount++;
                                         }

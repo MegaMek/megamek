@@ -256,34 +256,34 @@ public class MechSummaryCache {
 
         // Official units are in the internal dir, not in the user dirs or story arcs dir
         if (!ignoreUnofficial) {
-        // load units from the MM internal user data dir
-        File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
-        if (userDataUnits.isDirectory()) {
-            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, false);
-        }
+            // load units from the MM internal user data dir
+            File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
+            if (userDataUnits.isDirectory()) {
+                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, false);
+            }
 
-        // load units from the external user data dir
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        File userDataUnits2 = new File(userDir, "");
-        if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
-            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, false);
-        }
+            // load units from the external user data dir
+            String userDir = PreferenceManager.getClientPreferences().getUserDir();
+            File userDataUnits2 = new File(userDir, "");
+            if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
+                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, false);
+            }
 
-        // load units from story arcs
-        File storyarcsDir = Configuration.storyarcsDir();
-        if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
-            File[] storyArcsFiles = storyarcsDir.listFiles();
-            if (storyArcsFiles != null) {
-                for (File file : storyArcsFiles) {
-                    if (file.isDirectory()) {
-                        File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
-                        if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
-                            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
+            // load units from story arcs
+            File storyarcsDir = Configuration.storyarcsDir();
+            if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                File[] storyArcsFiles = storyarcsDir.listFiles();
+                if (storyArcsFiles != null) {
+                    for (File file : storyArcsFiles) {
+                        if (file.isDirectory()) {
+                            File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
+                            if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
+                                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
+                            }
                         }
                     }
                 }
             }
-        }
         }
 
         // save updated cache back to disk

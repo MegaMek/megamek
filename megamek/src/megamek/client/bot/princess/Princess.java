@@ -680,9 +680,6 @@ public class Princess extends BotClient {
 
                             if (aimLocation != Mech.LOC_NONE) {
 
-                                int lowestArmor = Math.max(mechCandidate.getArmor(aimLocation, rearShot), 0);
-                                locationDestruction = mechCandidate.getInternal(aimLocation) + lowestArmor;
-
                                 // Set the maximum target number based on Princess behavior. Despite the
                                 // name Self Preservation also controls firing behavior.
                                 if (isAimedShot || aimLocation == Mech.LOC_HEAD) {
@@ -690,38 +687,45 @@ public class Princess extends BotClient {
                                     advancedTargetingThreshold = Math.max(maxTargetNumber -
                                             getBehaviorSettings().getSelfPreservationIndex(), 2);
 
+                                    int lowestArmor = Math.max(mechCandidate.getArmor(aimLocation, rearShot), 0);
+                                    locationDestruction = mechCandidate.getInternal(aimLocation) + lowestArmor;
+
                                     if (locationDestruction <= 5) {
                                         advancedTargetingThreshold += 1;
                                     }
 
-                                } else {
-                                    advancedTargetingThreshold = 12;
-                                }
+                                    // Check how effective aiming the shots will be
+                                    int penetratorCount = 0;
+                                    int shotCount = 0;
+                                    double totalDamage = 0;
+                                    for (WeaponFireInfo curFire : plan) {
+                                        if (advancedTargetingThreshold >= curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) &&
+                                                Compute.allowAimedShotWith(curFire.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
 
-                                // Check how effective aiming the shots will be
-                                int penetratorCount = 0;
-                                int shotCount = 0;
-                                double totalDamage = 0;
-                                for (WeaponFireInfo curFire : plan) {
-                                    if (advancedTargetingThreshold >= curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3) &&
-                                            Compute.allowAimedShotWith(curFire.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
+                                            shotCount++;
+                                            totalDamage += curFire.getMaxDamage();
+                                            if (lowestArmor <= curFire.getMaxDamage()) {
+                                                penetratorCount++;
+                                            }
 
-                                        shotCount++;
-                                        totalDamage += curFire.getMaxDamage();
-                                        if (lowestArmor <= curFire.getMaxDamage()) {
-                                            penetratorCount++;
                                         }
-
                                     }
+
+                                    // If the weapons being fired will go through the armor in the
+                                    // aimed location, don't bother with checking for called shots
+                                    if (penetratorCount > 0 || 0.4 * totalDamage >= lowestArmor) {
+                                        isCalledShot = false;
+                                    } else {
+                                        aimLocation = Mech.LOC_NONE;
+                                    }
+
+                                } else {
+                                    // Avoid combining aimed and called shots against immobile
+                                    // targets to keep things fair (ish)
+                                    advancedTargetingThreshold = 12;
+                                    isCalledShot = false;
                                 }
 
-                                // If the weapons being fired will go through the armor in the
-                                // aimed location, don't bother with checking for called shots
-                                if (penetratorCount > 0 || 0.4 * totalDamage >= lowestArmor) {
-                                    isCalledShot = false;
-                                } else {
-                                    aimLocation = Mech.LOC_NONE;
-                                }
 
                             }
 

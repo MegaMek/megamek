@@ -691,7 +691,9 @@ public class Princess extends BotClient {
                         if (isCalledShot) {
 
                             calledShotDirection = calculateCalledShotDirection(mechCandidate,
-                                    plan.get(0).getToHit().getSideTable());
+                                    plan.get(0).getToHit().getSideTable(),
+                                    plan.stream().mapToInt(w -> (int)Math.floor(w.getMaxDamage())).min().orElse(10));
+
 
                             // Set the target roll maximum. Despite the name, the Self Preservation
                             // setting controls whether Princess takes risky shots or not.
@@ -1182,14 +1184,20 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Determine which direction to make a called shot - left, right, high, or low
-     * @param target      Mech being shot at
-     * @param attackSide  {@link ToHitData} SIDE_ constant, indicating attack direction relative
-     *                         to target
-     * @return            {@link CalledShot} constant indicating which direction to call, may
-     *                    return {@code CalledShot.CALLED_NONE}.
+     * Determine which direction to make a called shot - left, right, high, or low. Shots into a
+     * side arc will be called to become rear shots. Shots to the front or rear will call high or
+     * low based on how many locations have minimal armor.
+     * @param target       Mech being shot at
+     * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
+     *                     to target
+     * @param maxArmor     maximum armor value to consider as a valid target location
+     * @param planOfAttack Proposed attacks against {@code target} parameter
+     * @return             {@link CalledShot} constant indicating which direction to call, may
+     *                     return {@code CalledShot.CALLED_NONE}.
      */
-    protected int calculateCalledShotDirection (Mech target, int attackSide) {
+    protected int calculateCalledShotDirection (Mech target,
+                                                int attackSide,
+                                                int maxArmor) {
         int calledShotDirection = CalledShot.CALLED_NONE;
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
@@ -1199,29 +1207,57 @@ public class Princess extends BotClient {
             calledShotDirection = CalledShot.CALLED_LEFT;
         }
 
-        // If the attack is from the front or rear consider aiming high for targets
-        // with damaged head armor or low torso armor, or low for fast targets or
-        // with high speed
         if (attackSide == ToHitData.SIDE_FRONT || attackSide == ToHitData.SIDE_REAR) {
 
-            double averageTorsoArmor = 0.0;
-            if (attackSide == ToHitData.SIDE_REAR) {
-                averageTorsoArmor = (IntStream.of(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT).
-                        map(i -> Math.max(target.getArmor(i, true), 0)).sum()) / 3.0;
-            } else {
-                averageTorsoArmor = (IntStream.of(Mech.LOC_RT, Mech.LOC_LT, Mech.LOC_CT).
-                        map(i -> Math.max(target.getArmor(i, false), 0)).sum()) / 3.0;
+            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mech.LOC_RT,
+                    Mech.LOC_LT,
+                    Mech.LOC_CT));
+
+            // Only consider the arms if they have 'big' weapons
+            for (WeaponMounted curWeapon : target.getWeaponList().
+                    stream().
+                    filter(w -> w.isOperable() &&
+                    w.getType().getDamage(5) >= 10).collect(Collectors.toSet())) {
+
+                if (!upperLocations.contains(Mech.LOC_RARM) &&
+                        curWeapon.getLocation() == Mech.LOC_RARM &&
+                        target.getInternal(Mech.LOC_RARM) > 0) {
+                    upperLocations.add(Mech.LOC_RARM);
+                } else if (!upperLocations.contains(Mech.LOC_LARM) &&
+                        curWeapon.getLocation() == Mech.LOC_LARM &&
+                        target.getInternal(Mech.LOC_LARM) > 0) {
+                    upperLocations.add(Mech.LOC_LARM);
+                }
+                if (upperLocations.contains(Mech.LOC_RARM) && upperLocations.contains(Mech.LOC_LARM)) {
+                    break;
+                }
+
             }
 
-            double averageLegArmor = (Math.max(target.getArmor(Mech.LOC_RLEG), 0) +
-                    Math.max(target.getArmor(Mech.LOC_LLEG), 0)) / 2.0;
+            double upperTargets = upperLocations.
+                    stream().
+                    mapToInt(loc -> loc).
+                    filter(loc -> target.getArmor(loc, attackSide == ToHitData.SIDE_REAR) <= maxArmor).
+                    count();
 
+            // Only consider shooting low if both legs are intact
+            double lowerTargets = 0;
+            if (target.getInternal(Mech.LOC_RLEG) > 0 && target.getInternal(Mech.LOC_LLEG) > 0) {
+                if (target.getArmor(Mech.LOC_RLEG) <= maxArmor) {
+                    lowerTargets++;
+                }
+                if (target.getArmor(Mech.LOC_LLEG) <= maxArmor) {
+                    lowerTargets++;
+                }
+            }
+
+            // If the head armor is weak or there are proportionally more upper targets, call high.
+            // If the leg armor is weak and this is a fast and/or jumping Mech, call low.
             if (target.getArmor(Mech.LOC_HEAD) <= 5 ||
-                    (averageTorsoArmor < 10 && averageTorsoArmor < averageLegArmor)) {
+                    (upperTargets / upperLocations.size() > lowerTargets / 2.0)) {
                 calledShotDirection = CalledShot.CALLED_HIGH;
-            } else if (averageLegArmor < 10 ||
-                    target.getWalkMP() >= 6 ||
-                    target.getJumpMP() >= 5) {
+            } else if (lowerTargets >= 1 &&
+                    (target.getWalkMP() >= 6 || target.getJumpMP() >= 5)) {
                 calledShotDirection = CalledShot.CALLED_LOW;
             }
 

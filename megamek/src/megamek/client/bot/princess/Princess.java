@@ -1043,10 +1043,15 @@ public class Princess extends BotClient {
                                               boolean includeHead) {
         int aimLocation = Mech.LOC_NONE;
 
-        // If none of the weapons being fired can be aimed, don't bother finding the best location
-        if (planOfAttack.stream().noneMatch(curShot ->
+        List<WeaponFireInfo> workingShots = planOfAttack.
+                stream().
+                filter(curShot ->
                 Compute.allowAimedShotWith(curShot.getWeapon(),
-                        target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER))) {
+                        target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)).
+                collect(Collectors.toList());
+
+        // If none of the weapons being fired can be aimed, don't bother finding the best location
+        if (workingShots.isEmpty()) {
             return aimLocation;
         }
 
@@ -1158,10 +1163,8 @@ public class Princess extends BotClient {
 
             int penetratorCount = 0;
             double totalDamage = 0;
-            for (WeaponFireInfo curFire : planOfAttack) {
-                if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) <= (maximumToHit + offset) &&
-                        Compute.allowAimedShotWith(curFire.getWeapon(),
-                                target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
+            for (WeaponFireInfo curFire : workingShots) {
+                if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) <= (maximumToHit + offset)) {
 
                     totalDamage += curFire.getMaxDamage();
                     if (curFire.getMaxDamage() >= lowestArmor) {

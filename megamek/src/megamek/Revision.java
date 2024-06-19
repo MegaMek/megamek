@@ -28,13 +28,14 @@ import java.nio.file.Files;
  * This class contains static methods to obtain the current code revision hashcode of all three programs.
  * The code revision can be used to check out the precise point in the code when available from a log
  * file.
- * MML and MHQ revisions are only available when the revision txt files are present, i.e. in an MML or MHQ
- * release / git clone.
+ * In the IDE, revisions may not be fully available. E.g. when working in MML, the MM directories are not
+ * used.
  */
 public final class Revision {
 
     /**
-     * @return The current MM code revision (e.g. "eba3a49e1006e51b16db12446caf5e43f57a18a7")
+     * @return The current MM code revision (e.g. "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown"
+     * if not available.
      */
     public static String mmRevision() {
         return instance.mmRevision;

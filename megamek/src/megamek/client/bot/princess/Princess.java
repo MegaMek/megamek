@@ -52,7 +52,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Princess extends BotClient {
@@ -624,9 +623,9 @@ public class Princess extends BotClient {
 
                     // If the shooter is a ground unit (including VTOLs and infantry) and only
                     // shooting at a single Mech target with all weapons, consider making an
-                    // aimed shot if it is shut down or the attacker has a targeting computer.
-                    // Alternatively, consider using the called shots optional rule to adjust
-                    // the hit table.
+                    // aimed shot if the target is shut down or the attacker has a targeting
+                    // computer. Alternatively, consider using the called shots optional rule to
+                    // adjust the hit table to something more favorable.
 
                     boolean isShutdownShot = false;
                     boolean isAimedShot = false;
@@ -644,10 +643,10 @@ public class Princess extends BotClient {
                             plan.get(0).getTarget().getTargetType() == UnitType.MEK &&
                             plan.stream().allMatch(curAttack -> curAttack.getTarget().getId() == targetID)) {
 
-                        Mech mechCandidate = (Mech) plan.get(0).getTarget();
+                        Mech mechTarget = (Mech) plan.get(0).getTarget();
 
                         // Determine the type of advanced targeting
-                        if (mechCandidate.isImmobile()) {
+                        if (mechTarget.isImmobile()) {
                             // Aimed shot at immobile target, without relying on targeting computer
                             isShutdownShot = true;
                         } else if (shooter.hasTargComp() && plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
@@ -655,10 +654,10 @@ public class Princess extends BotClient {
                             isAimedShot = true;
                         }
 
-                        // Call shot high/low/left/right if game option is set and no partial cover. Do not call
-                        // shots for anti-Mech attacks, except leg attacks.
+                        // Call shot high/low/left/right if game option is set and no partial cover.
+                        // Do not call shots for anti-Mech attacks.
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
-                                !mechCandidate.isImmobile() &&
+                                !mechTarget.isImmobile() &&
                                 plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
 
                             isCalledShot = !shooter.isInfantry() ||
@@ -672,14 +671,16 @@ public class Princess extends BotClient {
                             boolean rearShot = plan.get(0).getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
                             if (isAimedShot) {
-                                advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber - getBehaviorSettings().getSelfPreservationIndex(), 2);
+                                advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber -
+                                        getBehaviorSettings().getSelfPreservationIndex(), 2);
                             } else {
                                 advancedTargetingThreshold = 12;
                             }
 
                             // Get the Mech location to aim at. Infantry and BA will go for the head
                             // if the odds are good.
-                            aimLocation = calculateAimedShotLocation(mechCandidate, plan, advancedTargetingThreshold, rearShot, shooter.isInfantry());
+                            aimLocation = calculateAimedShotLocation(mechTarget,
+                                    plan, advancedTargetingThreshold, rearShot, shooter.isInfantry());
 
                             if (aimLocation != Mech.LOC_NONE) {
                                 isCalledShot = false;
@@ -690,10 +691,17 @@ public class Princess extends BotClient {
                         // Get direction and maximum target number for called shots
                         if (isCalledShot) {
 
-                            calledShotDirection = calculateCalledShotDirection(mechCandidate,
+                            int armorThreshold = 10;
+                            if (!shooter.isInfantry()) {
+                                armorThreshold = (int) Math.floor(plan.
+                                        stream().
+                                        mapToDouble(WeaponFireInfo::getMaxDamage).
+                                        average().
+                                        orElse(10));
+                            }
+                            calledShotDirection = calculateCalledShotDirection(mechTarget,
                                     plan.get(0).getToHit().getSideTable(),
-                                    plan.stream().mapToInt(w -> (int)Math.floor(w.getMaxDamage())).min().orElse(10));
-
+                                    armorThreshold);
 
                             // Set the target roll maximum. Despite the name, the Self Preservation
                             // setting controls whether Princess takes risky shots or not.
@@ -1043,6 +1051,7 @@ public class Princess extends BotClient {
                                               boolean includeHead) {
         int aimLocation = Mech.LOC_NONE;
 
+        // If none of the weapons being fired can be aimed, don't bother finding the best location
         List<WeaponFireInfo> workingShots = planOfAttack.
                 stream().
                 filter(curShot ->
@@ -1050,7 +1059,6 @@ public class Princess extends BotClient {
                         target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)).
                 collect(Collectors.toList());
 
-        // If none of the weapons being fired can be aimed, don't bother finding the best location
         if (workingShots.isEmpty()) {
             return aimLocation;
         }
@@ -1059,7 +1067,7 @@ public class Princess extends BotClient {
         List<Integer> rankedLocations = new ArrayList<>();
 
         // Aiming for the head can only be done against an immobile Mech, and takes a penalty.
-        // Don't aim for the head for anti-Mech attacks except after swarming..
+        // Don't aim for the head for anti-Mech attacks except after swarming.
         if (includeHead &&
                 target.isImmobile() &&
                 planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK &&
@@ -1074,7 +1082,7 @@ public class Princess extends BotClient {
         }
 
         // Limit leg attack aimed shots to the legs
-        if (planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
+        if (workingShots.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
 
             // Consider arm locations if they have a 'big' weapon
             for (WeaponMounted curWeapon : target.getWeaponList().
@@ -1152,7 +1160,7 @@ public class Princess extends BotClient {
                 break;
             }
         }
-        // Evaluate whether an aimed shot at a higher to-hit number will be effective
+        // Evaluate whether all the weapons at the chosen location will be effective
         if (aimLocation != Mech.LOC_NONE &&
                 (!target.isImmobile() || aimLocation == Mech.LOC_HEAD)) {
 
@@ -1194,7 +1202,6 @@ public class Princess extends BotClient {
      * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
      *                     to target
      * @param maxArmor     maximum armor value to consider as a valid target location
-     * @param planOfAttack Proposed attacks against {@code target} parameter
      * @return             {@link CalledShot} constant indicating which direction to call, may
      *                     return {@code CalledShot.CALLED_NONE}.
      */

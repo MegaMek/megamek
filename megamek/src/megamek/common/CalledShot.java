@@ -44,14 +44,6 @@ public class CalledShot implements Serializable {
         return current;
     }
 
-    public void setCall(int call) {
-        if (call >= CALLED_NONE && call < CALLED_NUM) {
-            current = call;
-        } else {
-            current = CALLED_NONE;
-        }
-    }
-
     public @Nullable String isValid(Targetable target) {
         if (current == CALLED_NONE) {
             return null;

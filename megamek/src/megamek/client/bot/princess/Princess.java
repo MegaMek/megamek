@@ -697,23 +697,29 @@ public class Princess extends BotClient {
                                     advancedTargetingThreshold = 12;
                                 }
 
-                                // Check for how many shots might penetrate armor. Infantry and battle
-                                // armor usually rely on multiple smaller hits so ignore this.
-                                if (!shooter.isInfantry()) {
-                                    int penetratorCount = 0;
-                                    for (WeaponFireInfo curFire : plan) {
-                                        if (advancedTargetingThreshold >= (curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3)) &&
-                                                lowestArmor - curFire.getMaxDamage() <= 5 &&
-                                                Compute.allowAimedShotWith(curFire.getWeapon(), AimingMode.TARGETING_COMPUTER)) {
+                                // Check how effective aiming the shots will be
+                                int penetratorCount = 0;
+                                int shotCount = 0;
+                                double totalDamage = 0;
+                                for (WeaponFireInfo curFire : plan) {
+                                    if (advancedTargetingThreshold >= curFire.getToHit().getValue() + (isShutdownShot ? 0 : 3) &&
+                                            Compute.allowAimedShotWith(curFire.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
+
+                                        shotCount++;
+                                        totalDamage += curFire.getMaxDamage();
+                                        if (lowestArmor <= curFire.getMaxDamage()) {
                                             penetratorCount++;
                                         }
+
                                     }
-                                    // Determine if aimed shots are preferred over called shots
-                                    if ((double) penetratorCount / plan.size() > 0.4) {
-                                        isCalledShot = false;
-                                    } else if (penetratorCount == 0) {
-                                        aimLocation = Mech.LOC_NONE;
-                                    }
+                                }
+
+                                // If the weapons being fired will go through the armor in the
+                                // aimed location, don't bother with checking for called shots
+                                if (penetratorCount > 0 || 0.4 * totalDamage >= lowestArmor) {
+                                    isCalledShot = false;
+                                } else {
+                                    aimLocation = Mech.LOC_NONE;
                                 }
 
                             }

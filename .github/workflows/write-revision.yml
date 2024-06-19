@@ -1,0 +1,23 @@
+on:  
+  push:  
+    branches:  
+      - master  
+  
+jobs:  
+  write_hashcode:  
+    runs-on: ubuntu-latest  
+  
+    steps:  
+      - name: Checkout Repository  
+        uses: actions/checkout@v4  
+  
+      - name: Write latest revision hashcode to file  
+        run: echo ${{ github.sha }} > megamek/docs/revision.txt  
+  
+      - name: Commit and Push Changes  
+        run: |  
+          git config --global user.name 'GitHub Actions'  
+          git config --global user.email 'actions@github.com'  
+          git add megamek/docs/revision.txt  
+          git commit -m 'Update revision.txt'  
+          git push  

@@ -711,7 +711,8 @@ public class Princess extends BotClient {
 
                                     // If the weapons being fired will go through the armor in the
                                     // aimed location, don't bother with checking for called shots
-                                    if (penetratorCount > 0 || 0.4 * totalDamage >= lowestArmor) {
+                                    if (totalDamage > 0 &&
+                                            (penetratorCount > 0 || 0.4 * totalDamage >= lowestArmor)) {
                                         isCalledShot = false;
                                     } else {
                                         aimLocation = Mech.LOC_NONE;

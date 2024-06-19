@@ -3,7 +3,12 @@ name: "Write MM Revision"
 on:  
   push:  
     branches:  
-      - master  
+      - master
+    paths:
+      # only write the revision for changes that affect program behavior
+      - '**.gradle'
+      - 'megamek/src/**'
+      - 'megamek/data/**'
   
 jobs:  
   write_hashcode:  

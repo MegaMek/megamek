@@ -671,58 +671,18 @@ public class Princess extends BotClient {
 
                             boolean rearShot = plan.get(0).getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
+                            if (isAimedShot) {
+                                advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber - getBehaviorSettings().getSelfPreservationIndex(), 2);
+                            } else {
+                                advancedTargetingThreshold = 12;
+                            }
+
                             // Get the Mech location to aim at. Infantry and BA will go for the head
                             // if the odds are good.
-                            aimLocation = calculateAimedShotLocation(mechCandidate, plan, maxAdvancedTargetNumber, rearShot, shooter.isInfantry());
+                            aimLocation = calculateAimedShotLocation(mechCandidate, plan, advancedTargetingThreshold, rearShot, shooter.isInfantry());
 
                             if (aimLocation != Mech.LOC_NONE) {
-
-                                // Set the maximum target number based on Princess behavior. Despite the
-                                // name Self Preservation also controls firing behavior.
-                                if (isAimedShot || aimLocation == Mech.LOC_HEAD) {
-
-                                    advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber -
-                                            getBehaviorSettings().getSelfPreservationIndex(), 2);
-
-                                    int lowestArmor = Math.max(mechCandidate.getArmor(aimLocation, rearShot), 0);
-                                    locationDestruction = mechCandidate.getInternal(aimLocation) + lowestArmor;
-
-                                    if (locationDestruction <= 5) {
-                                        advancedTargetingThreshold += 1;
-                                    }
-
-                                    // Check how effective aiming the shots will be
-                                    int penetratorCount = 0;
-                                    double totalDamage = 0;
-                                    for (WeaponFireInfo curFire : plan) {
-                                        if (advancedTargetingThreshold >= curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) &&
-                                                Compute.allowAimedShotWith(curFire.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
-
-                                            totalDamage += curFire.getMaxDamage();
-                                            if (curFire.getMaxDamage() >= lowestArmor) {
-                                                penetratorCount++;
-                                            }
-
-                                        }
-                                    }
-
-                                    // If the weapons being fired will go through the armor in the
-                                    // aimed location, don't bother with checking for called shots
-                                    if (totalDamage > 0 &&
-                                            (penetratorCount > 0 || 0.4 * totalDamage >= lowestArmor)) {
-                                        isCalledShot = false;
-                                    } else {
-                                        aimLocation = Mech.LOC_NONE;
-                                    }
-
-                                } else {
-                                    // Avoid combining aimed and called shots against immobile
-                                    // targets to keep things fair (ish)
-                                    advancedTargetingThreshold = 12;
-                                    isCalledShot = false;
-                                }
-
-
+                                isCalledShot = false;
                             }
 
                         }
@@ -1068,7 +1028,7 @@ public class Princess extends BotClient {
      * 'right-handed'.
      * @param target        Mech being shot at
      * @param planOfAttack  Proposed attacks against {@code target} parameter
-     * @param maximumToHit  maximum to-hit number
+     * @param maximumToHit  maximum to-hit number for consideration of an aimed shot
      * @param rearAttack    true if attacking from the rear arc
      * @param includeHead   true to include the head as a valid location
      * @return              {@link Mech} constant for location to shoot, or {@code Mech.LOC_NONE}
@@ -1081,20 +1041,26 @@ public class Princess extends BotClient {
                                               boolean includeHead) {
         int aimLocation = Mech.LOC_NONE;
 
+        // If none of the weapons being fired can be aimed, don't bother finding the best location
+        if (planOfAttack.stream().noneMatch(curShot ->
+                Compute.allowAimedShotWith(curShot.getWeapon(),
+                        target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER))) {
+            return aimLocation;
+        }
+
         int lowestArmor = 1000;
         List<Integer> rankedLocations = new ArrayList<>();
 
         // Aiming for the head can only be done against an immobile Mech, and takes a penalty.
-        // Don't aim for the head if this is a leg attach.
+        // Don't aim for the head for anti-Mech attacks except after swarming..
         if (includeHead &&
                 target.isImmobile() &&
-                planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
+                planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK &&
+                planOfAttack.get(0).getWeapon().getShortName() != Infantry.SWARM_MEK &&
+                planOfAttack.get(0).getWeapon().getShortName() != Infantry.STOP_SWARM) {
             aimLocation = Mech.LOC_HEAD;
-            lowestArmor = target.getArmor(Mech.LOC_HEAD);
-            if (planOfAttack.stream().anyMatch(curFire -> curFire.getToHit().getValue() + 7 >
-                    Math.max(maximumToHit - getBehaviorSettings().getSelfPreservationIndex(), 2))) {
+            if (planOfAttack.stream().anyMatch(curFire -> curFire.getToHit().getValue() + 7 > maximumToHit)) {
                 aimLocation = Mech.LOC_NONE;
-                lowestArmor = 1000;
             } else {
                 return aimLocation;
             }
@@ -1155,6 +1121,7 @@ public class Princess extends BotClient {
         }
 
         // Select the most vulnerable location
+        int locationDestruction = 0;
         for (int curLocation : rankedLocations) {
             int locationArmor = Math.max(target.hasRearArmor(curLocation) ?
                     target.getArmor(curLocation, rearAttack) :
@@ -1162,10 +1129,11 @@ public class Princess extends BotClient {
 
             if (target.getInternal(curLocation) > 0 &&
                     (lowestArmor > locationArmor ||
-                            lowestArmor + target.getInternal(aimLocation) > target.getInternal(curLocation) + locationArmor)) {
+                            locationDestruction > locationArmor + target.getInternal(curLocation))) {
 
-                lowestArmor = locationArmor;
                 aimLocation = curLocation;
+                lowestArmor = locationArmor;
+                locationDestruction = lowestArmor + target.getInternal(aimLocation);
 
             }
 
@@ -1176,6 +1144,38 @@ public class Princess extends BotClient {
                             aimLocation == Mech.LOC_CT)) {
                 break;
             }
+        }
+        // Evaluate whether an aimed shot at a higher to-hit number will be effective
+        if (aimLocation != Mech.LOC_NONE &&
+                (!target.isImmobile() || aimLocation == Mech.LOC_HEAD)) {
+
+            int offset = 0;
+            if (locationDestruction <= 5) {
+                offset = 1;
+            }
+
+            int penetratorCount = 0;
+            double totalDamage = 0;
+            for (WeaponFireInfo curFire : planOfAttack) {
+                if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) <= (maximumToHit + offset) &&
+                        Compute.allowAimedShotWith(curFire.getWeapon(),
+                                target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
+
+                    totalDamage += curFire.getMaxDamage();
+                    if (curFire.getMaxDamage() >= lowestArmor) {
+                        penetratorCount++;
+                    }
+
+                }
+            }
+
+            // If none of the weapons have a low enough to-hit number, or if none of the weapons
+            // can penetrate the armor individually or cumulatively, don't bother aiming
+            if (totalDamage == 0 ||
+                    (penetratorCount == 0 && 0.4 * totalDamage < lowestArmor)) {
+                aimLocation = Mech.LOC_NONE;
+            }
+
         }
 
         return aimLocation;

@@ -1,3 +1,5 @@
+name: "Write MM Revision"
+
 on:  
   push:  
     branches:  
@@ -12,12 +14,12 @@ jobs:
         uses: actions/checkout@v4  
   
       - name: Write latest revision hashcode to file  
-        run: echo ${{ github.sha }} > megamek/docs/revision.txt  
+        run: echo ${{ github.sha }} > megamek/docs/mm-revision.txt  
   
       - name: Commit and Push Changes  
         run: |  
           git config --global user.name 'GitHub Actions'  
           git config --global user.email 'actions@github.com'  
-          git add megamek/docs/revision.txt  
-          git commit -m 'Update revision.txt'  
+          git add megamek/docs/mm-revision.txt  
+          git commit -m 'Update mm-revision.txt'  
           git push  

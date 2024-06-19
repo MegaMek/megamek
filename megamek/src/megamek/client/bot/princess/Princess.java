@@ -696,15 +696,13 @@ public class Princess extends BotClient {
 
                                     // Check how effective aiming the shots will be
                                     int penetratorCount = 0;
-                                    int shotCount = 0;
                                     double totalDamage = 0;
                                     for (WeaponFireInfo curFire : plan) {
                                         if (advancedTargetingThreshold >= curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) &&
                                                 Compute.allowAimedShotWith(curFire.getWeapon(), isShutdownShot ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
 
-                                            shotCount++;
                                             totalDamage += curFire.getMaxDamage();
-                                            if (lowestArmor <= curFire.getMaxDamage()) {
+                                            if (curFire.getMaxDamage() >= lowestArmor) {
                                                 penetratorCount++;
                                             }
 
@@ -747,9 +745,6 @@ public class Princess extends BotClient {
                         }
 
                     }
-
-
-
 
                     // Add expected damage from the chosen FiringPlan to the
                     // damageMap for the target enemy.

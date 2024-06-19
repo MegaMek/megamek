@@ -53,6 +53,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -1102,24 +1103,28 @@ public class Princess extends BotClient {
             }
         }
 
+        // Limit leg attack aimed shots to the legs
         if (planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
 
             // Consider arm locations if they have a 'big' weapon
-            for (WeaponMounted curWeapon : target.getWeaponList()) {
-                if (curWeapon.getType().getDamage(5) >= 10) {
-                    if (!rankedLocations.contains(Mech.LOC_RARM) &&
-                            curWeapon.getLocation() == Mech.LOC_RARM &&
-                            target.getInternal(Mech.LOC_RARM) > 0) {
-                        rankedLocations.add(Mech.LOC_RARM);
-                    } else if (!rankedLocations.contains(Mech.LOC_LARM) &&
-                            curWeapon.getLocation() == Mech.LOC_LARM &&
-                            target.getInternal(Mech.LOC_LARM) > 0) {
-                        rankedLocations.add(Mech.LOC_LARM);
-                    }
+            for (WeaponMounted curWeapon : target.getWeaponList().
+                    stream().
+                    filter(w -> w.isOperable() &&
+                    w.getType().getDamage(5) >= 10).collect(Collectors.toSet())) {
+
+                if (!rankedLocations.contains(Mech.LOC_RARM) &&
+                        curWeapon.getLocation() == Mech.LOC_RARM &&
+                        target.getInternal(Mech.LOC_RARM) > 0) {
+                    rankedLocations.add(Mech.LOC_RARM);
+                } else if (!rankedLocations.contains(Mech.LOC_LARM) &&
+                        curWeapon.getLocation() == Mech.LOC_LARM &&
+                        target.getInternal(Mech.LOC_LARM) > 0) {
+                    rankedLocations.add(Mech.LOC_LARM);
                 }
                 if (rankedLocations.contains(Mech.LOC_RARM) && rankedLocations.contains(Mech.LOC_LARM)) {
                     break;
                 }
+
             }
 
             // Favor right torso over left, except if right torso is completely gone

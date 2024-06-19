@@ -307,13 +307,17 @@ public class MegaMek {
     public static String getUnderlyingInformation(final String originProject,
                                                   final String currentProject) {
         final LocalDateTime buildDate = getBuildDate();
-        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
+        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: " +
+                        "%s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\t" +
+                        "Total memory available to %s: %,.0f GB" +
+                        "\n\tMM Code Revision: %s\n\tMML Code Revision: %s\n\tMHQ Code Revision: %s",
                 currentProject, MMConstants.VERSION, ((buildDate == null) ? "N/A" : buildDate),
                 LocalDate.now(), originProject,
                 System.getProperty("java.vendor"), System.getProperty("java.version"),
                 System.getProperty("os.name"), System.getProperty("os.version"),
                 System.getProperty("os.arch"), Locale.getDefault(), currentProject,
-                Runtime.getRuntime().maxMemory() / Math.pow(2, 30));
+                Runtime.getRuntime().maxMemory() / Math.pow(2, 30),
+                Revision.mmRevision(), Revision.mmlRevision(), Revision.mhqRevision());
     }
 
     public static @Nullable LocalDateTime getBuildDate() {

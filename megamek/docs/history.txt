@@ -71,6 +71,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5576: Improvements to TacOps coolant failure systems
 + PR #5586: Updated Game Options and Report Log Default Preferences
 + PR #5599: Fixing Rocket Launchers to no longer allow indirect fire
++ PR #5601: Add revision to the game log
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

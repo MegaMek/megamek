@@ -287,18 +287,13 @@ public class LobbyActions {
             LobbyErrors.showSingleOwnerRequired(frame());
             return;
         }
-        Entity randomSelected = CollectionUtil.anyOneElement(entities);
-        String ownerName = randomSelected.getOwner().getName();
-        int ownerId = randomSelected.getOwner().getId();
+        Entity oneSelected = CollectionUtil.anyOneElement(entities);
+        String ownerName = oneSelected.getOwner().getName();
+        boolean ownerIsLocalPlayer = oneSelected.getOwner().getId() == localPlayer().getId();
 
-        boolean editable = client().getBots().get(ownerName) != null;
-        Client client;
-        if (editable) {
-            client = (Client) client().getBots().get(ownerName);
-        } else {
-            editable |= ownerId == localPlayer().getId();
-            client = client();
-        }
+        Optional<Client> localBotOwner = Optional.ofNullable((Client) client().getBots().get(ownerName));
+        Client client = localBotOwner.orElse(client());
+        boolean editable = localBotOwner.isPresent() || ownerIsLocalPlayer || localPlayer().isGameMaster();
 
         CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
@@ -307,35 +302,11 @@ public class LobbyActions {
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
+
         if (editable && cmd.isOkay()) {
-            // send changes
-            for (Entity entity : entities) {
-                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
-                if ((entity instanceof LandAirMech)
-                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
-                    for (Entity loadee : entity.getLoadedUnits()) {
-                        entity.unload(loadee);
-                        loadee.setTransportId(Entity.NONE);
-                        client().sendUpdateEntity(loadee);
-                    }
-                }
-
-                client().sendUpdateEntity(entity);
-
-                // Changing state to a transporting unit can update state of
-                // transported units, so update those as well
-                for (Transporter transport : entity.getTransports()) {
-                    for (Entity loaded : transport.getLoadedUnits()) {
-                        client().sendUpdateEntity(loaded);
-                    }
-                }
-
-                // Customizations to a Squadron can effect the fighters
-                if (entity instanceof FighterSquadron) {
-                    entity.getSubEntities().forEach(client::sendUpdateEntity);
-                }
-            }
+            sendCustomizationUpdate(entities);
         }
+
         if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
             Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
             customizeMech(nextEnt);
@@ -343,41 +314,27 @@ public class LobbyActions {
     }
 
     /**
-     *
-     * @param entity
+     * Shows the unit configuration dialog for the given unit.
+     * @param entity the unit to configure
      */
     public void customizeMech(Entity entity) {
-        if (!validateUpdate(Arrays.asList(entity))) {
+        if (!validateUpdate(List.of(entity))) {
             return;
         }
-        boolean editable = client().getBots().get(entity.getOwner().getName()) != null;
-        Client c;
-        if (editable) {
-            c = (Client) client().getBots().get(entity.getOwner().getName());
-        } else {
-            boolean localGM = localPlayer().isGameMaster();
-            editable |= localGM || entity.getOwnerId() == localPlayer().getId();
-            c = client();
-        }
 
-        // When we customize a single entity's C3 network setting,
-        // **ALL** members of the network may get changed.
-        Entity c3master = entity.getC3Master();
-        ArrayList<Entity> c3members = new ArrayList<>();
-        Iterator<Entity> playerUnits = c.getGame().getPlayerEntities(c.getLocalPlayer(), false).iterator();
-        while (playerUnits.hasNext()) {
-            Entity unit = playerUnits.next();
-            if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
-                c3members.add(unit);
-            }
-        }
+        String ownerName = entity.getOwner().getName();
+        boolean ownerIsLocalPlayer = entity.getOwner().getId() == localPlayer().getId();
+
+        Optional<Client> localBotOwner = Optional.ofNullable((Client) client().getBots().get(ownerName));
+        Client client = localBotOwner.orElse(client());
+        boolean editable = localBotOwner.isPresent() || ownerIsLocalPlayer || localPlayer().isGameMaster();
 
         boolean doneCustomizing = false;
         while (!doneCustomizing) {
             // display dialog
             List<Entity> entities = new ArrayList<>();
             entities.add(entity);
-            CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), c, entities, editable);
+            CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, entities, editable);
             cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                     GUIPreferences.getInstance().getCustomUnitHeight()));
             cmd.refreshOptions();
@@ -391,47 +348,66 @@ public class LobbyActions {
             GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
             GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
             cmdSelectedTab = cmd.getSelectedTab();
+
             if (editable && cmd.isOkay()) {
-                Set<Entity> updateCandidates = new HashSet<>();
-                updateCandidates.add(entity);
-                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
-                if ((entity instanceof LandAirMech)
-                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
-                    for (Entity loadee : entity.getLoadedUnits()) {
-                        entity.unload(loadee);
-                        loadee.setTransportId(Entity.NONE);
-                        updateCandidates.add(loadee);
-                    }
-                }
-
-                // Changing state to a transporting unit can update state of
-                // transported units, so update those as well
-                for (Transporter transport : entity.getTransports()) {
-                    for (Entity loaded : transport.getLoadedUnits()) {
-                        updateCandidates.add(loaded);
-                    }
-                }
-
-                // Customizations to a Squadron can effect the fighters
-                if (entity instanceof FighterSquadron) {
-                    updateCandidates.addAll(entity.getSubEntities());
-                }
-
-                // Do we need to update the members of our C3 network?
-                if (((c3master != null) && !c3master.equals(entity.getC3Master()))
-                        || ((c3master == null) && (entity.getC3Master() != null))) {
-                    for (Entity unit : c3members) {
-                        updateCandidates.add(unit);
-                    }
-                }
-                sendUpdates(updateCandidates);
+                sendCustomizationUpdate(entities);
             }
+
             if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
                 entity = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
             } else {
                 doneCustomizing = true;
             }
         }
+    }
+
+    /**
+     * For use after customization in the unit configuration dialog. Checks the given list
+     * of units for dependents (transported/contained units/C3 connections) and sends an update
+     * for all to the Server.
+     *
+     * @param entities The units that were configured
+     */
+    private void sendCustomizationUpdate(Collection<Entity> entities) {
+        Set<Entity> updateCandidates = new HashSet<>(entities);
+        for (Entity entity : entities) {
+            // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+            if ((entity instanceof LandAirMech)
+                    && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                for (Entity loadee : entity.getLoadedUnits()) {
+                    entity.unload(loadee);
+                    loadee.setTransportId(Entity.NONE);
+                    updateCandidates.add(loadee);
+                }
+            }
+
+            // Changing state to a transporting unit can update state of
+            // transported units, so update those as well
+            for (Transporter transport : entity.getTransports()) {
+                updateCandidates.addAll(transport.getLoadedUnits());
+            }
+
+            // Customizations to a Squadron can effect the fighters
+            if (entity instanceof FighterSquadron) {
+                updateCandidates.addAll(entity.getSubEntities());
+            }
+
+            // When we customize a single entity's C3 network setting,
+            // **ALL** members of the network may get changed.
+            Entity c3master = entity.getC3Master();
+            List<Entity> c3members = new ArrayList<>();
+            for (Entity unit : game().getEntitiesVector()) {
+                if (entity.onSameC3NetworkAs(unit)) {
+                    c3members.add(unit);
+                }
+            }
+            // Do we need to update the members of our C3 network?
+            if (((c3master != null) && !c3master.equals(entity.getC3Master()))
+                    || ((c3master == null) && (entity.getC3Master() != null))) {
+                updateCandidates.addAll(c3members);
+            }
+        }
+        sendUpdates(updateCandidates);
     }
 
     /**

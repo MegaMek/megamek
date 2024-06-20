@@ -2920,11 +2920,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public Optional<AmmoMounted> getDisplayedAmmo() {
-        AmmoMounted ammo = unitDisplay.wPan.getSelectedAmmo();
-        if (null == ammo) {
-            return Optional.empty();
-        }
-        return Optional.of(ammo);
+        return Optional.ofNullable(unitDisplay.wPan.getSelectedAmmo());
     }
 
     @Override

@@ -21,6 +21,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.ui.swing.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -300,12 +301,19 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
     private void findRanges(WeaponMounted weapon) {
         WeaponType wtype = weapon.getType();
-        ranges[0] = wtype.getRanges(weapon);
 
-        AmmoType atype = null;
-        if ((weapon.getLinked() != null) && (weapon.getLinked().getType() instanceof AmmoType)) {
+        // Use the Weapon Panel's selected ammo to determine ranges, or the current linked ammo if not set
+        AmmoMounted ammoMounted = (clientGUI.getDisplayedAmmo().isPresent())
+                ? clientGUI.getDisplayedAmmo().get() : weapon.getLinkedAmmo();
+
+        // Try to get the ammo type from the selected ammo if possible, or the current linked ammo if not
+        AmmoType atype = (ammoMounted != null) ? ammoMounted.getType() : null;
+        if (atype == null && (weapon.getLinked() != null) && (weapon.getLinked().getType() instanceof AmmoType)) {
             atype = (AmmoType) weapon.getLinked().getType();
         }
+
+        // Ranges set by weapon + ammo combination, but will be updated depending on selected unit
+        ranges[0] = wtype.getRanges(weapon, ammoMounted);
 
         // gather underwater ranges
         ranges[1] = wtype.getWRanges();
@@ -317,9 +325,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                     || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MML)) {
                 if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
-                    ranges[1] = wtype.getRanges(weapon);
+                    ranges[1] = wtype.getRanges(weapon, ammoMounted);
                 } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
-                    ranges[1] = wtype.getRanges(weapon);
+                    ranges[1] = wtype.getRanges(weapon, ammoMounted);
                 }
             }
         }
@@ -340,12 +348,12 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // 6 to 17 in the other phases as it will be
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-            boolean isADA = (weapon.getLinked() != null
-                    && ((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
+            boolean isADA = (ammoMounted != null
+                    && ((AmmoType) ammoMounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (game.getPhase().isTargeting()) {
                 ranges[0] = (!isADA? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
-                ranges[0] = (!isADA? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(weapon));
+                ranges[0] = (!isADA? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(weapon, ammoMounted));
             }
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
@@ -388,9 +396,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             // only works for the current player's units
             if (!weapon.isBreached() && !weapon.isMissing()
                     && !weapon.isDestroyed() && !weapon.isJammed()
-                    && ((weapon.getLinked() == null)
-                    || (weapon.getLinked().getUsableShotsLeft() > 0))) {
-                maxr = wtype.getMaxRange(weapon);
+                    && ((ammoMounted == null)
+                    || (ammoMounted.getUsableShotsLeft() > 0))) {
+                maxr = wtype.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
                 // boolean isCap = wtype.isCapital();
@@ -402,6 +410,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
                     if (maxr >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
+                    } else {
+                        ranges[0][rangeIndex] = 0;
                     }
                 }
             }

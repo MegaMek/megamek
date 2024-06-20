@@ -261,7 +261,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         // Set up the teams (for initiative)
         game.setupTeams();
         game.setPhase(GamePhase.STARTING_SCENARIO);
-        game.setupRoundDeployment();
+        game.setupDeployment();
         game.setExternalGameId(parseExternalGameId(this));
         game.setVictoryContext(new HashMap<>());
         game.createVictoryConditions();

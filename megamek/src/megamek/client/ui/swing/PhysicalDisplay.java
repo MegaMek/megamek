@@ -264,9 +264,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.maybeShowUnitDisplay();
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
-        if (turn instanceof GameTurn.CounterGrappleTurn) {
+        if (turn instanceof CounterGrappleTurn) {
             disableButtons();
-            selectEntity(((GameTurn.CounterGrappleTurn) turn).getEntityNum());
+            selectEntity(((CounterGrappleTurn) turn).getEntityNum());
             grapple(true);
             ready();
         } else {
@@ -350,9 +350,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         return false;
     }
 
-    /**
-     * Called when the current entity is done with physical attacks.
-     */
     @Override
     public void ready() {
         if (checkNags()) {
@@ -1643,9 +1640,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

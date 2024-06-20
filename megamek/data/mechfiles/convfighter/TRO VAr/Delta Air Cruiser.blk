@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.20-SNAPSHOT on 2024-06-01
 <UnitType>
 FixedWingSupport
 </UnitType>
@@ -45,8 +36,8 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:6.0:1:1
-1stclassquarters:20.0:2
+cargobay:6.0:1:1::-1:0
+1stclassquarters:20.0:2:-1::-1:0
 troopspace:9.0
 </transporters>
 
@@ -74,6 +65,14 @@ troopspace:9.0
 1
 </engine_type>
 
+<armor_type>
+47
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
 28
 19
@@ -85,17 +84,9 @@ troopspace:9.0
 </Nose Equipment>
 
 <Left Wing Equipment>
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-Lifeboat (Maritime)
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-Lifeboat (Maritime)
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -109,10 +100,18 @@ Paramedic Equipment
 Paramedic Equipment
 Paramedic Equipment
 Paramedic Equipment
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-Lifeboat (Maritime)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
+Lifeboat (Atmospheric)
 </Body Equipment>
 
 <barrating>
@@ -123,6 +122,14 @@ Lifeboat (Maritime)
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
 <source>
 TRO: Vehicle Annex Revised
 </source>
@@ -130,3 +137,4 @@ TRO: Vehicle Annex Revised
 <tonnage>
 180.0
 </tonnage>
+

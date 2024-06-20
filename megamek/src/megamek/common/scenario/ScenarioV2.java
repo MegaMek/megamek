@@ -112,7 +112,7 @@ public class ScenarioV2 implements Scenario {
 
         if (game instanceof Game) {
             Game twGame = (Game) game;
-            twGame.setupRoundDeployment();
+            twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
             }

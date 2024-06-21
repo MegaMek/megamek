@@ -2177,9 +2177,6 @@ public class Princess extends BotClient {
      * ammo on relatively undamaged units, and laser AMS may be turned off to help reduce
      * overheating. Manual use is reserved as an emergency anti-infantry measure.
      *
-     * FIXME: (remote) filter AMS selection on weapons to manual mode only
-     * FIXME: add tracking list for entity IDs for manual AMS fire
-     * FIXME: (remote) log entity as using manual AMS fire, same place where targeting is being set
      */
     private void setAMSModes() {
 

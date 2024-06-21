@@ -1646,8 +1646,9 @@ public class FireControl {
         // cycle through my weapons
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
-                    weapon.getType().hasFlag(WeaponType.F_AMS)) {
+            if (weapon.getType().hasFlag(WeaponType.F_AMS) &&
+                    (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
+                            !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
 
@@ -1969,8 +1970,9 @@ public class FireControl {
             }
 
             // respect restriction on manual AMS firing.
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
-                    weapon.getType().hasFlag(WeaponType.F_AMS)) {
+            if (weapon.getType().hasFlag(WeaponType.F_AMS) &&
+                    (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
+                            !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
 

@@ -277,7 +277,9 @@ public class LobbyActions {
     }
 
     /**
-     * Configure multiple entities at once. Only affects deployment options.
+     * Shows the unit configuration dialog for the given units.
+     *
+     * @param entities the units to configure
      */
     public void customizeMechs(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
@@ -288,12 +290,8 @@ public class LobbyActions {
             return;
         }
         Entity oneSelected = CollectionUtil.anyOneElement(entities);
-        String ownerName = oneSelected.getOwner().getName();
-        boolean ownerIsLocalPlayer = oneSelected.getOwner().getId() == localPlayer().getId();
-
-        Optional<Client> localBotOwner = Optional.ofNullable((Client) client().getBots().get(ownerName));
-        Client client = localBotOwner.orElse(client());
-        boolean editable = localBotOwner.isPresent() || ownerIsLocalPlayer || localPlayer().isGameMaster();
+        Client client = clientForCustomization(oneSelected);
+        boolean editable = allowCustomization(oneSelected);
 
         CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
@@ -315,6 +313,7 @@ public class LobbyActions {
 
     /**
      * Shows the unit configuration dialog for the given unit.
+     *
      * @param entity the unit to configure
      */
     public void customizeMech(Entity entity) {
@@ -322,12 +321,8 @@ public class LobbyActions {
             return;
         }
 
-        String ownerName = entity.getOwner().getName();
-        boolean ownerIsLocalPlayer = entity.getOwner().getId() == localPlayer().getId();
-
-        Optional<Client> localBotOwner = Optional.ofNullable((Client) client().getBots().get(ownerName));
-        Client client = localBotOwner.orElse(client());
-        boolean editable = localBotOwner.isPresent() || ownerIsLocalPlayer || localPlayer().isGameMaster();
+        Client client = clientForCustomization(entity);
+        boolean editable = allowCustomization(entity);
 
         boolean doneCustomizing = false;
         while (!doneCustomizing) {
@@ -359,6 +354,19 @@ public class LobbyActions {
                 doneCustomizing = true;
             }
         }
+    }
+
+    private Optional<Client> localBotOwner(Entity entity) {
+        return Optional.ofNullable((Client) client().getBots().get(entity.getOwner().getName()));
+    }
+
+    private Client clientForCustomization(Entity entity) {
+        return localBotOwner(entity).orElse(client());
+    }
+
+    private boolean allowCustomization(Entity entity) {
+        boolean ownerIsLocalPlayer = entity.getOwner().getId() == localPlayer().getId();
+        return localBotOwner(entity).isPresent() || ownerIsLocalPlayer || localPlayer().isGameMaster();
     }
 
     /**

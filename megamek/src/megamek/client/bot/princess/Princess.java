@@ -636,24 +636,32 @@ public class Princess extends BotClient {
                     int locationDestruction = 999;
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
+                    WeaponFireInfo primaryFire = plan.get(0);
+                    int targetID;
+                    if (primaryFire != null) {
+                        targetID = primaryFire.getTarget().getId();
+                    } else {
+                        targetID = -1;
+                    }
+
                     // Aimed and called shots can be made by all ground units, VTOLs, and gun
                     // emplacements, while excluding blue water naval, fixed wing, and larger units.
-                    // Only Mechs aer considered valid targets, and all attacks should be against
+                    // Only Mechs are considered valid targets, and all attacks should be against
                     // the same target, just for good measure.
-                    int targetID = plan.get(0).getTarget().getId();
-                    if (shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT &&
+                    if (targetID >= 0 &&
+                            shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT &&
                             !(shooter instanceof EjectedCrew) &&
                             shooter.getUnitType() != UnitType.NAVAL &&
-                            plan.get(0).getTarget().getTargetType() == UnitType.MEK &&
+                            primaryFire.getTarget().getTargetType() == UnitType.MEK &&
                             plan.stream().allMatch(curAttack -> curAttack.getTarget().getId() == targetID)) {
 
-                        Mech mechTarget = (Mech) plan.get(0).getTarget();
+                        Mech mechTarget = (Mech) primaryFire.getTarget();
 
                         // Determine the type of advanced targeting
                         if (mechTarget.isImmobile()) {
                             // Aimed shot at immobile target, without relying on targeting computer
                             isShutdownShot = true;
-                        } else if (shooter.hasTargComp() && plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
+                        } else if (shooter.hasTargComp() && primaryFire.getToHit().getCover() == LosEffects.COVER_NONE) {
                             // Aimed shot at active target using targeting computer
                             isAimedShot = true;
                         }
@@ -662,17 +670,17 @@ public class Princess extends BotClient {
                         // Do not call shots for anti-Mech attacks.
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
                                 !mechTarget.isImmobile() &&
-                                plan.get(0).getToHit().getCover() == LosEffects.COVER_NONE) {
+                                primaryFire.getToHit().getCover() == LosEffects.COVER_NONE) {
 
                             isCalledShot = !shooter.isInfantry() ||
                                     (Stream.of(Infantry.LEG_ATTACK, Infantry.SWARM_WEAPON_MEK, Infantry.SWARM_MEK, Infantry.STOP_SWARM).
-                                            allMatch(s -> plan.get(0).getWeapon().getShortName() != s));
+                                            allMatch(s -> primaryFire.getWeapon().getShortName() != s));
                         }
 
                         // Get location and maximum allowed target number for aimed shots
                         if (isShutdownShot || isAimedShot) {
 
-                            boolean rearShot = plan.get(0).getToHit().getSideTable() == ToHitData.SIDE_REAR;
+                            boolean rearShot = primaryFire.getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
                             if (isAimedShot) {
                                 advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber -

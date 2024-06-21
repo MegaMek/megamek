@@ -58,6 +58,52 @@ public class Princess extends BotClient {
     private static final char PLUS = '+';
     private static final char MINUS = '-';
 
+    /**
+     * Highest target number to consider when not aiming at the head on an immobile Mech
+     */
+    private static final int SHUTDOWN_MAX_TARGETNUMBER = 12;
+
+    /**
+     * Default maximum location armor for checking called shots
+     */
+    private static final int CALLED_SHOT_DEFAULT_MAXARMOR = 10;
+
+    /**
+     * Combined armor and structure value where a location is at risk of destruction
+     */
+    private static final int LOCATION_DESTRUCTION_THREAT = 5;
+
+    /**
+     * Difference in to-hit number between a general shot at an immobile Mech, and aiming for the head
+     */
+    private static final int IMMOBILE_HEADSHOT_MODIFIER = 7;
+
+    /**
+     * To-hit modifier for aimed shots against active targets
+     */
+    private static final int AIMED_SHOT_MODIFIER = 3;
+
+    /**
+     * Minimum damage to be considered as a 'big gun' for prioritizing aimed shot locations
+     */
+    private static final int BIG_GUN_MIN_DAMAGE = 10;
+
+    /**
+     * Range to check damage when determining if a weapon is a 'big gun'
+     */
+    private static final int BIG_GUN_TYPICAL_RANGE = 5;
+
+    /**
+     * Minimum walking speed to consider for calling a shot low
+     */
+    private static final int CALLED_SHOT_MIN_MOVE = 6;
+
+    /**
+     * Minimum jump distance to consider for calling a shot low
+     */
+    private static final int CALLED_SHOT_MIN_JUMP = 5;
+
+
     private final IHonorUtil honorUtil = new HonorUtil();
 
     private boolean initialized = false;
@@ -686,7 +732,7 @@ public class Princess extends BotClient {
                                 advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber -
                                         getBehaviorSettings().getSelfPreservationIndex(), 2);
                             } else {
-                                advancedTargetingThreshold = 12;
+                                advancedTargetingThreshold = SHUTDOWN_MAX_TARGETNUMBER;
                             }
 
                             // Get the Mech location to aim at. Infantry and BA will go for the head
@@ -703,16 +749,19 @@ public class Princess extends BotClient {
                         // Get direction and maximum target number for called shots
                         if (isCalledShot) {
 
-                            int armorThreshold = 10;
+                            // Establish a maximum armor value for calling shots high/low. If most
+                            // of the locations have more armor than this, it's not a good option.
+                            // Infantry and battle armor weapons rely on many small hits, so use
+                            // a default value.
+                            int armorThreshold = CALLED_SHOT_DEFAULT_MAXARMOR;
                             if (!shooter.isInfantry()) {
-                                armorThreshold = (int) Math.floor(plan.
-                                        stream().
-                                        mapToDouble(WeaponFireInfo::getMaxDamage).
-                                        average().
-                                        orElse(10));
+                                OptionalDouble averageDamage = plan.stream().mapToDouble(WeaponFireInfo::getMaxDamage).average();
+                                if (averageDamage.isPresent()) {
+                                    armorThreshold = (int) Math.floor(averageDamage.getAsDouble());
+                                }
                             }
                             calledShotDirection = calculateCalledShotDirection(mechTarget,
-                                    plan.get(0).getToHit().getSideTable(),
+                                    primaryFire.getToHit().getSideTable(),
                                     armorThreshold);
 
                             // Set the target roll maximum. Despite the name, the Self Preservation
@@ -1064,6 +1113,10 @@ public class Princess extends BotClient {
         int aimLocation = Mech.LOC_NONE;
 
         // If none of the weapons being fired can be aimed, don't bother finding the best location
+        if (planOfAttack == null) {
+            return aimLocation;
+        }
+
         List<WeaponFireInfo> workingShots = planOfAttack.
                 stream().
                 filter(curShot ->
@@ -1075,18 +1128,24 @@ public class Princess extends BotClient {
             return aimLocation;
         }
 
-        int lowestArmor = 1000;
+        WeaponFireInfo primaryFire = workingShots.get(0);
+        if (primaryFire == null) {
+            return aimLocation;
+        }
+
+        int lowestArmor = Integer.MAX_VALUE;
         List<Integer> rankedLocations = new ArrayList<>();
 
         // Aiming for the head can only be done against an immobile Mech, and takes a penalty.
         // Don't aim for the head for anti-Mech attacks except after swarming.
         if (includeHead &&
                 target.isImmobile() &&
-                planOfAttack.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK &&
-                planOfAttack.get(0).getWeapon().getShortName() != Infantry.SWARM_MEK &&
-                planOfAttack.get(0).getWeapon().getShortName() != Infantry.STOP_SWARM) {
+                primaryFire.getWeapon().getShortName() != Infantry.LEG_ATTACK &&
+                primaryFire.getWeapon().getShortName() != Infantry.SWARM_MEK &&
+                primaryFire.getWeapon().getShortName() != Infantry.STOP_SWARM) {
             aimLocation = Mech.LOC_HEAD;
-            if (planOfAttack.stream().anyMatch(curFire -> curFire.getToHit().getValue() + 7 > maximumToHit)) {
+            if (workingShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
+                    IMMOBILE_HEADSHOT_MODIFIER > maximumToHit)) {
                 aimLocation = Mech.LOC_NONE;
             } else {
                 return aimLocation;
@@ -1099,8 +1158,8 @@ public class Princess extends BotClient {
             // Consider arm locations if they have a 'big' weapon
             for (WeaponMounted curWeapon : target.getWeaponList().
                     stream().
-                    filter(w -> w.isOperable() &&
-                    w.getType().getDamage(5) >= 10).collect(Collectors.toSet())) {
+                    filter(w -> w.isOperable() && isBigGun(w)).
+                    collect(Collectors.toSet())) {
 
                 if (!rankedLocations.contains(Mech.LOC_RARM) &&
                         curWeapon.getLocation() == Mech.LOC_RARM &&
@@ -1177,14 +1236,15 @@ public class Princess extends BotClient {
                 (!target.isImmobile() || aimLocation == Mech.LOC_HEAD)) {
 
             int offset = 0;
-            if (locationDestruction <= 5) {
+            if (locationDestruction <= LOCATION_DESTRUCTION_THREAT) {
                 offset = 1;
             }
 
             int penetratorCount = 0;
             double totalDamage = 0;
             for (WeaponFireInfo curFire : workingShots) {
-                if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ? 7 : 3) <= (maximumToHit + offset)) {
+                if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ?
+                        IMMOBILE_HEADSHOT_MODIFIER : AIMED_SHOT_MODIFIER) <= (maximumToHit + offset)) {
 
                     totalDamage += curFire.getMaxDamage();
                     if (curFire.getMaxDamage() >= lowestArmor) {
@@ -1238,8 +1298,8 @@ public class Princess extends BotClient {
             // Only consider the arms if they have 'big' weapons
             for (WeaponMounted curWeapon : target.getWeaponList().
                     stream().
-                    filter(w -> w.isOperable() &&
-                    w.getType().getDamage(5) >= 10).collect(Collectors.toSet())) {
+                    filter(w -> w.isOperable() && isBigGun(w)).
+                    collect(Collectors.toSet())) {
 
                 if (!upperLocations.contains(Mech.LOC_RARM) &&
                         curWeapon.getLocation() == Mech.LOC_RARM &&
@@ -1275,11 +1335,11 @@ public class Princess extends BotClient {
 
             // If the head armor is weak or there are proportionally more upper targets, call high.
             // If the leg armor is weak and this is a fast and/or jumping Mech, call low.
-            if (target.getArmor(Mech.LOC_HEAD) <= 5 ||
+            if (target.getArmor(Mech.LOC_HEAD) <= LOCATION_DESTRUCTION_THREAT ||
                     (upperTargets / upperLocations.size() > lowerTargets / 2.0)) {
                 calledShotDirection = CalledShot.CALLED_HIGH;
             } else if (lowerTargets >= 1 &&
-                    (target.getWalkMP() >= 6 || target.getJumpMP() >= 5)) {
+                    (target.getWalkMP() >= CALLED_SHOT_MIN_MOVE || target.getJumpMP() >= CALLED_SHOT_MIN_JUMP)) {
                 calledShotDirection = CalledShot.CALLED_LOW;
             }
 
@@ -1287,6 +1347,18 @@ public class Princess extends BotClient {
 
         return calledShotDirection;
     }
+
+
+    /**
+     * Checks if a weapon is considered a 'big gun' worth taking a shot at
+     * @param testWeapon  weapon to check
+     * @return            true if weapon damage exceeds {@code BIG_GUN_MIN_DAMAGE} at a
+     *                    typical range value
+     */
+    private boolean isBigGun(WeaponMounted testWeapon) {
+        return testWeapon.getType().getDamage(BIG_GUN_TYPICAL_RANGE) >= BIG_GUN_MIN_DAMAGE;
+    }
+
 
     /**
      * If a shot meets criteria, set it as aimed or called.  {@code aimLocation} and {@code
@@ -1328,7 +1400,7 @@ public class Princess extends BotClient {
 
                 // If the target number is considered viable set attack as aimed
                 // at the provided location
-                if ((shot.getToHit().getValue() + (target.isImmobile() ? 0 : 3)) <= (maximumTargetThreshold + offset)) {
+                if ((shot.getToHit().getValue() + (target.isImmobile() ? 0 : AIMED_SHOT_MODIFIER)) <= (maximumTargetThreshold + offset)) {
                     shot.getAction().setAimingMode(target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER);
                     shot.getAction().setAimedLocation(aimLocation);
                 }

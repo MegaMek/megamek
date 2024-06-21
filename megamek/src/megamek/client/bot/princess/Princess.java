@@ -720,7 +720,7 @@ public class Princess extends BotClient {
 
                             isCalledShot = !shooter.isInfantry() ||
                                     (Stream.of(Infantry.LEG_ATTACK, Infantry.SWARM_WEAPON_MEK, Infantry.SWARM_MEK, Infantry.STOP_SWARM).
-                                            allMatch(s -> primaryFire.getWeapon().getShortName() != s));
+                                            noneMatch(s -> primaryFire.getWeapon().getShortName().equalsIgnoreCase(s)));
                         }
 
                         // Get location and maximum allowed target number for aimed shots
@@ -1140,9 +1140,9 @@ public class Princess extends BotClient {
         // Don't aim for the head for anti-Mech attacks except after swarming.
         if (includeHead &&
                 target.isImmobile() &&
-                primaryFire.getWeapon().getShortName() != Infantry.LEG_ATTACK &&
-                primaryFire.getWeapon().getShortName() != Infantry.SWARM_MEK &&
-                primaryFire.getWeapon().getShortName() != Infantry.STOP_SWARM) {
+                !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK) &&
+                !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
+                !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
             aimLocation = Mech.LOC_HEAD;
             if (workingShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
                     IMMOBILE_HEADSHOT_MODIFIER > maximumToHit)) {
@@ -1153,7 +1153,7 @@ public class Princess extends BotClient {
         }
 
         // Limit leg attack aimed shots to the legs
-        if (workingShots.get(0).getWeapon().getShortName() != Infantry.LEG_ATTACK) {
+        if (!workingShots.get(0).getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK)) {
 
             // Consider arm locations if they have a 'big' weapon
             for (WeaponMounted curWeapon : target.getWeaponList().
@@ -1382,8 +1382,8 @@ public class Princess extends BotClient {
         // If the target is a Mech and the attack is not artillery or non-damaging anti-Mech
         if (shot.getTarget().getTargetType() == UnitType.MEK &&
                 !shot.getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) &&
-                shot.getWeapon().getShortName() != Infantry.SWARM_MEK &&
-                shot.getWeapon().getShortName() != Infantry.STOP_SWARM) {
+                !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
+                !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
 
             Mech target = (Mech) shot.getTarget();
 

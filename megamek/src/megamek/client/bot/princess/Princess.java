@@ -2186,7 +2186,7 @@ public class Princess extends BotClient {
             for (Entity curEnemy : this.getEnemyEntities().stream().filter(Entity::isDeployed).collect(Collectors.toSet())) {
                 if (curEnemy.getPosition() != null && curEnemy.isVisibleToEnemy()) {
 
-                    if (curEnemy instanceof Infantry) {
+                    if (curEnemy instanceof Infantry && !(curEnemy instanceof EjectedCrew)) {
                         enemyInfantry.add(curEnemy);
                     }
 
@@ -2248,7 +2248,7 @@ public class Princess extends BotClient {
 
                             // Fighting a missile boat is more likely to require an active AMS
                             int lastTargetID = curEntity.getLastTarget();
-                            if (lastTargetID >= 1) {
+                            if (lastTargetID >= 0) {
                                 Entity lastTarget = game.getEntity(lastTargetID);
                                 if (lastTarget != null && lastTarget.getRole() == UnitRole.MISSILE_BOAT) {
                                     ammoTN += 4;

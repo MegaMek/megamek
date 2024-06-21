@@ -90,6 +90,9 @@ public class Princess extends BotClient {
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
 
+    // Track entities that fired an AMS manually this round
+    private List<Integer> manualAMSIds;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -628,6 +631,13 @@ public class Princess extends BotClient {
                         double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
+
+                        // Track manual AMS use each round
+                        if (shot.getWeapon().getType().hasFlag(Weapon.F_AMS)) {
+                            if (shot.getWeapon().curMode().equals(Weapon.MODE_AMS_MANUAL)) {
+                                flagManualAMSUse(shooter.getId());
+                            }
+                        }
 
                         if (shot.getUpdatedFiringMode() != null) {
                             super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
@@ -2207,7 +2217,6 @@ public class Princess extends BotClient {
 
                 // If there are enough nearby enemy infantry (only counted if the game option is
                 // set), choose manual fire
-                // FIXME: also set manual if this entity fired AMS manually this round
                 if (!enemyInfantry.isEmpty() && !curEntity.isAirborne()) {
                     int infantryRange = enemyInfantry.stream().mapToInt(e -> Compute.effectiveDistance(game, curEntity, e)).min().getAsInt();
                     if (infantryRange <= 3) {
@@ -2215,10 +2224,14 @@ public class Princess extends BotClient {
                     }
                 }
 
+                // If AMS was used manually this round, chances are it will be needed next round too
+                if (usedManualAMS(curEntity.getId())) {
+                    newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_MANUAL);
+                }
+
                 for (WeaponMounted curAMS : activeAMS) {
 
                     EquipmentMode curMode = curAMS.curMode();
-
 
                     // Turn off laser AMS to help with overheating problems
                     if (curAMS.getType().hasFlag(WeaponType.F_ENERGY)) {
@@ -2291,6 +2304,39 @@ public class Princess extends BotClient {
 
         }
 
+        // Clear the manual AMS tracking list for next round
+        clearManualAMSIds();
+    }
+
+    /**
+     * Flag an entity as having used manual AMS this round
+     * @param id
+     */
+    public void flagManualAMSUse (int id) {
+        if (manualAMSIds == null) {
+            manualAMSIds = new ArrayList<>();
+        }
+        if (!manualAMSIds.contains(id)) {
+            manualAMSIds.add(id);
+        }
+    }
+
+    public boolean usedManualAMS (int id) {
+        if (manualAMSIds == null) {
+            manualAMSIds = new ArrayList<>();
+            return false;
+        }
+        return manualAMSIds.contains(id);
+    }
+
+    /**
+     * Clear the manual AMS tracking list
+     */
+    public void clearManualAMSIds () {
+        if (manualAMSIds == null) {
+            manualAMSIds = new ArrayList<>();
+        }
+        manualAMSIds.clear();
     }
 
     public void sendChat(final String message, final Level logLevel) {

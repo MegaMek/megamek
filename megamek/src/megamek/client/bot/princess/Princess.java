@@ -636,6 +636,10 @@ public class Princess extends BotClient {
                     int locationDestruction = 999;
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
+                    // Aimed and called shots can be made by all ground units, VTOLs, and gun
+                    // emplacements, while excluding blue water naval, fixed wing, and larger units.
+                    // Only Mechs aer considered valid targets, and all attacks should be against
+                    // the same target, just for good measure.
                     int targetID = plan.get(0).getTarget().getId();
                     if (shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT &&
                             !(shooter instanceof EjectedCrew) &&

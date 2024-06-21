@@ -1176,7 +1176,10 @@ public class Princess extends BotClient {
 
             }
 
-            // Favor right torso over left, except if right torso is completely gone
+            // Most Mech designs will have their main weapon in either the right torso or right arm,
+            // so going after the right torso first solves both conditions. Putting the right torso
+            // first ensures the left torso and other locations will only supersede it if they have
+            // taken more damage and make for a better target.
             if (target.getInternal(Mech.LOC_RT) > 0) {
                 rankedLocations.add(Mech.LOC_RT);
             } else if (target.getInternal(Mech.LOC_LT) > 0) {

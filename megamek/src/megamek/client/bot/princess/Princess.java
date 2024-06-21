@@ -57,6 +57,8 @@ public class Princess extends BotClient {
     private static final char PLUS = '+';
     private static final char MINUS = '-';
 
+    private static final int MAX_OVERHEAT_AMS = 14;
+
     private final IHonorUtil honorUtil = new HonorUtil();
 
     private boolean initialized = false;
@@ -2210,7 +2212,7 @@ public class Princess extends BotClient {
                 // Set default to on/automatic and test to see if it should be off or manual instead
                 EquipmentMode newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_ON);
 
-                boolean isOverheating = (curEntity instanceof Mech) && (curEntity.getHeat() >= 14);
+                boolean isOverheating = (curEntity instanceof Mech) && (curEntity.getHeat() >= MAX_OVERHEAT_AMS);
 
                 // If there are enough nearby enemy infantry (only counted if the game option is
                 // set), choose manual fire

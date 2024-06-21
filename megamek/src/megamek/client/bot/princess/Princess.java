@@ -41,6 +41,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.Weapon;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +51,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final char PLUS = '+';
@@ -1908,6 +1910,7 @@ public class Princess extends BotClient {
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishoneredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
+        setAMSModes();
     }
 
     @Override
@@ -2155,6 +2158,139 @@ public class Princess extends BotClient {
         if (executeLaunch) {
             path.addStep(MoveStepType.LAUNCH, unitsToLaunch);
         }
+    }
+
+    /**
+     * Sets the mode for AMS on each unit this bot controls. This may be on or off, and possibly
+     * manual fire if the game options allow it, with any change taking effect next round.
+     * Normal setting is to have the AMS active/automatic. It may be turned off to conserve
+     * ammo on relatively undamaged units, and laser AMS may be turned off to help reduce
+     * overheating. Manual use is reserved as an emergency anti-infantry measure.
+     *
+     * FIXME: (remote) filter AMS selection on weapons to manual mode only
+     * FIXME: add tracking list for entity IDs for manual AMS fire
+     * FIXME: (remote) log entity as using manual AMS fire, same place where targeting is being set
+     */
+    private void setAMSModes() {
+
+        // Get conventional infantry if manual mode is available
+        List<Entity> enemyInfantry = new ArrayList<>();
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+            for (Entity curEnemy : this.getEnemyEntities().stream().filter(Entity::isDeployed).collect(Collectors.toSet())) {
+                if (curEnemy.getPosition() != null && curEnemy.isVisibleToEnemy()) {
+
+                    if (curEnemy instanceof Infantry) {
+                        enemyInfantry.add(curEnemy);
+                    }
+
+                }
+            }
+        }
+
+        for (Entity curEntity : this.getEntitiesOwned()) {
+            if (!curEntity.isDeployed() || curEntity.getPosition() == null) {
+                continue;
+            }
+
+            List<WeaponMounted> activeAMS = curEntity.
+                    getWeaponList().
+                    stream().
+                    filter(w -> w.getType().hasFlag(AmmoWeapon.F_AMS) && w.hasModes()).
+                    collect(Collectors.toList());
+
+            if (!activeAMS.isEmpty()) {
+
+                // Set default to on/automatic and test to see if it should be off or manual instead
+                EquipmentMode newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_ON);
+
+                boolean isOverheating = (curEntity instanceof Mech) && (curEntity.getHeat() >= 14);
+
+                // If there are enough nearby enemy infantry (only counted if the game option is
+                // set), choose manual fire
+                // FIXME: also set manual if this entity fired AMS manually this round
+                if (!enemyInfantry.isEmpty() && !curEntity.isAirborne()) {
+                    int infantryRange = enemyInfantry.stream().mapToInt(e -> Compute.effectiveDistance(game, curEntity, e)).min().getAsInt();
+                    if (infantryRange <= 3) {
+                        newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_MANUAL);
+                    }
+                }
+
+                for (WeaponMounted curAMS : activeAMS) {
+
+                    EquipmentMode curMode = curAMS.curMode();
+
+
+                    // Turn off laser AMS to help with overheating problems
+                    if (curAMS.getType().hasFlag(WeaponType.F_ENERGY)) {
+                        if (isOverheating) {
+                            newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_OFF);
+                        }
+                    } else {
+
+                        // Determine if ammo needs to be conserved
+                        boolean conserveAmmo = curAMS.getLinkedAmmo().getUsableShotsLeft() <= (int) Math.floor(curAMS.getOriginalShots() *
+                                behaviorSettings.getSelfPreservationValue() / 100.0);
+
+                        // Consider turning off AMS to conserve ammo unless it's needed for infantry
+                        if (conserveAmmo && !newAMSMode.equals(Weapon.MODE_AMS_MANUAL)) {
+
+                            int ammoTN = 12 - behaviorSettings.getBraveryIndex();
+
+                            // Fighting a missile boat is more likely to require an active AMS
+                            int lastTargetID = curEntity.getLastTarget();
+                            if (lastTargetID >= 1) {
+                                Entity lastTarget = game.getEntity(lastTargetID);
+                                if (lastTarget != null && lastTarget.getRole() == UnitRole.MISSILE_BOAT) {
+                                    ammoTN += 4;
+                                }
+                            }
+
+                            // Heavily damaged units are more likely to require an active AMS than
+                            // lightly damaged ones
+                            switch (curEntity.getDamageLevel()) {
+                                case Entity.DMG_NONE:
+                                    ammoTN -= 4;
+                                    break;
+                                case Entity.DMG_LIGHT:
+                                    ammoTN -= 2;
+                                    break;
+                                case Entity.DMG_MODERATE:
+                                    ammoTN += 1;
+                                    break;
+                                case Entity.DMG_HEAVY:
+                                    ammoTN += 4;
+                                case Entity.DMG_CRIPPLED:
+                                    ammoTN += 8;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            if (ammoTN < 10) {
+                                if (Compute.d6(2) >= ammoTN) {
+                                    newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_OFF);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    // Set the mode for the AMS to get the new mode number, and register the change
+                    // with the server
+                    if (!curMode.equals(newAMSMode)) {
+                        int modeNumber = curAMS.setMode(newAMSMode.getName());
+                        if (modeNumber != -1) {
+                            sendModeChange(curEntity.getId(), curEntity.getEquipmentNum(curAMS), modeNumber);
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
     }
 
     public void sendChat(final String message, final Level logLevel) {

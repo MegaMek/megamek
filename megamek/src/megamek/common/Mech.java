@@ -1509,19 +1509,6 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Returns the about of heat that the entity can sink each turn.
-     */
-    @Override
-    public int getHeatCapacity() {
-        return getHeatCapacity(true, true);
-    }
-
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSink) {
-        return getHeatCapacity(true, radicalHeatSink);
-    }
-
-    /**
      * Returns the name of the heat sinks mounted on this 'mech.
      *
      * @return
@@ -1541,6 +1528,19 @@ public abstract class Mech extends Entity {
 
         // if a mech has no heat sink equipment, we pretend like it has standard heat sinks.
         return "Heat Sink";
+    }
+
+    /**
+     * Returns the about of heat that the entity can sink each turn.
+     */
+    @Override
+    public int getHeatCapacity() {
+        return getHeatCapacity(true, true);
+    }
+
+    @Override
+    public int getHeatCapacity(boolean radicalHeatSink) {
+        return getHeatCapacity(true, radicalHeatSink);
     }
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
@@ -1585,6 +1585,13 @@ public abstract class Mech extends Entity {
         if (includeRadicalHeatSink
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
+        }
+
+        // If the tacops option for coolant failure is enabled, include reductions for
+        // coolant failure
+        if (game != null &&
+                game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)) {
+            capacity -= heatSinkCoolantFailureFactor;
         }
 
         return Math.max(capacity, 0);
@@ -5397,16 +5404,28 @@ public abstract class Mech extends Entity {
         return isCarefulStanding;
     }
 
+    /**
+     * How many times TacOps coolant failure has occurred, which is also the reduction in heat
+     * sinking capacity
+     */
     @Override
     public int getCoolantFailureAmount() {
         return heatSinkCoolantFailureFactor;
     }
 
+    /**
+     * Modify the number of TacOps coolant failures. May be positive to indicate additional
+     * failures, or negative to indicate coolant being refreshed from an outside source.
+     * @param amount  Amount to change the value, typical value is 1
+     */
     @Override
     public void addCoolantFailureAmount(int amount) {
         heatSinkCoolantFailureFactor += amount;
     }
 
+    /**
+     * Reset count of TacOps coolant failures to zero (no loss)
+     */
     @Override
     public void resetCoolantFailureAmount() {
         heatSinkCoolantFailureFactor = 0;

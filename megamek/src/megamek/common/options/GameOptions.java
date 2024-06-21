@@ -13,7 +13,10 @@
  */
 package megamek.common.options;
 
-import jakarta.xml.bind.*;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -82,7 +85,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_TURN_TIMER_FIRING, 0);
         addOption(base, OptionsConstants.BASE_TURN_TIMER_PHYSICAL, 0);
         addOption(base, OptionsConstants.BASE_TURN_TIMER_ALLOW_EXTENSION, true);
-        addOption(base, OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG, false);
+        addOption(base, OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG, true);
         addOption(base, OptionsConstants.BASE_GM_CONTROLS_DONE_REPORT_PHASE, false);
         addOption(base, OptionsConstants.BASE_HIDE_UNOFFICIAL, false);
         addOption(base, OptionsConstants.BASE_HIDE_LEGACY, false);

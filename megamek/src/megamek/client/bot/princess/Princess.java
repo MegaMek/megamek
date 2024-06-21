@@ -1153,7 +1153,7 @@ public class Princess extends BotClient {
         }
 
         // Limit leg attack aimed shots to the legs
-        if (!workingShots.get(0).getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK)) {
+        if (!primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK)) {
 
             // Consider arm locations if they have a 'big' weapon
             for (WeaponMounted curWeapon : target.getWeaponList().

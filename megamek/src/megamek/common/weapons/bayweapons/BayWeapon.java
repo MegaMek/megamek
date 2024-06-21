@@ -71,11 +71,13 @@ public abstract class BayWeapon extends Weapon {
     public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
+        AmmoMounted mAmmo;
         if (null != ae) {
             for (WeaponMounted bayW : weapon.getBayWeapons()) {
+                mAmmo = (ammo != null) ? ammo : bayW.getLinkedAmmo();
                 WeaponType bayWType = bayW.getType();
-                if (bayWType.getMaxRange(bayW) > mrange) {
-                    mrange = bayWType.getMaxRange(bayW);
+                if (bayWType.getMaxRange(bayW, mAmmo) > mrange) {
+                    mrange = bayWType.getMaxRange(bayW, mAmmo);
                 }
             }
         }

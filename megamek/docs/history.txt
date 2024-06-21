@@ -74,6 +74,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5601: Add revision to the game log
 + PR #5589: Re-submitting role exclusions
 + PR #5600: Numerous typo and spelling fixes
++ Fix #5596: Fixing firing arc updates and projections in space, the effects of special ammo on range can now be considered also for enemy units when selected in the Unit Display
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

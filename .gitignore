@@ -54,6 +54,8 @@ megamek/userdata/**
 
 #Revision
 /megamek/docs/mm-revision.txt
+/megamek/docs/mml-revision.txt
+/megamek/docs/mhq-revision.txt
 
 #MegaMek/data Folders
 /megamek/data/misc/

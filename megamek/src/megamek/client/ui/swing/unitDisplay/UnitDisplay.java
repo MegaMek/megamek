@@ -437,7 +437,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
-        if ((en == null) || (currentlyDisplaying == en)) {
+        if (en == null) {
             return;
         }
         currentlyDisplaying = en;

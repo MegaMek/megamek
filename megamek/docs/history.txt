@@ -80,6 +80,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #5084: Princess and using AMS as a manual weapon
 + PR #5618: Branch for typos and spelling
 + Fix #5577: Industrial hexes no longer influence units higher than their roof
++ Fix #5622: Fixes MML #1532: Total Warfare Flamer should be unofficial
++ PR #5623: adjust wind direction order
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

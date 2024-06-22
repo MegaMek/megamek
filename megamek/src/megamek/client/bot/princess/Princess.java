@@ -1421,8 +1421,9 @@ public class Princess extends BotClient {
             if (target.getArmor(Mech.LOC_HEAD) <= LOCATION_DESTRUCTION_THREAT ||
                     (upperTargets / upperLocations.size() > lowerTargets / 2.0)) {
                 calledShotDirection = CalledShot.CALLED_HIGH;
-            } else if (lowerTargets >= 1 &&
-                    (target.getWalkMP() >= CALLED_SHOT_MIN_MOVE || target.getJumpMP() >= CALLED_SHOT_MIN_JUMP)) {
+            } else if (lowerTargets >= 1 ||
+                    target.getWalkMP() >= CALLED_SHOT_MIN_MOVE ||
+                    target.getJumpMP() >= CALLED_SHOT_MIN_JUMP) {
                 calledShotDirection = CalledShot.CALLED_LOW;
             }
 

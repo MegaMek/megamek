@@ -303,6 +303,7 @@ public class TeamLoadoutGenerator {
         ArrayList<String> enemyFactions = new ArrayList<>();
         boolean doubleBlind = gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
+        boolean spaceEnvironment = g.getBoard().inSpace();
 
         // This team can see the opponent teams; set appropriate options
         if (!doubleBlind) {
@@ -314,7 +315,14 @@ public class TeamLoadoutGenerator {
                 etEntities.addAll((ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et)));
             }
         }
-        return generateParameters(ownTeamEntities, etEntities, enemyFactions, doubleBlind, darkEnvironment);
+        return generateParameters(
+                ownTeamEntities,
+                etEntities,
+                enemyFactions,
+                doubleBlind,
+                darkEnvironment,
+                spaceEnvironment
+        );
     }
 
     public static ReconfigurationParameters generateParameters(
@@ -322,7 +330,8 @@ public class TeamLoadoutGenerator {
             ArrayList<Entity> etEntities,
             ArrayList<String> enemyFactions,
             boolean doubleBlind,
-            boolean darkEnvironment
+            boolean darkEnvironment,
+            boolean spaceEnvironment
     ) {
         ReconfigurationParameters rp = new ReconfigurationParameters();
 
@@ -331,6 +340,9 @@ public class TeamLoadoutGenerator {
 
         // Estimate enemy count for ammo count purposes; may include observers.  The fog of war!
         rp.enemyCount = etEntities.size();
+
+        // Record if space-based environment
+        rp.spaceEnvironment = spaceEnvironment;
 
         // If our team can see other teams...
         if (!doubleBlind) {
@@ -446,6 +458,7 @@ public class TeamLoadoutGenerator {
      */
     public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> ownTeamEntities, String defaultSettingsFile, MunitionWeightCollection mwc) {
 
+        // Either create a new tree or, if a defaults file is provided, load that as a base config
         MunitionTree mt = (defaultSettingsFile == null | defaultSettingsFile.isBlank()) ?
                 new MunitionTree() : new MunitionTree(defaultSettingsFile);
 
@@ -715,6 +728,14 @@ public class TeamLoadoutGenerator {
     //endregion reconfigureEntity
 
     //region reconfigureAero
+
+    /**
+     * This method should mirror reconfigureEntity but with more restrictions based on the types of alternate
+     * munitions allowed by Aerospace rules.
+     * @param e
+     * @param mt
+     * @param faction
+     */
     public void reconfigureAero(Entity e, MunitionTree mt, String faction) {
 
     }
@@ -851,6 +872,13 @@ public class TeamLoadoutGenerator {
         }
     }
 
+    /**
+     * Select a random munition type that is a valid damaging ammo (for "random") or truly random valid ammo
+     * (for true random) for the bin type.  IE "flechette" is
+     * @param binName
+     * @param trueRandom
+     * @return
+     */
     private static String getRandomBin(String binName, boolean trueRandom) {
         String result = "";
         for (String typeName: TYPE_LIST) {

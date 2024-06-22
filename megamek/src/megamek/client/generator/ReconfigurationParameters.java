@@ -13,6 +13,7 @@ public class ReconfigurationParameters {
 
     // Map settings
     public boolean darkEnvironment = false;
+    public boolean spaceEnvironment = false;
 
     // Enemy stats
     public long enemyCount = 0;
@@ -43,6 +44,7 @@ public class ReconfigurationParameters {
     public long friendlyECMCount = 0;
     public long friendlyInfantry = 0;
     public long friendlyBattleArmor = 0;
+    public long friendlyHeatGens = 0;
 
     // User-selected directives
     // Nukes may be banned for a given team but allowed in general (boo, hiss)

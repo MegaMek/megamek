@@ -364,7 +364,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      * player is active, no unit may be selected even in a player's turn.
      * Note that this is not necessarily equal to the currently *viewed* unit in the unit display.
      *
-     * @see ClientGUI#getSelectedUnit()
+     * @see ClientGUI#getDisplayedUnit()
      */
     protected final Entity ce() {
         return clientgui.getClient().getGame().getEntity(currentEntity);

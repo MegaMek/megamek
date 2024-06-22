@@ -2240,9 +2240,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

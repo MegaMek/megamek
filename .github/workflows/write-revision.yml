@@ -1,0 +1,30 @@
+name: "Write MM Revision"
+
+on:  
+  push:  
+    branches:  
+      - master
+    paths:
+      # only write the revision for changes that affect program behavior
+      - '**.gradle'
+      - 'megamek/src/**'
+      - 'megamek/data/**'
+  
+jobs:  
+  write_hashcode:  
+    runs-on: ubuntu-latest  
+  
+    steps:  
+      - name: Checkout Repository  
+        uses: actions/checkout@v4  
+  
+      - name: Write latest revision hashcode to file  
+        run: echo ${{ github.sha }} > megamek/docs/mm-revision.txt  
+  
+      - name: Commit and Push Changes  
+        run: |  
+          git config --global user.name 'GitHub Actions'  
+          git config --global user.email 'actions@github.com'  
+          git add megamek/docs/mm-revision.txt  
+          git commit -m 'Update mm-revision.txt'  
+          git push  

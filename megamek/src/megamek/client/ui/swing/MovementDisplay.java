@@ -354,7 +354,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().getGame().addGameListener(this);
             clientgui.getBoardView().addBoardViewListener(this);
             clientgui.getClient().getGame().setupTeams();
-            clientgui.getBoardView().getPanel().addKeyListener(this);
         }
 
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase"));
@@ -443,7 +442,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity currentEntity = ce();
         if (currentEntity != null) {
             computeMovementEnvelope(currentEntity);
-            clientgui.setFiringArcPosition(currentEntity, currentEntity.getPosition());
+            clientgui.updateFiringArc(currentEntity);
         }
         updateMove();
     }
@@ -1225,7 +1224,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
-        clientgui.setFiringArcPosition(ce, cmd);
+        clientgui.updateFiringArc(ce);
         clientgui.showSensorRanges(ce, cmd.getFinalCoords());
         computeCFWarningHexes(ce);
 
@@ -1313,7 +1312,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().select(cmd.getFinalCoords());
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
-            clientgui.setFiringArcPosition(entity, cmd);
+            clientgui.updateFiringArc(entity);
             clientgui.showSensorRanges(entity, cmd.getFinalCoords());
 
             //FIXME what is this
@@ -1634,9 +1633,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return false;
     }
 
-    /**
-     * Sends a data packet indicating the chosen movement.
-     */
     @Override
     public synchronized void ready() {
         if (ce() == null) {
@@ -1816,7 +1812,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
-        clientgui.setFiringArcPosition(ce(), cmd);
+        clientgui.updateFiringArc(ce());
     }
 
     //
@@ -5680,9 +5676,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         if (clientgui != null) {
@@ -5704,5 +5697,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Shortcut to clientgui.getClient().getGame(). */
     private Game game() {
         return clientgui.getClient().getGame();
+    }
+
+    @Nullable
+    public MovePath getPlannedMovement() {
+        return cmd;
     }
 }

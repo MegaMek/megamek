@@ -350,9 +350,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         return false;
     }
 
-    /**
-     * Called when the current entity is done with physical attacks.
-     */
     @Override
     public void ready() {
         if (checkNags()) {
@@ -1643,9 +1640,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

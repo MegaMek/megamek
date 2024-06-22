@@ -18289,18 +18289,18 @@ public class GameManager extends AbstractGameManager {
             // how much heat can we sink?
             int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
-            if (entity.getCoolantFailureAmount() > 0) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
+                    entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
                 r = new Report(5520);
                 r.subject = entity.getId();
                 r.add(failureAmount);
                 heatEffectsReports.add(r);
-                toSink -= failureAmount;
             }
 
             // should we use a coolant pod?
             int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-            int possibleSinkage = ((Mech) entity).getNumberOfSinks() - entity.getCoolantFailureAmount();
+            int possibleSinkage = ((Mech) entity).getNumberOfSinks();
             for (Mounted m : entity.getEquipment()) {
                 if (m.getType() instanceof AmmoType) {
                     AmmoType at = (AmmoType) m.getType();
@@ -18707,9 +18707,13 @@ public class GameManager extends AbstractGameManager {
                 }
             }
 
+            // If the TacOps coolant failure rule is in use, check for coolant failure. If the
+            // heat sink capacity has already been offset by previous coolant failures, further
+            // reductions in capacity will have no effect.
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)
-                    && (entity.getHeatCapacity() > entity.getCoolantFailureAmount())
-                    && (entity.heat >= 5)) {
+                    && (entity.heat >= 5)
+                    && (entity.getCoolantFailureAmount() < ((Mech) entity).getNumberOfSinks() *
+                    (((Mech) entity).hasDoubleHeatSinks() ? 2 : 1))) {
                 Roll diceRoll = Compute.rollD6(2);
                 int hitNumber = 10;
                 hitNumber -= Math.max(0, (int) Math.ceil(entity.heat / 5.0) - 2);

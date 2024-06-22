@@ -180,6 +180,9 @@ public class MegaMekController implements KeyEventDispatcher {
      * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
      * constructed from the given parameters. The given performer is called when the key is
      * pressed if the given receiver's shouldReceiveKeyCommands() method check returns true.
+     * Note that in this case, the keybind is considered consumed even if this receiver doesn't do
+     * anything with it. For a keybind to be passed on to other receivers, this receiver's
+     * shouldPerformKeyCommands() must return false.
      *
      * @param commandBind The KeyCommandBind
      * @param receiver The {@link KeyBindReceiver} that receives this keypress
@@ -204,33 +207,12 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
-     * constructed from the given method references. The given performer will be called when the key is
-     * pressed if the given shouldReceive check returns true.
-     *
-     * @param commandBind The KeyCommandBind
-     * @param shouldReceive A method that should return true when the performer is allowed to take action
-     * @param performer A method that takes action upon the keypress
-     */
-    public void registerCommandAction(KeyCommandBind commandBind,
-                                      Supplier<Boolean> shouldReceive, KeyBindAction performer) {
-        registerCommandAction(commandBind.cmd, new CommandAction() {
-            @Override
-            public boolean shouldReceiveAction() {
-                return shouldReceive.get();
-            }
-
-            @Override
-            public void performAction() {
-                performer.execute();
-            }
-        });
-    }
-
-    /**
      * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
      * constructed from the given method references. The given performer will be called when the key is
      * pressed if the given shouldPerform check returns true.
+     * Note that in this case, the keybind is considered consumed even if this receiver doesn't do
+     * anything with it. For a keybind to be passed on to other receivers, this receiver's
+     * shouldPerform must return false.
      * Additionally, the given releaseAction is called when the pressed key is released again (also, only
      * when shouldPerform allows it).
      *

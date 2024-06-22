@@ -695,6 +695,7 @@ public class Princess extends BotClient {
 
                     if (targetID >= 0 &&
                             primaryFire.getTarget() != null &&
+                            plan.stream().allMatch(curFire -> primaryFire.getTarget().getId() == targetID) &&
                             checkForEnhancedTargeting(shooter,
                                     null,
                                     (Entity) primaryFire.getTarget(),
@@ -713,21 +714,16 @@ public class Princess extends BotClient {
                         if (mechTarget.isImmobile() || shooter.hasTargComp()) {
                             boolean rearShot = primaryFire.getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
-                            if (!mechTarget.isImmobile()) {
-                                advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber -
-                                        getBehaviorSettings().getSelfPreservationIndex(), 2);
-                            } else {
-                                advancedTargetingThreshold = SHUTDOWN_MAX_TARGETNUMBER;
-                            }
-
                             // Get the Mech location to aim at. Infantry and BA will go for the head
                             // if the odds are good.
                             aimLocation = calculateAimedShotLocation(mechTarget,
-                                    plan, advancedTargetingThreshold, rearShot, shooter.isInfantry());
+                                    plan, rearShot, shooter.isInfantry());
 
                             // When aiming at a location, don't bother checking for called shots
                             if (aimLocation != Mech.LOC_NONE) {
                                 isCalledShot = false;
+                                advancedTargetingThreshold = calcEnhancedTargetingMaxTN(mechTarget.isImmobile() &&
+                                        aimLocation != Mech.LOC_HEAD);
                             }
 
                         }
@@ -752,8 +748,7 @@ public class Princess extends BotClient {
                             // Set the target roll maximum. Despite the name, the Self Preservation
                             // setting controls whether Princess takes risky shots or not.
                             if (calledShotDirection != CalledShot.CALLED_NONE) {
-                                advancedTargetingThreshold = Math.max(maxAdvancedTargetNumber -
-                                        getBehaviorSettings().getSelfPreservationIndex(), 2);
+                                advancedTargetingThreshold = calcEnhancedTargetingMaxTN(mechTarget.isImmobile());
                             }
                         }
 
@@ -1179,7 +1174,6 @@ public class Princess extends BotClient {
      * 'right-handed'.
      * @param target        Mech being shot at
      * @param planOfAttack  Proposed attacks against {@code target} parameter
-     * @param maximumToHit  maximum to-hit number for consideration of an aimed shot
      * @param rearAttack    true if attacking from the rear arc
      * @param includeHead   true to include the head as a valid location
      * @return              {@link Mech} constant for location to shoot, or {@code Mech.LOC_NONE}
@@ -1187,7 +1181,6 @@ public class Princess extends BotClient {
      */
     protected int calculateAimedShotLocation (Mech target,
                                               FiringPlan planOfAttack,
-                                              int maximumToHit,
                                               boolean rearAttack,
                                               boolean includeHead) {
         int aimLocation = Mech.LOC_NONE;
@@ -1224,8 +1217,9 @@ public class Princess extends BotClient {
                 !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
                 !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
             aimLocation = Mech.LOC_HEAD;
+            int headshotMaxTN = calcEnhancedTargetingMaxTN(false);
             if (workingShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
-                    IMMOBILE_HEADSHOT_MODIFIER > maximumToHit)) {
+                    IMMOBILE_HEADSHOT_MODIFIER > headshotMaxTN)) {
                 aimLocation = Mech.LOC_NONE;
             } else {
                 return aimLocation;
@@ -1325,6 +1319,7 @@ public class Princess extends BotClient {
 
             int penetratorCount = 0;
             double totalDamage = 0;
+            int maximumToHit = calcEnhancedTargetingMaxTN(target.isImmobile());
             for (WeaponFireInfo curFire : workingShots) {
                 if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ?
                         IMMOBILE_HEADSHOT_MODIFIER : AIMED_SHOT_MODIFIER) <= (maximumToHit + offset)) {
@@ -1441,6 +1436,18 @@ public class Princess extends BotClient {
      */
     private boolean isBigGun(WeaponMounted testWeapon) {
         return testWeapon.getType().getDamage(BIG_GUN_TYPICAL_RANGE) >= BIG_GUN_MIN_DAMAGE;
+    }
+
+    /**
+     * Figure out the highest practical to-hit number for enhanced aiming (aimed/called shots)
+     * @return
+     */
+    private int calcEnhancedTargetingMaxTN (boolean isImmobile) {
+        if (isImmobile) {
+            return SHUTDOWN_MAX_TARGETNUMBER;
+        } else {
+            return Math.max(10 - getBehaviorSettings().getSelfPreservationIndex(), 2);
+        }
     }
 
 

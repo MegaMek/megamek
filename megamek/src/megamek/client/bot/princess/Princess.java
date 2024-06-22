@@ -1107,6 +1107,93 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Determine if a shooter should consider using enhanced targeting - aimed or called shots -
+     * against a given target. This includes some basic filtering for unit types and equipment such
+     * targeting computers.
+     * @param shooter           Entity doing the shooting
+     * @param shooterTypeFilter list of {@link UnitType} constants for limiting valid shooter types,
+     *                           may be null or empty to limit selection to basic ground unit types
+     * @param target           Entity being shot at
+     * @param targetTypeFilter list of {@link UnitType} constants for limiting valid target types,
+     *                         may be null or empty to limit selection to Mechs
+     * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
+     * @param partialCoverOK   true, to permit shots against targets with partial cover
+     * @param immobileCalledShotsOK true, to permit called shots against immobile targets
+     * @return                 true, if aimed or called shots should be checked
+     */
+    protected boolean checkForEnhancedTargeting (Entity shooter,
+                                                 List<Integer> shooterTypeFilter,
+                                                 Entity target,
+                                                 List<Integer> targetTypeFilter,
+                                                 int cover,
+                                                 boolean partialCoverOK,
+                                                 boolean immobileCalledShotsOK) {
+
+        // Partial cover adds all sorts of complications, don't bother unless enabled
+        if (cover != LosEffects.COVER_NONE && !partialCoverOK) {
+            return false;
+        }
+
+        // Basic unit type filtering for shooter
+        if (shooterTypeFilter != null && !shooterTypeFilter.isEmpty()) {
+            if (!shooterTypeFilter.contains(shooter.getUnitType())) {
+                return false;
+            }
+        } else {
+            // If no filter was supplied, limit shooters to ground units, VTOLs, and gun
+            // emplacements. Specifically reject ejected vehicle crews and MechWarriors.
+            if (shooter.getUnitType() <= UnitType.GUN_EMPLACEMENT &&
+                    !(shooter instanceof EjectedCrew) &&
+                    shooter.getUnitType() != UnitType.NAVAL) {
+                return false;
+            }
+        }
+
+        // Basic unit type filtering for target
+        if (targetTypeFilter != null && !targetTypeFilter.isEmpty()) {
+            if (!targetTypeFilter.contains(target.getUnitType())) {
+                return false;
+            }
+        } else {
+            // If no filter was supplied, limit valid targets to Mechs
+            if (target.getUnitType() != UnitType.MEK) {
+                return false;
+            }
+        }
+
+        boolean useAimedShot = false;
+        boolean useCalledShot = false;
+
+        // Only certain unit types can be the target of aimed shots
+        List<Integer> validAimTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.VTOL,
+                UnitType.CONV_FIGHTER,
+                UnitType.AEROSPACEFIGHTER
+        ));
+
+        if (validAimTypes.contains(target.getUnitType())) {
+
+            // Aimed shots are only possible if the target is immobile or the shooter has a
+            // targeting computer
+            if (target.isImmobile() || shooter.hasTargComp()) {
+                useAimedShot = true;
+            }
+        }
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+            // Called shots against immobile targets can be a little too effective, so only use
+            // when enabled
+            if (immobileCalledShotsOK) {
+                useCalledShot = true;
+            }
+        }
+
+        return useAimedShot || useCalledShot;
+    }
+
+    /**
      * Determine which location to aim for on a Mech. Prioritizes torsos and legs, and ignores
      * destroyed locations. Prefers right to left, given that most non-symmetrical Mechs are
      * 'right-handed'.

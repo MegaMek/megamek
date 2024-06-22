@@ -301,6 +301,7 @@ public class TeamLoadoutGenerator {
         ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(t));
         ArrayList<Entity> etEntities = new ArrayList<Entity>();
         ArrayList<String> enemyFactions = new ArrayList<>();
+        String friendlyFaction = t.getFaction();
         boolean doubleBlind = gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         boolean spaceEnvironment = g.getBoard().inSpace();
@@ -318,6 +319,7 @@ public class TeamLoadoutGenerator {
         return generateParameters(
                 ownTeamEntities,
                 etEntities,
+                friendlyFaction,
                 enemyFactions,
                 doubleBlind,
                 darkEnvironment,
@@ -328,12 +330,16 @@ public class TeamLoadoutGenerator {
     public static ReconfigurationParameters generateParameters(
             ArrayList<Entity> ownTeamEntities,
             ArrayList<Entity> etEntities,
+            String friendlyFaction,
             ArrayList<String> enemyFactions,
             boolean doubleBlind,
             boolean darkEnvironment,
             boolean spaceEnvironment
     ) {
         ReconfigurationParameters rp = new ReconfigurationParameters();
+
+        // Set own faction
+        rp.friendlyFaction = friendlyFaction;
 
         // Get our own side's numbers for comparison
         rp.friendlyCount = ownTeamEntities.size();
@@ -385,7 +391,7 @@ public class TeamLoadoutGenerator {
     }
     //endregion generateParameters
 
-    //region AC Imperative mutators
+    //region Imperative mutators
     private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
         setAC20Imperatives(e, mt, rp);
     }
@@ -434,6 +440,7 @@ public class TeamLoadoutGenerator {
         }
         return false;
     }
+    //region Imperative mutators
 
     //region generateMunitionTree
     public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t) {
@@ -661,17 +668,32 @@ public class TeamLoadoutGenerator {
      */
     public void reconfigureTeam(Game g, Team team, String faction, MunitionTree mt) {
         // configure team according to MunitionTree
+        ArrayList<Entity> fEntities = new ArrayList<>();
         for (Player p: team.players()) {
-            ArrayList<Entity> aeros = new ArrayList<>();
             for (Entity e : g.getPlayerEntities(p, false)){
-                if (e.isAero()) {
-                    aeros.add(e);
-                } else {
-                    reconfigureEntity(e, mt, faction);
-                }
+                fEntities.add(e);
             }
-            populateAeroBombs(aeros, this.allowedYear, true);
         }
+        reconfigureEntities(fEntities, faction, mt);
+    }
+
+    /**
+     * More generic reconfiguration function that acts on sets of units, not teams
+     * @param entities ArrayList of entities, including ground and air units
+     * @param faction String code for entities' main faction
+     * @param mt MunitionTree defining all applicable loadout imperatives
+     */
+    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt) {
+        ArrayList<Entity> aeros = new ArrayList<>();
+        for (Entity e : entities){
+            if (e.isAero()) {
+                aeros.add(e);
+            } else {
+                reconfigureEntity(e, mt, faction);
+            }
+        }
+        // Temporarily uses transplanted version of old MHQ code
+        populateAeroBombs(aeros, this.allowedYear, true);
     }
 
     /**

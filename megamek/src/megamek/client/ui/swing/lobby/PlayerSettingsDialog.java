@@ -44,6 +44,7 @@ import org.apache.commons.collections.IteratorUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
@@ -651,9 +652,18 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
     };
 
+    /**
+     * Let user select an ADF file (Autoconfiguration Definition File) from which to load munition loadout
+     * imperatives, which can then be applied to selected units.
+     * @return
+     */
     private MunitionTree loadLoadout() {
         MunitionTree mt = null;
         JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
+                "adf files (*.adf)", "adf");
+        fc.addChoosableFileFilter(adfFilter);
+        fc.setFileFilter(adfFilter);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("ClientGui.LoadoutLoadDialog.title"));
 
@@ -677,6 +687,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void saveLoadout(MunitionTree source) {
         //ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
+                "adf files (*.adf)", "adf");
+        fc.addChoosableFileFilter(adfFilter);
+        fc.setFileFilter(adfFilter);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("ClientGui.LoadoutSaveDialog.title"));
 

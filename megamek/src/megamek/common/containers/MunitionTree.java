@@ -63,7 +63,7 @@ public class MunitionTree {
 
     private static String HEADER = String.join(
             System.getProperty("line.separator"),
-            "# ADF (Autoconfiguration Data File) from MegaMek.",
+            "# ADF (Autoconfiguration Definition File) from MegaMek.",
             "# Lines are formatted as",
             "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Muntion1[:Munition2[:...]]][::AmmoType2...]'",
             "# Values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",

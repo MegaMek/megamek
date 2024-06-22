@@ -677,8 +677,6 @@ public class Princess extends BotClient {
                     // a targeting computer. Alternatively, consider using the called shots optional
                     // rule to adjust the hit table to something more favorable.
 
-                    boolean isShutdownShot = false;
-                    boolean isAimedShot = false;
                     boolean isCalledShot = false;
                     boolean immobileCalledShotsOK = false;
                     int advancedTargetingThreshold = ToHitData.IMPOSSIBLE;

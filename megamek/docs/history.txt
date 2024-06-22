@@ -79,6 +79,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5608: Lobby Multiunit Customization (including setting the deployment round) will now work on one's own bot units
 + Fix #5084: Princess and using AMS as a manual weapon
 + PR #5618: Branch for typos and spelling
++ Fix #5577: Industrial hexes no longer influence units higher than their roof
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

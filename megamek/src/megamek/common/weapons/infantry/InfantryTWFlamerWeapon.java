@@ -22,33 +22,35 @@ package megamek.common.weapons.infantry;
  */
 public class InfantryTWFlamerWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -5741978934100309295L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -5741978934100309295L;
 
-	public InfantryTWFlamerWeapon() {
-		super();
-		// Range 1, reduced damage flamer for TW Platoon support
+    public InfantryTWFlamerWeapon() {
+        super();
+        // Range 1, reduced damage flamer for TW Platoon support
 
-		name = "Total Warfare Flamer";
-		setInternalName(name);
-		addLookupName("InfantryTWFlamer");
-		addLookupName("InfantryTWPortableFlamer");
-		cost = 100;
-		bv = 0.36;
-		tonnage = .015;
-		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-		infantryDamage = 0.35;
-		infantryRange = 1;
-		crew = 1;
-		// This Weapon has been replaced by the Flamer Pistol. Moving to
-		// Unofficial.
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-		        .setISApproximate(false, false, false, false, false)
-		        .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
-
-	}
+        name = "Total Warfare Flamer";
+        setInternalName(name);
+        addLookupName("InfantryTWFlamer");
+        addLookupName("InfantryTWPortableFlamer");
+        cost = 100;
+        bv = 0.36;
+        tonnage = .015;
+        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        infantryDamage = 0.35;
+        infantryRange = 1;
+        crew = 1;
+        // This Weapon has been replaced by the Flamer Pistol. Moving to
+        // Unofficial.
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+            .setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false, false, false)
+            .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false, false, false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setUnofficial(true);
+    }
 }

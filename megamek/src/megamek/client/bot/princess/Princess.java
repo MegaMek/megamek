@@ -148,6 +148,10 @@ public class Princess extends BotClient {
     // Track entities that fired an AMS manually this round
     private List<Integer> manualAMSIds;
 
+    // Limits types of units Princess will target and attack with enhanced aiming (aimed/called shots)
+    private List<Integer> enhancedTargetingTargetTypes;
+    private List<Integer> enhancedTargetingAttackerTypes;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -171,6 +175,20 @@ public class Princess extends BotClient {
 
         fireControlState = new FireControlState();
         pathRankerState = new PathRankerState();
+
+        // Set default enhanced targeting target and attacker types
+        enhancedTargetingTargetTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK
+        ));
+        enhancedTargetingAttackerTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.BATTLE_ARMOR,
+                UnitType.INFANTRY,
+                UnitType.PROTOMEK,
+                UnitType.VTOL,
+                UnitType.GUN_EMPLACEMENT
+        ));
 
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
@@ -700,9 +718,7 @@ public class Princess extends BotClient {
                             primaryFire.getTarget() != null &&
                             plan.stream().allMatch(curFire -> primaryFire.getTarget().getId() == targetID) &&
                             checkForEnhancedTargeting(shooter,
-                                    null,
                                     (Entity) primaryFire.getTarget(),
-                                    null,
                                     primaryFire.getToHit().getCover(),
                                     false,
                                     immobileCalledShotsOK)) {
@@ -1064,25 +1080,88 @@ public class Princess extends BotClient {
         }
     }
 
+
+
+
+
+    /**
+     * Swap out current set of valid enhanced targeting target types for a new set. Automatically
+     * removes certain types that will never apply, such as infantry.
+     * @param newTargetTypes  List of {@link UnitType} constants, may be empty or null to clear
+     */
+    public void setEnhancedTargetingTargetTypes (List<Integer> newTargetTypes) {
+        enhancedTargetingTargetTypes = Objects.requireNonNullElseGet(newTargetTypes, ArrayList::new);
+        if (enhancedTargetingTargetTypes.contains(UnitType.INFANTRY)) {
+            enhancedTargetingTargetTypes.remove(UnitType.INFANTRY);
+        }
+        if (enhancedTargetingTargetTypes.contains(UnitType.BATTLE_ARMOR)) {
+            enhancedTargetingTargetTypes.remove(UnitType.BATTLE_ARMOR);
+        }
+    }
+
+    /**
+     * Swap out current set of valid enhanced targeting attacker types for a new set
+     * @param newAttackerTypes  List of {@link UnitType} constants, may be empty or null to clear
+     */
+    public void setEnhancedTargetingAttackerTypes (List<Integer> newAttackerTypes) {
+        enhancedTargetingAttackerTypes = Objects.requireNonNullElseGet(newAttackerTypes, ArrayList::new);
+    }
+
+    /**
+     * Returns a copy of the list of valid enhanced targeting target types
+     * @return   list of {@link UnitType} constants, or empty list
+     */
+    public List<Integer> seeEnhancedTargetingTargetTypes () {
+        return new ArrayList<>(enhancedTargetingTargetTypes);
+    }
+
+    /**
+     * Returns a copy of the list of valid enhanced targeting attacker types
+     * @return   list of {@link UnitType} constants, or empty list
+     */
+    public List<Integer> seeEnhancedTargetingAttackerTypes () {
+        return new ArrayList<>(enhancedTargetingAttackerTypes);
+    }
+
+    /**
+     * Checks if the supplied unit type is considered a valid target for enhanced targeting
+     * @param unitTYpe  {@link UnitType} constant
+     * @return          true, if unit is a valid target for enhanced targeting
+     */
+    public boolean isValidEnhancedTargetingTarget (int testType) {
+        if (enhancedTargetingTargetTypes != null) {
+            return enhancedTargetingTargetTypes.contains(testType);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the supplied unit type is considered a valid attacker for enhanced targeting
+     * @param testType  {@link UnitType} constant
+     * @return          true, if unit is a valid attacker for enhanced targeting
+     */
+    public boolean isValidEnhancedTargetingAttacker (int testType) {
+        if (enhancedTargetingAttackerTypes != null) {
+            return enhancedTargetingAttackerTypes.contains(testType);
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Determine if a shooter should consider using enhanced targeting - aimed or called shots -
      * against a given target. This includes some basic filtering for unit types and equipment such
      * targeting computers.
      * @param shooter           Entity doing the shooting
-     * @param shooterTypeFilter list of {@link UnitType} constants for limiting valid shooter types,
-     *                           may be null or empty to limit selection to basic ground unit types
      * @param target           Entity being shot at
-     * @param targetTypeFilter list of {@link UnitType} constants for limiting valid target types,
-     *                         may be null or empty to limit selection to Mechs
      * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
      * @param partialCoverOK   true, to permit shots against targets with partial cover
      * @param immobileCalledShotsOK true, to permit called shots against immobile targets
      * @return                 true, if aimed or called shots should be checked
      */
     protected boolean checkForEnhancedTargeting (Entity shooter,
-                                                 List<Integer> shooterTypeFilter,
                                                  Entity target,
-                                                 List<Integer> targetTypeFilter,
                                                  int cover,
                                                  boolean partialCoverOK,
                                                  boolean immobileCalledShotsOK) {
@@ -1092,33 +1171,15 @@ public class Princess extends BotClient {
             return false;
         }
 
-        // Basic unit type filtering for shooter
-        if (shooterTypeFilter != null && !shooterTypeFilter.isEmpty()) {
-            if (!shooterTypeFilter.contains(shooter.getUnitType())) {
-                return false;
-            }
-        } else {
-            // If no filter was supplied, limit shooters to ground units, VTOLs, and gun
-            // emplacements. Specifically reject ejected vehicle crews and MechWarriors.
-            if (shooter.getUnitType() > UnitType.GUN_EMPLACEMENT ||
-                    shooter instanceof EjectedCrew ||
-                    shooter.getUnitType() == UnitType.NAVAL) {
-                return false;
-            }
+        // Basic unit type filtering for shooter. Ejected crews are considered infantry, so need
+        // to be specifically checked.
+        if (!isValidEnhancedTargetingAttacker(shooter.getUnitType()) ||
+                shooter instanceof EjectedCrew) {
+            return false;
         }
 
-        // Basic unit type filtering for target. Specifically reject types that cannot be
-        // targeted with aimed attacks
-        if (targetTypeFilter != null && !targetTypeFilter.isEmpty()) {
-            if (!targetTypeFilter.contains(target.getUnitType()) ||
-                    target.isInfantry()) {
-                return false;
-            }
-        } else {
-            // If no filter was supplied, limit valid targets to Mechs
-            if (target.getUnitType() != UnitType.MEK) {
-                return false;
-            }
+        if (!isValidEnhancedTargetingTarget(target.getUnitType())) {
+            return false;
         }
 
         boolean useAimedShot = false;
@@ -1639,6 +1700,10 @@ public class Princess extends BotClient {
         }
 
     }
+
+
+
+
 
     /**
      * Gets an entity eligible to fire from a list contained in the fire control state.

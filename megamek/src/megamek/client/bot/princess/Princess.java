@@ -147,7 +147,10 @@ public class Princess extends BotClient {
     // Track entities that fired an AMS manually this round
     private List<Integer> manualAMSIds;
 
-    // Limits types of units Princess will target and attack with enhanced aiming (aimed/called shots)
+    // Master switch to enable/disable use of enhanced targeting system (aimed/called shots)
+    private boolean enableEnhancedTargeting;
+
+    // Limits types of units Princess will target and attack with enhanced targeting
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
 
@@ -181,26 +184,8 @@ public class Princess extends BotClient {
         fireControlState = new FireControlState();
         pathRankerState = new PathRankerState();
 
-        // Set default enhanced targeting target and attacker types
-        enhancedTargetingTargetTypes = new ArrayList<>(Arrays.asList(
-                UnitType.MEK
-        ));
-        enhancedTargetingAttackerTypes = new ArrayList<>(Arrays.asList(
-                UnitType.MEK,
-                UnitType.TANK,
-                UnitType.BATTLE_ARMOR,
-                UnitType.INFANTRY,
-                UnitType.PROTOMEK,
-                UnitType.VTOL,
-                UnitType.GUN_EMPLACEMENT
-        ));
-
-        // Set default as not using called shots against immobile targets
-        useCalledShotsOnImmobileTarget = false;
-
-        // Set default as not allowing enhanced targeting if the target has partial cover.
-        // This prevents all sorts of issues, such as aiming for locations that are covered.
-        allowCoverEnhancedTargeting = false;
+        // Set up enhanced targeting
+        resetEnhancedTargeting(true);
 
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
@@ -732,14 +717,14 @@ public class Princess extends BotClient {
                                     (Entity) primaryFire.getTarget(),
                                     primaryFire.getToHit().getCover())) {
 
-                        Mech mechTarget = (Mech) primaryFire.getTarget();
+                        Entity aimTarget = (Mech) primaryFire.getTarget();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
-                                (!mechTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
+                                (!aimTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
                             isCalledShot = true;
                         }
 
                         // Check for an aimed shot
-                        if (mechTarget.isImmobile() || shooter.hasTargComp()) {
+                        if (aimTarget.isImmobile() || shooter.hasTargComp()) {
                             boolean rearShot = primaryFire.getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
                             // Get the Mech location to aim at. Infantry and BA will go for the head
@@ -750,7 +735,8 @@ public class Princess extends BotClient {
                             // When aiming at a location, don't bother checking for called shots
                             if (aimLocation != Mech.LOC_NONE) {
                                 isCalledShot = false;
-                                locationDestruction = mechTarget.getArmor(aimLocation, rearShot) + mechTarget.getInternal(aimLocation);
+                                // TODO: this should be adjusted to better handle multiple target types
+                                locationDestruction = aimTarget.getArmor(aimLocation, rearShot) + aimTarget.getInternal(aimLocation);
                             }
 
                         }
@@ -1091,7 +1077,47 @@ public class Princess extends BotClient {
 
 
 
+    // Enhanced targeting controls
 
+    public boolean getEnhancedTargetingControl () {
+        return enableEnhancedTargeting;
+    }
+
+    public void setEnableEnhancedTargeting (boolean newSetting) {
+        enableEnhancedTargeting = newSetting;
+    }
+
+    /**
+     * Sets all enhanced targeting controls to default values and optionally enables its use
+     * @param enable  true to immediately enable enhanced targeting features after reset
+     */
+    public void resetEnhancedTargeting (boolean enable) {
+
+        // Toggle enhanced targeting
+        enableEnhancedTargeting = enable;
+
+        // Set default enhanced targeting target and attacker types
+        enhancedTargetingTargetTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK
+        ));
+        enhancedTargetingAttackerTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.BATTLE_ARMOR,
+                UnitType.INFANTRY,
+                UnitType.PROTOMEK,
+                UnitType.VTOL,
+                UnitType.GUN_EMPLACEMENT
+        ));
+
+        // Set default as not using called shots against immobile targets
+        useCalledShotsOnImmobileTarget = false;
+
+        // Set default as not allowing enhanced targeting if the target has partial cover.
+        // This prevents all sorts of issues, such as aiming for locations that are covered.
+        allowCoverEnhancedTargeting = false;
+
+    }
 
     /**
      * Swap out current set of valid enhanced targeting target types for a new set. Automatically
@@ -1192,6 +1218,10 @@ public class Princess extends BotClient {
     protected boolean checkForEnhancedTargeting (Entity shooter,
                                                  Entity target,
                                                  int cover) {
+
+        if (!enableEnhancedTargeting) {
+            return false;
+        }
 
         // Partial cover adds all sorts of complications, don't bother unless enabled
         if (cover != LosEffects.COVER_NONE && !allowCoverEnhancedTargeting) {

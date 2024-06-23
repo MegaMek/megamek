@@ -20,12 +20,15 @@ factions:
       at: [4, 5]
       id: 3
 
-#- name: 1st Air Cavalry, Federated Suns
-#  camo: Federated Suns\Arcadian Cuirassiers\Arcadian Cuirassiers.jpg
-#  units:
+- name: 1st Air Cavalry, Federated Suns
+  camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
+  units:
     - include: Romy's Company.mmu
       at: [8, 9]
       id: 7
+
+    - include: Romy's Company.mmu
+      at: [ 12, 3 ]
 
 
 

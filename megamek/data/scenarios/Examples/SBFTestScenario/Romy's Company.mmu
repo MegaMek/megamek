@@ -4,43 +4,43 @@
 type: SBFFormation
 generalname: Romy's Company
 units:
-- type: SBFUnit
-  generalname: Smither's Lance
-  elements:
-  - type: ASElement
-    fullname: Atlas AS7-D
-    skill: 3
-  - type: ASElement
-    fullname: Awesome AWS-8Q
-    skill: 3
-  - type: ASElement
-    fullname: Crusader CRD-3R
-  - type: ASElement
-    fullname: Centurion CN9-A
-    skill: 5
-- type: SBFUnit
-  generalname: Swyccfer's Lance
-  elements:
-  - type: ASElement
-    fullname: Stinger STG-3R
-    skill: 3
-  - type: ASElement
-    fullname: Stinger STG-3R
-  - type: ASElement
-    fullname: Wasp WSP-1A
-  - type: ASElement
-    fullname: Wasp WSP-1A
-    skill: 5
-- type: SBFUnit
-  generalname: Romy's Lance
-  elements:
-  - type: ASElement
-    fullname: Atlas AS7-D
-    skill: 3
-  - type: ASElement
-    fullname: Awesome AWS-8Q
-    skill: 3
-  - type: ASElement
-    fullname: Orion ON1-K
-  - type: ASElement
-    fullname: Warhammer WHM-6R
+  - type: SBFUnit
+    generalname: Smither's Lance
+    elements:
+    - type: ASElement
+      fullname: Atlas AS7-D
+      skill: 3
+    - type: ASElement
+      fullname: Awesome AWS-8Q
+      skill: 3
+    - type: ASElement
+      fullname: Crusader CRD-3R
+    - type: ASElement
+      fullname: Centurion CN9-A
+      skill: 5
+  - type: SBFUnit
+    generalname: Swyccfer's Lance
+    elements:
+    - type: ASElement
+      fullname: Stinger STG-3R
+      skill: 3
+    - type: ASElement
+      fullname: Stinger STG-3R
+    - type: ASElement
+      fullname: Wasp WSP-1A
+    - type: ASElement
+      fullname: Wasp WSP-1A
+      skill: 5
+  - type: SBFUnit
+    generalname: Romy's Lance
+    elements:
+    - type: ASElement
+      fullname: Atlas AS7-D
+      skill: 3
+    - type: ASElement
+      fullname: Awesome AWS-8Q
+      skill: 3
+    - type: ASElement
+      fullname: Orion ON1-K
+    - type: ASElement
+      fullname: Warhammer WHM-6R

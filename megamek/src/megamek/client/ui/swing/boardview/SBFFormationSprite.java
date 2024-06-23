@@ -77,6 +77,7 @@ class SBFFormationSprite extends Sprite {
             graph.setColor(Color.DARK_GRAY);
         }
         graph.setStroke(new BasicStroke(2));
+        graph.drawImage(owner.getCamouflage().getImage(), 15, 15, 84-30, 72-30, null);
         graph.drawRoundRect(10, 10, 84-20, 72-20, 5, 5);
         graph.setColor(owner.getColour().getColour());
         graph.fillRoundRect(10, 10, 84-20, 72-20, 5, 5);

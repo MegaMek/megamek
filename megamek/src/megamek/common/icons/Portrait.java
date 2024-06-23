@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 
 import java.awt.*;
+import java.io.File;
 import java.io.PrintWriter;
 
 /**
@@ -45,6 +46,19 @@ public class Portrait extends AbstractIcon {
 
     public Portrait(final @Nullable String category, final @Nullable String filename) {
         super(category, filename);
+    }
+
+    /**
+     * Constructs a new portrait with the given file. Even though a file is accepted, this can only be used
+     * for portraits of the directories that are parsed automatically, i.e. the MM-internal portrait dir, the user dir
+     * and the story arcs directory! This method tries to parse the filename to find the portrait. This requires
+     * replacing Windows backslashes with normal slashes in order to find the file in the way portraits are
+     * stored (see {@link megamek.common.util.fileUtils.AbstractDirectory})
+     *
+     * @param file The File, such as a file of "Female/Aerospace Pilot/ASF_F_3.png"
+     */
+    public Portrait(File file) {
+        this(Camouflage.getDirectory(file), file.getName());
     }
     //endregion Constructors
 

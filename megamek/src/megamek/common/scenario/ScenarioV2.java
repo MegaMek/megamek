@@ -27,6 +27,7 @@ import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
+import megamek.common.jacksonadapters.BoardDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -42,8 +43,7 @@ public class ScenarioV2 implements Scenario {
 
     private static final String DEPLOY = "deploy";
     private static final String MAP = "map";
-    private static final String COLUMNS = "columns";
-    private static final String ROWS = "rows";
+    private static final String MAPS = "maps";
     private static final String UNITS = "units";
 
     private final JsonNode node;
@@ -99,7 +99,7 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public IGame createGame() throws IOException, ScenarioLoaderException {
-        LogManager.getLogger().info("Loading scenario from " + scenariofile);
+        LogManager.getLogger().info("Loading scenario from {}", scenariofile);
         IGame game = selectGameType();
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
@@ -119,6 +119,8 @@ public class ScenarioV2 implements Scenario {
             twGame.setVictoryContext(new HashMap<>());
             twGame.createVictoryConditions();
         }
+
+        // TODO: check the game for inconsistencies such as units outside board coordinates
         return game;
     }
 
@@ -153,8 +155,6 @@ public class ScenarioV2 implements Scenario {
                 return new ASGame();
             case SBF:
                 return new SBFGame();
-//            case GAMETYPE_BF:
-//                return new BFGame();
             default:
                 return new Game();
         }
@@ -237,6 +237,8 @@ public class ScenarioV2 implements Scenario {
                     ((SBFGame) game).addUnit(unit);
                 }
             }
+            // TODO: look at unit individual camo and see if it's a file in the scenario directory; the entity parsers
+            // cannot handle this as they don't know it's a scenario
         }
 
         return result;
@@ -247,46 +249,16 @@ public class ScenarioV2 implements Scenario {
     }
 
     private Board createBoard() throws ScenarioLoaderException {
-        if (!node.has(MAP)) {
+        if (!node.has(MAP) && !node.has(MAPS)) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
         }
         JsonNode mapNode = node.get(MAP);
-        // "map: Xyz.board" will directly load that board with no modifiers
-        if (!mapNode.textValue().isBlank()) {
-            return loadBoard(mapNode.textValue());
+        if (mapNode == null) {
+            mapNode = node.get(MAPS);
         }
 
-        //TODO: Board handling - this is incomplete, compare ScenarioV1
-
-        // more complex map setup
-        int mapWidth = 16;
-        int mapHeight = 17;
-        int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
-        int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
-
-        // load available boards
-        // basically copied from Server.java. Should get moved somewhere neutral
-        List<String> boards = new ArrayList<>();
-
-        // Find subdirectories given in the scenario file
-        List<String> allDirs = new LinkedList<>();
-        // "" entry stands for the boards base directory
-        allDirs.add("");
-
-        return null;
-    }
-
-    private Board loadBoard(String fileName) throws ScenarioLoaderException {
-        File boardFile = new File(scenarioDirectory(), fileName);
-        if (!boardFile.exists()) {
-            boardFile = new File(Configuration.boardsDir(), fileName);
-            if (!boardFile.exists()) {
-                throw new ScenarioLoaderException("ScenarioLoaderException.nonexistentBoard", fileName);
-            }
-        }
-        Board result = new Board();
-        result.load(boardFile);
-        return result;
+        //TODO: currently, the first parsed board is used
+        return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
     }
 
     private File scenarioDirectory() {

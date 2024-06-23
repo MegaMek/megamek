@@ -259,6 +259,7 @@ public class Compute {
      * @param list The list of items to select from
      * @return     An element in the list
      * @param <T>  The list type
+     * @throws IllegalArgumentException when the given list is empty
      */
     public static<T> T randomListElement(List<T> list) {
         if (list.isEmpty()) {

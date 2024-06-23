@@ -192,6 +192,47 @@ public class Board implements Serializable {
         infernos = infMap;
         createBldgByCoords();
     }
+
+    /**
+     * Returns a new atmospheric (low altitude) board with no terrain (sky map) of the given
+     * size.
+     *
+     * @param width the width of the board
+     * @param height the height of the board
+     * @return the new board, ready to be used
+     */
+    public static Board getSkyBoard(int width, int height) {
+        Hex[] data = new Hex[width * height];
+        int index = 0;
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                data[index++] = new Hex(0, "sky:1", "", new Coords(w, h));
+            }
+        }
+        Board result = new Board(width, height, data);
+        result.setType(Board.T_ATMOSPHERE);
+        return result;
+    }
+
+    /**
+     * Returns a new space board of the given size.
+     *
+     * @param width the width of the board
+     * @param height the height of the board
+     * @return the new board, ready to be used
+     */
+    public static Board getSpaceBoard(int width, int height) {
+        Hex[] data = new Hex[width * height];
+        int index = 0;
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                data[index++] = new Hex(0, "space:1", "", new Coords(w, h));
+            }
+        }
+        Board result = new Board(width, height, data);
+        result.setType(Board.T_SPACE);
+        return result;
+    }
     //endregion Constructors
 
     /**
@@ -219,7 +260,7 @@ public class Board implements Serializable {
      * @param width the width dimension.
      * @param height the height dimension.
      * @param data new hex data appropriate for the board.
-     * @param errBuff A buffer for storing error messages, if any.  This is allowed to be null.
+     * @param errors A buffer for storing error messages, if any.  This is allowed to be null.
      */
     public void newData(final int width, final int height, final Hex[] data,
                         final @Nullable List<String> errors) {

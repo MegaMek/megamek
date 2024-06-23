@@ -79,6 +79,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5608: Lobby Multiunit Customization (including setting the deployment round) will now work on one's own bot units
 + Fix #5084: Princess and using AMS as a manual weapon
 + PR #5618: Branch for typos and spelling
++ FIX #5613: Renewing Unit Display and Keybinds in Physical Phase
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

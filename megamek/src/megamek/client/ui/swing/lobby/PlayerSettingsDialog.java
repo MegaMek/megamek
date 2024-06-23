@@ -701,6 +701,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
         if (fc.getSelectedFile() != null) {
             String file = fc.getSelectedFile().getAbsolutePath();
+            if (!file.toLowerCase().endsWith(".adf")) {
+                file = file + ".adf";
+            }
             source.writeToADFFilename(file);
         }
     }

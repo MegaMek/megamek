@@ -130,6 +130,11 @@ public interface IClient {
     /** Sends a "this player is done/not done" message to the server. */
     void sendDone(boolean done);
 
+    /**
+     * Broadcasts a general chat message from the local player.
+     */
+    void sendChat(String message);
+
     //region ClientCommands
 
     /** @return The client chat command associated with the given name. */

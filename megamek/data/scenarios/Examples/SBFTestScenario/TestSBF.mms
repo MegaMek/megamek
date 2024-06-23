@@ -20,7 +20,7 @@ factions:
       at: [4, 5]
       id: 3
 
-- name: 1st Air Cavalry, Federated Suns
+- name: OpFor
   camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
   units:
     - include: Romy's Company.mmu

@@ -97,7 +97,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private final JPanel panSecondary = new JPanel();
 
 
-    private ReportDisplay reportDisplay;
+    private SBFReportDisplay reportDisplay;
 
     private StatusBarPhaseDisplay currPhaseDisplay;
 
@@ -221,6 +221,16 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     @Override
+    public void setChatBoxActive(boolean active) {
+
+    }
+
+    @Override
+    public void clearChatBox() {
+
+    }
+
+    @Override
     protected boolean saveGame() {
         //TODO
         return true;
@@ -311,7 +321,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         mainNames.put(phaseName, identifier);
     }
 
-    private void initializeWithBoardView(GamePhase phase, JComponent component, String secondary) {
+    private void initializeWithBoardView(GamePhase phase, StatusBarPhaseDisplay component, String secondary) {
         String identifier = CG_BOARDVIEW;
         String phaseName = String.valueOf(phase);
         component.setName(identifier);
@@ -319,7 +329,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         if (!mainNames.containsValue(identifier)) {
             panMain.add(panTop, identifier);
         }
-//        currPhaseDisplay = component;
+        currPhaseDisplay = component;
         panSecondary.add(component, secondary);
         phaseComponents.put(phaseName, component);
         mainNames.put(phaseName, identifier);
@@ -418,22 +428,11 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                initializeWithBoardView(phase, new JPanel(), CG_PHYSICALDISPLAY);
-
-                secondary = CG_REPORTDISPLAY;
                 if (reportDisplay == null) {
-//                    reportDisply = new JPanel();
-//                    reportDisply = new ReportDisplay(this);
-//                    reportDisply.setName(secondary);
+                    reportDisplay = new SBFReportDisplay(this);
+                    reportDisplay.setName(CG_REPORTDISPLAY);
                 }
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = reportDisplay;
-                component = reportDisplay;
-//                if (!secondaryNames.containsValue(secondary)) {
-//                    panSecondary.add(reportDisply, secondary);
-//                }
+                initializeWithBoardView(phase, reportDisplay, CG_REPORTDISPLAY);
                 break;
             default:
                 component = new WaitingForServerPanel();

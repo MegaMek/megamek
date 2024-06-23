@@ -2522,6 +2522,24 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return menuBar;
     }
 
+    @Override
+    public void setChatBoxActive(boolean active) {
+        bv.setChatterBoxActive(active);
+    }
+
+    @Override
+    public void clearChatBox() {
+        if (cb2 != null) {
+            cb2.clearMessage();
+            setChatBoxActive(false);
+        }
+    }
+
+    @Override
+    public boolean isChatBoxActive() {
+        return bv.getChatterBoxActive();
+    }
+
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
     }

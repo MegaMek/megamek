@@ -191,9 +191,7 @@ public abstract class AbstractClient implements IClient {
         send(new Packet(PacketCommand.PLAYER_UPDATE, getGame().getPlayer(localPlayerNumber)));
     }
 
-    /**
-     * Broadcast a general chat message from the local player
-     */
+    @Override
     public void sendChat(String message) {
         send(new Packet(PacketCommand.CHAT, message));
         flushConn();

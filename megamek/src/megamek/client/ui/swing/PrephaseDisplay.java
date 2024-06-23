@@ -117,12 +117,15 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     private final GamePhase phase;
 
+    protected final ClientGUI clientgui;
+
     /**
      * Creates and lays out a new Prefiring or PreMovement phase display for the specified
      * clientgui.getClient().
      */
     public PrephaseDisplay(final ClientGUI clientgui, GamePhase phase) {
         super(clientgui);
+        this.clientgui = clientgui;
         this.phase = phase;
 
         setupStatusBar(Messages.getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));

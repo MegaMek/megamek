@@ -55,7 +55,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
-    protected final ClientGUI clientgui;
+    protected final IClientGUI clientgui;
 
     /**
      * timer that ends turn if time limit set in options is over
@@ -100,7 +100,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
 
-    protected StatusBarPhaseDisplay(ClientGUI cg) {
+    protected StatusBarPhaseDisplay(IClientGUI cg) {
         super(cg);
         clientgui = cg;
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
@@ -110,9 +110,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getBoardView().getChatterBoxActive()) {
-                    clientgui.getBoardView().setChatterBoxActive(false);
-                    clientgui.cb2.clearMessage();
+                if (clientgui.isChatBoxActive()) {
+                    clientgui.clearChatBox();
                 } else if (clientgui.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
                     // Users can draw movement envelope during the movement phase
                     // even if it's not their turn, so we always want to be able
@@ -245,7 +244,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         donePanel.add(item, GBC.eol().fill(GridBagConstraints.BOTH).weighty(1));
     }
 
-    /** Clears the actions of this phase. */
+    /**
+     * Clears the actions of this phase. Called usually when the ESC key is pressed.
+     */
     public abstract void clear();
 
     /** Sets up the status bar. It usually displays info on the current phase and if it's the local player's turn. */
@@ -282,7 +283,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     @Override
     public boolean shouldReceiveKeyCommands() {
         return clientgui.getClient().isMyTurn()
-                && !clientgui.getBoardView().getChatterBoxActive()
+                && !clientgui.isChatBoxActive()
                 && !isIgnoringEvents() && isVisible();
     }
 
@@ -314,10 +315,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     public String getRemainingPlayerWithTurns() {
         String result = "";
         int playerCountToShow = GUIP.getPlayersRemainingToShow();
-        Game game = clientgui.getClient().getGame();
+        IGame game = clientgui.getClient().getGame();
         List<String> nextPlayerNames = new ArrayList<>();
         int turnIndex = game.getTurnIndex();
-        List<GameTurn> gameTurns = game.getTurnsList();
+        List<? extends PlayerTurn> gameTurns = game.getTurnsList();
         for (int i = turnIndex + 1; (i < gameTurns.size()) && (nextPlayerNames.size() < playerCountToShow); i++) {
             nextPlayerNames.add(game.getPlayer(gameTurns.get(i).playerId()).getName());
         }

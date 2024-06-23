@@ -13,7 +13,7 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
@@ -46,7 +46,7 @@ public class TurnTimer {
     private boolean extendTimer;
     private boolean expired;
 
-    public TurnTimer(int limit, AbstractPhaseDisplay pD, Client client) {
+    public TurnTimer(int limit, AbstractPhaseDisplay pD, IClient client) {
         phaseDisplay = pD;
         // linit in seconds.
         timeLimit = limit;
@@ -132,7 +132,7 @@ public class TurnTimer {
         return expired;
     }
 
-    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
+    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, IClient client) {
         // check if there should be a turn timer running
         GameOptions options = client.getGame().getOptions();
         GamePhase phase = client.getGame().getPhase();

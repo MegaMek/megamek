@@ -198,7 +198,7 @@ class SBFFormationSprite extends Sprite {
         hexOrigin = bounds.getLocation();
         Point ePos;
 //        if (secondaryPos == -1) {
-            ePos = bv.getHexLocation(formation.getPosition());
+            ePos = bv.getHexLocation(formation.getPosition().getCoords());
 //        } else {
 //            ePos = bv.getHexLocation(formation.getSecondaryPositions().get(secondaryPos));
 //        }

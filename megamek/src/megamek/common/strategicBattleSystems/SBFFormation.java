@@ -24,10 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.util.StringDrawer;
-import megamek.common.Deployable;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
@@ -81,6 +78,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     private boolean isDeployed = false;
     private int deployRound = 0;
+    private BoardLocation position = new BoardLocation(new Coords(5, 4), 0);
 
     private BufferedImage iconImage;
 
@@ -461,5 +459,9 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
             new StringDrawer(type.toString()).at(42, 36).absoluteCenter().color(Color.DARK_GRAY).draw(graphics);
         }
         return iconImage;
+    }
+
+    public BoardLocation getPosition() {
+        return position;
     }
 }

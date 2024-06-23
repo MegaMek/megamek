@@ -32,10 +32,14 @@ import java.awt.*;
  */
 class SBFFormationSprite extends Sprite {
 
+    private static final int INSET = 10;
+
     private final SBFFormation formation;
     private final Player owner;
 
-    private Rectangle entityRect;
+    /** The area actually covered by the icon */
+    private Rectangle hitBox;
+
     /** Used to color the label when this unit is selected for movement etc. */
     private boolean isSelected;
 
@@ -52,9 +56,8 @@ class SBFFormationSprite extends Sprite {
         Point ePos = bv.getHexLocation(formation.getPosition().getCoords());
         bounds.setLocation(ePos.x, ePos.y);
 
-        entityRect = new Rectangle(bounds.x + (int) (20 * bv.scale), bounds.y
-                + (int) (14 * bv.scale), (int) (44 * bv.scale),
-                (int) (44 * bv.scale));
+        hitBox = new Rectangle(bounds.x + INSET, bounds.y + INSET,
+                bounds.width - 2 * INSET, bounds.height - 2 * INSET);
 
         return bounds;
     }
@@ -77,17 +80,20 @@ class SBFFormationSprite extends Sprite {
             graph.setColor(Color.DARK_GRAY);
         }
         graph.setStroke(new BasicStroke(2));
-        graph.drawImage(owner.getCamouflage().getImage(), 15, 15, 84-30, 72-30, null);
-        graph.drawRoundRect(10, 10, 84-20, 72-20, 5, 5);
+        graph.drawImage(owner.getCamouflage().getImage(), INSET + INSET / 2, INSET + INSET / 2,
+                84 - 3 * INSET, 72 - 3 * INSET, null);
+        graph.drawRoundRect(INSET, INSET, 84 - 2 * INSET, 72 - 2 * INSET,
+                INSET / 2, INSET / 2);
         graph.setColor(owner.getColour().getColour());
-        graph.fillRoundRect(10, 10, 84-20, 72-20, 5, 5);
+        graph.fillRoundRect(INSET, INSET, 84 - 2 * INSET, 72 - 2 * INSET,
+                INSET / 2, INSET / 2);
         new StringDrawer(formation.getType().toString()).at(42, 36).absoluteCenter().color(Color.DARK_GRAY).draw(graph);
         graph.dispose();
     }
 
     @Override
     public boolean isInside(Point point) {
-        return entityRect.contains(point.x, point.y);
+        return hitBox.contains(point.x, point.y);
     }
 
     /** Marks the entity as selected for movement etc., recoloring the label */
@@ -101,5 +107,9 @@ class SBFFormationSprite extends Sprite {
     /** Returns if the entity is marked as selected for movement etc., recoloring the label */
     public boolean getSelected() {
         return isSelected;
+    }
+
+    public SBFFormation getFormation() {
+        return formation;
     }
 }

@@ -19,19 +19,12 @@
 
 package megamek.client.ui.swing.boardview;
 
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.Game;
-import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +58,8 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
 
         for (SBFFormation formation : formations) {
             tooltip.append(formation.toString());
+            tooltip.append("\n");
+            formation.getUnits().forEach(unit -> tooltip.append(unit.toString()).append("\n"));
         }
         return tooltip.toString();
     }

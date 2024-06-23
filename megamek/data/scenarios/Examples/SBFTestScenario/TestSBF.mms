@@ -27,7 +27,7 @@ factions:
       at: [8, 9]
       id: 7
 
-    - include: Romy's Company.mmu
+    - include: "Example SBF Formation.mmu"
       at: [ 12, 3 ]
 
 

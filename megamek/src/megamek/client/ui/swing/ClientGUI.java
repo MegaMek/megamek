@@ -57,6 +57,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
@@ -2915,6 +2916,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     unitDisplay.wPan.getSelectedWeaponNum(), getDisplayedUnit());
             return Optional.empty();
         }
+    }
+
+    public Optional<AmmoMounted> getDisplayedAmmo() {
+        return Optional.ofNullable(unitDisplay.wPan.getSelectedAmmo());
     }
 
     @Override

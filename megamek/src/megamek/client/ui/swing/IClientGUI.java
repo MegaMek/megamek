@@ -52,4 +52,8 @@ public interface IClientGUI {
     IClient getClient();
 
     JComponent turnTimerComponent();
+
+    default boolean isChatBoxActive() {
+        return false;
+    }
 }

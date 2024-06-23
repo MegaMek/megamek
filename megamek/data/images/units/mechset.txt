@@ -5827,7 +5827,12 @@ exact "Wotan C-UK" "mechs/Wotan_C.png"
 exact "Wotan D-UK" "mechs/Wotan_D.png"
 #WRAITH
 chassis "Wraith" "mechs/Wraith.png"
-exact "Wraith TR2-X 'Alexander'" "mechs/Wraith_TR2X.png"
+exact "Wraith TR2-X 'Alexander'" "mechs/Wraith_2X.png"
+exact "Wraith TR2-P 'Pocahontas'" "mechs/Wraith_2P.png"
+exact "'Wing' Wraith TR4" "mechs/Wraith_2X.png"
+exact "'Wing' Wraith TR4-X" "mechs/Wraith_2X.png"
+exact "'Wing' Wraith TR6" "mechs/Wraith_2X.png"
+exact "'Wing' Wraith TR7" "mechs/Wraith_2X.png"
 #WULFEN
 chassis "Wulfen" "mechs/Wulfen.png"
 exact "Wulfen A" "mechs/Wulfen_A.png"

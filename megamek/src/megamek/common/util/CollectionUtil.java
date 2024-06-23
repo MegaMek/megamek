@@ -38,8 +38,8 @@ public final class CollectionUtil {
     }
     
     /** 
-     * Returns a random element of the collection or the element if it has only one.
-     * Throws a NoSuchElement exception if it is empty.
+     * @return One element (not randomly chosen) of the collection or the element if it has only one.
+     * @throws java.util.NoSuchElementException if the collection is empty.
      */
     public static <T> T anyOneElement(Collection<T> collection) {
         return collection.stream().findFirst().orElseThrow();

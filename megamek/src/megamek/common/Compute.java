@@ -2845,6 +2845,10 @@ public class Compute {
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
                                && (entityTarget.getElevation() < hex.getLevel());
+        boolean isAboveStructures = (entityTarget != null) && 
+                ((entityTarget.relHeight() > hex.ceiling()) || 
+                        entityTarget.isAirborne());
+                
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -2910,7 +2914,7 @@ public class Compute {
             }
         }
 
-        if (hex.containsTerrain(Terrains.INDUSTRIAL)) {
+        if (!isAboveStructures && hex.containsTerrain(Terrains.INDUSTRIAL)) {
             toHit.addModifier(+1, "target in heavy industrial zone");
         }
         // space screens; bonus depends on number (level)

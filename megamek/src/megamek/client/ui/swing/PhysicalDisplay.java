@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
@@ -127,6 +128,20 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setButtonsTooltips();
 
         setupButtonPanel();
+
+        MegaMekController controller = clientgui.controller;
+
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
+                () -> selectEntity(clientgui.getClient().getNextEntityNum(currentEntity)));
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
+                () -> selectEntity(clientgui.getClient().getPrevEntityNum(currentEntity)));
+        controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
+    }
+
+    protected boolean shouldPerformClearKeyCommand() {
+        return !clientgui.getBoardView().getChatterBoxActive()
+                && !isIgnoringEvents()
+                && isVisible();
     }
 
     @Override
@@ -350,9 +365,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         return false;
     }
 
-    /**
-     * Called when the current entity is done with physical attacks.
-     */
     @Override
     public void ready() {
         if (checkNags()) {
@@ -1643,9 +1655,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

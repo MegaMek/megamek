@@ -206,11 +206,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         setupButtonPanel();
 
-        clientgui.getBoardView().getPanel().addKeyListener(this);
-
         // mech display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
-        clientgui.getUnitDisplay().wPan.weaponList.addKeyListener(this);
 
         ash = new AimedShotHandler(this);
 
@@ -793,10 +790,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         return false;
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
     @Override
     public void ready() {
         if (checkNags()) {
@@ -2138,9 +2131,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

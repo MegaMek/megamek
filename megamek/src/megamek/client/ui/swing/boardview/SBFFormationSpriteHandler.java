@@ -35,7 +35,7 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
         clear();
         game.getInGameObjects().stream()
                 .filter(SBFFormation.class::isInstance)
-                .map(f -> new SBFFormationSprite(boardView, (SBFFormation) f))
+                .map(f -> new SBFFormationSprite(boardView, (SBFFormation) f, game.getPlayer(f.getOwnerId())))
                 .forEach(currentSprites::add);
         boardView.addSprites(currentSprites);
     }

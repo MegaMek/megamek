@@ -13,18 +13,18 @@ planetaryconditions:
 
 factions:
 - name: Legion of Vega
-  deploy: N
   camo: Clans/Wolf/Alpha Galaxy/Alpha Galaxy.jpg
 
   units:
     - include: Noble's Company.mmu
+      at: [4, 5]
       id: 3
 
-- name: 1st Air Cavalry, Federated Suns
-  deploy: "S"
-  camo: Federated Suns\Arcadian Cuirassiers\Arcadian Cuirassiers.jpg
-  units:
+#- name: 1st Air Cavalry, Federated Suns
+#  camo: Federated Suns\Arcadian Cuirassiers\Arcadian Cuirassiers.jpg
+#  units:
     - include: Romy's Company.mmu
+      at: [8, 9]
       id: 7
 
 

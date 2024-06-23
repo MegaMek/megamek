@@ -165,6 +165,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         try {
             client.getGame().addGameListener(gameListener);
             bv = new BoardView(bvGame, MegaMekGUI.getKeyDispatcher(), null);
+            bv.setTooltipProvider(new SBFBoardViewTooltip(client.getGame(), bv));
             boardViews.put(0, bv);
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));

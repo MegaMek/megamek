@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
@@ -33,8 +32,6 @@ import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFFormationDeserializer;
 import megamek.common.jacksonadapters.SBFFormationSerializer;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +39,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.common.strategicBattleSystems.SBFElementType.AS;
-import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
@@ -78,9 +73,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     private boolean isDeployed = false;
     private int deployRound = 0;
-    private BoardLocation position = new BoardLocation(new Coords(5, 4), 0);
-
-    private BufferedImage iconImage;
+    private BoardLocation position;
 
     public String getName() {
         return name;
@@ -278,7 +271,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      */
     @Override
     public boolean isAerospace() {
-        return isAnyTypeOf(AS, LA);
+        return isAnyTypeOf(SBFElementType.AS, SBFElementType.LA);
     }
 
     /**
@@ -449,19 +442,11 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return id;
     }
 
-    @Override
-    public Image getIcon() {
-        if (iconImage == null) {
-            iconImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics = iconImage.createGraphics();
-            graphics.setColor(Color.WHITE);
-            graphics.fillRect(0, 0, 84, 72);
-            new StringDrawer(type.toString()).at(42, 36).absoluteCenter().color(Color.DARK_GRAY).draw(graphics);
-        }
-        return iconImage;
-    }
-
     public BoardLocation getPosition() {
         return position;
+    }
+
+    public void setPosition(BoardLocation boardLocation) {
+        position = boardLocation;
     }
 }

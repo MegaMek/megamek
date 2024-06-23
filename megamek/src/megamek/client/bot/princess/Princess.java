@@ -53,7 +53,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Princess extends BotClient {
     private static final char PLUS = '+';
@@ -152,6 +151,9 @@ public class Princess extends BotClient {
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
 
+    // Controls whether Princess will use called shots on immobile targets
+    private boolean useCalledShotsOnImmobileTarget;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -189,6 +191,9 @@ public class Princess extends BotClient {
                 UnitType.VTOL,
                 UnitType.GUN_EMPLACEMENT
         ));
+
+        // Set default as not using called shots against immobile targets
+        useCalledShotsOnImmobileTarget = false;
 
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
@@ -701,7 +706,6 @@ public class Princess extends BotClient {
                     // rule to adjust the hit table to something more favorable.
 
                     boolean isCalledShot = false;
-                    boolean immobileCalledShotsOK = false;
                     int locationDestruction = Integer.MAX_VALUE;
                     int aimLocation = Mech.LOC_NONE;
                     int calledShotDirection = CalledShot.CALLED_NONE;
@@ -720,12 +724,11 @@ public class Princess extends BotClient {
                             checkForEnhancedTargeting(shooter,
                                     (Entity) primaryFire.getTarget(),
                                     primaryFire.getToHit().getCover(),
-                                    false,
-                                    immobileCalledShotsOK)) {
+                                    false)) {
 
                         Mech mechTarget = (Mech) primaryFire.getTarget();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
-                                (!mechTarget.isImmobile() || immobileCalledShotsOK)) {
+                                (!mechTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
                             isCalledShot = true;
                         }
 
@@ -1149,6 +1152,14 @@ public class Princess extends BotClient {
         }
     }
 
+    public boolean getAllowCalledShotsOnImmobile () {
+        return useCalledShotsOnImmobileTarget;
+    }
+
+    public void setAllowCalledShotsOnImmobile(boolean newSetting) {
+        useCalledShotsOnImmobileTarget = newSetting;
+    }
+
     /**
      * Determine if a shooter should consider using enhanced targeting - aimed or called shots -
      * against a given target. This includes some basic filtering for unit types and equipment such
@@ -1157,14 +1168,12 @@ public class Princess extends BotClient {
      * @param target           Entity being shot at
      * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
      * @param partialCoverOK   true, to permit shots against targets with partial cover
-     * @param immobileCalledShotsOK true, to permit called shots against immobile targets
      * @return                 true, if aimed or called shots should be checked
      */
     protected boolean checkForEnhancedTargeting (Entity shooter,
                                                  Entity target,
                                                  int cover,
-                                                 boolean partialCoverOK,
-                                                 boolean immobileCalledShotsOK) {
+                                                 boolean partialCoverOK) {
 
         // Partial cover adds all sorts of complications, don't bother unless enabled
         if (cover != LosEffects.COVER_NONE && !partialCoverOK) {
@@ -1206,7 +1215,7 @@ public class Princess extends BotClient {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
             // Called shots against immobile targets can be a little too effective, so only use
             // when enabled
-            if (!target.isImmobile() || immobileCalledShotsOK) {
+            if (!target.isImmobile() || useCalledShotsOnImmobileTarget) {
                 useCalledShot = true;
             }
         }

@@ -719,7 +719,7 @@ public class Princess extends BotClient {
 
                             // Get the Mech location to aim at. Infantry and BA will go for the head
                             // if the odds are good.
-                            aimLocation = calculateAimedShotLocation(mechTarget,
+                            aimLocation = getAimedShotLocation(primaryFire.getTarget(),
                                     plan, rearShot, shooter.isInfantry());
 
                             // When aiming at a location, don't bother checking for called shots
@@ -732,7 +732,7 @@ public class Princess extends BotClient {
 
                         if (isCalledShot) {
 
-                            calledShotDirection = calculateCalledShotDirection(mechTarget,
+                            calledShotDirection = getCalledShotDirection(primaryFire.getTarget(),
                                     primaryFire.getToHit().getSideTable(),
                                     plan);
 
@@ -1154,29 +1154,43 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Determine which location to aim for on a Mech. Prioritizes torsos and legs, and ignores
-     * destroyed locations. Prefers right to left, given that most non-symmetrical Mechs are
-     * 'right-handed'.
-     * @param target        Mech being shot at
-     * @param planOfAttack  Proposed attacks against {@code target} parameter
-     * @param rearAttack    true if attacking from the rear arc
-     * @param includeHead   true to include the head as a valid location
-     * @return              {@link Mech} constant for location to shoot, or {@code Mech.LOC_NONE}
-     *                      for none
+     * Determine which location to aim for on a general target. Returned location constant is
+     * relative to the provided target type.
+     * Currently only supports aimed shots against Mechs.
+     * @param target        Entity being shot at
+     * @param planOfAttack  Proposed attacks against {@code target}
+     * @param rearAttack    true if attacking from rear arc
+     * @param includeHead   true if the head is a valid location, ignored for non-Mech targets
+     * @return              location constant to aim for, with the {2code LOC_NONE} constant
+     *                      indicating no suitable location
      */
-    protected int calculateAimedShotLocation (Mech target,
-                                              FiringPlan planOfAttack,
-                                              boolean rearAttack,
-                                              boolean includeHead) {
-        int aimLocation = Mech.LOC_NONE;
+    protected int getAimedShotLocation (Targetable target,
+                                        FiringPlan planOfAttack,
+                                        boolean rearAttack,
+                                        boolean includeHead) {
 
-        // If none of the weapons being fired can be aimed, don't bother finding the best location
-        if (planOfAttack == null) {
+        int aimLocation = Entity.LOC_NONE;
+        if (planOfAttack == null || target == null) {
+            return aimLocation;
+        }
+
+        // Only check attacks if the target has locations that can be aimed for, which can be
+        // aimed, and are against the designated target
+        List<Integer> validAimTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.VTOL,
+                UnitType.CONV_FIGHTER,
+                UnitType.AEROSPACEFIGHTER
+        ));
+
+        if (!validAimTypes.contains(((Entity) target).getUnitType())) {
             return aimLocation;
         }
 
         List<WeaponFireInfo> workingShots = planOfAttack.
                 stream().
+                filter(curShot -> curShot.getTarget().getId() == target.getId()).
                 filter(curShot ->
                 Compute.allowAimedShotWith(curShot.getWeapon(),
                         target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)).
@@ -1186,11 +1200,102 @@ public class Princess extends BotClient {
             return aimLocation;
         }
 
-        WeaponFireInfo primaryFire = workingShots.get(0);
+        // Each type of unit requires its own checking process due to unique locations.
+        // TODO: placeholders are used for non-Mech targets. Create appropriate methods for each.
+        switch (((Entity) target).getUnitType()) {
+            case UnitType.MEK:
+                aimLocation = calculateAimedShotLocation(
+                        (Mech) target,
+                        workingShots,
+                        rearAttack,
+                        includeHead
+                );
+                break;
+            case UnitType.TANK:
+            case UnitType.VTOL:
+            case UnitType.NAVAL:
+                aimLocation = Entity.LOC_NONE;
+                break;
+            case UnitType.CONV_FIGHTER:
+            case UnitType.AEROSPACEFIGHTER:
+                aimLocation = Entity.LOC_NONE;
+                break;
+            default:
+                break;
+        }
+
+        return aimLocation;
+    }
+
+    /**
+     * Determine which direction to make a called shot - left, right, high, or low. Some target
+     * types only support calling shots left or right.
+     * Currently only supports called shots against Mechs.
+     * @param target       Entity being shot at
+     * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
+     *                     to target
+     * @param planOfAttack Proposed attacks against {@code target}
+     * @return             {@link CalledShot} constant indicating which direction to call, may
+     *                     return {@code CalledShot.CALLED_NONE}.
+     */
+    protected int getCalledShotDirection (Targetable target,
+                                          int attackSide,
+                                          FiringPlan planOfAttack) {
+        int calledShotDirection = CalledShot.CALLED_NONE;
+        if (planOfAttack == null || target == null) {
+            return calledShotDirection;
+        }
+
+        WeaponFireInfo primaryFire = planOfAttack.get(0);
         if (primaryFire == null) {
+            return calledShotDirection;
+        }
+
+        // Limit the weapons fire to those against the designated target and which have a
+        // reasonable to-hit number
+        int maximumToHit = calcEnhancedTargetingMaxTN(false);
+        List<WeaponFireInfo> workingShots = planOfAttack.
+                stream().
+                filter(curShot -> curShot.getTarget().getId() == target.getId()).
+                filter(curShot -> curShot.getToHit().getValue() + CALLED_SHOT_MODIFIER <= maximumToHit).
+                collect(Collectors.toList());
+
+        if (workingShots.isEmpty()) {
+            return calledShotDirection;
+        }
+
+        if (target instanceof Mech) {
+            calledShotDirection = calculateCalledShotDirection((Mech) target, attackSide, workingShots);
+        } else {
+            // TODO: placeholder for non-Mech targets. Create appropriate methods for each.
+            calledShotDirection = CalledShot.CALLED_NONE;
+        }
+
+        return calledShotDirection;
+    }
+
+    /**
+     * Determine which location to aim for on a Mech. Prioritizes torsos and legs, and ignores
+     * destroyed locations. Prefers right to left, given that most non-symmetrical Mechs are
+     * 'right-handed'.
+     * @param target        Mech being shot at
+     * @param planOfAttack  Proposed attacks against {@code target}
+     * @param rearAttack    true if attacking from the rear arc
+     * @param includeHead   true to include the head as a valid location
+     * @return              {@link Mech} constant for location to shoot, or {@code Mech.LOC_NONE}
+     *                      for none
+     */
+    protected int calculateAimedShotLocation (Mech target,
+                                              List<WeaponFireInfo> aimedShots,
+                                              boolean rearAttack,
+                                              boolean includeHead) {
+        int aimLocation = Mech.LOC_NONE;
+
+        if (aimedShots == null || target == null) {
             return aimLocation;
         }
 
+        WeaponFireInfo primaryFire = aimedShots.get(0);
         int lowestArmor = Integer.MAX_VALUE;
         List<Integer> rankedLocations = new ArrayList<>();
 
@@ -1203,7 +1308,7 @@ public class Princess extends BotClient {
                 !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
             aimLocation = Mech.LOC_HEAD;
             int headshotMaxTN = calcEnhancedTargetingMaxTN(false);
-            if (workingShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
+            if (aimedShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
                     IMMOBILE_HEADSHOT_MODIFIER > headshotMaxTN)) {
                 aimLocation = Mech.LOC_NONE;
             } else {
@@ -1305,7 +1410,7 @@ public class Princess extends BotClient {
             int penetratorCount = 0;
             double totalDamage = 0;
             int maximumToHit = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mech.LOC_HEAD);
-            for (WeaponFireInfo curFire : workingShots) {
+            for (WeaponFireInfo curFire : aimedShots) {
                 if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ?
                         IMMOBILE_HEADSHOT_MODIFIER : AIMED_SHOT_MODIFIER) <= (maximumToHit + offset)) {
 
@@ -1330,9 +1435,9 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Determine which direction to make a called shot - left, right, high, or low. Shots into a
-     * side arc will be called to become rear shots. Shots to the front or rear will call high or
-     * low based on how many locations have minimal armor.
+     * Determine which direction to make a called shot against a Mech - left, right, high, or low.
+     * Shots into a side arc will be called to become rear shots. Shots to the front or rear will
+     * call high or low based on how many locations have minimal armor.
      * @param target       Mech being shot at
      * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
      *                     to target
@@ -1342,28 +1447,16 @@ public class Princess extends BotClient {
      */
     protected int calculateCalledShotDirection (Mech target,
                                                 int attackSide,
-                                                FiringPlan planOfAttack) {
+                                                List<WeaponFireInfo> calledShots) {
         int calledShotDirection = CalledShot.CALLED_NONE;
-        if (planOfAttack == null ||
-                planOfAttack.isEmpty() ||
-                planOfAttack.get(0) == null) {
-            return calledShotDirection;
-        }
-        WeaponFireInfo primaryFire = planOfAttack.get(0);
-        if (primaryFire == null) {
+
+        if (calledShots == null ||
+                calledShots.isEmpty() ||
+                calledShots.get(0) == null) {
             return calledShotDirection;
         }
 
-        // Set
-        int maximumToHit = calcEnhancedTargetingMaxTN(false);
-        List<WeaponFireInfo> workingShots = planOfAttack.
-                stream().
-                filter(wf -> wf.getToHit().getValue() + CALLED_SHOT_MODIFIER <= maximumToHit).
-                collect(Collectors.toList());
-
-        if (workingShots.isEmpty()) {
-            return calledShotDirection;
-        }
+        WeaponFireInfo primaryFire = calledShots.get(0);
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
         if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REARLEFT) {
@@ -1406,7 +1499,7 @@ public class Princess extends BotClient {
             int armorThreshold;
             Entity shooter = primaryFire.getShooter();
             if (!shooter.isInfantry()) {
-                OptionalDouble averageDamage = workingShots.stream().mapToDouble(WeaponFireInfo::getMaxDamage).average();
+                OptionalDouble averageDamage = calledShots.stream().mapToDouble(WeaponFireInfo::getMaxDamage).average();
                 if (averageDamage.isPresent()) {
                     armorThreshold = (int) Math.floor(averageDamage.getAsDouble());
                 } else {

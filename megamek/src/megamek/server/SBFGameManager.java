@@ -27,6 +27,7 @@ import megamek.server.commands.ServerCommand;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class manages an SBF game on the server side. As of 2024, this is under construction.
@@ -39,6 +40,14 @@ public final class SBFGameManager extends AbstractGameManager {
     private final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
 
     @Override
+    public void handlePacket(int connId, Packet packet) {
+        super.handlePacket(connId, packet);
+        final Player player = game.getPlayer(connId);
+
+        // Nothing here yet
+        LogManager.getLogger().info("Leaving handle packet");
+    }
+
     public SBFGame getGame() {
         return game;
     }
@@ -89,8 +98,9 @@ public final class SBFGameManager extends AbstractGameManager {
      */
     private Packet createGameStartUnitPacket(Player recipient) {
         return new Packet(PacketCommand.SENDING_ENTITIES,
-                filterEntities(recipient, getGame().getInGameObjects(), null),
+                getVisibleUnits(recipient),
                 getGame().getGraveyard(),
+                //TODO: must add Sensor blips of all kinds as a separate list of stuff
                 getGame().getForces());
     }
 
@@ -149,16 +159,19 @@ public final class SBFGameManager extends AbstractGameManager {
 
     @Override
     protected void endCurrentPhase() {
+        LogManager.getLogger().info("Ending phase {}", game.getPhase());
         phaseEndManager.managePhase();
     }
 
     @Override
     protected void prepareForCurrentPhase() {
+        LogManager.getLogger().info("Preparing phase {}", game.getPhase());
         phasePreparationManager.managePhase();
     }
 
     @Override
     protected void executeCurrentPhase() {
+        LogManager.getLogger().info("Executing phase {}", game.getPhase());
         switch (game.getPhase()) {
             case EXCHANGE:
                 resetPlayersDone();
@@ -314,107 +327,21 @@ public final class SBFGameManager extends AbstractGameManager {
 //        }
     }
 
-    /**
-     * Filters an entity vector according to LOS
-     * this is currently a copy of GameManager's method. Will require some rework
-     */
-    private List<InGameObject> filterEntities(Player viewer,
-                                        List<InGameObject> activeUnits,
-                                        Map<UnitTargetPair, LosEffects> losCache) {
-        if (losCache == null) {
-            losCache = new HashMap<>();
+
+    private List<InGameObject> getVisibleUnits(Player viewer) {
+        if (isDoubleBlind()) {
+            return game.getInGameObjects().stream()
+                    .filter(unit -> game.isVisible(viewer.getId(), unit.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return game.getInGameObjects();
         }
-        List<InGameObject> visibleUnits = new Vector<>();
-        List<InGameObject> myUnits = new ArrayList<>(activeUnits);
-        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
-
-        // If they can see all, return the input list
-        if (viewer.canIgnoreDoubleBlind()) {
-            return activeUnits;
-        }
-
-        return activeUnits;
-//        List<ECMInfo> allECMInfo = null;
-//        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-//            allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
-//        }
-
-        // If they're an observer, they can see anything seen by any enemy.
-//        if (viewer.isObserver()) {
-//            myUnits.addAll(activeUnits);
-//            for (InGameObject a : myUnits) {
-//                for (InGameObject b : myUnits) {
-//                    if (a.isEnemyOf(b)
-//                            && Compute.canSee(game, b, a, true, null, allECMInfo)) {
-//                        addVisibleEntity(visibleUnits, a);
-//                        break;
-//                    }
-//                }
-//            }
-//            return visibleUnits;
-//        }
-//
-//        // If they aren't an observer and can't see all, create the list of
-//        // "friendly" units.
-//        for (InGameObject e : activeUnits) {
-//            if ((e.getOwner() == viewer) || (bTeamVision && !e.getOwner().isEnemyOf(viewer))) {
-//                myUnits.addElement(e);
-//            }
-//        }
-//
-//        // Then, break down the list by whether they're friendly,
-//        // or whether or not any friendly unit can see them.
-//        for (InGameObject e : activeUnits) {
-//            // If it's their own unit, obviously, they can see it.
-//            if (myUnits.contains(e)) {
-//                addVisibleEntity(visibleUnits, e);
-//                continue;
-//            } else if (e.isHidden()) {
-//                // If it's NOT friendly and is hidden, they can't see it, period.
-//                // LOS doesn't matter.
-//                continue;
-//            } else if (e.isOffBoardObserved(viewer.getTeam())) {
-//                // if it's hostile and has been observed for counter-battery fire, we can "see" it
-//                addVisibleEntity(visibleUnits, e);
-//                continue;
-//            }
-//
-//            for (InGameObject spotter : myUnits) {
-//
-//                // If they're off-board, skip it; they can't see anything.
-//                if (spotter.isOffBoard()) {
-//                    continue;
-//                }
-//
-//                // See if the LosEffects is cached, and if not cache it
-//                UnitTargetPair etp = new UnitTargetPair(spotter, e);
-//                LosEffects los = losCache.get(etp);
-//                if (los == null) {
-//                    los = LosEffects.calculateLOS(game, spotter, e);
-//                    losCache.put(etp, los);
-//                }
-//                // Otherwise, if they can see the entity in question
-//                if (Compute.canSee(game, spotter, e, true, los, allECMInfo)) {
-//                    addVisibleEntity(visibleUnits, e);
-//                    break;
-//                }
-//
-//                // If this unit has ECM, players with units affected by the ECM
-//                //  will need to know about this entity, even if they can't see
-//                //  it.  Otherwise, the client can't properly report things
-//                //  like to-hits.
-//                if ((e.getECMRange() > 0) && (e.getPosition() != null) &&
-//                        (spotter.getPosition() != null)) {
-//                    int ecmRange = e.getECMRange();
-//                    Coords pos = e.getPosition();
-//                    if (pos.distance(spotter.getPosition()) <= ecmRange) {
-//                        addVisibleEntity(visibleUnits, e);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return visibleUnits;
     }
 
+    /**
+     * @return True when this game is using double blind rules (IO BF p.195)
+     */
+    private boolean isDoubleBlind() {
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+    }
 }

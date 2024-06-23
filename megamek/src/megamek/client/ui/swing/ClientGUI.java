@@ -233,7 +233,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
-    private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
+
     private JPanel panTop;
     private JSplitPane splitPaneA;
     private JPanel panA1;
@@ -1025,7 +1025,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
-        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first

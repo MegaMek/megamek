@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.Deployable;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
@@ -35,6 +36,8 @@ import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFFormationDeserializer;
 import megamek.common.jacksonadapters.SBFFormationSerializer;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +81,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     private boolean isDeployed = false;
     private int deployRound = 0;
+
+    private BufferedImage iconImage;
 
     public String getName() {
         return name;
@@ -444,5 +449,17 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     @Override
     public int hashCode() {
         return id;
+    }
+
+    @Override
+    public Image getIcon() {
+        if (iconImage == null) {
+            iconImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = iconImage.createGraphics();
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, 84, 72);
+            new StringDrawer(type.toString()).at(42, 36).absoluteCenter().color(Color.DARK_GRAY).draw(graphics);
+        }
+        return iconImage;
     }
 }

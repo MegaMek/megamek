@@ -22,10 +22,12 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.server.sbf.SBFVisibilityHelper;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -41,11 +43,16 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
     private final List<GameTurn> turnList = new ArrayList<>();
+    private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper();
 
     /**
      * Contains all units that have left the game by any means.
      */
     private final List<InGameObject> graveyard = new ArrayList<>();
+
+    public SBFGame() {
+        setBoard(0, new Board());
+    }
 
     @Override
     public PlayerTurn getTurn() {
@@ -245,6 +252,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
             int id = unit.getId();
             inGameObjects.put(id, unit);
         }
+        fireGameEvent(new GameEntityChangeEvent(this, null));
     }
 
     public void setGraveyard(List<InGameObject> graveyard) {
@@ -252,4 +260,11 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         this.graveyard.addAll(graveyard);
     }
 
+    public SBFVisibilityHelper visibilityHelper() {
+        return visibilityHelper;
+    }
+
+    public boolean isVisible(int viewingPlayer, int formationID) {
+        return visibilityHelper.isVisible(viewingPlayer, formationID);
+    }
 }

@@ -18,17 +18,31 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.SBFClient;
+import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.MiniReportDisplayDialog;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
+import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
+import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Game;
 import megamek.common.InGameObject;
+import megamek.common.MechSummaryCache;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.util.Distractable;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
@@ -58,6 +72,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     protected JComponent curPanel;
     private final JPanel panTop = new JPanel(new BorderLayout());
+    private JSplitPane splitPaneA;
+    private JPanel panA1;
+    private JPanel panA2;
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -101,6 +118,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     private final GameListener gameListener = new SBFClientGUIGameListener(this);
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
+    private BoardView bv;
+    private SBFFormationSpriteHandler formationSpriteHandler;
 
     public SBFClientGUI(SBFClient client, MegaMekController c) {
         super(client);
@@ -108,6 +127,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
         frame.setJMenuBar(menuBar);
+        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
         menuBar.addActionListener(this);
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -127,6 +147,68 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         }
     };
 
+    /**
+     * Initializes a number of things about this frame.
+     */
+    @Override
+    protected void initializeFrame() {
+        super.initializeFrame();
+        frame.setJMenuBar(menuBar);
+    }
+
+    protected Game bvGame = new Game();
+
+    @Override
+    public void initialize() {
+        initializeFrame();
+        super.initialize();
+        try {
+            client.getGame().addGameListener(gameListener);
+            bv = new BoardView(bvGame, MegaMekGUI.getKeyDispatcher(), null);
+            boardViews.put(0, bv);
+            bv.addOverlay(new KeyBindingsOverlay(bv));
+            bv.addOverlay(new PlanetaryConditionsOverlay(bv));
+            bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
+            boardViewsContainer.setName(CG_BOARDVIEW);
+            boardViewsContainer.updateMapTabs();
+            initializeSpriteHandlers();
+
+            panA1 = new JPanel();
+            panA1.setVisible(false);
+            panA2 = new JPanel();
+            panA2.setVisible(false);
+            panA2.add(boardViewsContainer.getPanel());
+            panA2.setVisible(true);
+
+            splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
+            splitPaneA.setDividerSize(10);
+            splitPaneA.setResizeWeight(0.5);
+
+            splitPaneA.setLeftComponent(panA1);
+            splitPaneA.setRightComponent(panA2);
+
+            panTop.add(splitPaneA, BorderLayout.CENTER);
+
+        } catch (Exception ex) {
+            LogManager.getLogger().fatal("", ex);
+            die();
+        }
+
+        menuBar.addActionListener(this);
+        client.changePhase(GamePhase.UNKNOWN);
+        frame.setVisible(true);
+    }
+
+    private void initializeSpriteHandlers() {
+//        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
+//        sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
+//        firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
+        formationSpriteHandler = new SBFFormationSpriteHandler(bv, client);
+        spriteHandlers.addAll(List.of(formationSpriteHandler));
+        spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
+    }
+
     @Override
     public SBFClient getClient() {
         return client;
@@ -138,13 +220,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-        client.getGame().addGameListener(gameListener);
-        frame.setVisible(true);
-    }
-
-    @Override
     protected boolean saveGame() {
         //TODO
         return true;
@@ -152,8 +227,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     @Override
     public void die() {
-        super.die();
         client.getGame().removeGameListener(gameListener);
+        super.die();
     }
 
     protected void switchPanel(GamePhase phase) {
@@ -224,6 +299,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //        if (GUIP.getFocus() && !(client instanceof BotClient)) {
 //            curPanel.requestFocus();
 //        }
+        clientGuiPanel.validate();
     }
 
     private void initializeSingleComponent(GamePhase phase, JComponent component, String identifier) {
@@ -234,7 +310,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         mainNames.put(phaseName, identifier);
     }
 
-    private void initializeWithBoardView(GamePhase phase, StatusBarPhaseDisplay component, String secondary) {
+    private void initializeWithBoardView(GamePhase phase, JComponent component, String secondary) {
         String identifier = CG_BOARDVIEW;
         String phaseName = String.valueOf(phase);
         component.setName(identifier);
@@ -242,7 +318,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         if (!mainNames.containsValue(identifier)) {
             panMain.add(panTop, identifier);
         }
-        currPhaseDisplay = component;
+//        currPhaseDisplay = component;
         panSecondary.add(component, secondary);
         phaseComponents.put(phaseName, component);
         mainNames.put(phaseName, identifier);
@@ -341,7 +417,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-//                initializeWithBoardView(phase, new JPanel(), CG_PHYSICALDISPLAY);
+                initializeWithBoardView(phase, new JPanel(), CG_PHYSICALDISPLAY);
+
                 secondary = CG_REPORTDISPLAY;
                 if (reportDisplay == null) {
 //                    reportDisply = new JPanel();
@@ -370,5 +447,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+    }
+
+    protected void updateFormationSprites() {
+        formationSpriteHandler.update();
     }
 }

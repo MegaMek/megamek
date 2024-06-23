@@ -154,6 +154,9 @@ public class Princess extends BotClient {
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
+    // Controls whether Princess will use enhanced targeting on targets that have partial cover
+    private boolean allowCoverEnhancedTargeting;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -194,6 +197,10 @@ public class Princess extends BotClient {
 
         // Set default as not using called shots against immobile targets
         useCalledShotsOnImmobileTarget = false;
+
+        // Set default as not allowing enhanced targeting if the target has partial cover.
+        // This prevents all sorts of issues, such as aiming for locations that are covered.
+        allowCoverEnhancedTargeting = false;
 
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
@@ -723,8 +730,7 @@ public class Princess extends BotClient {
                             plan.stream().allMatch(curFire -> primaryFire.getTarget().getId() == targetID) &&
                             checkForEnhancedTargeting(shooter,
                                     (Entity) primaryFire.getTarget(),
-                                    primaryFire.getToHit().getCover(),
-                                    false)) {
+                                    primaryFire.getToHit().getCover())) {
 
                         Mech mechTarget = (Mech) primaryFire.getTarget();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
@@ -1156,8 +1162,22 @@ public class Princess extends BotClient {
         return useCalledShotsOnImmobileTarget;
     }
 
-    public void setAllowCalledShotsOnImmobile(boolean newSetting) {
+    public void setAllowCalledShotsOnImmobile (boolean newSetting) {
         useCalledShotsOnImmobileTarget = newSetting;
+    }
+
+    public boolean getPartialCoverEnhancedTargeting () {
+        return allowCoverEnhancedTargeting;
+    }
+
+    /**
+     * Controls whether enhanced targeting will be used against targets with partial cover from
+     * the shooter. Use with caution as this can result in situations like aiming for a location
+     * which is protected by intervening cover.
+     * @param newSetting  true, to allow aimed/called shots against targets with partial cover
+     */
+    public void setPartialCoverEnhancedTargeting (boolean newSetting) {
+        allowCoverEnhancedTargeting = newSetting;
     }
 
     /**
@@ -1167,16 +1187,14 @@ public class Princess extends BotClient {
      * @param shooter           Entity doing the shooting
      * @param target           Entity being shot at
      * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
-     * @param partialCoverOK   true, to permit shots against targets with partial cover
      * @return                 true, if aimed or called shots should be checked
      */
     protected boolean checkForEnhancedTargeting (Entity shooter,
                                                  Entity target,
-                                                 int cover,
-                                                 boolean partialCoverOK) {
+                                                 int cover) {
 
         // Partial cover adds all sorts of complications, don't bother unless enabled
-        if (cover != LosEffects.COVER_NONE && !partialCoverOK) {
+        if (cover != LosEffects.COVER_NONE && !allowCoverEnhancedTargeting) {
             return false;
         }
 

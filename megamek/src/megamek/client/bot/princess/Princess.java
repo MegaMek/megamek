@@ -1160,7 +1160,7 @@ public class Princess extends BotClient {
 
     /**
      * Checks if the supplied unit type is considered a valid target for enhanced targeting
-     * @param unitTYpe  {@link UnitType} constant
+     * @param testType  {@link UnitType} constant
      * @return          true, if unit is a valid target for enhanced targeting
      */
     public boolean isValidEnhancedTargetingTarget (int testType) {
@@ -1397,7 +1397,7 @@ public class Princess extends BotClient {
      * destroyed locations. Prefers right to left, given that most non-symmetrical Mechs are
      * 'right-handed'.
      * @param target        Mech being shot at
-     * @param planOfAttack  Proposed attacks against {@code target}
+     * @param aimedShots    Proposed attacks against {@code target}
      * @param rearAttack    true if attacking from the rear arc
      * @param includeHead   true to include the head as a valid location
      * @return              {@link Mech} constant for location to shoot, or {@code Mech.LOC_NONE}
@@ -1559,7 +1559,7 @@ public class Princess extends BotClient {
      * @param target       Mech being shot at
      * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
      *                     to target
-     * @param planOfAttack Proposed attacks against {@code target} parameter
+     * @param calledShots  Proposed attacks against {@code target} parameter
      * @return             {@link CalledShot} constant indicating which direction to call, may
      *                     return {@code CalledShot.CALLED_NONE}.
      */

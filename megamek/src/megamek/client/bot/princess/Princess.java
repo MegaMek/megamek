@@ -1279,7 +1279,7 @@ public class Princess extends BotClient {
      * @param planOfAttack  Proposed attacks against {@code target}
      * @param rearAttack    true if attacking from rear arc
      * @param includeHead   true if the head is a valid location, ignored for non-Mech targets
-     * @return              location constant to aim for, with the {2code LOC_NONE} constant
+     * @return              location constant to aim for, with the {@code LOC_NONE} constant
      *                      indicating no suitable location
      */
     protected int getAimedShotLocation (Targetable target,

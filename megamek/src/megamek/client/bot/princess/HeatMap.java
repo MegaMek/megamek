@@ -19,6 +19,7 @@ public class HeatMap {
     private static final int MIN_DECAY_MODIFIER = -1;
     private static final int MIN_WEIGHT = 0;
     private static final int MAX_WEIGHT = 100;
+    private static final double BV_DIVISOR = 100.0;
     private static final int MAX_MP_WEIGHT = 10;
     private static final int MIN_TRACKER_POSITIONS = 10;
 
@@ -35,6 +36,9 @@ public class HeatMap {
     private int decayModifier;
     private int removalWeight;
     private int maxPositions;
+
+    // Control whether decay is applied or not
+    private boolean enableDecay;
 
     /**
      * Constructor. Initializes all backing objects to an empty state.
@@ -57,6 +61,8 @@ public class HeatMap {
         decayModifier = MIN_DECAY_MODIFIER;
         removalWeight = MIN_WEIGHT;
         maxPositions = MIN_TRACKER_POSITIONS;
+
+        enableDecay = true;
     }
 
 
@@ -75,6 +81,22 @@ public class HeatMap {
      */
     public void enableTrackIndividuals (boolean newSetting) {
         trackIndividualUnits = newSetting;
+    }
+
+    /**
+     * Determines if decay is applied to the map when {@code ageMaps()} is called
+     * @return  false if decay rate is disabled
+     */
+    public boolean isDecayEnabled() {
+        return enableDecay;
+    }
+
+    /**
+     * Change the setting to enable or disable decay rate on tracker weights
+     * @param newSetting
+     */
+    public void changeDecayEnabled (boolean newSetting) {
+        enableDecay = newSetting;
     }
 
     /**
@@ -190,7 +212,8 @@ public class HeatMap {
                     !e.isHidden()).
                 collect(Collectors.toList())) {
 
-            // Immobile - once you know where it is, it's (hopefully!) not moving
+            // Immobile - once you know where it is, it's (hopefully!) not moving ...
+            // Non-combat - not worth tracking
             if (curTracked instanceof GunEmplacement || curTracked instanceof EjectedCrew) {
                 continue;
             }
@@ -206,7 +229,7 @@ public class HeatMap {
     }
 
 
-    // TODO: add method for updating via movement path
+    // TODO: add method for updating entity tracker via movement path
 
     /**
      * Reduces the values for every entry in the map. This will gradually reduce the weights over
@@ -214,18 +237,22 @@ public class HeatMap {
      */
     public void ageMaps () {
 
-        int curWeight;
-        for (Coords curPosition : teamActivity.keySet()) {
-            curWeight = teamActivity.get(curPosition) + decayModifier;
-            teamActivity.put(curPosition, curWeight);
-        }
+        if (enableDecay) {
 
-        for (int curID : entityActivity.keySet()) {
-            Map<Coords, Integer> curMap = entityActivity.get(curID);
-            for (Coords curPosition : curMap.keySet()) {
-                curWeight = curMap.get(curPosition) + decayModifier;
-                curMap.put(curPosition, curWeight);
+            int curWeight;
+            for (Coords curPosition : teamActivity.keySet()) {
+                curWeight = teamActivity.get(curPosition) + decayModifier;
+                teamActivity.put(curPosition, curWeight);
             }
+
+            for (int curID : entityActivity.keySet()) {
+                Map<Coords, Integer> curMap = entityActivity.get(curID);
+                for (Coords curPosition : curMap.keySet()) {
+                    curWeight = curMap.get(curPosition) + decayModifier;
+                    curMap.put(curPosition, curWeight);
+                }
+            }
+
         }
 
         // Remove any entries that hit the threshold for removal, and as needed for size
@@ -267,7 +294,6 @@ public class HeatMap {
     /**
      * Get the weight of the entity for adjusting the team map. Higher BV units get a larger weight,
      * while faster units have a reduced weight.
-     * FIXME: entity BV should be the primary factor, modified by movement
      * @param tracked
      * @return
      */
@@ -278,7 +304,7 @@ public class HeatMap {
             bvWeight = tracked.getInitialBV();
 //            bvWeight = tracked.getBvCalculator().calculateBV(false, false);
         }
-        bvWeight = (int) Math.floor(bvWeight / 200.0);
+        bvWeight = (int) Math.floor(bvWeight / BV_DIVISOR);
 
         bvWeight = Math.max(bvWeight - Math.max(tracked.getJumpMP(), tracked.getWalkMP()), 1);
 

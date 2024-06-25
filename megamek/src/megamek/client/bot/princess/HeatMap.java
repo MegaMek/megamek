@@ -9,10 +9,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Tracks activity of visible enemy units on the map. Board positions that are frequently occupied
- * by enemy units get pushed to the top while those that are the least frequent get removed. This
- * supports making rough guesses about where enemy units may be present, both in general and for
- * specific units.
+ * Tracks activity of visible units on the map. Board positions that are frequently occupied by
+ * units get higher values while those that are the least frequent get lower values. This creates a
+ * rough history of where units were concentrated which can be used for intelligent estimates about
+ * where they will be in future turns.
  */
 public class HeatMap {
 
@@ -33,12 +33,16 @@ public class HeatMap {
     private boolean trackIndividualUnits;
     private Map<Integer, Map<Coords, Integer>> entityActivity;
 
+    // Control whether decay is applied or not
+    private boolean enableDecay;
     private int decayModifier;
+
     private int removalWeight;
     private int maxPositions;
 
-    // Control whether decay is applied or not
-    private boolean enableDecay;
+    // Scaling factor applied to unit weight
+    private double weightScaling;
+
 
     /**
      * Constructor. Initializes all backing objects to an empty state.
@@ -58,11 +62,13 @@ public class HeatMap {
         trackIndividualUnits = false;
         entityActivity = new HashMap<>();
 
+        enableDecay = true;
         decayModifier = MIN_DECAY_MODIFIER;
+
         removalWeight = MIN_WEIGHT;
         maxPositions = MIN_TRACKER_POSITIONS;
 
-        enableDecay = true;
+        weightScaling = 1.0;
     }
 
 
@@ -113,6 +119,27 @@ public class HeatMap {
      */
     public void setDecayModifier(int newSetting) {
         decayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
+    }
+
+    /**
+     * Scaling factor applied when converting entities to weights for the tracking maps
+     * @return   positive, non-zero number, typically between 0.1 and 5.0 with default of 1.0
+     */
+    public double getWeightScaling () {
+        return weightScaling;
+    }
+
+    /**
+     * Scaling factor applied when converting entities to weights for the tracking maps. 0.5 is
+     * half normal, 2.0 is twice normal, etc. Higher factor mean larger weight, and bigger impact
+     * on the map. Typical values will be in the range of 0.1 to 5.0, although values outside that
+     * are permitted.
+     * @param newSetting  positive, non-zero number
+     */
+    public void setWeightScaling (double newSetting) {
+        if (newSetting > 0) {
+            weightScaling = newSetting;
+        }
     }
 
     /**
@@ -241,27 +268,30 @@ public class HeatMap {
 
             int curWeight;
             for (Coords curPosition : teamActivity.keySet()) {
-                curWeight = teamActivity.get(curPosition) + decayModifier;
+                curWeight = Math.max(teamActivity.get(curPosition) + decayModifier, MIN_WEIGHT);
                 teamActivity.put(curPosition, curWeight);
             }
 
             for (int curID : entityActivity.keySet()) {
                 Map<Coords, Integer> curMap = entityActivity.get(curID);
                 for (Coords curPosition : curMap.keySet()) {
-                    curWeight = curMap.get(curPosition) + decayModifier;
+                    curWeight = Math.max(curMap.get(curPosition) + decayModifier, MIN_WEIGHT);
                     curMap.put(curPosition, curWeight);
                 }
             }
 
         }
 
-        // Remove any entries that hit the threshold for removal, and as needed for size
-        trimMaps();
+        // if the tracking maps are hitting the set limits, trim the entries back
+        if (teamActivity.size() >= maxPositions ||
+                entityActivity.values().stream().anyMatch(m -> m.size() >= maxPositions)) {
+            trimMaps();
+        }
     }
 
 
     /**
-     * Apply the entities position to the team map and the entity map if used
+     * Apply the position to the team map and the entity map if used
      * @param tracked
      */
     private void processEntity (Entity tracked) {
@@ -276,6 +306,7 @@ public class HeatMap {
         // If individual entity tracking is enabled, adjust the entity map
         if (trackIndividualUnits) {
             mapAdjustment = getEntityWeightAdjustment(tracked);
+            updateEntityMap(tracked, mapAdjustment);
         }
 
     }
@@ -302,9 +333,8 @@ public class HeatMap {
         int bvWeight = tracked.getBvCalculator().retrieveBV();
         if (bvWeight == -1) {
             bvWeight = tracked.getInitialBV();
-//            bvWeight = tracked.getBvCalculator().calculateBV(false, false);
         }
-        bvWeight = (int) Math.floor(bvWeight / BV_DIVISOR);
+        bvWeight = (int) Math.floor(weightScaling * bvWeight / BV_DIVISOR);
 
         bvWeight = Math.max(bvWeight - Math.max(tracked.getJumpMP(), tracked.getWalkMP()), 1);
 
@@ -354,7 +384,7 @@ public class HeatMap {
             return jumpWeight <= moveWeight ? moveWeight - 1 : jumpWeight;
         }
 
-        return moveWeight;
+        return (int) Math.floor(moveWeight * weightScaling);
     }
 
     /**

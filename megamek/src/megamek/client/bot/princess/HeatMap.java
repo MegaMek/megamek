@@ -85,7 +85,7 @@ public class HeatMap {
      * Enable or disable tracking of individual units in addition to
      * @param newSetting
      */
-    public void enableTrackIndividuals (boolean newSetting) {
+    public void setTrackIndividuals(boolean newSetting) {
         trackIndividualUnits = newSetting;
     }
 
@@ -220,6 +220,7 @@ public class HeatMap {
                 collect(Collectors.toSet());
     }
 
+    // TODO: add method to calculate and return hotspots (probably List<Collection<Coords>>)
 
     /**
      * Adjusts the heat map using the current position of each provided entity. Filters out gun
@@ -306,7 +307,7 @@ public class HeatMap {
         // If individual entity tracking is enabled, adjust the entity map
         if (trackIndividualUnits) {
             mapAdjustment = getEntityWeightAdjustment(tracked);
-            updateEntityMap(tracked, mapAdjustment);
+            updateEntityMap(tracked.getId(), position, mapAdjustment);
         }
 
     }
@@ -342,34 +343,32 @@ public class HeatMap {
     }
 
     /**
-     * Update the entity tracker for a given location
-     * @param tracked
+     * Update the entity tracker for a given position
+     *
+     * @param trackedId
+     * @param position
      * @param adjustment
      */
-    private void updateEntityMap (Entity tracked, int adjustment) {
-        int mapValue;
-        Coords position = tracked.getPosition();
+    private void updateEntityMap (int trackedId, Coords position, int adjustment) {
         Map<Coords, Integer> positionMap;
 
-        if (entityActivity.containsKey(tracked.getId())) {
-            positionMap = entityActivity.get(tracked.getId());
+        if (entityActivity.containsKey(trackedId)) {
+            positionMap = entityActivity.get(trackedId);
+            int mapValue = adjustment;
             if (positionMap.containsKey(position)) {
                 mapValue = positionMap.get(position) + adjustment;
-            } else {
-                positionMap.put(position, adjustment);
             }
+            positionMap.put(position, mapValue);
         } else {
             positionMap = new HashMap<>();
             positionMap.put(position, adjustment);
-            entityActivity.put(tracked.getId(), positionMap);
+            entityActivity.put(trackedId, positionMap);
         }
     }
 
     /**
-     * Get the weight of the entity for adjust the individual map. Faster units, and jumping units
-     * in particular, are not likely to stay in the same place so get a much lower weight.
-     * Technically a duplicate of the team weight calculation, but it might be necessary for
-     * different weight values.
+     * Get the weight of the entity for adjusting the individual map. Faster units, and jumping
+     * units in particular, are not likely to stay in the same place so get a much lower weight.
      * @param tracked
      * @return
      */

@@ -61,18 +61,14 @@ class SBFPhasePreparationManager {
                 // roll 'em
                 gameManager.resetActivePlayersDone();
                 gameManager.rollInitiative();
-                //Cockpit command consoles that switched crew on the previous round are ineligible for force
-                // commander initiative bonus. Now that initiative is rolled, clear the flag.
-//                game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
                 if (!gameManager.getGame().shouldDeployThisRound()) {
-//                    incrementAndSendGameRound();
+                    gameManager.incrementAndSendGameRound();
                     gameManager.autoSaveService.performRollingAutosave();
                 }
 
-                // setIneligible(phase);
 //                gameManager.determineTurnOrder(gameManager.getGame().getPhase());
-//                writeInitiativeReport(false);
+                gameManager.initiativeHelper.writeInitiativeReport();
 //
 //                // checks for environmental survival
 //                checkForConditionDeath();
@@ -232,7 +228,7 @@ class SBFPhasePreparationManager {
             case PHYSICAL_REPORT:
             case END_REPORT:
 //                resetActivePlayersDone();
-//                sendReport();
+                gameManager.sendReport();
 //                entityAllUpdate();
                 if (gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     gameManager.autoSave();

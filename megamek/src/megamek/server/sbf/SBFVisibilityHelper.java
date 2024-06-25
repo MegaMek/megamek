@@ -1,7 +1,5 @@
 package megamek.server.sbf;
 
-import megamek.common.strategicBattleSystems.SBFGame;
-
 import java.util.HashMap;
 import java.util.Map;
 

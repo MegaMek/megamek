@@ -1845,14 +1845,6 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * Increment's the server's game round and send it to all the clients
-     */
-    void incrementAndSendGameRound() {
-        game.incrementRoundCount();
-        send(packetHelper.createCurrentRoundNumberPacket());
-    }
-
-    /**
      * Hand over a turn to the next player. This is only possible if you haven't
      * yet started your turn (i.e. not yet moved anything like infantry where
      * you have to move multiple units)
@@ -29903,7 +29895,7 @@ public class GameManager extends AbstractGameManager {
             }
         }
 
-        for (Player p : game.getPlayersVector()) {
+        for (Player p : game.getPlayersList()) {
             send(p.getId(), tacticalGeniusReport ? createTacticalGeniusReportPacket(p) : createReportPacket(p));
         }
     }

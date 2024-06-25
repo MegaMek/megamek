@@ -2455,7 +2455,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Increments the round counter
      */
     public void incrementRoundCount() {
-        currentRound++;
+        incrementCurrentRound();
     }
 
     /**

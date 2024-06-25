@@ -23,7 +23,9 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.util.EmailService;
 import megamek.server.commands.ServerCommand;
+import megamek.server.sbf.SBFInitiativeHelper;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -38,6 +40,7 @@ public final class SBFGameManager extends AbstractGameManager {
     private final List<Report> pendingReports = new ArrayList<>();
     private final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
     private final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
+    final SBFInitiativeHelper initiativeHelper = new SBFInitiativeHelper(this);
 
     @Override
     public void handlePacket(int connId, Packet packet) {
@@ -269,6 +272,10 @@ public final class SBFGameManager extends AbstractGameManager {
         return new Packet(PacketCommand.SENDING_REPORTS_ALL, game.getGameReport().createFilteredReport(recipient));
     }
 
+    private Packet createReportPacket(Player recipient) {
+        return new Packet(PacketCommand.SENDING_REPORTS, pendingReports);
+    }
+
     public void clearPendingReports() {
         pendingReports.clear();
     }
@@ -343,5 +350,24 @@ public final class SBFGameManager extends AbstractGameManager {
      */
     private boolean isDoubleBlind() {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+    }
+
+    /**
+     * Send the round report to all connected clients.
+     */
+    public void sendReport() {
+//        EmailService mailer = Server.getServerInstance().getEmailService();
+//        if (mailer != null) {
+//            for (var player: mailer.getEmailablePlayers(game)) {
+//                try {
+//                    var reports = filterReportVector(vPhaseReport, player);
+//                    var message = mailer.newReportMessage(game, reports, player);
+//                    mailer.send(message);
+//                } catch (Exception ex) {
+//                    LogManager.getLogger().error("Error sending round report", ex);
+//                }
+//            }
+//        }
+        game.getPlayersList().forEach(player -> send(player.getId(), createReportPacket(player)));
     }
 }

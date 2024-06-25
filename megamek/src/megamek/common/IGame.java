@@ -76,6 +76,11 @@ public interface IGame {
      */
     void setCurrentRound(int currentRound);
 
+    /**
+     * Adds 1 to the current round value. This method is intended for server use only.
+     */
+    void incrementCurrentRound();
+
     //region Phase Management
 
     /**

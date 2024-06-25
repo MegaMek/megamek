@@ -211,4 +211,12 @@ abstract class AbstractGameManager implements IGameManager {
     void sendCurrentTurns() {
         send(packetHelper.createTurnListPacket());
     }
+
+    /**
+     * Increment's the server's game round and send it to all the clients
+     */
+    void incrementAndSendGameRound() {
+        getGame().incrementCurrentRound();
+        send(packetHelper.createCurrentRoundNumberPacket());
+    }
 }

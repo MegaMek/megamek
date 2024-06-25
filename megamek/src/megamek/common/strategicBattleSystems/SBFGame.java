@@ -69,6 +69,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return phase;
     }
 
+    public GamePhase getLastPhase() {
+        return lastPhase;
+    }
+
     @Override
     public void setPhase(GamePhase phase) {
         this.phase = phase;
@@ -134,7 +138,65 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     @Override
     public void setupTeams() {
+        Vector<Team> initTeams = new Vector<>();
+        boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
+                .booleanValue();
 
+        // Get all NO_TEAM players. If team_initiative is false, all
+        // players are on their own teams for initiative purposes.
+        for (Player player : getPlayersList()) {
+            // Ignore players not on a team
+            if (player.getTeam() == Player.TEAM_UNASSIGNED) {
+                continue;
+            }
+            if (!useTeamInit || (player.getTeam() == Player.TEAM_NONE)) {
+                Team new_team = new Team(Player.TEAM_NONE);
+                new_team.addPlayer(player);
+                initTeams.addElement(new_team);
+            }
+        }
+
+        if (useTeamInit) {
+            // Now, go through all the teams, and add the appropriate player
+            for (int t = Player.TEAM_NONE + 1; t < Player.TEAM_NAMES.length; t++) {
+                Team new_team = null;
+                for (Player player : getPlayersList()) {
+                    if (player.getTeam() == t) {
+                        if (new_team == null) {
+                            new_team = new Team(t);
+                        }
+                        new_team.addPlayer(player);
+                    }
+                }
+
+                if (new_team != null) {
+                    initTeams.addElement(new_team);
+                }
+            }
+        }
+
+        // May need to copy state over from previous teams, such as initiative
+        if (!getPhase().isLounge()) {
+            for (Team newTeam : initTeams) {
+                for (Team oldTeam : teams) {
+                    if (newTeam.equals(oldTeam)) {
+                        newTeam.setInitiative(oldTeam.getInitiative());
+                    }
+                }
+            }
+        }
+
+        // Carry over faction settings
+        for (Team newTeam : initTeams) {
+            for (Team oldTeam : teams) {
+                if (newTeam.equals(oldTeam)) {
+                    newTeam.setFaction(oldTeam.getFaction());
+                }
+            }
+        }
+
+        teams.clear();
+        teams.addAll(initTeams);
     }
 
     @Override

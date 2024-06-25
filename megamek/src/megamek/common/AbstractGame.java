@@ -319,4 +319,9 @@ public abstract class AbstractGame implements IGame {
         forces = fs;
         forces.setGame(this);
     }
+
+    @Override
+    public void incrementCurrentRound() {
+        currentRound++;
+    }
 }

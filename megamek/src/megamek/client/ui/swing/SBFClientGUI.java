@@ -18,21 +18,12 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.MiniReportDisplayDialog;
-import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.boardview.*;
-import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
-import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
-import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
-import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.SBFReportPanel;
 import megamek.common.Game;
-import megamek.common.InGameObject;
-import megamek.common.MechSummaryCache;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.util.Distractable;
@@ -111,6 +102,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
      */
     private final Map<String, JComponent> phaseComponents = new HashMap<>();
 
+    private JDialog miniReportDisplayDialog;
+    private SBFReportPanel reportPanel;
+
     /**
      * Map each phase to the name of the card for the main display area.
      */
@@ -138,6 +132,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         clientGuiPanel.addComponentListener(resizeListener);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
+
+        miniReportDisplayDialog = new JDialog(getFrame());
+        reportPanel = new SBFReportPanel(this);
     }
 
     private final ComponentListener resizeListener = new ComponentAdapter() {
@@ -202,9 +199,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     private void initializeSpriteHandlers() {
-//        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
-//        sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
-//        firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
         formationSpriteHandler = new SBFFormationSpriteHandler(bv, client);
         spriteHandlers.addAll(List.of(formationSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
@@ -222,12 +216,12 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     @Override
     public void setChatBoxActive(boolean active) {
-
+        //TODO
     }
 
     @Override
     public void clearChatBox() {
-
+        //TODO
     }
 
     @Override
@@ -279,7 +273,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //        maybeShowMinimap();
 //        maybeShowUnitDisplay();
 //        maybeShowForceDisplay();
-//        maybeShowMiniReport();
+        showReportPanel();
 //        maybeShowPlayerList();
 
         cardsMain.show(panMain, mainNames.get(name));
@@ -311,6 +305,16 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //            curPanel.requestFocus();
 //        }
         clientGuiPanel.validate();
+    }
+
+    private void showReportPanel() {
+        if (client.getGame().getPhase().isReport()) {
+
+            miniReportDisplayDialog.add(reportPanel);
+            miniReportDisplayDialog.pack();
+            miniReportDisplayDialog.setVisible(true);
+
+        }
     }
 
     private void initializeSingleComponent(GamePhase phase, JComponent component, String identifier) {

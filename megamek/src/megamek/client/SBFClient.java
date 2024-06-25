@@ -20,6 +20,7 @@ package megamek.client;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
+import megamek.common.event.GameReportEvent;
 import megamek.common.force.Forces;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -90,6 +91,20 @@ public class SBFClient extends AbstractClient {
                 // We don't really have a copy of the phase report at this point, so I guess we'll just use the
                 // round report until the next phase actually completes.
                 phaseReport = roundReport;
+                break;
+            case SENDING_REPORTS:
+                phaseReport = assembleAndAddImages((List<Report>) packet.getObject(0));
+                if (keepGameLog()) {
+                    if ((log == null) && (game.getCurrentRound() == 1)) {
+                        initGameLog();
+                    }
+                    if (log != null) {
+                        //TODO
+//                        log.append(phaseReport);
+                    }
+                }
+                game.addReports((List<Report>) packet.getObject(0));
+                roundReport = assembleAndAddImages(game.getGameReport().get(game.getCurrentRound()));
                 break;
             default:
                 return false;

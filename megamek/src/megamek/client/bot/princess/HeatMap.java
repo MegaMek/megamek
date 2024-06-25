@@ -180,21 +180,18 @@ public class HeatMap {
         maxPositions = Math.max(newSetting, MIN_TRACKER_POSITIONS);
     }
 
+    // TODO: get nearest team hotspot to provided position. Need to consider value vs range.
+
     /**
      * Get the highest ranked team positions. This could be multiple positions, a single position,
      * or none at all.
      * @return  highest rank position in the tracker; may return null if no positions available
      */
-    public Collection<Coords> getTopTeamPosition() {
-        if (teamActivity == null || teamActivity.isEmpty()) {
+    public Collection<Coords> getTopTeamPositions () {
+        if (teamActivity.isEmpty()) {
             return null;
         }
-        OptionalInt maxWeight = teamActivity.values().stream().mapToInt(w -> w).max();
-        return teamActivity.
-                keySet().
-                stream().
-                filter(curPosition -> teamActivity.get(curPosition) == maxWeight.getAsInt()).
-                collect(Collectors.toSet());
+        return getTopRatedPositions(teamActivity, 1, null);
     }
 
     /**
@@ -204,20 +201,14 @@ public class HeatMap {
      * @return   highest ranked position in the entity tracker; may return null if entity tracker
      *           is not in use or no positions are available
      */
-    public Collection<Coords> getTopEntityPosition (int tracked) {
+    public Collection<Coords> getTopEntityPositions (int tracked) {
         if (!trackIndividualUnits ||
-                entityActivity == null ||
                 entityActivity.isEmpty() ||
                 !entityActivity.containsKey(tracked)) {
             return null;
         }
         Map<Coords, Integer> trackedMap = entityActivity.get(tracked);
-        OptionalInt maxWeight = trackedMap.values().stream().mapToInt(w -> w).max();
-        return trackedMap.
-                keySet().
-                stream().
-                filter(curPosition -> trackedMap.get(curPosition) == maxWeight.getAsInt()).
-                collect(Collectors.toSet());
+        return getTopRatedPositions(trackedMap, 1, null);
     }
 
     // TODO: add method to calculate and return hotspots (probably List<Collection<Coords>>)
@@ -423,6 +414,58 @@ public class HeatMap {
                 positionTracker.remove(curPosition);
             }
         }
+    }
+
+    /**
+     * Get the highest rated positions from a tracking map
+     * @param trackingMap
+     * @param maxRange
+     * @param basePoint
+     * @return
+     */
+    private Collection<Coords> getTopRatedPositions (Map<Coords, Integer> trackingMap, int maxRange, Coords basePoint) {
+        Collection<Coords> topSet = new HashSet<>();
+        List<Coords> mapCoords = new ArrayList<>();
+        List<Integer> mapWeights = new ArrayList<>();
+
+        splitAndSort(trackingMap, mapCoords, mapWeights);
+
+        int maxWeight = mapWeights.get(0);
+        for (int i = 0; i < mapCoords.size() && mapWeights.get(i) == maxWeight; i++) {
+            if (basePoint == null || basePoint.distance(mapCoords.get(i)) <= maxRange) {
+                topSet.add(mapCoords.get(i));
+            }
+        }
+
+        return topSet;
+    }
+
+    /**
+     * Split the provided Map into two lists, sorted from highest weight to lowest weight
+     * @param input
+     * @param positions
+     * @param weights
+     */
+    private void splitAndSort (Map<Coords, Integer> input, List<Coords> positions, List<Integer> weights) {
+        if (positions == null || weights == null) {
+            throw new IllegalArgumentException("Expecting initialized List<> object(s).");
+        }
+
+        Map<Coords, Integer> workingMap = new HashMap<>(input);
+
+        while (!workingMap.isEmpty()) {
+            int maxWeight = input.values().stream().mapToInt(w -> w).max().getAsInt();
+
+            for (Coords curPosition : input.keySet()) {
+                if (input.get(curPosition) == maxWeight) {
+                    positions.add(curPosition);
+                    weights.add(maxWeight);
+                }
+            }
+
+            workingMap.entrySet().removeIf(curPosition -> curPosition.getValue() == maxWeight);
+        }
+
     }
 
 }

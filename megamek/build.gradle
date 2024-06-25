@@ -45,7 +45,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.12.0'
 }
 
-mainClassName = 'megamek.MegaMek'
+application {
+    mainClass = 'megamek.MegaMek'
+}
 
 ext {
     mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
@@ -73,7 +75,7 @@ run {
 jar {
     archiveFileName = 'MegaMek.jar'
     manifest {
-        attributes "Main-Class" : mainClassName
+        attributes "Main-Class" : application.mainClass
         attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
             .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
         attributes "Add-Opens" : 'java.base/java.util java.base/java.util.concurrent'

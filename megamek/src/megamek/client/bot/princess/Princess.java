@@ -71,6 +71,8 @@ public class Princess extends BotClient {
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
 
+    private List<HeatMap> enemyHeatMaps;
+
     private Integer spinupThreshold = null;
 
     private BehaviorSettings behaviorSettings;
@@ -1658,6 +1660,9 @@ public class Princess extends BotClient {
                 }
             }
 
+            // Set up heat mapping
+            initHeatMaps();
+
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } catch (Exception ignored) {
@@ -1923,6 +1928,7 @@ public class Princess extends BotClient {
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
         setAMSModes();
+        updateHeatMaps();
     }
 
     @Override
@@ -2336,6 +2342,43 @@ public class Princess extends BotClient {
             manualAMSIds = new ArrayList<>();
         }
         manualAMSIds.clear();
+    }
+
+    /**
+     * Set up heat maps to track enemy unit positions over time
+     */
+    protected void initHeatMaps () {
+        enemyHeatMaps = new ArrayList<>();
+        int princessTeamId = getGame().getTeamForPlayer(this.getLocalPlayer()).getId();
+        for (Team curTeam : getGame().getTeams()) {
+            if (curTeam.getId() != princessTeamId) {
+                HeatMap newMap = new HeatMap(curTeam.getId());
+                newMap.setMaxPositions(100);
+                enemyHeatMaps.add(newMap);
+            }
+        }
+    }
+
+    /**
+     * Update the heat maps with enemy unit positions
+     */
+    protected void updateHeatMaps () {
+
+        List<Entity> trackedEntities = getGame().
+                inGameTWEntities().
+                stream().
+                filter(e -> e.isDeployed() && !(e instanceof EjectedCrew)).
+                collect(Collectors.toList());
+
+        if (trackedEntities.isEmpty()) {
+            return;
+        }
+
+        // Process entities into each heat map, then age it
+        for (HeatMap curMap : enemyHeatMaps) {
+            curMap.updateTrackers(trackedEntities);
+            curMap.ageMaps();
+        }
     }
 
     public void sendChat(final String message, final Level logLevel) {

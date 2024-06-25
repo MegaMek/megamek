@@ -6,9 +6,7 @@ import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Tracks activity of visible enemy units on the map. Board positions that are frequently occupied
@@ -18,7 +16,7 @@ import java.util.stream.Stream;
  */
 public class HeatMap {
 
-    private static final int MIN_AGE_MODIFIER = -1;
+    private static final int MIN_DECAY_MODIFIER = -1;
     private static final int MIN_WEIGHT = 0;
     private static final int MAX_WEIGHT = 100;
     private static final int MAX_MP_WEIGHT = 10;
@@ -34,7 +32,7 @@ public class HeatMap {
     private boolean trackIndividualUnits;
     private Map<Integer, Map<Coords, Integer>> entityActivity;
 
-    private int ageModifier;
+    private int decayModifier;
     private int removalWeight;
     private int maxPositions;
 
@@ -56,10 +54,11 @@ public class HeatMap {
         trackIndividualUnits = false;
         entityActivity = new HashMap<>();
 
-        ageModifier = MIN_AGE_MODIFIER;
+        decayModifier = MIN_DECAY_MODIFIER;
         removalWeight = MIN_WEIGHT;
         maxPositions = MIN_TRACKER_POSITIONS;
     }
+
 
 
     /**
@@ -82,16 +81,16 @@ public class HeatMap {
      * Reduction weight for each map entry on each game turn
      * @return  a negative number
      */
-    public int getAgeModifier () {
-        return ageModifier;
+    public int getDecayModifier() {
+        return decayModifier;
     }
 
     /**
      * Set reduction weight for each map entry on each game turn. Must be negative number.
      * @param newSetting
      */
-    public void setAgeModifier (int newSetting) {
-        ageModifier = Math.min(newSetting, MIN_AGE_MODIFIER);
+    public void setDecayModifier(int newSetting) {
+        decayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
     }
 
     /**
@@ -179,20 +178,25 @@ public class HeatMap {
      * @param tracked
      */
     public void updateTrackers (List<Entity> tracked) {
-        // For every entity that is on the team of this tracker
-        for (Entity curTracked : tracked.stream().filter(e -> e.getOwner().getTeam() == teamId).collect(Collectors.toList())) {
+
+        // Filter out the entities that are on the team for this tracker and are considered 'active'
+        // i.e. crew is alive, unit is deployed, can be seen, and is not a concealed unit
+        for (Entity curTracked : tracked.
+                stream().
+                filter(e -> e.getOwner().getTeam() == teamId &&
+                    !e.isCarcass() &&
+                    e.isDeployed() &&
+                    (e.isVisibleToEnemy() || e.isDetectedByEnemy()) &&
+                    !e.isHidden()).
+                collect(Collectors.toList())) {
+
             // Immobile - once you know where it is, it's (hopefully!) not moving
             if (curTracked instanceof GunEmplacement || curTracked instanceof EjectedCrew) {
                 continue;
             }
 
-            // Entity must be deployed, on the game map, not hidden, and visible during
-            // double-blind/sensor contact conditions
-            if (!curTracked.isDeployed() ||
-                    curTracked.getPosition() == null ||
-                    curTracked.isHidden() ||
-                    !curTracked.isVisibleToEnemy() ||
-                    !curTracked.isDetectedByEnemy()) {
+            // Everything rides on valid coordinates, so double check
+            if (curTracked.getPosition() == null) {
                 continue;
             }
 
@@ -202,6 +206,8 @@ public class HeatMap {
     }
 
 
+    // TODO: add method for updating via movement path
+
     /**
      * Reduces the values for every entry in the map. This will gradually reduce the weights over
      * time for positions that are not regularly updated.
@@ -210,14 +216,14 @@ public class HeatMap {
 
         int curWeight;
         for (Coords curPosition : teamActivity.keySet()) {
-            curWeight = teamActivity.get(curPosition) - ageModifier;
+            curWeight = teamActivity.get(curPosition) + decayModifier;
             teamActivity.put(curPosition, curWeight);
         }
 
         for (int curID : entityActivity.keySet()) {
             Map<Coords, Integer> curMap = entityActivity.get(curID);
             for (Coords curPosition : curMap.keySet()) {
-                curWeight = curMap.get(curPosition) - ageModifier;
+                curWeight = curMap.get(curPosition) + decayModifier;
                 curMap.put(curPosition, curWeight);
             }
         }
@@ -232,7 +238,7 @@ public class HeatMap {
      * @param tracked
      */
     private void processEntity (Entity tracked) {
-        Coords position = tracked.getPosition();
+        final Coords position = new Coords(tracked.getPosition().getX(), tracked.getPosition().getY());
 
         // Get the map adjustments, based on entity movement
         int mapAdjustment = getTeamWeightAdjustment(tracked);
@@ -253,26 +259,30 @@ public class HeatMap {
      * @param adjustment
      */
     private void updateTeamMap (Coords position, int adjustment) {
-        int mapValue = teamActivity.getOrDefault(position, 0) + adjustment;
+        int mapValue = Math.min(teamActivity.getOrDefault(position, 0) + adjustment, MAX_WEIGHT);
         teamActivity.put(position, mapValue);
     }
 
 
     /**
-     * Get the weight of the entity for adjusting the team map. Faster units, and jumping units
-     * in particular, are not likely to stay in the same place so get a much lower weight.
+     * Get the weight of the entity for adjusting the team map. Higher BV units get a larger weight,
+     * while faster units have a reduced weight.
+     * FIXME: entity BV should be the primary factor, modified by movement
      * @param tracked
      * @return
      */
     private int getTeamWeightAdjustment (Entity tracked) {
-        int moveWeight = MAX_MP_WEIGHT - Math.min(tracked.getWalkMP(), MAX_MP_WEIGHT);
-        int jumpWeight = MAX_MP_WEIGHT - Math.min(tracked.getJumpMP(), MAX_MP_WEIGHT);
 
-        if (jumpWeight > 0) {
-            return jumpWeight <= moveWeight ? moveWeight - 1 : jumpWeight;
+        int bvWeight = tracked.getBvCalculator().retrieveBV();
+        if (bvWeight == -1) {
+            bvWeight = tracked.getInitialBV();
+//            bvWeight = tracked.getBvCalculator().calculateBV(false, false);
         }
+        bvWeight = (int) Math.floor(bvWeight / 200.0);
 
-        return moveWeight;
+        bvWeight = Math.max(bvWeight - Math.max(tracked.getJumpMP(), tracked.getWalkMP()), 1);
+
+        return bvWeight;
     }
 
     /**
@@ -309,7 +319,10 @@ public class HeatMap {
      */
     private int getEntityWeightAdjustment (Entity tracked) {
         int moveWeight = MAX_MP_WEIGHT - Math.min(tracked.getWalkMP(), MAX_MP_WEIGHT);
-        int jumpWeight = MAX_MP_WEIGHT - Math.min(tracked.getJumpMP(), MAX_MP_WEIGHT);
+        int jumpWeight = 0;
+        if (tracked.getJumpMP() > 0) {
+            jumpWeight = MAX_MP_WEIGHT - Math.min(tracked.getJumpMP(), MAX_MP_WEIGHT);
+        }
 
         if (jumpWeight > 0) {
             return jumpWeight <= moveWeight ? moveWeight - 1 : jumpWeight;
@@ -319,7 +332,7 @@ public class HeatMap {
     }
 
     /**
-     * Removes entries from the maps which are at or below the removal weight, then trims each
+     * Removes entries from the maps which are at or below the removal weight, then clips each
      * map to meet the maximum entry limit
      */
     private void trimMaps () {

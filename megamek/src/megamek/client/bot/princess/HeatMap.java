@@ -1,9 +1,6 @@
 package megamek.client.bot.princess;
 
-import megamek.common.Coords;
-import megamek.common.EjectedCrew;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
+import megamek.common.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,27 +19,33 @@ public class HeatMap {
     private static final double BV_DIVISOR = 100.0;
     private static final int MAX_MP_WEIGHT = 10;
     private static final int MIN_TRACKER_POSITIONS = 10;
+    private static final int MOVEMENT_WEIGHT_DEFAULT = 3;
 
     // Which team this is tracking
     private int teamId;
 
     // Tracking team activity
     private Map<Coords, Integer> teamActivity;
+    private Map<Coords, Integer> teamMovement;
 
     // Tracking individual units
     private boolean trackIndividualUnits;
-    private Map<Integer, Map<Coords, Integer>> entityActivity;
+    private Map<Integer, Coords> lastPositionCache;
+    private Map<Integer, Map<Coords, Integer>> entityMovement;
 
     // Control whether decay is applied or not
     private boolean enableDecay;
     private int decayModifier;
 
+    private int movementWeight;
     private int removalWeight;
     private int maxPositions;
 
     // Scaling factor applied to unit weight
     private double weightScaling;
 
+    // TODO: cache entity positions by ID so movement can be interpolated between two points
+    // TODO: add flag for interpolating movement and applying to each position in the path
 
     /**
      * Constructor. Initializes all backing objects to an empty state.
@@ -58,13 +61,16 @@ public class HeatMap {
     private void initialize (int newTeamId) {
         teamId = newTeamId;
         teamActivity = new HashMap<>();
+        teamMovement = new HashMap<>();
 
         trackIndividualUnits = false;
-        entityActivity = new HashMap<>();
+        entityMovement = new HashMap<>();
+        lastPositionCache = new HashMap<>();
 
         enableDecay = true;
         decayModifier = MIN_DECAY_MODIFIER;
 
+        movementWeight = MOVEMENT_WEIGHT_DEFAULT;
         removalWeight = MIN_WEIGHT;
         maxPositions = MIN_TRACKER_POSITIONS;
 
@@ -115,7 +121,7 @@ public class HeatMap {
 
     /**
      * Set reduction weight for each map entry on each game turn. Must be negative number.
-     * @param newSetting
+     * @param newSetting   a negative number
      */
     public void setDecayModifier(int newSetting) {
         decayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
@@ -143,16 +149,16 @@ public class HeatMap {
     }
 
     /**
-     * The weight at which an entry in the tracker is removed. Typically 0 (zero) but may be higher
-     * for more aggressive pruning.
+     * The weight at which an entry is removed from the trackers when trimmed for size constraints.
+     * Normally 0 (zero) but may be higher for more aggressive trimming.
      */
     public int getRemovalWeight () {
         return removalWeight;
     }
 
     /**
-     * The weight at which an entry in the tracker is removed. Typically 0 (zero) but may be higher
-     * for more aggressive pruning. Should not be a negative number.
+     * The weight at which an entry is removed from the trackers when trimmed for size constraints.
+     * Must be 0 (zero) or positive number.
      *
      * @param newSetting  positive number, may be 0 (zero)
      */
@@ -194,22 +200,6 @@ public class HeatMap {
         return getTopRatedPositions(teamActivity, 1, null);
     }
 
-    /**
-     * Gets the highest ranked positions for the specified entity ID. This could be multiple
-     * positions, a single position, or none at all.
-     * @param tracked  game ID of the desired entity
-     * @return   highest ranked position in the entity tracker; may return null if entity tracker
-     *           is not in use or no positions are available
-     */
-    public Collection<Coords> getTopEntityPositions (int tracked) {
-        if (!trackIndividualUnits ||
-                entityActivity.isEmpty() ||
-                !entityActivity.containsKey(tracked)) {
-            return null;
-        }
-        Map<Coords, Integer> trackedMap = entityActivity.get(tracked);
-        return getTopRatedPositions(trackedMap, 1, null);
-    }
 
     // TODO: add method to calculate and return hotspots (probably List<Collection<Coords>>)
 
@@ -242,10 +232,12 @@ public class HeatMap {
                 continue;
             }
 
-            // Update the team and entity trackers
+            // Update the team, team movement, and entity movement trackers
             processEntity(curTracked);
         }
     }
+
+    // TODO: add method to calculate entity movement vector based on weighted average of movement
 
 
     // TODO: add method for updating entity tracker via movement path
@@ -264,8 +256,13 @@ public class HeatMap {
                 teamActivity.put(curPosition, curWeight);
             }
 
-            for (int curID : entityActivity.keySet()) {
-                Map<Coords, Integer> curMap = entityActivity.get(curID);
+            for (Coords curPosition : teamMovement.keySet()) {
+                curWeight = Math.max(teamMovement.get(curPosition) + decayModifier, MIN_WEIGHT);
+                teamMovement.put(curPosition, curWeight);
+            }
+
+            for (int curID : entityMovement.keySet()) {
+                Map<Coords, Integer> curMap = entityMovement.get(curID);
                 for (Coords curPosition : curMap.keySet()) {
                     curWeight = Math.max(curMap.get(curPosition) + decayModifier, MIN_WEIGHT);
                     curMap.put(curPosition, curWeight);
@@ -276,31 +273,51 @@ public class HeatMap {
 
         // if the tracking maps are hitting the set limits, trim the entries back
         if (teamActivity.size() >= maxPositions ||
-                entityActivity.values().stream().anyMatch(m -> m.size() >= maxPositions)) {
+                teamMovement.size() >= maxPositions ||
+                entityMovement.values().stream().anyMatch(m -> m.size() >= maxPositions)) {
             trimMaps();
         }
     }
 
 
     /**
-     * Apply the position to the team map and the entity map if used
+     * Apply the position to the team maps and the entity movement map if used
      * @param tracked
      */
     private void processEntity (Entity tracked) {
-        final Coords position = new Coords(tracked.getPosition().getX(), tracked.getPosition().getY());
+        Coords position = new Coords(tracked.getPosition().getX(), tracked.getPosition().getY());
 
-        // Get the map adjustments, based on entity movement
+        // Get the map adjustments, based on entity position
         int mapAdjustment = getTeamWeightAdjustment(tracked);
 
         // Update the team map, adding the position if not already present
         updateTeamMap(position, mapAdjustment);
 
-        // If individual entity tracking is enabled, adjust the entity map
-        if (trackIndividualUnits) {
-            mapAdjustment = getEntityWeightAdjustment(tracked);
-            updateEntityMap(tracked.getId(), position, mapAdjustment);
-        }
+        // Only process the movement trackers if the entity has moved from it's last known position
+        if (!position.equals(lastPositionCache.get(tracked.getId()))) {
 
+            // Interpolate movement from last known position
+            mapAdjustment = getMovementWeightAdjustment(tracked);
+            List<Coords> path = new ArrayList<>();
+            Coords startPosition = lastPositionCache.get(tracked.getId());
+            if (lastPositionCache.containsKey(tracked.getId())) {
+                path = Coords.intervening(startPosition, position);
+                // Remove the starting point, as it was already counted in the last round
+                path.remove(startPosition);
+            } else {
+                path.add(position);
+            }
+
+            updateTeamMovementMap(path, mapAdjustment);
+
+            // If individual entity tracking is enabled, adjust the entity map
+            if (trackIndividualUnits) {
+                updateEntityMap(tracked.getId(), path, mapAdjustment);
+            }
+
+            // Stash this position for movement interpolation in the next round
+            updateLastKnown(tracked.getId(), position);
+        }
     }
 
     /**
@@ -311,6 +328,21 @@ public class HeatMap {
     private void updateTeamMap (Coords position, int adjustment) {
         int mapValue = Math.min(teamActivity.getOrDefault(position, 0) + adjustment, MAX_WEIGHT);
         teamActivity.put(position, mapValue);
+    }
+
+    /**
+     * Update the team movement tracker for a given path
+     * @param path
+     * @param adjustment
+     */
+    private void updateTeamMovementMap (List<Coords> path, int adjustment) {
+        int mapValue = adjustment;
+        for (Coords curPosition : path) {
+            if (teamMovement.containsKey(curPosition)) {
+                mapValue = teamMovement.get(curPosition) + adjustment;
+            }
+            teamMovement.put(curPosition, mapValue);
+        }
     }
 
 
@@ -334,47 +366,51 @@ public class HeatMap {
     }
 
     /**
+     * Get the weight for tracking movement. For now, this is a simple number chosen so that the
+     * entities movement can bee evaluated for the past several rounds.
+     * @param tracked
+     * @return
+     */
+    private int getMovementWeightAdjustment(Entity tracked) {
+        return (int) Math.floor(movementWeight * weightScaling);
+    }
+
+    /**
      * Update the entity tracker for a given position
      *
      * @param trackedId
-     * @param position
+     * @param positions
      * @param adjustment
      */
-    private void updateEntityMap (int trackedId, Coords position, int adjustment) {
+    private void updateEntityMap (int trackedId, List<Coords> positions, int adjustment) {
         Map<Coords, Integer> positionMap;
 
-        if (entityActivity.containsKey(trackedId)) {
-            positionMap = entityActivity.get(trackedId);
+        if (entityMovement.containsKey(trackedId)) {
+            positionMap = entityMovement.get(trackedId);
             int mapValue = adjustment;
-            if (positionMap.containsKey(position)) {
-                mapValue = positionMap.get(position) + adjustment;
+            for (Coords curPosition : positions) {
+                if (positionMap.containsKey(curPosition)) {
+                    mapValue = positionMap.get(curPosition) + adjustment;
+                }
+                positionMap.put(curPosition, mapValue);
             }
-            positionMap.put(position, mapValue);
         } else {
             positionMap = new HashMap<>();
-            positionMap.put(position, adjustment);
-            entityActivity.put(trackedId, positionMap);
+            for (Coords curPosition : positions) {
+                positionMap.put(curPosition, adjustment);
+            }
+            entityMovement.put(trackedId, positionMap);
         }
     }
 
     /**
-     * Get the weight of the entity for adjusting the individual map. Faster units, and jumping
-     * units in particular, are not likely to stay in the same place so get a much lower weight.
+     * Keep track of the last known position of each entity for interpolating movement
      * @param tracked
-     * @return
      */
-    private int getEntityWeightAdjustment (Entity tracked) {
-        int moveWeight = MAX_MP_WEIGHT - Math.min(tracked.getWalkMP(), MAX_MP_WEIGHT);
-        int jumpWeight = 0;
-        if (tracked.getJumpMP() > 0) {
-            jumpWeight = MAX_MP_WEIGHT - Math.min(tracked.getJumpMP(), MAX_MP_WEIGHT);
+    private void updateLastKnown (int trackedId, Coords position) {
+        if (!lastPositionCache.containsKey(trackedId) || !lastPositionCache.get(trackedId).equals(position)) {
+            lastPositionCache.put(trackedId, position);
         }
-
-        if (jumpWeight > 0) {
-            return jumpWeight <= moveWeight ? moveWeight - 1 : jumpWeight;
-        }
-
-        return (int) Math.floor(moveWeight * weightScaling);
     }
 
     /**
@@ -383,19 +419,21 @@ public class HeatMap {
      */
     private void trimMaps () {
 
-        // Team tracker
+        // Team trackers
         teamActivity.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
+        teamMovement.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
 
         // Entity tracker
-        for (int curID : entityActivity.keySet()) {
-            Map<Coords, Integer> positionMap = entityActivity.get(curID);
+        for (int curID : entityMovement.keySet()) {
+            Map<Coords, Integer> positionMap = entityMovement.get(curID);
             positionMap.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
         }
 
         clipMap(teamActivity);
+        clipMap(teamMovement);
 
-        for (int curId : entityActivity.keySet()) {
-            Map<Coords, Integer> curMap = entityActivity.get(curId);
+        for (int curId : entityMovement.keySet()) {
+            Map<Coords, Integer> curMap = entityMovement.get(curId);
             clipMap(curMap);
         }
 

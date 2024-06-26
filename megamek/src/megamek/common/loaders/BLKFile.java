@@ -814,6 +814,7 @@ public class BLKFile {
             }
 
             // Need to make sure that only "Unknown" armor gets skipped
+            // barRating block written out later in SV-specific section
             if (!t.hasPatchworkArmor() && (t.getArmorType(1) != ArmorType.T_ARMOR_UNKNOWN)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));
                 blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));

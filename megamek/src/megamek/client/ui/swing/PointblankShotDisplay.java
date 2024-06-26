@@ -664,25 +664,28 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 if (aiming) {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
-                            false, false, null, null, false, true, -1);
+                            false, false, null, null, false, true,
+                            WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
                     clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
 
                 } else {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false, false,
-                            null, null, false, true, -1);
+                            null, null, false, true,
+                            WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
                     clientgui.getUnitDisplay().wPan.setTarget(target, null);
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
                         AimingMode.NONE, false, false, null,
-                        null, false, true, -1);
+                        null, false, true,
+                        WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
                 clientgui.getUnitDisplay().wPan.setTarget(target, null);
             }
             int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
-            Mounted m = ce().getEquipment(weaponId);
+            WeaponMounted m = ce().getWeapon(weaponId);
             // If we have a Centurion Weapon System selected, we may need to
             //  update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {

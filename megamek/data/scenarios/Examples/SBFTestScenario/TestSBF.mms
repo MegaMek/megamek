@@ -20,7 +20,7 @@ factions:
       at: [4, 5]
       id: 3
 
-- name: OpFor
+- name: OpFor αθø
   camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
   units:
     - include: Romy's Company.mmu

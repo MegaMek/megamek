@@ -19,7 +19,6 @@
 package megamek.client.ui.swing.tooltip;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -34,9 +33,8 @@ public final class SBFFormationTooltip {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String BR = "<BR>";
-    private static final String SPACER = "&nbsp;&nbsp;&nbsp;";
+    private static final String SPACER = "&nbsp;&nbsp;&nbsp;&nbsp;";
     private static final String SHORT = "&nbsp;";
-    private static final String TABLE = "<TABLE>";
 
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
 
@@ -74,77 +72,88 @@ public final class SBFFormationTooltip {
     }
 
     private static StringBuilder styles() {
+        float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+        int labelSize = (int) (0.7 * base);
+        int valueSize = (int) (base);
+        int nameSize = (int) (1.2 * base);
+
         StringBuilder result = new StringBuilder("<style>");
         result.append(".value { font-family:Exo; font-size:20; }");
-        result.append(".label { font-family:Noto Sans; font-size:14; color:gray; }");
-        result.append(".idnum { font-family:Exo; font-size:14; color:gray; }");
-        result.append(".unitname { font-family:Noto Sans; font-size:16; }");
-        result.append(".valuecell { font-family:Exo; font-size:20; text-align: center; }");
-        result.append(".speccell { font-family:Exo; font-size:14; }");
-        result.append("th, td { padding:0 5; }");
+        result.append(".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }");
+        result.append(".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray; text-align:right; }");
+        result.append(".unitname { padding-right:10; font-family:Noto Sans; font-size:" + valueSize + "; }");
+        result.append(".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + "; text-align: center; }");
+        result.append(".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }");
+        result.append(".speccell { font-family:Exo; font-size:" + labelSize + "; }");
+        result.append(".fullwidth { width:100%; }");
+        result.append(".formation { font-family:Noto Sans; font-size:" + nameSize + "; }");
+        result.append("th, td { padding:0 2; }");
         return result;
     }
 
-    private static StringBuilder getDisplayNames(InGameObject unit, @Nullable IGame game) {
+    private static StringBuilder getDisplayNames(SBFFormation formation, @Nullable IGame game) {
         StringBuilder result = new StringBuilder();
-        Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
+        Player owner = (game != null) ? game.getPlayer(formation.getOwnerId()) : null;
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : GUIP.getUnitToolTipFGColor();
-        result.append(idString(unit));
-        result.append(guiScaledFontHTML(ownerColor));
-        result.append(unitName(unit));
+
+        String pvCell = asCSS("label", "PV") + SHORT + asCSS("pvcell", formation.getStrength());
+        result.append("<TABLE class=fullwidth><TR>");
+        result.append(tdCSS("formation", unitName(formation)))
+                .append(tdCSS("pvcell", pvCell));
+        result.append("</TR></TABLE>");
+
         String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
-        result.append(BR).append(ownerName);
-        result.append("</FONT>");
+        result.append("<TABLE class=fullwidth><TR>");
+        result.append(tdCSS("unitname", ownerName))
+                .append(tdCSS("idnum", idString(formation)));
+        result.append("</TR></TABLE>");
         return result;
     }
 
     private static StringBuilder formationStats(SBFFormation formation) {
         StringBuilder result = new StringBuilder();
 
-        result.append(BR)
-                .append(asCSS("label", "TP")).append(SHORT)
-                .append(asCSS("value", formation.getType().toString())).append(SPACER)
-                .append(asCSS("label", "SZ")).append(SHORT)
-                .append(asCSS("value", formation.getSize())).append(SPACER)
-                .append(asCSS("label", "PV")).append(SHORT)
-                .append(asCSS("value", formation.getStrength()));
+        result.append("<TABLE><TR>");
+        result.append(tdCSS("label", "TP"))
+                .append(tdCSS("valuecell", formation.getType().toString()))
+                .append(tdCSS("label", "SZ"))
+                .append(tdCSS("valuecell", formation.getSize()))
+                .append(tdCSS("label", "MO"))
+                .append(tdCSS("valuecell", formation.getMorale()));
+        result.append("</TR></TABLE>");
 
-        result.append(BR)
-                .append(asCSS("label", "MV")).append(SHORT)
-                .append(asCSS("value", "" + formation.getMovement() + formation.getMovementCode()));
+        result.append("<TABLE><TR>");
+        result.append(tdCSS("label", "MV"))
+                .append(tdCSS("valuecell", "" + formation.getMovement() + formation.getMovementCode()));
 
         if (formation.getJumpMove() > 0) {
-            result.append(SPACER).append(asCSS("label", "JUMP")).append(SHORT)
-                    .append(asCSS("value", formation.getJumpMove()));
+            result.append(tdCSS("label", "JUMP"))
+                    .append(tdCSS("valuecell", formation.getJumpMove()));
         }
 
         if (formation.getTrspMovement() != formation.getMovement()) {
-            result.append(SPACER).append(asCSS("label", "Trsp MV")).append(SHORT)
-                    .append(asCSS("value", "" + formation.getTrspMovement() + formation.getTrspMovementCode()));
+            result.append(tdCSS("label", "Trsp MV"))
+                    .append(tdCSS("valuecell", "" + formation.getTrspMovement() + formation.getTrspMovementCode()));
         }
 
-        result.append(BR)
-                .append(asCSS("label", "SPEC")).append(SHORT)
-                .append(asCSS("value", formation.getSpecialsDisplayString(formation)));
+        result.append(tdCSS("label", "TC"))
+                .append(tdCSS("valuecell", formation.getTactics()));
+        result.append("</TR></TABLE>");
 
-        result.append(BR)
-                .append(asCSS("label", "TC")).append(SHORT)
-                .append(asCSS("value", formation.getTactics())).append(SPACER)
-                .append(asCSS("label", "MO")).append(SHORT)
-                .append(asCSS("value", formation.getMorale())).append(SPACER)
-                .append(asCSS("label", "TMM")).append(SHORT)
-                .append(asCSS("value", formation.getTmm())).append(SPACER)
-                .append(asCSS("label", "Skill")).append(SHORT)
-                .append(asCSS("value", formation.getSkill()));
-
+        result.append("<TABLE><TR>");
+        result.append(tdCSS("label", "TMM"))
+                .append(tdCSS("valuecell", formation.getTmm()))
+                .append(tdCSS("label", "Skill"))
+                .append(tdCSS("valuecell", formation.getSkill()))
+                .append(tdCSS("label", "SPEC"))
+                .append(tdCSS("valuecell", formation.getSpecialsDisplayString(formation)));
+        result.append("</TR></TABLE>");
         result.append(unitsStats(formation));
-
         return result;
     }
 
     private static StringBuilder unitsStats(SBFFormation formation) {
         StringBuilder result = new StringBuilder();
-//        String style = " style=\"color:red;border-style:solid;border-width:0px;padding:0;margin:0;\">";
         result.append("<TABLE>");
         formation.getUnits().forEach(unit -> result.append(unitLine(unit)));
         result.append("</TABLE>");
@@ -155,11 +164,11 @@ public final class SBFFormationTooltip {
         StringBuilder result = new StringBuilder();
         result.append("<TR>");
         result.append(tdCSS("unitname", abbrevUnitName(unit.getName())))
-                .append(tdCSS("label", "Ärmör"))
+                .append(tdCSS("label", "Armor"))
                 .append(tdCSS("valuecell", unit.getArmor()))
                 .append(tdCSS("label", "Dmg"))
                 .append(tdCSS("valuecell", unit.getDamage().toString()))
-                .append(tdCSS("label", "SPÉC"))
+                .append(tdCSS("label", "SPEC"))
                 .append(tdCSS("speccell", unit.getSpecialsDisplayString(unit)));
         result.append("</TR>");
         return result;

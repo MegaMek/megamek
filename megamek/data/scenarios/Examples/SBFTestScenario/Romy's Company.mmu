@@ -5,7 +5,7 @@ type: SBFFormation
 generalname: Romy's Company
 units:
   - type: SBFUnit
-    generalname: Smither's Lance
+    generalname: Smäther's Lance
     elements:
     - type: ASElement
       fullname: Atlas AS7-D
@@ -19,7 +19,7 @@ units:
       fullname: Centurion CN9-A
       skill: 5
   - type: SBFUnit
-    generalname: Swyccfer's Lance
+    generalname: Swófer's Lance
     elements:
     - type: ASElement
       fullname: Stinger STG-3R
@@ -32,7 +32,7 @@ units:
       fullname: Wasp WSP-1A
       skill: 5
   - type: SBFUnit
-    generalname: Romy's Lance
+    generalname: Râmy's Lance
     elements:
     - type: ASElement
       fullname: Atlas AS7-D

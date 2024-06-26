@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
@@ -172,12 +173,15 @@ public class ScenarioV2 implements Scenario {
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
+        final PlayerColour[] colours = PlayerColour.values();
+
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
             MMUReader.requireFields("Player", playerNode, NAME, UNITS);
 
             Player player = new Player(playerId, playerNode.get(NAME).textValue());
             result.add(player);
+            player.setColour(colours[playerId % colours.length]);
             playerId++;
 
             // scenario players start out as ghosts to be logged into

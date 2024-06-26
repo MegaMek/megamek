@@ -20,6 +20,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tooltip.SBFFormationTooltip;
 import megamek.common.Coords;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -57,9 +58,8 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
                 .collect(Collectors.toList());
 
         for (SBFFormation formation : formations) {
-            tooltip.append(formation.toString());
+            tooltip.append(SBFFormationTooltip.getTooltip(formation, game));
             tooltip.append("\n");
-            formation.getUnits().forEach(unit -> tooltip.append(unit.toString()).append("\n"));
         }
         return tooltip.toString();
     }

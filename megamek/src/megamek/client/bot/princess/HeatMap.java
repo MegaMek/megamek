@@ -186,14 +186,14 @@ public class HeatMap {
         maxPositions = Math.max(newSetting, MIN_TRACKER_POSITIONS);
     }
 
-    // TODO: get nearest team hotspot to provided position. Need to consider value vs range.
+    // TODO: method to get nearest hotspot to provided position. Need to consider value vs range.
 
     /**
      * Get the highest ranked team positions. This could be multiple positions, a single position,
      * or none at all.
      * @return  highest rank position in the tracker; may return null if no positions available
      */
-    public Collection<Coords> getTopTeamPositions () {
+    public Collection<Coords> getHotSpots () {
         if (teamActivity.isEmpty()) {
             return null;
         }
@@ -201,7 +201,9 @@ public class HeatMap {
     }
 
 
-    // TODO: add method to calculate and return hotspots (probably List<Collection<Coords>>)
+    // TODO: method to determine if team is travelling in column or front using team movement tracker
+
+    // TODO: method to find point of advance using team movement tracker (highest value/group of values)
 
     /**
      * Adjusts the heat map using the current position of each provided entity. Filters out gun
@@ -237,8 +239,6 @@ public class HeatMap {
         }
     }
 
-    // TODO: add method to calculate entity movement vector based on weighted average of movement
-
 
     // TODO: add method for updating entity tracker via movement path
 
@@ -246,28 +246,16 @@ public class HeatMap {
      * Reduces the values for every entry in the map. This will gradually reduce the weights over
      * time for positions that are not regularly updated.
      */
-    public void ageMaps () {
+    public void ageMaps (Game game) {
+
+        // Bring out your dead!
+        trimLastKnownPositions(game);
 
         if (enableDecay) {
 
-            int curWeight;
-            for (Coords curPosition : teamActivity.keySet()) {
-                curWeight = Math.max(teamActivity.get(curPosition) + decayModifier, MIN_WEIGHT);
-                teamActivity.put(curPosition, curWeight);
-            }
-
-            for (Coords curPosition : teamMovement.keySet()) {
-                curWeight = Math.max(teamMovement.get(curPosition) + decayModifier, MIN_WEIGHT);
-                teamMovement.put(curPosition, curWeight);
-            }
-
-            for (int curID : entityMovement.keySet()) {
-                Map<Coords, Integer> curMap = entityMovement.get(curID);
-                for (Coords curPosition : curMap.keySet()) {
-                    curWeight = Math.max(curMap.get(curPosition) + decayModifier, MIN_WEIGHT);
-                    curMap.put(curPosition, curWeight);
-                }
-            }
+            ageTeamMap(game);
+            ageTeamMovementMap();
+            ageEntityMap();
 
         }
 
@@ -331,22 +319,6 @@ public class HeatMap {
     }
 
     /**
-     * Update the team movement tracker for a given path
-     * @param path
-     * @param adjustment
-     */
-    private void updateTeamMovementMap (List<Coords> path, int adjustment) {
-        int mapValue = adjustment;
-        for (Coords curPosition : path) {
-            if (teamMovement.containsKey(curPosition)) {
-                mapValue = teamMovement.get(curPosition) + adjustment;
-            }
-            teamMovement.put(curPosition, mapValue);
-        }
-    }
-
-
-    /**
      * Get the weight of the entity for adjusting the team map. Higher BV units get a larger weight,
      * while faster units have a reduced weight.
      * @param tracked
@@ -366,6 +338,61 @@ public class HeatMap {
     }
 
     /**
+     * Apply decay rate to team activity map. Positions that have a trakced entity use a slower,
+     * linear decay rate, while those that do not have a tracked entity use a faster exponential
+     * decay rate
+     * @param game
+     */
+    private void ageTeamMap (Game game) {
+
+        // Get positions of tracked entities with known positions
+        List<Coords> activePositions = new ArrayList<>();
+        for (int curId : lastPositionCache.keySet()) {
+            Entity curEntity = game.getEntity(curId);
+            if (curEntity != null &&
+                    !curEntity.isDestroyed() &&
+                    curEntity.isDeployed() &&
+                    !curEntity.isCarcass() &&
+                    (curEntity.isVisibleToEnemy() || curEntity.isDetectedByEnemy())) {
+                activePositions.add(lastPositionCache.get(curId));
+            }
+        }
+
+        int curWeight;
+
+        for (Coords curPosition : teamActivity.keySet()) {
+            curWeight = teamActivity.get(curPosition);
+            if (curWeight <= MIN_WEIGHT) {
+                continue;
+            }
+            // If this position does not have a tracked entity, use exponential decay.
+            // Otherwise, use linear decay.
+            if (!activePositions.contains(curPosition)) {
+                curWeight = Math.max((int) Math.floor(curWeight / 2.0), MIN_WEIGHT);
+            } else {
+                curWeight = Math.max(curWeight + decayModifier, MIN_WEIGHT);
+            }
+            teamActivity.put(curPosition, curWeight);
+        }
+
+    }
+
+    /**
+     * Update the team movement tracker for a given path
+     * @param path
+     * @param adjustment
+     */
+    private void updateTeamMovementMap (List<Coords> path, int adjustment) {
+        int mapValue = adjustment;
+        for (Coords curPosition : path) {
+            if (teamMovement.containsKey(curPosition)) {
+                mapValue = teamMovement.get(curPosition) + adjustment;
+            }
+            teamMovement.put(curPosition, mapValue);
+        }
+    }
+
+    /**
      * Get the weight for tracking movement. For now, this is a simple number chosen so that the
      * entities movement can bee evaluated for the past several rounds.
      * @param tracked
@@ -373,6 +400,23 @@ public class HeatMap {
      */
     private int getMovementWeightAdjustment(Entity tracked) {
         return (int) Math.floor(movementWeight * weightScaling);
+    }
+
+    /**
+     * Apply decay rate to team movement map
+     */
+    private void ageTeamMovementMap () {
+        int curWeight;
+
+        for (Coords curPosition : teamMovement.keySet()) {
+            curWeight = teamMovement.get(curPosition);
+            if (curWeight <= MIN_WEIGHT) {
+                continue;
+            }
+            curWeight = Math.max(curWeight + decayModifier, MIN_WEIGHT);
+            teamMovement.put(curPosition, curWeight);
+        }
+
     }
 
     /**
@@ -404,12 +448,45 @@ public class HeatMap {
     }
 
     /**
+     * Apply decay rate to the individual movement maps
+     */
+    private void ageEntityMap () {
+        int curWeight;
+
+        for (int curID : entityMovement.keySet()) {
+            Map<Coords, Integer> curMap = entityMovement.get(curID);
+            for (Coords curPosition : curMap.keySet()) {
+                curWeight = curMap.get(curPosition);
+                if (curWeight <= MIN_WEIGHT) {
+                    continue;
+                }
+                curWeight = Math.max(curWeight + decayModifier, MIN_WEIGHT);
+                curMap.put(curPosition, curWeight);
+            }
+        }
+
+    }
+
+    // TODO: add method to calculate entity movement vector based on weighted average of movement
+
+    /**
      * Keep track of the last known position of each entity for interpolating movement
      * @param tracked
      */
     private void updateLastKnown (int trackedId, Coords position) {
         if (!lastPositionCache.containsKey(trackedId) || !lastPositionCache.get(trackedId).equals(position)) {
             lastPositionCache.put(trackedId, position);
+        }
+    }
+
+    /**
+     * Remove destroyed entities from the last known position tracker
+     */
+    private void trimLastKnownPositions (Game game) {
+        for (Entity curCorpse : game.getOutOfGameEntitiesVector()) {
+            if (curCorpse != null) {
+                lastPositionCache.remove(curCorpse.getId());
+            }
         }
     }
 
@@ -453,6 +530,9 @@ public class HeatMap {
             }
         }
     }
+
+    // TODO: method for trimming last known tracker, if entity is destroyed/non-functional (carcass)
+    //       or if individual movement tracker for entity is all zero
 
     /**
      * Get the highest rated positions from a tracking map

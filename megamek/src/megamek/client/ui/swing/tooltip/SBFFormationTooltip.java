@@ -32,13 +32,8 @@ import java.util.Set;
 public final class SBFFormationTooltip {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final String BR = "<BR>";
-    private static final String SPACER = "&nbsp;&nbsp;&nbsp;&nbsp;";
     private static final String SHORT = "&nbsp;";
-
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
-
-    private SBFFormationTooltip() { }
 
     public static String getTooltip(SBFFormation formation, @Nullable IGame game) {
         StringBuilder result = new StringBuilder("<HTML><HEAD>");
@@ -48,7 +43,7 @@ public final class SBFFormationTooltip {
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : Color.BLACK;
         String styleColor = Integer.toHexString(ownerColor.getRGB() & 0xFFFFFF);
         result.append("<div style=\"padding:0 10; border:2; border-style:solid; border-color:" + styleColor + ";\">");
-        result.append(getDisplayNames(formation, game));
+        result.append(nameLines(formation, game));
         result.append(formationStats(formation));
         result.append("</div>");
         result.append("</BODY></HTML>");
@@ -73,9 +68,9 @@ public final class SBFFormationTooltip {
 
     private static StringBuilder styles() {
         float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-        int labelSize = (int) (0.7 * base);
-        int valueSize = (int) (base);
-        int nameSize = (int) (1.2 * base);
+        int labelSize = (int) (0.8 * base);
+        int valueSize = (int) (1.1 * base);
+        int nameSize = (int) (1.3 * base);
 
         StringBuilder result = new StringBuilder("<style>");
         result.append(".value { font-family:Exo; font-size:20; }");
@@ -91,7 +86,7 @@ public final class SBFFormationTooltip {
         return result;
     }
 
-    private static StringBuilder getDisplayNames(SBFFormation formation, @Nullable IGame game) {
+    private static StringBuilder nameLines(SBFFormation formation, @Nullable IGame game) {
         StringBuilder result = new StringBuilder();
         Player owner = (game != null) ? game.getPlayer(formation.getOwnerId()) : null;
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : GUIP.getUnitToolTipFGColor();
@@ -183,42 +178,6 @@ public final class SBFFormationTooltip {
         return "<span class=idnum>" + id + "&nbsp;</span>";
     }
 
-    private static void appendAsCells(StringBuilder result, int content, int... moreContents) {
-        result.append(cellCenter(Integer.toString(content)));
-        for (int moreContent : moreContents) {
-            result.append(cellCenter(Integer.toString(moreContent)));
-        }
-    }
-
-    private static void appendAsCells(StringBuilder result, String content, String... moreContents) {
-        result.append(cellCenter(content));
-        for (String moreContent : moreContents) {
-            result.append(cellCenter(moreContent));
-        }
-    }
-
-    private static String cellCenter(String content) {
-        return "<TD ALIGN=CENTER>" + content + "</TD>";
-    }
-
-    private static String cellLeft(String content) {
-        return "<TD>" + content + "</TD>";
-    }
-
-    public static String guiScaledFontHTML(Color col) {
-        return "<FONT " + sizeString() + colorString(col) + ">";
-    }
-
-    private static String sizeString() {
-        int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * UIUtil.FONT_SCALE1);
-        return " style=font-size:" + fontSize + " ";
-    }
-
-    /** Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given color. */
-    public static String colorString(Color col) {
-        return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
-    }
-
     private static String abbrevUnitName(String unitName) {
         String result = unitName;
         for (String token : ABBREV_NAME_PARTS_UNIT) {
@@ -226,4 +185,6 @@ public final class SBFFormationTooltip {
         }
         return result;
     }
+
+    private SBFFormationTooltip() { }
 }

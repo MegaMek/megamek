@@ -54,8 +54,11 @@ public interface PlayerTurn extends Serializable  {
      * Returns true if this player turn requires the player to provide actions for more than one unit. This is
      * true for example when vehicles must be moved as a lance. This is not equivalent to providing multiple
      * actions, such as in firing multiple weapons. That is not considered a multi-turn.
+     * By default, this method returns false.
      *
      * @return True when this turn requires actions for at least two units
      */
-    boolean isMultiTurn();
+    default boolean isMultiTurn() {
+        return false;
+    }
 }

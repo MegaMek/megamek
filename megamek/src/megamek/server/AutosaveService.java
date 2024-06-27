@@ -34,7 +34,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class AutosaveService {
+public class AutosaveService {
 
     public static final String FILENAME_FORMAT = "Round-%d-autosave%s.sav.gz";
 

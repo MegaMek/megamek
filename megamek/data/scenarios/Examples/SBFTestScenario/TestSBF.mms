@@ -20,7 +20,7 @@ factions:
       at: [4, 5]
       id: 3
 
-- name: OpFor αθø
+- name: OpFor ΟπΦόρ
   camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
   units:
     - include: Romy's Company.mmu
@@ -29,6 +29,9 @@ factions:
 
     - include: "Example SBF Formation.mmu"
       at: [ 12, 3 ]
+
+    - include: Noble's Company.mmu
+      deploymentround: 3
 
 
 

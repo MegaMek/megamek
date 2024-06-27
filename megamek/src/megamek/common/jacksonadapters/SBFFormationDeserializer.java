@@ -47,6 +47,7 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     private static final String AT = "at";
     private static final String X = "x";
     private static final String Y = "y";
+    private static final String DEPLOYMENTROUND = "deploymentround";
 
     public SBFFormationDeserializer() {
         this(null);
@@ -76,6 +77,7 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
             formation.setId(node.get(ID).intValue());
         }
         assignPosition(formation, node);
+        assignDeploymentRound(formation, node);
         return formation;
     }
 
@@ -99,5 +101,11 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
         formation.setDeployed(true);
         // translate the position so "at: 2, 3" will place a unit on 0203 (instead of 0102)
         formation.setPosition(new BoardLocation(new Coords(coords.getX() - 1, coords.getY() - 1), 0));
+    }
+
+    private void assignDeploymentRound(SBFFormation formation, JsonNode node) {
+        if (node.has(DEPLOYMENTROUND)) {
+            formation.setDeployRound(node.get(DEPLOYMENTROUND).asInt());
+        }
     }
 }

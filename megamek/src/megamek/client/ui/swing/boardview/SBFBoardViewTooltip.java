@@ -54,6 +54,7 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
         List<SBFFormation> formations = game.getInGameObjects().stream()
                 .filter(SBFFormation.class::isInstance)
                 .map(f -> (SBFFormation) f)
+                .filter(f -> f.getPosition() != null)
                 .filter(f -> f.getPosition().isAtCoords(coords))
                 .collect(Collectors.toList());
 

@@ -16,17 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.server.sbf;
 
 import megamek.MegaMek;
-import megamek.common.GameTurn;
-import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.stream.Collectors;
-
-class SBFPhasePreparationManager {
+class SBFPhasePreparationManager implements SBFGameManagerHelper {
 
     private final SBFGameManager gameManager;
 
@@ -35,7 +31,7 @@ class SBFPhasePreparationManager {
     }
 
     void managePhase() {
-        switch (gameManager.getGame().getPhase()) {
+        switch (game().getPhase()) {
             case LOUNGE:
                 gameManager.clearPendingReports();
 //                MapSettings mapSettings = game.getMapSettings();
@@ -49,7 +45,7 @@ class SBFPhasePreparationManager {
             case INITIATIVE:
                 // remove the last traces of last round
 //                game.handleInitiativeCompensation();
-                gameManager.getGame().clearActions();
+                game().clearActions();
 //                game.resetTagInfo();
 //                sendTagInfoReset();
                 gameManager.clearPendingReports();
@@ -57,17 +53,17 @@ class SBFPhasePreparationManager {
 //                resetEntityPhase(phase);
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
-
-                // roll 'em
                 gameManager.resetActivePlayersDone();
+
+                // new round
                 gameManager.rollInitiative();
 
-                if (!gameManager.getGame().shouldDeployThisRound()) {
+                if (!game().shouldDeployThisRound()) {
                     gameManager.incrementAndSendGameRound();
-                    gameManager.autoSaveService.performRollingAutosave();
+                    gameManager.getAutoSaveService().performRollingAutosave();
                 }
 
-//                gameManager.determineTurnOrder(gameManager.getGame().getPhase());
+                gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
                 gameManager.initiativeHelper.writeInitiativeReport();
 //
 //                // checks for environmental survival
@@ -84,22 +80,14 @@ class SBFPhasePreparationManager {
 //                bvReports(true);
 
                 LogManager.getLogger().info("Round {} memory usage: {}",
-                        gameManager.getGame().getCurrentRound(), MegaMek.getMemoryUsed());
+                        game().getCurrentRound(), MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
 //                resetActivePlayersDone();
 //                setIneligible(phase);
-                gameManager.getGame().clearTurns();
-                if (gameManager.getGame().getBoard().onGround()) {
-                    gameManager.getGame().setTurns(gameManager.getGame().getPlayersList().stream()
-                            .filter(Player::hasMinefields)
-                            .map(p -> new GameTurn(p.getId()))
-                            .collect(Collectors.toList()));
-                }
-                gameManager.getGame().resetTurnIndex();
-                gameManager.sendCurrentTurns();
+                gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
 //                deployOffBoardEntities();
@@ -134,7 +122,7 @@ class SBFPhasePreparationManager {
 //                    }
 //                }
 //                game.setTurnVector(turn);
-                gameManager.getGame().resetTurnIndex();
+                game().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
             case PREMOVEMENT:
@@ -165,7 +153,7 @@ class SBFPhasePreparationManager {
                 gameManager.transmitAllPlayerUpdates();
 //                resetActivePlayersDone();
 //                setIneligible(phase);
-//                determineTurnOrder(phase);
+                gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
 //                entityAllUpdate();
                 gameManager.clearPendingReports();
 //                doTryUnstuck();
@@ -230,7 +218,7 @@ class SBFPhasePreparationManager {
 //                resetActivePlayersDone();
                 gameManager.sendReport();
 //                entityAllUpdate();
-                if (gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
+                if (game().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     gameManager.autoSave();
                 }
                 break;
@@ -242,10 +230,10 @@ class SBFPhasePreparationManager {
                 gameManager.addPendingReportsToGame();
 //                EmailService mailer = Server.getServerInstance().getEmailService();
 //                if (mailer != null) {
-//                    for (var player: mailer.getEmailablePlayers(gameManager.getGame())) {
+//                    for (var player: mailer.getEmailablePlayers(game())) {
 //                        try {
 //                            var message = mailer.newReportMessage(
-//                                    gameManager.getGame(), gameManager.getPendingReports(), player
+//                                    game(), gameManager.getPendingReports(), player
 //                            );
 //                            mailer.send(message);
 //                        } catch (Exception ex) {
@@ -262,5 +250,10 @@ class SBFPhasePreparationManager {
         }
 
 
+    }
+
+    @Override
+    public SBFGameManager gameManager() {
+        return gameManager;
     }
 }

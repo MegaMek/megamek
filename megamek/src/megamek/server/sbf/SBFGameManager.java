@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.server.sbf;
 
 import megamek.common.*;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
-import megamek.common.util.EmailService;
+import megamek.server.AbstractGameManager;
+import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
-import megamek.server.sbf.SBFInitiativeHelper;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -348,7 +348,7 @@ public final class SBFGameManager extends AbstractGameManager {
     /**
      * @return True when this game is using double blind rules (IO BF p.195)
      */
-    private boolean isDoubleBlind() {
+    boolean isDoubleBlind() {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
     }
 

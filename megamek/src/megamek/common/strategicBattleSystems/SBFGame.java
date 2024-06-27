@@ -42,7 +42,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private GamePhase lastPhase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
-    private final List<GameTurn> turnList = new ArrayList<>();
+    private final List<SBFPlayerTurn> turnList = new ArrayList<>();
     private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper();
 
     /**
@@ -282,7 +282,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @param newTurns The new list of turns to use
      */
-    public void setTurns(List<GameTurn> newTurns) {
+    public void setTurns(List<SBFPlayerTurn> newTurns) {
         turnList.clear();
         turnList.addAll(newTurns);
     }
@@ -292,7 +292,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      * not the SBFGameManager, don't even think about changing any of the turns.
      */
     @Override
-    public List<GameTurn> getTurnsList() {
+    public List<SBFPlayerTurn> getTurnsList() {
         return Collections.unmodifiableList(turnList);
     }
 

@@ -16,12 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.server.sbf;
 
-public interface SBFReportWriter {
+import megamek.common.ReportEntry;
+import megamek.common.net.packets.Packet;
+import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.server.GameManagerPacketHelper;
 
-    void addReport();
+public interface SBFGameManagerHelper {
 
+    SBFGameManager gameManager();
 
+    default SBFGame game() {
+        return gameManager().getGame();
+    }
+
+    default void addReport(ReportEntry reportEntry) {
+        gameManager().addReport(reportEntry);
+    }
+
+    default void send(Packet packet) {
+        gameManager().send(packet);
+    }
+
+    default GameManagerPacketHelper packetHelper() {
+        return gameManager().getPacketHelper();
+    }
 }

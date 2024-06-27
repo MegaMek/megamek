@@ -82,7 +82,7 @@ public class MunitionTree {
 
     private static String HEADER = String.join(
             System.getProperty("line.separator"),
-            "# ADF (Autoconfiguration Definition File) from MegaMek.",
+            "# ADF (Autoconfiguration Data File) from MegaMek.",
             "# Lines are formatted as",
             "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Muntion1[:Munition2[:...]]][::AmmoType2...]'",
             "# Values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",
@@ -213,12 +213,13 @@ public class MunitionTree {
             HashMap<String, String> imperatives = new HashMap<>();
             for (Mounted m : e.getAmmo()) {
                 AmmoType aType = (AmmoType) m.getType();
+                String baseName = aType.getBaseName();
                 String sName = aType.getShortName();
-                String munition = (aType.getSubMunitionName() == aType.getBaseName()) ? "Standard" : aType.getSubMunitionName();
-                if (!(imperatives.containsKey(sName))) {
-                    imperatives.put(sName, munition);
+                String munition = (aType.getSubMunitionName() == baseName) ? "Standard" : aType.getSubMunitionName();
+                if (!(imperatives.containsKey(baseName))) {
+                    imperatives.put(baseName, munition);
                 } else {
-                    imperatives.put(sName, imperatives.get(sName) + ':' + munition);
+                    imperatives.put(baseName, imperatives.get(baseName) + ':' + munition);
                 }
             }
             root.insert(imperatives, e.getFullChassis(), e.getModel(), e.getCrew().getName(0));

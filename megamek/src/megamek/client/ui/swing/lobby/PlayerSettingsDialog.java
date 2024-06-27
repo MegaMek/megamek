@@ -675,11 +675,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         if (fc.getSelectedFile() != null) {
             String file = fc.getSelectedFile().getAbsolutePath();
-            if (null == munitionTree) {
-                munitionTree = new MunitionTree(file);
-            } else {
-                munitionTree.readFromADFFilename(file);
-            }
+            mt = new MunitionTree(file);
         }
         return mt;
     }

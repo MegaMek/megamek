@@ -18,7 +18,8 @@ public class HeatMap {
     private static final int MAX_WEIGHT = 100;
     private static final double BV_DIVISOR = 100.0;
     private static final int MAX_MP_WEIGHT = 10;
-    private static final int MIN_TRACKER_POSITIONS = 10;
+    private static final double MIN_TRACKER_TOLERANCE = 0.1;
+    private static final int MAX_TRACKER_ENTRIES = 100;
     private static final int MOVEMENT_WEIGHT_DEFAULT = 3;
 
     // Which team this is tracking
@@ -39,7 +40,7 @@ public class HeatMap {
 
     private int movementWeight;
     private int removalWeight;
-    private int maxPositions;
+    private double mapTrimThreshold;
 
     // Scaling factor applied to unit weight
     private double weightScaling;
@@ -72,7 +73,7 @@ public class HeatMap {
 
         movementWeight = MOVEMENT_WEIGHT_DEFAULT;
         removalWeight = MIN_WEIGHT;
-        maxPositions = MIN_TRACKER_POSITIONS;
+        mapTrimThreshold = MIN_TRACKER_TOLERANCE;
 
         weightScaling = 1.0;
     }
@@ -171,19 +172,18 @@ public class HeatMap {
      *
      * @return
      */
-    public int getMaximumTrackerSize () {
-        return maxPositions;
+    public double getMapTrimThreshold () {
+        return mapTrimThreshold;
     }
 
     /**
-     * The maximum number of positions that will be tracked by team, as well as per entity if
-     * that setting is enabled. Setting this value low will minimize memory use but will be less
-     * useful.
+     * When the percentage of minimum values in any map exceeds this value, the map is trimmed of
+     * all minimum values to maintain efficiency. Typical values are between 0.1 and 0.5.
      * TODO: consider auto-setting this based on percentage of map size or other factors
-     * @param newSetting
+     * @param newSetting  positive value between MIN_TRACKER_POSITIONS and 0.9
      */
-    public void setMaxPositions (int newSetting) {
-        maxPositions = Math.max(newSetting, MIN_TRACKER_POSITIONS);
+    public void setMapTrimThreshold(double newSetting) {
+        mapTrimThreshold = Math.min(Math.max(newSetting, MIN_TRACKER_TOLERANCE), 0.9);
     }
 
     // TODO: method to get nearest hotspot to provided position. Need to consider value vs range.
@@ -252,19 +252,18 @@ public class HeatMap {
         trimLastKnownPositions(game);
 
         if (enableDecay) {
-
             ageTeamMap(game);
             ageTeamMovementMap();
             ageEntityMap();
-
         }
 
-        // if the tracking maps are hitting the set limits, trim the entries back
-        if (teamActivity.size() >= maxPositions ||
-                teamMovement.size() >= maxPositions ||
-                entityMovement.values().stream().anyMatch(m -> m.size() >= maxPositions)) {
-            trimMaps();
+        // If the tracking maps are hitting the set limits, trim the entries back
+        trimMap(teamActivity);
+        trimMap(teamMovement);
+        for (Map<Coords, Integer> entityMap : entityMovement.values()) {
+            trimMap(entityMap);
         }
+
     }
 
 
@@ -491,48 +490,25 @@ public class HeatMap {
     }
 
     /**
-     * Removes entries from the maps which are at or below the removal weight, then clips each
-     * map to meet the maximum entry limit
+     * Removes all elements with a weight equal to or lower than the removal weight
+     * @param checkMap
      */
-    private void trimMaps () {
-
-        // Team trackers
-        teamActivity.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
-        teamMovement.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
-
-        // Entity tracker
-        for (int curID : entityMovement.keySet()) {
-            Map<Coords, Integer> positionMap = entityMovement.get(curID);
-            positionMap.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
+    private void trimMap (Map<Coords, Integer> checkMap) {
+        if ((double) checkMap.values().stream().filter(w -> w <= removalWeight).count() / checkMap.size() >= mapTrimThreshold) {
+            checkMap.entrySet().removeIf(curPos -> curPos.getValue() <= removalWeight);
         }
 
-        clipMap(teamActivity);
-        clipMap(teamMovement);
-
-        for (int curId : entityMovement.keySet()) {
-            Map<Coords, Integer> curMap = entityMovement.get(curId);
-            clipMap(curMap);
-        }
-
-    }
-
-    /**
-     * If the number of map entries exceeds the maximum number, removed the lowest ranked members
-     * until the number of entries is acceptable
-     * @param positionTracker
-     */
-    private void clipMap (Map<Coords, Integer> positionTracker) {
-        while (maxPositions > 0 && positionTracker.size() > maxPositions) {
-            OptionalInt lowestRank = positionTracker.values().stream().mapToInt(w -> w).min();
-            List<Coords> removals = positionTracker.keySet().stream().filter(p -> positionTracker.get(p) == lowestRank.getAsInt()).collect(Collectors.toList());
+        // Last ditch measures - trim out the lowest weights until the number of entries is
+        // within reason
+        while (checkMap.size() > MAX_TRACKER_ENTRIES) {
+            OptionalInt lowestRank = checkMap.values().stream().mapToInt(w -> w).min();
+            List<Coords> removals = checkMap.keySet().stream().filter(p -> checkMap.get(p) == lowestRank.getAsInt()).collect(Collectors.toList());
             for (Coords curPosition : removals) {
-                positionTracker.remove(curPosition);
+                checkMap.remove(curPosition);
             }
         }
-    }
 
-    // TODO: method for trimming last known tracker, if entity is destroyed/non-functional (carcass)
-    //       or if individual movement tracker for entity is all zero
+    }
 
     /**
      * Get the highest rated positions from a tracking map

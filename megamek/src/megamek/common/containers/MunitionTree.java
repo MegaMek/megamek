@@ -215,7 +215,7 @@ public class MunitionTree {
                 AmmoType aType = (AmmoType) m.getType();
                 String baseName = aType.getBaseName();
                 String sName = aType.getShortName();
-                String munition = (aType.getSubMunitionName() == baseName) ? "Standard" : aType.getSubMunitionName();
+                String munition = (aType.getSubMunitionName().equals(baseName)) ? "Standard" : aType.getSubMunitionName();
                 if (!(imperatives.containsKey(baseName))) {
                     imperatives.put(baseName, munition);
                 } else {

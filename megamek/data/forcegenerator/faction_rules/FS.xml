@@ -654,9 +654,9 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 				<option weight="2" ifWeightClass="H" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="Tank" role="infantry_support" name="Armor Support"
+				<option unitType="Tank" role="inf_support" name="Armor Support"
 					weight="3">%COMPANY%</option>
-				<option unitType="Tank" role="infantry_support" name="Armor Support"
+				<option unitType="Tank" role="inf_support" name="Armor Support"
 					weight="1">%BATTALION%</option>
 				<option weight="2" />
 				<option weight="1" ifWeightClass="M"/>

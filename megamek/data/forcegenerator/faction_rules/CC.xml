@@ -830,9 +830,9 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="2" ifWeightClass="H" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="inf_support"
 					weight="3" name="Armor Support">%COMPANY%</option>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="inf_support"
 					weight="1" name="Armor Support">%BATTALION%</option>
 				<option weight="2" />
 				<option weight="1" ifWeightClass="M"/>

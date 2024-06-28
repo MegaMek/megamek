@@ -247,7 +247,7 @@ This is required to distinguish between different unit types that have the same 
         Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL
         Notes: typically applied to units with multiple anti-personnel weapons
 
-        inf_support/infantry_support
+        inf_support/(formerly infantry_support)
         Use: combat unit optimized for supporting conventional infantry
         Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL
         Notes: typically applied to units that provide heavier fire support for infantry

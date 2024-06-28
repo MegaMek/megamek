@@ -939,8 +939,8 @@ public class TeamLoadoutGenerator {
      * Helper function that makes some of the units in the given list of entities
      * carry bombs.
      * @param entityList The list of entities to process
-     * @param campaign Campaign object. In the future, may be used to check list of bombs
-     * for technological availability.
+     * @param year
+     * @param groundMap
      */
     public static void populateAeroBombs(List<Entity> entityList, int year, boolean groundMap) {
         if (entityList == null || entityList.size() < 1) {

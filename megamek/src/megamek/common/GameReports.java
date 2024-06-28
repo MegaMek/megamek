@@ -49,7 +49,7 @@ public class GameReports implements FullGameReport<Report> {
 
     @Override
     public boolean hasReportsforRound(int round) {
-        return round <= reports.size();
+        return round >= 0 && round <= reports.size();
     }
 
     @Override

@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
@@ -378,7 +379,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                 String name = key.split(":")[0];
                 int loc = Integer.parseInt(key.split(":")[1]);
                 EquipmentType etype = EquipmentType.get(name);
-                Mounted newmount;
+                WeaponMounted newmount;
                 if (etype != null) {
                     try {
                         newmount = addWeaponGroup(etype, loc);
@@ -779,7 +780,6 @@ public class FighterSquadron extends AeroSpaceFighter {
         for (int fid: fighters) {
             AeroSpaceFighter fighter = (AeroSpaceFighter) game.getEntity(fid);
             fighter.damageLocation(loc);
-
         }
     }
 

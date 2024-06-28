@@ -2830,7 +2830,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getReportInfoColor() {
         return getColor(MINI_REPORT_COLOR_INFO);
     }
-  
+
     public String getReportFontType() {
         return getString(MINI_REPORT_FONT_TYPE);
     }
@@ -2952,7 +2952,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setReportrInfoColo(Color color) {
         store.setValue(MINI_REPORT_COLOR_INFO, getColorString(color));
     }
-      
+
     public void setReportFontType(String font) {
         store.setValue(MINI_REPORT_FONT_TYPE, font);
     }

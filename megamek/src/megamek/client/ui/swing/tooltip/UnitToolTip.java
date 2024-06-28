@@ -1134,16 +1134,7 @@ public final class UnitToolTip {
         }
 
         int heatCapOrg = heatCap;
-
         int heatCapWater = e.getHeatCapacityWithWater();
-
-        if (e instanceof Mech) {
-            Mech m = (Mech) e;
-            if (m.getCoolantFailureAmount() > 0) {
-                heatCap -= m.getCoolantFailureAmount();
-                heatCapWater -= m.getCoolantFailureAmount();
-            }
-        }
 
         if (e.hasActivatedRadicalHS()) {
             if (e instanceof Mech) {

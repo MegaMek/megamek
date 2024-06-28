@@ -1,0 +1,178 @@
+generator:Mordel.Net Code Release 2.24.13 on 14-Jun-2024
+chassis:'Wing' Wraith
+model:TR4
+source:Shrapnel 17
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3150
+Rules Level:3
+
+Mass:55
+Engine:330 XL Engine(IS)
+Structure:IS Endo-Composite
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous (IS)
+LA Armor:14
+RA Armor:14
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:8
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:2
+Snub-Nose PPC, Right Arm
+Medium VSP Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+Endo-Composite
+Endo-Composite
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSNPPC
+ISSNPPC
+ISPPCCapacitor
+Endo-Composite
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISPartialWing
+Jump Jet
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISPartialWing
+Jump Jet
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Composite
+Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Composite
+Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Leg:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Wraith is a 'Mech that, when properly employed, can wreak havoc on an enemy with its astounding speed and maneuverability. Initially developed by Curtiss Militech, it later became a key asset for the Capellan Confederation following the company's financial distress post-Jihad. The Wraith's speed, firepower, and decent armor make it a considerable threat to many 'Mechs, some being almost twice its weight.
+
+capabilities:The “Wing” Wraith enhances the base design’s accurate and ammunition-independent loadout with improved heat dissipation and jump range. Despite the advantages of the partial-wing technology, the TR6 suffers from slower ground speed and a demanding maintenance schedule, making it a less popular export than the more straightforward TR5. However, both variants share parts and construction processes, making continued production a low-cost endeavor.
+
+deployment:The TR4 variant of the Wraith builds upon the early prototype TR4-X by enhancing its firepower and overall combat effectiveness. Originally based on the customized TR2-X arena fighter from the late thirty-first century, the TR4 retains the exceptional jump capabilities of its predecessors, utilizing advanced partial-wing technology to achieve remarkable maneuverability. To address the firepower deficiencies of the TR4-X, the TR4 is equipped with a powerful main weapon that allows it to engage effectively at both medium and long ranges.
+
+history:The Wing Wraith project, spearheaded by Hellespont Industries, dates back to the Capellan Crusades, but it wasn’t until the 3140s that the mass-produced TR6 variant saw production. The Wraith’s assets were acquired by the Capellan Confederation after Curtiss Hydroponics, the original manufacturer, was forced to sell its military holdings to remain solvent following the Jihad. The destruction of Curtiss Militech’s homeworld, Paradise, by the Regulans during the Jihad significantly contributed to the financial distress that led to this sale. Hellespont Industries capitalized on this opportunity, integrating advanced partial-wing technology into the Wraith design to enhance its maneuverability and heat dissipation capabilities.<p>The TR6’s first major combat deployment occurred during the Victoria Rangers’ assault on Victoria in 3144. However, the results were underwhelming due to the Wraiths being reassigned to unsuitable roles, leading to significant damage and operational issues. Despite this setback, the TR6 found its stride during House Davion’s Operation Cerberus. On Narellan, Wraiths from the Second St. Ives Cheveau-Légers conducted effective raiding operations against the Second Davion Auxiliaries, showcasing their capability in hit-and-run tactics alongside Canopian Agroteras. This success spurred increased orders from various factions, including the Sea Foxes and the Magistracy Armed Forces, solidifying the Wing Wraith’s reputation as a valuable raider and scout hunter in the Capellan Confederation's arsenal.</p>
+
+manufacturer:Hellespont Industries
+primaryfactory:Sian
+systemmanufacturer:CHASSIS:Hellespont Wraith Endo-Composite
+systemmanufacturer:ENGINE:Magna 330 XL
+systemmanufacturer:ARMOR:Hellespont Lite Ferro-Fibrous
+systemmanufacturer:JUMPJET:Hellespont Leapers with Partial Wing
+systemmanufacturer:COMMUNICATIONS:Ceres Metals Model 666
+systemmanufacturer:TARGETING:Ceres Bullseye

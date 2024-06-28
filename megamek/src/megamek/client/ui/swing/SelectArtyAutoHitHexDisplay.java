@@ -353,9 +353,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setEnabled(nbr > 0);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

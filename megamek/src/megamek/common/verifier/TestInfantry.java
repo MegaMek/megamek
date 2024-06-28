@@ -490,7 +490,6 @@ public class TestInfantry extends TestEntity {
         }
     }
 
-
     // The following methods are a condensed version of MML's UnitUtil.removeMounted
     // and can be replaced if the latter is ever moved into MM
     public static void removeAntiMekAttacks(Infantry unit) {
@@ -500,14 +499,9 @@ public class TestInfantry extends TestEntity {
         unit.recalculateTechAdvancement();
     }
 
-    public static void removeAntiMekAttack(Infantry unit, EquipmentType et) {
-        for (int pos = unit.getEquipment().size() - 1; pos >= 0; pos--) {
-            Mounted mount = unit.getEquipment().get(pos);
-            if (mount.getType().equals(et)) {
-                unit.getEquipment().remove(mount);
-                unit.getWeaponList().remove(mount);
-                unit.getTotalWeaponList().remove(mount);
-            }
-        }
+    public static void removeAntiMekAttack(Infantry unit, EquipmentType antiMekType) {
+        unit.getEquipment().removeIf(m -> m.getType() == antiMekType);
+        unit.getWeaponList().removeIf(m -> m.getType() == antiMekType);
+        unit.getTotalWeaponList().removeIf(m -> m.getType() == antiMekType);
     }
 }

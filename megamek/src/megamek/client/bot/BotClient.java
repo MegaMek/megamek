@@ -512,8 +512,8 @@ public abstract class BotClient extends Client {
         try {
             if (game.getPhase().isMovement()) {
                 MovePath mp;
-                if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
+                if (game.getTurn() instanceof SpecificEntityTurn) {
+                    SpecificEntityTurn turn = (SpecificEntityTurn) game.getTurn();
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {

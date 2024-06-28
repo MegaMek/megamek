@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 VTOL
 </UnitType>
@@ -28,6 +19,10 @@ Balac Strike VTOL
 3079
 </year>
 
+<originalBuildYear>
+3079
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -36,9 +31,17 @@ Clan Level 2
 Missile Boat
 </role>
 
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+cargobay:0.5:1:0::-1:0
+</transporters>
 
 <cruiseMP>
 10
@@ -47,6 +50,10 @@ VTOL
 <engine_type>
 0
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 1
@@ -68,7 +75,6 @@ VTOL
 Clan Ammo LRM-15
 Clan Ammo LRM-15
 CLCASE
-Cargo (0.5 tons)
 </Body Equipment>
 
 <Front Equipment>
@@ -96,8 +102,4 @@ TRO: 3085
 <tonnage>
 25.0
 </tonnage>
-
-<quirks>
-vtol_rotor_coaxial
-</quirks>
 

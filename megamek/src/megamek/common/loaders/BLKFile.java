@@ -320,11 +320,6 @@ public class BLKFile {
                                 * ((InfantryWeapon) mount.getType()).getShots());
                             mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
                         }
-                        if (etype.hasFlag(MiscType.F_CARGO)) {
-                            // Treat F_CARGO equipment as cargo bays with 1 door, e.g. for ASF with IBB.
-                            int idx = t.getTransportBays().size();
-                            t.addTransporter(new CargoBay(mount.getSize(), 1, idx), isOmniMounted);
-                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
@@ -379,6 +374,8 @@ public class BLKFile {
             }
             if (dataFile.exists("armor_tech")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech")[0]);
+            } else if (dataFile.exists("armor_tech_rating")) {
+                sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
         }
     }
@@ -589,7 +586,7 @@ public class BLKFile {
         }
     }
 
-    public static BuildingBlock getBlock(Entity t) {
+    public static BuildingBlock getBlock(Entity t) throws EntitySavingException{
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
 
@@ -815,7 +812,10 @@ public class BLKFile {
                     blk.writeBlockData("clan_engine", Boolean.toString(t.getEngine().isClan()));
                 }
             }
-            if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
+
+            // Need to make sure that only "Unknown" armor gets skipped
+            // barRating block written out later in SV-specific section
+            if (!t.hasPatchworkArmor() && (t.getArmorType(1) != ArmorType.T_ARMOR_UNKNOWN)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));
                 blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
             } else if (t.hasPatchworkArmor()) {
@@ -830,6 +830,8 @@ public class BLKFile {
                         blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
                     }
                 }
+            } else {
+                throw new EntitySavingException("Armor type unknown or not set; aborting save!");
             }
             if (t.getStructureType() != 0) {
                 blk.writeBlockData("internal_type", t.getStructureType());
@@ -937,7 +939,6 @@ public class BLKFile {
         if (t.isSupportVehicle()) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
             blk.writeBlockData("engine_tech_rating", t.getEngineTechRating());
-            blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
         }
 
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
@@ -1232,7 +1233,7 @@ public class BLKFile {
         return name;
     }
 
-    public static void encode(String fileName, Entity t) {
+    public static void encode(String fileName, Entity t) throws EntitySavingException{
         BuildingBlock blk = BLKFile.getBlock(t);
         blk.writeBlockFile(fileName);
     }

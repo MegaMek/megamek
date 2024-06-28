@@ -18,7 +18,6 @@ package megamek.common;
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -82,7 +81,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * The current turn list
      */
     private final Vector<GameTurn> turnVector = new Vector<>();
-    private int turnIndex = 0;
 
     /**
      * The present phase
@@ -631,21 +629,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Resets the turn index to -1 (awaiting first turn)
-     */
-    public void resetTurnIndex() {
-        turnIndex = -1;
-    }
-
-    /**
-     * Returns true if there is a turn after the current one
-     */
-    @Override
-    public boolean hasMoreTurns() {
-        return turnVector.size() > turnIndex;
-    }
-
-    /**
      * Inserts a turn that will come directly after the current one
      */
     public void insertNextTurn(GameTurn turn) {
@@ -685,13 +668,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns the current turn index
-     */
-    public int getTurnIndex() {
-        return turnIndex;
-    }
-
-    /**
      * Sets the current turn index
      *
      * @param turnIndex The new turn index.
@@ -701,13 +677,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // FIXME: occasionally getTurn() returns null. Handle that case
         // intelligently.
         this.turnIndex = turnIndex;
-        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().getPlayerNum()), prevPlayerId));
+        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().playerId()), prevPlayerId));
     }
 
-    /**
-     * Returns the current turn vector
-     */
-    public List<GameTurn> getTurnVector() {
+    @Override
+    public List<GameTurn> getTurnsList() {
         return Collections.unmodifiableList(turnVector);
     }
 
@@ -1303,7 +1277,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        setupRoundDeployment();
+        setupDeployment();
         processGameEvent(new GameEntityRemoveEvent(this, toRemove));
     }
 
@@ -1319,7 +1293,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public synchronized void reset() {
         uuid = UUID.randomUUID();
 
-        currentRound = 0;
+        currentRound = -1;
 
         inGameObjects.clear();
         entityPosLookup.clear();
@@ -2038,11 +2012,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized(turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
-                                    && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_INFANTRY)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_INFANTRY)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2061,11 +2035,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
-                                    && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_PROTOMECH)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMECH)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2085,11 +2059,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_TANK)
-                                    && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_TANK)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_TANK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2109,11 +2083,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_MECH)
-                                    && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_MECH)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_MECH)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }

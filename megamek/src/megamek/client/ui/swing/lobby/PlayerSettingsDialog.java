@@ -24,7 +24,10 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.generator.ReconfigurationParameters;
 import megamek.client.generator.TeamLoadoutGenerator;
+import megamek.client.ratgenerator.FactionRecord;
+import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -36,6 +39,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -43,6 +47,7 @@ import org.apache.commons.collections.IteratorUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
@@ -51,6 +56,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static megamek.client.ui.Messages.getString;
@@ -81,6 +87,28 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         initialize();
     }
+
+    private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
+        private static final long serialVersionUID = -333065979253244440L;
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                      boolean isSelected, boolean cellHasFocus) {
+            if (value == null) {
+                setText("General");
+            } else {
+                setText(((FactionRecord) value).getName(year));
+            }
+            return this;
+        }
+    };
+
+    private Comparator<FactionRecord> factionSorter = new Comparator<>() {
+        @Override
+        public int compare(FactionRecord o1, FactionRecord o2) {
+            return o1.getName(year).compareTo(o2.getName(year));
+        }
+    };
 
     @Override
     protected void finalizeInitialization() throws Exception {
@@ -166,6 +194,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final Client client;
     private final ClientGUI clientgui;
     private final BoardView bv;
+    private Player player;
 
     // Initiative Section
     private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
@@ -207,12 +236,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // Team Configuration Section
     private Team team;
+    private int year;
     private final JLabel labelAutoconfig = new TipLabel(
             Messages.getString("PlayerSettingsDialog.autoConfigFaction"), SwingConstants.LEFT);
-    private JComboBox<String> cmbTeamFaction;
+    private JComboBox<FactionRecord> cmbFaction = new JComboBox<FactionRecord>();
     private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
     private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
-    private Checkbox chkTrulyRandom = new Checkbox("Truly Random", false);
+    private JCheckBox chkTrulyRandom = new JCheckBox("Truly Random", false);
+    private JCheckBox chkBanNukes = new JCheckBox("No Nukes", true);
     private final JButton butSaveADF = new JButton(Messages.getString("PlayerSettingsDialog.saveADF"));
     private final JButton butLoadADF = new JButton(Messages.getString("PlayerSettingsDialog.loadADF"));
     private final JButton butRestoreMT = new JButton(Messages.getString("PlayerSettingsDialog.restore"));
@@ -229,7 +260,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(headerSection());
-        mainPanel.add(teamConfigSection());
+        mainPanel.add(autoConfigSection());
         if (client instanceof BotClient) {
             mainPanel.add(botSection());
         }
@@ -263,26 +294,38 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return result;
     }
 
-    private JPanel teamConfigSection() {
-        JPanel result = new OptionPanel("PlayerSettingsDialog.header.teamConfig");
+    private JPanel autoConfigSection() {
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.autoConfig");
+        result.setToolTipText(Messages.getString("CustomMechDialog.acfPanelDesc"));
         Content panContent = new Content(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         result.add(panContent);
 
+        // Set up auto-configuration controls for player
         panContent.add(labelAutoconfig, gbc);
-        panContent.add(cmbTeamFaction, gbc);
-        cmbTeamFaction.addActionListener(listener);
+        panContent.add(cmbFaction, gbc);
+        cmbFaction.setToolTipText(Messages.getString("CustomMechDialog.acfFactionChooser"));
+        cmbFaction.setRenderer(factionCbRenderer);
+        updateFactionChoice(getFactionFromCode(team.getFaction(), year));
         panContent.add(butAutoconfigure, gbc);
         butAutoconfigure.addActionListener(listener);
+        butAutoconfigure.setToolTipText(Messages.getString("CustomMechDialog.acfExecuteConfig"));
         panContent.add(butRandomize, gbc);
         butRandomize.addActionListener(listener);
+        butRandomize.setToolTipText(Messages.getString("CustomMechDialog.acfRandomizer"));
         panContent.add(chkTrulyRandom, gbc);
+        chkTrulyRandom.setToolTipText(Messages.getString("CustomMechDialog.acfTrulyRandom"));
+        panContent.add(chkBanNukes, gbc);
+        chkBanNukes.setToolTipText(Messages.getString("CustomMechDialog.acfBanNukes"));
         panContent.add(butSaveADF, gbc);
+        butSaveADF.setToolTipText(Messages.getString("CustomMechDialog.acfSaveADF"));
         butSaveADF.addActionListener(listener);
         panContent.add(butLoadADF, gbc);
+        butLoadADF.setToolTipText(Messages.getString("CustomMechDialog.acfLoadADF"));
         butLoadADF.addActionListener(listener);
         panContent.add(butRestoreMT, gbc);
+        butRestoreMT.setToolTipText(Messages.getString("CustomMechDialog.acfRestoreMunitionTree"));
         butRestoreMT.addActionListener(listener);
         butRestoreMT.setEnabled(false);
         return result;
@@ -358,7 +401,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     private void apply() {
-        Player player = client.getLocalPlayer();
 
         player.setConstantInitBonus(getInit());
         player.setNbrMFConventional(getCnvMines());
@@ -382,16 +424,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             }
         }
 
-        // Team Configuration
-        String faction = (String) cmbTeamFaction.getSelectedItem();
+        // Unit Munition Configuration
+        String faction = getFactionCode();
         team.setFaction(faction);
-        if (null != munitionTree) {
-            // TODO: create and set up default adf file path for bots
-            tlg.reconfigureTeam(team, faction, munitionTree);
-            if ((clientgui != null) && (clientgui.chatlounge != null)) {
-                ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
-                        clientgui.getClient().getGame().getTeamEntities(team)
-                );
+        if ((clientgui != null) && (clientgui.chatlounge != null)) {
+            ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
+            if (null != munitionTree) {
+                // TODO: create and set up default adf file path for bots
+                tlg.reconfigureEntities(updateEntities, faction, munitionTree);
                 // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
                 clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());
                 // clientgui.chatlounge.sendUpdate(updateEntities);
@@ -457,16 +497,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     private void setupValues() {
-        Player player = client.getLocalPlayer();
+        player = client.getLocalPlayer();
+        year = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
 
         // For new auto-loadout-configuration
         team = client.getGame().getTeamForPlayer(player);
-        String faction = team.getFaction();
         tlg = new TeamLoadoutGenerator(clientgui);
         originalMT = new MunitionTree();
-        originalMT.loadEntityList(
-                (ArrayList<Entity>) IteratorUtils.toList(client.getGame().getTeamEntities(team)
-                ));
+        originalMT.loadEntityList(client.getGame().getPlayerEntities(player, false));
 
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
@@ -489,9 +527,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
-
-        cmbTeamFaction = new JComboBox<String>(ITechnology.MM_FACTION_CODES);
-        cmbTeamFaction.setSelectedItem(faction);
 
         int x = Math.min(player.getStartingAnyNWx() + 1, bw);
         spinStartingAnyNWx.setValue(x);
@@ -591,7 +626,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(false);
                 butRandomize.setEnabled(true);
-                munitionTree = tlg.generateMunitionTree(tlg.generateParameters(team), team);
+                // Set nuke ban state before generating the tree
+                ReconfigurationParameters rp = tlg.generateParameters(team);
+                rp.nukesBannedForMe = chkBanNukes.isSelected();
+                ArrayList<Entity> entities = clientgui.getClient().getGame().getPlayerEntities(player, false);
+                munitionTree = tlg.generateMunitionTree(rp, entities, "");
             }
 
             if (butRandomize.equals(e.getSource())) {
@@ -599,11 +638,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(true);
                 butRandomize.setEnabled(false);
-                tlg.setTrueRandom(chkTrulyRandom.getState());
+                tlg.setTrueRandom(chkTrulyRandom.isSelected());
                 munitionTree = TeamLoadoutGenerator.generateRandomizedMT();
             }
 
-            if (cmbTeamFaction.equals(e.getSource())) {
+            if (cmbFaction.equals(e.getSource())) {
                 // Reset autoconfigure button if user changes faction
                 butAutoconfigure.setEnabled(true);
             }
@@ -645,9 +684,18 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
     };
 
+    /**
+     * Let user select an ADF file (Autoconfiguration Definition File) from which to load munition loadout
+     * imperatives, which can then be applied to selected units.
+     * @return
+     */
     private MunitionTree loadLoadout() {
         MunitionTree mt = null;
         JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
+                "adf files (*.adf)", "adf");
+        fc.addChoosableFileFilter(adfFilter);
+        fc.setFileFilter(adfFilter);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("ClientGui.LoadoutLoadDialog.title"));
 
@@ -659,11 +707,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         if (fc.getSelectedFile() != null) {
             String file = fc.getSelectedFile().getAbsolutePath();
-            if (null == munitionTree) {
-                munitionTree = new MunitionTree(file);
-            } else {
-                munitionTree.readFromADFFilename(file);
-            }
+            mt = new MunitionTree(file);
         }
         return mt;
     }
@@ -671,6 +715,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void saveLoadout(MunitionTree source) {
         //ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
+                "adf files (*.adf)", "adf");
+        fc.addChoosableFileFilter(adfFilter);
+        fc.setFileFilter(adfFilter);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("ClientGui.LoadoutSaveDialog.title"));
 
@@ -681,6 +729,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
         if (fc.getSelectedFile() != null) {
             String file = fc.getSelectedFile().getAbsolutePath();
+            if (!file.toLowerCase().endsWith(".adf")) {
+                file = file + ".adf";
+            }
             source.writeToADFFilename(file);
         }
     }
@@ -699,4 +750,44 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
+
+    public FactionRecord getFaction() {
+        return (FactionRecord) cmbFaction.getSelectedItem();
+    }
+
+    public String getFactionCode() {
+        return getFaction().getKey();
+    }
+
+    public FactionRecord getFactionFromCode(String code, int year) {
+        for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
+            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year) && fRec.getKey().equals(code)) {
+                return fRec;
+            }
+        }
+        return RATGenerator.getInstance().getFaction("IS");
+    }
+
+    public void updateFactionChoice(FactionRecord preset) {
+        FactionRecord old = (preset == null) ? (FactionRecord) cmbFaction.getSelectedItem() : preset;
+        cmbFaction.removeActionListener(listener);
+        cmbFaction.removeAllItems();
+        List<FactionRecord> recs = new ArrayList<>();
+        for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
+            if ((!fRec.isMinor())
+                    && !fRec.getKey().contains(".") && fRec.isActiveInYear(year)) {
+                recs.add(fRec);
+            }
+        }
+        recs.sort(factionSorter);
+        for (FactionRecord fRec : recs) {
+            cmbFaction.addItem(fRec);
+        }
+        cmbFaction.setSelectedItem(old);
+        if (cmbFaction.getSelectedItem() == null) {
+            cmbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
+        }
+        cmbFaction.addActionListener(listener);
+    }
+
 }

@@ -37,6 +37,7 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.DiscordFormat;
 import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -3790,7 +3791,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             miscList.add((MiscMounted) mounted);
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
-                && !(mounted instanceof WeaponMounted) && !(mounted instanceof InfantryWeaponMounted)) {
+                && !(mounted instanceof WeaponMounted)) {
             LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
         }
     }
@@ -4560,6 +4561,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the CriticalSlots in the given location as a list. The returned list can be empty
+     * depending on the unit and the chosen slot but not null. The entries are not filtered in
+     * any way (could be null although that is probably an error in the internal representation
+     * of the unit.)
+     *
+     * @param location The location, e.g. Mech.LOC_HEAD
+     * @return A list of CriticalSlots in that location, possibly empty
+     */
+    public List<CriticalSlot> getCriticalSlots(int location) {
+        List<CriticalSlot> result = new ArrayList<>();
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            result.add(getCritical(location, slot));
+        }
+        return result;
     }
 
     /**
@@ -8897,7 +8915,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String getUnusedString() {
-        return getUnusedString(false);
+        return getUnusedString(ViewFormatting.NONE);
     }
 
     @Override
@@ -8928,8 +8946,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean ishtml) {
-        StringBuffer result = new StringBuffer();
+    public String getUnusedString(ViewFormatting formatting) {
+        StringBuilder result = new StringBuilder();
 
         // Walk through this entity's transport components;
         // add all of their string to ours.
@@ -8942,10 +8960,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((next instanceof DockingCollar) && ((DockingCollar) next).isDamaged()) {
                 continue;
             }
-            if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+            if (formatting == ViewFormatting.HTML && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
                 result.append("<font color='red'>")
                     .append(next.getUnusedString())
                     .append("</font>");
+            } else if (formatting == ViewFormatting.DISCORD && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+                result.append(DiscordFormat.RED.format())
+                    .append(next.getUnusedString())
+                    .append(DiscordFormat.RESET.format());
             } else {
                 result.append(next.getUnusedString());
             }
@@ -8959,7 +8981,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                if (ishtml) {
+                if (formatting == ViewFormatting.HTML) {
                     result.append("<br>");
                 } else {
                     result.append("\n");
@@ -9386,7 +9408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String toString() {
-        return "Entity [" + getDisplayName() + ", " + getId() + "]";
+        return "Entity [" + getDisplayName() + ", ID: " + getId() + "]";
     }
 
     /**

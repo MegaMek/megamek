@@ -65,6 +65,7 @@ public class AeroTROView extends TROView {
         setModelData("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
         setModelData("isSupportVehicle", aero.isSupportVehicle());
         setModelData("isVSTOL", aero.isVSTOL());
+        setModelData("isFighterSquadron", aero instanceof FighterSquadron);
         final TestAero testAero = new TestAero(aero, verifier.aeroOption, null);
         if (aero.hasEngine()) {
             setModelData("engineName", stripNotes(aero.getEngine().getEngineName()));

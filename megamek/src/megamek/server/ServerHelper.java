@@ -128,8 +128,7 @@ public class ServerHelper {
 
         // should we use a coolant pod?
         int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-        int possibleSinkage = ((Aero) entity).getHeatSinks()
-                - entity.getCoolantFailureAmount();
+        int possibleSinkage = ((Aero) entity).getHeatSinks();
         for (Mounted m : entity.getEquipment()) {
             if (m.getType() instanceof AmmoType) {
                 AmmoType at = (AmmoType) m.getType();
@@ -697,7 +696,7 @@ public class ServerHelper {
         }
 
         if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
-                && ((game.getTurnIndex() + 1) < game.getTurnVector().size())) {
+                && ((game.getTurnIndex() + 1) < game.getTurnsList().size())) {
             for (Integer playerId : reportPlayers) {
                 gameManager.send(playerId, gameManager.createSpecialReportPacket());
             }

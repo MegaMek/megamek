@@ -518,9 +518,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         buttons.get(DeployMinefieldCommand.REMOVE_MINES).setEnabled(enable);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

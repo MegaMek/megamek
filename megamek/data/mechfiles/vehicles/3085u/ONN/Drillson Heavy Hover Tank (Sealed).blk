@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 Tank
 </UnitType>
@@ -45,6 +36,7 @@ Hover
 </motion_type>
 
 <transporters>
+cargobay:0.5:1:0::-1:0
 </transporters>
 
 <cruiseMP>
@@ -66,7 +58,6 @@ Hover
 <Body Equipment>
 IS Ammo MML-3 LRM
 IS Ammo MML-3 SRM
-Cargo:SIZE:0.5
 ISFlotationHull
 Environmental Sealing
 </Body Equipment>
@@ -89,21 +80,13 @@ Light PPC
 ISMML3
 </Turret Equipment>
 
-<source>
-TRO: 3085
-</source>
-
-<tonnage>
-50.0
-</tonnage>
+<capabilities>
+The Drillson's electronics are its focal point. During the Fourth Succession War, the Evil Eye targeting and tracking system, a groundbreaking 360-degree vision system similar to the heads-up display in BattleMech targeting systems, proved to be one of the fi nest conventional electronics systems in use. Using a combination of energy and missile armaments, it can hit and damage targets at a variety of ranges. The Drillson's superb armor is what genuinely endears it to Lyran commanders. With over seven tons of ArcShield armor on the chassis, the Drillson can withstand more abuse than most people believe a hovercraft can.
+</capabilities>
 
 <overview>
 Its mix of thick armor, speed, and hitting power quickly made it a favorite of even the most hidebound Lyran generals.
 </overview>
-
-<capabilities>
-The Drillson's electronics are its focal point. During the Fourth Succession War, the Evil Eye targeting and tracking system, a groundbreaking 360-degree vision system similar to the heads-up display in BattleMech targeting systems, proved to be one of the fi nest conventional electronics systems in use. Using a combination of energy and missile armaments, it can hit and damage targets at a variety of ranges. The Drillson's superb armor is what genuinely endears it to Lyran commanders. With over seven tons of ArcShield armor on the chassis, the Drillson can withstand more abuse than most people believe a hovercraft can.
-</capabilities>
 
 <deployment>
 This 3076 version replaces all the standard weaponry with a pair of Light PPCs which are mounted in the turret and an MML-3. It carries sufficient ammunition for extended battles (33 shots SRM + 40 shots LRM). A flotation hull allows this model to support amphibious operations alongside the Plainsman.
@@ -127,3 +110,12 @@ ARMOR:ArcShield Heavy
 COMMUNICATIONS:Cyclops 1
 TARGETING:Evil Eye
 </systemManufacturers>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

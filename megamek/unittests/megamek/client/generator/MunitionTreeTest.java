@@ -1,12 +1,9 @@
 package megamek.client.generator;
 
-import megamek.common.BipedMech;
-import megamek.common.Entity;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.containers.MunitionTree;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -22,7 +19,6 @@ class MunitionTreeTest {
     HashMap<String, String> lrmHash = new HashMap<>();
     HashMap<String, String> acHash = new HashMap<>();
     HashMap<String, String> ltHash = new HashMap<>();
-    HashMap<String, String> mgHash = new HashMap<>();
 
     @BeforeAll
     static void setUp() {
@@ -127,7 +123,7 @@ class MunitionTreeTest {
     }
 
     @Test
-    @Disabled("Runtime is > 20 seconds")
+    //@Disabled("Runtime is > 20 seconds")
     void testPopulateAllPossibleUnits() {
         MechSummaryCache instance = MechSummaryCache.getInstance(true);
         // Make sure no units failed loading

@@ -201,27 +201,27 @@
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
 		<availability>CC:10,IS:9,Periphery.Deep:10,DC:8,Periphery:10,TC:10</availability>
 		<model name='(Hover Primitive)'>
-			<roles>apc,support</roles>
+			<roles>apc</roles>
 			<availability>General:7</availability>
 		</model>
 		<model name='(Tracked LRM)'>
-			<roles>apc</roles>
+			<roles>fire_support</roles>
 			<availability>IS.pm:3</availability>
 		</model>
 		<model name='(Tracked MG)'>
-			<roles>apc,support</roles>
+			<roles>inf_support</roles>
 			<availability>IS:2</availability>
 		</model>
 		<model name='(Tracked Primitive)'>
-			<roles>apc,support</roles>
+			<roles>apc</roles>
 			<availability>General:9</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>apc,support</roles>
+			<roles>inf_support,urban</roles>
 			<availability>PIR:3,General:2</availability>
 		</model>
 		<model name='(Wheeled Primitive)'>
-			<roles>apc,support</roles>
+			<roles>apc</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -444,21 +444,21 @@
 		</model>
 	</chassis>
 	<chassis name='Field Gunners' unitType='Infantry'>
-		<availability>IS:1,Periphery:1</availability>
+		<availability>IS:4,Periphery:2</availability>
 		<model name='(AC10)'>
 			<roles>field_gun</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='(AC2)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>General:7</availability>
 		</model>
 		<model name='(AC20)'>
-			<roles>field_gun</roles>
-			<availability>General:7</availability>
+			<roles>urban,field_gun</roles>
+			<availability>General:5</availability>
 		</model>
 		<model name='(AC5)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -1009,12 +1009,14 @@
 	<chassis name='Whitestreak Jetski' unitType='Naval'>
 		<availability>TH:2-,IS:2-,Periphery:1-</availability>
 		<model name=''>
+			<roles>civilian</roles>
 			<availability>TH:2-,IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitestreak Speedboat' unitType='Naval'>
 		<availability>TH:2-,IS:2-,Periphery:1-</availability>
 		<model name=''>
+			<roles>civilian</roles>
 			<availability>TH:2-,IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>

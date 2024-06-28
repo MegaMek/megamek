@@ -63,6 +63,7 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldPilotingAero = new JTextField(3);
     private final JTextField fldArtillery = new JTextField(3);
     private final JTextField fldTough = new JTextField(3);
+    private final JTextField fldFatigue = new JTextField(3);
 
     private final JComboBox<String> cbBackup = new JComboBox<>();
 
@@ -236,6 +237,13 @@ public class CustomPilotView extends JPanel {
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
 
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
+            label = new JLabel(Messages.getString("CustomMechDialog.labFatigue"), SwingConstants.RIGHT);
+            add(label, GBC.std());
+            add(fldFatigue, GBC.eop());
+        }
+        fldFatigue.setText(Integer.toString(entity.getCrew().getCrewFatigue(slot)));
+
         if (entity.getCrew().getSlotCount() > 2) {
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
                 if (i != slot) {
@@ -307,6 +315,7 @@ public class CustomPilotView extends JPanel {
             fldPilotingAero.setEnabled(false);
             fldArtillery.setEnabled(false);
             fldTough.setEnabled(false);
+            fldFatigue.setEnabled(false);
         }
 
         missingToggled();
@@ -426,6 +435,10 @@ public class CustomPilotView extends JPanel {
 
     public int getToughness() {
         return Integer.parseInt(fldTough.getText());
+    }
+
+    public int getCrewFatigue() {
+        return Integer.parseInt(fldFatigue.getText());
     }
 
     public Portrait getPortrait() {

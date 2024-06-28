@@ -77,6 +77,7 @@ public enum PacketCommand {
     /** A Server to Client packet instructing the Client to change the game's phase. */
     PHASE_CHANGE,
 
+    /** A Server to Client packet instructing the Client to update the current player turn index. */
     TURN,
 
     /** A Server to Client packet instructing the Client to change the game's current round. */
@@ -89,7 +90,10 @@ public enum PacketCommand {
     CLEAR_ILLUM_HEXES,
     SENDING_ENTITIES,
     SENDING_PLAYERS,
+
+    /** A Server to Client packet instructing the Client to update the list of player turns. */
     SENDING_TURNS,
+
     SENDING_REPORTS,
     SENDING_REPORTS_SPECIAL,
     SENDING_REPORTS_TACTICAL_GENIUS,

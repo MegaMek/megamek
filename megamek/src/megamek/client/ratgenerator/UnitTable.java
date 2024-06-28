@@ -57,41 +57,91 @@ public class UnitTable {
     /**
      * Checks the cache for a previously generated table meeting the criteria. If none is
      * found, generates it and adds it to the cache.
+     * This method is provided as a convenience for when there are no excluded roles.
      *
-     * @param faction - The faction for which to generate a table
-     * @param unitType - a UnitType constant
-     * @param year - the game year
-     * @param rating - the unit's equipment rating; if null, the table is not adjusted for unit rating.
-     * @param weightClasses - a collection of EntityWeightClass constants to include in the table;
-     * if null or empty all weight classes are included
-     * @param networkMask - a ModelRecord.NETWORK_* constant
-     * @param movementModes - the movement modes allowed to appear in the table; if null or empty, no filtering
-     * is applied.
-     * @param roles - the roles for which to adjust the availability
-     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is &lt;= 4
-     * @param deployingFaction - when using the salvage/isorla mechanism, any omni unit will select
-     * the configuration based on the faction actually deploying
-     * @return - a table containing the available units and their relative weights
+     * @param faction        The faction the table filters for
+     * @param unitType       {@link megamek.common.UnitType} constant with the type of unit
+     * @param year           the game year
+     * @param rating         the unit's equipment rating; if null, the table is not adjusted for unit rating.
+     * @param weightClasses  a collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
+     *                       if null or empty all weight classes are included
+     * @param networkMask    One of the {@link MOdelRecord} NETWORK constants, for filtering various C3 systems
+     * @param movementModes  the movement modes covered by the table, null/empty for all modes
+     * @param roles          {@link MissionRole} types the units should qualify for, null/empty for no role
+     *                       filtering
+     * @param roleStrictness how strongly to apply roles, zero for none/minimal with higher being more
+     *                       restrictive; typically no higher than 5
+     * @param deployingFaction when using the salvage/isorla mechanism, any omni unit will select
+     *                         the configuration based on the faction actually deploying
+     * @return               table containing units which fit all parameters and their relative weights
      */
-    public static UnitTable findTable(FactionRecord faction, int unitType, int year,
-            String rating, Collection<Integer> weightClasses, int networkMask,
-            Collection<EntityMovementMode> movementModes,
-            Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
+    public static UnitTable findTable (FactionRecord faction,
+                                       int unitType,
+                                       int year,
+                                       String rating,
+                                       Collection<Integer> weightClasses,
+                                       int networkMask,
+                                       Collection<EntityMovementMode> movementModes,
+                                       Collection<MissionRole> roles,
+                                       int roleStrictness,
+                                       FactionRecord deployingFaction) {
         Objects.requireNonNull(faction);
         Parameters params = new Parameters(faction, unitType, year, rating, weightClasses, networkMask,
-                movementModes, roles, roleStrictness, deployingFaction);
+                movementModes, roles, new ArrayList<>(), roleStrictness, deployingFaction);
         return findTable(params);
     }
 
     /**
-     * deployingFaction not specified, uses main faction.
-     *
+     * Overloaded method, with additional argument for excluded roles
+     * @param faction        The faction the table filters for
+     * @param unitType       {@link megamek.common.UnitType} constant with the type of unit
+     * @param year           the game year
+     * @param rating         the unit's equipment rating; if null, the table is not adjusted for unit rating.
+     * @param weightClasses  collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
+     *                       if null or empty all weight classes are included
+     * @param networkMask    One of the {@link ModelRecord} NETWORK constants, for filtering various C3 systems
+     * @param movementModes  the movement modes covered by the table, null/empty for all modes
+     * @param roles          {@link MissionRole} types the units should qualify for, null/empty for no role
+     *                       filtering
+     * @param rolesExcluded  {@link MissionRole} types the units should not contain, null empty to
+     *                       allow all roles
+     * @param roleStrictness how strongly to apply roles, zero for none/minimal with higher being more
+     *                       restrictive; typically no higher than 5
+     * @param deployingFaction when using the salvage/isorla mechanism, any omni unit will select
+     *                         the configuration based on the faction actually deploying
+     * @return               table containing units which fit all parameters and their relative weights
+     */
+    public static UnitTable findTable (FactionRecord faction,
+                                       int unitType,
+                                       int year,
+                                       String rating,
+                                       Collection<Integer> weightClasses,
+                                       int networkMask,
+                                       Collection<EntityMovementMode> movementModes,
+                                       Collection<MissionRole> roles,
+                                       Collection<MissionRole> rolesExcluded,
+                                       int roleStrictness,
+                                       FactionRecord deployingFaction) {
+        Objects.requireNonNull(faction);
+        Parameters params = new Parameters(faction, unitType, year, rating, weightClasses, networkMask,
+                movementModes, roles, rolesExcluded, roleStrictness, deployingFaction);
+        return findTable(params);
+    }
+
+    /**
+     * Provided as a convenience to call findTable while using the faction parameter as the
+     * deploying faction
      */
 
-    public static UnitTable findTable(FactionRecord faction, int unitType, int year,
-            String rating, Collection<Integer> weightClasses, int networkMask,
-            Collection<EntityMovementMode> movementModes,
-            Collection<MissionRole> roles, int roleStrictness) {
+    public static UnitTable findTable (FactionRecord faction,
+                                       int unitType,
+                                       int year,
+                                       String rating,
+                                       Collection<Integer> weightClasses,
+                                       int networkMask,
+                                       Collection<EntityMovementMode> movementModes,
+                                       Collection<MissionRole> roles,
+                                       int roleStrictness) {
         return findTable(faction, unitType, year, rating, weightClasses, networkMask,
                 movementModes, roles, roleStrictness, faction);
     }
@@ -103,7 +153,7 @@ public class UnitTable {
      * @param params - the parameters to use in generating the table.
      * @return a generated table matching the parameters
      */
-    public static synchronized UnitTable findTable(Parameters params) {
+    public static synchronized UnitTable findTable (Parameters params) {
         Objects.requireNonNull(params);
         UnitTable retVal = cache.get(params);
         if (retVal == null) {
@@ -127,22 +177,31 @@ public class UnitTable {
     int salvagePct;
 
     /**
-     * Initializes table based on values provided by key
+     * Initializes table based on restrictions provided by a Parameters object
      *
-     * @param key - a structure providing the parameters for generating the table
+     * @param key   a {@link Parameters} structure providing the parameters for generating the table
      */
-    protected UnitTable(Parameters key) {
+    protected UnitTable (Parameters key) {
         this.key = key;
         /*
          * Generate the RAT, then go through it to build the NavigableMaps that
          * will be used for random selection.
          */
         if (key.getFaction() != null ) {
+
+            // Simple check if the faction is active now
             if (key.getFaction().isActiveInYear(key.getYear())) {
+
                 List<TableEntry> table = RATGenerator.getInstance().generateTable(key.getFaction(),
-                        key.getUnitType(), key.getYear(), key.getRating(), key.getWeightClasses(),
-                        key.getNetworkMask(), key.getMovementModes(),
-                        key.getRoles(), key.getRoleStrictness(), key.getDeployingFaction());
+                        key.getUnitType(),
+                        key.getYear(),
+                        key.getRating(),
+                        key.getWeightClasses(),
+                        key.getNetworkMask(),
+                        key.getMovementModes(),
+                        key.getRoles(),
+                        key.getRoleStrictness(),
+                        key.getDeployingFaction());
                 Collections.sort(table);
 
                 table.forEach(te -> {
@@ -431,13 +490,20 @@ public class UnitTable {
         private int networkMask;
         private Collection<EntityMovementMode> movementModes;
         private Collection<MissionRole> roles;
+        private Collection<MissionRole> rolesExcluded;
         private int roleStrictness;
         private FactionRecord deployingFaction;
 
-        public Parameters(FactionRecord faction, int unitType, int year,
-                String rating, Collection<Integer> weightClasses, int networkMask,
-                Collection<EntityMovementMode> movementModes,
-                Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
+        public Parameters (FactionRecord faction,
+                           int unitType,
+                           int year,
+                           String rating,
+                           Collection<Integer> weightClasses,
+                           int networkMask,
+                           Collection<EntityMovementMode> movementModes,
+                           Collection<MissionRole> roles,
+                           int roleStrictness,
+                           FactionRecord deployingFaction) {
             this.faction = faction;
             this.unitType = unitType;
             this.year = year;
@@ -445,10 +511,47 @@ public class UnitTable {
             this.weightClasses = weightClasses == null?
                     new ArrayList<>() : new ArrayList<>(weightClasses);
             this.networkMask = networkMask;
-            this.movementModes = ((movementModes == null) || movementModes.isEmpty())
-                    ? EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
-            this.roles = ((roles == null) || roles.isEmpty())
-                    ? EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
+
+            this.movementModes = ((movementModes == null) || movementModes.isEmpty()) ?
+                    EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
+
+            this.roles = ((roles == null) || roles.isEmpty()) ?
+                    EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
+
+            this.rolesExcluded = EnumSet.noneOf((MissionRole.class));
+
+            this.roleStrictness = roleStrictness;
+            this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
+        }
+
+        public Parameters (FactionRecord faction,
+                           int unitType,
+                           int year,
+                           String rating,
+                           Collection<Integer> weightClasses,
+                           int networkMask,
+                           Collection<EntityMovementMode> movementModes,
+                           Collection<MissionRole> roles,
+                           Collection<MissionRole> rolesExcluded,
+                           int roleStrictness,
+                           FactionRecord deployingFaction) {
+            this.faction = faction;
+            this.unitType = unitType;
+            this.year = year;
+            this.rating = rating;
+            this.weightClasses = weightClasses == null?
+                    new ArrayList<>() : new ArrayList<>(weightClasses);
+            this.networkMask = networkMask;
+
+            this.movementModes = ((movementModes == null) || movementModes.isEmpty()) ?
+                    EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
+
+            this.roles = ((roles == null) || roles.isEmpty()) ?
+                    EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
+
+            this.rolesExcluded = ((rolesExcluded == null) || rolesExcluded.isEmpty()) ?
+                    EnumSet.noneOf((MissionRole.class)) : EnumSet.copyOf(rolesExcluded);
+
             this.roleStrictness = roleStrictness;
             this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
         }
@@ -470,6 +573,7 @@ public class UnitTable {
                     + ((rating == null) ? 0 : rating.hashCode());
             result = prime * result + roleStrictness;
             result = prime * result + ((roles == null) ? 0 : roles.hashCode());
+            result = prime * result + ((rolesExcluded == null) ? 0 : rolesExcluded.hashCode());
             result = prime * result + unitType;
             result = prime * result
                     + ((weightClasses == null) ? 0 : weightClasses.hashCode());
@@ -528,6 +632,13 @@ public class UnitTable {
                     return false;
                 }
             } else if (!roles.equals(other.roles)) {
+                return false;
+            }
+            if (rolesExcluded == null) {
+                if (other.rolesExcluded != null) {
+                    return false;
+                }
+            } else if (!rolesExcluded.equals(other.rolesExcluded)) {
                 return false;
             }
             if (unitType != other.unitType) {
@@ -610,6 +721,14 @@ public class UnitTable {
             this.roles = roles;
         }
 
+        public Collection<MissionRole> getRolesExcluded() {
+            return rolesExcluded;
+        }
+
+        public void setRolesExcluded(Collection<MissionRole> rolesExcluded) {
+            this.rolesExcluded = rolesExcluded;
+        }
+
         public int getRoleStrictness() {
             return roleStrictness;
         }
@@ -629,7 +748,7 @@ public class UnitTable {
         public Parameters copy() {
             return new Parameters(faction, unitType, year,
                 rating, weightClasses, networkMask, movementModes,
-                roles, roleStrictness, deployingFaction);
+                roles, rolesExcluded, roleStrictness, deployingFaction);
         }
 
     }

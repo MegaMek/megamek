@@ -282,7 +282,7 @@
 	<faction key='FS' name='Federated Suns' minor='false' clan='false' periphery='false'
 		image='logo_federated_suns.png'>
 		<nameChange year='3042' image='logo_federated_commonwealth.png'>Federated Commonwealth (Davion)</nameChange>
-		<nameChange year='3067' image='logo_federated_sun.png'>Federated Suns</nameChange>
+		<nameChange year='3067' image='logo_federated_suns.png'>Federated Suns</nameChange>
 		<years>2317-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>

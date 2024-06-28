@@ -34,6 +34,7 @@ public class ASGame extends AbstractGame {
 
     private GameOptions options = new GameOptions();
     private GamePhase phase = GamePhase.UNKNOWN;
+    private GamePhase lastPhase = GamePhase.UNKNOWN;
     private Board board = new Board();
 
     @Override
@@ -42,8 +43,8 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public boolean hasMoreTurns() {
-        return false;
+    public List<GameTurn> getTurnsList() {
+        return List.of();
     }
 
     @Override
@@ -59,6 +60,11 @@ public class ASGame extends AbstractGame {
     @Override
     public void setPhase(GamePhase phase) {
 
+    }
+
+    @Override
+    public void setLastPhase(GamePhase lastPhase) {
+        this.lastPhase = lastPhase;
     }
 
     @Override

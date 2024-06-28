@@ -1302,6 +1302,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     /**
+     *
+     * @return the AmmoMounted currently selected by the ammo selector combo box, not the linked ammo per se.
+     */
+    public AmmoMounted getSelectedAmmo() {
+        int selected = m_chAmmo.getSelectedIndex();
+        if (selected == -1 || vAmmo == null) {
+            return null;
+        }
+        return vAmmo.get(m_chAmmo.getSelectedIndex());
+    }
+
+    /**
      * Returns the equipment ID number for the weapon currently selected
      */
     public int getSelectedWeaponNum() {
@@ -1877,9 +1889,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wExtR.setText("" + extremeR);
         }
 
-        // Update the range display to account for the weapon's loaded ammo.
-        if ((mounted.getLinked() != null) && (mounted.getLinked() instanceof AmmoMounted)) {
-            updateRangeDisplayForAmmo((AmmoMounted) mounted.getLinked());
+        // Update the range display to account for the selected ammo, or the loaded ammo if none is selected
+        int curDisplayed = m_chAmmo.getSelectedIndex();
+        AmmoMounted mAmmo = (curDisplayed != -1 && vAmmo != null) ? 
+                vAmmo.get(curDisplayed) : mounted.getLinkedAmmo();
+        if (mAmmo != null) {
+            updateRangeDisplayForAmmo(mAmmo);
         }
 
         if (aerospaceAttack) {
@@ -1893,11 +1908,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // if this is a weapons bay, then I need to compile it to get
             // accurate results
             if (wtype instanceof BayWeapon) {
-                compileWeaponBay(mounted, wtype.isCapital());
+                compileWeaponBay(mounted, mAmmo, wtype.isCapital());
             } else {
                 // otherwise I need to replace range display with standard
                 // ranges and attack values
-                updateAttackValues(mounted, (AmmoMounted) mounted.getLinked());
+                updateAttackValues(mounted, mAmmo);
             }
 
         }
@@ -1920,7 +1935,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         }
 
-        // update ammo selector
+        // update ammo selector; reset to currently-displayed item if set.
         ((DefaultComboBoxModel<String>) m_chAmmo.getModel()).removeAllElements();
         WeaponMounted oldmount = mounted;
         if (wtype instanceof BayWeapon) {
@@ -2000,7 +2015,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                     vAmmo.add(mountedAmmo);
                     m_chAmmo.addItem(formatAmmo(mountedAmmo));
-                    if ((mounted.getLinked() != null) &&
+                    if (curDisplayed != -1) {
+                        nCur = curDisplayed;
+                    } else if ((mounted.getLinked() != null) &&
                         mounted.getLinked().equals(mountedAmmo)) {
                         nCur = i;
                     }
@@ -2375,7 +2392,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     }
 
-    private void compileWeaponBay(WeaponMounted weapon, boolean isCapital) {
+    private void compileWeaponBay(WeaponMounted weapon, AmmoMounted mAmmo, boolean isCapital) {
 
         List<WeaponMounted> bayWeapons = weapon.getBayWeapons();
         WeaponType wtype = weapon.getType();
@@ -2402,8 +2419,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 && !m.isMissing()
                 && !m.isDestroyed()
                 && !m.isJammed()
-                && ((m.getLinked() == null) || (m.getLinked()
-                                                 .getUsableShotsLeft() > 0))) {
+                && ((mAmmo == null) || (mAmmo.getUsableShotsLeft() > 0))) {
                 WeaponType bayWType = m.getType();
                 heat = heat + m.getCurrentHeat();
                 double mAVShort = bayWType.getShortAV();
@@ -2413,8 +2429,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 int mMaxR = bayWType.getMaxRange(m);
 
                 // deal with any ammo adjustments
-                if (null != m.getLinked()) {
-                    double[] changes = changeAttackValues((AmmoType) m.getLinked().getType(), mAVShort, mAVMed,
+                if (null != mAmmo) {
+                    double[] changes = changeAttackValues((AmmoType) mAmmo.getType(), mAVShort, mAVMed,
                                                           mAVLong, mAVExt, mMaxR);
                     mAVShort = changes[0];
                     mAVMed = changes[1];
@@ -2558,19 +2574,30 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (ev.getSource().equals(m_chAmmo)
                 && (m_chAmmo.getSelectedIndex() != -1)
                 && (clientgui != null)) {
+            int n = weaponList.getSelectedIndex();
+            if (n == -1) {
+                return;
+            }
+
+            // We can update display values without changing the selected unit's ammo;
+            // this allows displaying selected unit's ammo-based ranges without owning it
+            WeaponMounted mWeap = ((WeaponListModel) weaponList.getModel()).getWeaponAt(n);
+            WeaponMounted oldWeap = mWeap;
+            AmmoMounted oldAmmo = mWeap.getLinkedAmmo();
+            AmmoMounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
+
+            weaponList.setSelectedIndex(n);
+            weaponList.ensureIndexIsVisible(n);
+            displaySelected();
+            // Update once prior to changing any actual loaded ammo
+            updateRangeDisplayForAmmo(mAmmo);
+
             // only change our own units
             if (!clientgui.getClient().getLocalPlayer()
                     .equals(entity.getOwner())) {
                 return;
             }
-            int n = weaponList.getSelectedIndex();
-            if (weaponList.getSelectedIndex() == -1) {
-                return;
-            }
-            WeaponMounted mWeap = ((WeaponListModel) weaponList.getModel()).getWeaponAt(n);
-            WeaponMounted oldWeap = mWeap;
-            AmmoMounted oldAmmo = mWeap.getLinkedAmmo();
-            AmmoMounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
+
             // if this is a weapon bay, then this is not what we want
             boolean isBay = false;
             if (mWeap.getType() instanceof BayWeapon) {
@@ -2623,7 +2650,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (entity.isAirborne() || entity.usesWeaponBays()) {
                 WeaponType wtype = (WeaponType) mWeap.getType();
                 if (isBay) {
-                    compileWeaponBay(oldWeap, wtype.isCapital());
+                    compileWeaponBay(oldWeap, mAmmo, wtype.isCapital());
                 } else {
                     // otherwise I need to replace range display with
                     // standard ranges and attack values

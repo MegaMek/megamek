@@ -86,6 +86,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5629: prevent NPE when OS launcher is being selected in weapons panel
 + PR #5634: cannot load Support Vehicle blk files missing armor_type field
 + Fix #5569: Fix for squadron ammo weapons
++ PR #5641: continue munition loadout generator
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

@@ -22,10 +22,14 @@ package megamek.common.equipment;
 
 import megamek.common.BombType;
 import megamek.common.Entity;
-import megamek.common.Mounted;
 
-public class BombMounted extends Mounted<BombType> {
+public class BombMounted extends AmmoMounted {
     public BombMounted(Entity entity, BombType type) {
         super(entity, type);
+    }
+
+    @Override
+    public BombType getType() {
+        return (BombType) super.getType();
     }
 }

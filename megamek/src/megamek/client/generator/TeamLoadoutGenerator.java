@@ -306,21 +306,35 @@ public class TeamLoadoutGenerator {
 
     //region generateParameters
     public ReconfigurationParameters generateParameters(Team t) {
-        return generateParameters(game, gameOptions, t);
+        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
+        return generateParameters(game, gameOptions, ownTeamEntities, t.getFaction(), t);
+    }
+
+    public ReconfigurationParameters generateParameters(ArrayList<Entity> ownEntities, String ownFaction, Team t) {
+        return generateParameters(game, gameOptions, ownEntities, ownFaction, t);
     }
 
     /**
      * Create the parameters that will determine how to configure ammo loadouts for this team
      * @param g
      * @param gOpts
-     * @param t
+     * @param ownEntities
+     * @param friendlyFaction
+     * @param team
      * @return ReconfigurationParameters with information about enemy and friendly forces
      */
-    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, Team t) {
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(t));
+    public static ReconfigurationParameters generateParameters(
+            Game g,
+            GameOptions gOpts,
+            ArrayList<Entity> ownEntities,
+            String friendlyFaction,
+            Team team) {
+        if (ownEntities.isEmpty()) {
+            // Nothing to generate
+            return new ReconfigurationParameters();
+        }
         ArrayList<Entity> etEntities = new ArrayList<Entity>();
         ArrayList<String> enemyFactions = new ArrayList<>();
-        String friendlyFaction = t.getFaction();
         boolean doubleBlind = gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         boolean spaceEnvironment = g.getBoard().inSpace();
@@ -328,7 +342,7 @@ public class TeamLoadoutGenerator {
         // This team can see the opponent teams; set appropriate options
         if (!doubleBlind) {
             for (Team et : g.getTeams()) {
-                if (!et.isEnemyOf(t)) {
+                if (!et.isEnemyOf(team)) {
                     continue;
                 }
                 enemyFactions.add(et.getFaction());
@@ -336,7 +350,7 @@ public class TeamLoadoutGenerator {
             }
         }
         return generateParameters(
-                ownTeamEntities,
+                ownEntities,
                 etEntities,
                 friendlyFaction,
                 enemyFactions,
@@ -463,14 +477,14 @@ public class TeamLoadoutGenerator {
 
     //region generateMunitionTree
     public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t) {
-        return generateMunitionTree(rp, t, "");
+        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
+        return generateMunitionTree(rp, ownTeamEntities, "");
     }
 
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> entities, String defaultSettingsFile) {
         // Based on various requirements from rp, set weights for some ammo types over others
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
-        return generateMunitionTree(rp, ownTeamEntities, defaultSettingsFile, mwc);
+        return generateMunitionTree(rp, entities, defaultSettingsFile, mwc);
     }
 
     /**
@@ -650,7 +664,7 @@ public class TeamLoadoutGenerator {
     }
     //endregion generateMunitionTree
 
-    //region reconfigureTeam
+    //region reconfigureEntities
     /**
      * Wrapper to streamline bot team configuration using standardized defaults
      * @param team
@@ -660,10 +674,6 @@ public class TeamLoadoutGenerator {
         reconfigureTeam(team, faction, defaultBotMunitionsFile);
     }
 
-    public void reconfigureTeam(Team team, String faction, MunitionTree mt) {
-        reconfigureTeam(game, team, faction, mt);
-    }
-
     /**
      * Wrapper to load a file of preset munition imperatives
      * @param team
@@ -671,29 +681,15 @@ public class TeamLoadoutGenerator {
      * @param adfFile
      */
     public void reconfigureTeam(Team team, String faction, String adfFile) {
-        ReconfigurationParameters rp = generateParameters(game, gameOptions, team);
+        ReconfigurationParameters rp = generateParameters(team);
         rp.allowedYear = allowedYear;
-        MunitionTree mt = generateMunitionTree(rp, team, adfFile);
-        reconfigureTeam(game, team, faction, mt);
-    }
 
-    /**
-     * Main configuration function; mutates units of passed-in team
-     *
-     * @param g       Game instance
-     * @param team    containing units to configure
-     * @param mt      MunitionTree with imperatives for desired/required ammo loads per Chassis, variant, pilot
-     * @param faction
-     */
-    public void reconfigureTeam(Game g, Team team, String faction, MunitionTree mt) {
-        // configure team according to MunitionTree
-        ArrayList<Entity> fEntities = new ArrayList<>();
-        for (Player p: team.players()) {
-            for (Entity e : g.getPlayerEntities(p, false)){
-                fEntities.add(e);
-            }
-        }
-        reconfigureEntities(fEntities, faction, mt);
+        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
+                game.getTeamEntities(team)
+        );
+
+        MunitionTree mt = generateMunitionTree(rp, updateEntities, adfFile);
+        reconfigureEntities(updateEntities, faction, mt);
     }
 
     /**
@@ -721,7 +717,10 @@ public class TeamLoadoutGenerator {
      * @param faction
      */
     public void randomizeBotTeamConfiguration(Team team, String faction) {
-        reconfigureTeam(game, team, faction, generateRandomizedMT());
+        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
+                game.getTeamEntities(team)
+        );
+        reconfigureEntities(updateEntities, faction, generateRandomizedMT());
     }
 
     public static MunitionTree generateRandomizedMT() {
@@ -731,7 +730,7 @@ public class TeamLoadoutGenerator {
         }
         return mt;
     }
-    //endregion reconfigureTeam
+    //endregion reconfigureEntities
 
     //region reconfigureEntity
     /**

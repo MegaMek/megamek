@@ -4,7 +4,6 @@ import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
-import megamek.client.generator.ReconfigurationParameters;
 import megamek.common.options.*;
 import org.apache.commons.collections.IteratorUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -257,7 +256,7 @@ class TeamLoadoutGeneratorTest {
         // Kintaro's go under different keys
         mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
-        tlg.reconfigureTeam(game, team, "FS", mt);
+        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt);
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless
@@ -358,7 +357,7 @@ class TeamLoadoutGeneratorTest {
         Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
 
         // Just check that the bins are populated still
-        tlg.reconfigureTeam(team,"CL", "");
+        tlg.reconfigureTeam(team, "CL", "");
 
         for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());

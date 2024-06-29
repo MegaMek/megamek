@@ -16,33 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.strategicBattleSystems;
 
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+package megamek.client.ui.swing.sbf;
 
-/**
- * This is a turn for a player action that does not use a unit (formation). Examples are minefield
- * deployment, arty auto hex designation and others.
- */
-public class SBFPlayerTurn extends SBFTurn {
+public enum SelectDirection {
 
-    /**
-     * Creates a new player action turn for an SBF Game.
-     *
-     * @param playerId The player who has to take action
-     */
-    public SBFPlayerTurn(int playerId) {
-        super(playerId);
+    NEXT_UNIT,
+    PREVIOUS_UNIT;
+
+    public boolean isNextUnit() {
+        return this == NEXT_UNIT;
     }
 
-    @Override
-    public boolean isValidEntity(InGameObject unit, IGame game) {
-        return false;
+    public boolean isPreviousUnit() {
+        return this == PREVIOUS_UNIT;
     }
 
-    @Override
-    public boolean isValid(SBFGame game) {
-        return game.getPlayer(playerId()) != null;
-    }
 }

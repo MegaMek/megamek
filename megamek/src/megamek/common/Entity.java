@@ -116,7 +116,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
 
-    public static final int NONE = -1;
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;

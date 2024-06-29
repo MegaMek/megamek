@@ -18,12 +18,14 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import megamek.client.ui.swing.sbf.SelectDirection;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -31,6 +33,7 @@ import megamek.server.sbf.SBFVisibilityHelper;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
@@ -42,7 +45,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private GamePhase lastPhase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
-    private final List<SBFPlayerTurn> turnList = new ArrayList<>();
+    private final List<SBFTurn> turnList = new ArrayList<>();
     private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper();
 
     /**
@@ -55,8 +58,12 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     @Override
-    public PlayerTurn getTurn() {
-        return null;
+    public @Nullable SBFTurn getTurn() {
+        if ((turnIndex < 0) || (turnIndex >= turnList.size())) {
+            return null;
+        } else {
+            return turnList.get(turnIndex);
+        }
     }
 
     @Override
@@ -282,7 +289,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @param newTurns The new list of turns to use
      */
-    public void setTurns(List<SBFPlayerTurn> newTurns) {
+    public void setTurns(List<SBFTurn> newTurns) {
         turnList.clear();
         turnList.addAll(newTurns);
     }
@@ -292,16 +299,8 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      * not the SBFGameManager, don't even think about changing any of the turns.
      */
     @Override
-    public List<SBFPlayerTurn> getTurnsList() {
+    public List<SBFTurn> getTurnsList() {
         return Collections.unmodifiableList(turnList);
-    }
-
-    /**
-     * Changes to the next turn, returning it.
-     */
-    public PlayerTurn changeToNextTurn() {
-        turnIndex++;
-        return getTurn();
     }
 
     public List<InGameObject> getGraveyard() {
@@ -328,5 +327,137 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     public boolean isVisible(int viewingPlayer, int formationID) {
         return visibilityHelper.isVisible(viewingPlayer, formationID);
+    }
+
+    /**
+     * Advances the turn index and returns the then-current turn.
+     *
+     * @return The current turn (after advancing the turn index)
+     */
+    public SBFTurn changeToNextTurn() {
+        turnIndex++;
+        return getTurn();
+    }
+
+    public boolean hasEligibleFormation(SBFFormationTurn turn) {
+        //TODO: called from turn and asks back in turn... circular, improve this
+        return (turn != null) && getActiveFormations().stream().anyMatch(f -> turn.isValidEntity(f, this));
+    }
+
+    /**
+     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed
+     * or otherwise removed from play.
+     *
+     * @return The currently active formations
+     */
+    private List<SBFFormation> getActiveFormations() {
+        return inGameObjects.values().stream()
+                .filter(u -> u instanceof SBFFormation)
+                .map(u -> (SBFFormation) u)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * @return the first formation in the list of formations that is alive and eligible for the current game phase.
+     */
+    public Optional<SBFFormation> getNextEligibleFormation() {
+        return getNextEligibleFormation(BTObject.NONE);
+    }
+
+    /**
+     * @return the preceding formation in the list of formations that is alive and eligible for the current game phase.
+     */
+    public Optional<SBFFormation> getPreviousEligibleFormation() {
+        return getPreviousEligibleFormation(BTObject.NONE);
+    }
+
+    /**
+     * @return the next in the list of formations that is alive and eligible for the current game phase,
+     * counting from the given current formation id. If no matching formation can be found for the given id,
+     * returns the first eligible formation in the list of formations that is alive and eligible.
+     */
+    public Optional<SBFFormation> getNextEligibleFormation(int currentFormationID) {
+        return getEligibleFormationImpl(currentFormationID, phase, SelectDirection.NEXT_UNIT);
+    }
+
+    /**
+     * @return the previous in the list of formations that is alive and eligible for the current game phase,
+     * counting from the given current formation id. If no matching formation can be found for the given id,
+     * returns the last eligible formation from the list of formations that is alive and eligible.
+     */
+    public Optional<SBFFormation> getPreviousEligibleFormation(int currentFormationID) {
+        return getEligibleFormationImpl(currentFormationID, phase, SelectDirection.PREVIOUS_UNIT);
+    }
+
+    /**
+     * Based on the given search direction, returns the formation that precedes or follows the given
+     * formation ID in the list of active formations eligible for action in the given game phase.
+     *
+     * @param currentFormationID the start point of the formation search. Need not match an actual formation
+     * @param phase the phase to check
+     * @param direction the selection to seek the next or previous formation
+     * @return the formation that precedes or follows the given formation ID, if one can be found
+     */
+    private Optional<SBFFormation> getEligibleFormationImpl(int currentFormationID, GamePhase phase,
+                                                            SelectDirection direction) {
+        List<SBFFormation> eligibleFormations = getActiveFormations().stream()
+                .filter(u -> u.isEligibleForPhase(phase))
+                .collect(Collectors.toList());
+        if (eligibleFormations.isEmpty()) {
+            return Optional.empty();
+        } else {
+            Optional<SBFFormation> currentFormation = getFormation(currentFormationID);
+            int index = currentFormation.map(eligibleFormations::indexOf).orElse(-1);
+            if (index == -1) {
+                // when no current unit is found, the next unit is the first, the previous unit is the last
+                index = direction.isNextUnit() ? 0 : eligibleFormations.size() - 1;
+            } else {
+                // must add the list size to safely get the previous unit because -1 % 5 == -1 (not 4)
+                index += eligibleFormations.size() + (direction.isNextUnit() ? 1 : -1);
+                index %= eligibleFormations.size();
+            }
+                return Optional.ofNullable(eligibleFormations.get(index));
+        }
+    }
+
+    /**
+     * Returns the formation of the given ID, if one can be found.
+     *
+     * @param formationID the ID to look for
+     * @return The formation or an empty Optional
+     */
+    public Optional<SBFFormation> getFormation(int formationID) {
+        Optional<InGameObject> unit = getInGameObject(formationID);
+        if (unit.isPresent() && unit.get() instanceof SBFFormation) {
+            return Optional.of((SBFFormation) unit.get());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean hasMoreTurns() {
+        return getTurnsList().size() > turnIndex + 1;
+    }
+
+    /**
+     * Returns the Player that has to act in the given turn. The result should rarely be empty.
+     *
+     * @param turn The SBFTurn to check
+     * @return The Player whose turn it is
+     */
+    public Optional<Player> getPlayerFor(SBFTurn turn) {
+        return Optional.ofNullable(getPlayer(turn.playerId()));
+    }
+
+    /**
+     * Sets the current turn index
+     *
+     * @param turnIndex The new turn index.
+     * @param prevPlayerId  The ID of the player who triggered the turn index change.
+     */
+    public void setTurnIndex(int turnIndex, int prevPlayerId) {
+        setTurnIndex(turnIndex);
+        fireGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().playerId()), prevPlayerId));
     }
 }

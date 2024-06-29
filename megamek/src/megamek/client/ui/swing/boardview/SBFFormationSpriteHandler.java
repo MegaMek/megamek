@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.SBFClient;
+import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 
@@ -31,6 +32,9 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
         game = client.getGame();
     }
 
+    /**
+     * Clears the current sprites and creates new sprites for all formations.
+     */
     public void update() {
         clear();
         game.getInGameObjects().stream()
@@ -39,6 +43,21 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
                 .map(f -> new SBFFormationSprite(boardView, (SBFFormation) f, game.getPlayer(f.getOwnerId())))
                 .forEach(currentSprites::add);
         boardView.addSprites(currentSprites);
+    }
+
+    /**
+     * Sets the given formation as the selected formation and renews the sprites accordingly. The previously
+     * selected formation, if any, will no longer be selected. When the given formation is null,
+     * all formations will be deselected.
+     *
+     * @param formation The formation to draw as selected, or null for no selection
+     */
+    public void setSelectedFormation(@Nullable SBFFormation formation) {
+        for (Sprite sprite : currentSprites) {
+            SBFFormationSprite formationSprite = (SBFFormationSprite) sprite;
+            formationSprite.setSelected(formationSprite.getFormation().equals(formation));
+        }
+        boardView.repaint();
     }
 
     @Override

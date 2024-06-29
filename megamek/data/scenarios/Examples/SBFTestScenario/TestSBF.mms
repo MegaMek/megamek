@@ -20,6 +20,9 @@ factions:
       at: [4, 5]
       id: 3
 
+    - include: "Example SBF Formation.mmu"
+      at: [ 7, 4 ]
+
 - name: OpFor ΟπΦόρ
   camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
   units:

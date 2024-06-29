@@ -227,4 +227,16 @@ public abstract class AbstractGameManager implements IGameManager {
     public AutosaveService getAutoSaveService() {
         return autoSaveService;
     }
+
+    /**
+     * Sends out a notification message indicating that a ghost player's turn may be skipped with the
+     * /skip command.
+     *
+     * @param ghost the Player who is ghosted. This value must not be null.
+     */
+    protected void sendGhostSkipMessage(Player ghost) {
+        String message = "Player '" + ghost.getName() +
+                "' is disconnected. You may skip their current turn with the /skip command.";
+        sendServerChat(message);
+    }
 }

@@ -1993,19 +1993,6 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * Sends out a notification message indicating that a ghost player may be
-     * skipped.
-     *
-     * @param ghost - the <code>Player</code> who is ghosted. This value must not
-     *              be <code>null</code>.
-     */
-    private void sendGhostSkipMessage(Player ghost) {
-        String message = "Player '" + ghost.getName() +
-                "' is disconnected.  You may skip his/her current turn with the /skip command.";
-        sendServerChat(message);
-    }
-
-    /**
      * Sends out a notification message indicating that the current turn is an
      * error and should be skipped.
      *

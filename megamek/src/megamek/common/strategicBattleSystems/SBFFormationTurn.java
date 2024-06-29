@@ -22,27 +22,27 @@ import megamek.common.IGame;
 import megamek.common.InGameObject;
 
 /**
- * This is a turn for a player action that does not use a unit (formation). Examples are minefield
- * deployment, arty auto hex designation and others.
+ * This is a turn for a player action that uses a unit (formation). Examples are movement and firing.
  */
-public class SBFPlayerTurn extends SBFTurn {
+public class SBFFormationTurn extends SBFTurn {
 
     /**
-     * Creates a new player action turn for an SBF Game.
+     * Creates a new player turn for an SBF Game.
      *
      * @param playerId The player who has to take action
      */
-    public SBFPlayerTurn(int playerId) {
+    public SBFFormationTurn(int playerId) {
         super(playerId);
     }
 
     @Override
-    public boolean isValidEntity(InGameObject unit, IGame game) {
-        return false;
+    public boolean isValid(SBFGame game) {
+        return (game.getPlayer(playerId()) != null) && game.hasEligibleFormation(this);
     }
 
     @Override
-    public boolean isValid(SBFGame game) {
-        return game.getPlayer(playerId()) != null;
+    public boolean isValidEntity(InGameObject unit, IGame game) {
+        return unit.getOwnerId() == playerId() && unit instanceof SBFFormation
+                && ((SBFFormation) unit).isEligibleForPhase(game.getPhase());
     }
 }

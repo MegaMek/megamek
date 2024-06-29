@@ -324,4 +324,13 @@ public abstract class AbstractGame implements IGame {
     public void incrementCurrentRound() {
         currentRound++;
     }
+
+    /**
+     * Sets the turn index to the given value.
+     *
+     * @param turnIndex the new turn index
+     */
+    protected void setTurnIndex(int turnIndex) {
+        this.turnIndex = turnIndex;
+    }
 }

@@ -21,7 +21,10 @@ package megamek.server.sbf;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFFormationTurn;
 import megamek.common.strategicBattleSystems.SBFPlayerTurn;
+import megamek.common.strategicBattleSystems.SBFTurn;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,7 +52,7 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
      * @see AbstractGame#resetTurnIndex()
      */
     void determineTurnOrder(GamePhase phase) {
-        final List<SBFPlayerTurn> turns;
+        final List<SBFTurn> turns;
         if (phase.isDeployMinefields()) {
             turns = game().getPlayersList().stream()
                     .filter(Player::hasMinefields)
@@ -57,8 +60,11 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
                     .collect(Collectors.toList());
         } else {
             turns = game().getInGameObjects().stream()
+                    .filter(unit -> unit instanceof SBFFormation)
+                    .filter(unit -> ((SBFFormation) unit).isDeployed())
+                    .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
                     .map(InGameObject::getOwnerId)
-                    .map(SBFPlayerTurn::new)
+                    .map(SBFFormationTurn::new)
                     .collect(Collectors.toList());
         }
         //TODO sort by init and uneven count
@@ -83,7 +89,7 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
                 Report r = new Report(1020, Report.PUBLIC);
 
                 boolean hasEven = false;
-                for (SBFPlayerTurn turn : game().getTurnsList()) {
+                for (SBFTurn turn : game().getTurnsList()) {
                     Player player = game().getPlayer(turn.playerId());
                     if (null != player) {
                         r.add(player.getName());
@@ -122,6 +128,7 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
                 .filter(unit -> !unit.isDeployed())
                 .sorted(comp)
                 .collect(Collectors.toList());
+
         if (!futureDeployments.isEmpty()) {
             addReport(new Report(1060, Report.PUBLIC));
             int round = -1;
@@ -136,6 +143,7 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
                 r.add(((InGameObject) deployable).generalName());
                 r.add("1");
                 r.add("2");
+                //TODO
 //                r.addDesc(entity);
 //                String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
 //                r.add(s);

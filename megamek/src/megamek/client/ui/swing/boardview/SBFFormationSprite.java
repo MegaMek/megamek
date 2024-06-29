@@ -24,6 +24,7 @@ import megamek.common.*;
 import megamek.common.strategicBattleSystems.SBFFormation;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an
@@ -45,7 +46,7 @@ class SBFFormationSprite extends Sprite {
 
     public SBFFormationSprite(BoardView boardView, SBFFormation formation, Player owner) {
         super(boardView);
-        this.formation = formation;
+        this.formation = Objects.requireNonNull(formation);
         this.owner = owner;
         getBounds();
     }

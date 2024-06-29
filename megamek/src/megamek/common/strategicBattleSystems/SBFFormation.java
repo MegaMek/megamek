@@ -28,6 +28,7 @@ import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFFormationDeserializer;
 import megamek.common.jacksonadapters.SBFFormationSerializer;
@@ -71,6 +72,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int id = Entity.NONE;
     private int ownerId = Player.PLAYER_NONE;
 
+    /** Hidden deployment (not unseen) */
+    private boolean isHidden = false;
     private boolean isDeployed = false;
     private int deployRound = 0;
     private BoardLocation position;
@@ -448,5 +451,20 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public void setPosition(BoardLocation boardLocation) {
         position = boardLocation;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public boolean isEligibleForPhase(GamePhase phase) {
+        switch (phase) {
+            case PREMOVEMENT:
+            case PREFIRING:
+                return isHidden;
+            default:
+                return isDeployed;
+
+        }
     }
 }

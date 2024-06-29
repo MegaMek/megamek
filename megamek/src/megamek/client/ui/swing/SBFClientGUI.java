@@ -21,11 +21,14 @@ package megamek.client.ui.swing;
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
 import megamek.common.Game;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
+import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.util.Distractable;
 import org.apache.logging.log4j.LogManager;
 
@@ -391,7 +394,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case MOVEMENT:
-//                initializeWithBoardView(phase, new MovementDisplay(this), CG_MOVEMENTDISPLAY);
+                initializeWithBoardView(phase, new SBFMovementDisplay(this), CG_MOVEMENTDISPLAY);
                 break;
             case OFFBOARD:
 //                component = new TargetingPhaseDisplay(this, true);
@@ -455,5 +458,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     protected void updateFormationSprites() {
         formationSpriteHandler.update();
+    }
+
+    public void selectForAction(@Nullable SBFFormation formation) {
+        formationSpriteHandler.setSelectedFormation(formation);
     }
 }

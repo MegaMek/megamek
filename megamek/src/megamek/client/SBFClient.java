@@ -20,11 +20,11 @@ package megamek.client;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
-import megamek.common.event.GameReportEvent;
 import megamek.common.force.Forces;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
@@ -105,6 +105,12 @@ public class SBFClient extends AbstractClient {
                 }
                 game.addReports((List<Report>) packet.getObject(0));
                 roundReport = assembleAndAddImages(game.getGameReport().get(game.getCurrentRound()));
+                break;
+            case SENDING_TURNS:
+                game.setTurns((List<SBFTurn>) packet.getObject(0));
+                break;
+            case TURN:
+                game.setTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
                 break;
             default:
                 return false;

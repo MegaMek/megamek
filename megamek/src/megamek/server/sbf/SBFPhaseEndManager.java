@@ -197,6 +197,7 @@ public class SBFPhaseEndManager {
 //                    send(connId, createArtilleryPacket(player));
 //                }
 //
+                gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
             case OFFBOARD:
 //                // write Offboard Attack Phase header

@@ -23,6 +23,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.server.AbstractGameManager;
 import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
@@ -294,46 +295,35 @@ public final class SBFGameManager extends AbstractGameManager {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
-//        boolean minefieldPhase = game.getPhase().isDeployMinefields();
-//        boolean artyPhase = game.getPhase().isSetArtilleryAutohitHexes();
-//
-//        GameTurn nextTurn = null;
-//        Entity nextEntity = null;
-//        while (game.hasMoreTurns() && (null == nextEntity)) {
-//            nextTurn = game.changeToNextTurn();
-//            nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
-//            if (minefieldPhase || artyPhase) {
-//                break;
-//            }
-//        }
-//
-//        // if there aren't any more valid turns, end the phase
-//        // note that some phases don't use entities
-//        if (((null == nextEntity) && !minefieldPhase) || ((null == nextTurn) && minefieldPhase)) {
-//            endCurrentPhase();
-//            return;
-//        }
-//
-//        Player player = game.getPlayer(nextTurn.getPlayerNum());
-//
-//        if ((player != null) && (game.getEntitiesOwnedBy(player) == 0)) {
-//            endCurrentTurn(null);
-//            return;
-//        }
-//
-//        if (prevPlayerId != -1) {
-//            send(packetHelper.createTurnIndexPacket(prevPlayerId));
-//        } else {
-//            send(packetHelper.createTurnIndexPacket(player != null ? player.getId() : Player.PLAYER_NONE));
-//        }
-//
-//        if ((null != player) && player.isGhost()) {
-//            sendGhostSkipMessage(player);
-//        } else if ((null == game.getFirstEntity()) && (null != player) && !minefieldPhase && !artyPhase) {
-//            sendTurnErrorSkipMessage(player);
-//        }
-    }
+        if (!game.hasMoreTurns()) {
+            endCurrentPhase();
+            return;
+        }
 
+        SBFTurn nextTurn = game.changeToNextTurn();
+        boolean isValidTurn = nextTurn.isValid(game);
+        while (game.hasMoreTurns() && !isValidTurn) {
+            nextTurn = game.changeToNextTurn();
+            isValidTurn = nextTurn.isValid(game);
+        }
+
+        if (!isValidTurn) {
+            endCurrentPhase();
+        } else {
+            Optional<Player> player = game.getPlayerFor(nextTurn);
+            if (prevPlayerId != Player.PLAYER_NONE) {
+                send(packetHelper.createTurnIndexPacket(prevPlayerId));
+            } else {
+                send(packetHelper.createTurnIndexPacket(player.map(Player::getId).orElse(Player.PLAYER_NONE)));
+            }
+
+            if (player.isPresent() && player.get().isGhost()) {
+                sendGhostSkipMessage(player.get());
+//            } else if ((null == game.getFirstEntity()) && (null != player) && !minefieldPhase && !artyPhase) {
+//                sendTurnErrorSkipMessage(player);
+            }
+        }
+    }
 
     private List<InGameObject> getVisibleUnits(Player viewer) {
         if (isDoubleBlind()) {

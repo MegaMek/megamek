@@ -19,6 +19,7 @@ public class HeatMap {
     private static final double BV_DIVISOR = 100.0;
     private static final int MAX_MP_WEIGHT = 10;
     private static final double MIN_TRACKER_TOLERANCE = 0.1;
+    private static final double MAX_TRACKER_TOLERANCE = 0.9;
     private static final int MAX_TRACKER_ENTRIES = 100;
     private static final int MOVEMENT_WEIGHT_DEFAULT = 3;
 
@@ -45,8 +46,8 @@ public class HeatMap {
     // Scaling factor applied to unit weight
     private double weightScaling;
 
-    // TODO: cache entity positions by ID so movement can be interpolated between two points
-    // TODO: add flag for interpolating movement and applying to each position in the path
+    // Tracking friendly units does not require checking visibility or detection
+    private boolean isFriendlyTeam;
 
     /**
      * Constructor. Initializes all backing objects to an empty state.
@@ -76,9 +77,19 @@ public class HeatMap {
         mapTrimThreshold = MIN_TRACKER_TOLERANCE;
 
         weightScaling = 1.0;
+
+        isFriendlyTeam = false;
     }
 
 
+    /**
+     * Base weight for movement trackers. Large values will result in movement being retained
+     * longer. Typically 1.0 to 10.0 with 3.0 being the default.
+     * @param newSetting  positive value, minimum 1.0
+     */
+    public void setMovementWeightValue (int newSetting) {
+        movementWeight = (int) Math.max(newSetting, 1.0);
+    }
 
     /**
      * Indicates if this heat map will track individual entities in addition to team positions.
@@ -89,7 +100,7 @@ public class HeatMap {
     }
 
     /**
-     * Enable or disable tracking of individual units in addition to
+     * Enable or disable tracking of individual unit movement
      * @param newSetting
      */
     public void setTrackIndividuals(boolean newSetting) {
@@ -168,9 +179,9 @@ public class HeatMap {
     }
 
     /**
-     * The maximum number of positions that can be tracked
+     * Percentage of low-value tracking map entries allowed before they are removed
      *
-     * @return
+     * @return  number between {@code MIN_TRACKER_TOLERANCE} and 0.9
      */
     public double getMapTrimThreshold () {
         return mapTrimThreshold;
@@ -180,10 +191,25 @@ public class HeatMap {
      * When the percentage of minimum values in any map exceeds this value, the map is trimmed of
      * all minimum values to maintain efficiency. Typical values are between 0.1 and 0.5.
      * TODO: consider auto-setting this based on percentage of map size or other factors
-     * @param newSetting  positive value between MIN_TRACKER_POSITIONS and 0.9
+     * @param newSetting  positive value between {@code MIN_TRACKER_TOLERANCE} and
+     *                    {@code MAX_TRACKER_TOLERANCE}
      */
     public void setMapTrimThreshold(double newSetting) {
-        mapTrimThreshold = Math.min(Math.max(newSetting, MIN_TRACKER_TOLERANCE), 0.9);
+        mapTrimThreshold = Math.min(Math.max(newSetting, MIN_TRACKER_TOLERANCE), MAX_TRACKER_TOLERANCE);
+    }
+
+    /**
+     * Identifies if this is tracking a friendly team, so visibility and detection status don't apply
+     */
+    public boolean getIsTrackingFriendlyTeam () {
+        return isFriendlyTeam;
+    }
+
+    /**
+     * Tracking friendly entities doesn't require checking visibility or detection status
+     */
+    public void setIsTrackingFriendlyTeam (boolean newSetting) {
+        isFriendlyTeam = newSetting;
     }
 
     // TODO: method to get nearest hotspot to provided position. Need to consider value vs range.
@@ -219,11 +245,11 @@ public class HeatMap {
                 filter(e -> e.getOwner().getTeam() == teamId &&
                     !e.isCarcass() &&
                     e.isDeployed() &&
-                    (e.isVisibleToEnemy() || e.isDetectedByEnemy()) &&
+                    (isFriendlyTeam || e.isVisibleToEnemy() || e.isDetectedByEnemy()) &&
                     !e.isHidden()).
                 collect(Collectors.toList())) {
 
-            // Immobile - once you know where it is, it's (hopefully!) not moving ...
+            // Immobile - once you know where it is, it's (hopefully!) not moving ... or
             // Non-combat - not worth tracking
             if (curTracked instanceof GunEmplacement || curTracked instanceof EjectedCrew) {
                 continue;
@@ -239,8 +265,61 @@ public class HeatMap {
         }
     }
 
+    /**
+     * Updates the heat map with a specific movement path. Filters out gun emplacements and ejected
+     * MechWarriors and vehicle crews.
+     * @param detailedMove  {@link MovePath} object, which includes an entity reference and Coords
+     *                      for the positions moved through
+     */
+    public void updateTrackers (MovePath detailedMove) {
+        if (detailedMove == null || detailedMove.getCoordsSet() == null) {
+            return;
+        }
 
-    // TODO: add method for updating entity tracker via movement path
+        Entity tracked = detailedMove.getEntity();
+
+        // Immobile - once you know where it is, it's (hopefully!) not moving ... or
+        // Non-combat - not worth tracking
+        if (tracked instanceof GunEmplacement || tracked instanceof EjectedCrew) {
+            return;
+        }
+
+        // Get the map adjustments, based on entity position
+        int mapAdjustment = getTeamWeightAdjustment(detailedMove.getEntity());
+
+        List<Coords> path = new ArrayList<>();
+
+        Coords startPosition = null;
+        Coords lastPosition = detailedMove.getLastStep().getPosition();
+
+        for (MoveStep curStep : detailedMove.getStepVector()) {
+            Coords curPosition = curStep.getPosition();
+            if (startPosition != null) {
+                if (!path.contains(curPosition) && !curPosition.equals(startPosition)) {
+                    path.add(curPosition);
+                }
+            } else {
+                startPosition = curPosition;
+            }
+        }
+
+        // Update the team map, adding the position if not already present
+        updateTeamMap(lastPosition, mapAdjustment);
+
+        // Only process the movement trackers if the entity has moved from it's last known position
+        if (lastPosition != null && !path.isEmpty()) {
+            mapAdjustment = getMovementWeightAdjustment(tracked);
+            updateTeamMovementMap(path, mapAdjustment);
+
+            // If individual entity tracking is enabled, adjust the entity map
+            if (trackIndividualUnits) {
+                updateEntityMap(tracked.getId(), path, mapAdjustment);
+            }
+        }
+
+        // Stash this position for movement interpolation in the next round
+        updateLastKnown(tracked.getId(), lastPosition);
+    }
 
     /**
      * Reduces the values for every entry in the map. This will gradually reduce the weights over
@@ -262,6 +341,28 @@ public class HeatMap {
         trimMap(teamMovement);
         for (Map<Coords, Integer> entityMap : entityMovement.values()) {
             trimMap(entityMap);
+        }
+
+    }
+
+    /**
+     * Manually update the last known positions of tracked entities
+     * @param game
+     */
+    public void refreshLastKnownCache (Game game) {
+
+        // Don't bother updating destroyed entities
+        trimLastKnownPositions(game);
+
+        for (int curId : lastPositionCache.keySet()) {
+            Entity curEntity = game.getEntity(curId);
+            if (curEntity != null &&
+                    curEntity.isDeployed() &&
+                    curEntity.getPosition() != null &&
+                    !curEntity.isCarcass() &&
+                    (isFriendlyTeam || curEntity.isVisibleToEnemy() || curEntity.isDetectedByEnemy())) {
+                lastPositionCache.put(curId, curEntity.getPosition());
+            }
         }
 
     }
@@ -352,7 +453,7 @@ public class HeatMap {
                     !curEntity.isDestroyed() &&
                     curEntity.isDeployed() &&
                     !curEntity.isCarcass() &&
-                    (curEntity.isVisibleToEnemy() || curEntity.isDetectedByEnemy())) {
+                    (isFriendlyTeam || curEntity.isVisibleToEnemy() || curEntity.isDetectedByEnemy())) {
                 activePositions.add(lastPositionCache.get(curId));
             }
         }
@@ -393,7 +494,7 @@ public class HeatMap {
 
     /**
      * Get the weight for tracking movement. For now, this is a simple number chosen so that the
-     * entities movement can bee evaluated for the past several rounds.
+     * entities movement can be evaluated for the past several rounds.
      * @param tracked
      * @return
      */

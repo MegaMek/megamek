@@ -46,11 +46,8 @@
 	</faction>
 	<faction key='CCC'>
 		<pctOmni>0,0,0,5,10</pctOmni>
-		<pctClan>0,0,20,35,45</pctClan>
-		<pctSL>100,100,80,65,55</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,0,5,10</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,15,30,50</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>100,100,85,70,50</pctSL>
+		<pctClan>0,0,15,30,50</pctClan>
+		<pctSL>100,100,85,70,50</pctSL>
 		<pctClan unitType='Vehicle'>0,0,15,15,15</pctClan>
 		<pctSL unitType='Vehicle'>100,100,85,85,85</pctSL>
 		<salvage pct='10'>CHH:2,CSR:2,CIH:3,CSV:2,CFM:2,CCO:10,CGS:2,CSA:3,CDS:1,CW:3,CBS:2,CNC:5,CJF:5,CGB:2,CB:1</salvage>
@@ -84,12 +81,9 @@
 		<weightDistribution era='2855' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGS'>
-		<pctOmni>0,0,0,5,10</pctOmni>
-		<pctClan>10,10,20,30,45</pctClan>
-		<pctSL>90,90,80,70,55</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,0,0,0</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,15,20,30</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>100,100,85,80,70</pctSL>
+		<pctOmni>0,0,0,0,0</pctOmni>
+		<pctClan>0,0,15,20,30</pctClan>
+		<pctSL>100,100,85,80,70</pctSL>
 		<pctClan unitType='Vehicle'>0,0,10,10,10</pctClan>
 		<pctSL unitType='Vehicle'>100,100,90,90,90</pctSL>
 		<salvage pct='10'>CCC:1,CHH:10,CSR:1,CIH:5,CSV:4,CFM:10,CCO:1,CSA:8,CDS:5,CW:4,CNC:10,CSJ:1,CMG:3,CJF:5,CB:5</salvage>
@@ -154,22 +148,16 @@
 	</faction>
 	<faction key='CSR'>
 		<pctOmni>0,0,0,5,10</pctOmni>
-		<pctClan>0,0,15,35,45</pctClan>
-		<pctSL>100,100,85,65,55</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,0,5,10</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,20,15,55</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>100,100,80,55,45</pctSL>
+		<pctClan>0,0,20,15,55</pctClan>
+		<pctSL>100,100,80,55,45</pctSL>
 		<pctClan unitType='Vehicle'>0,0,10,10,10</pctClan>
 		<pctSL unitType='Vehicle'>100,100,90,90,90</pctSL>
 		<salvage pct='10'>CCC:2,CHH:3,CIH:5,CSV:4,CFM:5,CCO:8,CGS:1,CSA:1,CDS:7,CW:7,CNC:10,CSJ:2,CMG:1,CJF:3,CB:8</salvage>
 	</faction>
 	<faction key='CSA'>
-		<pctOmni>0,0,0,10,15</pctOmni>
-		<pctClan>0,0,15,40,45</pctClan>
-		<pctSL>100,100,85,60,55</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,0,0,0</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,20,40,50</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>100,100,80,60,50</pctSL>
+		<pctOmni>0,0,0,0,0</pctOmni>
+		<pctClan>0,0,20,40,50</pctClan>
+		<pctSL>100,100,80,60,50</pctSL>
 		<pctClan unitType='Vehicle'>0,0,10,20,20</pctClan>
 		<pctSL unitType='Vehicle'>100,100,90,80,80</pctSL>
 		<salvage pct='10'>CCC:5,CHH:3,CSR:2,CIH:8,CSV:5,CFM:10,CCO:5,CGS:4,CDS:3,CW:5,CNC:8,CSJ:1,CMG:2,CJF:3,CGB:3,CB:5</salvage>
@@ -356,9 +344,6 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>0</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>0</pctSL>
 		<pctClan unitType='Vehicle'>0</pctClan>
 		<pctSL unitType='Vehicle'>0</pctSL>
 	</faction>
@@ -370,9 +355,6 @@
 		<pctOmni>0,0,0,5,10</pctOmni>
 		<pctClan>0,0,10,35,45</pctClan>
 		<pctSL>100,100,90,65,55</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,0,5,10</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,10,35,45</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>100,100,90,65,55</pctSL>
 		<pctClan unitType='Vehicle'>0,0,15,15,15</pctClan>
 		<pctSL unitType='Vehicle'>100,100,85,85,85</pctSL>
 		<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:7,CSV:4,CCO:4,CGS:5,CSA:10,CDS:2,CW:3,CNC:2,CSJ:3,CMG:1,CJF:7,CGB:1,CB:1</salvage>
@@ -405,9 +387,6 @@
 		<pctOmni>0,0,0,5,10</pctOmni>
 		<pctClan>0,0,10,35,45</pctClan>
 		<pctSL>100,100,90,65,55</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,0,5,10</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,10,35,45</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>100,100,90,65,55</pctSL>
 		<pctClan unitType='Vehicle'>0,0,15,15,15</pctClan>
 		<pctSL unitType='Vehicle'>100,100,85,85,85</pctSL>
 		<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:7,CSV:4,CCO:4,CGS:5,CSA:10,CDS:2,CW:3,CNC:2,CSJ:3,CMG:1,CJF:7,CGB:1,CB:1</salvage>
@@ -682,7 +661,7 @@
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
 		<availability>CC:10,MOC:10,CHH:8,CLAN:6,IS:9,Periphery.Deep:10,CIR:10,DC:8,Periphery:10,TC:10</availability>
 		<model name='(Hover LRM)'>
-			<roles>fire_support,recon</roles>
+			<roles>recon,fire_support</roles>
 			<availability>PIR:4-,IS.pm:3,Periphery.Deep:3-,Periphery:3-</availability>
 		</model>
 		<model name='(Hover MG)'>
@@ -690,7 +669,7 @@
 			<availability>General:2</availability>
 		</model>
 		<model name='(Hover SRM)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>PIR:5-,IS.pm:3,Periphery.Deep:3-,Periphery:3-</availability>
 		</model>
 		<model name='(Hover Sensors)'>
@@ -698,7 +677,7 @@
 			<availability>TC:3</availability>
 		</model>
 		<model name='(Hover)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>General:7</availability>
 		</model>
 		<model name='(Tracked LRM)'>
@@ -722,7 +701,7 @@
 			<availability>PIR:4-,IS.pm:3,Periphery.Deep:3-,Periphery:3-</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>inf_support,urban</roles>
+			<roles>urban,inf_support</roles>
 			<availability>PIR:3,General:2</availability>
 		</model>
 		<model name='(Wheeled SRM)'>
@@ -1961,7 +1940,7 @@
 			<availability>General:8</availability>
 		</model>
 		<model name='(AC)'>
-			<roles>fire_support,support</roles>
+			<roles>support,fire_support</roles>
 			<availability>IS:6,Periphery.Deep:6,Periphery:6</availability>
 		</model>
 		<model name='(Armor)'>
@@ -1969,11 +1948,11 @@
 			<availability>IS:6,Periphery.Deep:6,Periphery:6</availability>
 		</model>
 		<model name='(LRM)'>
-			<roles>fire_support,support</roles>
+			<roles>support,fire_support</roles>
 			<availability>IS:4,Periphery.Deep:4,BAN:6,Periphery:4</availability>
 		</model>
 		<model name='(Mortar)'>
-			<roles>fire_support,support</roles>
+			<roles>support,fire_support</roles>
 			<availability>IS:4,Periphery.Deep:4,Periphery:4</availability>
 		</model>
 		<model name='(SRM)'>

@@ -216,7 +216,7 @@
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
 		<availability>CC:10,IS:9,Periphery.Deep:10,DC:8,Periphery:10,TC:10</availability>
 		<model name='(Hover LRM)'>
-			<roles>fire_support,recon</roles>
+			<roles>recon,fire_support</roles>
 			<availability>PIR:3-,IS.pm:2,Periphery.Deep:2-,Periphery:2-</availability>
 		</model>
 		<model name='(Hover MG)'>
@@ -228,11 +228,11 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='(Hover SRM)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>PIR:3-,IS.pm:2,Periphery.Deep:2-,Periphery:2-</availability>
 		</model>
 		<model name='(Hover)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>General:7</availability>
 		</model>
 		<model name='(Tracked LRM)'>
@@ -260,7 +260,7 @@
 			<availability>PIR:3-,IS.pm:2,Periphery.Deep:2-,Periphery:2-</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>inf_support,urban</roles>
+			<roles>urban,inf_support</roles>
 			<availability>PIR:3,General:2</availability>
 		</model>
 		<model name='(Wheeled Primitive)'>

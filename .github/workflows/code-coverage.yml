@@ -34,7 +34,7 @@ jobs:
 
       # Setup the requested Java Distribution and Version from the matrix
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: ${{ matrix.java-distribution }}
           java-version: ${{ matrix.java-version }}
@@ -54,7 +54,7 @@ jobs:
       # Output Variables:
       #    - buildScanUri
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: build --stacktrace --scan
           build-root-directory: megamek
@@ -63,7 +63,7 @@ jobs:
       #
       # The logs will be relative to the ./megamek directory.
       - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cd-failure-logs
@@ -71,7 +71,7 @@ jobs:
 
       # Upload our Code Coverage Reports to CodeCov.io
       - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false

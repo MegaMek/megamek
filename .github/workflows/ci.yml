@@ -54,11 +54,12 @@ jobs:
       #
       # Output Variables:
       #    - buildScanUri
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: build --stacktrace --scan
-          build-root-directory: megamek
+        working-directory: megamek
+        run: ./gradlew build  --stacktrace --scan
 
       # If the build step fails, try to upload any test logs in case it was a unit test failure.
       # The logs will be relative to the ./megamek directory.

@@ -48,11 +48,12 @@ jobs:
         if: runner.os != 'Windows'
 
       # Include --stacktrace to make some build failures easier to figure out.
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: clean build -x test --continue --stacktrace --scan
-          build-root-directory: megamek
+        working-directory: megamek
+        run: ./gradlew clean build -x test --continue --stacktrace --scan
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4

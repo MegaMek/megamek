@@ -29,7 +29,7 @@ jobs:
 
     steps:
       # Checkout the Pull Request source and put it in: ./megamek
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: megamek
 
@@ -102,4 +102,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: ./megamek/megamek/build/distributions/*.tar
+          path: ./megamek/megamek/build/distributions/*.tar.gz

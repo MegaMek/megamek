@@ -16,33 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+import megamek.common.options.SBFRuleOptions;
 
-/**
- * This is a turn for a player action that uses a unit (formation). Examples are movement and firing.
- */
-public class SBFFormationTurn extends SBFTurn {
+public interface SBFRuleOptionsUser {
 
-    /**
-     * Creates a new player turn for an SBF Game.
-     *
-     * @param playerId The player who has to take action
-     */
-    public SBFFormationTurn(int playerId) {
-        super(playerId);
+    SBFRuleOptions getOptions();
+
+    default boolean usesDoubleBlind() {
+        return getOptions().booleanOption(SBFRuleOptions.BASE_RECON);
     }
 
-    @Override
-    public boolean isValid(SBFGame game) {
-        return (game.getPlayer(playerId()) != null) && game.hasEligibleFormation(this);
+    default boolean usesAdvancedInitiative() {
+        return getOptions().booleanOption(SBFRuleOptions.INIT_MODIFIERS);
     }
 
-    @Override
-    public boolean isValidEntity(InGameObject unit, IGame game) {
-        return (unit.getOwnerId() == playerId()) && unit instanceof SBFFormation
-                && ((SBFFormation) unit).isEligibleForPhase(game.getPhase());
+    default boolean usesBattlefieldInt() {
+        return getOptions().booleanOption(SBFRuleOptions.INIT_BATTLEFIELD_INT);
     }
+
+    default boolean usesAdjustingFormations() {
+        return getOptions().booleanOption(SBFRuleOptions.BASE_ADJUST_FORMATIONS);
+    }
+
 }

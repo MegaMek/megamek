@@ -22,7 +22,9 @@ import megamek.common.*;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.SBFRuleOptions;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFRuleOptionsUser;
 import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.server.AbstractGameManager;
 import megamek.server.Server;
@@ -35,7 +37,7 @@ import java.util.stream.Collectors;
 /**
  * This class manages an SBF game on the server side. As of 2024, this is under construction.
  */
-public final class SBFGameManager extends AbstractGameManager {
+public final class SBFGameManager extends AbstractGameManager implements SBFRuleOptionsUser {
 
     private SBFGame game;
     private final List<Report> pendingReports = new ArrayList<>();
@@ -326,20 +328,13 @@ public final class SBFGameManager extends AbstractGameManager {
     }
 
     private List<InGameObject> getVisibleUnits(Player viewer) {
-        if (isDoubleBlind()) {
+        if (usesDoubleBlind()) {
             return game.getInGameObjects().stream()
                     .filter(unit -> game.isVisible(viewer.getId(), unit.getId()))
                     .collect(Collectors.toList());
         } else {
             return game.getInGameObjects();
         }
-    }
-
-    /**
-     * @return True when this game is using double blind rules (IO BF p.195)
-     */
-    boolean isDoubleBlind() {
-        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
     }
 
     /**
@@ -359,5 +354,10 @@ public final class SBFGameManager extends AbstractGameManager {
 //            }
 //        }
         game.getPlayersList().forEach(player -> send(player.getId(), createReportPacket(player)));
+    }
+
+    @Override
+    public SBFRuleOptions getOptions() {
+        return game.getOptions();
     }
 }

@@ -69,6 +69,14 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
         }
         //TODO sort by init and uneven count
 
+        if (gameManager.usesAdvancedInitiative()) {
+            //TODO ...
+        }
+
+        if (game().usesBattlefieldInt()) {
+            //TODO ...
+        }
+
         game().setTurns(turns);
         game().resetTurnIndex();
         send(packetHelper().createTurnListPacket());
@@ -83,7 +91,7 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
     }
 
     private void writeTurnOrder() {
-        if (!gameManager.isDoubleBlind()) {
+        if (!gameManager.usesDoubleBlind()) {
                 // The turn order is different in movement phase
                 // if a player has any "even" moving units. ???????????????????????????????????? SBF?
                 Report r = new Report(1020, Report.PUBLIC);

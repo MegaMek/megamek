@@ -26,8 +26,8 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.sbf.SBFVisibilityHelper;
 import org.apache.logging.log4j.LogManager;
@@ -38,9 +38,10 @@ import java.util.stream.Collectors;
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
  */
-public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
+public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing,
+        SBFRuleOptionsUser {
 
-    private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
+    private final SBFRuleOptions options = new SBFRuleOptions();
     private GamePhase phase = GamePhase.UNKNOWN;
     private GamePhase lastPhase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
@@ -67,7 +68,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     @Override
-    public GameOptions getOptions() {
+    public SBFRuleOptions getOptions() {
         return options;
     }
 
@@ -357,6 +358,12 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
                 .collect(Collectors.toList());
     }
 
+    // check current turn, phase, formatzion
+    private boolean isEligibleForAction(SBFFormation formation) {
+        return (getTurn() instanceof SBFFormationTurn)
+                && getTurn().isValidEntity(formation, this);
+    }
+
     /**
      * @return the first formation in the list of formations that is alive and eligible for the current game phase.
      */
@@ -401,7 +408,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private Optional<SBFFormation> getEligibleFormationImpl(int currentFormationID, GamePhase phase,
                                                             SelectDirection direction) {
         List<SBFFormation> eligibleFormations = getActiveFormations().stream()
-                .filter(u -> u.isEligibleForPhase(phase))
+                .filter(this::isEligibleForAction)
                 .collect(Collectors.toList());
         if (eligibleFormations.isEmpty()) {
             return Optional.empty();

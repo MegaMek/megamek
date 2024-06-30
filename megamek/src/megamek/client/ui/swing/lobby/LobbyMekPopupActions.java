@@ -1,4 +1,4 @@
-/*  
+/*
  * MegaMek - Copyright (C) 2021 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -56,6 +56,8 @@ public class LobbyMekPopupActions implements ActionListener {
 
                 // Multi entity commands
             case LMP_ALPHASTRIKE:
+            case LMP_AUTOCONFIG:
+            case LMP_RANDOMCONFIG:
             case LMP_UNLOADALLFROMBAY:
             case LMP_C3CM:
             case LMP_C3LM:
@@ -331,7 +333,18 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_ALPHASTRIKE:
                 lobby.lobbyActions.showAlphaStrikeView(entities);
                 break;
+
+            case LMP_AUTOCONFIG:
+            case LMP_RANDOMCONFIG:
+                runMunitionConfigCMD(entities, command);
+                break;
+
         }
+    }
+
+    /** Run config command for a set of entities */
+    private void runMunitionConfigCMD(Set<Entity> entities, String command) {
+
     }
 
     /** Calls lobby actions for a single entity. */

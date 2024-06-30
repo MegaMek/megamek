@@ -31,9 +31,9 @@ import java.awt.*;
  */
 public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
 
-    private final Game game;
+    private final IGame game;
 
-    public MovementEnvelopeSpriteHandler(BoardView boardView, Game game) {
+    public MovementEnvelopeSpriteHandler(BoardView boardView, IGame game) {
         super(boardView);
         this.game = game;
     }

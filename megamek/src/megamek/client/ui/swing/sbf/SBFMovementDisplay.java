@@ -22,12 +22,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.common.BTObject;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.strategicBattleSystems.SBFFormationTurn;
-import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.*;
 
 import java.awt.event.ActionEvent;
 import java.util.*;
@@ -103,6 +101,9 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             currentUnit = SBFFormation.NONE;
         } else {
             currentUnit = formation.getId();
+            if (isMyTurn() && GUIP.getMoveEnvelope()) {
+                computeMovementEnvelope(formation);
+            }
         }
         clientgui.selectForAction(formation);
     }
@@ -234,5 +235,39 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 //            }
 //            clientgui.bingOthersTurn();
         }
+    }
+
+    /**
+     * Computes all of the possible moves for an Entity in a particular gear. The Entity can either
+     * be a suggested Entity or the currently selected one. If there is a selected entity (which
+     * implies it's the current players turn), then the current gear is used (which is set by the
+     * user). If there is no selected entity, then the current gear is invalid, and it defaults to
+     * GEAR_LAND (standard "walk forward").
+     *
+     */
+    public void computeMovementEnvelope(SBFFormation formation) {
+        if (formation == null || formation.getPosition() == null || !formation.isDeployed()) {
+            return;
+        }
+//        if (en.isDone()) {
+//            return;
+//        }
+
+        Map<BoardLocation, SBFMovePath> mvEnvData = new HashMap<>();
+        SBFMovePath mp = new SBFMovePath(formation.getId(), formation.getPosition());
+
+        int maxMP = formation.getMovement();
+        if (game().usesSprintingMove()) {
+            maxMP *= 1.5;
+        }
+
+        SBFMovePathFinder pathFinder = SBFMovePathFinder.moveEnvelopeFinder(maxMP, game());
+        pathFinder.run(mp);
+        mvEnvData = pathFinder.getAllComputedPaths();
+        Map<Coords, Integer> mvEnvMP = new HashMap<>();
+        for (BoardLocation c : mvEnvData.keySet()) {
+            mvEnvMP.put(c.getCoords(), mvEnvData.get(c).getMpUsed());
+        }
+        clientgui.showMovementEnvelope(formation, mvEnvMP);
     }
 }

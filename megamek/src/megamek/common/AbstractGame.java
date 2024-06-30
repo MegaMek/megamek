@@ -19,6 +19,7 @@
 package megamek.common;
 
 import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
@@ -332,5 +333,22 @@ public abstract class AbstractGame implements IGame {
      */
     protected void setTurnIndex(int turnIndex) {
         this.turnIndex = turnIndex;
+    }
+
+
+    public boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
+        return hasBoardLocation(boardLocation.getCoords(), boardLocation.getBoardId());
+    }
+
+    public boolean hasBoardLocation(Coords coords, int boardId) {
+        return hasBoard(boardId) && getBoard(boardId).contains(coords);
+    }
+
+    public boolean hasBoard(@Nullable BoardLocation boardLocation) {
+        return (boardLocation != null) && hasBoard(boardLocation.getBoardId());
+    }
+
+    public boolean hasBoard(int boardId) {
+        return gameBoards.containsKey(boardId);
     }
 }

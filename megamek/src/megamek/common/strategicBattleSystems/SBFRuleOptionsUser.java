@@ -41,4 +41,8 @@ public interface SBFRuleOptionsUser {
         return getOptions().booleanOption(SBFRuleOptions.BASE_ADJUST_FORMATIONS);
     }
 
+    default boolean usesSprintingMove() {
+        return getOptions().booleanOption(SBFRuleOptions.MOVE_SPRINT);
+    }
+
 }

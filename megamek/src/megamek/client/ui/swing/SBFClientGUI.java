@@ -24,6 +24,7 @@ import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
+import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -117,6 +118,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
     private BoardView bv;
     private SBFFormationSpriteHandler formationSpriteHandler;
+    private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
 
     public SBFClientGUI(SBFClient client, MegaMekController c) {
         super(client);
@@ -202,8 +204,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     private void initializeSpriteHandlers() {
+        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
         formationSpriteHandler = new SBFFormationSpriteHandler(bv, client);
-        spriteHandlers.addAll(List.of(formationSpriteHandler));
+        spriteHandlers.addAll(List.of(formationSpriteHandler, movementEnvelopeHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -462,5 +465,17 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     public void selectForAction(@Nullable SBFFormation formation) {
         formationSpriteHandler.setSelectedFormation(formation);
+    }
+
+    /**
+     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is
+     * a map of move end Coords to movement points used.
+     *
+     * @param formation The entity for which the movement envelope is
+     * @param mvEnvData The movement envelope data
+     */
+    public void showMovementEnvelope(SBFFormation formation, Map<Coords, Integer> mvEnvData) {
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, formation.getMovement(),
+                formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
     }
 }

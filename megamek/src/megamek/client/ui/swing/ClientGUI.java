@@ -1219,7 +1219,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 panMain.add(component, main);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
+                component = new StartingScenarioPanel();
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_STARTINGSCENARIO;
                 component.setName(main);

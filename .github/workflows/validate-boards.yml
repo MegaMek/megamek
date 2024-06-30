@@ -48,14 +48,12 @@ jobs:
           distribution: ${{ matrix.java-distribution }}
           java-version: ${{ matrix.java-version }}
 
-      # Make sure we can execute the Gradle wrapper
-      - name: Grant execute permission for gradlew (*nix or MacOS)
-        run: chmod +x gradlew
-        if: runner.os != 'Windows'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      # Build the MegaMek project
-      - name: Create MM Jar
-        run: ./gradlew jar --stacktrace
+      - name: Build with Gradle
+        working-directory: megamek
+        run: ./gradlew jar
 
       # Run the Boards Validator
       - name: Validate Boards

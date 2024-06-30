@@ -44,7 +44,7 @@ void configureExtension(extension) {
         // ref: https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter
         //
         buildScanPublished { PublishedBuildScan scan ->
-            println "::set-output name=buildScanUri::${scan.buildScanUri}\n"
+            echo "name=buildScanUri::${scan.buildScanUri}\n" >> $GITHUB_OUTPUT
         }
     }
 }

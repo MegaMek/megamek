@@ -65,7 +65,6 @@ public class MechSummaryCache {
     private final List<Listener> listeners = new ArrayList<>();
 
     private StringBuffer loadReport = new StringBuffer();
-    private EntityVerifier entityVerifier = null;
     private Thread loader;
     private static final Object lock = new Object();
 
@@ -191,8 +190,6 @@ public class MechSummaryCache {
         Vector<MechSummary> vMechs = new Vector<>();
         Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
-        entityVerifier = EntityVerifier.getInstance(new MegaMekFile(getUnitCacheDir(),
-                EntityVerifier.CONFIG_FILENAME).getFile());
         failedFiles = new HashMap<>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
@@ -257,27 +254,33 @@ public class MechSummaryCache {
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
 
-        // load units from the MM internal user data dir
-        File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
-        if (userDataUnits.isDirectory()) {
-            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, ignoreUnofficial);
-        }
+        // Official units are in the internal dir, not in the user dirs or story arcs dir
+        if (!ignoreUnofficial) {
+            // load units from the MM internal user data dir
+            File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
+            if (userDataUnits.isDirectory()) {
+                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, false);
+            }
 
-        // load units from the external user data dir
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        File userDataUnits2 = new File(userDir, "");
-        if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
-            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
-        }
+            // load units from the external user data dir
+            String userDir = PreferenceManager.getClientPreferences().getUserDir();
+            File userDataUnits2 = new File(userDir, "");
+            if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
+                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, false);
+            }
 
-        // load units from story arcs
-        File storyarcsDir = Configuration.storyarcsDir();
-        if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
-            for (File file : storyarcsDir.listFiles()) {
-                if (file.isDirectory()) {
-                    File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
-                    if(storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
-                        bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, ignoreUnofficial);
+            // load units from story arcs
+            File storyarcsDir = Configuration.storyarcsDir();
+            if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                File[] storyArcsFiles = storyarcsDir.listFiles();
+                if (storyArcsFiles != null) {
+                    for (File file : storyArcsFiles) {
+                        if (file.isDirectory()) {
+                            File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
+                            if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
+                                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
+                            }
+                        }
                     }
                 }
             }

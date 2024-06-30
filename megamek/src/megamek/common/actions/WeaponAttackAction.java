@@ -320,7 +320,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ammoId == UNASSIGNED) {
             linkedAmmo = weapon.getLinkedAmmo();
         } else {
-            Entity carrier = game.getEntity(ammoCarrier);
+            Entity carrier = (ammoCarrier == UNASSIGNED) ? ae : game.getEntity(ammoCarrier);
             linkedAmmo = (carrier == null) ? null : carrier.getAmmo(ammoId);
         }
 

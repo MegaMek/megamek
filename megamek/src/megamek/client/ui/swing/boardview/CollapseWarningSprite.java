@@ -21,6 +21,7 @@ package megamek.client.ui.swing.boardview;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
@@ -37,12 +38,12 @@ import megamek.common.Coords;
  */
 public class CollapseWarningSprite extends HexSprite {
 
-    private static final int TEXT_SIZE = BoardView.HEX_H / 2;
+    private static final int TEXT_SIZE = HexTileset.HEX_H / 2;
     private static final Color TEXT_COLOR = new Color(255, 255, 40, 128);
     private static final Color OUTLINE_COLOR = new Color(40, 40,40,200);
 
-    private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
-    private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
+    private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
+    private static final int HEX_CENTER_Y = HexTileset.HEX_H / 2;
 
     // Draw a special character 'warning sign'.
     private final StringDrawer xWriter = new StringDrawer("\ue160")

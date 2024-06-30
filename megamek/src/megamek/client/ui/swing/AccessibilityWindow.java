@@ -20,6 +20,7 @@ package megamek.client.ui.swing;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -114,14 +115,14 @@ public class AccessibilityWindow extends JDialog {
                 history.addFirst(inputField.getText());
                 historyBookmark = -1;
 
-                if (inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
-                    systemEvent(client.runCommand(inputField.getText()));
+                if (inputField.getText().startsWith(ClientCommand.CLIENT_COMMAND)) {
+                    systemEvent(gui.runCommand(inputField.getText()));
                 } else if (inputField.getText().startsWith(ACCESSIBLE_GUI_SHORTCUT)) {
                     processAccessibleGUI();
                     systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
                 } else {
                     // default to running commands in the accesibility window, added a say command for chat.
-                    systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
+                    systemEvent(gui.runCommand(ClientCommand.CLIENT_COMMAND + inputField.getText()));
                 }
                 inputField.setText("");
 

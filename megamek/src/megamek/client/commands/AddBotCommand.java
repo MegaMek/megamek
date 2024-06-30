@@ -14,25 +14,18 @@
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.util.AddBotUtil;
 
 /**
  * @author dirk
  */
 public class AddBotCommand extends ClientCommand {
-    /**
-     * @param client the client this command will be registered to.
-     */
-    public AddBotCommand(Client client) {
-        super(client, AddBotUtil.COMMAND, AddBotUtil.USAGE);
+
+    public AddBotCommand(ClientGUI clientGUI) {
+        super(clientGUI, AddBotUtil.COMMAND, AddBotUtil.USAGE);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
-     */
     @Override
     public String run(String[] args) {
         return new AddBotUtil().addBot(args, getClient().getGame(), getClient().getHost(), getClient().getPort());

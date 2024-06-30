@@ -1,6 +1,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.Hex;
 
@@ -18,13 +19,13 @@ public class LookCommand extends ClientCommand {
         directions.add("NW");
     }
 
-    public LookCommand(Client client) {
-        super(client, "look", "Look around the current hex.");
+    public LookCommand(ClientGUI clientGUI) {
+        super(clientGUI, "look", "Look around the current hex.");
     }
 
     @Override
     public String run(String[] args) {
-        Coords pos = client.getCurrentHex();
+        Coords pos = getClientGUI().getCurrentHex();
         Hex hex = getClient().getGame().getBoard().getHex(pos);
         String str;
         if (hex != null) {

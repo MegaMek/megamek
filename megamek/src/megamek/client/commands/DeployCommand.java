@@ -17,6 +17,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 
 /**
@@ -24,12 +25,9 @@ import megamek.common.Coords;
  */
 public class DeployCommand extends ClientCommand {
 
-    /**
-     * @param client
-     */
-    public DeployCommand(Client client) {
+    public DeployCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "deploy",
                 "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is the direction it's looking in. #deploy without any options will provide legal deployment zones.");
     }

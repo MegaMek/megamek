@@ -26,6 +26,7 @@ import java.awt.Rectangle;
 import java.text.MessageFormat;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;
 import megamek.common.preference.PreferenceManager;
@@ -71,7 +72,7 @@ public abstract class AbstractWreckSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        image = ImageUtil.createAcceleratedImage(BoardView.HEX_W, BoardView.HEX_H);
+        image = ImageUtil.createAcceleratedImage(HexTileset.HEX_W, HexTileset.HEX_H);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent

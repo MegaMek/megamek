@@ -14,10 +14,8 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
-
-import megamek.client.Client;
 import megamek.client.ui.IClientCommandHandler;
+import megamek.client.ui.swing.ClientGUI;
 
 /**
  * @author dirk
@@ -26,13 +24,12 @@ public class HelpCommand extends ClientCommand {
 
     private IClientCommandHandler cmdHandler;
 
-    /** Creates new HelpCommand */
-    public HelpCommand(Client client) {
+    public HelpCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "help",
                 "Lists all of the commands available, or gives help on a specific command.  Usage: #help [command]");
-        cmdHandler = client;
+        cmdHandler = clientGUI;
     }
 
     @Override

@@ -29,7 +29,6 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
-import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
@@ -70,6 +69,8 @@ import java.util.Queue;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static megamek.client.ui.swing.tileset.HexTileset.*;
+
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
@@ -82,8 +83,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private static final int BOARD_HEX_POPUP = 4;
 
     // the dimensions of megamek's hex images
-    public static final int HEX_W = HexTileset.HEX_W;
-    public static final int HEX_H = HexTileset.HEX_H;
     public static final int HEX_DIAG = (int) Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
 
     static final int HEX_WC = HEX_W - (HEX_W / 4);
@@ -207,19 +206,19 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     TilesetManager tileManager;
 
     // polygons for a few things
-    static Polygon hexPoly;
+    private static final Polygon HEX_POLY;
 
     static {
         // hex polygon
-        hexPoly = new Polygon();
-        hexPoly.addPoint(21, 0);
-        hexPoly.addPoint(62, 0);
-        hexPoly.addPoint(83, 35);
-        hexPoly.addPoint(83, 36);
-        hexPoly.addPoint(62, 71);
-        hexPoly.addPoint(21, 71);
-        hexPoly.addPoint(0, 36);
-        hexPoly.addPoint(0, 35);
+        HEX_POLY = new Polygon();
+        HEX_POLY.addPoint(21, 0);
+        HEX_POLY.addPoint(62, 0);
+        HEX_POLY.addPoint(83, 35);
+        HEX_POLY.addPoint(83, 36);
+        HEX_POLY.addPoint(62, 71);
+        HEX_POLY.addPoint(21, 71);
+        HEX_POLY.addPoint(0, 36);
+        HEX_POLY.addPoint(0, 35);
     }
 
     Shape[] movementPolys;
@@ -393,7 +392,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         hexImageCache = new ImageCache<>();
 
-        tileManager = new TilesetManager(this);
+        tileManager = new TilesetManager(game);
         ToolTipManager.sharedInstance().registerComponent(boardPanel);
 
         game.addGameListener(gameListener);
@@ -707,6 +706,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
             case ClientPreferences.MAP_TILESET:
+                clearHexImageCache();
                 updateBoard();
                 break;
 
@@ -1959,7 +1959,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 g.setColor(tint);
                 AffineTransform sc = new AffineTransform();
                 sc.scale(scale, scale);
-                g.fill(sc.createTransformedShape(hexPoly));
+                g.fill(sc.createTransformedShape(HEX_POLY));
                 g.setColor(origColor);
                 Image staticImage = getScaledImage(tileManager.getEcmStaticImage(tint), false);
                 g.drawImage(staticImage, 0, 0, staticImage.getWidth(null),
@@ -1974,7 +1974,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 g.setColor(tint);
                 AffineTransform sc = new AffineTransform();
                 sc.scale(scale, scale);
-                g.fill(sc.createTransformedShape(hexPoly));
+                g.fill(sc.createTransformedShape(HEX_POLY));
                 g.setColor(origColor);
             }
         }
@@ -4943,8 +4943,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
     }
 
-    public Polygon getHexPoly() {
-        return hexPoly;
+    public static Polygon getHexPoly() {
+        return HEX_POLY;
     }
 
     /** Displays a dialog and changes the theme of all

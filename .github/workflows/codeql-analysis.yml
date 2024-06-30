@@ -34,8 +34,10 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Checkout repository
+      - name: "Check out MegaMek"
         uses: actions/checkout@v4
+        with:
+          path: megamek
 
       # Setup the requested Java Distribution and Version from the matrix
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
@@ -55,21 +57,12 @@ jobs:
           # queries: ./path/to/local/query, your-org/your-repo/queries@main
           queries: +security-and-quality
 
-      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-      # If this step fails, then you should remove it and run the build manually (see below)
-      - name: Autobuild MegaMek
-        uses: github/codeql-action/autobuild@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      # ℹ️ Command-line programs to run using the OS shell.
-      # 📚 https://git.io/JvXDl
-
-      # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-      #    and modify them (or add more) to build your code if your project
-      #    uses a compiled language
-
-      #- run: |
-      #   make bootstrap
-      #   make release
+      - name: Build with Gradle
+        working-directory: megamek
+        run: ./gradlew jar
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

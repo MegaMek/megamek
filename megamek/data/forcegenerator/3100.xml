@@ -4252,6 +4252,14 @@
 		<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='true'>
 			<availability>CW:4</availability>
 		</model>
+		<model name='(Naval) &apos;Bär&apos; (Sqd4)' mechanized='false'>
+			<roles>marine</roles>
+			<availability>RD:6</availability>
+		</model>
+		<model name='(Naval) Bär&apos; (Sqd5)' mechanized='false'>
+			<roles>marine</roles>
+			<availability>RD:6,CDS:5,CW:4-,CNC:8,CLAN.IS:5,CGB:6,CWIE:6</availability>
+		</model>
 		<model name='(Rabid)(Sqd5)' mechanized='false'>
 			<availability>RD:4,CDS:5,CW:4,CNC:5,CGB:4,CWIE:5</availability>
 		</model>

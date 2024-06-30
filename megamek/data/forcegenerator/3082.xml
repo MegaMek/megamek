@@ -3962,6 +3962,10 @@
 		<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='true'>
 			<availability>CW:5</availability>
 		</model>
+		<model name='(Naval) Bär&apos; (Sqd5)' mechanized='false'>
+			<roles>marine</roles>
+			<availability>CDS:4,CW:4-,CNC:7,CLAN.IS:4,CGB:6,CWIE:6</availability>
+		</model>
 		<model name='(Rabid)(Sqd5)' mechanized='false'>
 			<availability>CDS:7,CW:4,CNC:7,CGB:4,CWIE:7</availability>
 		</model>

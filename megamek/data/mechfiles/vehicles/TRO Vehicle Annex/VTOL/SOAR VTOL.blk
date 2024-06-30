@@ -1,24 +1,15 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.0-SNAPSHOT on 2024-06-29
 <UnitType>
 SupportVTOL
 </UnitType>
 
 <Name>
-SOAR
+SOAR VTOL
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 5095
@@ -45,8 +36,8 @@ VTOL
 </motion_type>
 
 <transporters>
-cargobay:0.05:1:1
-standardseats:6.0:0
+cargobay:0.05:1:1::-1:0
+standardseats:6.0:0:-1::-1:0
 </transporters>
 
 <cruiseMP>
@@ -56,6 +47,14 @@ standardseats:6.0:0
 <engine_type>
 6
 </engine_type>
+
+<armor_type>
+45
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <armor>
 5
@@ -96,6 +95,10 @@ Paramedic Equipment
 2
 </structural_tech_rating>
 
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
 <source>
 TRO: Vehicle Annex (Revised)
 </source>
@@ -107,3 +110,4 @@ TRO: Vehicle Annex (Revised)
 <fuel>
 0.5
 </fuel>
+

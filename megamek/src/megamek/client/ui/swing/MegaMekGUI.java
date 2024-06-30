@@ -468,51 +468,36 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     private IGameManager getGameManager(GameType gameType) {
-        switch (gameType) {
-            /*
-            Not implemented:
-            case AS:
-                return new ASGameManager();
-            case BF:
-                return new BFGameManager();
+        return switch (gameType) {
+            /* Not implemented:
+            case AS-> new ASGameManager();
+            case BF-> new BFGameManager();
              */
-            case SBF:
-                return new SBFGameManager();
-            default:
-                return new GameManager();
-        }
+            case SBF -> new SBFGameManager();
+            default -> new GameManager();
+        };
     }
 
     private IClientGUI getClientGUI(GameType gameType, IClient client, MegaMekController controller) {
-        switch (gameType) {
-            /*
-            Not implemented:
-            case AS:
-                return new ASGameManager();
-            case BF:
-                return new BFGameManager();
+        return switch (gameType) {
+            /* Not implemented:
+            case AS-> new ASGameManager();
+            case BF-> new BFGameManager();
              */
-            case SBF:
-                return new SBFClientGUI((SBFClient) client, controller);
-            default:
-                return new ClientGUI((Client) client, controller);
-        }
+            case SBF -> new SBFClientGUI((SBFClient) client, controller);
+            default -> new ClientGUI((Client) client, controller);
+        };
     }
 
     private IClient getClient(GameType gameType, String playerName, String host, int port) {
-        switch (gameType) {
-            /*
-            Not implemented:
-            case AS:
-                return new ASGameManager();
-            case BF:
-                return new BFGameManager();
+        return switch (gameType) {
+            /* Not implemented:
+            case AS-> new ASClient();
+            case BF-> new BFClient();
              */
-            case SBF:
-                return new SBFClient(playerName, host, port);
-            default:
-                return new Client(playerName, host, port);
-        }
+            case SBF -> new SBFClient(playerName, host, port);
+            default -> new Client(playerName, host, port);
+        };
     }
 
     public void startClient(String playerName, String serverAddress, int port) {

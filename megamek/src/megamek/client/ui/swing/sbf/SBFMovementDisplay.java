@@ -254,7 +254,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 //        }
 
         Map<BoardLocation, SBFMovePath> mvEnvData = new HashMap<>();
-        SBFMovePath mp = new SBFMovePath(formation.getId(), formation.getPosition());
+        SBFMovePath mp = new SBFMovePath(formation.getId(), formation.getPosition(), game());
 
         int maxMP = formation.getMovement();
         if (game().usesSprintingMove()) {

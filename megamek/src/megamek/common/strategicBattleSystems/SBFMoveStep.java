@@ -23,32 +23,43 @@ import megamek.common.BoardLocation;
 
 import java.io.Serializable;
 
-public class SBFMoveStep implements Serializable {
+public abstract class SBFMoveStep implements Serializable {
 
-    BoardLocation startingPoint;
-    BoardLocation destination;
+    protected final int formationId;
+    protected BoardLocation startingPoint;
+    protected BoardLocation destination;
+    protected int mpUsed = 1;
+    protected boolean isIllegal = false;
 
-    private SBFMoveStep() { }
-
-    public static SBFMoveStep createGroundMovementStep(BoardLocation startingPoint, BoardLocation destination) {
-        SBFMoveStep step = new SBFMoveStep();
-        step.destination = destination;
-        return step;
+    protected SBFMoveStep(int formationId) {
+        this.formationId = formationId;
     }
 
-    public static SBFMoveStep createGroundMovementStep(BoardLocation startingPoint, int direction) {
-        SBFMoveStep step = new SBFMoveStep();
-        step.startingPoint = startingPoint;
-        step.destination = startingPoint.translated(direction);
-        return step;
+    /**
+     * Assembles and computes all data for this step. Tests if the start and end are on the same board and
+     * actually on that board and if the step distance is more than one. Override to procide more tests.
+     *
+     * @param game The game
+     */
+    protected void compile(SBFGame game) {
+        if (!game.hasBoardLocation(startingPoint) || !game.hasBoardLocation(destination)
+                || (startingPoint.getBoardId() != destination.getBoardId())
+                || (startingPoint.getCoords().distance(destination.getCoords()) > 1)) {
+            isIllegal = true;
+        }
     }
 
-    public static SBFMoveStep createStep(SBFMoveStep original) {
-        return new SBFMoveStep();
-    }
+    /**
+     * @return An exact copy of this move step.
+     */
+    public abstract SBFMoveStep copy();
 
     public BoardLocation getLastPosition() {
         return destination;
+    }
+
+    public int getMpUsed() {
+        return mpUsed;
     }
 
 }

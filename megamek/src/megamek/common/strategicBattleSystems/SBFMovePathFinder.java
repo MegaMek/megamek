@@ -56,7 +56,7 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
         SBFMovePathFinder spf = new SBFMovePathFinder(game, SBFMovePath::getLastPosition, new MovePathRelaxer(),
                         new GroundMovementAdjacency(game), Comparator.comparingInt(SBFMovePath::getMpUsed));
         spf.addFilter(new MovePathLengthFilter(maxMP));
-//        spf.addFilter(new MovePathLegalityFilter(game));
+        spf.addFilter(new MovePathLegalityFilter());
         return spf;
     }
 
@@ -116,7 +116,8 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
             possibleDestinations.removeIf(bl -> !game.hasBoardLocation(bl));
             for (BoardLocation newDestination : possibleDestinations) {
                 SBFMovePath newPath = SBFMovePath.createMovePathShallow(mp);
-                newPath.addStep(SBFMoveStep.createGroundMovementStep(currentDestination, newDestination));
+                newPath.addStep(SurfaceSBFMoveStep.createSurfaceMoveStep(game, mp.getEntityId(),
+                        currentDestination, newDestination));
                 result.add(newPath);
             }
 
@@ -206,5 +207,13 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
 //        paths.add(cost);
 
         return getCostOf(coords);
+    }
+
+    private static class MovePathLegalityFilter extends AbstractPathFinder.Filter<SBFMovePath> {
+
+        @Override
+        public boolean shouldStay(SBFMovePath mp) {
+            return !mp.isIllegal();
+        }
     }
 }

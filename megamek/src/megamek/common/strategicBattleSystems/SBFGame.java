@@ -350,12 +350,38 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @return The currently active formations
      */
-    private List<SBFFormation> getActiveFormations() {
+    public List<SBFFormation> getActiveFormations() {
         return inGameObjects.values().stream()
                 .filter(u -> u instanceof SBFFormation)
                 .map(u -> (SBFFormation) u)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed
+     * or otherwise removed from play.
+     *
+     * @return The currently active formations
+     */
+    public List<SBFFormation> getActiveFormationsAt(BoardLocation location) {
+        return getActiveFormations().stream()
+                .filter(f -> f.getPosition() != null)
+                .filter(f -> f.getPosition().equals(location))
+                .collect(Collectors.toList());
+        //TODO: cache when receiving units at the Client
+    }
+
+    public boolean isHostileActiveFormationAt(BoardLocation location, SBFFormation formation) {
+        Player owner = getPlayer(formation.getOwnerId());
+        return getActiveFormationsAt(location).stream()
+                .map(f -> getPlayer(f.getOwnerId()))
+                .anyMatch(owner::isEnemyOf);
+    }
+
+    public boolean areHostile(SBFFormation formation, Player player) {
+        return player.isEnemyOf(getPlayer(formation.getOwnerId()));
+    }
+
 
     // check current turn, phase, formatzion
     private boolean isEligibleForAction(SBFFormation formation) {

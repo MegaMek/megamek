@@ -23,8 +23,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
-import megamek.common.options.AbstractOptions;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -61,7 +60,7 @@ public interface IGame {
 
     //endregion
 
-    AbstractOptions getOptions();
+    BasicGameOptions getOptions();
 
     /**
      * @return The current game round, with 0 typically indicating deployment and 1 the first

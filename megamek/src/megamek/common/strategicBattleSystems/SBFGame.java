@@ -147,8 +147,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     @Override
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<>();
-        boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
-                .booleanValue();
+        boolean useTeamInit = getOptions().booleanOption(OptionsConstants.BASE_TEAM_INITIATIVE);
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.

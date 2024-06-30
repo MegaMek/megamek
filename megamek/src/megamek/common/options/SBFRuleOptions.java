@@ -18,7 +18,10 @@
  */
 package megamek.common.options;
 
-public class SBFRuleOptions extends AbstractOptions {
+import java.io.File;
+import java.util.Vector;
+
+public class SBFRuleOptions extends BasicGameOptions {
 
     /** Detection and recon rules aka "double blind", IO BF p.195 */
     public static final String BASE_RECON = "base_recon";
@@ -61,7 +64,9 @@ public class SBFRuleOptions extends AbstractOptions {
 //    public static final String INIT_FORCING = "init_forcing";
 
     @Override
-    protected void initialize() {
+    public synchronized void initialize() {
+        super.initialize();
+
         IBasicOptionGroup base = addGroup("base");
         addOption(base, BASE_RECON, false);
         addOption(base, BASE_ADJUST_FORMATIONS, false);
@@ -75,6 +80,16 @@ public class SBFRuleOptions extends AbstractOptions {
         addOption(move, MOVE_HULLDOWN, false);
         addOption(move, MOVE_EVASIVE, false);
         addOption(move, MOVE_SPRINT, false);
+    }
+
+    @Override
+    public Vector<IOption> loadOptions() {
+        return null;
+    }
+
+    @Override
+    public Vector<IOption> loadOptions(File file, boolean print) {
+        return null;
     }
 
     @Override

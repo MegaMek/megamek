@@ -60,19 +60,4 @@ public class ISERLaserLarge extends LaserWeapon {
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_DC);
     }
-
-    @Override
-    public int getLongRange() {
-        if (Server.getServerInstance() == null) {
-            return super.getLongRange();
-        }
-        final GameOptions options = Server.getServerInstance().getGame().getOptions();
-        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE) == null) {
-            return super.getLongRange();
-        } else if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE).booleanValue()) {
-            return 21;
-        } else {
-            return super.getLongRange();
-        }
-    }
 }

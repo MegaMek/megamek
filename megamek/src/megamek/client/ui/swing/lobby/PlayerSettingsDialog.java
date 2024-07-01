@@ -238,6 +238,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // Team Configuration Section
     private Team team;
+    private ReconfigurationParameters rp;
     private int year;
     private final JLabel labelAutoconfig = new TipLabel(
             Messages.getString("PlayerSettingsDialog.autoConfigFaction"), SwingConstants.LEFT);
@@ -431,11 +432,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         team.setFaction(faction);
         if ((clientgui != null) && (clientgui.chatlounge != null)) {
             ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
-            if (null != munitionTree) {
+            if (null != munitionTree && null != rp) {
                 // TODO: create and set up default adf file path for bots
-                tlg.reconfigureEntities(updateEntities, faction, munitionTree);
-                // Use sendUpdate because we want the Game to allow us to change on Bot's
-                // behalf.
+                tlg.reconfigureEntities(updateEntities, faction, munitionTree, rp);
+                // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
                 clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());
                 // clientgui.chatlounge.sendUpdate(updateEntities);
             }
@@ -630,7 +630,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butAutoconfigure.setEnabled(false);
                 butRandomize.setEnabled(true);
                 // Set nuke ban state before generating the tree
-                ReconfigurationParameters rp = tlg.generateParameters(team);
+                rp = tlg.generateParameters(team);
                 rp.nukesBannedForMe = chkBanNukes.isSelected();
                 ArrayList<Entity> entities = clientgui.getClient().getGame().getPlayerEntities(player, false);
                 munitionTree = tlg.generateMunitionTree(rp, entities, "");

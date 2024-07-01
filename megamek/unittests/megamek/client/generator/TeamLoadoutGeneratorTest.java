@@ -241,6 +241,7 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testReconfigureTeamOfMechs() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        ReconfigurationParameters rp = new ReconfigurationParameters();
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -271,7 +272,7 @@ class TeamLoadoutGeneratorTest {
         // Kintaro's go under different keys
         mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
-        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt);
+        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt, rp);
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless

@@ -382,12 +382,12 @@ public class LobbyMekPopupActions implements ActionListener {
         switch (command) {
             case LMP_AUTOCONFIG:
                 mt = tlg.generateMunitionTree(rp, el, "");
-                tlg.reconfigureEntities(el, faction, mt);
+                tlg.reconfigureEntities(el, faction, mt, rp);
                 reconfigured = true;
                 break;
             case LMP_RANDOMCONFIG:
                 mt = TeamLoadoutGenerator.generateRandomizedMT();
-                tlg.reconfigureEntities(el, faction, mt);
+                tlg.reconfigureEntities(el, faction, mt, rp);
                 reconfigured = true;
                 break;
             case LMP_SAVECONFIG:
@@ -398,7 +398,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 mt = loadLoadout();
                 if (null != mt && null != clientgui) {
                     // Apply to entities
-                    tlg.reconfigureEntities(el, faction, mt);
+                    tlg.reconfigureEntities(el, faction, mt, rp);
                     reconfigured = true;
                 }
                 break;

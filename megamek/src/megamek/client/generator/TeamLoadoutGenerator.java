@@ -19,12 +19,12 @@
 
 package megamek.client.generator;
 
+import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.codeUtilities.ObjectUtility;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
-import megamek.common.enums.AbstractRating;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
@@ -466,6 +466,7 @@ public class TeamLoadoutGenerator {
         ArrayList<String> enemyFactions = new ArrayList<>();
         boolean doubleBlind = gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
+        boolean groundMap = g.getBoard().onGround();
         boolean spaceEnvironment = g.getBoard().inSpace();
 
         // This team can see the opponent teams; set appropriate options
@@ -485,7 +486,9 @@ public class TeamLoadoutGenerator {
                 enemyFactions,
                 doubleBlind,
                 darkEnvironment,
-                spaceEnvironment);
+                groundMap,
+                spaceEnvironment
+        );
     }
 
     public static ReconfigurationParameters generateParameters(
@@ -495,7 +498,9 @@ public class TeamLoadoutGenerator {
             ArrayList<String> enemyFactions,
             boolean doubleBlind,
             boolean darkEnvironment,
-            boolean spaceEnvironment) {
+            boolean groundMap,
+            boolean spaceEnvironment
+    ) {
         ReconfigurationParameters rp = new ReconfigurationParameters();
 
         // Set own faction
@@ -508,6 +513,8 @@ public class TeamLoadoutGenerator {
         // of war!
         rp.enemyCount = etEntities.size();
 
+        // Record if ground map
+        rp.groundMap = groundMap;
         // Record if space-based environment
         rp.spaceEnvironment = spaceEnvironment;
 
@@ -838,7 +845,7 @@ public class TeamLoadoutGenerator {
                 game.getTeamEntities(team));
 
         MunitionTree mt = generateMunitionTree(rp, updateEntities, adfFile);
-        reconfigureEntities(updateEntities, faction, mt);
+        reconfigureEntities(updateEntities, faction, mt, rp);
     }
 
     /**
@@ -848,17 +855,24 @@ public class TeamLoadoutGenerator {
      * @param faction  String code for entities' main faction
      * @param mt       MunitionTree defining all applicable loadout imperatives
      */
-    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt) {
+    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt, ReconfigurationParameters rp) {
         ArrayList<Entity> aeros = new ArrayList<>();
         for (Entity e : entities) {
             if (e.isAero()) {
+                // TODO: Will be used when A2G attack errata are implemented
                 aeros.add(e);
             } else {
                 reconfigureEntity(e, mt, faction);
             }
         }
-        // Temporarily uses transplanted version of old MHQ code
-        populateAeroBombs(aeros, this.allowedYear, true);
+
+        populateAeroBombs(
+            entities,
+            this.allowedYear,
+                rp.groundMap || rp.enemyCount > rp.enemyFliers,
+            ForceDescriptor.RATING_5,
+            faction.equals("PIR")
+        );
     }
 
     /**
@@ -868,9 +882,11 @@ public class TeamLoadoutGenerator {
      * @param faction
      */
     public void randomizeBotTeamConfiguration(Team team, String faction) {
+        ReconfigurationParameters rp = generateParameters(team);
         ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
-                game.getTeamEntities(team));
-        reconfigureEntities(updateEntities, faction, generateRandomizedMT());
+                game.getTeamEntities(team)
+        );
+        reconfigureEntities(updateEntities, faction, generateRandomizedMT(), rp);
     }
 
     public static MunitionTree generateRandomizedMT() {
@@ -1039,8 +1055,8 @@ public class TeamLoadoutGenerator {
                     && !binList.isEmpty()) {
                 try {
                     // fill one ammo bin with the requested ammo type
-                    // Check if the bin can even load the desired munition
-                    if (!((AmmoType) bin.getType()).equalsAmmoTypeOnly(desired)) {
+
+                    if (!((AmmoType)bin.getType()).equalsAmmoTypeOnly(desired)){
                         // can't use this ammo if not
                         logger.debug("Unable to load bin " + bin.getName() + " with " + desired.getName());
                         // Unset default bin if ammo was not loadable
@@ -1188,9 +1204,10 @@ public class TeamLoadoutGenerator {
                                          boolean isPirate) {
 
         // Get all valid bombers, and sort unarmed ones to the front
+        // Ignore VTOLs for now, as they suffer extra penalties for mounting bomb munitions
         List<Entity> bomberList = new ArrayList<>();
         for (Entity curEntity : entityList) {
-            if (curEntity.isBomber()) {
+            if (curEntity.isBomber() && !curEntity.isVehicle()) {
                 if (!curEntity.getIndividualWeaponList().isEmpty()) {
                     bomberList.add(curEntity);
                 } else {
@@ -1507,20 +1524,20 @@ public class TeamLoadoutGenerator {
         );
 
         switch (quality) {
-            case 5:
-            case 4:
+            case ForceDescriptor.RATING_5:
+            case ForceDescriptor.RATING_4:
                 randomThreshold = 5;
                 break;
-            case 3:
+            case ForceDescriptor.RATING_3:
                 randomThreshold = 10;
                 break;
-            case 2:
+            case ForceDescriptor.RATING_2:
                 randomThreshold = 25;
                 break;
-            case 1:
+            case ForceDescriptor.RATING_1:
                 randomThreshold = 40;
                 break;
-            case 0:
+            case ForceDescriptor.RATING_0:
                 randomThreshold = 80;
                 break;
             default:

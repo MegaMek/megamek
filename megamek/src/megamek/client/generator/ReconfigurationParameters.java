@@ -32,6 +32,7 @@ public class ReconfigurationParameters {
 
     // Map settings
     public boolean darkEnvironment = false;
+    public boolean groundMap = false;
     public boolean spaceEnvironment = false;
 
     // Enemy stats

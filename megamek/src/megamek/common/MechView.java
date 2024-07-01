@@ -66,7 +66,7 @@ public class MechView {
 
     private static final Pattern numberPattern = Pattern.compile("\\b\\d+\\b");
     private static String highlightNumbersForDiscord(String original) {
-        return numberPattern.matcher(original).replaceAll(DiscordFormat.YELLOW + "$0" + DiscordFormat.WHITE);
+        return numberPattern.matcher(original).replaceAll(DiscordFormat.NUMBER_COLOR + "$0" + DiscordFormat.WHITE);
     }
 
     private final Entity entity;
@@ -1441,7 +1441,7 @@ public class MechView {
         public String toDiscord() {
             final String COL_PADDING = "  ";
             StringBuilder sb = new StringBuilder();
-            sb.append(DiscordFormat.UNDERLINE).append(DiscordFormat.BG_BLUEISH_BLACK);
+            sb.append(DiscordFormat.UNDERLINE).append(DiscordFormat.ROW_SHADING);
             for (int col = 0; col < colNames.length; col++) {
                 sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
                 if (col < colNames.length - 1) {
@@ -1453,7 +1453,7 @@ public class MechView {
             for (int r = 0; r < data.size(); r++) {
                 final String[] row = data.get(r);
                 if (r % 2 == 1) {
-                    sb.append(DiscordFormat.BG_BLUEISH_BLACK);
+                    sb.append(DiscordFormat.ROW_SHADING);
                 }
                 for (int col = 0; col < row.length; col++) {
                     sb.append(highlightNumbersForDiscord(justify(justification[col], row[col], colWidth.get(col))));
@@ -1518,7 +1518,7 @@ public class MechView {
             boolean evenLine = false;
             for (String item : data) {
                 if (evenLine) {
-                    sb.append(DiscordFormat.BG_BLUEISH_BLACK);
+                    sb.append(DiscordFormat.ROW_SHADING);
                 }
                 sb.append(highlightNumbersForDiscord(item)).append("\n");
                 if (evenLine) {

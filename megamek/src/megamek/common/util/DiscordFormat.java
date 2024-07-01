@@ -42,4 +42,7 @@ public enum DiscordFormat {
         }
         return "\u001b[" + code + 'm';
     }
+
+    public static final DiscordFormat NUMBER_COLOR = YELLOW;
+    public static final DiscordFormat ROW_SHADING = BG_BLUEISH_BLACK;
 }

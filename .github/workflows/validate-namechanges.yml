@@ -44,7 +44,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew jar
+        run: ./gradlew build
 
       - name: Validate Name Changes
         working-directory: megamek

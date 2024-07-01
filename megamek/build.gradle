@@ -189,7 +189,7 @@ task stageFiles {
 task createStartScripts (type: CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
     applicationName = 'mm'
-    mainClass = project.mainClassName
+    mainClass = application.mainClass
     outputDir = startScripts.outputDir
     classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
             .filter { it.name.endsWith(".jar") }
@@ -242,18 +242,26 @@ distributions {
 
 createExe {
     description = 'Create Windows executable that wraps MM jar'
-    mainClassName = project.mainClassName
+    mainClassName = application.mainClass
     outfile = 'MegaMek.exe'
+    def iniFile = 'MegaMek.l4j.ini'
     icon = "${projectDir}/data/images/misc/megamek.ico"
     jarTask = project.tasks.jar
-    downloadUrl = 'https://adoptium.net/temurin/releases/?os=windows&arch=x64'
+    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     supportUrl = 'https://megamek.org'
     copyright = '2024 MegaMek Development Team'
     companyName = "MegaMek Development Team"
     outputs.file "${buildDir}/launch4j/${outfile}"
+    outputs.file "${buildDir}/launch4j/${iniFile}"
     jvmOptions = project.ext.mmJvmOptions
     jreMinVersion = '17'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
+    doLast {
+        new File("${buildDir}/launch4j/${iniFile}").text = """# Launch4j runtime config
+# you can add arguments here that will be processed by the JVM at runtime
+${project.ext.mmJvmOptions.join('\n')}
+"""
+    }
 }
 
 windowsDistZip {

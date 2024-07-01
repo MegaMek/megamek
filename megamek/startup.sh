@@ -2,17 +2,17 @@
 
 # MegaMek -
 # Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
-# 
+#
 #  This program is free software; you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License as published by the Free
 #  Software Foundation; either version 2 of the License, or (at your option)
 #  any later version.
-# 
+#
 #  This program is distributed in the hope that it will be useful, but
 #  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 #  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 #  for more details.
-# 
+#
 
 # Define script constants.
 MEGAMEK_NIX_NAME="megamek"  # Assuming on *nix name is lowercase (megamek-*)
@@ -166,4 +166,4 @@ if ! test $PWD -ef $MEGAMEK_CONFPATH; then
     cd $MEGAMEK_CONFPATH
 fi
 #Change the number in -Xmx to the amount of memory available to MegaMek
-$JAVA $JAVA_MODULES -Xmx1024m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@
+$JAVA $JAVA_MODULES -Xmx2048m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@

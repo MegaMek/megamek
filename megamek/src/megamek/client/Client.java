@@ -67,8 +67,6 @@ public class Client extends AbstractClient {
      */
     protected final Game game = new Game();
 
-    private BoardView bv;
-    private Coords currentHex;
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
     private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;

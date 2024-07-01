@@ -21,7 +21,10 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.MovePathFinder;
+import megamek.common.pathfinder.ShortestPathFinder;
 
+import java.io.Serializable;
 import java.util.*;
 
 public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMovePath, SBFMovePath> {
@@ -58,6 +61,41 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
         spf.addFilter(new MovePathLengthFilter(maxMP));
         spf.addFilter(new MovePathLegalityFilter());
         return spf;
+    }
+
+    /**
+     * Produces a new instance of shortest path between starting points and a
+     * destination finder. Algorithm will halt after reaching destination.
+     *
+     * Current implementation uses AStar algorithm.
+     *
+     * @param destination
+     * @param game The current {@link Game}
+     */
+    public static SBFMovePathFinder aStarFinder(BoardLocation destination, SBFGame game) {
+        SBFMovePathFinder spf = new SBFMovePathFinder(game, SBFMovePath::getLastPosition, new MovePathRelaxer(),
+                new GroundMovementAdjacency(game),
+                new MovePathAStarComparator(destination, game.getBoard(destination.getBoardId())));
+        spf.addStopCondition(new DestinationReachedStopCondition(destination));
+        spf.addFilter(new MovePathLegalityFilter());
+        return spf;
+    }
+
+    /**
+     * Returns true if last processed move path had final position equal to
+     * destination.
+     */
+    public static class DestinationReachedStopCondition implements StopCondition<SBFMovePath> {
+        private final BoardLocation destination;
+
+        public DestinationReachedStopCondition(BoardLocation destination) {
+            this.destination = Objects.requireNonNull(destination);
+        }
+
+        @Override
+        public boolean shouldStop(SBFMovePath e) {
+            return destination.equals(e.getLastPosition());
+        }
     }
 
     /**
@@ -215,5 +253,66 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
         public boolean shouldStay(SBFMovePath mp) {
             return !mp.isIllegal();
         }
+    }
+
+    /**
+     * A MovePath comparator that compares movement points spent and distance to
+     * destination. If those are equal then MovePaths with more HexesMoved are
+     * Preferred. This should considerably speed A* when multiple shortest paths
+     * are present.
+     *
+     * This comparator is used by A* algorithm.
+     */
+    public static class MovePathAStarComparator implements Comparator<SBFMovePath>, Serializable {
+        BoardLocation destination;
+        Board board;
+
+        public MovePathAStarComparator(BoardLocation destination, Board board) {
+            this.destination = Objects.requireNonNull(destination);
+            this.board = board;
+        }
+
+        @Override
+        public int compare(SBFMovePath first, SBFMovePath second) {
+            int h1 = 0, h2 = 0;
+//            if (first.getEntity().getWalkMP() == 0) {
+//                // current implementation of movement cost allows a 0mp moves
+//                // for units with 0 mp.
+//            } else {
+//                boolean backwards = stepType == MovePath.MoveStepType.BACKWARDS;
+//                h1 = first.getFinalCoords().distance(destination)
+//                        + getFacingDiff(first, destination, backwards)
+//                        + getLevelDiff(first, destination, board, first.isJumping())
+//                        + getElevationDiff(first, destination, board,
+//                        first.getEntity());
+//                h2 = second.getFinalCoords().distance(destination)
+//                        + getFacingDiff(second, destination, backwards)
+//                        + getLevelDiff(second, destination, board, second.isJumping())
+//                        + getElevationDiff(second, destination, board,
+//                        second.getEntity());
+//            }
+
+            int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
+
+            if (dd != 0) {
+                return dd;
+            } else {
+                return first.getHexesMoved() - second.getHexesMoved();
+            }
+        }
+    }
+
+    /**
+     * Returns the shortest move path to a hex at given coordinates or
+     * {@code null} if none is present. If multiple path are present with
+     * different final facings, the minimal one is chosen.
+     *
+     *
+     * @param coordinates - the coordinates of the hex
+     * @return the shortest move path to hex at given coordinates or
+     *         {@code null}
+     */
+    public SBFMovePath getComputedPath(BoardLocation coordinates) {
+        return getCost(coordinates, getComparator());
     }
 }

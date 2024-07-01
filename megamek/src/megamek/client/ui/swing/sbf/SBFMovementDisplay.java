@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.sbf;
 
+import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -25,9 +26,13 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.*;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -76,6 +81,8 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     private final Map<MoveCommand, MegamekButton> buttons = new HashMap<>();
+
+    private SBFMovePath plannedMovement;
 
     public SBFMovementDisplay(SBFClientGUI cg) {
         super(cg);
@@ -269,5 +276,86 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             mvEnvMP.put(c.getCoords(), mvEnvData.get(c).getMpUsed());
         }
         clientgui.showMovementEnvelope(formation, mvEnvMP);
+    }
+
+    @Override
+    public void hexMoused(BoardViewEvent b) {
+        if (isIgnoringEvents() || !isMyTurn() || (b.getButton() != MouseEvent.BUTTON1)) {
+            return;
+        }
+
+        currentMove(b.getCoords());
+    }
+
+    /**
+     * Returns new MovePath for the currently selected movement type
+     */
+    private void currentMove(Coords dest) {
+        findPathTo(new BoardLocation(dest, 0), plannedMovement);
+
+//            LongestPathFinder lpf;
+//            if (ce().isAero()) {
+//                lpf = LongestPathFinder.newInstanceOfAeroPath(maxMp, ce().getGame());
+//            } else {
+//                lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp, stepType, ce().getGame());
+//            }
+//            final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+//            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<>(timeLimit * 4));
+//
+//            lpf.run(cmd);
+//            MovePath lPath = lpf.getComputedPath(dest);
+//            if (lPath != null) {
+//                cmd = lPath;
+//            }
+    }
+
+//        clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
+//        clientgui.updateFiringArc(ce());
+
+
+    /**
+     * Extend the current path to the destination <code>Coords</code>.
+     *
+     * @param dest the destination <code>Coords</code> of the move.
+     */
+    public void findPathTo(final BoardLocation dest, SBFMovePath currentPath) {
+        if (currentPath == null) {
+            currentPath = new SBFMovePath(currentUnit, game().getFormation(currentUnit).get().getPosition(), game());
+        }
+        final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+        SBFMovePathFinder pf = SBFMovePathFinder.aStarFinder(dest, game());
+        AbstractPathFinder.StopConditionTimeout<SBFMovePath> timeoutCondition =
+                new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
+        pf.addStopCondition(timeoutCondition);
+        pf.run(SBFMovePath.createMovePathShallow(currentPath));
+        SBFMovePath finPath = pf.getComputedPath(dest);
+        // this can be used for debugging the "destruction aware pathfinder"
+        //MovePath finPath = calculateDestructionAwarePath(dest);
+
+//        if (timeoutCondition.timeoutEngaged || finPath == null) {
+//            /*
+//             * Either we have forced searcher to end prematurely or no path was
+//             * found. Lets try to fix it by taking the path that ended closest
+//             * to the target and greedily extend it.
+//             */
+//            MovePath bestMp = Collections.min(pf.getAllComputedPaths().values(), new ShortestPathFinder.MovePathGreedyComparator(dest));
+//            pf = ShortestPathFinder.newInstanceOfGreedy(dest, type, game);
+//            pf.run(bestMp);
+//            finPath = pf.getComputedPath(dest);
+//            // If no path could be found, use the best one returned by A*
+//            if (finPath == null) {
+//                finPath = bestMp;
+//            }
+//        }
+
+        if (finPath != null) {
+            plannedMovement = finPath;
+//            finPath.compile();
+//            this.steps = finPath.steps;
+        } else {
+//            LogManager.getLogger().error("Unable to find a path to the destination hex! \tMoving "
+//                    + getEntity() + "from " + getFinalCoords() + " to " + dest);
+        }
+
     }
 }

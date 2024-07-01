@@ -136,4 +136,11 @@ public class SBFMovePath implements EntityAction, Serializable {
     public void restore(SBFGame game) {
         this.game = game;
     }
+
+    /**
+     * Returns the number of hexes moved
+     */
+    public int getHexesMoved() {
+        return startLocation.getCoords().distance(getLastPosition().getCoords());
+    }
 }

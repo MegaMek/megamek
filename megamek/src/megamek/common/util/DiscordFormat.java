@@ -19,8 +19,13 @@
 package megamek.common.util;
 
 public enum DiscordFormat {
+    // Text colors
     GRAY(30), RED(31), GREEN(32), YELLOW(33), BLUE(34), PINK(35), CYAN(36), WHITE(37),
 
+    // Background colors
+    BG_BLUEISH_BLACK(40), BG_RUST(41), BG_DARKER_GREY(42), BG_DARK_GREY(43), BG_GREY(44), BG_BLURPLE(45), BG_LIGHT_GREY(46), BG_OFF_WHITE(47),
+
+    // Font effects
     BOLD(1), UNDERLINE(4),
 
     RESET(0);
@@ -31,7 +36,10 @@ public enum DiscordFormat {
         this.code = code;
     }
 
-    public String format() {
+    public String toString() {
+        if (this == RESET) {
+            return "\u001b[" + code + 'm' + WHITE;
+        }
         return "\u001b[" + code + 'm';
     }
 }

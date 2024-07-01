@@ -8964,9 +8964,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     .append(next.getUnusedString())
                     .append("</font>");
             } else if (formatting == ViewFormatting.DISCORD && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
-                result.append(DiscordFormat.RED.format())
+                result.append(DiscordFormat.RED)
                     .append(next.getUnusedString())
-                    .append(DiscordFormat.RESET.format());
+                    .append(DiscordFormat.RESET);
             } else {
                 result.append(next.getUnusedString());
             }

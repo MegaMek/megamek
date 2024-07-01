@@ -50,7 +50,7 @@ application {
 }
 
 ext {
-    mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
+    mmJvmOptions = ['-Xmx4096m', '-Dsun.awt.disablegrab=true']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -74,6 +74,7 @@ run {
 
 jar {
     archiveFileName = 'MegaMek.jar'
+
     manifest {
         attributes "Main-Class" : application.mainClass
         attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
@@ -230,6 +231,7 @@ distributions {
                 include '*.exe'
                 include '*.ini'
             }
+            from(jar)
             from fileStagingDir
             from (project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {

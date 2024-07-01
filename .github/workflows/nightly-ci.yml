@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: megamek/megamek/build/distributions/megamek-0*.tar.gz
+          path: megamek/megamek/build/distributions/megamek-unix-*.tar.gz
 
       # Put the Windows Release in an artifact
       #

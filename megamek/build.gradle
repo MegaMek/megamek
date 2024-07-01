@@ -209,9 +209,8 @@ task createStartScripts (type: CreateStartScripts) {
 }
 
 distributions {
-    // Creates tasks which package distribution with MM jar and startup script in root directory
     unix {
-        distributionBaseName = 'megamek'
+        distributionBaseName = 'megamek-unix'
         contents {
             from fileStagingDir
             from(createStartScripts.outputs.files) {
@@ -224,7 +223,7 @@ distributions {
             }
         }
     }
-    // Creates tasks which package distribution with MM jar wrapped in Windows executable
+
     windows {
         contents {
             from ("${buildDir}/launch4j") {
@@ -336,7 +335,6 @@ distTar {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 

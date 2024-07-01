@@ -106,6 +106,8 @@ class LobbyMekPopup {
     static final String LMP_ALPHASTRIKE = "ALPHASTRIKE";
     static final String LMP_AUTOCONFIG = "AUTOCONFIG";
     static final String LMP_RANDOMCONFIG = "RANDOMCONFIG";
+    static final String LMP_SAVECONFIG = "SAVECONFIG";
+    static final String LMP_APPLYCONFIG = "APPLYCONFIG";
 
     private static final String NOINFO = "|-1";
 
@@ -181,7 +183,7 @@ class LobbyMekPopup {
 
         popup.add(deployMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
         popup.add(randomizeMenu(hasjoinedEntities, listener, seIds));
-        popup.add(munitionsConfigMenu(hasjoinedEntities, listener, seIds));
+        popup.add(munitionsConfigMenu(hasjoinedEntities, listener, joinedEntities));
         popup.add(swapPilotMenu(hasjoinedEntities, joinedEntities, clientGui, listener));
         popup.add(prioTargetMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
 
@@ -502,12 +504,17 @@ class LobbyMekPopup {
     /**
      * Returns the "Configure Munitions" submenu.
      */
-    private static JMenu munitionsConfigMenu(boolean enabled, ActionListener listener, String eIds) {
+    private static JMenu munitionsConfigMenu(boolean enabled, ActionListener listener, Collection<Entity> entityCol) {
         JMenu menu = new JMenu("Configure Munitions");
+        Entity first = (entityCol.isEmpty()) ? null : entityCol.iterator().next();
+        enabled &= (first != null && !entityCol.stream().anyMatch(e -> e.isEnemyOf(first)));
         menu.setEnabled(enabled);
+        String eIds = enToken(entityCol);
 
         menu.add(menuItem("Autoconfig", LMP_AUTOCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_A));
         menu.add(menuItem("Randomize", LMP_RANDOMCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_R));
+        menu.add(menuItem("Save config", LMP_SAVECONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_S));
+        menu.add(menuItem("Apply config", LMP_APPLYCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_P));
 
         return menu;
     }

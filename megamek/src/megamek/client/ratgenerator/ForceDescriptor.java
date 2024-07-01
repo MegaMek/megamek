@@ -111,7 +111,7 @@ public class ForceDescriptor {
     private double cargo = 0.0;
 
     public ForceDescriptor() {
-        faction = "IS";
+        faction = FactionRecord.IS_GENERAL_KEY;
         year = 3067;
         movementModes = new HashSet<>();
         roles = new HashSet<>();

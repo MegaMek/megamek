@@ -19,31 +19,6 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.teamColor;
-import static megamek.client.ui.swing.util.UIUtil.uiYellow;
-
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
@@ -63,21 +38,28 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.util.UIUtil.Content;
-import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
-import megamek.client.ui.swing.util.UIUtil.OptionPanel;
-import megamek.client.ui.swing.util.UIUtil.TipButton;
-import megamek.client.ui.swing.util.UIUtil.TipLabel;
-import megamek.client.ui.swing.util.UIUtil.TipTextField;
-import megamek.common.Entity;
-import megamek.common.IStartingPositions;
-import megamek.common.MapSettings;
-import megamek.common.OffBoardDirection;
-import megamek.common.Player;
-import megamek.common.Team;
+import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.file.Paths;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -715,7 +697,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
      */
     private MunitionTree loadLoadout() {
         MunitionTree mt = null;
-        JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
                 "adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);
@@ -737,8 +719,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     private void saveLoadout(MunitionTree source) {
-        // ignoreHotKeys = true;
-        JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        //ignoreHotKeys = true;
+        JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
                 "adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);

@@ -93,6 +93,11 @@ public class FactionRecord {
     private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
     private ArrayList<String> parentFactions;
 
+    // Constants: IS and Clan "general" keys
+    public static final String IS_GENERAL_KEY = "IS";
+    public static final String CL_GENERAL_KEY = "CLAN";
+    public static final String PER_GENERAL_KEY = "PERIPHERY";
+
     public FactionRecord() {
         this("Periphery", "Periphery");
     }

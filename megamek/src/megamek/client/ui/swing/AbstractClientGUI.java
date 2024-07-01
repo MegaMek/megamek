@@ -19,6 +19,8 @@
 package megamek.client.ui.swing;
 
 import megamek.client.IClient;
+import megamek.client.commands.ClientCommand;
+import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.util.UIUtil;
@@ -31,12 +33,10 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-public abstract class AbstractClientGUI implements IClientGUI {
+public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHandler {
 
     /** The smallest GUI scaling value; smaller will make text unreadable */
     public static final float MIN_GUISCALE = 0.7f;
@@ -53,7 +53,8 @@ public abstract class AbstractClientGUI implements IClientGUI {
     protected static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     protected final JFrame frame = new JFrame(Messages.getString("ClientGUI.title"));
-    private final IClient iClient;
+
+    protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
     // BoardViews
     protected final Map<Integer, IBoardView> boardViews = new HashMap<>();
@@ -61,7 +62,6 @@ public abstract class AbstractClientGUI implements IClientGUI {
     protected final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
 
     public AbstractClientGUI(IClient iClient) {
-        this.iClient = iClient;
         initializeFrame();
     }
 
@@ -144,4 +144,47 @@ public abstract class AbstractClientGUI implements IClientGUI {
     public List<IBoardView> boardViews() {
         return new ArrayList<>(boardViews.values());
     }
+
+    /** Registers a new command in the client command table. */
+    @Override
+    public void registerCommand(ClientCommand command) {
+        // Warning, the special direction commands are registered separately
+        clientCommands.put(command.getName(), command);
+    }
+
+    /** Returns the command associated with the specified name. */
+    @Override
+    public ClientCommand getCommand(String commandName) {
+        return clientCommands.get(commandName);
+    }
+
+    @Override
+    public Set<String> getAllCommandNames() {
+        return clientCommands.keySet();
+    }
+
+
+    /**
+     * @param cmd
+     *            a client command with CLIENT_COMMAND prepended.
+     */
+    public String runCommand(String cmd) {
+        cmd = cmd.substring(ClientCommand.CLIENT_COMMAND.length());
+        return runCommand(cmd.split("\\s+"));
+    }
+
+    /**
+     * Runs the command
+     *
+     * @param args
+     *            the command and it's arguments with the CLIENT_COMMAND already
+     *            removed, and the string tokenized.
+     */
+    public String runCommand(String[] args) {
+        if ((args != null) && (args.length > 0) && clientCommands.containsKey(args[0])) {
+            return clientCommands.get(args[0]).run(args);
+        }
+        return "Unknown Client Command.";
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,23 +18,33 @@
  */
 package megamek.common.loaders;
 
-import com.sun.mail.util.DecodingException;
-import megamek.common.*;
-import megamek.common.InfantryBay.PlatoonType;
-import megamek.common.loaders.BLKFile.ParsedBayInfo;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-public class BLKFileTest {
+import megamek.common.BattleArmorBay;
+import megamek.common.Bay;
+import megamek.common.DropshuttleBay;
+import megamek.common.InfantryBay;
+import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.Jumpship;
+import megamek.common.MechBay;
+import megamek.common.NavalRepairFacility;
+import megamek.common.loaders.BLKFile.ParsedBayInfo;
+
+class BLKFileTest {
 
     /**
      * Strips the bay type identifier from the bay string.
      *
      * @param bay The Bay being parsed
-     * @return The part of the bay string containing the parameters (size, doors, num, etc)
+     * @return The part of the bay string containing the parameters (size, doors,
+     *         num, etc)
      */
     private String getBayNumbers(Bay bay) {
         String bayString = bay.toString();
@@ -42,7 +52,7 @@ public class BLKFileTest {
     }
 
     @Test
-    public void parseBayDataAssignsMissingBayNumber() {
+    void parseBayDataAssignsMissingBayNumber() {
         final double SIZE = 2.0;
         final int DOORS = 1;
         String bayString = SIZE + ":" + DOORS;
@@ -50,20 +60,19 @@ public class BLKFileTest {
         bayNums.add(0);
         bayNums.add(1);
 
-
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(bayString, bayNums);
             assertEquals(pbi.getSize(), SIZE, 0.01);
             assertEquals(pbi.getDoors(), DOORS);
-            assertEquals(pbi.getBayNumber(), 2);
-        } catch (DecodingException e) {
+            assertEquals(2, pbi.getBayNumber());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
 
     }
 
     @Test
-    public void parseBayDataFixesDuplicateBayNumber() {
+    void parseBayDataFixesDuplicateBayNumber() {
         final double SIZE = 2.0;
         final int DOORS = 1;
         Bay bay = new MechBay(SIZE, DOORS, 1);
@@ -76,28 +85,28 @@ public class BLKFileTest {
 
             assertEquals(pbi.getSize(), SIZE, 0.01);
             assertEquals(pbi.getDoors(), DOORS);
-            assertEquals(pbi.getBayNumber(), 2);
-        } catch (DecodingException e) {
+            assertEquals(2, pbi.getBayNumber());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseBayTypeIndicatorWithBayNumber() {
+    void parseBayTypeIndicatorWithBayNumber() {
         Bay bay = new BattleArmorBay(2.0, 1, 1, false, true);
 
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
             assertTrue(pbi.isComstarBay());
-            assertEquals(pbi.getBayNumber(), 1);
-        } catch (DecodingException e) {
+            assertEquals(1, pbi.getBayNumber());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseBayTypeIndicatorWithoutBayNumber() {
+    void parseBayTypeIndicatorWithoutBayNumber() {
         Bay bay = new BattleArmorBay(2.0, 1, 4, false, true);
         String numbers = getBayNumbers(bay).replace(":4", ":-1");
         HashSet<Integer> bayNums = new HashSet<>();
@@ -108,66 +117,66 @@ public class BLKFileTest {
             ParsedBayInfo pbi = new ParsedBayInfo(numbers, bayNums);
 
             assertTrue(pbi.isComstarBay());
-            assertEquals(pbi.getBayNumber(), 2);
-        } catch (DecodingException e) {
+            assertEquals(2, pbi.getBayNumber());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseFootInfantryBay() {
+    void parseFootInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.FOOT);
 
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
-            assertEquals(pbi.getPlatoonType(), PlatoonType.FOOT);
-        } catch (DecodingException e) {
+            assertEquals(PlatoonType.FOOT, pbi.getPlatoonType());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseJumpInfantryBay() {
+    void parseJumpInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.JUMP);
 
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
-            assertEquals(pbi.getPlatoonType(), PlatoonType.JUMP);
-        } catch (DecodingException e) {
+            assertEquals(PlatoonType.JUMP, pbi.getPlatoonType());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseMotorizedInfantryBay() {
+    void parseMotorizedInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.MOTORIZED);
 
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
-            assertEquals(pbi.getPlatoonType(), PlatoonType.MOTORIZED);
-        } catch (DecodingException e) {
+            assertEquals(PlatoonType.MOTORIZED, pbi.getPlatoonType());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseMechanizedInfantryBay() {
+    void parseMechanizedInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.MECHANIZED);
 
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
-            assertEquals(pbi.getPlatoonType(), PlatoonType.MECHANIZED);
-        } catch (DecodingException e) {
+            assertEquals(PlatoonType.MECHANIZED, pbi.getPlatoonType());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void parseDropShuttleBay() {
+    void parseDropShuttleBay() {
         Bay bay = new DropshuttleBay(1, -1, Jumpship.LOC_AFT);
 
         try {
@@ -175,14 +184,14 @@ public class BLKFileTest {
 
             assertEquals(pbi.getDoors(), 1);
             assertEquals(pbi.getBayNumber(), 1);
-            assertEquals(pbi.getFacing(), Jumpship.LOC_AFT);
-        } catch (DecodingException e) {
+            assertEquals(Jumpship.LOC_AFT, pbi.getFacing());
+        } catch (BLKDecodingException e) {
             fail(String.format("Unexpected exception (%s)!", e.toString()));
         }
     }
 
     @Test
-    public void parseNavalRepairFacility() {
+    void parseNavalRepairFacility() {
         final double SIZE = 5000.0;
         final int DOORS = 2;
         Bay bay = new NavalRepairFacility(SIZE, DOORS, -1, Jumpship.LOC_AFT, true);
@@ -193,15 +202,15 @@ public class BLKFileTest {
             assertEquals(pbi.getSize(), SIZE, 0.01);
             assertEquals(pbi.getDoors(), DOORS);
             assertEquals(pbi.getBayNumber(), 1);
-            assertEquals(pbi.getFacing(), Jumpship.LOC_AFT);
-        } catch (DecodingException e) {
+            assertEquals(Jumpship.LOC_AFT, pbi.getFacing());
+        } catch (BLKDecodingException e) {
             fail("Unexpected exception!");
         }
     }
 
     @Test
-    public void decodeValidPlatoonTypes() throws DecodingException {
-        final String[] types = {"foot", "jump", "mechanized", "motorized", ""};
+    void decodeValidPlatoonTypes() throws BLKDecodingException {
+        final String[] types = { "foot", "jump", "mechanized", "motorized", "" };
         final PlatoonType[] ptypes = {
                 PlatoonType.FOOT,
                 PlatoonType.JUMP,
@@ -216,18 +225,19 @@ public class BLKFileTest {
     }
 
     @Test
-    public void decodeInvalidPlatoonTypeThrows(){
-        assertThrows(DecodingException.class,
+    void decodeInvalidPlatoonTypeThrows() {
+        assertThrows(
+                BLKDecodingException.class,
                 () -> {
                     ParsedBayInfo.decodePlatoonType("FEeeTS");
-                }
-        );
+                });
     }
 
     @Test
-    public void normalizeInvalidNumbersThrows(){
+    void normalizeInvalidNumbersThrows() {
         String invalidNumbers = "10.0:0:1:c*:extra:fields:throw";
-        assertThrows(DecodingException.class,
+        assertThrows(
+                BLKDecodingException.class,
                 () -> {
                     ParsedBayInfo.normalizeTransporterNumbers(invalidNumbers);
                 });
@@ -238,60 +248,63 @@ public class BLKFileTest {
         try {
             String[] genNumArray = ParsedBayInfo.normalizeTransporterNumbers(numbers);
             assertEquals(expNumArray.length, genNumArray.length);
-            for(int i=0; i < genNumArray.length; i++){
+            for (int i = 0; i < genNumArray.length; i++) {
                 assertEquals(expNumArray[i], genNumArray[i],
-                        String.format("Checking index %s of '%s' failed", i, numbers)
-                );
+                        String.format("Checking index %s of '%s' failed", i, numbers));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         return true;
     }
 
     @Test
-    public void normalizeNewNumbersFormatReturnsSameValues() {
+    void normalizeNewNumbersFormatReturnsSameValues() {
         String numbers = "1000.0:1:2::-1:2"; // 1000.0 ton Clan BA bay with one door
         String[] expNumArray = numbers.split(Bay.FIELD_SEPARATOR);
 
         assertTrue(confirmTransporterNumbers(numbers, expNumArray));
 
     }
+
     @Test
-    public void normalizeOldTransporterFormats(){
+    void normalizeOldTransporterFormats() {
         // expected format of "numbers" string:
         // 0:1:2:3:4:5
         // Field 0 is the size of the bay, in tons or # of units and is required
         // Field 1 is the number of doors in the bay, and is required
         // Field 2 is the bay number and is required; default value of "-1" is "unset"
         // Field 3 is used to record infantry platoon type; default is an empty string
-        // Field 4 is an int recording facing; default is string representation of entity.LOC_NONE
-        // Field 5 is a bitmap recording status like tech type, ComStar bay; default is "0"
-        // numbersArray is in old format; expNumbersArray is an array of String[] in new format
+        // Field 4 is an int recording facing; default is string representation of
+        // entity.LOC_NONE
+        // Field 5 is a bitmap recording status like tech type, ComStar bay; default is
+        // "0"
+        // numbersArray is in old format; expNumbersArray is an array of String[] in new
+        // format
         String[] numbersArray = {
-                "1.0:0",        // Size: 1.0; Doors: 0
-                "2.0:1",        // Size: 2.0; Doors: 1
-                "3.0:1:-1",     // Size: 3.0; Doors: 1; Bay#: -1 (unset)
-                "4.0:2:0",      // Size: 4.0; Doors: 2; Bay#: 0
-                "5.0:1:1",      // Size: 5.0; Doors: 1; Bay#: 1
-                "6.0:0:c*",     // Size: 6.0; Doors: 0; ComStar type = set
-                "7.0:1:Foot",   // Size: 7.0; Doors: 1; infantry bay type FOOT
+                "1.0:0", // Size: 1.0; Doors: 0
+                "2.0:1", // Size: 2.0; Doors: 1
+                "3.0:1:-1", // Size: 3.0; Doors: 1; Bay#: -1 (unset)
+                "4.0:2:0", // Size: 4.0; Doors: 2; Bay#: 0
+                "5.0:1:1", // Size: 5.0; Doors: 1; Bay#: 1
+                "6.0:0:c*", // Size: 6.0; Doors: 0; ComStar type = set
+                "7.0:1:Foot", // Size: 7.0; Doors: 1; infantry bay type FOOT
                 "8.0:0:1:Jump", // Size: 8.0; Doors: 0; Bay#: 1; infantry bay type JUMP
-                "9.0:1:2:f1",   // Size: 9.0; Doors: 1; Bay#: 2; Facing: 1
+                "9.0:1:2:f1", // Size: 9.0; Doors: 1; Bay#: 2; Facing: 1
         };
         String[][] expNumbersArray = {
-                {"1.0", "0", "-1", "", "-1", "0"},
-                {"2.0", "1", "-1", "", "-1", "0"},
-                {"3.0", "1", "-1", "", "-1", "0"},
-                {"4.0", "2", "0", "", "-1", "0"},
-                {"5.0", "1", "1", "", "-1", "0"},
-                {"6.0", "0", "-1", "", "-1", "1"},
-                {"7.0", "1", "-1", "Foot", "-1", "0"},
-                {"8.0", "0", "1", "Jump", "-1", "0"},
-                {"9.0", "1", "2", "", "1", "0"}
+                { "1.0", "0", "-1", "", "-1", "0" },
+                { "2.0", "1", "-1", "", "-1", "0" },
+                { "3.0", "1", "-1", "", "-1", "0" },
+                { "4.0", "2", "0", "", "-1", "0" },
+                { "5.0", "1", "1", "", "-1", "0" },
+                { "6.0", "0", "-1", "", "-1", "1" },
+                { "7.0", "1", "-1", "Foot", "-1", "0" },
+                { "8.0", "0", "1", "Jump", "-1", "0" },
+                { "9.0", "1", "2", "", "1", "0" }
         };
         boolean matched = false;
-        for(int i=0; i<numbersArray.length; i++){
+        for (int i = 0; i < numbersArray.length; i++) {
             matched = confirmTransporterNumbers(numbersArray[i], expNumbersArray[i]);
             assertTrue(matched);
 

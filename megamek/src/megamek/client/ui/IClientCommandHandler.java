@@ -14,7 +14,6 @@
  */
 package megamek.client.ui;
 
-import java.util.Enumeration;
 import java.util.Set;
 
 import megamek.client.commands.ClientCommand;

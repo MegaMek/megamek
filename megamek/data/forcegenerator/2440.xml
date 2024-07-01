@@ -217,7 +217,7 @@
 			<availability>General:9</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>inf_support,urban</roles>
+			<roles>urban,inf_support</roles>
 			<availability>PIR:3,General:2</availability>
 		</model>
 		<model name='(Wheeled Primitive)'>

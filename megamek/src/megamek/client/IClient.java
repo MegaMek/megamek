@@ -18,7 +18,6 @@
  */
 package megamek.client;
 
-import megamek.client.commands.ClientCommand;
 import megamek.common.IGame;
 import megamek.common.InGameObject;
 import megamek.common.Player;
@@ -26,7 +25,6 @@ import megamek.common.Player;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public interface IClient {
 //region Server Connection
@@ -129,19 +127,4 @@ public interface IClient {
 
     /** Sends a "this player is done/not done" message to the server. */
     void sendDone(boolean done);
-
-    /**
-     * Broadcasts a general chat message from the local player.
-     */
-    void sendChat(String message);
-
-    //region ClientCommands
-
-    /** @return The client chat command associated with the given name. */
-    ClientCommand getCommand(String name);
-
-    /** @return All registered client chat command associated with the given name. */
-    Set<String> getAllCommandNames();
-
-    //endregion
 }

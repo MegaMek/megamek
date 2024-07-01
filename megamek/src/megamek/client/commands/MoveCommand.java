@@ -15,6 +15,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
@@ -39,8 +40,8 @@ public class MoveCommand extends ClientCommand {
     private int cen = Entity.NONE;
     int gear;
 
-    public MoveCommand(Client client) {
-        super(client, "move",
+    public MoveCommand(ClientGUI clientGUI) {
+        super(clientGUI, "move",
                 "Move your units. Use #move HELP for more information.");
     }
 
@@ -75,7 +76,7 @@ public class MoveCommand extends ClientCommand {
                     }
                     cmd = new MovePath(getClient().getGame(), ce());
 
-                    client.setCurrentHex(ce().getPosition());
+                    getClientGUI().setCurrentHex(ce().getPosition());
                     return "Entity " + ce().toString()
                             + " selected for movement.";
                 } catch (Exception e) {

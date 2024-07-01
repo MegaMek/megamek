@@ -103,7 +103,7 @@ The Ajax Assault Tank is an Omni-capable combat vehicle that is the followup to 
 </overview>
 
 <deployment>
-This configuration is intended to support amphibious assaults and was introduced in 3078[13]. As such it uses Environmental Sealing to create a watertight tank. An SRT-6 with 30 salvos provides defense against submarine threats, while an MML-9 with 2 tons of ammo, ER Large Laser and two Medium Pulse Lasers provide firepower against other threats. The Guardian ECM Suite and C3 Slave from other versions is also in place. The vehicle is also equipped with an CASE system in case of an ammo explosion.
+This configuration is intended to support amphibious assaults and was introduced in 3078. As such it uses Environmental Sealing to create a watertight tank. An SRT-6 with 30 salvos provides defense against submarine threats, while an MML-9 with 2 tons of ammo, ER Large Laser and two Medium Pulse Lasers provide firepower against other threats. The Guardian ECM Suite and C3 Slave from other versions is also in place. The vehicle is also equipped with a CASE system in case of an ammo explosion.
 </deployment>
 
 <history>

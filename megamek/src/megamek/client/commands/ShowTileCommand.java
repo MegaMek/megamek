@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Hex;
@@ -26,9 +27,9 @@ public class ShowTileCommand extends ClientCommand {
         directions.add("SE");
     }
 
-    public ShowTileCommand(Client client) {
+    public ShowTileCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "tile",
                 "print the information about a tile into the chat window. " +
                         "Usage: #tile 01 01 [dir1 ...] which would show the details for the hex numbered 01 01. " +
@@ -50,10 +51,10 @@ public class ShowTileCommand extends ClientCommand {
             Coords coord;
             if ((args.length >= 1) && directions.contains(args[0].toUpperCase())) {
                 i = 1;
-                coord = getClient().getCurrentHex().translated(args[0]);
+                coord = getClientGUI().getCurrentHex().translated(args[0]);
             } else if ((args.length > 1) && directions.contains(args[1].toUpperCase()) ) {
                 i = 2;
-                coord = getClient().getCurrentHex().translated(args[1]);
+                coord = getClientGUI().getCurrentHex().translated(args[1]);
             } else {
                 coord = new Coords(Integer.parseInt(args[1]) - 1, Integer
                         .parseInt(args[2]) - 1);
@@ -62,7 +63,7 @@ public class ShowTileCommand extends ClientCommand {
 
             do {
                 hex = getClient().getGame().getBoard().getHex(coord);
-                getClient().setCurrentHex(hex);
+                getClientGUI().setCurrentHex(hex);
                 if (hex != null) {
                     str = "Details for hex (" + (coord.getX() + 1) + ", "
                           + (coord.getY() + 1) + ") : " + hex;

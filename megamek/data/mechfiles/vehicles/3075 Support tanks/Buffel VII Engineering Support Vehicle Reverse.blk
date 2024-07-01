@@ -9,87 +9,93 @@ MAM0
 </Version>
 
 <UnitType>
-SupportVTOL
+SupportTank
 </UnitType>
 
 <Name>
-SOAR
+Büffel Engineering Support Vehicle VII
 </Name>
 
-<model>
-
-</model>
+<Model>
+(Reverse)
+</Model>
 
 <mul id:>
-5095
+5476
 </mul id:>
 
 <year>
-3018
+2552
 </year>
 
 <originalBuildYear>
-3018
+2552
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <role>
-None
+Ambusher
 </role>
 
 <motion_type>
-VTOL
+Tracked
 </motion_type>
 
 <transporters>
-cargobay:0.05:1:1
-standardseats:6.0:0
+cargobay:2.5:1:1
 </transporters>
 
 <cruiseMP>
-8
+3
 </cruiseMP>
 
 <engine_type>
-6
+1
 </engine_type>
 
 <armor>
-5
-3
-3
-2
-2
+20
+20
+20
+24
+14
 </armor>
 
 <Body Equipment>
-Environmental Sealing
+IS Ammo MG - Full
+Armored Chassis
+SV Chassis Mod [Tractor]
 </Body Equipment>
 
 <Front Equipment>
+ISMineSweeper
+Machine Gun
 </Front Equipment>
 
 <Right Equipment>
-Paramedic Equipment
 </Right Equipment>
 
 <Left Equipment>
-Paramedic Equipment
 </Left Equipment>
 
 <Rear Equipment>
-Paramedic Equipment
-Paramedic Equipment
+ISVehicularGrenadeLauncher
+ISVehicularGrenadeLauncher
+Bulldozer
 </Rear Equipment>
 
-<Rotor Equipment>
-</Rotor Equipment>
+<Turret Equipment>
+Machine Gun
+Machine Gun
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+</Turret Equipment>
 
 <barrating>
-4
+7
 </barrating>
 
 <structural_tech_rating>
@@ -97,13 +103,17 @@ Paramedic Equipment
 </structural_tech_rating>
 
 <source>
-TRO: Vehicle Annex (Revised)
+TRO: 3075
 </source>
 
 <tonnage>
-15.0
+70.0
 </tonnage>
 
 <fuel>
 0.5
 </fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

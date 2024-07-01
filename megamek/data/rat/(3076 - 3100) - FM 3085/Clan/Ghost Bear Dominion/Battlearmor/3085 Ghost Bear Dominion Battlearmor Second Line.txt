@@ -1,5 +1,5 @@
 3085 Ghost Bear Dominion Battlearmor Second Line
-Clan Medium Battle Armor (Bär),1
+Clan Medium Battle Armor (Naval) 'Bär' (Sqd5),1
 Kobold Battle Armor (GB) [GL],2
 Kobold Battle Armor (GB) [GL],3
 Rogue Bear Heavy Battle Armor (Hybrid),4

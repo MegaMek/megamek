@@ -18,17 +18,15 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.BoardLocation;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.actions.EntityAction;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 
 public class SBFMovePath implements EntityAction, Serializable {
 
@@ -103,10 +101,16 @@ public class SBFMovePath implements EntityAction, Serializable {
      * Assembles and computes all data for this move path, especially if it is legal.
      */
     private void compile() {
+        if (game == null) {
+            LogManager.getLogger().error("Trying to compile but game is null. Call restore after serialization!");
+        }
+
+        SBFFormation formation = game.getFormation(formationId).orElseThrow();
+
         isIllegal = steps.stream().anyMatch(s -> s.isIllegal);
+        isIllegal |= getMpUsed() > formation.getMovement();
 
         // may not leave after entering hostile hex
-        SBFFormation formation = game.getFormation(formationId).orElseThrow();
         for (SBFMoveStep step : steps) {
             if (game.isHostileActiveFormationAt(step.startingPoint, formation)
                     && !step.startingPoint.equals(step.destination)
@@ -119,7 +123,7 @@ public class SBFMovePath implements EntityAction, Serializable {
         Player owner = game.getPlayer(formation.getOwnerId());
         List<SBFFormation> friendliesAtDestination = game.getActiveFormationsAt(getLastPosition()).stream()
                 .filter(f -> !game.areHostile(f, owner))
-                .collect(toList());
+                .toList();
 
         Set<SBFElementType> friendliesTypes = friendliesAtDestination.stream()
                 .map(SBFFormation::getType).collect(toSet());
@@ -129,7 +133,8 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Restores the move path after serialization.
+     * Restores the move path after serialization. This is unnecessary unless the {@link #compile()}
+     * method is used.
      *
      * @param game The SBFGame
      */
@@ -142,5 +147,42 @@ public class SBFMovePath implements EntityAction, Serializable {
      */
     public int getHexesMoved() {
         return startLocation.getCoords().distance(getLastPosition().getCoords());
+    }
+
+    @Override
+    public String toString() {
+        return "[SBFMovePath]: ID: " + formationId + "; steps: " + steps;
+    }
+
+    /**
+     * @return The steps of this move path as an unmodifiable list.
+     */
+    public List<SBFMoveStep> getSteps() {
+        return Collections.unmodifiableList(steps);
+    }
+
+    public boolean isEndStep(SBFMoveStep step) {
+        return (step != null) && steps.contains(step) && step.destination.equals(getLastPosition());
+    }
+
+    /**
+     * Returns the number of mp used up to and including the given step. Returns -1 if the step is
+     * not part of this move path.
+     *
+     * @param step The last step to include in the cost
+     * @return The total mp up to the given step
+     */
+    public int getMpUpTo(SBFMoveStep step) {
+        if (steps.contains(step)) {
+            int mpUsed = 0;
+            for (SBFMoveStep step2 : steps) {
+                mpUsed += step2.getMpUsed();
+                if (step.equals(step2)) {
+                    return mpUsed;
+                }
+            }
+        }
+        LogManager.getLogger().error("Tried to find the mp used with a step that is not part of this move path!");
+        return -1;
     }
 }

@@ -21,9 +21,11 @@ package megamek.client;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.force.Forces;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
@@ -112,6 +114,9 @@ public class SBFClient extends AbstractClient {
             case TURN:
                 game.setTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
                 break;
+            case ENTITY_UPDATE:
+                getGame().receiveUnit((InGameObject) packet.getObject(0));
+                break;
             default:
                 return false;
         }
@@ -198,6 +203,13 @@ public class SBFClient extends AbstractClient {
 //        } else {
 //            return bv.getTilesetManager().imageFor(e);
 //        }
+    }
+
+    /**
+     * Send movement data for the given unit to the server.
+     */
+    public void moveUnit(SBFMovePath movePath) {
+        send(new Packet(PacketCommand.ENTITY_MOVE, Objects.requireNonNull(movePath)));
     }
 
 

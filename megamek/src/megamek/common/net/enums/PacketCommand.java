@@ -143,7 +143,10 @@ public enum PacketCommand {
     CFR_HIDDEN_PBS,
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
-    GAME_VICTORY_EVENT;
+    GAME_VICTORY_EVENT,
+
+    /** A packet containing other packets to be processed in the order they are stored. */
+    MULTI_PACKET;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

@@ -39,6 +39,10 @@ public interface SBFGameManagerHelper {
         gameManager().send(packet);
     }
 
+    default void send(int playerId, Packet packet) {
+        gameManager().send(playerId, packet);
+    }
+
     default GameManagerPacketHelper packetHelper() {
         return gameManager().getPacketHelper();
     }

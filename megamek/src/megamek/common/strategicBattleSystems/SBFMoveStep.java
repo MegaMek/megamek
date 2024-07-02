@@ -62,4 +62,15 @@ public abstract class SBFMoveStep implements Serializable {
         return mpUsed;
     }
 
+    public BoardLocation getDestination() {
+        return destination;
+    }
+
+    public boolean isIllegal() {
+        return isIllegal;
+    }
+
+    public int getMovementDirection() {
+        return -1;
+    }
 }

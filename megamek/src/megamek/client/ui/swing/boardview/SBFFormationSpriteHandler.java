@@ -20,6 +20,7 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.SBFClient;
 import megamek.common.annotations.Nullable;
+import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 
@@ -61,10 +62,19 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
     }
 
     @Override
-    public void initialize() { }
+    public void initialize() {
+        game.addGameListener(this);
+    }
 
     @Override
     public void dispose() {
         clear();
+        game.removeGameListener(this);
+    }
+
+    @Override
+    public void gameUnitChange(GameEvent event) {
+        super.gameUnitChange(event);
+        update();
     }
 }

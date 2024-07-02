@@ -18,6 +18,7 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import megamek.client.commands.ClientCommand;
 import megamek.common.BoardLocation;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -118,5 +119,15 @@ public class SurfaceSBFMoveStep extends SBFMoveStep {
         step.mpUsed = mpUsed;
         step.isIllegal = isIllegal;
         return step;
+    }
+
+    @Override
+    public String toString() {
+        return ClientCommand.getDirection(startingPoint.getCoords().direction(destination.getCoords()));
+    }
+
+    @Override
+    public int getMovementDirection() {
+        return startingPoint.getCoords().direction(destination.getCoords());
     }
 }

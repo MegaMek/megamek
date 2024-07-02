@@ -23,9 +23,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.SBFRuleOptions;
-import megamek.common.strategicBattleSystems.SBFGame;
-import megamek.common.strategicBattleSystems.SBFRuleOptionsUser;
-import megamek.common.strategicBattleSystems.SBFTurn;
+import megamek.common.strategicBattleSystems.*;
 import megamek.server.AbstractGameManager;
 import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
@@ -40,18 +38,60 @@ import java.util.stream.Collectors;
 public final class SBFGameManager extends AbstractGameManager implements SBFRuleOptionsUser {
 
     private SBFGame game;
+
     private final List<Report> pendingReports = new ArrayList<>();
+
+    record PendingPacket(int recipient, Packet packet) { }
+    private final List<PendingPacket> pendingPackets = new ArrayList<>();
+
     private final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
     private final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
+    private final SBFMovementProcessor movementProcessor = new SBFMovementProcessor(this);
     final SBFInitiativeHelper initiativeHelper = new SBFInitiativeHelper(this);
 
     @Override
     public void handlePacket(int connId, Packet packet) {
         super.handlePacket(connId, packet);
-        final Player player = game.getPlayer(connId);
 
-        // Nothing here yet
-        LogManager.getLogger().info("Leaving handle packet");
+        switch (packet.getCommand()) {
+            case ENTITY_MOVE:
+                receiveMovement(packet, connId);
+                break;
+        }
+
+        sendPendingPackets();
+        LogManager.getLogger().info("Leaving handle packet: {}", packet.getCommand());
+    }
+
+    /**
+     * Sends all pending packets to eligible players and clears out the pending packets.
+     */
+    private void sendPendingPackets() {
+        // packets must be sorted/filtered according to recipient for double blind games
+        // each player must receive the packets directed at them as well as any undirected packets
+        // in the order they were stored in pendingPackets
+        if (!pendingPackets.isEmpty()) {
+            // collect all recipients; this includes Player.PLAYER_NONE for packets to everyone
+            Set<Integer> playerIds = pendingPackets.stream().map(PendingPacket::recipient).collect(Collectors.toSet());
+            // Now send each player what they should receive ...
+            for (int player : playerIds) {
+                // ... but not to PLAYER_NONE (= to everyone); send only to each player individually
+                if (player != Player.PLAYER_NONE) {
+                    List<Packet> packets = pendingPackets.stream()
+                            // include packets to PLAYER_NONE; these may go to every player
+                            .filter(p -> (p.recipient == Player.PLAYER_NONE) || (p.recipient == player))
+                            .map(PendingPacket::packet)
+                            .toList();
+                    // the seemingly redundant new ArrayList is necessary to prevent an xstream error
+                    send(player, new Packet(PacketCommand.MULTI_PACKET, new ArrayList<>(packets)));
+                }
+            }
+            pendingPackets.clear();
+        }
+    }
+
+    void addPendingPacket(int recipient, Packet packet) {
+        pendingPackets.add(new PendingPacket(recipient, packet));
     }
 
     public SBFGame getGame() {
@@ -359,5 +399,46 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     @Override
     public SBFRuleOptions getOptions() {
         return game.getOptions();
+    }
+
+    /**
+     * Receives an entity movement packet, and if valid, executes it and ends
+     * the current turn.
+     */
+    private void receiveMovement(Packet packet, int connId) {
+        var movePath = (SBFMovePath) packet.getObject(0);
+        movePath.restore(game);
+        Optional<SBFFormation> formationInfo = game.getFormation(movePath.getEntityId());
+        if (formationInfo.isEmpty()) {
+            LogManager.getLogger().error("Malformed packet {}", packet);
+            return;
+        }
+        SBFTurn turn = game.getTurn();
+        if ((turn == null) || !turn.isValid(connId, formationInfo.get(), game)) {
+            LogManager.getLogger().error("It is not player {}'s turn! ", connId);
+            return;
+        }
+
+        movementProcessor.processMovement(movePath, formationInfo.get());
+    }
+
+    /**
+     * Called when the current player has done his current turn and the turn
+     * counter needs to be advanced.
+     */
+    void endCurrentTurn(SBFFormation entityUsed) {
+        final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
+        changeToNextTurn(playerId);
+    }
+
+    Packet createFormationPacket(SBFFormation formation) {
+        return new Packet(PacketCommand.ENTITY_UPDATE, formation);
+    }
+
+    Packet createUnitPacket(int unitId) {
+        if (game.getInGameObject(unitId).isEmpty()) {
+            LogManager.getLogger().error("No unit found for id {}! ", unitId);
+        }
+        return new Packet(PacketCommand.ENTITY_UPDATE, unitId, game.getInGameObject(unitId).get());
     }
 }

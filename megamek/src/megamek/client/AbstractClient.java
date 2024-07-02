@@ -329,14 +329,21 @@ public abstract class AbstractClient implements IClient {
             return;
         }
         try {
-            boolean isHandled = handleGameIndependentPacket(packet);
-            isHandled |= handleGameSpecificPacket(packet);
-            if (!isHandled) {
-                LogManager.getLogger().error("Attempted to parse unknown PacketCommand of "
-                        + packet.getCommand().name());
+            if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
+                @SuppressWarnings("unchecked")
+                var includedPackets = (List<Packet>) packet.getObject(0);
+                for (Packet includedPacket : includedPackets) {
+                    handlePacket(includedPacket);
+                }
+            } else {
+                boolean isHandled = handleGameIndependentPacket(packet);
+                isHandled |= handleGameSpecificPacket(packet);
+                if (!isHandled) {
+                    LogManager.getLogger().error("Unknown PacketCommand of {}", packet.getCommand().name());
+                }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse Packet command " + packet.getCommand(), ex);
+            LogManager.getLogger().error("Failed to parse Packet command {}", packet.getCommand(), ex);
         }
     }
 

@@ -30,6 +30,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.util.Distractable;
 import org.apache.logging.log4j.LogManager;
 
@@ -119,6 +120,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private BoardView bv;
     private SBFFormationSpriteHandler formationSpriteHandler;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
+    private MovePathSpriteHandler movePathSpriteHandler;
 
     public SBFClientGUI(SBFClient client, MegaMekController c) {
         super(client);
@@ -206,7 +208,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private void initializeSpriteHandlers() {
         movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
         formationSpriteHandler = new SBFFormationSpriteHandler(bv, client);
-        spriteHandlers.addAll(List.of(formationSpriteHandler, movementEnvelopeHandler));
+        movePathSpriteHandler = new MovePathSpriteHandler(bv);
+        spriteHandlers.addAll(List.of(formationSpriteHandler, movementEnvelopeHandler, movePathSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -477,5 +480,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     public void showMovementEnvelope(SBFFormation formation, Map<Coords, Integer> mvEnvData) {
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, formation.getMovement(),
                 formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
+    }
+
+    public void showMovePath(@Nullable SBFMovePath movePath) {
+        movePathSpriteHandler.update(movePath);
     }
 }

@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class SBFMovementDisplay extends SBFActionPhaseDisplay {
@@ -92,6 +93,9 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         setupButtonPanel();
         registerKeyCommands();
         game().addGameListener(this);
+        //TODO: rather have clientgui take BVListeners and forward all events -> dont have to deal with changing
+        // boardviews
+        clientgui.boardViews().forEach(b -> b.addBoardViewListener(this));
     }
 
     @Override
@@ -112,7 +116,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
                 computeMovementEnvelope(formation);
             }
         }
-        clientgui.selectForAction(formation);
+        resetPlannedMovement();
     }
 
     protected boolean shouldPerformClearKeyCommand() {
@@ -142,9 +146,31 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
     }
 
+    /**
+     * Resets the planned movement for the current formation, if any. This also validates the current
+     * formation and does some extra checks to avoid errors.
+     */
+    private void resetPlannedMovement() {
+        if (currentUnit == SBFFormation.NONE || game().getFormation(currentUnit).isEmpty()) {
+            currentUnit = SBFFormation.NONE;
+            plannedMovement = null;
+        } else {
+            SBFFormation formation = game().getFormation(currentUnit).get();
+            if (!formation.isDeployed() || formation.getPosition() == null) {
+                plannedMovement = null;
+            } else {
+                plannedMovement = new SBFMovePath(currentUnit, formation.getPosition(), game());
+            }
+        }
+        clientgui.selectForAction(game().getFormation(currentUnit).orElse(null));
+        clientgui.showMovePath(plannedMovement);
+    }
+
     @Override
     public void clear() {
-
+        resetPlannedMovement();
+        updateButtonStatus();
+        updateDonePanel();
     }
 
     private void selectNextFormation() {
@@ -171,24 +197,50 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
     @Override
     public void ready() {
+        Optional<SBFFormation> formation = game().getFormation(currentUnit);
+        if (formation.isEmpty() || plannedMovement == null) {
+            return;
+        }
 
+//        plannedMovement.clip;
+//        cmd.clipToPossible();
+
+//        if (checkNags()) {
+//            return;
+//        }
+
+//        disableButtons();
+
+//        clientgui.clearTemporarySprites();
+//        clientgui.getBoardView().clearMovementData();
+
+        clientgui.getClient().moveUnit(plannedMovement);
+        endMyTurn();
+    }
+
+    /**
+     * Clears out old movement data and disables relevant buttons.
+     */
+    private void endMyTurn() {
+        stopTimer();
+        updateButtonStatus();
+        currentUnit = Entity.NONE;
+        resetPlannedMovement();
     }
 
     @Override
     public void removeAllListeners() {
-
+        game().removeGameListener(this);
+        clientgui.boardViews().forEach(b -> b.removeBoardViewListener(this));
     }
 
-    /**
-     * Enables relevant buttons and sets up for your turn.
-     */
     private void beginMyTurn() {
         initDonePanelForNewTurn();
         updateButtonStatus();
         if (GUIP.getAutoSelectNextUnit()) {
             clientgui.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
         }
-
+//            clientgui.bingMyTurn();
         startTimer();
     }
 
@@ -229,11 +281,10 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         if (isMyTurn()) {
             if (currentUnit == SBFFormation.NONE) {
                 setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
-                beginMyTurn();
             }
-//            clientgui.bingMyTurn();
+                beginMyTurn();
         } else {
-//            endMyTurn();
+            endMyTurn();
 //            if ((e.getPlayer() == null)
 //                    && (clientgui.getClient().getGame().getTurn() instanceof UnloadStrandedTurn)) {
 //                setStatusBarText(Messages.getString("MovementDisplay.waitForAnother") + s);
@@ -253,7 +304,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
      *
      */
     public void computeMovementEnvelope(SBFFormation formation) {
-        if (formation == null || formation.getPosition() == null || !formation.isDeployed()) {
+        if ((formation == null) || (formation.getPosition() == null) || !formation.isDeployed()) {
             return;
         }
 //        if (en.isDone()) {
@@ -292,26 +343,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
      */
     private void currentMove(Coords dest) {
         findPathTo(new BoardLocation(dest, 0), plannedMovement);
-
-//            LongestPathFinder lpf;
-//            if (ce().isAero()) {
-//                lpf = LongestPathFinder.newInstanceOfAeroPath(maxMp, ce().getGame());
-//            } else {
-//                lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp, stepType, ce().getGame());
-//            }
-//            final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
-//            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<>(timeLimit * 4));
-//
-//            lpf.run(cmd);
-//            MovePath lPath = lpf.getComputedPath(dest);
-//            if (lPath != null) {
-//                cmd = lPath;
-//            }
     }
-
-//        clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
-//        clientgui.updateFiringArc(ce());
-
 
     /**
      * Extend the current path to the destination <code>Coords</code>.
@@ -329,32 +361,13 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         pf.addStopCondition(timeoutCondition);
         pf.run(SBFMovePath.createMovePathShallow(currentPath));
         SBFMovePath finPath = pf.getComputedPath(dest);
-        // this can be used for debugging the "destruction aware pathfinder"
-        //MovePath finPath = calculateDestructionAwarePath(dest);
-
-//        if (timeoutCondition.timeoutEngaged || finPath == null) {
-//            /*
-//             * Either we have forced searcher to end prematurely or no path was
-//             * found. Lets try to fix it by taking the path that ended closest
-//             * to the target and greedily extend it.
-//             */
-//            MovePath bestMp = Collections.min(pf.getAllComputedPaths().values(), new ShortestPathFinder.MovePathGreedyComparator(dest));
-//            pf = ShortestPathFinder.newInstanceOfGreedy(dest, type, game);
-//            pf.run(bestMp);
-//            finPath = pf.getComputedPath(dest);
-//            // If no path could be found, use the best one returned by A*
-//            if (finPath == null) {
-//                finPath = bestMp;
-//            }
-//        }
 
         if (finPath != null) {
             plannedMovement = finPath;
-//            finPath.compile();
-//            this.steps = finPath.steps;
+            clientgui.showMovePath(plannedMovement);
         } else {
-//            LogManager.getLogger().error("Unable to find a path to the destination hex! \tMoving "
-//                    + getEntity() + "from " + getFinalCoords() + " to " + dest);
+            resetPlannedMovement();
+            LogManager.getLogger().error("Unable to find a move path for formation {} to {}!", currentUnit, dest);
         }
 
     }

@@ -26,6 +26,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.UnitChangedGameEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -240,8 +241,15 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         inGameObjects.put(id, unit);
     }
 
-    public void receiveUnit(InGameObject unit) { // This is a client-side method to set a unit sent by the server!
-        inGameObjects.put(unit.getId(), unit);
+    /**
+     * Adds or overwrites the received unit in the game's unit list.
+     *
+     * @param unit The new or changed unit
+     */
+    @ClientOnly
+    public void receiveUnit(InGameObject unit) {
+        InGameObject oldUnit = inGameObjects.put(unit.getId(), unit);
+        fireGameEvent(new UnitChangedGameEvent(this, oldUnit, unit));
     }
 
     private boolean isSupportedUnitType(InGameObject object) {
@@ -307,6 +315,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return graveyard;
     }
 
+    /**
+     * Client-side
+     * @param units
+     */
     public void setUnitList(List<InGameObject> units) {
         inGameObjects.clear();
         for (InGameObject unit : units) {

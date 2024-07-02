@@ -215,15 +215,85 @@ public class HeatMap {
     // TODO: method to get nearest hotspot to provided position. Need to consider value vs range.
 
     /**
-     * Get the highest ranked team positions. This could be multiple positions, a single position,
-     * or none at all.
-     * @return  highest rank position in the tracker; may return null if no positions available
+     * Get the closest hotspot (position of high activity). May return null if the activity tracker
+     * is empty.
+     * @return  {@link Coords} with nearest hotspot, or null if no valid position
      */
-    public Collection<Coords> getHotSpots () {
-        if (teamActivity.isEmpty()) {
+    public Coords getHotSpot (Coords testPosition, boolean topOnly) {
+
+        // If there are no hotspots, return null
+        if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
             return null;
         }
-        return getTopRatedPositions(teamActivity, 1, null);
+
+        // Get all the positions in the activity tracker, sorted by descending value
+        List<Coords> teamPositions = new ArrayList<>();
+        List<Integer> teamWeights = new ArrayList<>();
+        splitAndSort(teamActivity, teamPositions, teamWeights);
+
+        // Trim positions to only the top values, or by those which exceed the minimum weight value
+        List<Coords> workingPositions;
+        if (topOnly) {
+            int maxRating = teamWeights.get(0);
+            workingPositions = teamPositions.
+                    stream().
+                    filter(p -> teamWeights.get(teamPositions.indexOf(p)) == maxRating).
+                    collect(Collectors.toList());
+        } else {
+            workingPositions = teamPositions.
+                    stream().
+                    filter(p -> teamWeights.get(teamPositions.indexOf(p)) > MIN_WEIGHT).
+                    collect(Collectors.toList());
+        }
+
+        // Find the hotspot with the best value at the shortest distance
+        Coords bestPosition = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (Coords curPosition : workingPositions) {
+
+            // If the distance to the provided position is shorter than the last value,
+            // save the current position and distance
+            if (bestDistance > curPosition.distance(testPosition)) {
+                bestPosition = curPosition;
+                bestDistance = curPosition.distance(testPosition);
+            }
+        }
+
+        // Return the saved position
+        return bestPosition;
+    }
+
+    /**
+     * Get the best hotspot (position with high activity) across all positions
+     * @return
+     */
+    public Coords getHotSpot () {
+
+        // If there are no hotspots, return null
+        if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
+            return null;
+        }
+
+        // Get all the positions in the activity tracker, sorted by descending value
+        List<Coords> teamPositions = new ArrayList<>();
+        List<Integer> teamWeights = new ArrayList<>();
+        splitAndSort(teamActivity, teamPositions, teamWeights);
+
+        // Trim all positions with no value
+        List<Coords> workingPositions = teamPositions.
+                stream().
+                filter(p -> teamWeights.get(teamPositions.indexOf(p)) > MIN_WEIGHT).
+                collect(Collectors.toList());
+
+        // Get the hotspots by accounting for other nearby weight values
+        List<Integer> workingWeights = workingPositions.stream().map(this::getHotSpotRating).collect(Collectors.toList());
+
+        OptionalInt bestRating = workingWeights.stream().mapToInt(w -> w).max();
+        if (bestRating.isPresent()) {
+            return workingPositions.get(workingWeights.indexOf(bestRating.getAsInt()));
+        } else {
+            return null;
+        }
     }
 
 
@@ -272,7 +342,7 @@ public class HeatMap {
      *                      for the positions moved through
      */
     public void updateTrackers (MovePath detailedMove) {
-        if (detailedMove == null || detailedMove.getCoordsSet() == null) {
+        if (detailedMove == null || detailedMove.getCoordsSet() == null || detailedMove.length() == 0) {
             return;
         }
 
@@ -649,10 +719,10 @@ public class HeatMap {
         Map<Coords, Integer> workingMap = new HashMap<>(input);
 
         while (!workingMap.isEmpty()) {
-            int maxWeight = input.values().stream().mapToInt(w -> w).max().getAsInt();
+            int maxWeight = workingMap.values().stream().mapToInt(w -> w).max().getAsInt();
 
-            for (Coords curPosition : input.keySet()) {
-                if (input.get(curPosition) == maxWeight) {
+            for (Coords curPosition : workingMap.keySet()) {
+                if (workingMap.get(curPosition) == maxWeight) {
                     positions.add(curPosition);
                     weights.add(maxWeight);
                 }
@@ -661,6 +731,29 @@ public class HeatMap {
             workingMap.entrySet().removeIf(curPosition -> curPosition.getValue() == maxWeight);
         }
 
+    }
+
+    /**
+     * Uses weighted sum of team activity weights, adjusted for how far they are from the provided
+     * position
+     * @param position
+     * @return
+     */
+    private int getHotSpotRating (Coords position) {
+
+        // Get the farthest position for scaling purposes
+        int longestDistance = teamActivity.keySet().stream().mapToInt(position::distance).max().getAsInt();
+
+        // Sum the distances of each usable weight weighted by the distance from the provided
+        // position
+        double runningTotal = teamActivity.
+                keySet().
+                stream().
+                mapToDouble(curPosition -> teamActivity.get(curPosition) *
+                    (double) (longestDistance - position.distance(curPosition)) / longestDistance).
+                sum();
+
+        return (int) Math.floor(runningTotal);
     }
 
 }

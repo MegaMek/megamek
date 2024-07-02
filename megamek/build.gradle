@@ -63,7 +63,6 @@ ext {
     fileStagingDir = "${buildDir}/files"
     mmRepoDir = "${buildDir}/repo"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-    mavenPublishDir = "${buildDir}/mavenrepo"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
 }
@@ -226,6 +225,7 @@ distributions {
     }
 
     windows {
+        distributionBaseName = 'megamek-windows'
         contents {
             from ("${buildDir}/launch4j") {
                 include '*.exe'
@@ -248,6 +248,7 @@ createExe {
     def iniFile = 'MegaMek.l4j.ini'
     icon = "${projectDir}/data/images/misc/megamek.ico"
     jarTask = project.tasks.jar
+    internalName = 'MegaMek'
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     supportUrl = 'https://megamek.org'
     copyright = '2024 MegaMek Development Team'
@@ -337,6 +338,7 @@ distTar {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
+    archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
@@ -441,18 +443,7 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            url uri(mavenPublishDir)
-        }
-    }
 }
-
-task cleanPublishingDir (type: Delete) {
-    delete = mavenPublishDir
-}
-
-publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
 
 test {
     useJUnitPlatform()

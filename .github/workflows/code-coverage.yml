@@ -44,7 +44,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build  --stacktrace --scan
+        run: ./gradlew test
 
       # If the build step fails, try to upload any test logs in case it was a unit test failure.
       #

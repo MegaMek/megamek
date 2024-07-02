@@ -5,6 +5,12 @@ plugins {
     id 'maven-publish'
     id 'edu.sc.seis.launch4j' version '3.0.5'
     id 'jacoco'
+    id 'java'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
@@ -50,7 +56,7 @@ application {
 }
 
 ext {
-    mmJvmOptions = ['-Xmx4096m', '-Dsun.awt.disablegrab=true']
+    mmJvmOptions = ['-Xmx2048m', '-Dsun.awt.disablegrab=true']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -447,13 +453,11 @@ publishing {
 
 test {
     useJUnitPlatform()
-    // report is always generated after tests run
     finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
-    // tests are required to run before generating the report
-    dependsOn test
+    dependsOn(test)
     reports {
         xml.required = true
         html.required = true

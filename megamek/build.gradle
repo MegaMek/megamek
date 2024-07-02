@@ -50,7 +50,7 @@ application {
 }
 
 ext {
-    mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
+    mmJvmOptions = ['-Xmx4096m', '-Dsun.awt.disablegrab=true']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -74,6 +74,7 @@ run {
 
 jar {
     archiveFileName = 'MegaMek.jar'
+
     manifest {
         attributes "Main-Class" : application.mainClass
         attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
@@ -209,9 +210,8 @@ task createStartScripts (type: CreateStartScripts) {
 }
 
 distributions {
-    // Creates tasks which package distribution with MM jar and startup script in root directory
     unix {
-        distributionBaseName = 'megamek'
+        distributionBaseName = 'megamek-unix'
         contents {
             from fileStagingDir
             from(createStartScripts.outputs.files) {
@@ -224,13 +224,14 @@ distributions {
             }
         }
     }
-    // Creates tasks which package distribution with MM jar wrapped in Windows executable
+
     windows {
         contents {
             from ("${buildDir}/launch4j") {
                 include '*.exe'
                 include '*.ini'
             }
+            from(jar)
             from fileStagingDir
             from (project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
@@ -336,7 +337,6 @@ distTar {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 

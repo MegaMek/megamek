@@ -224,6 +224,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
+        MegamekButton connectSBF = new MegamekButton("Connect to SBF",
+                UIComponents.MainMenuButton.getComp(), true);
+        connectSBF.setActionCommand(ClientGUI.FILE_GAME_CONNECT_SBF);
+        connectSBF.addActionListener(actionListener);
         MegamekButton botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
@@ -316,8 +320,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.gridy++;
         addBag(connectB, gridbag, c);
         c.gridy++;
-        addBag(botB, gridbag, c);
+        addBag(connectSBF, gridbag, c);
         c.gridy++;
+//        addBag(botB, gridbag, c);
+//        c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(skinEditB, gridbag, c);
@@ -879,6 +885,17 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
+     * Connect to an existing game
+     */
+    void connectSbf() {
+        var cd = new ConnectDialog(frame);
+        cd.setVisible(true);
+        if (cd.isConfirmed() && cd.dataValidation("MegaMek.ConnectDialog.title")) {
+            startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort(), GameType.SBF);
+        }
+    }
+
+    /**
      * Connect to a game as Princess
      */
     void connectBot() {
@@ -1020,6 +1037,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 break;
             case ClientGUI.FILE_GAME_CONNECT_BOT:
                 connectBot();
+                break;
+            case ClientGUI.FILE_GAME_CONNECT_SBF:
+                connectSbf();
                 break;
             case ClientGUI.FILE_GAME_LOAD:
                 loadGame();

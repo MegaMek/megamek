@@ -51,6 +51,7 @@ application {
 
 ext {
     mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
+    mmL4jJvmOptions = ['-Xmx4096m', '-Dsun.awt.disablegrab=true']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -253,8 +254,9 @@ createExe {
     companyName = "MegaMek Development Team"
     outputs.file "${buildDir}/launch4j/${outfile}"
     outputs.file "${buildDir}/launch4j/${iniFile}"
-    jvmOptions = project.ext.mmJvmOptions
+    jvmOptions = project.ext.mmL4jJvmOptions
     jreMinVersion = '17'
+    doNotTrackState("Tell gradle not to track output")
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     doLast {
         new File("${buildDir}/launch4j/${iniFile}").text = """# Launch4j runtime config

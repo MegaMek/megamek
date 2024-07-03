@@ -72,6 +72,7 @@ public class Princess extends BotClient {
     private ArtilleryTargetingControl atc;
 
     private List<HeatMap> enemyHeatMaps;
+    private HeatMap friendlyHeatMap;
 
     private Integer spinupThreshold = null;
 
@@ -1068,7 +1069,10 @@ public class Princess extends BotClient {
     @Override
     protected @Nullable MovePath calculateMoveTurn() {
         try {
-            return continueMovementFor(getEntityToMove());
+            MovePath path = continueMovementFor(getEntityToMove());
+            // Update the friendly heat map with this move
+            friendlyHeatMap.updateTrackers(path);
+            return path;
         } catch (Exception ignored) {
             return null;
         }
@@ -1661,7 +1665,8 @@ public class Princess extends BotClient {
             }
 
             // Set up heat mapping
-            initHeatMaps();
+            initEnemyHeatMaps();
+            initFriendlyHeatMap();
 
             initialized = true;
             BotGeometry.debugSelfTest(this);
@@ -1928,7 +1933,8 @@ public class Princess extends BotClient {
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
         setAMSModes();
-        updateHeatMaps();
+        updateEnemyHeatMaps();
+        updateFriendlyHeatMap();
     }
 
     @Override
@@ -2347,27 +2353,37 @@ public class Princess extends BotClient {
     /**
      * Set up heat maps to track enemy unit positions over time
      */
-    protected void initHeatMaps () {
+    protected void initEnemyHeatMaps () {
         enemyHeatMaps = new ArrayList<>();
         int princessTeamId = getGame().getTeamForPlayer(this.getLocalPlayer()).getId();
         for (Team curTeam : getGame().getTeams()) {
             if (curTeam.getId() != princessTeamId) {
                 HeatMap newMap = new HeatMap(curTeam.getId());
-                newMap.setMaxPositions(100);
+                newMap.setMapTrimThreshold(0.5);
                 enemyHeatMaps.add(newMap);
             }
         }
     }
 
     /**
-     * Update the heat maps with enemy unit positions
+     * Set up heat map to track friendly units over time
      */
-    protected void updateHeatMaps () {
+    protected void initFriendlyHeatMap () {
+        friendlyHeatMap = new HeatMap(getGame().getTeamForPlayer(this.getLocalPlayer()).getId());
+        friendlyHeatMap.setMovementWeightValue(5);
+        friendlyHeatMap.setMapTrimThreshold(0.6);
+        friendlyHeatMap.setIsTrackingFriendlyTeam(true);
+    }
+
+    /**
+     * Update the heat maps with enemy unit positions, then apply decay
+     */
+    protected void updateEnemyHeatMaps() {
 
         List<Entity> trackedEntities = getGame().
                 inGameTWEntities().
                 stream().
-                filter(e -> e.isDeployed() && !(e instanceof EjectedCrew)).
+                filter(e -> e.isDeployed() && !e.isOffBoard() && !(e instanceof EjectedCrew)).
                 collect(Collectors.toList());
 
         if (trackedEntities.isEmpty()) {
@@ -2377,9 +2393,34 @@ public class Princess extends BotClient {
         // Process entities into each heat map, then age it
         for (HeatMap curMap : enemyHeatMaps) {
             curMap.updateTrackers(trackedEntities);
-            curMap.ageMaps();
+            curMap.ageMaps(game);
         }
     }
+
+    /**
+     * Update the heat map with allied unit positions (entities controlled by this bot have
+     * already been processed as they move), then apply decay
+     */
+    protected void updateFriendlyHeatMap () {
+
+        List<Entity> trackedEntities = getGame().
+                inGameTWEntities().
+                stream().
+                filter(e -> e.isDeployed() &&
+                    !(e instanceof EjectedCrew) &&
+                    e.getOwner().getId() != this.getLocalPlayer().getId() &&
+                    !e.isOffBoard()).
+                collect(Collectors.toList());
+
+        if (trackedEntities.isEmpty()) {
+            return;
+        }
+        friendlyHeatMap.updateTrackers(trackedEntities);
+        // Units may have skidded, fallen, etc. and need their actual last position updated
+        friendlyHeatMap.refreshLastKnownCache(game);
+        friendlyHeatMap.ageMaps(game);
+    }
+
 
     public void sendChat(final String message, final Level logLevel) {
         if (LogManager.getLogger().getLevel().isLessSpecificThan(logLevel)) {

@@ -10,6 +10,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5592: Cleanup and disentangle (TilesetManager, Client, BoardView)
 + PR #5591: Only consider MM internal dirs when creating the official unit list
 + PR #5570: ScenarioV2 extension, sky map
++ Fix #5665: Adding a Chameleon Light Polarization Shield to an omni is classified as an Omni Repod
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

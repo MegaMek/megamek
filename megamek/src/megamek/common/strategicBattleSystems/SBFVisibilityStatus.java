@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server.sbf;
+package megamek.common.strategicBattleSystems;
 
 /**
  * This enum represents the various states of visibility used in SBF games with the Recon rules,
@@ -39,14 +39,14 @@ public enum SBFVisibilityStatus {
     // Solid Lock, Where?, Scan Interference:
     BLIP,
 
-    // TP, SZ, MP
-    PARTIAL_SCAN,
-
     // TP
     SOMETHING_OUT_THERE,
 
     // TP and SZ
     I_GOT_SOMETHING,
+
+    // TP, SZ, MP
+    PARTIAL_SCAN,
 
     // Same as Partial Scan? TP, SZ, MP, Elements
     EYES_ON_TARGET,

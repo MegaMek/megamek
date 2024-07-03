@@ -30,7 +30,6 @@ import megamek.common.event.UnitChangedGameEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.sbf.SBFVisibilityHelper;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -48,7 +47,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
     private final List<SBFTurn> turnList = new ArrayList<>();
-    private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper();
+    private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper(this);
 
     /**
      * Contains all units that have left the game by any means.

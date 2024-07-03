@@ -26,6 +26,9 @@ public class SBFRuleOptions extends BasicGameOptions {
     /** Detection and recon rules aka "double blind", IO BF p.195 */
     public static final String BASE_RECON = "base_recon";
 
+    /** When using detection and recon rules, players on a team share their vision */
+    public static final String BASE_TEAM_VISION = "base_team_vision";
+
     /** Hidden formations, IO BF p.214 */
     public static final String BASE_HIDDEN = "base_hidden";
 
@@ -69,6 +72,7 @@ public class SBFRuleOptions extends BasicGameOptions {
 
         IBasicOptionGroup base = addGroup("base");
         addOption(base, BASE_RECON, false);
+        addOption(base, BASE_TEAM_VISION, true);
         addOption(base, BASE_ADJUST_FORMATIONS, false);
         addOption(base, BASE_RECON, false);
 

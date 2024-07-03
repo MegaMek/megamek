@@ -121,11 +121,11 @@ task copyFiles(type: Copy) {
     dependsOn equipmentList
 
     from projectDir
-
     include "${data}/**"
     include "${docs}/**"
     include "${mmconf}/**"
-    include "${rootDir}/license.txt"
+    include "SubmitBug.html"
+    include "license.txt"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
@@ -137,7 +137,7 @@ task copyFiles(type: Copy) {
     inputs.dir "${data}"
     inputs.dir "${docs}"
     inputs.dir "${mmconf}"
-    inputs.file "${rootDir}/license.txt"
+    inputs.files 'license.txt', 'SubmitBug.html'
     outputs.dir fileStagingDir
 }
 
@@ -255,8 +255,10 @@ distributions {
 createExe {
     description = 'Create Windows executable that wraps MM jar'
     mainClassName = application.mainClass
+    outfile = 'MegaMek.exe'
     icon = "${projectDir}/data/images/misc/megamek.ico"
     jarTask = project.tasks.jar
+    windowTitle = 'MegaMek'
     internalName = 'MegaMek'
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     supportUrl = 'https://megamek.org'
@@ -265,6 +267,8 @@ createExe {
     companyName = "MegaMek Development Team"
     jvmOptions = project.ext.mmJvmOptions
     jreMinVersion = '17'
+    splashFileName = 'data/images/misc/megamek_splash_spooky_uhd.png'
+    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     doLast {
         new File("${buildDir}/launch4j/MegaMek.l4j.ini").text = """# Launch4j runtime config

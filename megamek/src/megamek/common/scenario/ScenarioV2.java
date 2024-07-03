@@ -30,6 +30,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.BoardDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
@@ -46,6 +47,7 @@ public class ScenarioV2 implements Scenario {
     private static final String MAP = "map";
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
+    private static final String OPTIONS = "options";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -147,6 +149,14 @@ public class ScenarioV2 implements Scenario {
             game.getOptions().loadOptions(optionsFile, true);
         } else {
             game.getOptions().loadOptions();
+        }
+        if (node.has(OPTIONS)) {
+            JsonNode optionsNode = node.get(OPTIONS);
+            if (optionsNode.isArray()) {
+                optionsNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+            } else if (optionsNode.isTextual()) {
+                game.getOptions().getOption(optionsNode.textValue()).setValue(true);
+            }
         }
     }
 

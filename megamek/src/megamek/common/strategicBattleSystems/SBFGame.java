@@ -332,12 +332,19 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         this.graveyard.addAll(graveyard);
     }
 
+    @ServerOnly
     public SBFVisibilityHelper visibilityHelper() {
         return visibilityHelper;
     }
 
+    @ServerOnly
     public boolean isVisible(int viewingPlayer, int formationID) {
         return visibilityHelper.isVisible(viewingPlayer, formationID);
+    }
+
+    @ServerOnly
+    public List<InGameObject> getFullyVisibleUnits(Player viewingPlayer) {
+        return getInGameObjects().stream().filter(unit -> isVisible(viewingPlayer.getId(), unit.getId())).toList();
     }
 
     /**

@@ -30,7 +30,6 @@ import megamek.server.commands.ServerCommand;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class manages an SBF game on the server side. As of 2024, this is under construction.
@@ -144,7 +143,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
      */
     Packet createGameStartUnitPacket(Player recipient) {
         return new Packet(PacketCommand.SENDING_ENTITIES,
-                getVisibleUnits(recipient),
+                new ArrayList<>(getVisibleUnits(recipient)),
                 getGame().getGraveyard(),
                 //TODO: must add Sensor blips of all kinds as a separate list of stuff
                 getGame().getForces());
@@ -373,13 +372,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     }
 
     private List<InGameObject> getVisibleUnits(Player viewer) {
-        if (usesDoubleBlind()) {
-            return game.getInGameObjects().stream()
-                    .filter(unit -> game.isVisible(viewer.getId(), unit.getId()))
-                    .collect(Collectors.toList());
-        } else {
-            return game.getInGameObjects();
-        }
+        return game.getFullyVisibleUnits(viewer);
     }
 
     /**

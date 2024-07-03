@@ -8,6 +8,10 @@ description: >
 
 map: AGoAC Maps\16x17 Desert 2.board
 
+options:
+  - base_recon
+  - base_team_vision
+
 planetaryconditions:
   light: dusk
 

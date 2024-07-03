@@ -18,7 +18,9 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import megamek.common.InGameObject;
 import megamek.common.Player;
+import megamek.common.ServerOnly;
 import megamek.common.Team;
 import megamek.common.options.SBFRuleOptions;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +36,10 @@ import static megamek.common.strategicBattleSystems.SBFVisibilityStatus.*;
  * but checked and updated in the Detection and Recon phase, see IO:BF p.194. Note that this class
  * checks the game options by itself and will always indicate that formations are visible when detection
  * and recon is not used.
+ *
+ * Note that while this class is used by SBFGame (as it needs to be saved with the game) it should only
+ * be used by the server (SBFGameManager). The Clients must accept what they get from the server as
+ * a result of testing visibility.
  */
 public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
 
@@ -53,12 +59,13 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
     /**
      * Returns true when the given formation is fully visible to the given player, depending on the game's
      * options. When double blind rules are not used, this is always true. Otherwise it depends on 
-     * previous detection.
+     * previous detection. Players always see their own units.
      * 
      * @param viewingPlayer the player that is doing the looking
      * @param formationID the formation in question
      * @return True when the formation is fully visible, false otherwise
      */
+    @ServerOnly
     public boolean isVisible(int viewingPlayer, int formationID) {
         return getVisibility(viewingPlayer, formationID) == VISIBLE;
     }
@@ -66,7 +73,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
     /**
      * Returns the visibility status for the given formation to the given player, depending on the game's
      * options. When double blind rules are not used, the status is always {@link SBFVisibilityStatus#VISIBLE}. 
-     * Otherwise it depends on previous detection.
+     * Otherwise it depends on previous detection. Players always see their own units.
      *
      * @param viewingPlayer the player that is doing the looking
      * @param formationID the formation in question
@@ -74,6 +81,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
      * @see SBFVisibilityStatus
      * @see #isVisible(int, int) 
      */
+    @ServerOnly
     public SBFVisibilityStatus getVisibility(int viewingPlayer, int formationID) {
         if (!usesDoubleBlind()) {
             return VISIBLE;
@@ -91,6 +99,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
      * @param viewingPlayer The player
      * @param formationID The formation to make visible
      */
+    @ServerOnly
     public void setVisible(int viewingPlayer, int formationID) {
         setVisibility(viewingPlayer, formationID, VISIBLE);
     }
@@ -104,6 +113,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
      * @param viewingPlayer The player
      * @param formationID The formation to make invisible
      */
+    @ServerOnly
     public void setInvisible(int viewingPlayer, int formationID) {
         Map<Integer, SBFVisibilityStatus> playerMap = visibilityMap.get(viewingPlayer);
         if (playerMap != null) {
@@ -123,6 +133,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
      * @see #setVisible(int, int) 
      * @see #setInvisible(int, int) 
      */
+    @ServerOnly
     public void setVisibility(int viewingPlayer, int formationID, SBFVisibilityStatus visibilityStatus) {
         if (!usesDoubleBlind()) {
             LogManager.getLogger().warn("Setting visibility in a non-double blind game.");
@@ -179,12 +190,21 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
     }
 
     private SBFVisibilityStatus getVisibilityImpl(int viewingPlayer, int formationID) {
-        Map<Integer, SBFVisibilityStatus> playerMap = visibilityMap.get(viewingPlayer);
-        if (playerMap == null) {
-            return INVISIBLE;
+        if (isOwner(viewingPlayer, formationID)) {
+            return VISIBLE;
         } else {
-            return playerMap.getOrDefault(formationID, INVISIBLE);
+            Map<Integer, SBFVisibilityStatus> playerMap = visibilityMap.get(viewingPlayer);
+            if (playerMap == null) {
+                return INVISIBLE;
+            } else {
+                return playerMap.getOrDefault(formationID, INVISIBLE);
+            }
         }
+    }
+
+    private boolean isOwner(int viewingPlayer, int formationID) {
+        Optional<InGameObject> unit = game.getInGameObject(formationID);
+        return unit.isPresent() && (unit.get().getOwnerId() == viewingPlayer) && (viewingPlayer != Player.PLAYER_NONE);
     }
 
     //endregion

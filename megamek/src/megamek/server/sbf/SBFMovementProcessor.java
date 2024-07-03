@@ -30,7 +30,8 @@ record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManage
         }
 
         formation.setPosition(movePath.getLastPosition());
-        gameManager.addPendingPacket(formation.getOwnerId(), gameManager.createFormationPacket(formation));
+        formation.setDone(true);
+        gameManager.addPendingPacket(gameManager.createFormationPacket(formation));
 
         // This entity's turn is over.
         gameManager.endCurrentTurn(formation);
@@ -42,6 +43,9 @@ record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManage
             return false;
         } else if (movePath.isIllegal()) {
             LogManager.getLogger().error("Illegal move path!");
+            return false;
+        } else if (formation.isDone()) {
+            LogManager.getLogger().error("Formation already done!");
             return false;
         }
         return true;

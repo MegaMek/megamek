@@ -25,6 +25,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
+import java.util.List;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Set;
@@ -34,6 +35,23 @@ public final class SBFFormationTooltip {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String SHORT = "&nbsp;";
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
+
+    public static String getTooltip(List<SBFFormation> formations, @Nullable IGame game) {
+        StringBuilder result = new StringBuilder("<HTML><HEAD>");
+        result.append(styles());
+        result.append("</HEAD><BODY>");
+        for (SBFFormation formation : formations) {
+            Player owner = (game != null) ? game.getPlayer(formation.getOwnerId()) : null;
+            Color ownerColor = (owner != null) ? owner.getColour().getColour() : Color.BLACK;
+            String styleColor = Integer.toHexString(ownerColor.getRGB() & 0xFFFFFF);
+            result.append("<div style=\"padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:" + styleColor + ";\">");
+            result.append(nameLines(formation, game));
+            result.append(formationStats(formation));
+            result.append("</div>");
+        }
+        result.append("</BODY></HTML>");
+        return result.toString();
+    }
 
     public static String getTooltip(SBFFormation formation, @Nullable IGame game) {
         StringBuilder result = new StringBuilder("<HTML><HEAD>");

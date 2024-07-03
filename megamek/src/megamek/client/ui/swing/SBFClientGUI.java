@@ -482,6 +482,10 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
     }
 
+    public void clearMovementEnvelope() {
+        movementEnvelopeHandler.clear();
+    }
+
     public void showMovePath(@Nullable SBFMovePath movePath) {
         movePathSpriteHandler.update(movePath);
     }

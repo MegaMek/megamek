@@ -59,8 +59,9 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 break;
         }
 
-        sendPendingPackets();
         LogManager.getLogger().info("Leaving handle packet: {}", packet.getCommand());
+        LogManager.getLogger().info(pendingPackets);
+        sendPendingPackets();
     }
 
     /**
@@ -71,20 +72,15 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // each player must receive the packets directed at them as well as any undirected packets
         // in the order they were stored in pendingPackets
         if (!pendingPackets.isEmpty()) {
-            // collect all recipients; this includes Player.PLAYER_NONE for packets to everyone
-            Set<Integer> playerIds = pendingPackets.stream().map(PendingPacket::recipient).collect(Collectors.toSet());
-            // Now send each player what they should receive ...
-            for (int player : playerIds) {
-                // ... but not to PLAYER_NONE (= to everyone); send only to each player individually
-                if (player != Player.PLAYER_NONE) {
-                    List<Packet> packets = pendingPackets.stream()
-                            // include packets to PLAYER_NONE; these may go to every player
-                            .filter(p -> (p.recipient == Player.PLAYER_NONE) || (p.recipient == player))
-                            .map(PendingPacket::packet)
-                            .toList();
-                    // the seemingly redundant new ArrayList is necessary to prevent an xstream error
-                    send(player, new Packet(PacketCommand.MULTI_PACKET, new ArrayList<>(packets)));
-                }
+            // Send each player what they should receive ...
+            for (int playerId : game.getPlayersList().stream().map(Player::getId).toList()) {
+                List<Packet> packets = pendingPackets.stream()
+                        // ... including packets to PLAYER_NONE; these go to every player
+                        .filter(p -> (p.recipient == Player.PLAYER_NONE) || (p.recipient == playerId))
+                        .map(PendingPacket::packet)
+                        .toList();
+                // the redundant new ArrayList is necessary to prevent an xstream error
+                super.send(playerId, new Packet(PacketCommand.MULTI_PACKET, new ArrayList<>(packets)));
             }
             pendingPackets.clear();
         }
@@ -92,6 +88,10 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
     void addPendingPacket(int recipient, Packet packet) {
         pendingPackets.add(new PendingPacket(recipient, packet));
+    }
+
+    void addPendingPacket(Packet packet) {
+        pendingPackets.add(new PendingPacket(Player.PLAYER_NONE, packet));
     }
 
     public SBFGame getGame() {
@@ -142,7 +142,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
      * Creates a packet containing all entities, including wrecks, visible to
      * the player in a blind game
      */
-    private Packet createGameStartUnitPacket(Player recipient) {
+    Packet createGameStartUnitPacket(Player recipient) {
         return new Packet(PacketCommand.SENDING_ENTITIES,
                 getVisibleUnits(recipient),
                 getGame().getGraveyard(),
@@ -190,8 +190,8 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             }
 //
             if (getGame().getPhase().usesTurns() && getGame().hasMoreTurns()) {
-//                send(connId, createTurnVectorPacket());
-//                send(connId, createTurnIndexPacket(connId));
+                send(packetHelper.createTurnListPacket());
+                addPendingPacket(packetHelper.createTurnIndexPacket(connId));
             } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
                 endCurrentPhase();
             }
@@ -200,6 +200,9 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 //            send(connId, createFlarePacket());
 //            send(connId, createSpecialHexDisplayPacket(connId));
 //            send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
+
+            // This method is not called through normal packet handling, so it must send packets actively
+            sendPendingPackets();
         }
     }
 
@@ -250,7 +253,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             case PHYSICAL:
             case TARGETING:
             case OFFBOARD:
-                changeToNextTurn(-1);
+                changeToNextTurn(-1); //TODO what is the prev player good for??
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
@@ -354,9 +357,11 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         } else {
             Optional<Player> player = game.getPlayerFor(nextTurn);
             if (prevPlayerId != Player.PLAYER_NONE) {
-                send(packetHelper.createTurnIndexPacket(prevPlayerId));
+//                send(packetHelper.createTurnIndexPacket(prevPlayerId));
+                addPendingPacket(packetHelper.createTurnIndexPacket(prevPlayerId));
             } else {
-                send(packetHelper.createTurnIndexPacket(player.map(Player::getId).orElse(Player.PLAYER_NONE)));
+                addPendingPacket(packetHelper.createTurnIndexPacket(player.map(Player::getId).orElse(Player.PLAYER_NONE)));
+//                send(packetHelper.createTurnIndexPacket(player.map(Player::getId).orElse(Player.PLAYER_NONE)));
             }
 
             if (player.isPresent() && player.get().isGhost()) {
@@ -440,5 +445,57 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             LogManager.getLogger().error("No unit found for id {}! ", unitId);
         }
         return new Packet(PacketCommand.ENTITY_UPDATE, unitId, game.getInGameObject(unitId).get());
+    }
+
+    @Override
+    protected void transmitAllPlayerDones() {
+        getGame().getPlayersList().forEach(player -> addPendingPacket(player.getId(), packetHelper.createPlayerDonePacket(player.getId())));
+//        getGame().getPlayersList().forEach(player -> send(packetHelper.createPlayerDonePacket(player.getId())));
+    }
+
+    public void send(Packet packet) {
+        addPendingPacket(packet);
+    }
+
+    /**
+     * Sends the given packet to the given connection (= player ID).
+     * @see Server#send(int, Packet)
+     */
+    public void send(int connId, Packet p) {
+        addPendingPacket(connId, p);
+    }
+
+    /**
+     * Sends out the player object to all players. Private info of the given player
+     * is redacted before being sent to other players.
+     *
+     * @param player The player whose information is to be shared
+     * @see #transmitAllPlayerUpdates()
+     * //TODO: wonder if pending packets can be extended to TW
+     * //TODO: might work easily by overriding send; must send CFR packets immediately
+     */
+    protected void transmitPlayerUpdate(Player player) {
+        int playerId = player.getId();
+        for (Player player1 : game.getPlayersList()) {
+
+            var destPlayer = player;
+
+            if (playerId != player1.getId()) {
+                // Sending the player's data to another player's
+                // connection, need to redact any private data
+                destPlayer = player.copy();
+                destPlayer.redactPrivateData();
+            }
+            send(player1.getId(), new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
+        }
+    }
+
+    /**
+     * Updates all units to all players, taking into account double blind filtering.
+     */
+    void entityAllUpdate() {
+        for (Player player : game.getPlayersList()) {
+            send(player.getId(), createGameStartUnitPacket(player));
+        }
     }
 }

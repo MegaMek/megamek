@@ -20,9 +20,12 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFGame;
 
+import java.util.List;
 import java.awt.*;
 import java.util.Objects;
 
@@ -37,6 +40,8 @@ class SBFFormationSprite extends Sprite {
 
     private final SBFFormation formation;
     private final Player owner;
+    private final int positionInHex;
+    private final int formationCountInHex;
 
     /** The area actually covered by the icon */
     private Rectangle hitBox;
@@ -44,10 +49,14 @@ class SBFFormationSprite extends Sprite {
     /** Used to color the label when this unit is selected for movement etc. */
     private boolean isSelected;
 
-    public SBFFormationSprite(BoardView boardView, SBFFormation formation, Player owner) {
+
+    public SBFFormationSprite(BoardView boardView, SBFFormation formation, Player owner, SBFGame game) {
         super(boardView);
         this.formation = Objects.requireNonNull(formation);
         this.owner = owner;
+        List<SBFFormation> formationsInHex = game.getActiveFormationsAt(formation.getPosition());
+        formationCountInHex = formationsInHex.size();
+        positionInHex = MathUtility.clamp(formationsInHex.indexOf(formation), 0, 3);
         getBounds();
     }
 
@@ -75,10 +84,15 @@ class SBFFormationSprite extends Sprite {
         UIUtil.setHighQualityRendering(graph);
 
         graph.scale(bv.scale, bv.scale);
+        graph.translate(positionInHex > 1 ? 42 : 0, (positionInHex % 2 == 1) ? 36 : 0);
+        double scaling = formationCountInHex > 1 ? 0.5 : 1;
+        graph.scale(scaling, scaling);
         if (isSelected) {
             graph.setColor(Color.WHITE);
-        } else {
+        } else if (formation.isDone()) {
             graph.setColor(Color.DARK_GRAY);
+        } else {
+            graph.setColor(Color.GREEN);
         }
         graph.setStroke(new BasicStroke(2));
         graph.drawImage(owner.getCamouflage().getImage(), INSET + INSET / 2, INSET + INSET / 2,

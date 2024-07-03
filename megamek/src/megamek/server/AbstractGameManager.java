@@ -37,7 +37,7 @@ public abstract class AbstractGameManager implements IGameManager {
      * Sends the given packet to all connections (all connected Clients = players).
      * @see Server#send(Packet)
      */
-    public final void send(Packet packet) {
+    public void send(Packet packet) {
         Server.getServerInstance().send(packet);
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractGameManager implements IGameManager {
      * Sends the given packet to the given connection (= player ID).
      * @see Server#send(int, Packet)
      */
-    public final void send(int connId, Packet p) {
+    public void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
 

@@ -77,6 +77,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private boolean isDeployed = false;
     private int deployRound = 0;
     private BoardLocation position;
+    private boolean isDone = false;
 
     public String getName() {
         return name;
@@ -458,13 +459,17 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     public boolean isEligibleForPhase(GamePhase phase) {
-        switch (phase) {
-            case PREMOVEMENT:
-            case PREFIRING:
-                return isHidden;
-            default:
-                return isDeployed;
+        return !isDone && switch (phase) {
+            case PREMOVEMENT, PREFIRING -> isHidden;
+            default -> isDeployed;
+        };
+    }
 
-        }
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
+    public boolean isDone() {
+        return isDone;
     }
 }

@@ -26,7 +26,7 @@ factions:
     - include: "Formation2.mmu"
       at: [ 8, 3 ]
 
-- name: OpFor ΟπΦόρ
+- name: OpFor
   camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
   units:
     - include: Romy's Company.mmu

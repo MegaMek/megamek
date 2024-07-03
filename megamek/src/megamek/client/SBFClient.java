@@ -74,7 +74,7 @@ public class SBFClient extends AbstractClient {
     @Override
     @SuppressWarnings("unchecked")
     protected boolean handleGameSpecificPacket(Packet packet) {
-        LogManager.getLogger().info("Received packet: {}", packet);
+        LogManager.getLogger().info("Player {} received packet: {}", localPlayerNumber, packet);
         switch (packet.getCommand()) {
             case SENDING_ENTITIES:
                 receiveEntities(packet);

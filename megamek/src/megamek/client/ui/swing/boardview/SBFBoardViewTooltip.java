@@ -16,31 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing.boardview;
 
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.SBFFormationTooltip;
+import megamek.common.BoardLocation;
 import megamek.common.Coords;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 
 import java.awt.*;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
-
-    private final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final SBFGame game;
     private final BoardView bv;
 
-    public SBFBoardViewTooltip(SBFGame game, BoardView boardView) {
+    public SBFBoardViewTooltip(SBFGame game, BoardView bv) {
         this.game = game;
-        this.bv = boardView;
+        this.bv = bv;
     }
 
     @Override
@@ -51,17 +45,12 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
         }
         StringBuilder tooltip = new StringBuilder();
 
-        List<SBFFormation> formations = game.getInGameObjects().stream()
-                .filter(SBFFormation.class::isInstance)
-                .map(f -> (SBFFormation) f)
-                .filter(f -> f.getPosition() != null)
-                .filter(f -> f.getPosition().isAtCoords(coords))
-                .collect(Collectors.toList());
-
-        for (SBFFormation formation : formations) {
-            tooltip.append(SBFFormationTooltip.getTooltip(formation, game));
-            tooltip.append("\n");
+        List<SBFFormation> formations = game.getActiveFormationsAt(new BoardLocation(coords, 0));
+        if (formations.isEmpty()) {
+            return null;
         }
+        tooltip.append(SBFFormationTooltip.getTooltip(formations, game));
+
         return tooltip.toString();
     }
 }

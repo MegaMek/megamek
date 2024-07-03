@@ -19,16 +19,14 @@
 package megamek.server.sbf;
 
 import megamek.MegaMek;
+import megamek.common.InGameObject;
+import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.strategicBattleSystems.SBFFormation;
 import org.apache.logging.log4j.LogManager;
 
-class SBFPhasePreparationManager implements SBFGameManagerHelper {
-
-    private final SBFGameManager gameManager;
-
-    public SBFPhasePreparationManager(SBFGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
     void managePhase() {
         switch (game().getPhase()) {
@@ -50,7 +48,7 @@ class SBFPhasePreparationManager implements SBFGameManagerHelper {
 //                sendTagInfoReset();
                 gameManager.clearPendingReports();
 //                resetEntityRound();
-//                resetEntityPhase(phase);
+                resetEntityPhase(game().getPhase());
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
                 gameManager.resetActivePlayersDone();
@@ -148,18 +146,18 @@ class SBFPhasePreparationManager implements SBFGameManagerHelper {
 //                if (doBlind()) {
 //                    updateVisibilityIndicator(null);
 //                }
-//                resetEntityPhase(phase);
+                resetEntityPhase(game().getPhase());
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
 //                resetActivePlayersDone();
 //                setIneligible(phase);
                 gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
-//                entityAllUpdate();
+                gameManager.entityAllUpdate();
                 gameManager.clearPendingReports();
 //                doTryUnstuck();
                 break;
             case END:
-//                resetEntityPhase(phase);
+                resetEntityPhase(game().getPhase());
                 gameManager.clearPendingReports();
 //                resolveHeat();
 //                PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -205,7 +203,7 @@ class SBFPhasePreparationManager implements SBFGameManagerHelper {
 //
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
-//                entityAllUpdate();
+                gameManager.entityAllUpdate();
                 break;
             case INITIATIVE_REPORT:
                 gameManager.autoSave();
@@ -215,9 +213,9 @@ class SBFPhasePreparationManager implements SBFGameManagerHelper {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
-//                resetActivePlayersDone();
+                gameManager.resetActivePlayersDone();
                 gameManager.sendReport();
-//                entityAllUpdate();
+//                gameManager.entityAllUpdate();  // really needed in report phase?
                 if (game().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     gameManager.autoSave();
                 }
@@ -248,12 +246,15 @@ class SBFPhasePreparationManager implements SBFGameManagerHelper {
             default:
                 break;
         }
-
-
     }
 
-    @Override
-    public SBFGameManager gameManager() {
-        return gameManager;
+    private void resetEntityPhase(GamePhase phase) {
+        for (InGameObject unit : game().getInGameObjects()) {
+            if (unit instanceof SBFFormation formation) {
+                formation.setDone(formation.isDone());
+            }
+        }
     }
+
+
 }

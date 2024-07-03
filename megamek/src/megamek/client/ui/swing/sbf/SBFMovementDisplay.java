@@ -103,13 +103,10 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
     }
 
-    private void deselect() {
-        selectFormation(null);
-    }
-
     private void selectFormation(@Nullable SBFFormation formation) {
         if (formation == null) {
             currentUnit = SBFFormation.NONE;
+            clientgui.clearMovementEnvelope();
         } else {
             currentUnit = formation.getId();
             if (isMyTurn() && GUIP.getMoveEnvelope()) {
@@ -224,7 +221,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     private void endMyTurn() {
         stopTimer();
         updateButtonStatus();
-        currentUnit = Entity.NONE;
+        selectFormation(null);
         resetPlannedMovement();
     }
 
@@ -311,7 +308,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 //            return;
 //        }
 
-        Map<BoardLocation, SBFMovePath> mvEnvData = new HashMap<>();
+        Map<BoardLocation, SBFMovePath> mvEnvData;
         SBFMovePath mp = new SBFMovePath(formation.getId(), formation.getPosition(), game());
 
         int maxMP = formation.getMovement();
@@ -369,6 +366,5 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             resetPlannedMovement();
             LogManager.getLogger().error("Unable to find a move path for formation {} to {}!", currentUnit, dest);
         }
-
     }
 }

@@ -57,7 +57,7 @@ application {
 
 ext {
     mmJvmOptions = [
-        '-Xmx2048m',
+        '-Xmx4096m',
         '--add-opens',
         'java.base/java.util=ALL-UNNAMED',
         '--add-opens',

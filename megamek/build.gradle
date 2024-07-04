@@ -269,9 +269,9 @@ createExe {
     companyName = "MegaMek Development Team"
     jvmOptions = project.ext.mmJvmOptions
     jreMinVersion = '17'
-    splashFileName = "${projectDir}/data/images/misc/megamek_splash_spooky_uhd.png"
     messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
+    dontWrapJar = true
     doLast {
         new File("${buildDir}/launch4j/MegaMek.l4j.ini").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime

@@ -331,7 +331,7 @@ public class PathEnumerator {
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
                 break;
             case MoveToContact:
-                CardinalEdge oppositeEdge = CardinalEdge.getOppositeEdge(BoardUtilities.determineOppositeEdge(mover));
+                CardinalEdge oppositeEdge = BoardUtilities.determineOppositeEdge(mover);
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
                 break;
             default:

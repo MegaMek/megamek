@@ -34,6 +34,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -49,7 +51,17 @@ import static java.util.Map.entry;
 public class TeamLoadoutGenerator {
 
     //region Constants
-    public final String LOADOUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.xml";
+    public static final String LOADOUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.xml";
+
+    public static Properties weightProperties = new Properties();
+    static {
+        try (InputStream is = new FileInputStream(LOADOUT_SETTINGS_PATH)) {
+            weightProperties.loadFromXML(is);
+        } catch (Exception e) {
+            LogManager.getLogger().error("Munition weight properties could not be loaded!  Using defaults...", e);
+        }
+    }
+
 
     public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of(
             "Armor-Piercing", "Tandem-Charge"));
@@ -1687,53 +1699,76 @@ class MunitionWeightCollection {
                 entry("Bomb", bombWeights)));
     }
 
+    /**
+     * Use values from the Properties file defined in TeamLoadoutGenerator class if available; else use provided default
+     * @param field
+     * @param defValue
+     * @return
+     */
+    private static Double castPropertyDouble(String field, Double defValue) {
+        try {
+            return Double.parseDouble(TeamLoadoutGenerator.weightProperties.getProperty("defaultWeaponWeight"));
+        }
+        catch (Exception ignored) {
+            return defValue;
+        }
+    }
+
     // Section: initializing weights
     private static HashMap<String, Double> initializeWeaponWeights(ArrayList<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
-        for (String name : wepAL) {
-            weights.put(name, 1.0);
+        for (String name: wepAL) {
+            weights.put(name, castPropertyDouble("defaultWeaponWeight", 1.0));
         }
         // Every weight list should have a Standard set as weight 2.0
-        weights.put("Standard", 2.0);
+        weights.put("Standard", castPropertyDouble("defaultMunitionStandardWeight", 2.0));
         return weights;
     }
 
     private static HashMap<String, Double> initializeMissileWeaponWeights(ArrayList<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
-        for (String name : wepAL) {
-            weights.put(name, 1.0);
+        for (String name: wepAL) {
+            weights.put(name, castPropertyDouble("defaultWeaponWeight", 1.0));
         }
-        // Every weight list should have a Standard set as weight 2.0
-        weights.put("Standard", 2.0);
+        // Every missile weight list should have a Standard set as weight 2.0
+        weights.put("Standard", castPropertyDouble("defaultMissileStandardMunitionWeight", 2.0));
         // Dead-Fire should be even higher to start
-        weights.put("Dead-Fire", 3.0);
+        weights.put("Dead-Fire", castPropertyDouble("defaultDeadFireMunitionWeight", 3.0));
         return weights;
     }
 
     private static HashMap<String, Double> initializeATMWeights(ArrayList<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
-        for (String name : wepAL) {
-            weights.put(name, 2.0);
+        for (String name: wepAL) {
+            weights.put(name, castPropertyDouble("defaultATMMunitionWeight", 2.0));
         }
         // ATM Standard ammo is weighted lower due to overlap with HE and ER
-        weights.put("Standard", 1.0);
+        weights.put("Standard", castPropertyDouble("defaultATMStandardWeight", 1.0));
         return weights;
     }
 
-    // Increase/Decrease functions. Increase is 2x + 1, decrease is 0.5x, so items
-    // voted up and down multiple times should still exceed items never voted up
-    // _or_ down.
-
+    // Increase/Decrease functions.  Increase is 2x + 1, decrease is 0.5x, so items
+    // voted up and down multiple times should still exceed items never voted up _or_ down.
     public void increaseMunitions(ArrayList<String> munitions) {
         mapTypeToWeights.entrySet().forEach(
                 e -> modifyMatchingWeights(
-                        e.getValue(), munitions, 2.0, 1.0));
+                        e.getValue(),
+                        munitions,
+                        castPropertyDouble("increaseWeightFactor", 2.0),
+                        castPropertyDouble("increaseWeightIncrement", 1.0)
+                )
+        );
     }
 
     public void decreaseMunitions(ArrayList<String> munitions) {
         mapTypeToWeights.entrySet().forEach(
                 e -> modifyMatchingWeights(
-                        e.getValue(), munitions, 0.5, 0.0));
+                        e.getValue(),
+                        munitions,
+                        castPropertyDouble("decreaseWeightFactor", 0.5),
+                        castPropertyDouble("decreaseWeightDecrement", 0.0)
+                )
+        );
     }
 
     public void zeroMunitionsWeight(ArrayList<String> munitions) {

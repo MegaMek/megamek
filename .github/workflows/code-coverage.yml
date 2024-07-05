@@ -1,28 +1,19 @@
-# Builds MegaMek for Code Coverage
-#
-# Jobs:
-#    - code_coverage: Build MegaMek on the specified Operating Systems for the specified Java versions
-#          and upload the code coverage results to CodeCov.io
 name: MegaMek CI with Code Coverage
 
-# This Action Definition should be triggered only on pushes to master
 on:
   push:
     branches: [master]
 
-# Setup the Build Scan "VCS" link for all gradle invocations
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
 
 jobs:
-  # Perform build of MegaMek for Code Coverage any time master updated.
   code_coverage:
     runs-on: ${{ matrix.os }}
 
-    # Run this job once for each combination in the matrix below.
     strategy:
       matrix:
-        os: [ubuntu-latest] # For Code QL running on *nix is sufficient
+        os: [ubuntu-latest]
         java-distribution: [temurin]
         java-version: [17]
 
@@ -32,7 +23,6 @@ jobs:
         with:
           path: megamek
 
-      # Setup the requested Java Distribution and Version from the matrix
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
         with:
@@ -44,11 +34,8 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build  --stacktrace --scan
+        run: ./gradlew test
 
-      # If the build step fails, try to upload any test logs in case it was a unit test failure.
-      #
-      # The logs will be relative to the ./megamek directory.
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4
         if: failure()
@@ -56,7 +43,6 @@ jobs:
           name: cd-failure-logs
           path: ./megamek/megamek/build/reports/
 
-      # Upload our Code Coverage Reports to CodeCov.io
       - name: CodeCov.io Coverage Report
         uses: codecov/codecov-action@v4
         with:

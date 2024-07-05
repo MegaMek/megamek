@@ -251,6 +251,9 @@ distributions {
             from(jar) {
                 into "${lib}"
             }
+            from(createStartScripts.outputs.files) {
+                include "mm*"
+            }
             from(jar)
             from fileStagingDir
             from (project.sourceSets.main.runtimeClasspath.files

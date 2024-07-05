@@ -33,6 +33,7 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -47,7 +48,9 @@ import static java.util.Map.entry;
 
 public class TeamLoadoutGenerator {
 
-    // region Constants
+    //region Constants
+    public final String LOADOUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.xml";
+
     public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of(
             "Armor-Piercing", "Tandem-Charge"));
 
@@ -464,13 +467,14 @@ public class TeamLoadoutGenerator {
         }
         ArrayList<Entity> etEntities = new ArrayList<Entity>();
         ArrayList<String> enemyFactions = new ArrayList<>();
-        boolean doubleBlind = gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                        || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         boolean groundMap = g.getBoard().onGround();
         boolean spaceEnvironment = g.getBoard().inSpace();
 
         // This team can see the opponent teams; set appropriate options
-        if (!doubleBlind) {
+        if (!blind) {
             for (Team et : g.getTeams()) {
                 if (!et.isEnemyOf(team)) {
                     continue;
@@ -484,7 +488,7 @@ public class TeamLoadoutGenerator {
                 etEntities,
                 friendlyFaction,
                 enemyFactions,
-                doubleBlind,
+                blind,
                 darkEnvironment,
                 groundMap,
                 spaceEnvironment
@@ -496,7 +500,7 @@ public class TeamLoadoutGenerator {
             ArrayList<Entity> etEntities,
             String friendlyFaction,
             ArrayList<String> enemyFactions,
-            boolean doubleBlind,
+            boolean blind,
             boolean darkEnvironment,
             boolean groundMap,
             boolean spaceEnvironment
@@ -519,24 +523,24 @@ public class TeamLoadoutGenerator {
         rp.spaceEnvironment = spaceEnvironment;
 
         // If our team can see other teams...
-        if (!doubleBlind) {
-            rp.enemiesVisible = true;
-            rp.enemyFactions.addAll(enemyFactions);
-            rp.enemyFliers += checkForFliers(etEntities);
-            rp.enemyBombers += checkForBombers(etEntities);
-            rp.enemyInfantry += checkForInfantry(etEntities);
-            rp.enemyBattleArmor += checkForBattleArmor(etEntities);
-            rp.enemyVehicles += checkForVehicles(etEntities);
-            rp.enemyMeks += checkForMeks(etEntities);
-            rp.enemyEnergyBoats += checkForEnergyBoats(etEntities);
-            // Enemy Missile Boats might be good to know for Retro Streak weighting
-            rp.enemyMissileBoats += checkForMissileBoats(etEntities);
-            rp.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
-            rp.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
-            rp.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
-            rp.enemyFastMovers += checkForFastMovers(etEntities);
-            rp.enemyOffBoard = checkForOffboard(etEntities);
-            rp.enemyECMCount = checkForECM(etEntities);
+        if (!blind) {
+                rp.enemiesVisible = true;
+                rp.enemyFactions.addAll(enemyFactions);
+                rp.enemyFliers += checkForFliers(etEntities);
+                rp.enemyBombers += checkForBombers(etEntities);
+                rp.enemyInfantry += checkForInfantry(etEntities);
+                rp.enemyBattleArmor += checkForBattleArmor(etEntities);
+                rp.enemyVehicles += checkForVehicles(etEntities);
+                rp.enemyMeks += checkForMeks(etEntities);
+                rp.enemyEnergyBoats += checkForEnergyBoats(etEntities);
+                // Enemy Missile Boats might be good to know for Retro Streak weighting
+                rp.enemyMissileBoats += checkForMissileBoats(etEntities);
+                rp.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
+                rp.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
+                rp.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
+                rp.enemyFastMovers += checkForFastMovers(etEntities);
+                rp.enemyOffBoard = checkForOffboard(etEntities);
+                rp.enemyECMCount = checkForECM(etEntities);
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
             rp.enemiesVisible = false;

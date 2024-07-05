@@ -5,6 +5,12 @@ plugins {
     id 'maven-publish'
     id 'edu.sc.seis.launch4j' version '3.0.5'
     id 'jacoco'
+    id 'java'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
@@ -37,11 +43,11 @@ dependencies {
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
     implementation 'org.apache.commons:commons-text:1.12.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
-    implementation 'org.freemarker:freemarker:2.3.32'
+    implementation 'org.freemarker:freemarker:2.3.33'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
     testImplementation 'org.mockito:mockito-core:5.12.0'
 }
 
@@ -50,7 +56,18 @@ application {
 }
 
 ext {
-    mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
+    mmJvmOptions = [
+        '-Xmx2048m',
+        '--add-opens',
+        'java.base/java.util=ALL-UNNAMED',
+        '--add-opens',
+        'java.base/java.util.concurrent=ALL-UNNAMED',
+        '-Dsun.awt.disablegrab=true'
+    ]
+    l4jJvmOptions = [
+        '-Xmx2048m',
+        '-Dsun.awt.disablegrab=true'
+    ]
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -63,7 +80,6 @@ ext {
     fileStagingDir = "${buildDir}/files"
     mmRepoDir = "${buildDir}/repo"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-    mavenPublishDir = "${buildDir}/mavenrepo"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
 }
@@ -74,6 +90,7 @@ run {
 
 jar {
     archiveFileName = 'MegaMek.jar'
+
     manifest {
         attributes "Main-Class" : application.mainClass
         attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
@@ -110,11 +127,11 @@ task copyFiles(type: Copy) {
     dependsOn equipmentList
 
     from projectDir
-
     include "${data}/**"
     include "${docs}/**"
     include "${mmconf}/**"
-    include "${rootDir}/license.txt"
+    include "SubmitBug.html"
+    include "license.txt"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
@@ -126,7 +143,7 @@ task copyFiles(type: Copy) {
     inputs.dir "${data}"
     inputs.dir "${docs}"
     inputs.dir "${mmconf}"
-    inputs.file "${rootDir}/license.txt"
+    inputs.files 'license.txt', 'SubmitBug.html'
     outputs.dir fileStagingDir
 }
 
@@ -201,7 +218,7 @@ task createStartScripts (type: CreateStartScripts) {
     doLast {
         // The start script assumes all the files on the classpath will be in the lib directory.
         unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
-        windowsScript.text = windowsScript.text.replace('lib\\MegaMek', 'MegaMek')
+        windowsScript.text = windowsScript.text.replace('lib/MegaMek', 'MegaMek')
         // The Windows script just has a single line that needs to be changed to put the script in the root,
         // so we'll do a simple replace
         windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')
@@ -209,9 +226,8 @@ task createStartScripts (type: CreateStartScripts) {
 }
 
 distributions {
-    // Creates tasks which package distribution with MM jar and startup script in root directory
     unix {
-        distributionBaseName = 'megamek'
+        distributionBaseName = 'megamek-unix'
         contents {
             from fileStagingDir
             from(createStartScripts.outputs.files) {
@@ -224,13 +240,21 @@ distributions {
             }
         }
     }
-    // Creates tasks which package distribution with MM jar wrapped in Windows executable
+
     windows {
+        distributionBaseName = 'megamek-windows'
         contents {
             from ("${buildDir}/launch4j") {
                 include '*.exe'
                 include '*.ini'
             }
+            from(jar) {
+                into "${lib}"
+            }
+            from(createStartScripts.outputs.files) {
+                include "mm*"
+            }
+            from(jar)
             from fileStagingDir
             from (project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
@@ -240,102 +264,72 @@ distributions {
     }
 }
 
-createExe {
-    description = 'Create Windows executable that wraps MM jar'
+launch4j {
+    description = 'Create Windows executable for Megamek'
     mainClassName = application.mainClass
     outfile = 'MegaMek.exe'
-    def iniFile = 'MegaMek.l4j.ini'
     icon = "${projectDir}/data/images/misc/megamek.ico"
     jarTask = project.tasks.jar
+    windowTitle = 'MegaMek'
+    internalName = 'MegaMek'
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     supportUrl = 'https://megamek.org'
-    copyright = '2024 MegaMek Development Team'
+    copyright = '2024 MegaMek Development Team.'
+    trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
-    outputs.file "${buildDir}/launch4j/${outfile}"
-    outputs.file "${buildDir}/launch4j/${iniFile}"
-    jvmOptions = project.ext.mmJvmOptions
+    jvmOptions = project.ext.l4jJvmOptions
     jreMinVersion = '17'
+    dontWrapJar = true
+    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
-    doLast {
-        new File("${buildDir}/launch4j/${iniFile}").text = """# Launch4j runtime config
-# you can add arguments here that will be processed by the JVM at runtime
-${project.ext.mmJvmOptions.join('\n')}
-"""
-    }
+}
+
+tasks.register("packagePrepWork") {
+    description = 'General Catch All for all distributions'
+    dependsOn stageFiles
+    dependsOn startScripts
+    dependsOn createStartScripts
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
 }
 
 windowsDistZip {
     description = 'Creates Windows distribution packaged as a zip archive'
-    dependsOn copyFiles
-    dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
-    dependsOn ratZip
-    dependsOn stageFiles
-    dependsOn createExe
+    dependsOn packagePrepWork
+    dependsOn createAllExecutables
 }
 
 windowsDistTar {
     description = 'Creates Windows distribution packaged as a tar.gz archive'
-    dependsOn copyFiles
-    dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
-    dependsOn ratZip
-    dependsOn stageFiles
-    dependsOn createExe
+    dependsOn packagePrepWork
+    dependsOn createAllExecutables
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
 unixDistZip {
     description = 'Creates *nix distribution packaged as a tar ball'
-    dependsOn stageFiles
-    dependsOn startScripts
-    dependsOn createStartScripts
-    dependsOn copyFiles
-    dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
-    dependsOn ratZip
+    dependsOn packagePrepWork
 }
 
 unixDistTar {
     description = 'Creates *nix distribution packaged as a tar ball'
-    dependsOn stageFiles
-    dependsOn startScripts
-    dependsOn createStartScripts
-    dependsOn copyFiles
-    dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
-    dependsOn ratZip
+    dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
 distZip {
     description = 'Creates *nix distribution packaged as a Zip file'
-    dependsOn stageFiles
-    dependsOn startScripts
-    dependsOn createStartScripts
-    dependsOn copyFiles
-    dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
-    dependsOn ratZip
+    dependsOn packagePrepWork
 }
 
 distTar {
     description = 'Creates *nix distribution packaged as a gziped tar ball'
-    dependsOn stageFiles
-    dependsOn startScripts
-    dependsOn createStartScripts
-    dependsOn copyFiles
-    dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
-    dependsOn ratZip
+    dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
@@ -441,28 +435,15 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            url uri(mavenPublishDir)
-        }
-    }
 }
-
-task cleanPublishingDir (type: Delete) {
-    delete = mavenPublishDir
-}
-
-publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
 
 test {
     useJUnitPlatform()
-    // report is always generated after tests run
     finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
-    // tests are required to run before generating the report
-    dependsOn test
+    dependsOn(test)
     reports {
         xml.required = true
         html.required = true

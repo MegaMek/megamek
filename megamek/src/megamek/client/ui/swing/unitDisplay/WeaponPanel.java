@@ -2024,8 +2024,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     i++;
                 }
             }
-            if (nCur != -1) {
-                m_chAmmo.setSelectedIndex(nCur);
+            if (nCur != -1 && nCur < m_chAmmo.getItemCount()) {
+            	m_chAmmo.setSelectedIndex(nCur);
             }
         }
 

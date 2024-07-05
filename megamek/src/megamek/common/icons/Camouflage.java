@@ -218,7 +218,7 @@ public class Camouflage extends AbstractIcon {
         return Objects.hash(getFilename(), getCategory(), rotationAngle, scale);
     }
 
-    private static String getDirectory(File file) {
+    public static String getDirectory(File file) {
         String result = file.getParent().replace("\\", "/");
         return result + (!result.endsWith("/") ? "/" : "");
     }

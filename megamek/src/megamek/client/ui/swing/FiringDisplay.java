@@ -22,6 +22,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -1233,11 +1234,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             }
 
             if ((mounted.getLinked() != null)
-                    && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)
+                    && (mounted.getType().getAmmoType() != AmmoType.T_NA)
                     && (mounted.getLinked().getType() instanceof AmmoType)) {
-                Mounted ammoMount = mounted.getLinked();
-                AmmoType ammoType = (AmmoType) ammoMount.getType();
-                waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+                AmmoMounted ammoMount = mounted.getLinkedAmmo();
+                AmmoType ammoType = ammoMount.getType();
+                waa.setAmmoId(ammoMount.getEquipmentNum());
                 EnumSet<AmmoType.Munitions> ammoMunitionType = ammoType.getMunitionType();
                 waa.setAmmoMunitionType(ammoMunitionType);
                 waa.setAmmoCarrier(ammoMount.getEntity().getId());

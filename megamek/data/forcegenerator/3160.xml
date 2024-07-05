@@ -252,12 +252,9 @@
 		<weightDistribution era='3160' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='RA'>
-		<pctOmni>0,0,0,48,100</pctOmni>
-		<pctClan>70,70,95,100,100</pctClan>
-		<pctSL>30,30,5,0,0</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,10,75,100</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>80,80,100,100,100</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>20,0,0,0,0</pctSL>
+		<pctOmni>0,0,10,75,100</pctOmni>
+		<pctClan>80,80,100,100,100</pctClan>
+		<pctSL>20,0,0,0,0</pctSL>
 		<pctClan unitType='Vehicle'>15,0,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,0,55,55,55</pctSL>
 		<techMargin>18</techMargin>
@@ -285,12 +282,9 @@
 		<salvage pct='5'>LA:10</salvage>
 	</faction>
 	<faction key='SE'>
-		<pctOmni>0,0,40,80,100</pctOmni>
-		<pctClan>54,54,77,90,100</pctClan>
-		<pctSL>46,46,23,10,0</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,0,20,50,80</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>10,10,60,70,90</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>90,90,40,30,10</pctSL>
+		<pctOmni>0,0,20,50,80</pctOmni>
+		<pctClan>10,10,60,70,90</pctClan>
+		<pctSL>90,90,40,30,10</pctSL>
 		<pctClan unitType='Vehicle'>10,10,33,33,33</pctClan>
 		<pctSL unitType='Vehicle'>90,90,65,65,65</pctSL>
 		<techMargin>18</techMargin>
@@ -370,12 +364,9 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='RA.OA'>
-		<pctOmni>0,0,0,0,0</pctOmni>
+		<pctOmni>0,8,10,12,18</pctOmni>
 		<pctClan>0,0,0,0,0</pctClan>
-		<pctSL>30,50,60,75,80</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0,8,10,12,18</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0,0,0,0,0</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>40,50,70,85,100</pctSL>
+		<pctSL>40,50,70,85,100</pctSL>
 		<techMargin>18</techMargin>
 		<salvage pct='5'></salvage>
 		<weightDistribution era='3160' unitType='Mek'>5,5,3,1</weightDistribution>
@@ -474,8 +465,7 @@
 	<faction key='CC.CDF'>
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
-		<pctSL>90</pctSL>
-		<pctSL unitType='AeroSpaceFighter'>60</pctSL>
+		<pctSL>60</pctSL>
 		<pctSL unitType='Vehicle'>90</pctSL>
 		<omniMargin>18</omniMargin>
 		<techMargin>18</techMargin>
@@ -493,10 +483,8 @@
 	</faction>
 	<faction key='CC.CH'>
 		<pctOmni>25</pctOmni>
-		<pctClan>16</pctClan>
-		<pctSL>84</pctSL>
-		<pctClan unitType='AeroSpaceFighter'>10</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>90</pctSL>
+		<pctClan>10</pctClan>
+		<pctSL>90</pctSL>
 		<pctClan unitType='Vehicle'>10</pctClan>
 		<pctSL unitType='Vehicle'>90</pctSL>
 		<omniMargin>18</omniMargin>
@@ -563,8 +551,7 @@
 	<faction key='CC.CRC'>
 		<pctOmni>10</pctOmni>
 		<pctClan>0</pctClan>
-		<pctSL>85</pctSL>
-		<pctSL unitType='AeroSpaceFighter'>50</pctSL>
+		<pctSL>50</pctSL>
 		<pctSL unitType='Vehicle'>80</pctSL>
 		<omniMargin>18</omniMargin>
 		<techMargin>18</techMargin>
@@ -699,9 +686,6 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>0</pctSL>
-		<pctOmni unitType='AeroSpaceFighter'>0</pctOmni>
-		<pctClan unitType='AeroSpaceFighter'>0</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>0</pctSL>
 		<pctClan unitType='Vehicle'>0</pctClan>
 		<pctSL unitType='Vehicle'>0</pctSL>
 		<techMargin>18</techMargin>
@@ -741,8 +725,7 @@
 	<faction key='CC.LCC'>
 		<pctOmni>8</pctOmni>
 		<pctClan>5</pctClan>
-		<pctSL>75</pctSL>
-		<pctSL unitType='AeroSpaceFighter'>70</pctSL>
+		<pctSL>70</pctSL>
 		<pctSL unitType='Vehicle'>70</pctSL>
 		<omniMargin>18</omniMargin>
 		<techMargin>18</techMargin>
@@ -811,10 +794,8 @@
 	</faction>
 	<faction key='CC.MAC'>
 		<pctOmni>32</pctOmni>
-		<pctClan>16</pctClan>
-		<pctSL>84</pctSL>
-		<pctClan unitType='AeroSpaceFighter'>10</pctClan>
-		<pctSL unitType='AeroSpaceFighter'>90</pctSL>
+		<pctClan>10</pctClan>
+		<pctSL>90</pctSL>
 		<pctClan unitType='Vehicle'>10</pctClan>
 		<pctSL unitType='Vehicle'>90</pctSL>
 		<omniMargin>18</omniMargin>
@@ -1044,8 +1025,7 @@
 	<faction key='CC.SIAC'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
-		<pctSL>90</pctSL>
-		<pctSL unitType='AeroSpaceFighter'>70</pctSL>
+		<pctSL>70</pctSL>
 		<pctSL unitType='Vehicle'>76</pctSL>
 		<omniMargin>18</omniMargin>
 		<techMargin>18</techMargin>
@@ -1055,8 +1035,7 @@
 	<faction key='CC.SIS'>
 		<pctOmni>16</pctOmni>
 		<pctClan>8</pctClan>
-		<pctSL>90</pctSL>
-		<pctSL unitType='AeroSpaceFighter'>72</pctSL>
+		<pctSL>72</pctSL>
 		<pctSL unitType='Vehicle'>80</pctSL>
 		<omniMargin>18</omniMargin>
 		<techMargin>18</techMargin>
@@ -1128,8 +1107,7 @@
 	<faction key='CC.VCR'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
-		<pctSL>92</pctSL>
-		<pctSL unitType='AeroSpaceFighter'>90</pctSL>
+		<pctSL>90</pctSL>
 		<pctSL unitType='Vehicle'>84</pctSL>
 		<omniMargin>18</omniMargin>
 		<techMargin>18</techMargin>
@@ -1237,9 +1215,11 @@
 	<chassis name='Aerie PA(L)' unitType='BattleArmor'>
 		<availability>RA:6</availability>
 		<model name='(Salvage)(Sqd5)' mechanized='false'>
+			<roles>marine</roles>
 			<availability>General:6</availability>
 		</model>
 		<model name='(Sqd5)' mechanized='false'>
+			<roles>marine</roles>
 			<availability>General:4</availability>
 		</model>
 	</chassis>
@@ -1295,12 +1275,14 @@
 	<chassis name='Ailette Rescue PA(L)' unitType='BattleArmor'>
 		<availability>FS:4,CDP:5,TC:6</availability>
 		<model name='(Sqd4)' mechanized='false'>
+			<roles>marine</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ailette Zero-G Engineering Exoskeleton' unitType='BattleArmor'>
 		<availability>FS:4</availability>
 		<model name='(Sqd4)' mechanized='false'>
+			<roles>marine</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -1379,6 +1361,9 @@
 	<chassis name='Alfar' unitType='Mek'>
 		<availability>LA:2</availability>
 		<model name='AL-A1'>
+			<availability>LA:2</availability>
+		</model>
+		<model name='AL-D1 &apos;Dökkálfar&apos;'>
 			<availability>LA:2</availability>
 		</model>
 	</chassis>
@@ -1829,7 +1814,7 @@
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
 		<availability>CC:10,MOC:10,CHH:8,CLAN:6,IS:9,Periphery.Deep:8,DC:8,Periphery:10,TC:10</availability>
 		<model name='(Hover LRM)'>
-			<roles>fire_support,recon</roles>
+			<roles>recon,fire_support</roles>
 			<availability>PIR:4-,IS.pm:3,Periphery:3-</availability>
 		</model>
 		<model name='(Hover MG)'>
@@ -1837,7 +1822,7 @@
 			<availability>General:2</availability>
 		</model>
 		<model name='(Hover SRM)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>PIR:5-,IS.pm:3,Periphery:3-</availability>
 		</model>
 		<model name='(Hover Sensors)'>
@@ -1845,7 +1830,7 @@
 			<availability>MH:3,TC:3</availability>
 		</model>
 		<model name='(Hover)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>General:7</availability>
 		</model>
 		<model name='(Tracked LRM)'>
@@ -1869,7 +1854,7 @@
 			<availability>PIR:4-,IS.pm:3,Periphery:3-</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>inf_support,urban</roles>
+			<roles>urban,inf_support</roles>
 			<availability>PIR:3,General:2</availability>
 		</model>
 		<model name='(Wheeled SRM)'>
@@ -4345,9 +4330,13 @@
 		<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='true'>
 			<availability>CWE:4</availability>
 		</model>
-		<model name='(Naval) &apos;Bar&apos; (Sqd5)' mechanized='false'>
+		<model name='(Naval) &apos;Bär&apos; (Sqd4)' mechanized='false'>
 			<roles>marine</roles>
-			<availability>RD:8</availability>
+			<availability>RD:6</availability>
+		</model>
+		<model name='(Naval) Bär&apos; (Sqd5)' mechanized='false'>
+			<roles>marine</roles>
+			<availability>CWE:4-,RD:6,CDS:5,CLAN.IS:5,CP:6</availability>
 		</model>
 		<model name='(Rabid)(Sqd5)' mechanized='false'>
 			<availability>CWE:4,RD:4,CDS:4,CP:4</availability>
@@ -5924,9 +5913,11 @@
 			<availability>CWE:2,RD:2</availability>
 		</model>
 		<model name='(Space) [Flamer](Sqd5)' mechanized='true'>
+			<roles>marine</roles>
 			<availability>CLAN:2,RA:3</availability>
 		</model>
 		<model name='(Space) [MG](Sqd5)' mechanized='true'>
+			<roles>marine</roles>
 			<availability>CLAN:2,RA:3</availability>
 		</model>
 		<model name='(Space) [MicroPL](Sqd5)' mechanized='false'>
@@ -6493,7 +6484,7 @@
 			<availability>IS:6</availability>
 		</model>
 		<model name='(LBX2)'>
-			<roles>field_gun</roles>
+			<roles>anti_aircraft,field_gun</roles>
 			<availability>IS:6</availability>
 		</model>
 		<model name='(LBX20)'>
@@ -6749,7 +6740,7 @@
 			<availability>General:8</availability>
 		</model>
 		<model name='(AC)'>
-			<roles>fire_support,support</roles>
+			<roles>support,fire_support</roles>
 			<availability>IS:6,Periphery.Deep:4,Periphery:6</availability>
 		</model>
 		<model name='(Armor)'>
@@ -6757,11 +6748,11 @@
 			<availability>IS:6,Periphery.Deep:4,CLAN.IS:6,Periphery:6</availability>
 		</model>
 		<model name='(LRM)'>
-			<roles>fire_support,support</roles>
+			<roles>support,fire_support</roles>
 			<availability>IS:4,BAN:6,Periphery:4</availability>
 		</model>
 		<model name='(Mortar)'>
-			<roles>fire_support,support</roles>
+			<roles>support,fire_support</roles>
 			<availability>IS:4,Periphery:4</availability>
 		</model>
 		<model name='(SRM)'>
@@ -7473,9 +7464,6 @@
 	</chassis>
 	<chassis name='Gotterdammerung' unitType='Mek'>
 		<availability>LA:5,MERC:4</availability>
-		<model name='GTD-20S'>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Grand Dragon' unitType='Mek'>
 		<availability>RD:4,MERC:4,CP:5,DC:4</availability>
@@ -7865,18 +7853,8 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Gun' unitType='Mek' omni='IS'>
+	<chassis name='Gun' unitType='Mek'>
 		<availability>CC:6-,MOC:5,DA:4</availability>
-		<model name='GN-2O'>
-			<availability>General:8</availability>
-		</model>
-		<model name='GN-2OA'>
-			<availability>General:7</availability>
-		</model>
-		<model name='GN-2OB'>
-			<roles>spotter</roles>
-			<availability>General:7</availability>
-		</model>
 	</chassis>
 	<chassis name='Gunslinger' unitType='Mek'>
 		<availability>FVC:5,LA:8,IS:5,MH:4,FS:5,DC:7</availability>

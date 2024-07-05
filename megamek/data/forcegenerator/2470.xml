@@ -212,7 +212,7 @@
 			<availability>General:7</availability>
 		</model>
 		<model name='(Hover)'>
-			<roles>apc,recon</roles>
+			<roles>recon,apc</roles>
 			<availability>General:4</availability>
 		</model>
 		<model name='(Tracked LRM)'>
@@ -228,7 +228,7 @@
 			<availability>General:9</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>inf_support,urban</roles>
+			<roles>urban,inf_support</roles>
 			<availability>PIR:3,General:2</availability>
 		</model>
 		<model name='(Wheeled Primitive)'>

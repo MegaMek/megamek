@@ -792,7 +792,7 @@ class LobbyMekPopup {
 
         // Get the Sprite
         final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
-        final Image sprite = EntityImage.createLobbyIcon(base, camouflage, frame, entity).loadPreviewImage(showDamage);
+        final Image sprite = EntityImage.createLobbyIcon(base, camouflage, entity).loadPreviewImage(showDamage);
 
         // Export to File
         try {

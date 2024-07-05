@@ -42,7 +42,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
                 return 0;
         }
     }
-    
+
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
@@ -116,7 +116,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         for (int x = 0; x < fullArmor.length; x++) {
             t.initializeArmor(fullArmor[x], x);
         }
-        
+
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
@@ -125,14 +125,18 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         t.setStructuralTechRating(dataFile
                 .getDataAsInt("structural_tech_rating")[0]);
         // Set armor tech rating, if it exists (defaults to structural tr)
+        // Allow use of armor_tech field if provided
         if (dataFile.exists("armor_tech_rating")) {
             t.setArmorTechRating(dataFile
-                    .getDataAsInt("armor_tech_rating")[0]);            
+                    .getDataAsInt("armor_tech_rating")[0]);
+        } else if (dataFile.exists("armor_tech")) {
+            t.setArmorTechRating(dataFile
+                .getDataAsInt("armor_tech")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
             t.setEngineTechRating(dataFile
-                    .getDataAsInt("engine_tech_rating")[0]);            
+                    .getDataAsInt("engine_tech_rating")[0]);
         }
 
         t.autoSetInternal();

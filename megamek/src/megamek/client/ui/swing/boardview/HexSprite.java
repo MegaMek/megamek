@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.common.Coords;
 
 /**
@@ -29,8 +30,8 @@ public abstract class HexSprite extends Sprite {
 
     protected void updateBounds() {
         bounds = new Rectangle(
-                (int) (BoardView.HEX_W * bv.scale),
-                (int) (BoardView.HEX_H * bv.scale));
+                (int) (HexTileset.HEX_W * bv.scale),
+                (int) (HexTileset.HEX_H * bv.scale));
         bounds.setLocation(bv.getHexLocation(loc));
     }
     

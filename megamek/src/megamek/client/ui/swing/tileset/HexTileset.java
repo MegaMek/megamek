@@ -1,16 +1,22 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2023-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing.tileset;
 
@@ -29,29 +35,22 @@ import java.util.*;
 
 /**
  * Matches each hex with an appropriate image.
- *
  * @author Ben
- * @since May 9, 2002, 1:33 PM
  */
 public class HexTileset implements BoardListener {
-    /**
-     * The image width of a hex image.
-     */
+
+    /** The image width of a hex image. */
     public static final int HEX_W = 84;
 
-    /**
-     * The image height of a hex image.
-     */
+    /** The image height of a hex image. */
     public static final int HEX_H = 72;
 
     public static final String TRANSPARENT_THEME = "transparent";
     
-    private Game game;
-
-    private ArrayList<HexEntry> bases = new ArrayList<>();
-    private ArrayList<HexEntry> supers = new ArrayList<>();
-    private ArrayList<HexEntry> orthos = new ArrayList<>();
-    private Set<String> themes = new TreeSet<>();
+    private final ArrayList<HexEntry> bases = new ArrayList<>();
+    private final ArrayList<HexEntry> supers = new ArrayList<>();
+    private final ArrayList<HexEntry> orthos = new ArrayList<>();
+    private final Set<String> themes = new TreeSet<>();
     private ImageCache<Hex, Image> basesCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> supersCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> orthosCache = new ImageCache<>();
@@ -59,10 +58,9 @@ public class HexTileset implements BoardListener {
     /**
      * Creates new HexTileset
      */
-    public HexTileset(Game g) {
-        game = g;
-        game.addGameListener(gameListener);
-        game.getBoard().addBoardListener(this);
+    public HexTileset(IGame g) {
+        g.addGameListener(gameListener);
+        g.getBoard().addBoardListener(this);
     }
 
     /** Clears the image cache for the given hex. */
@@ -90,11 +88,11 @@ public class HexTileset implements BoardListener {
      * Any terrain left is used to match a base image for the hex. This time, a
      * match can be any value, and the first, best image is used.
      */
-    public synchronized Object[] assignMatch(Hex hex, Component comp) {
+    public synchronized Object[] assignMatch(Hex hex) {
         Hex hexCopy = hex.duplicate();
-        List<Image> ortho = orthoFor(hexCopy, comp);
-        List<Image> supers = supersFor(hexCopy, comp);
-        Image base = baseFor(hexCopy, comp);
+        List<Image> ortho = orthoFor(hexCopy);
+        List<Image> supers = supersFor(hexCopy);
+        Image base = baseFor(hexCopy);
         Object[] pair = new Object[] { base, supers, ortho };
         basesCache.put(hex, base);
         supersCache.put(hex, supers);
@@ -102,30 +100,30 @@ public class HexTileset implements BoardListener {
         return pair;
     }
 
-    public synchronized Image getBase(Hex hex, Component comp) {
+    public synchronized Image getBase(Hex hex) {
         Image i = basesCache.get(hex);
         if (i == null) {
-            Object[] pair = assignMatch(hex, comp);
+            Object[] pair = assignMatch(hex);
             return (Image) pair[0];
         }
         return i;
     }
 
     @SuppressWarnings("unchecked")
-    public synchronized List<Image> getSupers(Hex hex, Component comp) {
+    public synchronized List<Image> getSupers(Hex hex) {
         List<Image> l = supersCache.get(hex);
         if (l == null) {
-            Object[] pair = assignMatch(hex, comp);
+            Object[] pair = assignMatch(hex);
             return (List<Image>) pair[1];
         }
         return l;
     }
 
     @SuppressWarnings("unchecked")
-    public synchronized List<Image> getOrtho(Hex hex, Component comp) {
+    public synchronized List<Image> getOrtho(Hex hex) {
         List<Image> o = orthosCache.get(hex);
         if (o == null) {
-            Object[] pair = assignMatch(hex, comp);
+            Object[] pair = assignMatch(hex);
             return (List<Image>) pair[2];
         }
         return o;
@@ -137,13 +135,13 @@ public class HexTileset implements BoardListener {
      * elements from the tileset hex are removed from the hex. Thus you want to pass
      * a copy of the original to this function.
      */
-    private List<Image> orthoFor(Hex hex, Component comp) {
+    private List<Image> orthoFor(Hex hex) {
         ArrayList<Image> matches = new ArrayList<>();
 
         // find orthographic image matches
         for (HexEntry entry : orthos) {
             if (orthoMatch(hex, entry.getHex()) >= 1.0) {
-                Image img = entry.getImage(comp, hex.getCoords().hashCode());
+                Image img = entry.getImage(hex.getCoords().hashCode());
                 if (img != null) {
                     matches.add(img);
                 } else {
@@ -166,13 +164,13 @@ public class HexTileset implements BoardListener {
      * from the tileset hex are removed from the hex. Thus you want to pass a copy
      * of the original to this function.
      */
-    private List<Image> supersFor(Hex hex, Component comp) {
+    private List<Image> supersFor(Hex hex) {
         ArrayList<Image> matches = new ArrayList<>();
 
         // find superimposed image matches
         for (HexEntry entry : supers) {
             if (superMatch(hex, entry.getHex()) >= 1.0) {
-                Image img = entry.getImage(comp, hex.getCoords().hashCode());
+                Image img = entry.getImage(hex.getCoords().hashCode());
                 if (img != null) {
                     matches.add(img);
                 } else {
@@ -193,7 +191,7 @@ public class HexTileset implements BoardListener {
      * Returns the best matching base image for this hex. This works best if any
      * terrain with a "super" image is removed.
      */
-    private Image baseFor(Hex hex, Component comp) {
+    private Image baseFor(Hex hex) {
         HexEntry bestMatch = null;
         double match = -1;
 
@@ -219,7 +217,7 @@ public class HexTileset implements BoardListener {
         }
 
         Random random = new Random(hex.getCoords().hashCode());
-        Image img = bestMatch.getImage(comp, Math.abs(random.nextInt() * random.nextInt()));
+        Image img = bestMatch.getImage(Math.abs(random.nextInt() * random.nextInt()));
         if (img == null) {
             img = ImageUtil.createAcceleratedImage(HEX_W, HEX_H);
         }
@@ -307,57 +305,9 @@ public class HexTileset implements BoardListener {
         }
         incDepth--;
     }
-    
-    /**
-     * Initializes all the images in this tileset and adds them to the tracker
-     */
-    public void loadAllImages(Component comp, MediaTracker tracker) {
-        for (HexEntry entry: bases) {
-            if (entry.getImage() == null) {
-                entry.loadImage(comp);
-            }
-            tracker.addImage(entry.getImage(), 1);
-        }
-        for (HexEntry entry: supers) {
-            if (entry.getImage() == null) {
-                entry.loadImage(comp);
-            }
-            tracker.addImage(entry.getImage(), 1);
-        }
-        for (HexEntry entry: orthos) {
-            if (entry.getImage() == null) {
-                entry.loadImage(comp);
-            }
-            tracker.addImage(entry.getImage(), 1);
-        }
-    }
 
     public Set<String> getThemes() {
         return new TreeSet<>(themes);
-    }
-
-    /**
-     * Adds all images associated with the hex to the specified tracker
-     */
-    public synchronized void trackHexImages(Hex hex, MediaTracker tracker) {
-
-        Image base = basesCache.get(hex);
-        List<Image> superImgs = supersCache.get(hex);
-        List<Image> orthoImgs = orthosCache.get(hex);
-
-        // add base
-        tracker.addImage(base, 1);
-        // add superImgs
-        if (superImgs != null) {
-            for (Image img: superImgs) {
-                tracker.addImage(img, 1);
-            }
-        }
-        if (orthoImgs != null) {
-            for (Image img: orthoImgs) {
-                tracker.addImage(img, 1);
-            }
-        }
     }
 
     /**
@@ -535,11 +485,10 @@ public class HexTileset implements BoardListener {
         return elevation * terrain * theme;
     }
 
-    private class HexEntry {
-        private Hex hex;
-        private Image image;
+    private static class HexEntry {
+        private final Hex hex;
         private Vector<Image> images;
-        private Vector<String> filenames;
+        private final Vector<String> filenames;
 
         public HexEntry(Hex hex, String imageFile) {
             this.hex = hex;
@@ -550,13 +499,9 @@ public class HexTileset implements BoardListener {
             return hex;
         }
 
-        public Image getImage() {
-            return image;
-        }
-
-        public Image getImage(Component comp, int seed) {
+        public Image getImage(int seed) {
             if ((null == images) || images.isEmpty()) {
-                loadImage(comp);
+                loadImage();
             }
             if (images.isEmpty()) {
                 return null;
@@ -568,7 +513,7 @@ public class HexTileset implements BoardListener {
             return images.firstElement();
         }
 
-        public void loadImage(Component c2) {
+        public void loadImage() {
             images = new Vector<>();
             for (String filename: filenames) {
                 File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
@@ -594,7 +539,7 @@ public class HexTileset implements BoardListener {
     // hexes from the cache. 
     // It must listen to Game events to catch when a board is entirely replaced
     // to be able to register itself to the new board.
-    private GameListener gameListener = new GameListenerAdapter() {
+    private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {

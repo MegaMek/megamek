@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.common.Board;
 import megamek.common.Coords;
@@ -114,8 +115,8 @@ class TerrainShadowHelper {
 
         // the shadowmap needs to be painted as if scale == 1
         // therefore some of the methods of boardview1 cannot be used
-        int width = board.getWidth() * BoardView.HEX_WC + BoardView.HEX_W / 4;
-        int height = board.getHeight() * BoardView.HEX_H + BoardView.HEX_H / 2;
+        int width = board.getWidth() * BoardView.HEX_WC + HexTileset.HEX_W / 4;
+        int height = board.getHeight() * HexTileset.HEX_H + HexTileset.HEX_H / 2;
 
         GraphicsConfiguration config = GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice()
@@ -181,10 +182,10 @@ class TerrainShadowHelper {
             Path2D path = new Path2D.Float();
             for (Coords c : sortedHexes.get(h)) {
                 Point p = BoardView.getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                AffineTransform t = AffineTransform.getTranslateInstance(p.x + BoardView.HEX_W / 2.0, p.y + BoardView.HEX_H / 2.0);
+                AffineTransform t = AffineTransform.getTranslateInstance(p.x + HexTileset.HEX_W / 2.0, p.y + HexTileset.HEX_H / 2.0);
                 t.scale(1.02, 1.02);
-                t.translate(-BoardView.HEX_W / 2.0, -BoardView.HEX_H / 2.0);
-                path.append(t.createTransformedShape(BoardView.hexPoly), false);
+                t.translate(-HexTileset.HEX_W / 2.0, -HexTileset.HEX_H / 2.0);
+                path.append(t.createTransformedShape(BoardView.getHexPoly()), false);
             }
             levelClips.put(h, path);
         }
@@ -214,8 +215,8 @@ class TerrainShadowHelper {
         Map<Integer, BufferedImage> hS = new HashMap<>();
         for (int lDiff : lDiffs) {
             Dimension eSize = new Dimension(
-                    (int) (Math.abs(lightDirection[0]) * lDiff + BoardView.HEX_W) * 2,
-                    (int) (Math.abs(lightDirection[1]) * lDiff + BoardView.HEX_H) * 2);
+                    (int) (Math.abs(lightDirection[0]) * lDiff + HexTileset.HEX_W) * 2,
+                    (int) (Math.abs(lightDirection[1]) * lDiff + HexTileset.HEX_H) * 2);
 
             BufferedImage elevShadow = config.createCompatibleImage(eSize.width, eSize.height,
                     Transparency.TRANSLUCENT);
@@ -257,8 +258,8 @@ class TerrainShadowHelper {
                 for (Coords c : shadowCastingHexes.get(shadowcaster)) {
                     Point2D p0 = BoardView.getHexLocationLargeTile(c.getX(), c.getY(), 1);
                     g.drawImage(hS.get(Math.min(lDiff, maxDiff)),
-                            (int) p0.getX() - (int) (Math.abs(lightDirection[0]) * Math.min(lDiff, maxDiff) + BoardView.HEX_W),
-                            (int) p0.getY() - (int) (Math.abs(lightDirection[1]) * Math.min(lDiff, maxDiff) + BoardView.HEX_H), null);
+                            (int) p0.getX() - (int) (Math.abs(lightDirection[0]) * Math.min(lDiff, maxDiff) + HexTileset.HEX_W),
+                            (int) p0.getY() - (int) (Math.abs(lightDirection[1]) * Math.min(lDiff, maxDiff) + HexTileset.HEX_H), null);
                 }
             }
             g.setClip(saveClip);

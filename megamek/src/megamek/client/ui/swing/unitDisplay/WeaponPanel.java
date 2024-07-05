@@ -1307,7 +1307,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     public AmmoMounted getSelectedAmmo() {
         int selected = m_chAmmo.getSelectedIndex();
-        if (selected == -1) {
+        if (selected == -1 || vAmmo == null) {
             return null;
         }
         return vAmmo.get(m_chAmmo.getSelectedIndex());
@@ -1891,7 +1891,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // Update the range display to account for the selected ammo, or the loaded ammo if none is selected
         int curDisplayed = m_chAmmo.getSelectedIndex();
-        AmmoMounted mAmmo = (curDisplayed != -1) ? vAmmo.get(curDisplayed) : mounted.getLinkedAmmo();
+        AmmoMounted mAmmo = (curDisplayed != -1 && vAmmo != null) ? 
+                vAmmo.get(curDisplayed) : mounted.getLinkedAmmo();
         if (mAmmo != null) {
             updateRangeDisplayForAmmo(mAmmo);
         }

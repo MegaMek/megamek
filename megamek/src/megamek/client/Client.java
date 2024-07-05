@@ -1,7 +1,7 @@
 /*
  * MegaMek -
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -19,12 +19,10 @@ package megamek.client;
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
-import megamek.client.commands.*;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
-import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -61,7 +59,7 @@ import java.util.zip.GZIPInputStream;
  * This class is instantiated for each client and for each bot running on that
  * client. non-local clients are not also instantiated on the local server.
  */
-public class Client extends AbstractClient implements IClientCommandHandler {
+public class Client extends AbstractClient {
 
     /**
      * The game state object: this object is not ever replaced during a game, only updated. A
@@ -71,31 +69,20 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
     // Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
-    private BoardView bv;
-    private Coords currentHex;
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
     private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
 
+    //FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
+    private TilesetManager tilesetManager;
+
     public Client(String name, String host, int port) {
         super(name, host, port);
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
-        registerCommand(new HelpCommand(this));
-        registerCommand(new MoveCommand(this));
-        registerCommand(new RulerCommand(this));
-        registerCommand(new ShowEntityCommand(this));
-        registerCommand(new FireCommand(this));
-        registerCommand(new DeployCommand(this));
-        registerCommand(new AddBotCommand(this));
-        registerCommand(new AssignNovaNetworkCommand(this));
-        registerCommand(new SitrepCommand(this));
-        registerCommand(new LookCommand(this));
-        registerCommand(new ChatCommand(this));
-        registerCommand(new DoneCommand(this));
-        ShowTileCommand tileCommand = new ShowTileCommand(this);
-        registerCommand(tileCommand);
-        for (String direction : ShowTileCommand.directions) {
-            clientCommands.put(direction.toLowerCase(), tileCommand);
+        try {
+            tilesetManager = new TilesetManager(game);
+        } catch (IOException e) {
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -174,10 +161,6 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
     public MapSettings getMapSettings() {
         return game.getMapSettings();
-    }
-
-    public void setBoardView(BoardView bv) {
-        this.bv = bv;
     }
 
     /**
@@ -465,14 +448,6 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
     public void sendExplodeBuilding(Building.DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
-    }
-
-    /**
-     * Loads the board from the data in the net command.
-     */
-    protected void receiveBoard(Packet c) {
-        Board newBoard = (Board) c.getObject(0);
-        game.setBoard(newBoard);
     }
 
     /**
@@ -817,12 +792,12 @@ public class Client extends AbstractClient implements IClientCommandHandler {
      * Gets the current mech image
      */
     private Image getTargetImage(Entity e) {
-        if (bv == null) {
+        if (tilesetManager == null) {
             return null;
         } else if (e.isDestroyed()) {
-            return bv.getTilesetManager().wreckMarkerFor(e, -1);
+            return tilesetManager.wreckMarkerFor(e, -1);
         } else {
-            return bv.getTilesetManager().imageFor(e);
+            return tilesetManager.imageFor(e);
         }
     }
 
@@ -866,7 +841,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean handleGameSpecificPacket(Packet packet) throws Exception {
+    protected boolean handleGameSpecificPacket(Packet packet) {
         switch (packet.getCommand()) {
             case SERVER_GREETING:
                 if (this instanceof Princess) {
@@ -1352,26 +1327,5 @@ public class Client extends AbstractClient implements IClientCommandHandler {
         } catch (Exception ex) {
             LogManager.getLogger().error("Can't find the local savegame " + f, ex);
         }
-    }
-
-    /**
-     * Return the Current Hex, used by client commands for the visually impaired
-     * @return the current Hex
-     */
-    public Coords getCurrentHex() {
-        return currentHex;
-    }
-
-    /**
-     * Set the Current Hex, used by client commands for the visually impaired
-     */
-    public void setCurrentHex(Hex hex) {
-        if (hex != null) {
-            currentHex = hex.getCoords();
-        }
-    }
-
-    public void setCurrentHex(Coords hex) {
-        currentHex = hex;
     }
 }

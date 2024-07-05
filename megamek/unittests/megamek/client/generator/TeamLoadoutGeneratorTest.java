@@ -5,6 +5,7 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.*;
+import org.apache.commons.collections.IteratorUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -255,7 +256,7 @@ class TeamLoadoutGeneratorTest {
         // Kintaro's go under different keys
         mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
-        tlg.reconfigureTeam(game, team, "FS", mt);
+        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt);
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless
@@ -356,7 +357,7 @@ class TeamLoadoutGeneratorTest {
         Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
 
         // Just check that the bins are populated still
-        tlg.reconfigureTeam(team,"CL", "");
+        tlg.reconfigureTeam(team, "CL", "");
 
         for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
@@ -462,5 +463,21 @@ class TeamLoadoutGeneratorTest {
         mwc.increaseMunitions(tsmOnly);
         assertEquals(15.0, mwc.getSrmWeights().get("Anti-TSM"));
         assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("SRM").get(0));
+    }
+
+    @Test
+    void testNukeToggleDecreasesNukeWeightToZero() {
+        ReconfigurationParameters rp = new ReconfigurationParameters();
+        rp.nukesBannedForMe = true;
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+
+        // Have the Munition Tree generator use our pre-made mwc so we can see its changes
+
+        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
+        MunitionTree mt = tlg.generateMunitionTree(rp, ownTeamEntities, "", mwc);
+
+        assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
+        assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));
     }
 }

@@ -22,6 +22,7 @@ package megamek.client.ui.swing.tooltip;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.equipment.AmmoMounted;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -198,8 +199,12 @@ public class EntityActionLog implements Collection<EntityAction> {
         final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' ' + table : "");
         final Entity entity = game.getEntity(attack.getEntityId());
         final String weaponName = (entity.getEquipment(attack.getWeaponId()).getType()).getName();
-        final Mounted ammo = entity.getEquipment(attack.getAmmoId());
-        final String ammoName = (ammo == null) ? "" : " [" + ((AmmoType) ammo.getType()).getShortName() + "] ";
+        Entity ammoCarrier = game.getEntity(attack.getAmmoCarrier());
+        if (ammoCarrier == null) {
+            ammoCarrier = entity;
+        }
+        final AmmoMounted ammo = ammoCarrier.getAmmo(attack.getAmmoId());
+        final String ammoName = (ammo == null) ? "" : " [" + ammo.getType().getShortName() + "] ";
 
         //add to an existing entry if possible
         boolean found = false;

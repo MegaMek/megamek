@@ -27,6 +27,7 @@ import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
@@ -331,6 +332,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     private final AudioService audioService = new SoundManager();
 
+    private Coords currentHex;
+
     // endregion Variable Declarations
 
     /**
@@ -354,6 +357,26 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         audioService.loadSoundFiles();
 
         unitDisplay = new UnitDisplay(this, controller);
+
+        registerCommand(new HelpCommand(this));
+        registerCommand(new MoveCommand(this));
+        registerCommand(new RulerCommand(this));
+        registerCommand(new ShowEntityCommand(this));
+        registerCommand(new FireCommand(this));
+        registerCommand(new DeployCommand(this));
+        registerCommand(new AddBotCommand(this));
+        registerCommand(new AssignNovaNetworkCommand(this));
+        registerCommand(new SitrepCommand(this));
+        registerCommand(new LookCommand(this));
+        registerCommand(new ChatCommand(this));
+        registerCommand(new DoneCommand(this));
+        ShowTileCommand tileCommand = new ShowTileCommand(this);
+        registerCommand(tileCommand);
+        for (String direction : ShowTileCommand.directions) {
+            clientCommands.put(direction.toLowerCase(), tileCommand);
+        }
+        registerCommand(new HelpCommand(this));
+        registerCommand(new BotHelpCommand(this));
     }
 
     public BoardView getBoardView() {
@@ -520,7 +543,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             panTop.add(splitPaneA, BorderLayout.CENTER);
 
             bv.addBoardViewListener(this);
-            client.setBoardView(bv);
         } catch (Exception ex) {
             LogManager.getLogger().fatal("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -1197,7 +1219,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 panMain.add(component, main);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
+                component = new StartingScenarioPanel();
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_STARTINGSCENARIO;
                 component.setName(main);
@@ -2090,7 +2112,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
         final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
-        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp);
+        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage);
         bp.setIcon((icon == null) ? null : new ImageIcon(icon));
     }
 
@@ -2967,5 +2989,26 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
+    }
+
+    /**
+     * Return the Current Hex, used by client commands for the visually impaired
+     * @return the current Hex
+     */
+    public Coords getCurrentHex() {
+        return currentHex;
+    }
+
+    /**
+     * Set the Current Hex, used by client commands for the visually impaired
+     */
+    public void setCurrentHex(Hex hex) {
+        if (hex != null) {
+            currentHex = hex.getCoords();
+        }
+    }
+
+    public void setCurrentHex(Coords hex) {
+        currentHex = hex;
     }
 }

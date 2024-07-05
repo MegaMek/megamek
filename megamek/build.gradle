@@ -57,11 +57,15 @@ application {
 
 ext {
     mmJvmOptions = [
-        '-Xmx4096m',
+        '-Xmx2048m',
         '--add-opens',
         'java.base/java.util=ALL-UNNAMED',
         '--add-opens',
         'java.base/java.util.concurrent=ALL-UNNAMED',
+        '-Dsun.awt.disablegrab=true'
+    ]
+    l4jJvmOptions = [
+        '-Xmx2048m',
         '-Dsun.awt.disablegrab=true'
     ]
     data = 'data'
@@ -244,10 +248,10 @@ distributions {
                 include '*.exe'
                 include '*.ini'
             }
-            from(jar)
             from(jar) {
                 into "${lib}"
             }
+            from(jar)
             from fileStagingDir
             from (project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
@@ -257,8 +261,8 @@ distributions {
     }
 }
 
-createExe {
-    description = 'Create Windows executable that wraps MM jar'
+launch4j {
+    description = 'Create Windows executable for Megamek'
     mainClassName = application.mainClass
     outfile = 'MegaMek.exe'
     icon = "${projectDir}/data/images/misc/megamek.ico"
@@ -270,16 +274,11 @@ createExe {
     copyright = '2024 MegaMek Development Team.'
     trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
-    jvmOptions = project.ext.mmJvmOptions
+    jvmOptions = project.ext.l4jJvmOptions
     jreMinVersion = '17'
+    dontWrapJar = true
     messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
-    doLast {
-        new File("${buildDir}/launch4j/MegaMek.l4j.ini").text = """# Launch4j runtime config
-# you can add arguments here that will be processed by the JVM at runtime
-${project.ext.mmJvmOptions.join('\n')}
-"""
-    }
 }
 
 windowsDistZip {
@@ -290,7 +289,7 @@ windowsDistZip {
     dependsOn officialUnitList
     dependsOn ratZip
     dependsOn stageFiles
-    dependsOn createExe
+    dependsOn createAllExecutables
 }
 
 windowsDistTar {
@@ -301,7 +300,7 @@ windowsDistTar {
     dependsOn officialUnitList
     dependsOn ratZip
     dependsOn stageFiles
-    dependsOn createExe
+    dependsOn createAllExecutables
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }

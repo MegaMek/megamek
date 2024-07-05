@@ -134,6 +134,7 @@ task copyFiles(type: Copy) {
     include "SubmitBug.html"
     include "license.txt"
     include "sentry.properties"
+    include "mm-revision.txt"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
@@ -145,7 +146,7 @@ task copyFiles(type: Copy) {
     inputs.dir "${data}"
     inputs.dir "${docs}"
     inputs.dir "${mmconf}"
-    inputs.files 'license.txt', 'SubmitBug.html', 'sentry.properties'
+    inputs.files 'license.txt', 'SubmitBug.html', 'sentry.properties', 'mm-revision.txt'
     outputs.dir fileStagingDir
 }
 

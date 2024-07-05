@@ -2351,6 +2351,26 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Get a list of all hotspots (positions of high activity) for opposing units
+     * @return
+     */
+    public List<Coords> getEnemyHotspots () {
+        List<Coords> accumlatedHotspots = new ArrayList<>();
+        for (HeatMap curMap : enemyHeatMaps) {
+            List<Coords> mapHospots = curMap.getHotSpots();
+            if (mapHospots != null) {
+                for (Coords curPosition : mapHospots) {
+                    if (!accumlatedHotspots.contains(curPosition)) {
+                        accumlatedHotspots.add(curPosition);
+                    }
+                }
+            }
+        }
+
+        return accumlatedHotspots;
+    }
+
+    /**
      * Set up heat maps to track enemy unit positions over time
      */
     protected void initEnemyHeatMaps () {
@@ -2383,7 +2403,10 @@ public class Princess extends BotClient {
         List<Entity> trackedEntities = getGame().
                 inGameTWEntities().
                 stream().
-                filter(e -> e.isDeployed() && !e.isOffBoard() && !(e instanceof EjectedCrew)).
+                filter(e -> e.isDeployed() &&
+                !e.isOffBoard() &&
+                !(e instanceof EjectedCrew) &&
+                !e.isAirborneAeroOnGroundMap()).
                 collect(Collectors.toList());
 
         if (trackedEntities.isEmpty()) {

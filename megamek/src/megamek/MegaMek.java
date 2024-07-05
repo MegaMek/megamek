@@ -63,8 +63,10 @@ public class MegaMek {
     private static final NumberFormat numberFormatter = NumberFormat.getInstance();
 
     public static void main(String... args) {
-        Sentry.init(options -> options.setEnableExternalConfiguration(true));
-
+        Sentry.init(options -> {
+            options.setEnableExternalConfiguration(true);
+            options.setRelease(SuiteConstants.VERSION.toString());
+        });
         // First, create a global default exception handler
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             Sentry.captureException(t);

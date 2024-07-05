@@ -1707,7 +1707,7 @@ class MunitionWeightCollection {
      */
     private static Double castPropertyDouble(String field, Double defValue) {
         try {
-            return Double.parseDouble(TeamLoadoutGenerator.weightProperties.getProperty("defaultWeaponWeight"));
+            return Double.parseDouble(TeamLoadoutGenerator.weightProperties.getProperty(field));
         }
         catch (Exception ignored) {
             return defValue;
@@ -1721,7 +1721,7 @@ class MunitionWeightCollection {
             weights.put(name, castPropertyDouble("defaultWeaponWeight", 1.0));
         }
         // Every weight list should have a Standard set as weight 2.0
-        weights.put("Standard", castPropertyDouble("defaultMunitionStandardWeight", 2.0));
+        weights.put("Standard", castPropertyDouble("defaultStandardMunitionWeight", 2.0));
         return weights;
     }
 

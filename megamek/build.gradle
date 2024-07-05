@@ -282,6 +282,7 @@ tasks.register("packagePrepWork") {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
+    dependsOn createAllExecutables
 }
 
 distZip {

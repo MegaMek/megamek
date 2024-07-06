@@ -16,7 +16,6 @@ public class HeatMap {
     private static final int MIN_DECAY_MODIFIER = -1;
     private static final int MIN_WEIGHT = 0;
     private static final int MAX_WEIGHT = 100;
-    private static final double BV_DIVISOR = 100.0;
     private static final int MAX_MP_WEIGHT = 10;
     private static final double MIN_TRACKER_TOLERANCE = 0.1;
     private static final double MAX_TRACKER_TOLERANCE = 0.9;
@@ -37,7 +36,8 @@ public class HeatMap {
 
     // Control whether decay is applied or not
     private boolean enableDecay;
-    private int decayModifier;
+    private int movementDecayModifier;
+    private int activityDecayModifier;
 
     private int movementWeight;
     private int removalWeight;
@@ -70,7 +70,8 @@ public class HeatMap {
         lastPositionCache = new HashMap<>();
 
         enableDecay = true;
-        decayModifier = MIN_DECAY_MODIFIER;
+        movementDecayModifier = MIN_DECAY_MODIFIER;
+        activityDecayModifier = MIN_DECAY_MODIFIER;
 
         movementWeight = MOVEMENT_WEIGHT_DEFAULT;
         removalWeight = MIN_WEIGHT;
@@ -111,7 +112,7 @@ public class HeatMap {
      * Determines if decay is applied to the map when {@code ageMaps()} is called
      * @return  false if decay rate is disabled
      */
-    public boolean isDecayEnabled() {
+    public boolean isDecayEnabled () {
         return enableDecay;
     }
 
@@ -124,19 +125,36 @@ public class HeatMap {
     }
 
     /**
+     * Reduction weight for aging the activity map
+     * @return    a negative number
+     */
+    public int getActivityDecay () {
+        return activityDecayModifier;
+    }
+
+    /**
+     * Set the linear reduction applied to each weight in the activity tracker
+     * @param newSetting   a negative number
+     * @return
+     */
+    public void setActivityDecay (int newSetting) {
+        activityDecayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
+    }
+
+    /**
      * Reduction weight for each map entry on each game turn
      * @return  a negative number
      */
-    public int getDecayModifier() {
-        return decayModifier;
+    public int getMovementDecay () {
+        return movementDecayModifier;
     }
 
     /**
      * Set reduction weight for each map entry on each game turn. Must be negative number.
      * @param newSetting   a negative number
      */
-    public void setDecayModifier(int newSetting) {
-        decayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
+    public void setMovementDecay (int newSetting) {
+        movementDecayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
     }
 
     /**
@@ -425,7 +443,7 @@ public class HeatMap {
         trimLastKnownPositions(game);
 
         if (enableDecay) {
-            ageTeamMap(game);
+            ageTeamActivityMap(game);
             ageTeamMovementMap();
             ageEntityMap();
         }
@@ -508,7 +526,7 @@ public class HeatMap {
      * @param adjustment
      */
     private void updateTeamMap (Coords position, int adjustment) {
-        int mapValue = Math.min(teamActivity.getOrDefault(position, 0) + adjustment, MAX_WEIGHT);
+        int mapValue = teamActivity.getOrDefault(position, 0) + adjustment;
         teamActivity.put(position, mapValue);
     }
 
@@ -524,9 +542,9 @@ public class HeatMap {
         if (bvWeight == -1) {
             bvWeight = tracked.getInitialBV();
         }
-        bvWeight = (int) Math.floor(weightScaling * bvWeight / BV_DIVISOR);
+        bvWeight = (int) Math.floor(weightScaling * bvWeight);
 
-        bvWeight = Math.max(bvWeight - Math.max(tracked.getJumpMP(), tracked.getWalkMP()), 1);
+        bvWeight = Math.max(bvWeight - (100 * Math.max(tracked.getJumpMP(), tracked.getWalkMP())), 1);
 
         return bvWeight;
     }
@@ -537,7 +555,7 @@ public class HeatMap {
      * decay rate
      * @param game
      */
-    private void ageTeamMap (Game game) {
+    private void ageTeamActivityMap (Game game) {
 
         // Get positions of tracked entities with known positions
         List<Coords> activePositions = new ArrayList<>();
@@ -564,7 +582,7 @@ public class HeatMap {
             if (!activePositions.contains(curPosition)) {
                 curWeight = Math.max((int) Math.floor(curWeight / 2.0), MIN_WEIGHT);
             } else {
-                curWeight = Math.max(curWeight + decayModifier, MIN_WEIGHT);
+                curWeight = Math.max(curWeight + activityDecayModifier, MIN_WEIGHT);
             }
             teamActivity.put(curPosition, curWeight);
         }
@@ -607,7 +625,7 @@ public class HeatMap {
             if (curWeight <= MIN_WEIGHT) {
                 continue;
             }
-            curWeight = Math.max(curWeight + decayModifier, MIN_WEIGHT);
+            curWeight = Math.max(curWeight + movementDecayModifier, MIN_WEIGHT);
             teamMovement.put(curPosition, curWeight);
         }
 
@@ -654,7 +672,7 @@ public class HeatMap {
                 if (curWeight <= MIN_WEIGHT) {
                     continue;
                 }
-                curWeight = Math.max(curWeight + decayModifier, MIN_WEIGHT);
+                curWeight = Math.max(curWeight + movementDecayModifier, MIN_WEIGHT);
                 curMap.put(curPosition, curWeight);
             }
         }

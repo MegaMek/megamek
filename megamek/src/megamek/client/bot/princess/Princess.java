@@ -2380,6 +2380,7 @@ public class Princess extends BotClient {
             if (curTeam.getId() != princessTeamId) {
                 HeatMap newMap = new HeatMap(curTeam.getId());
                 newMap.setMapTrimThreshold(0.5);
+                newMap.setActivityDecay(-200);
                 enemyHeatMaps.add(newMap);
             }
         }
@@ -2392,6 +2393,7 @@ public class Princess extends BotClient {
         friendlyHeatMap = new HeatMap(getGame().getTeamForPlayer(this.getLocalPlayer()).getId());
         friendlyHeatMap.setMovementWeightValue(5);
         friendlyHeatMap.setMapTrimThreshold(0.6);
+        friendlyHeatMap.setActivityDecay(-200);
         friendlyHeatMap.setIsTrackingFriendlyTeam(true);
     }
 

@@ -19,10 +19,12 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.SBFClient;
+import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
 
 public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
 
@@ -43,6 +45,13 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
                 .filter(f -> ((SBFFormation) f).getPosition() != null)
                 .map(f -> new SBFFormationSprite(boardView, (SBFFormation) f, game.getPlayer(f.getOwnerId()), game))
                 .forEach(currentSprites::add);
+
+        game.getInGameObjects().stream()
+                .filter(SBFUnitPlaceHolder.class::isInstance)
+                .filter(f -> ((SBFUnitPlaceHolder) f).getPosition() != null)
+                .map(f -> new SBFPlaceHolderSprite(boardView, (SBFUnitPlaceHolder) f, game.getPlayer(f.getOwnerId()), game))
+                .forEach(currentSprites::add);
+
         boardView.addSprites(currentSprites);
     }
 
@@ -55,8 +64,9 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
      */
     public void setSelectedFormation(@Nullable SBFFormation formation) {
         for (Sprite sprite : currentSprites) {
-            SBFFormationSprite formationSprite = (SBFFormationSprite) sprite;
-            formationSprite.setSelected(formationSprite.getFormation().equals(formation));
+            if (sprite instanceof SBFFormationSprite formationSprite) {
+                formationSprite.setSelected(formationSprite.getFormation().equals(formation));
+            }
         }
         boardView.repaint();
     }
@@ -77,4 +87,5 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
         super.gameUnitChange(event);
         update();
     }
+
 }

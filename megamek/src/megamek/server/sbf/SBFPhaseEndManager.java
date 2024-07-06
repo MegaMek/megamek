@@ -73,11 +73,20 @@ public class SBFPhaseEndManager {
             case INITIATIVE_REPORT:
                 gameManager.getGame().setupDeployment();
                 if (gameManager.getGame().shouldDeployThisRound()) {
+                    //TODO: could be handled in SBFGame.isCurrentPhasePlayable
                     gameManager.changePhase(GamePhase.DEPLOYMENT);
+                } else if (gameManager.usesDoubleBlind()) {
+                    //TODO: Problem: phase "execution" always works with turns. Phases without turns
+                    // are skipped and must do their thing in prep or end. Means they must be skipped here explciitly
+                    gameManager.changePhase(GamePhase.SBF_DETECTION);
                 } else {
                     gameManager.changePhase(GamePhase.TARGETING);
                 }
                 break;
+            case SBF_DETECTION:
+                gameManager.changePhase(GamePhase.SBF_DETECTION_REPORT);
+            case SBF_DETECTION_REPORT:
+                gameManager.changePhase(GamePhase.DEPLOYMENT);
             case PREMOVEMENT:
                 gameManager.changePhase(GamePhase.MOVEMENT);
                 break;

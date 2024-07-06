@@ -31,18 +31,7 @@ import java.util.stream.Collectors;
 
 import static megamek.common.Report.publicReport;
 
-public class SBFInitiativeHelper implements SBFGameManagerHelper {
-
-    private final SBFGameManager gameManager;
-
-    public SBFInitiativeHelper(SBFGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-
-    @Override
-    public SBFGameManager gameManager() {
-        return gameManager;
-    }
+public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
     /**
      * Determines the turn order for a given phase, setting the game's turn list and sending it to the
@@ -92,22 +81,22 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
 
     private void writeTurnOrder() {
         if (!gameManager.usesDoubleBlind()) {
-                // The turn order is different in movement phase
-                // if a player has any "even" moving units. ???????????????????????????????????? SBF?
-                Report r = new Report(1020, Report.PUBLIC);
+            // The turn order is different in movement phase
+            // if a player has any "even" moving units. ???????????????????????????????????? SBF?
+            Report r = new Report(1020, Report.PUBLIC);
 
-                boolean hasEven = false;
-                for (SBFTurn turn : game().getTurnsList()) {
-                    Player player = game().getPlayer(turn.playerId());
-                    if (null != player) {
-                        r.add(player.getName());
+            boolean hasEven = false;
+            for (SBFTurn turn : game().getTurnsList()) {
+                Player player = game().getPlayer(turn.playerId());
+                if (null != player) {
+                    r.add(player.getName());
 //                        if (player.getEvenTurns() > 0) {
 //                            hasEven = true;
 //                        }
-                    }
                 }
-                r.newlines = 2;
-                addReport(r);
+            }
+            r.newlines = 2;
+            addReport(r);
 //                if (hasEven) {
 //                    r = new Report(1021, Report.PUBLIC);
 //                    if ((game().getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN)
@@ -121,7 +110,7 @@ public class SBFInitiativeHelper implements SBFGameManagerHelper {
 //                    r.newlines = 2;
 //                    addReport(r);
 //                }
-            }
+        }
     }
 
     private void writeFutureDeployment() {

@@ -117,6 +117,8 @@ public class SBFClient extends AbstractClient {
             case ENTITY_UPDATE:
                 getGame().receiveUnit((InGameObject) packet.getObject(0));
                 break;
+            case UNIT_INVISIBLE:
+                getGame().forget((int) packet.getObject(0));
             default:
                 return false;
         }

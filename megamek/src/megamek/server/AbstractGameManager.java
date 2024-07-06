@@ -92,7 +92,6 @@ public abstract class AbstractGameManager implements IGameManager {
         } else {
             // tell the players about the new phase
             send(packetHelper.createPhaseChangePacket());
-
             executeCurrentPhase();
         }
     }

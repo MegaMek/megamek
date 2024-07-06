@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
@@ -19,45 +18,16 @@
  */
 package megamek.common.strategicBattleSystems;
 
-/**
- * This enum represents the various states of visibility used in SBF games with the Recon rules,
- * IO BF p.195.
- */
-public enum SBFVisibilityStatus {
+public class SBFIGotSomethingUnitPlaceholder extends SBFSomethingOutThereUnitPlaceHolder {
 
-    UNKNOWN,
+    private final int size;
 
-    //
-    INVISIBLE,
+    public SBFIGotSomethingUnitPlaceholder(SBFFormation formation) {
+        super(formation);
+        size = formation.getSize();
+    }
 
-    // ?
-    SENSOR_GHOST,
-
-    // ?
-    SENSOR_PING,
-
-    // Solid Lock, Where?, Scan Interference:
-    BLIP,
-
-    // TP
-    SOMETHING_OUT_THERE,
-
-    // TP and SZ
-    I_GOT_SOMETHING,
-
-    // TP, SZ, MP
-    PARTIAL_SCAN,
-
-    // Same as Partial Scan? TP, SZ, MP, Elements
-    EYES_ON_TARGET,
-
-    // Same as Partial Scan? TP, SZ, MP, Elements
-    PARTIAL_SCAN_RECON,
-
-    // Full Scan
-    VISIBLE;
-
-    public SBFVisibilityStatus betterOf(SBFVisibilityStatus other) {
-        return ordinal() > other.ordinal() ? this : other;
+    public int getSize() {
+        return size;
     }
 }

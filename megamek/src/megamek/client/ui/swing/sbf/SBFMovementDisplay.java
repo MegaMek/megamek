@@ -348,6 +348,9 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
      * @param dest the destination <code>Coords</code> of the move.
      */
     public void findPathTo(final BoardLocation dest, SBFMovePath currentPath) {
+        if (currentUnit == SBFFormation.NONE) {
+            return;
+        }
         if (currentPath == null) {
             currentPath = new SBFMovePath(currentUnit, game().getFormation(currentUnit).get().getPosition(), game());
         }

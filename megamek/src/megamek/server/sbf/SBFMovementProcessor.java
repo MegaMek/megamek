@@ -31,9 +31,7 @@ record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManage
 
         formation.setPosition(movePath.getLastPosition());
         formation.setDone(true);
-        gameManager.addPendingPacket(gameManager.createFormationPacket(formation));
-
-        // This entity's turn is over.
+        gameManager.sendUnitUpdate(formation);
         gameManager.endCurrentTurn(formation);
     }
 

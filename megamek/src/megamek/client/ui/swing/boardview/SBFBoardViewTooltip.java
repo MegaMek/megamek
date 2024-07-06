@@ -18,13 +18,15 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import megamek.client.ui.swing.tooltip.SBFFormationTooltip;
+import megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip;
 import megamek.common.BoardLocation;
 import megamek.common.Coords;
-import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.InGameObject;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
@@ -43,14 +45,34 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
         if (!game.getBoard().contains(coords)) {
             return null;
         }
-        StringBuilder tooltip = new StringBuilder();
+        var location = new BoardLocation(coords, 0); //TODO should not be fixed to board 0
 
-        List<SBFFormation> formations = game.getActiveFormationsAt(new BoardLocation(coords, 0));
-        if (formations.isEmpty()) {
+        StringBuilder tooltip = new StringBuilder("<HTML>");
+        // HEAD - styles for all content must go here
+        tooltip.append("<HEAD>");
+        tooltip.append(SBFInGameObjectTooltip.styles());
+        tooltip.append("</HEAD>");
+
+        // BODY
+        tooltip.append("<BODY>");
+
+        List<InGameObject> units = new ArrayList<>(game.getActiveFormationsAt(location));
+        game.getInGameObjects().stream()
+                .filter(u -> u instanceof SBFUnitPlaceHolder)
+                .map(u -> (SBFUnitPlaceHolder) u)
+                .filter(u -> location.equals(u.getPosition()))
+                .forEach(units::add);
+
+        //TODO: when showing hex info, this must be replaced
+        if (units.isEmpty()) {
             return null;
         }
-        tooltip.append(SBFFormationTooltip.getTooltip(formations, game));
 
+        for (InGameObject unit : units) {
+            tooltip.append(SBFInGameObjectTooltip.getTooltip(unit, game));
+        }
+
+        tooltip.append("</BODY></HTML>");
         return tooltip.toString();
     }
 }

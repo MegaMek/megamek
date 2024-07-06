@@ -113,25 +113,12 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     @Override
     public boolean isCurrentPhasePlayable() {
-        switch (phase) {
-            case INITIATIVE:
-            case END:
-            case TARGETING:
-            case PHYSICAL:
-            case OFFBOARD:
-            case OFFBOARD_REPORT:
-                return false;
-            case DEPLOYMENT:
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case PREFIRING:
-            case FIRING:
-            case DEPLOY_MINEFIELDS:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-                return hasMoreTurns();
-            default:
-                return true;
-        }
+        return switch (phase) {
+            case INITIATIVE, END, TARGETING, PHYSICAL, OFFBOARD, OFFBOARD_REPORT, SBF_DETECTION, SBF_DETECTION_REPORT -> false;
+            case DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING, DEPLOY_MINEFIELDS, SET_ARTILLERY_AUTOHIT_HEXES ->
+                    hasMoreTurns();
+            default -> true;
+        };
     }
 
     @Override
@@ -287,10 +274,6 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         gameReport.replaceAllReports(newReports);
     }
 
-    public void clearTurns() {
-        turnList.clear();
-    }
-
     /**
      * Sets the current list of turns to the given one, replacing any currently present turns.
      *
@@ -315,9 +298,9 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Client-side
      * @param units
      */
+    @ClientOnly
     public void setUnitList(List<InGameObject> units) {
         inGameObjects.clear();
         for (InGameObject unit : units) {
@@ -345,6 +328,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     @ServerOnly
     public List<InGameObject> getFullyVisibleUnits(Player viewingPlayer) {
         return getInGameObjects().stream().filter(unit -> isVisible(viewingPlayer.getId(), unit.getId())).toList();
+    }
+
+    public SBFVisibilityStatus getVisibility(Player player, int unitId) {
+        return visibilityHelper.getVisibility(player.getId(), unitId);
     }
 
     /**
@@ -509,5 +496,13 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     public void setTurnIndex(int turnIndex, int prevPlayerId) {
         setTurnIndex(turnIndex);
         fireGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().playerId()), prevPlayerId));
+    }
+
+    public boolean onSameBoard(SBFFormation unit1, SBFFormation unit2) {
+        return (unit1.getPosition() != null) && unit1.getPosition().isSameBoardAs(unit2.getPosition());
+    }
+
+    public void forget(int unitId) {
+        inGameObjects.remove(unitId);
     }
 }

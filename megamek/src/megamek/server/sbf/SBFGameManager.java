@@ -43,10 +43,12 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     record PendingPacket(int recipient, Packet packet) { }
     private final List<PendingPacket> pendingPackets = new ArrayList<>();
 
-    private final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
-    private final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
-    private final SBFMovementProcessor movementProcessor = new SBFMovementProcessor(this);
+    final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
+    final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
+    final SBFMovementProcessor movementProcessor = new SBFMovementProcessor(this);
     final SBFInitiativeHelper initiativeHelper = new SBFInitiativeHelper(this);
+    final SBFUnitUpdateHelper unitUpdateHelper = new SBFUnitUpdateHelper(this);
+    final SBFDetectionHelper detectionHelper = new SBFDetectionHelper(this);
 
     @Override
     public void handlePacket(int connId, Packet packet) {
@@ -425,19 +427,8 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
      * counter needs to be advanced.
      */
     void endCurrentTurn(SBFFormation entityUsed) {
-        final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
+        final int playerId = (null == entityUsed) ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         changeToNextTurn(playerId);
-    }
-
-    Packet createFormationPacket(SBFFormation formation) {
-        return new Packet(PacketCommand.ENTITY_UPDATE, formation);
-    }
-
-    Packet createUnitPacket(int unitId) {
-        if (game.getInGameObject(unitId).isEmpty()) {
-            LogManager.getLogger().error("No unit found for id {}! ", unitId);
-        }
-        return new Packet(PacketCommand.ENTITY_UPDATE, unitId, game.getInGameObject(unitId).get());
     }
 
     @Override
@@ -481,6 +472,13 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             }
             send(player1.getId(), new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
         }
+    }
+
+    /**
+     * Info at {@link SBFUnitUpdateHelper#sendUnitUpdate(InGameObject)}
+     */
+    void sendUnitUpdate(InGameObject unit) {
+        unitUpdateHelper.sendUnitUpdate(unit);
     }
 
     /**

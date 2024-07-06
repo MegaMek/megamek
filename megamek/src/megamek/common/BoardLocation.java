@@ -18,6 +18,8 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,8 +136,8 @@ public class BoardLocation implements Serializable {
         return coords.toFriendlyString() + " (Map Id: " + boardId + ")";
     }
 
-    public boolean isSameBoardAs(BoardLocation other) {
-        return boardId == other.boardId;
+    public boolean isSameBoardAs(@Nullable BoardLocation other) {
+        return (other != null) && boardId == other.boardId;
     }
 }
 

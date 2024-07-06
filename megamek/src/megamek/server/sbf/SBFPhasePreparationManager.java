@@ -152,7 +152,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
 //                resetActivePlayersDone();
 //                setIneligible(phase);
                 gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
-                gameManager.entityAllUpdate();
+                gameManager.unitUpdateHelper.sendAllUnitUpdate();
                 gameManager.clearPendingReports();
 //                doTryUnstuck();
                 break;
@@ -205,6 +205,10 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 gameManager.transmitAllPlayerUpdates();
                 gameManager.entityAllUpdate();
                 break;
+            case SBF_DETECTION:
+                gameManager.detectionHelper.performSensorDetection();
+                gameManager.unitUpdateHelper.sendAllUnitUpdate();
+            case SBF_DETECTION_REPORT:
             case INITIATIVE_REPORT:
                 gameManager.autoSave();
             case TARGETING_REPORT:
@@ -215,7 +219,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
             case END_REPORT:
                 gameManager.resetActivePlayersDone();
                 gameManager.sendReport();
-//                gameManager.entityAllUpdate();  // really needed in report phase?
+//                gameManager.entityAllUpdate();  //TODO really needed in report phase?
                 if (game().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     gameManager.autoSave();
                 }

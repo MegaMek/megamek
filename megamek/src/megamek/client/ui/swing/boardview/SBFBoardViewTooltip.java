@@ -49,9 +49,9 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
 
         StringBuilder tooltip = new StringBuilder("<HTML>");
         // HEAD - styles for all content must go here
-        tooltip.append("<HEAD>");
+        tooltip.append("<HEAD><STYLE>");
         tooltip.append(SBFInGameObjectTooltip.styles());
-        tooltip.append("</HEAD>");
+        tooltip.append("</STYLE></HEAD>");
 
         // BODY
         tooltip.append("<BODY>");

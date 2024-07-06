@@ -32,6 +32,8 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Set;
 
+import static megamek.client.ui.swing.util.UIUtil.*;
+
 public final class SBFInGameObjectTooltip {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -44,7 +46,7 @@ public final class SBFInGameObjectTooltip {
         int valueSize = (int) (1.1 * base);
         int nameSize = (int) (1.3 * base);
 
-        return "<style>" + ".value { font-family:Exo; font-size:20; }" +
+        return ".value { font-family:Exo; font-size:20; }" +
                 ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }" +
                 ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray; text-align:right; }" +
                 ".unitname { padding-right:10; font-family:Noto Sans; font-size:" + valueSize + "; }" +
@@ -69,23 +71,6 @@ public final class SBFInGameObjectTooltip {
         return result.toString();
     }
 
-    private static String asCSS(String cssClass, String content) {
-        return "<span class=\"" + cssClass + "\">" + content + "</span>";
-    }
-
-    private static String tdCSS(String cssClass, String content) {
-        return "<TD class=\"" + cssClass + "\">" + content + "</TD>";
-    }
-
-    private static String tdCSS(String cssClass, int content) {
-        return "<TD class=\"" + cssClass + "\">" + content + "</TD>";
-    }
-
-//    private static String asCSS(String cssClass, int content) {
-//        return "<span class=\"" + cssClass + "\">" + content + "</span>";
-//    }
-
-
     private static StringBuilder nameLines(InGameObject unit, @Nullable IGame game) {
         StringBuilder result = new StringBuilder();
         Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
@@ -93,9 +78,8 @@ public final class SBFInGameObjectTooltip {
 
         // obscure values for sensor blips
         String pointValue = (unit instanceof SBFFormation) ? Integer.toString(unit.getStrength()) : "??";
-//        String unitName = (unit instanceof SBFFormation) ? unitName(unit) : "Unknown";
 
-        String pvCell = asCSS("label", "PV") + SHORT + asCSS("pvcell", pointValue);
+        String pvCell = spanCSS("label", "PV") + SHORT + spanCSS("pvcell", pointValue);
         result.append("<TABLE class=fullwidth><TR>");
         result.append(tdCSS("formation", unitName(unit)))
                 .append(tdCSS("pvcell", pvCell));
@@ -110,9 +94,7 @@ public final class SBFInGameObjectTooltip {
     }
 
     private record Stats(String type, String size, String morale, String mv, String mvcode, String jump,
-                         String trsp, String trspcode, String tactics, String tmm, String spec, String skill) {
-
-    }
+                         String trsp, String trspcode, String tactics, String tmm, String spec, String skill) { }
 
     private static StringBuilder formationStats(InGameObject unit) {
         Stats stats;

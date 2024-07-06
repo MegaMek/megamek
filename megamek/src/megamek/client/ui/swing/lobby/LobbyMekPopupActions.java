@@ -19,10 +19,7 @@ import megamek.client.generator.TeamLoadoutGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.Team;
+import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
@@ -33,10 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 
@@ -369,7 +363,8 @@ public class LobbyMekPopupActions implements ActionListener {
         MunitionTree mt = new MunitionTree();
         ArrayList<Entity> el = new ArrayList<Entity>(entities);
         ClientGUI clientgui = lobby.getClientgui();
-        Team team = lobby.game().getTeamForPlayer(el.get(0).getOwner());
+        // Team team = lobby.game().getTeamForPlayer(el.get(0).getOwner());
+        Team team = clientgui.getClient().getGame().getTeamForPlayer(el.get(0).getOwner());
         String faction = (team != null) ? team.getFaction() : FactionRecord.IS_GENERAL_KEY;
 
         // Parameters are generated _from_ the teams' information, _for_ the selected entities
@@ -382,11 +377,13 @@ public class LobbyMekPopupActions implements ActionListener {
         switch (command) {
             case LMP_AUTOCONFIG:
                 mt = tlg.generateMunitionTree(rp, el, "");
+                resetBombChoices(clientgui, el);
                 tlg.reconfigureEntities(el, faction, mt, rp);
                 reconfigured = true;
                 break;
             case LMP_RANDOMCONFIG:
                 mt = TeamLoadoutGenerator.generateRandomizedMT();
+                resetBombChoices(clientgui, el);
                 tlg.reconfigureEntities(el, faction, mt, rp);
                 reconfigured = true;
                 break;
@@ -398,6 +395,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 mt = loadLoadout();
                 if (null != mt && null != clientgui) {
                     // Apply to entities
+                    resetBombChoices(clientgui, el);
                     tlg.reconfigureEntities(el, faction, mt, rp);
                     reconfigured = true;
                 }
@@ -406,7 +404,22 @@ public class LobbyMekPopupActions implements ActionListener {
         if (reconfigured) {
             // Have to send reconfig as controlling player
             clientgui.chatlounge.sendProxyUpdates(el, lobby.game().getPlayer(el.get(0).getOwnerId()));
-            //clientgui.getClient().sendPlayerInfo();
+        }
+    }
+
+    private void resetBombChoices(ClientGUI clientgui, ArrayList<Entity> el) {
+        ArrayList<Entity> resetBombers = new ArrayList();
+        for (Entity entity: el) {
+            if (entity.isBomber() && !entity.isVehicle()) {
+                IBomber bomber = (IBomber) entity;
+                // Clear existing bomb choices!
+                bomber.setIntBombChoices(new int[BombType.B_NUM]);
+                bomber.setExtBombChoices(new int[BombType.B_NUM]);
+                resetBombers.add(entity);
+            }
+        }
+        if (!resetBombers.isEmpty()) {
+            clientgui.chatlounge.sendProxyUpdates(resetBombers, lobby.game().getPlayer(el.get(0).getOwnerId()));
         }
     }
 

@@ -1172,10 +1172,6 @@ public class TeamLoadoutGenerator {
         List<Entity> bomberList = new ArrayList<>();
         for (Entity curEntity : entityList) {
             if (curEntity.isBomber() && !curEntity.isVehicle()) {
-                // Clear existing bomb choices!
-                ((IBomber) curEntity).setIntBombChoices(new int[BombType.B_NUM]);
-                ((IBomber) curEntity).setExtBombChoices(new int[BombType.B_NUM]);
-
                 if (!curEntity.getIndividualWeaponList().isEmpty()) {
                     bomberList.add(curEntity);
                 } else {
@@ -1188,9 +1184,6 @@ public class TeamLoadoutGenerator {
             return;
         }
 
-        int minThrust;
-        int maxLoad;
-
         // Some bombers may not be loaded; calculate percentage of total to equip
         int maxBombers = Math.min(
             (int) Math.ceil(((castPropertyInt("percentBombersToEquipMin", 40)
@@ -1200,11 +1193,14 @@ public class TeamLoadoutGenerator {
         );
         int numBombers = 0;
 
-        int[] generatedBombs;
         Map<Integer, int[]> bombsByCarrier = new HashMap<>();
 
         boolean forceHasGuided = false;
         for (int i = 0; i < bomberList.size(); i++) {
+            int minThrust;
+            int maxLoad;
+
+            int[] generatedBombs;
             bombsByCarrier.put(i, new int[BombType.B_NUM]);
 
             // Only generate loadouts up to the maximum number, use empty loadout for the rest
@@ -1238,8 +1234,8 @@ public class TeamLoadoutGenerator {
             // Get a random percentage (default 40 ~ 90) of the maximum bomb load for armed entities
             if (!isUnarmed) {
                 maxLoad = (int) Math.ceil(
-                        castPropertyInt("maxPercentBomberLoadToEquipMin", 50) +
-                        (Compute.randomInt(castPropertyInt("maxPercentBomberLoadToEquipRange", 40))
+                        (castPropertyInt("maxPercentBomberLoadToEquipMin", 50) +
+                        Compute.randomInt(castPropertyInt("maxPercentBomberLoadToEquipRange", 40))
                 ) * maxLoad / 100.0);
             }
 
@@ -1272,6 +1268,10 @@ public class TeamLoadoutGenerator {
 
         }
 
+        loadBombsOntoBombers(bomberList, bombsByCarrier, forceHasGuided);
+    }
+
+    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, int[]> bombsByCarrier, boolean forceHasGuided) {
         // Load ordnance onto units. If there is guided ordnance present then randomly add some TAG
         // pods to those without the guided ordnance.
         int tagCount = Math.min(bomberList.size(), Compute.randomInt(
@@ -1280,12 +1280,12 @@ public class TeamLoadoutGenerator {
         for (int i = 0; i < bomberList.size(); i++) {
             Entity curBomber = bomberList.get(i);
 
-            generatedBombs = bombsByCarrier.get(i);
+            int[] generatedBombs = bombsByCarrier.get(i);
 
             // Don't combine guided ordnance with external TAG
             if (forceHasGuided && tagCount > 0) {
                 int maxLoadForTagger = Math.min((int) Math.floor(
-                        curBomber.getWeight() / castPropertyDouble("maxBomberLoadFactorDivisor", 5.0)),
+                                curBomber.getWeight() / castPropertyDouble("maxBomberLoadFactorDivisor", 5.0)),
                         (curBomber.getWalkMP() - 2) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5)
                 );
                 if (addExternalTAG(generatedBombs, true, maxLoadForTagger)) {

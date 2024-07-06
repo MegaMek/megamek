@@ -92,8 +92,8 @@
     <entry key="fighterCAPMinArmedSafeThrustFractionDivisor">2.0</entry>
     <entry key="maxBomberLoadFactorDivisor">5.0</entry>
     <entry key="maxBomberLoadThrustDiffFactor">5</entry>
-    <entry key="maxPercentBomberLoadToEquipMin">40</entry>
-    <entry key="maxPercentBomberLoadToEquipRange">60</entry>
+    <entry key="maxPercentBomberLoadToEquipMin">50</entry>
+    <entry key="maxPercentBomberLoadToEquipRange">40</entry>
     <entry key="bombersToAddTagMaxCount">3</entry>
     <entry key="bomberRandomThresholdMaxPercent">100</entry>
     <entry key="fighterCAPRandomPercentageRange">100</entry>

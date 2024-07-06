@@ -6803,6 +6803,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 6;
         misc.spreadable = true;
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -7282,6 +7283,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);

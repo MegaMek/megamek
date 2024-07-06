@@ -111,7 +111,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
         for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) &&
                     (entity.getOffBoardDirection() == direction) &&
-                        (targetingPhaseDisplay.ce().isOffBoard() ||
+                        (targetingPhaseDisplay.ce() != null && 
+                        		targetingPhaseDisplay.ce().isOffBoard() ||
                         weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
                 return true;
             }

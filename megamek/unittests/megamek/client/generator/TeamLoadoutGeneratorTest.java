@@ -103,7 +103,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Mauler", "MAL-1K", "Tyson");
         Mounted bin1 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
         Mounted bin2 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
@@ -128,7 +128,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechNoAmmoTypesRequested() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
@@ -143,7 +143,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechOneAmmoType() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
@@ -171,7 +171,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechThreeAmmoTypesFourBins() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
@@ -202,7 +202,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureTwoEntityMechsGenericAndNamed() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mech mockMech2 = createMech("Catapult", "CPLT-C1", "John Q. Public");
@@ -239,8 +239,8 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testReconfigureTeamOfMechs() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+    void testReconfigureTeamOfMechs()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         ReconfigurationParameters rp = new ReconfigurationParameters();
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
@@ -290,8 +290,8 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testRandomReconfigureBotTeam() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+    void testRandomReconfigureBotTeam()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -321,7 +321,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testLoadEntityListTwoEntities() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -347,8 +347,8 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testReconfigureBotTeamNoEnemyInfo() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+    void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -379,7 +379,7 @@ class TeamLoadoutGeneratorTest {
     // Section: legalityCheck tests
     @Test
     void testAmmoTypeIllegalByTechLevel() {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
@@ -406,7 +406,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testAmmoTypeIllegalBeforeCreation() {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
@@ -485,7 +485,7 @@ class TeamLoadoutGeneratorTest {
         ReconfigurationParameters rp = new ReconfigurationParameters();
         rp.nukesBannedForMe = true;
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         // Have the Munition Tree generator use our pre-made mwc so we can see its
         // changes

@@ -359,7 +359,7 @@ public class LobbyMekPopupActions implements ActionListener {
      * @param command
      */
     private void runMunitionConfigCMD(Set<Entity> entities, String command) {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(lobby.getClientgui());
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(lobby.game());
         MunitionTree mt = new MunitionTree();
         ArrayList<Entity> el = new ArrayList<Entity>(entities);
         ClientGUI clientgui = lobby.getClientgui();

@@ -505,7 +505,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         // For new auto-loadout-configuration
         team = client.getGame().getTeamForPlayer(player);
-        tlg = new TeamLoadoutGenerator(clientgui);
+        tlg = new TeamLoadoutGenerator(clientgui.getClient().getGame());
         originalMT = new MunitionTree();
         originalMT.loadEntityList(client.getGame().getPlayerEntities(player, false));
 

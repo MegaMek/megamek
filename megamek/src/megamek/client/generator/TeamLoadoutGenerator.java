@@ -22,7 +22,6 @@ package megamek.client.generator;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
-import megamek.codeUtilities.ObjectUtility;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoMounted;
@@ -271,7 +270,6 @@ public class TeamLoadoutGenerator {
     private static Game game;
 
     protected GameOptions gameOptions = null;
-    protected boolean enableYearLimits = false;
     protected int allowedYear = AbstractUnitSelectorDialog.ALLOWED_YEAR_ANY;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected SimpleTechLevel legalLevel;
@@ -281,21 +279,22 @@ public class TeamLoadoutGenerator {
     protected boolean trueRandom = false;
     protected String defaultBotMunitionsFile = null;
 
-    public TeamLoadoutGenerator(ClientGUI gui) {
-        cg = gui;
-        game = cg.getClient().getGame();
-        gameOptions = game.getOptions();
-        updateOptionValues();
+    public TeamLoadoutGenerator(Game ownerGame){
+        game = ownerGame;
+        updateOptionValues(game.getOptions());
     }
 
-    public TeamLoadoutGenerator(ClientGUI gui, String defaultSettings) {
-        this(gui);
+    public TeamLoadoutGenerator(Game ownerGame, String defaultSettings){
+        this(ownerGame);
         this.defaultBotMunitionsFile = defaultSettings;
     }
 
-    public void updateOptionValues() {
-        gameOptions = cg.getClient().getGame().getOptions();
-        enableYearLimits = true;
+    public void updateOptionValues(){
+        updateOptionValues(game.getOptions());
+    }
+
+    public void updateOptionValues(GameOptions gameOpts) {
+        gameOptions = gameOpts;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         legalLevel = SimpleTechLevel.getGameTechLevel(game);
@@ -325,7 +324,7 @@ public class TeamLoadoutGenerator {
 
         // Nukes are not allowed... unless they are!
         legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR)
-                || cg.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
+                || gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
 
         return legal;
     }
@@ -503,25 +502,41 @@ public class TeamLoadoutGenerator {
         }
         ArrayList<Entity> etEntities = new ArrayList<Entity>();
         ArrayList<String> enemyFactions = new ArrayList<>();
+        for (Team et : g.getTeams()) {
+            if (!et.isEnemyOf(team)) {
+                continue;
+            }
+            enemyFactions.add(et.getFaction());
+            etEntities.addAll((ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et)));
+        }
+
+        return generateParameters(
+                g, gOpts, ownEntities, team.getFaction(), etEntities, enemyFactions
+        );
+    }
+
+    public static ReconfigurationParameters generateParameters(
+            Game g,
+            GameOptions gOpts,
+            ArrayList<Entity> ownEntities,
+            String friendlyFaction,
+            ArrayList<Entity> enemyEntities,
+            ArrayList<String> enemyFactions
+    ) {
+
         boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
-                        || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+                || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         boolean groundMap = g.getBoard().onGround();
         boolean spaceEnvironment = g.getBoard().inSpace();
 
-        // This team can see the opponent teams; set appropriate options
-        if (!blind) {
-            for (Team et : g.getTeams()) {
-                if (!et.isEnemyOf(team)) {
-                    continue;
-                }
-                enemyFactions.add(et.getFaction());
-                etEntities.addAll((ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et)));
-            }
+        if (blind) {
+            enemyEntities.clear();
         }
+
         return generateParameters(
                 ownEntities,
-                etEntities,
+                enemyEntities,
                 friendlyFaction,
                 enemyFactions,
                 blind,

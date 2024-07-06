@@ -37,7 +37,7 @@ public class TargetRoll implements Serializable {
      */
     public static final int CHECK_FALSE = Integer.MIN_VALUE + 1;
 
-    private List<TargetRollModifier> modifiers = new ArrayList<>();
+    protected List<TargetRollModifier> modifiers = new ArrayList<>();
 
     private int total;
 
@@ -256,7 +256,7 @@ public class TargetRoll implements Serializable {
      * indicates an automatic result, stop and just return that modifier. Treat
      * the first modifier listed as a base
      */
-    private void recalculate() {
+    protected void recalculate() {
         total = 0;
 
         for (TargetRollModifier modifier : modifiers) {

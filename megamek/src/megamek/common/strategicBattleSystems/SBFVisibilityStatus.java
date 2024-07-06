@@ -57,7 +57,7 @@ public enum SBFVisibilityStatus {
     // Full Scan
     VISIBLE;
 
-    public SBFVisibilityStatus betterOf(SBFVisibilityStatus other) {
+    public SBFVisibilityStatus bestOf(SBFVisibilityStatus other) {
         return ordinal() > other.ordinal() ? this : other;
     }
 }

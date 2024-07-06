@@ -20,22 +20,29 @@ package megamek.server.sbf;
 
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.planetaryconditions.*;
 import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFVisibilityStatus;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.common.alphaStrike.BattleForceSUA.*;
-
+/**
+ * This class performs detection of formations in the Detection and Recon phase, IO:BF p.195 for the
+ * SBFGameManager.
+ */
 record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
+    /**
+     * Performs sensor detection for all formations of all players and updates the visibility status in the
+     * game accordingly. Does not send anything.
+     */
     void performSensorDetection() {
         if (game().usesDoubleBlind()) {
             for (Player player : game().getPlayersList()) {
-                LogManager.getLogger().info("Detection for " + player.getName());
+                LogManager.getLogger().info("Detection for " + player.getName()); //TODO remove or move to protocol
                 performSensorDetection(player);
             }
         }
@@ -59,41 +66,17 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
                     continue;
                 }
                 //TODO: aero units need special treatment
-                int range = sensorRange(viewingFormation);
-                int distance = viewingFormation.getPosition().getCoords()
-                        .distance(hostileFormation.getPosition().getCoords());
-                if (range >= distance) {
-                    //roll and report
+                var detectionModifiers = new SBFDetectionModifiers(viewingFormation, hostileFormation);
+                if (detectionModifiers.getValue() != TargetRoll.CHECK_FALSE) {
                     Roll diceRoll = Compute.rollD6(2);
-                    List<TargetRollModifier> modifiers = sensorTargetRollModifiers(viewingFormation, hostileFormation);
-                    visibilityStatus = visibilityStatus.betterOf(sensorDetectionResult(diceRoll));
-                    LogManager.getLogger().info("Detected from "+viewingFormation.getId()+" to "+hostileFormation.getId()+" result "+sensorDetectionResult(diceRoll));
+                    int rollResult = diceRoll.getIntValue() + detectionModifiers.getValue();
+                    SBFVisibilityStatus detectionResult = sensorDetectionResult(rollResult);
+                    //TODO remove or move to protocol:
+                    LogManager.getLogger().info("Detected from "+viewingFormation.getId()+" to "+hostileFormation.getId()+" result "+detectionResult);
+                    visibilityStatus = visibilityStatus.bestOf(detectionResult);
                 }
             }
             game().visibilityHelper().setVisibility(viewingPlayer.getId(), hostileFormation.getId(), visibilityStatus);
-        }
-    }
-
-
-    /**
-     * Returns the sensor range for sensor detection, IO:BF p.197
-     *
-     * @param formation The detecting formation
-     * @return the sensor range
-     */
-    private int sensorRange(SBFFormation formation) {
-        //TODO: this is heavily incomplete as the table is quite unclear
-        int rcnExtension = formation.hasSUA(RCN) ? 2 : 0;
-        if (formation.hasSUA(PRB)) {
-            return 8;
-        } else if (formation.hasSUA(BH)) {
-            return 10;
-        } else if (formation.isType(SBFElementType.BM)) {
-            return 6 + rcnExtension;
-        } else if (formation.isType(SBFElementType.V)) {
-            return 5 + rcnExtension;
-        } else {
-            return 0;
         }
     }
 
@@ -107,8 +90,14 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
                 && (formation.getPosition().getCoords() != null);
     }
 
-    private SBFVisibilityStatus sensorDetectionResult(Roll roll) {
-        return switch (MathUtility.clamp(roll.getIntValue(), 2, 12)) {
+    /**
+     * IO:BF p.197
+     *
+     * @param rollWithModifiers The 2d6 roll inlcuding modifiers
+     * @return The visibility status from sensor scan
+     */
+    private SBFVisibilityStatus sensorDetectionResult(int rollWithModifiers) {
+        return switch (MathUtility.clamp(rollWithModifiers, 2, 12)) {
             case 2 -> SBFVisibilityStatus.INVISIBLE;
             case 3, 4 -> SBFVisibilityStatus.SENSOR_GHOST;
             case 5, 6 -> SBFVisibilityStatus.SENSOR_PING;
@@ -118,28 +107,32 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
         };
     }
 
-    private List<TargetRollModifier> sensorTargetRollModifiers(SBFFormation viewer, SBFFormation target) {
-        List<TargetRollModifier> result = new ArrayList<>();
-        int range = sensorRange(viewer);
-        int distance = viewer.getPosition().getCoords()
-                .distance(target.getPosition().getCoords());
-        if (distance < range) {
-            result.add(new TargetRollModifier(Math.min(4, range - distance), "distance below sensor range"));
-        } else if (distance > range) {
-            //TODO make this automatic fail like in ToHit
-            result.add(new TargetRollModifier(-1000, "distance above sensor range"));
+    private int visualRange(SBFFormation formation) {
+        int srchModifier = (formation.hasSUA(BattleForceSUA.SRCH) &&
+                game().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) ? 1 : 0;
+        return switch (visualLevel()) {
+            case 4 -> srchModifier;
+            case 3 -> 1 + srchModifier;
+            case 2 -> srchModifier + (formation.isAnyTypeOf(SBFElementType.BM, SBFElementType.V) ? 2 : 1);
+            default -> srchModifier + (formation.isAnyTypeOf(SBFElementType.BM, SBFElementType.V) ? 4 : 2);
+        };
+    }
+
+    private int visualLevel() {
+        PlanetaryConditions conditions = game().getPlanetaryConditions();
+        Light light = conditions.getLight();
+        Weather weather = conditions.getWeather();
+        Fog fog = conditions.getFog();
+        boolean sand = conditions.isBlowingSand();
+        //TODO: this is missing quite a few conditions
+        if (light.isMoonlessOrPitchBack()) {
+            return 4;
+        } else if (light.isDusk() || weather.isSleet() || sand) {
+            return 3;
+        } else if (weather.isAnyRain() || weather.isAnySnowfall() || !fog.isFogNone()) {
+            return 2;
+        } else {
+            return 1;
         }
-        if (target.hasSUA(AECM) && target.hasAnySUAOf(STL, MAS, LMAS)) {
-            result.add(new TargetRollModifier(-3, "target has AECM and STL, MAS or LMAS"));
-        } else if (target.hasAnySUAOf(STL, MAS, LMAS)) {
-            result.add(new TargetRollModifier(-2, "target has STL, MAS or LMAS"));
-        } else if (target.hasSUA(AECM) && viewer.hasSUA(BH)) {
-            result.add(new TargetRollModifier(-1, "target has AECM, viewer has BH"));
-        } else if (target.hasSUA(AECM)) {
-            result.add(new TargetRollModifier(-2, "target has AECM"));
-        } else if (target.hasAnySUAOf(ECM, WAT, LECM) && !viewer.hasSUA(BH)) {
-            result.add(new TargetRollModifier(-1, "target has ECM, WAT or LECM"));
-        }
-        return result;
     }
 }

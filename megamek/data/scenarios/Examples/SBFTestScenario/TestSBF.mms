@@ -41,7 +41,7 @@ factions:
       at: [ 12, 3 ]
 
     - include: Noble's Company.mmu
-      deploymentround: 3
+      at: [ 9, 15]
 
 
 

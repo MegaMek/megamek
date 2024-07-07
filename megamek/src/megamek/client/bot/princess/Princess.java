@@ -2371,6 +2371,23 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Get the best hotspot (positions of high activity) for friendly units
+     * @return  {@code Coords} with high friendly activity; may return null
+     */
+    public Coords getFriendlyHotspot () {
+        return friendlyHeatMap.getHotSpot();
+    }
+
+    /**
+     * Get the nearest top-rated hotspot for friendly units
+     * @param testPosition
+     * @return
+     */
+    public Coords getFriendlyHotspot (Coords testPosition) {
+        return friendlyHeatMap.getHotSpot(testPosition, true);
+    }
+
+    /**
      * Set up heat maps to track enemy unit positions over time
      */
     protected void initEnemyHeatMaps () {
@@ -2411,10 +2428,6 @@ public class Princess extends BotClient {
                 !e.isAirborneAeroOnGroundMap()).
                 collect(Collectors.toList());
 
-        if (trackedEntities.isEmpty()) {
-            return;
-        }
-
         // Process entities into each heat map, then age it
         for (HeatMap curMap : enemyHeatMaps) {
             curMap.updateTrackers(trackedEntities);
@@ -2437,9 +2450,6 @@ public class Princess extends BotClient {
                     !e.isOffBoard()).
                 collect(Collectors.toList());
 
-        if (trackedEntities.isEmpty()) {
-            return;
-        }
         friendlyHeatMap.updateTrackers(trackedEntities);
         // Units may have skidded, fallen, etc. and need their actual last position updated
         friendlyHeatMap.refreshLastKnownCache(game);

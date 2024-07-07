@@ -2415,7 +2415,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Update the heat maps with enemy unit positions, then apply decay
+     * Update the heat maps with known enemy unit positions, then apply decay
      */
     protected void updateEnemyHeatMaps() {
 
@@ -2430,7 +2430,9 @@ public class Princess extends BotClient {
 
         // Process entities into each heat map, then age it
         for (HeatMap curMap : enemyHeatMaps) {
-            curMap.updateTrackers(trackedEntities);
+            if (!trackedEntities.isEmpty()) {
+                curMap.updateTrackers(trackedEntities);
+            }
             curMap.ageMaps(game);
         }
     }
@@ -2447,10 +2449,13 @@ public class Princess extends BotClient {
                 filter(e -> e.isDeployed() &&
                     !(e instanceof EjectedCrew) &&
                     e.getOwner().getId() != this.getLocalPlayer().getId() &&
+                    !e.isAirborneAeroOnGroundMap() &&
                     !e.isOffBoard()).
                 collect(Collectors.toList());
 
-        friendlyHeatMap.updateTrackers(trackedEntities);
+        if (!trackedEntities.isEmpty()) {
+            friendlyHeatMap.updateTrackers(trackedEntities);
+        }
         // Units may have skidded, fallen, etc. and need their actual last position updated
         friendlyHeatMap.refreshLastKnownCache(game);
         friendlyHeatMap.ageMaps(game);

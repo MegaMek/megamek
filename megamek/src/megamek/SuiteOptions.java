@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,29 +22,31 @@ import java.util.Locale;
 import java.util.prefs.Preferences;
 
 public class SuiteOptions {
-    //region Variable Declarations
+    // region Variable Declarations
     protected static final Preferences userPreferences = Preferences.userRoot();
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     protected SuiteOptions() {
 
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Temporary
+    // region Temporary
     /**
-     * This is a temporary Locale getter, which sets the stage for suite-wide localization.
+     * This is a temporary Locale getter, which sets the stage for suite-wide
+     * localization.
      */
     public Locale getLocale() {
         return Locale.US;
     }
 
     /**
-     * This is a temporary Locale getter for dates, which sets the stage for suite-wide localization.
+     * This is a temporary Locale getter for dates, which sets the stage for
+     * suite-wide localization.
      */
     public Locale getDateLocale() {
         return Locale.US;
     }
-    //endregion Temporary
+    // endregion Temporary
 }

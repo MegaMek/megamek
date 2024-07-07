@@ -20,6 +20,7 @@ package megamek.client;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
+import megamek.common.actions.EntityAction;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -74,7 +75,6 @@ public class SBFClient extends AbstractClient {
     @Override
     @SuppressWarnings("unchecked")
     protected boolean handleGameSpecificPacket(Packet packet) {
-        LogManager.getLogger().info("Player {} received packet: {}", localPlayerNumber, packet);
         switch (packet.getCommand()) {
             case SENDING_ENTITIES:
                 receiveEntities(packet);
@@ -207,12 +207,11 @@ public class SBFClient extends AbstractClient {
 //        }
     }
 
-    /**
-     * Send movement data for the given unit to the server.
-     */
     public void moveUnit(SBFMovePath movePath) {
         send(new Packet(PacketCommand.ENTITY_MOVE, Objects.requireNonNull(movePath)));
     }
 
-
+    public void sendAttackData(List<EntityAction> attacks) {
+        send(new Packet(PacketCommand.ENTITY_ATTACK, Objects.requireNonNull(attacks)));
+    }
 }

@@ -24,6 +24,7 @@ import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
+import megamek.common.actions.TorsoTwistAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -100,7 +101,11 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
     @Override
     protected void updateDonePanel() {
-
+        if (plannedMovement == null || plannedMovement.getSteps().isEmpty()) {
+            updateDonePanelButtons("Done", "Skip Movement", false, null);
+        } else {
+            updateDonePanelButtons("Move", "Skip Movement", true, null);
+        }
     }
 
     private void selectFormation(@Nullable SBFFormation formation) {
@@ -161,6 +166,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         }
         clientgui.selectForAction(game().getFormation(currentUnit).orElse(null));
         clientgui.showMovePath(plannedMovement);
+        updateDonePanel();
     }
 
     @Override
@@ -260,12 +266,20 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        if (isIgnoringEvents() || !clientgui.getClient().getGame().getPhase().isMovement()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        String s = getRemainingPlayerWithTurns();
-        setStatusBarText(s);
+        if (isMyTurn()) {
+            setStatusBarText(Messages.getString("MovementDisplay.its_your_turn"));
+            beginMyTurn();
+        } else {
+            setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerNameOrUnknown(e.getPlayer())));
+            endMyTurn();
+        }
+
+//        String s = getRemainingPlayerWithTurns();
+//        setStatusBarText(s);
 
         // if all our entities are actually done, don't start up the turn.
 //        if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
@@ -274,22 +288,23 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 //            clientgui.bingOthersTurn();
 //            return;
 //        }
-
-        if (isMyTurn()) {
-            if (currentUnit == SBFFormation.NONE) {
-                setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
-            }
-                beginMyTurn();
-        } else {
-            endMyTurn();
-//            if ((e.getPlayer() == null)
-//                    && (clientgui.getClient().getGame().getTurn() instanceof UnloadStrandedTurn)) {
-//                setStatusBarText(Messages.getString("MovementDisplay.waitForAnother") + s);
-//            } else {
-//                setStatusBarTextOthersTurn(e.getPlayer(), s);
+//        String playerName;
+//
+//        if (e.getPlayer() != null) {
+//            playerName = e.getPlayer().getName();
+//        } else {
+//            playerName = "Unknown";
+//        }
+//        if (isMyTurn()) {
+//            if (currentUnit == SBFFormation.NONE) {
+//                setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
 //            }
-//            clientgui.bingOthersTurn();
-        }
+//                beginMyTurn();
+//        } else {
+//            endMyTurn();
+//            setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
+////            clientgui.bingOthersTurn();
+//        }
     }
 
     /**
@@ -369,5 +384,6 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             resetPlannedMovement();
             LogManager.getLogger().error("Unable to find a move path for formation {} to {}!", currentUnit, dest);
         }
+        updateDonePanel();
     }
 }

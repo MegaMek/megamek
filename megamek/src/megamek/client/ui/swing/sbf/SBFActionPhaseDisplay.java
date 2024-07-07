@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.sbf;
 
 import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -175,8 +176,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         }
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
-        // point blank shots don't have the "isMyTurn()" characteristic
-        if ((currentUnit == Entity.NONE)
+        if ((currentUnit == SBFFormation.NONE)
                 || getClientgui().getClient().getGame().getInGameObject(currentUnit).isEmpty()) {
             butDone.setEnabled(false);
             butSkipTurn.setEnabled(false);
@@ -210,5 +210,4 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected final Optional<SBFFormation> actingFormation() {
         return clientgui.getClient().getGame().getFormation(currentUnit);
     }
-    
 }

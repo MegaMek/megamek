@@ -251,7 +251,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
     private void resetEntityPhase(GamePhase phase) {
         for (InGameObject unit : game().getInGameObjects()) {
             if (unit instanceof SBFFormation formation) {
-                formation.setDone(formation.isDone());
+                formation.setDone(false);
             }
         }
     }

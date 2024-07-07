@@ -23,6 +23,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.SBFClientGUI;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.common.BoardLocation;
+import megamek.common.InGameObject;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.strategicBattleSystems.*;
@@ -37,7 +41,13 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
     private enum FiringCommand implements PhaseCommand {
         FIRE_NEXT("moveNext"),
         FIRE_PREVIOUS("movePrevious"),
-        MOVE_MORE("MoveMore");
+        FIRE_MORE("MoveMore"),
+        FIRE_UNIT1("fireunit1"),
+        FIRE_UNIT2("fireunit2"),
+        FIRE_UNIT3("fireunit3"),
+        FIRE_UNIT4("fireunit4"),
+        FIRE_UNIT5("fireunit5"),
+        FIRE_UNIT6("fireunit6");
 
         private final String cmd;
         private final Predicate<SBFFormation> isEligible;
@@ -74,9 +84,10 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
         }
     }
 
-    private final Map<FiringCommand, MegamekButton> buttons = new HashMap<>();
+    private final List<EntityAction> plannedActions = new ArrayList<>();
+    private InGameObject selectedTarget;
 
-    private SBFMovePath plannedMovement;
+    private final Map<FiringCommand, MegamekButton> buttons = new HashMap<>();
 
     public SBFFiringDisplay(SBFClientGUI cg) {
         super(cg);
@@ -93,20 +104,21 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
 
     @Override
     protected void updateDonePanel() {
-
+        if (plannedActions.isEmpty()) {
+            updateDonePanelButtons("Done", "Skip Firing", false, null);
+        } else {
+            updateDonePanelButtons("Fire", "Skip Firing", true, null);
+        }
     }
 
     private void selectFormation(@Nullable SBFFormation formation) {
         if (formation == null) {
             currentUnit = SBFFormation.NONE;
-//            clientgui.clearMovementEnvelope();
         } else {
             currentUnit = formation.getId();
-//            if (isMyTurn() && GUIP.getMoveEnvelope()) {
-//                computeMovementEnvelope(formation);
-//            }
         }
-//        resetPlannedMovement();
+        resetPlannedActions();
+        clientgui.selectForAction(game().getFormation(currentUnit).orElse(null));
     }
 
     protected boolean shouldPerformClearKeyCommand() {
@@ -136,31 +148,15 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
 
     }
 
-    /**
-     * Resets the planned movement for the current formation, if any. This also validates the current
-     * formation and does some extra checks to avoid errors.
-     */
-//    private void resetPlannedMovement() {
-//        if (currentUnit == SBFFormation.NONE || game().getFormation(currentUnit).isEmpty()) {
-//            currentUnit = SBFFormation.NONE;
-//            plannedMovement = null;
-//        } else {
-//            SBFFormation formation = game().getFormation(currentUnit).get();
-//            if (!formation.isDeployed() || formation.getPosition() == null) {
-//                plannedMovement = null;
-//            } else {
-//                plannedMovement = new SBFMovePath(currentUnit, formation.getPosition(), game());
-//            }
-//        }
-//        clientgui.selectForAction(game().getFormation(currentUnit).orElse(null));
-//        clientgui.showMovePath(plannedMovement);
-//    }
-
     @Override
     public void clear() {
-//        resetPlannedMovement();
+        resetPlannedActions();
         updateButtonStatus();
         updateDonePanel();
+    }
+
+    private void resetPlannedActions() {
+        plannedActions.clear();
     }
 
     private void selectNextFormation() {
@@ -182,17 +178,39 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
             selectNextFormation();
         } else if (actionCmd.equals(FiringCommand.FIRE_PREVIOUS.getCmd())) {
             selectPreviousFormation();
+        } else if (actionCmd.equals(FiringCommand.FIRE_UNIT1.cmd)) {
+            fire(1);
+        } else if (actionCmd.equals(FiringCommand.FIRE_UNIT2.cmd)) {
+            fire(2);
+        } else if (actionCmd.equals(FiringCommand.FIRE_UNIT3.cmd)) {
+            fire(3);
+        } else if (actionCmd.equals(FiringCommand.FIRE_UNIT4.cmd)) {
+            fire(4);
+        } else if (actionCmd.equals(FiringCommand.FIRE_UNIT5.cmd)) {
+            fire(5);
+        } else if (actionCmd.equals(FiringCommand.FIRE_UNIT6.cmd)) {
+            fire(6);
         }
+    }
+
+    private void fire(int unit) {
+        if (actingFormation().isEmpty() || !isMyTurn() || selectedTarget == null) {
+            return;
+        }
+        var attack = new SBFStandardUnitAttack(actingFormation().get().getId(), unit, selectedTarget.getId());
+        plannedActions.add(attack);
+        updateButtonStatus();
+        updateDonePanel();
     }
 
     @Override
     public void ready() {
         Optional<SBFFormation> formation = game().getFormation(currentUnit);
-        if (formation.isEmpty() || plannedMovement == null) {
+        if (formation.isEmpty() || plannedActions.isEmpty()) {
             return;
         }
 
-        clientgui.getClient().moveUnit(plannedMovement);
+        clientgui.getClient().sendAttackData(plannedActions);
         endMyTurn();
     }
 
@@ -229,9 +247,26 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
         boolean myTurn = isMyTurn();
         boolean turnIsFormationTurn = game().getTurn() instanceof SBFFormationTurn;
         boolean hasAvailableUnits = turnIsFormationTurn && game().hasEligibleFormation((SBFFormationTurn) game().getTurn());
+        boolean hasTarget = selectedTarget != null;
 
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(myTurn && hasAvailableUnits);
-        buttons.get(FiringCommand.MOVE_MORE).setEnabled(myTurn && (numButtonGroups > 1));
+        buttons.get(FiringCommand.FIRE_MORE).setEnabled(myTurn && (numButtonGroups > 1));
+        if (actingFormation().isPresent() && myTurn) {
+            SBFFormation f = actingFormation().get();
+            buttons.get(FiringCommand.FIRE_UNIT1).setEnabled(!f.getUnits().isEmpty() && hasTarget && isUnitEligible(1));
+            buttons.get(FiringCommand.FIRE_UNIT2).setEnabled(f.getUnits().size() >= 2 && hasTarget && isUnitEligible(2));
+            buttons.get(FiringCommand.FIRE_UNIT3).setEnabled(f.getUnits().size() >= 3 && hasTarget && isUnitEligible(3));
+            buttons.get(FiringCommand.FIRE_UNIT4).setEnabled(f.getUnits().size() >= 4 && hasTarget && isUnitEligible(4));
+            buttons.get(FiringCommand.FIRE_UNIT5).setEnabled(f.getUnits().size() >= 5 && hasTarget && isUnitEligible(5));
+            buttons.get(FiringCommand.FIRE_UNIT6).setEnabled(f.getUnits().size() == 6 && hasTarget && isUnitEligible(6));
+        }
+    }
+
+    private boolean isUnitEligible(int unit) {
+        return actingFormation().isPresent() && actingFormation().get().getUnits().size() >= unit
+                && plannedActions.stream()
+                .filter(a -> a instanceof SBFStandardUnitAttack)
+                .noneMatch(a -> ((SBFStandardUnitAttack) a).getUnitNumber() == unit);
     }
 
     private boolean isMyTurn() {
@@ -240,12 +275,20 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
 
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        if (isIgnoringEvents() || !clientgui.getClient().getGame().getPhase().isMovement()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        String s = getRemainingPlayerWithTurns();
-        setStatusBarText(s);
+        if (isMyTurn()) {
+            setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+            beginMyTurn();
+        } else {
+            setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerNameOrUnknown(e.getPlayer())));
+            endMyTurn();
+        }
+
+//        String s = getRemainingPlayerWithTurns();
+//        setStatusBarText(s);
 
         // if all our entities are actually done, don't start up the turn.
 //        if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
@@ -254,22 +297,30 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
 //            clientgui.bingOthersTurn();
 //            return;
 //        }
-
-        if (isMyTurn()) {
-            if (currentUnit == SBFFormation.NONE) {
-                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
-            }
-            beginMyTurn();
-        } else {
-            endMyTurn();
-//            if ((e.getPlayer() == null)
-//                    && (clientgui.getClient().getGame().getTurn() instanceof UnloadStrandedTurn)) {
-//                setStatusBarText(Messages.getString("MovementDisplay.waitForAnother") + s);
-//            } else {
-//                setStatusBarTextOthersTurn(e.getPlayer(), s);
+//        String playerName;
+//
+//        if (e.getPlayer() != null) {
+//            playerName = e.getPlayer().getName();
+//        } else {
+//            playerName = "Unknown";
+//        }
+//        if (isMyTurn()) {
+//            setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+//            if (currentUnit == SBFFormation.NONE) {
+//                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
 //            }
+//            beginMyTurn();
+//        } else {
+//            setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerNameOrUnknown(e.getPlayer())));
+//            endMyTurn();
+//            setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
 //            clientgui.bingOthersTurn();
-        }
+//        }
+    }
+
+    private void setTarget(@Nullable InGameObject target) {
+        selectedTarget = target;
+        updateButtonStatus();
     }
 
     @Override
@@ -278,7 +329,8 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
             return;
         }
 
-//        currentMove(b.getCoords());
+        if (!game().getActiveFormationsAt(new BoardLocation(b.getCoords(), 0)).isEmpty()) {
+            setTarget(game().getActiveFormationsAt(new BoardLocation(b.getCoords(), 0)).get(0));
+        }
     }
-
 }

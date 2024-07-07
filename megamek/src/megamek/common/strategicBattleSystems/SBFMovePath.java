@@ -146,7 +146,7 @@ public class SBFMovePath implements EntityAction, Serializable {
      * Returns the number of hexes moved
      */
     public int getHexesMoved() {
-        return startLocation.getCoords().distance(getLastPosition().getCoords());
+        return startLocation.coords().distance(getLastPosition().coords());
     }
 
     @Override

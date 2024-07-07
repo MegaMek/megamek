@@ -82,12 +82,12 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
 
     private boolean canDetect(SBFFormation formation) {
         return formation.isDeployed() && (formation.getPosition() != null)
-                && (formation.getPosition().getCoords() != null);
+                && (formation.getPosition().coords() != null);
     }
 
     private boolean canBeDetected(SBFFormation formation) {
         return formation.isDeployed() && (formation.getPosition() != null)
-                && (formation.getPosition().getCoords() != null);
+                && (formation.getPosition().coords() != null);
     }
 
     /**

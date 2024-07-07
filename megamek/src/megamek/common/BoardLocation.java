@@ -23,7 +23,6 @@ import megamek.common.annotations.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -33,23 +32,7 @@ import java.util.stream.Collectors;
  *
  * @implNote BoardLocation is immutable.
  */
-public class BoardLocation implements Serializable {
-
-    private final Coords coords;
-    private final int boardId;
-
-    public BoardLocation(Coords coords, int boardId) {
-        this.coords = coords;
-        this.boardId = boardId;
-    }
-
-    public Coords getCoords() {
-        return coords;
-    }
-
-    public int getBoardId() {
-        return boardId;
-    }
+public record BoardLocation(Coords coords, int boardId) implements Serializable {
 
     public boolean isOnBoard(int boardId) {
         return this.boardId == boardId;
@@ -113,19 +96,6 @@ public class BoardLocation implements Serializable {
     @Override
     public String toString() {
         return coords + "; Map Id: " + boardId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BoardLocation that = (BoardLocation) o;
-        return boardId == that.boardId && Objects.equals(coords, that.coords);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(coords, boardId);
     }
 
     public String getBoardNum() {

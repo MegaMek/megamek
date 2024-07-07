@@ -59,8 +59,8 @@ public class SBFDetectionModifiers extends TargetRoll {
     private List<TargetRollModifier> sensorTargetRollModifiers(SBFFormation viewer, SBFFormation target) {
         List<TargetRollModifier> result = new ArrayList<>();
         int range = sensorRange(viewer);
-        int distance = viewer.getPosition().getCoords()
-                .distance(target.getPosition().getCoords());
+        int distance = viewer.getPosition().coords()
+                .distance(target.getPosition().coords());
         if (distance < range) {
             result.add(new TargetRollModifier(Math.min(4, range - distance), "distance below sensor range"));
         } else if (distance > range) {

@@ -24,7 +24,6 @@ import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
-import megamek.common.actions.TorsoTwistAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -336,7 +335,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         mvEnvData = pathFinder.getAllComputedPaths();
         Map<Coords, Integer> mvEnvMP = new HashMap<>();
         for (BoardLocation c : mvEnvData.keySet()) {
-            mvEnvMP.put(c.getCoords(), mvEnvData.get(c).getMpUsed());
+            mvEnvMP.put(c.coords(), mvEnvData.get(c).getMpUsed());
         }
         clientgui.showMovementEnvelope(formation, mvEnvMP);
     }

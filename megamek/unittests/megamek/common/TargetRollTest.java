@@ -128,6 +128,25 @@ public class TargetRollTest {
     }
 
     @Test
+    public void checkFalseSupersedesTest() {
+        TargetRoll roll = basicTargetRoll();
+        roll.addModifier(TargetRoll.IMPOSSIBLE, "mod");
+        roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "mod");
+        roll.addModifier(TargetRoll.AUTOMATIC_FAIL, "mod");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "mod");
+        assertFalse(roll.needsRoll());
+        assertEquals(roll.getValue(), TargetRoll.CHECK_FALSE);
+
+        roll = basicTargetRoll();
+        roll.addModifier(TargetRoll.CHECK_FALSE, "mod");
+        roll.addModifier(TargetRoll.IMPOSSIBLE, "mod");
+        roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "mod");
+        roll.addModifier(TargetRoll.AUTOMATIC_FAIL, "mod");
+        assertFalse(roll.needsRoll());
+        assertEquals(roll.getValue(), TargetRoll.CHECK_FALSE);
+    }
+
+    @Test
     public void getDescNegativeFirstMod() {
         TargetRoll roll = new TargetRoll();
 

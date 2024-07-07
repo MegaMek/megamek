@@ -202,20 +202,18 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Append another TargetRoll to the end of this one, possibly ignoring non-cumulative Modifier in the other
-     * one.
+     * Append another TargetRoll to the end of this one, possibly discarding non-cumulative modifier
+     * in the other one.
      *
      * @param other the TargetRoll to append
-     * @param appendNonCumulative True to append non cumulative (??)
+     * @param appendNonCumulative True to append all modifiers, false to append only cumulative modifiers
      */
     public void append(TargetRoll other, boolean appendNonCumulative) {
-        if (other == null) {
-            return;
-        }
-        for (TargetRollModifier modifier : other.modifiers) {
-            // possibly only add cumulative mods
-            if (appendNonCumulative || modifier.isCumulative()) {
-                addModifier(modifier);
+        if (other != null) {
+            for (TargetRollModifier modifier : other.modifiers) {
+                if (appendNonCumulative || modifier.isCumulative()) {
+                    addModifier(modifier);
+                }
             }
         }
     }

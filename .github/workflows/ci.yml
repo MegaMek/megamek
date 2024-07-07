@@ -39,7 +39,7 @@ jobs:
 
       - name: Add MMRevision file
         run: |
-          echo ${{ github.sha }} >> megamek/mm-revision.txt
+          echo ${{ github.sha }} >> megamek/megamek/mm-revision.txt
 
       - name: Build with Gradle
         working-directory: megamek

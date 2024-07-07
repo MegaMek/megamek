@@ -22,6 +22,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Keeps track of a target for a roll. Allows adding modifiers with
@@ -41,6 +42,10 @@ public class TargetRoll implements Serializable {
     /** The CHECK_FALSE value is returned when a function that normally would return a target roll number
      determines that the roll wasn't needed after all. */
     public static final int CHECK_FALSE = Integer.MIN_VALUE + 1;
+
+    private static final Set<Integer> FINALIZERS = Set.of(IMPOSSIBLE, AUTOMATIC_FAIL, AUTOMATIC_SUCCESS, CHECK_FALSE);
+    private static final Set<Integer> AUTOS = Set.of(AUTOMATIC_FAIL, AUTOMATIC_SUCCESS);
+    private static final Set<Integer> AUTOS_AND_IMPOSSIBLE = Set.of(IMPOSSIBLE, AUTOMATIC_FAIL, AUTOMATIC_SUCCESS);
 
     /**
      * This list of roll modifiers. Always call recalculate() after modifying it. This is clearly an unsafe
@@ -241,12 +246,11 @@ public class TargetRoll implements Serializable {
     }
 
     private boolean isAutomaticOrImpossible(TargetRollModifier modifier) {
-        return modifier.getValue() == AUTOMATIC_FAIL || modifier.getValue() == AUTOMATIC_SUCCESS
-                || modifier.getValue() == IMPOSSIBLE;
+        return AUTOS_AND_IMPOSSIBLE.contains(modifier.getValue());
     }
 
     private boolean isAutomatic(TargetRollModifier modifier) {
-        return modifier.getValue() == AUTOMATIC_FAIL || modifier.getValue() == AUTOMATIC_SUCCESS;
+        return AUTOS.contains(modifier.getValue());
     }
 
     /**
@@ -265,8 +269,7 @@ public class TargetRoll implements Serializable {
     }
 
     private boolean isFinalizer(int value) {
-        return (value == IMPOSSIBLE) || (value == AUTOMATIC_FAIL)
-                || (value == AUTOMATIC_SUCCESS) || (value == CHECK_FALSE);
+        return FINALIZERS.contains(value);
     }
 
     private void addModifierImpl(TargetRollModifier modifier) {

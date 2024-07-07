@@ -31,8 +31,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 public class SBFDetectionModifiers extends TargetRoll {
 
     public SBFDetectionModifiers(SBFFormation viewer, SBFFormation target) {
-        modifiers.addAll(sensorTargetRollModifiers(viewer, target));
-        recalculate();
+        sensorTargetRollModifiers(viewer, target).forEach(this::addModifier);
     }
 
     /**
@@ -42,7 +41,7 @@ public class SBFDetectionModifiers extends TargetRoll {
      * @return the sensor range
      */
     private int sensorRange(SBFFormation formation) {
-        //TODO: this is heavily incomplete as the table is quite unclear
+        //TODO: this is incomplete as the table is quite unclear
         int rcnExtension = formation.hasSUA(RCN) ? 2 : 0;
         if (formation.hasSUA(PRB)) {
             return 8;

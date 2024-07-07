@@ -123,8 +123,9 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 game().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
-            case PREMOVEMENT:
             case MOVEMENT:
+//                doTryUnstuck();
+            case PREMOVEMENT:
             case DEPLOYMENT:
             case PREFIRING:
             case FIRING:
@@ -142,10 +143,6 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
 //                        }
 //                    }
 //                }
-//                // Update visibility indications if using double blind.
-//                if (doBlind()) {
-//                    updateVisibilityIndicator(null);
-//                }
                 resetEntityPhase(game().getPhase());
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -154,7 +151,6 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
                 gameManager.unitUpdateHelper.sendAllUnitUpdate();
                 gameManager.clearPendingReports();
-//                doTryUnstuck();
                 break;
             case END:
                 resetEntityPhase(game().getPhase());

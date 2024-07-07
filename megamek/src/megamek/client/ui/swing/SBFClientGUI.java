@@ -21,6 +21,7 @@ package megamek.client.ui.swing;
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.sbf.SBFFiringDisplay;
 import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
@@ -425,7 +426,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case FIRING:
-//                initializeWithBoardView(phase, new FiringDisplay(this), CG_FIRINGDISPLAY);
+                initializeWithBoardView(phase, new SBFFiringDisplay(this), CG_FIRINGDISPLAY);
                 break;
             case POINTBLANK_SHOT:
 //                initializeWithBoardView(phase, new PointblankShotDisplay(this), CG_POINTBLANKSHOTDISPLAY);

@@ -37,6 +37,10 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
 
+      - name: Add MMRevision file
+        run: |
+          echo ${{ github.sha }} >> megamek/megamek/mm-revision.txt
+
       - name: Build with Gradle
         working-directory: megamek
         run: ./gradlew build  --stacktrace --scan
@@ -55,14 +59,14 @@ jobs:
           fail_ci_if_error: false
           verbose: true
 
-      - name: Upload Windows Release
+      - name: Upload Zip Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: mm-release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: ./megamek/megamek/build/distributions/megamek-windows-*.zip
+          name: mm-release-zip-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+          path: ./megamek/megamek/build/distributions/MegaMek-*.zip
 
-      - name: Upload Nix/Mac Release
+      - name: Upload TarGZ Release
         uses: actions/upload-artifact@v4
         with:
-          name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: ./megamek/megamek/build/distributions/megamek-unix-*.tar.gz
+          name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+          path: ./megamek/megamek/build/distributions/MegaMek-*.tar.gz

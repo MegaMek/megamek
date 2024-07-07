@@ -64,6 +64,9 @@ public class CacheRebuildTest {
             // This allows the test to prevent any *new* invalid units from being added.
             // If any of these units are corrected to become valid, they should be removed from the KNOWN_INVALID_UNITS list.
             if (KNOWN_INVALID_UNITS.contains(ms.getMulId())) {
+                if (!ms.getInvalid()) {
+                    System.out.println("Unit #" + ms.getMulId() + " " + ms + " expected to be invalid but was not.");
+                }
                 continue;
             }
             if (ms.isCanon() && ms.getInvalid()) {
@@ -93,7 +96,7 @@ public class CacheRebuildTest {
         6812, // Morgenstern MR-1SE
         6811, // Tatsu MIK-OF
         3713, // Aquilla Transport Jumpship
-        766 , //Cudgel CDG-1B
+        766,  // Cudgel CDG-1B
         6631, // Zeus-X ZEU-X
         5391, // Wasp LAM WSP-110
         8101, // Uni ATAE-70 ArtilleryMech
@@ -109,7 +112,7 @@ public class CacheRebuildTest {
         4401, // Jet Sled
         5105, // Speeder
         1531, // Hi-Scout Drone (PathTrak)
-        226 , //Bandit (C) Hovercraft G
+        226,  // Bandit (C) Hovercraft G
         5740, // Ajax Assault Tank C
         5729, // Glaive Medium Tank (MFB)
         3657, // Zugvogel Omni Support Aircraft C
@@ -126,6 +129,8 @@ public class CacheRebuildTest {
         3112, // SturmFeur 'Kalki' Cruise Missile Launcher
         7146, // Capital Drone M-5 'Caspar'
         7148, // Capital Drone M-5C 'Caspar'
-        4692  // Naga Destroyer (Caspar II Control Ship)
+        4692, // Naga Destroyer (Caspar II Control Ship)
+        3759, // Comet Airliner ACL-800
+        7630  // Debbie 'The Warcrime Wagon'
     );
 }

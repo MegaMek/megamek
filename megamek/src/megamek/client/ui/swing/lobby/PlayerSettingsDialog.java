@@ -72,6 +72,10 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  */
 public class PlayerSettingsDialog extends AbstractButtonDialog {
 
+	private static final String CMD_ADD_GROUND_OBJECT = "CMD_ADD_GROUND_OBJECT";
+	private static final String CMD_REMOVE_GROUND_OBJECT = "CMD_REMOVE_GROUND_OBJECT_%d";
+	private static final String CMD_REMOVE_GROUND_OBJECT_PREFIX = "CMD_REMOVE_GROUND_OBJECT_";
+	
     public PlayerSettingsDialog(ClientGUI cg, Client cl, BoardView bv) {
         super(cg.getFrame(), "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
@@ -230,6 +234,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
     private JSpinner spinStartingAnySEy;
+    
+    // ground object config section
+    private Content groundSectionContent = new Content(new GridLayout(2, 3));
+    private final JTextField txtGroundObjectName = new JTextField();
+    private final JFormattedTextField txtGroundObjectTonnage = new JFormattedTextField(formatterFactory, 0);
+    private List<List<Component>> groundSectionComponents = new ArrayList<>();
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -269,6 +279,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
+        mainPanel.add(groundObjectConfigSection());
         mainPanel.add(skillsSection());
         if (!(client instanceof BotClient)) {
             mainPanel.add(emailSection());
@@ -329,6 +340,101 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         butRestoreMT.addActionListener(listener);
         butRestoreMT.setEnabled(false);
         return result;
+    }
+    
+    private JPanel groundObjectConfigSection() {
+    	JPanel result = new OptionPanel("Carryable Ground Objects");
+    	result.setToolTipText("Define carryable objects that can be placed prior to unit deployment");
+    	groundSectionContent = new Content(new GridBagLayout());
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	
+    	gbc.gridx = 0;
+    	gbc.gridy = 0;
+    	JLabel lblName = new JLabel("Name");
+    	groundSectionContent.add(lblName, gbc);
+    	
+    	gbc.gridx = 1;
+    	JLabel lblTonnage = new JLabel("Tonnage");
+    	groundSectionContent.add(lblTonnage, gbc);
+    	
+    	gbc.gridy = 1;
+    	gbc.gridx = 0;
+    	groundSectionContent.add(txtGroundObjectName, gbc);
+    	
+    	gbc.gridx = 1;
+    	groundSectionContent.add(txtGroundObjectTonnage, gbc);
+    	
+    	gbc.gridx = 2;
+    	JButton btnAdd = new JButton("Add");
+    	btnAdd.setActionCommand(CMD_ADD_GROUND_OBJECT);
+    	btnAdd.addActionListener(listener);
+    	groundSectionContent.add(btnAdd, gbc);
+    	
+    	for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
+    		
+    	}
+    	
+    	result.add(groundSectionContent);
+    	return result;
+    }
+    
+    private void addGroundObjectToUI(ICarryable groundObject) {
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	gbc.gridy = groundSectionComponents.size() + 2; // there's always two extra rows - header + text fields 
+		gbc.gridx = 0;
+		
+		JLabel nameLabel = new JLabel(groundObject.getName());
+		groundSectionContent.add(nameLabel, gbc);
+		List<Component> row = new ArrayList<>();
+		row.add(nameLabel);
+    	
+		gbc.gridx = 1;
+		JLabel tonnageLabel = new JLabel(Double.toString(groundObject.getTonnage()));
+		groundSectionContent.add(tonnageLabel, gbc);
+		row.add(tonnageLabel);
+    	
+		gbc.gridx = 2;
+    	JButton btnRemove = new JButton("Remove");
+    	btnRemove.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, player.getGroundObjectsToPlace().size() - 1));
+    	btnRemove.addActionListener(listener);
+    	groundSectionContent.add(btnRemove, gbc);
+    	row.add(btnRemove);
+    	groundSectionComponents.add(row);
+    	validate();
+    }
+    
+    /**
+     * Worker function that uses the current state of the ground object inputs to
+     * add a new ground object to the backing player and the UI
+     */
+    private void addGroundObject() {
+    	Briefcase briefcase = new Briefcase();
+    	briefcase.setName(txtGroundObjectName.getText());
+    	briefcase.setTonnage(Double.parseDouble(txtGroundObjectTonnage.getText()));
+    	player.getGroundObjectsToPlace().add(briefcase);
+    	
+    	addGroundObjectToUI(briefcase);
+    }
+    
+    /**
+     * Worker function that removes the chosen ground object from the backing player and the UI
+     */
+    private void removeGroundObject(String command) {
+    	int index = Integer.parseInt(command.substring(CMD_REMOVE_GROUND_OBJECT_PREFIX.length()));
+    	player.getGroundObjectsToPlace().remove(index);
+    	for(Component component : groundSectionComponents.get(index)) {
+    		groundSectionContent.remove(component);
+    	}
+    	groundSectionComponents.remove(index);
+    	
+    	// kind of a hack, but I'm being lazy - re-index all the CMD_REMOVE_GROUND_OBJECT commands beyond
+    	// the one that just removed, so they're not pointing to higher indexes than they need to
+    	for (int componentIndex = index; componentIndex < groundSectionComponents.size(); componentIndex++) {
+    		((JButton) groundSectionComponents.get(index).get(2))
+    			.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, componentIndex));
+    	}
+    	
+    	validate();
     }
 
     private JPanel botSection() {
@@ -680,6 +786,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
+            }
+            
+            if (e.getActionCommand().equals(CMD_ADD_GROUND_OBJECT)) {
+            	addGroundObject();
+            }
+            
+            if (e.getActionCommand().contains(CMD_REMOVE_GROUND_OBJECT_PREFIX)) {
+            	removeGroundObject(e.getActionCommand());
             }
         }
     };

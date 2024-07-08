@@ -137,6 +137,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
+     * Piles of carry-able objects, sorted by coordinates
+     */
+    private HashMap<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+    
+    /**
      * Constructor
      */
     public Game() {
@@ -3277,8 +3282,50 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
     }
+    
+    /**
+     * Place a carryable object on the ground at the given coordinates
+     */
+    public void placeGroundObject(Coords coords, ICarryable carryable) {
+    	if (!groundObjects.containsKey(coords)) {
+    		groundObjects.put(coords, new ArrayList<>());
+    	}
+    	
+    	groundObjects.get(coords).add(carryable);
+    }
+    
+    /**
+     * Remove the given carryable object from the ground at the given coordinates
+     */
+    public void removeGroundObject(Coords coords, ICarryable carryable) {
+    	if (groundObjects.containsKey(coords)) {
+    		groundObjects.get(coords).remove(carryable);
+    	}
+    }
 
     /**
+     * Get a list of all the objects on the ground at the given coordinates
+     */
+    public List<ICarryable> getGroundObjects(Coords coords) {
+    	return groundObjects.containsKey(coords) ? groundObjects.get(coords) : new ArrayList<ICarryable>();
+    }
+    
+    /**
+	 * @return Collection of objects on the ground. Best to use getGroundObjects(Coords) 
+	 * if looking for objects in specific hex
+	 */
+	public HashMap<Coords, List<ICarryable>> getGroundObjects() {
+		return groundObjects;
+	}
+
+	/**
+	 * @param groundObjects the groundObjects to set
+	 */
+	public void setGroundObjects(HashMap<Coords, List<ICarryable>> groundObjects) {
+		this.groundObjects = groundObjects;
+	}
+
+	/**
      * Cancels a victory
      */
     public void cancelVictory() {

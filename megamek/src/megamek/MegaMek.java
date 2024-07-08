@@ -31,11 +31,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import org.apache.logging.log4j.LogManager;
 
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
@@ -48,6 +45,7 @@ import megamek.common.commandline.ClientServerCommandLineParser;
 import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.commandline.MegaMekCommandLineParser;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.RATGeneratorEditor;
 
@@ -80,14 +78,10 @@ public class MegaMek {
 
         // First, create a global default exception handler
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
-            Sentry.captureException(t);
-            LogManager.getLogger().error("Uncaught Exception Detected", t);
             final String name = t.getClass().getName();
-            JOptionPane.showMessageDialog(
-                    null,
-                    String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name),
-                    String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name),
-                    JOptionPane.ERROR_MESSAGE);
+            final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
+            final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
+            MMLogger.error(t, message, title);
         });
 
         // Second, let's handle logging
@@ -100,9 +94,8 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            Sentry.captureException(e);
-            LogManager.getLogger()
-                    .fatal(String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
+            MMLogger.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+                    parser.help()));
             System.exit(1);
         }
 
@@ -139,8 +132,7 @@ public class MegaMek {
     }
 
     public static void initializeLogging(final String originProject) {
-        final String initialMessage = getUnderlyingInformation(originProject);
-        LogManager.getLogger().info(initialMessage);
+        MMLogger.info(getUnderlyingInformation(originProject));
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -167,7 +159,7 @@ public class MegaMek {
         }
 
         if (!new File(filename).exists()) {
-            LogManager.getLogger().warn("MegaMek.jar not found. Returning null checksum.");
+            MMLogger.warn("MegaMek.jar not found. Returning null checksum.");
             return null;
         }
 
@@ -175,8 +167,7 @@ public class MegaMek {
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            Sentry.captureException(e);
-            LogManager.getLogger().error("", e);
+            MMLogger.error(e, "SHA-256 Algorithm Can't be Found");
             return null;
         }
 
@@ -190,8 +181,7 @@ public class MegaMek {
                 sb.append(String.format("%02x", d));
             }
         } catch (Exception e) {
-            Sentry.captureException(e);
-            LogManager.getLogger().error("", e);
+            MMLogger.error(e, "Error Calculating Hash");
             return null;
         }
 
@@ -217,11 +207,7 @@ public class MegaMek {
      * @param args the arguments to the dedicated server.
      */
     private static void startDedicatedServer(String... args) {
-        if (LogManager.getLogger().isInfoEnabled()) {
-            LogManager.getLogger().info(
-                    String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args)));
-        }
-
+        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args)));
         DedicatedServer.start(args);
     }
 
@@ -240,9 +226,9 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            Sentry.captureException(e);
-            LogManager.getLogger().error(
-                    String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
+            final String message = String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+                    parser.help());
+            MMLogger.error(e, message);
             System.exit(1);
         }
 
@@ -252,10 +238,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        if (LogManager.getLogger().isInfoEnabled()) {
-            LogManager.getLogger().info(
-                    String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
-        }
+        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -287,9 +270,8 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            Sentry.captureException(e);
-            LogManager.getLogger().error(
-                    String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
+            MMLogger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+                    parser.help()));
             System.exit(1);
         }
 
@@ -299,10 +281,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        if (LogManager.getLogger().isInfoEnabled()) {
-            LogManager.getLogger().info(
-                    String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
-        }
+        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -335,9 +314,8 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            Sentry.captureException(e);
-            LogManager.getLogger().error(
-                    String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()), e);
+            MMLogger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+                    parser.help()));
             System.exit(1);
         }
 
@@ -345,10 +323,7 @@ public class MegaMek {
                 null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        if (LogManager.getLogger().isInfoEnabled()) {
-            LogManager.getLogger().info(
-                    String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args)));
-        }
+        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args)));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -361,7 +336,7 @@ public class MegaMek {
      * Starts MegaMek's splash GUI
      */
     private static void startGUI() {
-        LogManager.getLogger().info("Starting MegaMekGUI.");
+        MMLogger.info("Starting MegaMekGUI.");
         SwingUtilities.invokeLater(() -> new MegaMekGUI().start(true));
     }
 
@@ -378,8 +353,7 @@ public class MegaMek {
      * @param currentProject the currently described project
      * @return the underlying information for this launch
      */
-    public static String getUnderlyingInformation(final String originProject,
-            final String currentProject) {
+    public static String getUnderlyingInformation(final String originProject, final String currentProject) {
         final LocalDateTime buildDate = getBuildDate();
         return String.format("""
                 Starting %s v%s

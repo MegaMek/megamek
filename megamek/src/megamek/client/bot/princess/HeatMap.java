@@ -6,17 +6,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Tracks activity of visible units on the map. Board positions that are frequently occupied by
- * units get higher values while those that are the least frequent get lower values. This creates a
- * rough history of where units were concentrated which can be used for intelligent estimates about
- * where they will be in future turns.
+ * Tracks activity of units on the map. Board positions that are frequently occupied by units get
+ * higher values, while those that are the least frequent get lower values. This creates a rough
+ * history of where units were concentrated within the last couple of game turns which can be used
+ * for intelligent estimates about where they will be in future turns.
+ * Normal operation is to call {@code ageMaps()} method once per round so previously set entries are
+ * reduced over time.
  */
 public class HeatMap {
 
     private static final int MIN_DECAY_MODIFIER = -1;
     private static final int MIN_WEIGHT = 0;
-    private static final int MAX_WEIGHT = 100;
-    private static final int MAX_MP_WEIGHT = 10;
     private static final double MIN_TRACKER_TOLERANCE = 0.1;
     private static final double MAX_TRACKER_TOLERANCE = 0.9;
     private static final int MAX_TRACKER_ENTRIES = 100;
@@ -28,19 +28,21 @@ public class HeatMap {
     // Tracking team activity
     private Map<Coords, Integer> teamActivity;
     private Map<Coords, Integer> teamMovement;
+    private Map<Integer, Map<Coords, Integer>> entityMovement;
+    private Map<Integer, Coords> lastPositionCache;
 
     // Tracking individual units
     private boolean trackIndividualUnits;
-    private Map<Integer, Coords> lastPositionCache;
-    private Map<Integer, Map<Coords, Integer>> entityMovement;
 
     // Control whether decay is applied or not
     private boolean enableDecay;
-    private int movementDecayModifier;
     private int activityDecayModifier;
+    private int movementDecayModifier;
 
     private int movementWeight;
     private int removalWeight;
+
+    // How many entries can be minimum value before the tracker is purged
     private double mapTrimThreshold;
 
     // Scaling factor applied to unit weight
@@ -50,7 +52,7 @@ public class HeatMap {
     private boolean isFriendlyTeam;
 
     /**
-     * Constructor. Initializes all backing objects to an empty state.
+     * Constructor. Initializes trackers to empty but usable states.
      */
     public HeatMap (int newTeamID) {
         initialize(newTeamID);
@@ -58,7 +60,7 @@ public class HeatMap {
 
     /**
      * Initialize backing objects
-     * @param newTeamId
+     * @param newTeamId  ID of team this heat map is tracking
      */
     private void initialize (int newTeamId) {
         teamId = newTeamId;
@@ -85,7 +87,7 @@ public class HeatMap {
 
     /**
      * Base weight for movement trackers. Large values will result in movement being retained
-     * longer. Typically 1.0 to 10.0 with 3.0 being the default.
+     * longer. Normal range 1 to 10 with 3.0 being the default.
      * @param newSetting  positive value, minimum 1.0
      */
     public void setMovementWeightValue (int newSetting) {
@@ -93,23 +95,25 @@ public class HeatMap {
     }
 
     /**
-     * Indicates if this heat map will track individual entities in addition to team positions.
-     * @return
+     * Indicates if the movement tracker in this heat map will track individuals in addition to
+     * overall team
+     * @return  true if individual unit movement is being tracked
      */
     public boolean canTrackIndividuals () {
         return trackIndividualUnits;
     }
 
     /**
-     * Enable or disable tracking of individual unit movement
-     * @param newSetting
+     * Enable or disable tracking of individual unit movements
+     * @param newSetting   true, to track individual movement of all units
      */
-    public void setTrackIndividuals(boolean newSetting) {
+    public void setTrackIndividuals (boolean newSetting) {
         trackIndividualUnits = newSetting;
     }
 
     /**
-     * Determines if decay is applied to the map when {@code ageMaps()} is called
+     * Determines if decay is applied to the map when {@code ageMaps()} is called. Default setting
+     * is true.
      * @return  false if decay rate is disabled
      */
     public boolean isDecayEnabled () {
@@ -118,14 +122,14 @@ public class HeatMap {
 
     /**
      * Change the setting to enable or disable decay rate on tracker weights
-     * @param newSetting
+     * @param newSetting  false, to disable decay
      */
     public void changeDecayEnabled (boolean newSetting) {
         enableDecay = newSetting;
     }
 
     /**
-     * Reduction weight for aging the activity map
+     * Reduction weight for aging the activity tracker
      * @return    a negative number
      */
     public int getActivityDecay () {
@@ -133,16 +137,16 @@ public class HeatMap {
     }
 
     /**
-     * Set the linear reduction applied to each weight in the activity tracker
+     * Set the reduction weight applied to each entry in the activity tracker. Higher absolute
+     * values will cause the entries to reduce more quickly, reducing their relative importance.
      * @param newSetting   a negative number
-     * @return
      */
     public void setActivityDecay (int newSetting) {
         activityDecayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
     }
 
     /**
-     * Reduction weight for each map entry on each game turn
+     * Reduction weight for aging the team movement and individual movement trackers
      * @return  a negative number
      */
     public int getMovementDecay () {
@@ -150,7 +154,7 @@ public class HeatMap {
     }
 
     /**
-     * Set reduction weight for each map entry on each game turn. Must be negative number.
+     * Set reduction weight applied to the team movement and individual movement trackers
      * @param newSetting   a negative number
      */
     public void setMovementDecay (int newSetting) {
@@ -158,7 +162,7 @@ public class HeatMap {
     }
 
     /**
-     * Scaling factor applied when converting entities to weights for the tracking maps
+     * Scaling factor applied when calculating weights for use in the trackers
      * @return   positive, non-zero number, typically between 0.1 and 5.0 with default of 1.0
      */
     public double getWeightScaling () {
@@ -166,10 +170,9 @@ public class HeatMap {
     }
 
     /**
-     * Scaling factor applied when converting entities to weights for the tracking maps. 0.5 is
-     * half normal, 2.0 is twice normal, etc. Higher factor mean larger weight, and bigger impact
-     * on the map. Typical values will be in the range of 0.1 to 5.0, although values outside that
-     * are permitted.
+     * Scaling factor applied when calculating weights for the trackers. 0.5 is half normal, 2.0 is
+     * twice normal, etc. Higher factor mean larger weight, and bigger impact on the map. Typical
+     * values will be in the range of 0.1 to 5.0, although values outside that are permitted.
      * @param newSetting  positive, non-zero number
      */
     public void setWeightScaling (double newSetting) {
@@ -206,18 +209,20 @@ public class HeatMap {
     }
 
     /**
-     * When the percentage of minimum values in any map exceeds this value, the map is trimmed of
-     * all minimum values to maintain efficiency. Typical values are between 0.1 and 0.5.
-     * TODO: consider auto-setting this based on percentage of map size or other factors
+     * When the percentage of minimum values in any tracker exceeds this value, any entries at or
+     * below {@code mapTrimThreshold} are removed to maintain efficiency. Typical values are between
+     * 0.1 and 0.5.
+     *
      * @param newSetting  positive value between {@code MIN_TRACKER_TOLERANCE} and
      *                    {@code MAX_TRACKER_TOLERANCE}
      */
-    public void setMapTrimThreshold(double newSetting) {
+    public void setMapTrimThreshold (double newSetting) {
         mapTrimThreshold = Math.min(Math.max(newSetting, MIN_TRACKER_TOLERANCE), MAX_TRACKER_TOLERANCE);
     }
 
     /**
-     * Identifies if this is tracking a friendly team, so visibility and detection status don't apply
+     * Identifies if this is tracking a friendly team, so visibility and detection status don't
+     * apply
      */
     public boolean getIsTrackingFriendlyTeam () {
         return isFriendlyTeam;
@@ -225,6 +230,8 @@ public class HeatMap {
 
     /**
      * Tracking friendly entities doesn't require checking visibility or detection status
+     *
+     * @param newSetting  true, if this is tracking entities on the same team
      */
     public void setIsTrackingFriendlyTeam (boolean newSetting) {
         isFriendlyTeam = newSetting;
@@ -233,7 +240,8 @@ public class HeatMap {
 
     /**
      * Get all hotspots (positions of high activity) in descending order
-     * @return
+     *
+     * @return  list of positions, or null if team activity tracker is empty
      */
     public List<Coords> getHotSpots () {
 
@@ -327,7 +335,7 @@ public class HeatMap {
     /**
      * Get the hotspot (position with high activity) with the highest rating. If multiple hotspots
      * of equal value are present, any one of them may be returned.
-     * @return
+     * @return   map position, may return null
      */
     public Coords getHotSpot () {
         List<Coords> rankedPositions = getHotSpots();
@@ -338,15 +346,11 @@ public class HeatMap {
         }
     }
 
-
-    // TODO: method to determine if team is travelling in column or front using team movement tracker
-
-    // TODO: method to find point of advance using team movement tracker (highest value/group of values)
-
     /**
-     * Adjusts the heat map using the current position of each provided entity. Filters out gun
-     * emplacements and ejected MechWarriors and vehicle crews
-     * @param tracked
+     * Adjusts the trackers using the current position of each provided entity that matches the team
+     * this heat map is tracking. Filters out gun emplacements and ejected MechWarriors/vehicle
+     * crews, as well as functional units with a dead pilot/crew.
+     * @param tracked  list of entities to process
      */
     public void updateTrackers (List<Entity> tracked) {
 
@@ -378,8 +382,9 @@ public class HeatMap {
     }
 
     /**
-     * Updates the heat map with a specific movement path. Filters out gun emplacements and ejected
-     * MechWarriors and vehicle crews.
+     * Updates the trackers using a specific movement path. Filters out gun emplacements and ejected
+     * MechWarriors/vehicle crews. Because this information is only available for entities under
+     * direct Princess control, this is normally limited to tracking friendly entities.
      * @param detailedMove  {@link MovePath} object, which includes an entity reference and Coords
      *                      for the positions moved through
      */
@@ -416,7 +421,7 @@ public class HeatMap {
         }
 
         // Update the team map, adding the position if not already present
-        updateTeamMap(lastPosition, mapAdjustment);
+        updateTeamActivityMap(lastPosition, mapAdjustment);
 
         // Only process the movement trackers if the entity has moved from it's last known position
         if (lastPosition != null && !path.isEmpty()) {
@@ -434,8 +439,9 @@ public class HeatMap {
     }
 
     /**
-     * Reduces the values for every entry in the map. This will gradually reduce the weights over
-     * time for positions that are not regularly updated.
+     * Reduces the values for every entry in the trackers. This will gradually reduce the weights
+     * over time for positions that are not regularly updated. If enough entries are below the set
+     * threshold, all entries which are at or below that threshold will be removed.
      */
     public void ageMaps (Game game) {
 
@@ -459,7 +465,7 @@ public class HeatMap {
 
     /**
      * Manually update the last known positions of tracked entities
-     * @param game
+     * @param game  current game
      */
     public void refreshLastKnownCache (Game game) {
 
@@ -481,19 +487,19 @@ public class HeatMap {
 
 
     /**
-     * Apply the position to the team maps and the entity movement map if used
-     * @param tracked
+     * Apply the entity position to the activity and movement trackers
+     * @param tracked  entity to process
      */
     private void processEntity (Entity tracked) {
         Coords position = new Coords(tracked.getPosition().getX(), tracked.getPosition().getY());
 
-        // Get the map adjustments, based on entity position
+        // Get the map adjustments, based on entity BV
         int mapAdjustment = getTeamWeightAdjustment(tracked);
 
-        // Update the team map, adding the position if not already present
-        updateTeamMap(position, mapAdjustment);
+        // Update the team activity tracker, adding the position if not already present
+        updateTeamActivityMap(position, mapAdjustment);
 
-        // Only process the movement trackers if the entity has moved from it's last known position
+        // Only update the movement trackers if the entity has moved from it's last known position
         if (!position.equals(lastPositionCache.get(tracked.getId()))) {
 
             // Interpolate movement from last known position
@@ -510,7 +516,7 @@ public class HeatMap {
 
             updateTeamMovementMap(path, mapAdjustment);
 
-            // If individual entity tracking is enabled, adjust the entity map
+            // If individual entity tracking is enabled, adjust the entity tracker
             if (trackIndividualUnits) {
                 updateEntityMap(tracked.getId(), path, mapAdjustment);
             }
@@ -521,20 +527,20 @@ public class HeatMap {
     }
 
     /**
-     * Update the team tracker for a given location
-     * @param position
-     * @param adjustment
+     * Update the team activity tracker for a given position
+     * @param position    position to update
+     * @param adjustment  modifier to existing value
      */
-    private void updateTeamMap (Coords position, int adjustment) {
+    private void updateTeamActivityMap(Coords position, int adjustment) {
         int mapValue = teamActivity.getOrDefault(position, 0) + adjustment;
         teamActivity.put(position, mapValue);
     }
 
     /**
-     * Get the weight of the entity for adjusting the team map. Higher BV units get a larger weight,
-     * while faster units have a reduced weight.
-     * @param tracked
-     * @return
+     * Get the weight of the entity for adjusting the team activity tracker. Higher BV units get a
+     * larger weight, while faster units have a reduced weight.
+     * @param tracked  entity to calculate weight for
+     * @return         weight to modify tracker with
      */
     private int getTeamWeightAdjustment (Entity tracked) {
 
@@ -542,18 +548,18 @@ public class HeatMap {
         if (bvWeight == -1) {
             bvWeight = tracked.getInitialBV();
         }
-        bvWeight = (int) Math.floor(weightScaling * bvWeight);
 
         bvWeight = Math.max(bvWeight - (100 * Math.max(tracked.getJumpMP(), tracked.getWalkMP())), 1);
+        bvWeight = (int) Math.floor(weightScaling * bvWeight);
 
         return bvWeight;
     }
 
     /**
-     * Apply decay rate to team activity map. Positions that have a trakced entity use a slower,
+     * Apply decay rate to team activity map. Positions that have a tracked entity use a slower,
      * linear decay rate, while those that do not have a tracked entity use a faster exponential
      * decay rate
-     * @param game
+     * @param game   current game
      */
     private void ageTeamActivityMap (Game game) {
 
@@ -591,8 +597,8 @@ public class HeatMap {
 
     /**
      * Update the team movement tracker for a given path
-     * @param path
-     * @param adjustment
+     * @param path        positions an entity has moved through
+     * @param adjustment  weight to modify tracker with
      */
     private void updateTeamMovementMap (List<Coords> path, int adjustment) {
         int mapValue = adjustment;
@@ -606,11 +612,11 @@ public class HeatMap {
 
     /**
      * Get the weight for tracking movement. For now, this is a simple number chosen so that the
-     * entities movement can be evaluated for the past several rounds.
-     * @param tracked
-     * @return
+     * entity's movement can be evaluated for the past several rounds.
+     * @param tracked   entity to calculate weight for
+     * @return          weight to modify tracker with
      */
-    private int getMovementWeightAdjustment(Entity tracked) {
+    private int getMovementWeightAdjustment (Entity tracked) {
         return (int) Math.floor(movementWeight * weightScaling);
     }
 
@@ -632,11 +638,11 @@ public class HeatMap {
     }
 
     /**
-     * Update the entity tracker for a given position
+     * Update the entity movement tracker
      *
-     * @param trackedId
-     * @param positions
-     * @param adjustment
+     * @param trackedId   game ID of entity
+     * @param positions   positions entity has moved through
+     * @param adjustment  weight to modify tracker with
      */
     private void updateEntityMap (int trackedId, List<Coords> positions, int adjustment) {
         Map<Coords, Integer> positionMap;
@@ -679,11 +685,10 @@ public class HeatMap {
 
     }
 
-    // TODO: add method to calculate entity movement vector based on weighted average of movement
-
     /**
      * Keep track of the last known position of each entity for interpolating movement
-     * @param tracked
+     * @param trackedId  game ID of entity to update
+     * @param position   new position
      */
     private void updateLastKnown (int trackedId, Coords position) {
         if (!lastPositionCache.containsKey(trackedId) || !lastPositionCache.get(trackedId).equals(position)) {
@@ -693,6 +698,8 @@ public class HeatMap {
 
     /**
      * Remove destroyed entities from the last known position tracker
+     *
+     * @param game  current game
      */
     private void trimLastKnownPositions (Game game) {
         for (Entity curCorpse : game.getOutOfGameEntitiesVector()) {
@@ -703,8 +710,10 @@ public class HeatMap {
     }
 
     /**
-     * Removes all elements with a weight equal to or lower than the removal weight
-     * @param checkMap
+     * If the percentage of entries in the given tracker that are low enough for removal is higher
+     * than the provided threshold, this will remove them. If the number of entries in the tracker
+     * exceed the maximum number then the lowest values
+     * @param checkMap  tracker to update
      */
     private void trimMap (Map<Coords, Integer> checkMap) {
         if ((double) checkMap.values().stream().filter(w -> w <= removalWeight).count() / checkMap.size() >= mapTrimThreshold) {
@@ -724,11 +733,11 @@ public class HeatMap {
     }
 
     /**
-     * Get the highest rated positions from a tracking map
-     * @param trackingMap
-     * @param maxRange
-     * @param basePoint
-     * @return
+     * Get the highest rated positions in a tracker, given a base point and limited distance
+     * @param trackingMap tracker to process
+     * @param maxRange    how far from provided position to consider
+     * @param basePoint   base point
+     * @return            list of positions, sorted from highest weight to lowest
      */
     private Collection<Coords> getTopRatedPositions (Map<Coords, Integer> trackingMap, int maxRange, Coords basePoint) {
         Collection<Coords> topSet = new HashSet<>();
@@ -748,17 +757,18 @@ public class HeatMap {
     }
 
     /**
-     * Split the provided Map into two lists, sorted from highest weight to lowest weight
-     * @param input
-     * @param positions
-     * @param weights
+     * Split the provided tracker into two lists, sorted from the highest weight to lowest
+     * @param trackingMap  tracker to process
+     * @param positions    list of {@link Coords} to populate
+     * @param weights      list of tracker weights to populate
+     * @throws             IllegalArgumentException if uninitialized lists are provided
      */
-    private void splitAndSort (Map<Coords, Integer> input, List<Coords> positions, List<Integer> weights) {
+    private void splitAndSort (Map<Coords, Integer> trackingMap, List<Coords> positions, List<Integer> weights) {
         if (positions == null || weights == null) {
             throw new IllegalArgumentException("Expecting initialized List<> object(s).");
         }
 
-        Map<Coords, Integer> workingMap = new HashMap<>(input);
+        Map<Coords, Integer> workingMap = new HashMap<>(trackingMap);
 
         while (!workingMap.isEmpty()) {
             int maxWeight = workingMap.values().stream().mapToInt(w -> w).max().getAsInt();
@@ -776,12 +786,12 @@ public class HeatMap {
     }
 
     /**
-     * Uses weighted sum of team activity weights, adjusted for how far they are from the provided
-     * position
-     * @param position
-     * @return
+     * Calculate a value for a position using both the weights in the activity tracker and how far
+     * they are from that position
+     * @param testPosition  position to calculate for, may be in the activity tracker or not
+     * @return     integer value representing how 'hot' the provided position is
      */
-    private int getHotSpotRating (Coords position) {
+    private int getHotSpotRating (Coords testPosition) {
 
         // When there is only one position in the activity tracker, the result is always that value
         if (teamActivity.size() == 1) {
@@ -789,7 +799,7 @@ public class HeatMap {
         }
 
         // Get the farthest position for scaling purposes
-        int longestDistance = teamActivity.keySet().stream().mapToInt(position::distance).max().getAsInt();
+        int longestDistance = teamActivity.keySet().stream().mapToInt(testPosition::distance).max().getAsInt();
 
         // Sum the distances of each usable weight weighted by the distance from the provided
         // position
@@ -797,7 +807,7 @@ public class HeatMap {
                 keySet().
                 stream().
                 mapToDouble(curPosition -> teamActivity.get(curPosition) *
-                    (double) (longestDistance - position.distance(curPosition)) / longestDistance).
+                    (double) (longestDistance - testPosition.distance(curPosition)) / longestDistance).
                 sum();
 
         return (int) Math.floor(runningTotal);

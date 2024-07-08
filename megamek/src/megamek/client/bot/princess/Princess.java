@@ -2357,19 +2357,19 @@ public class Princess extends BotClient {
      * @return
      */
     public List<Coords> getEnemyHotspots () {
-        List<Coords> accumlatedHotspots = new ArrayList<>();
+        List<Coords> accumulatedHotspots = new ArrayList<>();
         for (HeatMap curMap : enemyHeatMaps) {
-            List<Coords> mapHospots = curMap.getHotSpots();
-            if (mapHospots != null) {
-                for (Coords curPosition : mapHospots) {
-                    if (!accumlatedHotspots.contains(curPosition)) {
-                        accumlatedHotspots.add(curPosition);
+            List<Coords> mapHotspots = curMap.getHotSpots();
+            if (mapHotspots != null) {
+                for (Coords curPosition : mapHotspots) {
+                    if (!accumulatedHotspots.contains(curPosition)) {
+                        accumulatedHotspots.add(curPosition);
                     }
                 }
             }
         }
 
-        return accumlatedHotspots;
+        return accumulatedHotspots;
     }
 
     /**

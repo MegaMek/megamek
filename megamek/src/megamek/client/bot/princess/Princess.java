@@ -2427,7 +2427,7 @@ public class Princess extends BotClient {
                 filter(e -> e.isDeployed() &&
                 !e.isOffBoard() &&
                 !(e instanceof EjectedCrew) &&
-                !e.isAirborneAeroOnGroundMap()).
+                e.isGround()).
                 collect(Collectors.toList());
 
         // Process entities into each heat map, then age it
@@ -2451,7 +2451,7 @@ public class Princess extends BotClient {
                 filter(e -> e.isDeployed() &&
                     !(e instanceof EjectedCrew) &&
                     e.getOwner().getId() != this.getLocalPlayer().getId() &&
-                    !e.isAirborneAeroOnGroundMap() &&
+                    e.isGround() &&
                     !e.isOffBoard()).
                 collect(Collectors.toList());
 

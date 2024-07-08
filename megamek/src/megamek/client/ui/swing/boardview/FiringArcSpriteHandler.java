@@ -67,6 +67,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     public void update(Entity entity, WeaponMounted weapon, @Nullable MovePath movePath) {
         firingEntity = entity;
         int weaponId = entity.getEquipmentNum(weapon);
+        // findRanges must be called before any call to testUnderWater due to usage of 
+        // global-style variables for some reason
+        findRanges(weapon);
         if (movePath != null) {
             firingPosition = movePath.getFinalCoords();
             isUnderWater = testUnderWater(movePath);
@@ -78,7 +81,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         }
         firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getPosition();
         arc = firingEntity.getWeaponArc(weaponId);
-        findRanges(weapon);
+        
         renewSprites();
     }
 
@@ -456,6 +459,13 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         int location = clientGUI.getDisplayedWeapon().get().getLocation();
         Hex hex = game.getBoard().getHex(position);
         int waterDepth = hex.terrainLevel(Terrains.WATER);
+        
+        // if this is a ship/sub on the surface and we have a weapon that only has water
+        // ranges, consider it an underwater weapon for the purposes of displaying range brackets
+        if (waterDepth > 0 && firingEntity.isSurfaceNaval() &&
+        		ranges[0][1] == 0 && ranges[1][1] > 0) {
+        	return true;
+        }
 
         if ((waterDepth > 0) && allowSubmerge && (unitElevation < 0)) {
             if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {

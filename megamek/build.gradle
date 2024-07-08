@@ -2,10 +2,10 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'maven-publish'
     id 'edu.sc.seis.launch4j' version '3.0.5'
     id 'jacoco'
     id 'java'
+    id "io.sentry.jvm.gradle" version "4.9.0"
 }
 
 java {
@@ -37,10 +37,11 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.1'
     implementation 'com.formdev:flatlaf:3.4.1'
     implementation 'com.formdev:flatlaf-extras:3.4.1'
-    implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.20'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+    implementation 'org.apache.commons:commons-collections4:4.5.0-M2'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
     implementation 'org.apache.commons:commons-text:1.12.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
     implementation 'org.freemarker:freemarker:2.3.33'
@@ -132,6 +133,8 @@ task copyFiles(type: Copy) {
     include "${mmconf}/**"
     include "SubmitBug.html"
     include "license.txt"
+    include "sentry.properties"
+    include "mm-revision.txt"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
@@ -143,7 +146,7 @@ task copyFiles(type: Copy) {
     inputs.dir "${data}"
     inputs.dir "${docs}"
     inputs.dir "${mmconf}"
-    inputs.files 'license.txt', 'SubmitBug.html'
+    inputs.files 'license.txt', 'SubmitBug.html', 'sentry.properties', 'mm-revision.txt'
     outputs.dir fileStagingDir
 }
 
@@ -226,23 +229,8 @@ task createStartScripts (type: CreateStartScripts) {
 }
 
 distributions {
-    unix {
-        distributionBaseName = 'megamek-unix'
-        contents {
-            from fileStagingDir
-            from(createStartScripts.outputs.files) {
-                include "mm*"
-            }
-            from(jar)
-            from (project.sourceSets.main.runtimeClasspath.files
-                    .findAll { it.name.endsWith(".jar") }) {
-                into "${lib}"
-            }
-        }
-    }
-
-    windows {
-        distributionBaseName = 'megamek-windows'
+    main {
+        distributionBaseName = 'MegaMek'
         contents {
             from ("${buildDir}/launch4j") {
                 include '*.exe'
@@ -260,6 +248,7 @@ distributions {
                     .findAll { it.name.endsWith(".jar") }) {
                 into "${lib}"
             }
+            duplicatesStrategy 'exclude'
         }
     }
 }
@@ -294,41 +283,16 @@ tasks.register("packagePrepWork") {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-}
-
-windowsDistZip {
-    description = 'Creates Windows distribution packaged as a zip archive'
-    dependsOn packagePrepWork
     dependsOn createAllExecutables
-}
-
-windowsDistTar {
-    description = 'Creates Windows distribution packaged as a tar.gz archive'
-    dependsOn packagePrepWork
-    dependsOn createAllExecutables
-    archiveExtension = 'tar.gz'
-    compression = Compression.GZIP
-}
-
-unixDistZip {
-    description = 'Creates *nix distribution packaged as a tar ball'
-    dependsOn packagePrepWork
-}
-
-unixDistTar {
-    description = 'Creates *nix distribution packaged as a tar ball'
-    dependsOn packagePrepWork
-    archiveExtension = 'tar.gz'
-    compression = Compression.GZIP
 }
 
 distZip {
-    description = 'Creates *nix distribution packaged as a Zip file'
+    description = 'Creates a Zip file for distribution'
     dependsOn packagePrepWork
 }
 
 distTar {
-    description = 'Creates *nix distribution packaged as a gziped tar ball'
+    description = 'Creates a gziped tar ball for distribution'
     dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
@@ -380,8 +344,8 @@ task assembleDist(overwrite: true) {
     description = 'Build unix, Windows, and source packages'
     group = 'distribution'
     dependsOn test
-    dependsOn unixDistTar
-    dependsOn windowsDistZip
+    dependsOn distTar
+    dependsOn distZip
 }
 
 task buildFromRepo (type: GradleBuild) {
@@ -412,29 +376,6 @@ task javadocJar(type: Jar) {
     description = 'Creates a documentation archive for publication to a maven repository'
     from javadoc
     archiveClassifier = 'javadoc'
-}
-
-publishing {
-    publications {
-        publishMMLibrary(MavenPublication) {
-            artifactId = "megamek${mmBranchTag}"
-            from components.java
-            artifact sourcesJar
-//            artifact javadocJar
-
-            pom {
-                name = "MegaMek"
-                description = "MegaMek"
-                url = "https://megamek.org"
-                licenses {
-                    license {
-                        name = "GNU General Public License, version 2"
-                        url = "https://www.gnu.org/licenses/gpl-2.0.html"
-                    }
-                }
-            }
-        }
-    }
 }
 
 test {

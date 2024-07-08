@@ -19,6 +19,31 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.teamColor;
+import static megamek.client.ui.swing.util.UIUtil.uiYellow;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
@@ -38,30 +63,21 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
+import megamek.client.ui.swing.util.UIUtil.Content;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
+import megamek.client.ui.swing.util.UIUtil.OptionPanel;
+import megamek.client.ui.swing.util.UIUtil.TipButton;
+import megamek.client.ui.swing.util.UIUtil.TipLabel;
+import megamek.client.ui.swing.util.UIUtil.TipTextField;
+import megamek.common.Entity;
+import megamek.common.IStartingPositions;
+import megamek.common.MapSettings;
+import megamek.common.OffBoardDirection;
+import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import org.apache.commons.collections.IteratorUtils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.util.UIUtil.*;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -97,7 +113,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                      boolean isSelected, boolean cellHasFocus) {
+                boolean isSelected, boolean cellHasFocus) {
             if (value == null) {
                 setText("General");
             } else {
@@ -201,12 +217,15 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private Player player;
 
     // Initiative Section
-    private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
+    private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"),
+            SwingConstants.RIGHT);
     private final TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
-    private final JLabel labConventional = new JLabel(getString("PlayerSettingsDialog.labConventional"), SwingConstants.RIGHT);
-    private final JLabel labVibrabomb = new JLabel(getString("PlayerSettingsDialog.labVibrabomb"), SwingConstants.RIGHT);
+    private final JLabel labConventional = new JLabel(getString("PlayerSettingsDialog.labConventional"),
+            SwingConstants.RIGHT);
+    private final JLabel labVibrabomb = new JLabel(getString("PlayerSettingsDialog.labVibrabomb"),
+            SwingConstants.RIGHT);
     private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
     private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
     private final JTextField fldConventional = new JTextField(3);
@@ -224,7 +243,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
     private final TipButton[] butStartPos = new TipButton[11];
-    // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
+    // this might seem like kind of a dumb way to declare it, but
+    // JFormattedTextField doesn't have an overload that
     // takes both a number formatter and a default value.
     private final NumberFormatter numFormatter = new NumberFormatter(NumberFormat.getIntegerInstance());
     private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
@@ -492,7 +512,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return result;
     }
 
-
     private void useRuler() {
         if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
             int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
@@ -518,12 +537,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
 
-        // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard
+        // If the gameoption set_arty_player_homeedge is set, adjust the player's
+        // offboard
         // arty units to be behind the newly selected home edge.
         OffBoardDirection direction = OffBoardDirection.translateStartPosition(getStartPos());
         if (direction != OffBoardDirection.NONE &&
                 gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
-            for (Entity entity: client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
+            for (Entity entity : client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
                 if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
                     entity.setOffBoard(entity.getOffBoardDistance(), direction);
                 }
@@ -538,7 +558,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             if (null != munitionTree) {
                 // TODO: create and set up default adf file path for bots
                 tlg.reconfigureEntities(updateEntities, faction, munitionTree);
-                // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
+                // Use sendUpdate because we want the Game to allow us to change on Bot's
+                // behalf.
                 clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());
                 // clientgui.chatlounge.sendUpdate(updateEntities);
             }
@@ -625,7 +646,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         int bh = ms.getBoardHeight() * ms.getMapHeight();
         int bw = ms.getBoardWidth() * ms.getMapWidth();
 
-        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0,bw, 1);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0, bw, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
         SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(0, 0, bh, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
@@ -781,7 +802,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             // Bot settings button
             if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
                 BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
-                var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior, clientgui);
+                var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior,
+                        clientgui);
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
@@ -799,8 +821,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     };
 
     /**
-     * Let user select an ADF file (Autoconfiguration Definition File) from which to load munition loadout
+     * Let user select an ADF file (Autoconfiguration Definition File) from which to
+     * load munition loadout
      * imperatives, which can then be applied to selected units.
+     *
      * @return
      */
     private MunitionTree loadLoadout() {
@@ -815,7 +839,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         int returnVal = fc.showOpenDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // No file selected?  No loadout!
+            // No file selected? No loadout!
             return null;
         }
 
@@ -827,7 +851,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     private void saveLoadout(MunitionTree source) {
-        //ignoreHotKeys = true;
+        // ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
                 "adf files (*.adf)", "adf");
@@ -838,7 +862,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         int returnVal = fc.showSaveDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // No file selected?  No loadout!
+            // No file selected? No loadout!
             return;
         }
         if (fc.getSelectedFile() != null) {
@@ -861,8 +885,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             return 0;
         }
     }
+
     private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 
     public FactionRecord getFaction() {
@@ -875,7 +900,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     public FactionRecord getFactionFromCode(String code, int year) {
         for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
-            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year) && fRec.getKey().equals(code)) {
+            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year)
+                    && fRec.getKey().equals(code)) {
                 return fRec;
             }
         }

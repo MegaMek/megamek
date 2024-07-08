@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,30 +18,33 @@
  */
 package megamek;
 
+import java.io.PrintWriter;
+import java.io.Serializable;
+
+import javax.swing.JOptionPane;
+
+import org.apache.logging.log4j.LogManager;
+
+import io.sentry.Sentry;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
- * This is used for versioning, and to track the current Version the suite is running at.
+ * This is used for versioning, and to track the current Version the suite is
+ * running at.
  */
 public final class Version implements Comparable<Version>, Serializable {
-    //region Variable Declarations
+    // region Variable Declarations
     private static final long serialVersionUID = 3121116859864232639L;
 
     private int release;
     private int major;
     private int minor;
     private boolean snapshot;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     /**
      * This Constructor is not to be used outside of unit testing
      */
@@ -58,16 +61,16 @@ public final class Version implements Comparable<Version>, Serializable {
     }
 
     public Version(final String release, final String major, final String minor,
-                   final String snapshot) throws NumberFormatException {
+            final String snapshot) throws NumberFormatException {
         this();
         setRelease(Integer.parseInt(release));
         setMajor(Integer.parseInt(major));
         setMinor(Integer.parseInt(minor));
         setSnapshot(Boolean.parseBoolean(snapshot));
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters
+    // region Getters
     public int getRelease() {
         return release;
     }
@@ -99,10 +102,11 @@ public final class Version implements Comparable<Version>, Serializable {
     public void setSnapshot(final boolean snapshot) {
         this.snapshot = snapshot;
     }
-    //endregion Getters
+    // endregion Getters
 
     /**
-     * Use this method to determine if this version is higher than the version passed
+     * Use this method to determine if this version is higher than the version
+     * passed
      *
      * @param other The version we want to see if it is lower than this version
      * @return true if this is higher than checkVersion
@@ -112,7 +116,8 @@ public final class Version implements Comparable<Version>, Serializable {
     }
 
     /**
-     * Use this method to determine if the version passed is less than this Version object.
+     * Use this method to determine if the version passed is less than this Version
+     * object.
      *
      * @param other The version we want to see if is less than this version
      * @return true if checkVersion is less than this Version object
@@ -138,22 +143,24 @@ public final class Version implements Comparable<Version>, Serializable {
      * @return true if this is lower than checkVersion
      */
     public boolean isLowerThan(final Version other) {
-            return compareTo(other) < 0;
+        return compareTo(other) < 0;
     }
 
     /**
      * @param lower the lower Version bound (exclusive)
      * @param upper the upper Version bound (exclusive)
-     * @return true if the version is between lower and upper versions, both exclusive
+     * @return true if the version is between lower and upper versions, both
+     *         exclusive
      */
     public boolean isBetween(final String lower, final String upper) {
-       return isBetween(new Version(lower), new Version(upper));
+        return isBetween(new Version(lower), new Version(upper));
     }
 
     /**
      * @param lower the lower Version bound (exclusive)
      * @param upper the upper Version bound (exclusive)
-     * @return true is the version is between lower and upper versions, both exclusive
+     * @return true is the version is between lower and upper versions, both
+     *         exclusive
      */
     public boolean isBetween(final Version lower, final Version upper) {
         return isHigherThan(lower) && isLowerThan(upper);
@@ -172,7 +179,7 @@ public final class Version implements Comparable<Version>, Serializable {
      * @return true if this is same version as the other
      */
     public boolean is(final Version other) {
-        return compareTo(other) == 0;
+        return equals(other);
     }
 
     @Override
@@ -198,11 +205,34 @@ public final class Version implements Comparable<Version>, Serializable {
             return -1;
         }
 
-        // Return 0 if the snapshots equal, otherwise this is lower is this is the snapshot version
-        return (isSnapshot() == other.isSnapshot()) ? 0 : (isSnapshot() ? -1 : 1);
+        // Return 0 if the snapshots equal, otherwise this is lower is this is the
+        // snapshot version
+        if (isSnapshot() == other.isSnapshot()) {
+            return 0;
+        } else {
+            return (isSnapshot() ? -1 : 1);
+        }
     }
 
-    //region File I/O
+    // Added to complete the Java specification for the contract between compareTo
+    // and equals
+    public boolean equals(Object obj) {
+        if (obj instanceof Version other) {
+            return (getRelease() == other.getRelease() &&
+                    getMajor() == other.getMajor() &&
+                    getMinor() == other.getMinor() &&
+                    isSnapshot() == other.isSnapshot());
+        }
+
+        return false;
+    }
+
+    // Added to complete the contract between equals() and hashCode()
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    // region File I/O
     public void writeToXML(final PrintWriter pw, final int indent) {
         MMXMLUtility.writeSimpleXMLTag(pw, indent, "version", toString());
     }
@@ -213,7 +243,10 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
                     ((text == null) ? "a null string" : "a blank string"));
             LogManager.getLogger().fatal(message);
-            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+            JOptionPane.showMessageDialog(
+                    null,
+                    message,
+                    MMLoggingConstants.VERSION_PARSE_FAILURE,
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -226,19 +259,27 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Version text %s is in an illegal version format. Versions should be in the format 'release.major.minor-SNAPSHOT', with the snapshot being an optional inclusion. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             LogManager.getLogger().fatal(message);
-            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+            JOptionPane.showMessageDialog(
+                    null,
+                    message,
+                    MMLoggingConstants.VERSION_PARSE_FAILURE,
                     JOptionPane.ERROR_MESSAGE);
+
             return;
         }
 
         try {
             setRelease(Integer.parseInt(versionSplit[0]));
         } catch (Exception e) {
+            Sentry.captureException(e);
             final String message = String.format(
                     "Failed to parse the release value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             LogManager.getLogger().fatal(message, e);
-            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+            JOptionPane.showMessageDialog(
+                    null,
+                    message,
+                    MMLoggingConstants.VERSION_PARSE_FAILURE,
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -246,11 +287,13 @@ public final class Version implements Comparable<Version>, Serializable {
         try {
             setMajor(Integer.parseInt(versionSplit[1]));
         } catch (Exception e) {
+            Sentry.captureException(e);
             final String message = String.format(
                     "Failed to parse the major value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             LogManager.getLogger().fatal(message, e);
-            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+            JOptionPane.showMessageDialog(null, message,
+                    MMLoggingConstants.VERSION_PARSE_FAILURE,
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -258,22 +301,28 @@ public final class Version implements Comparable<Version>, Serializable {
         try {
             setMinor(Integer.parseInt(versionSplit[2]));
         } catch (Exception e) {
+            Sentry.captureException(e);
             final String message = String.format(
                     "Failed to parse the minor value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             LogManager.getLogger().fatal(message, e);
-            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+            JOptionPane.showMessageDialog(null, message,
+                    MMLoggingConstants.VERSION_PARSE_FAILURE,
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         setSnapshot(snapshotSplit.length == 2);
     }
-    //endregion File I/O
+    // endregion File I/O
 
     @Override
     public String toString() {
-        return String.format("%d.%d.%d%s", getRelease(), getMajor(), getMinor(),
+        return String.format(
+                "%d.%d.%d%s",
+                getRelease(),
+                getMajor(),
+                getMinor(),
                 (isSnapshot() ? "-SNAPSHOT" : ""));
     }
 }

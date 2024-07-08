@@ -1070,8 +1070,10 @@ public class Princess extends BotClient {
     protected @Nullable MovePath calculateMoveTurn() {
         try {
             MovePath path = continueMovementFor(getEntityToMove());
-            // Update the friendly heat map with this move
-            friendlyHeatMap.updateTrackers(path);
+            // Update the friendly heat map with movement of ground units
+            if (path != null && !path.getEntity().isGround()) {
+                friendlyHeatMap.updateTrackers(path);
+            }
             return path;
         } catch (Exception ignored) {
             return null;

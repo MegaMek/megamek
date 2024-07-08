@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.equipment.WeaponMounted;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 public class AmmoType extends EquipmentType {

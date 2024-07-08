@@ -21,7 +21,6 @@ package megamek.client;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
-import megamek.client.commands.ClientCommand;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -43,7 +42,6 @@ import javax.swing.*;
 import java.util.*;
 
 public abstract class AbstractClient implements IClient {
-    public static final String CLIENT_COMMAND = "#";
 
     // Server connection information
     protected String name;
@@ -58,8 +56,6 @@ public abstract class AbstractClient implements IClient {
 
     /** The ID of the local player (the player connected through this client) */
     protected int localPlayerNumber = -1;
-
-    protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
     protected GameLog log;
     public String phaseReport;
@@ -307,47 +303,6 @@ public abstract class AbstractClient implements IClient {
         List<InGameObject> units = (List<InGameObject>) packet.getObject(0);
         getGame().replaceUnits(units);
     }
-
-    /**
-     * @param cmd
-     *            a client command with CLIENT_COMMAND prepended.
-     */
-    public String runCommand(String cmd) {
-        cmd = cmd.substring(CLIENT_COMMAND.length());
-        return runCommand(cmd.split("\\s+"));
-    }
-
-    /**
-     * Runs the command
-     *
-     * @param args
-     *            the command and it's arguments with the CLIENT_COMMAND already
-     *            removed, and the string tokenized.
-     */
-    public String runCommand(String[] args) {
-        if ((args != null) && (args.length > 0) && clientCommands.containsKey(args[0])) {
-            return clientCommands.get(args[0]).run(args);
-        }
-        return "Unknown Client Command.";
-    }
-
-    /** Registers a new command in the client command table. */
-    public void registerCommand(ClientCommand command) {
-        // Warning, the special direction commands are registered separately
-        clientCommands.put(command.getName(), command);
-    }
-
-    /** Returns the command associated with the specified name. */
-    @Override
-    public ClientCommand getCommand(String commandName) {
-        return clientCommands.get(commandName);
-    }
-
-    @Override
-    public Set<String> getAllCommandNames() {
-        return clientCommands.keySet();
-    }
-
 
     /**
      * Adds the specified close client listener to receive close client events.

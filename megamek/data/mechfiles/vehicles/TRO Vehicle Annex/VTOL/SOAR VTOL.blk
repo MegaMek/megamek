@@ -1,119 +1,113 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.0-SNAPSHOT on 2024-06-29
 <UnitType>
-SupportTank
+SupportVTOL
 </UnitType>
 
 <Name>
-Buffel Engineering Support Vehicle VII
+SOAR VTOL
 </Name>
 
 <Model>
-(Reverse)
+
 </Model>
 
 <mul id:>
-5476
+5095
 </mul id:>
 
 <year>
-2552
+3018
 </year>
 
 <originalBuildYear>
-2552
+3018
 </originalBuildYear>
 
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <role>
-Ambusher
+None
 </role>
 
 <motion_type>
-Tracked
+VTOL
 </motion_type>
 
 <transporters>
-cargobay:2.5:1:1
+cargobay:0.05:1:1::-1:0
+standardseats:6.0:0:-1::-1:0
 </transporters>
 
 <cruiseMP>
-3
+8
 </cruiseMP>
 
 <engine_type>
-1
+6
 </engine_type>
 
+<armor_type>
+45
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
-20
-20
-20
-24
-14
+5
+3
+3
+2
+2
 </armor>
 
 <Body Equipment>
-IS Ammo MG - Full
-Armored Chassis
-SV Chassis Mod [Tractor]
+Environmental Sealing
 </Body Equipment>
 
 <Front Equipment>
-ISMineSweeper
-Machine Gun
 </Front Equipment>
 
 <Right Equipment>
+Paramedic Equipment
 </Right Equipment>
 
 <Left Equipment>
+Paramedic Equipment
 </Left Equipment>
 
 <Rear Equipment>
-ISVehicularGrenadeLauncher
-ISVehicularGrenadeLauncher
-Bulldozer
+Paramedic Equipment
+Paramedic Equipment
 </Rear Equipment>
 
-<Turret Equipment>
-Machine Gun
-Machine Gun
-Lift Hoist/Arresting Hoist
-Lift Hoist/Arresting Hoist
-</Turret Equipment>
+<Rotor Equipment>
+</Rotor Equipment>
 
 <barrating>
-7
+4
 </barrating>
 
 <structural_tech_rating>
 2
 </structural_tech_rating>
 
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
 <source>
-TRO: 3075
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>
-70.0
+15.0
 </tonnage>
 
 <fuel>
 0.5
 </fuel>
 
-<fuelType>
-PETROCHEMICALS
-</fuelType>

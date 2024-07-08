@@ -259,6 +259,7 @@ public class Compute {
      * @param list The list of items to select from
      * @return     An element in the list
      * @param <T>  The list type
+     * @throws IllegalArgumentException when the given list is empty
      */
     public static<T> T randomListElement(List<T> list) {
         if (list.isEmpty()) {
@@ -2519,41 +2520,36 @@ public class Compute {
             return toHit;
         }
 
+        int dedicatedGunnerMod = ((entity instanceof Mech mek) && (mek.getCockpitType() == Mech.COCKPIT_DUAL)
+                && entity.getCrew().hasDedicatedGunner()) ? 2 : 1;
+
         if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-            toHit.addModifier(3, "attacker used UMUs");
+            toHit.addModifier(3 / dedicatedGunnerMod, "attacker used UMUs");
         } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_WALK) {
-            toHit.addModifier(3, "attacker cruised");
+            toHit.addModifier(3 / dedicatedGunnerMod, "attacker cruised");
         } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_RUN) {
-            toHit.addModifier(4, "attacker flanked");
+            toHit.addModifier(4 / dedicatedGunnerMod, "attacker flanked");
         } else if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
                 || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
-            toHit.addModifier(1, "attacker walked");
+            toHit.addModifier(1 / dedicatedGunnerMod, "attacker walked");
         } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
-            toHit.addModifier(2, "attacker ran");
+            toHit.addModifier(2 / dedicatedGunnerMod, "attacker ran");
         } else if (movement == EntityMovementType.MOVE_SKID) {
-            toHit.addModifier(3, "attacker ran and skidded");
+            toHit.addModifier(3 / dedicatedGunnerMod, "attacker ran and skidded");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
             if (entity.hasAbility(OptionsConstants.PILOT_JUMPING_JACK)) {
-                toHit.addModifier(1, "attacker jumped");
+                toHit.addModifier(1 / dedicatedGunnerMod, "attacker jumped");
             } else if (entity.hasAbility(OptionsConstants.PILOT_HOPPING_JACK)) {
-                toHit.addModifier(2, "attacker jumped");
+                toHit.addModifier(2 / dedicatedGunnerMod, "attacker jumped");
             } else {
-                toHit.addModifier(3, "attacker jumped");
+                toHit.addModifier(3 / dedicatedGunnerMod, "attacker jumped");
             }
         } else if (movement == EntityMovementType.MOVE_SPRINT
                 || movement == EntityMovementType.MOVE_VTOL_SPRINT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
-        //Dual cockpit with both pilot and gunner has lower modifier for attacker movement.
-        if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
-                && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL
-                && entity.getCrew().hasDedicatedGunner()) {
-            for (TargetRollModifier mod : toHit.getModifiers()) {
-                mod.setValue(mod.getValue() / 2);
-            }
-        }
         return toHit;
     }
 
@@ -2690,7 +2686,7 @@ public class Compute {
             if (toHit.getModifiers().isEmpty()) {
                 toHit.addModifier(1, "target moved 1-2 hexes");
             } else {
-                toHit.getModifiers().get(0).setValue(toHit.getModifiers().get(0).getValue() + 1);
+                toHit.addModifier(1, "dedicated pilot");
             }
         }
 

@@ -15,6 +15,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
@@ -27,9 +28,9 @@ import megamek.common.ToHitData;
  */
 public class RulerCommand extends ClientCommand {
 
-    public RulerCommand(Client client) {
+    public RulerCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "ruler",
                 "Show Line of Sight (LOS) information between two points of the map. " +
                         "Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]]. " +
@@ -51,11 +52,11 @@ public class RulerCommand extends ClientCommand {
             ToHitData thd;
 
             if (args.length == 3) {
-                start = client.getCurrentHex();
+                start = getClientGUI().getCurrentHex();
                 end = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
             } else {
                 if (args[1].equals("cur")) {
-                    start = client.getCurrentHex();
+                    start = getClientGUI().getCurrentHex();
                 } else {
                     start = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
                 }

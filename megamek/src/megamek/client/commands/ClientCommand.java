@@ -15,25 +15,32 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 
 /**
  * @author dirk
  */
 public abstract class ClientCommand {
-    protected Client client;
 
-    private String name;
-    private String helpText;
+    public static final String CLIENT_COMMAND = "#";
+
+    protected final ClientGUI clientGUI;
+    private final String name;
+    private final String helpText;
 
     /** Creates new ServerCommand */
-    public ClientCommand(Client client, String name, String helpText) {
-        this.client = client;
+    public ClientCommand(ClientGUI clientGUI, String name, String helpText) {
+        this.clientGUI = clientGUI;
         this.name = name;
         this.helpText = helpText;
     }
 
     public Client getClient() {
-        return client;
+        return clientGUI.getClient();
+    }
+
+    public ClientGUI getClientGUI() {
+        return clientGUI;
     }
 
     /**

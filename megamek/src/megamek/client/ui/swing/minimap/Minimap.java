@@ -512,6 +512,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         gg.setColor(terrainColor(h));
                         if (h.containsTerrain(SPACE)) {
                             paintSpaceCoord(gg, j, k);
+                        } else if (h.containsTerrain(SKY)) {
+                            paintLowAtmoSkyCoord(gg, j, k);
                         } else {
                             paintCoord(gg, j, k, zoom > 1);
                         }
@@ -823,7 +825,18 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
         g.drawPolygon(xPoints, yPoints, 6);
     }
-    
+
+    private void paintLowAtmoSkyCoord(Graphics g, int x, int y) {
+        int[] xPoints = xPoints(x);
+        int[] yPoints = yPoints(x, y);
+        int c = 160 + (int) (Math.random() * 80);
+        g.setColor(new Color(c / 2, c, c));
+        g.fillPolygon(xPoints, yPoints, 6);
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawPolygon(xPoints, yPoints, 6);
+    }
+
+
     private void paintSpaceCoord(Graphics g, int x, int y) {
         int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
         int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;

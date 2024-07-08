@@ -1,6 +1,22 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.49.20-SNAPSHOT
+0.50.0-SNAPSHOT (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
++ PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)
++ PR #5512: Gradle and Github changes for JRE 17 Min
++ Fix #5648: Diacratics and/or name changes causing issues with Force/RAT Generator
++ Fix #5647: Rasalhague Dominion Force Generator Issues
++ PR #5652: Fix ammo carrier issue that prevents Princess from firing ammo-based weapons
++ PR #5602: Princess - enhanced anti-Mech targeting
++ PR #5592: Cleanup and disentangle (TilesetManager, Client, BoardView)
++ PR #5591: Only consider MM internal dirs when creating the official unit list
++ PR #5570: ScenarioV2 extension, sky map
++ Fix #5665: Adding a Chameleon Light Polarization Shield to an omni is classified as an Omni Repod
++ PR #5660: Startup And Windows CI Fixes
++ PR #5695: Remove serial killer #5695
++ PR #5696: TargetRoll modernization
++ PR #5657: Enable testInvalidCanonUnits but skip known invalid units
+
+0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
@@ -80,6 +96,13 @@ MEGAMEK VERSION HISTORY:
 + Fix #5084: Princess and using AMS as a manual weapon
 + PR #5618: Branch for typos and spelling
 + Fix #5577: Industrial hexes no longer influence units higher than their roof
++ Fix #5622: Fixes MML #1532: Total Warfare Flamer should be unofficial
++ PR #5623: adjust wind direction order
++ PR #5613: Renewing Unit Display and Keybinds in Physical Phase
++ PR #5629: prevent NPE when OS launcher is being selected in weapons panel
++ PR #5634: cannot load Support Vehicle blk files missing armor_type field
++ Fix #5569: Fix for squadron ammo weapons
++ PR #5641: continue munition loadout generator
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

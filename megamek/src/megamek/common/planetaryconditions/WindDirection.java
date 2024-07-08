@@ -21,12 +21,12 @@ package megamek.common.planetaryconditions;
 import megamek.common.Messages;
 
 public enum WindDirection {
-    NORTH("NORTH", "PlanetaryConditions.DisplayableName.WindDirection.North", "\u2193"),
-    NORTHEAST("NORTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Northeast", "\u2B0B"),
-    SOUTHEAST("SOUTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Southeast", "\u2B09"),
     SOUTH("SOUTH", "PlanetaryConditions.DisplayableName.WindDirection.South", "\u2191"),
     SOUTHWEST("SOUTHWEST", "PlanetaryConditions.DisplayableName.WindDirection.Southwest", "\u2B08"),
     NORTHWEST("NORTHWEST", "PlanetaryConditions.DisplayableName.WindDirection.Northwest", "\u2B0A"),
+    NORTH("NORTH", "PlanetaryConditions.DisplayableName.WindDirection.North", "\u2193"),
+    NORTHEAST("NORTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Northeast", "\u2B0B"),
+    SOUTHEAST("SOUTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Southeast", "\u2B09"),
     RANDOM("RANDOM", "PlanetaryConditions.DisplayableName.WindDirection.RandomWindDirection", "");
     private final String externalId;
     private final String name;

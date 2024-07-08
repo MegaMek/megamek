@@ -1,6 +1,6 @@
 package megamek.client.commands;
 
-import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Entity;
 
 import java.util.LinkedList;
@@ -27,9 +27,9 @@ import java.util.Objects;
  */
 public class AssignNovaNetworkCommand extends ClientCommand {
 
-    public AssignNovaNetworkCommand(Client client) {
+    public AssignNovaNetworkCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "nova",
                 "This command allows you to link NovaCEWS units." +
                 "\nDo not use this command unless you can link something." +
@@ -99,15 +99,15 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     
     private void setNewNetworkID(Entity ent, String net) {
         ent.setNewRoundNovaNetworkString(net);       
-        client.sendNovaChange(ent.getId(), net);
+        getClient().sendNovaChange(ent.getId(), net);
     }
 
     private String strLink3(int id1, int id2, int id3) {
         String rval = "";
         
-        Entity ent1 = client.getEntity(id1);
-        Entity ent2 = client.getEntity(id2);
-        Entity ent3 = client.getEntity(id3);
+        Entity ent1 = getClient().getEntity(id1);
+        Entity ent2 = getClient().getEntity(id2);
+        Entity ent3 = getClient().getEntity(id3);
         
         if ((ent1 == null) || (ent2 == null) || (ent3 == null)) {
             return "ID Mismatch!\n";
@@ -126,8 +126,8 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     private String strLink2(int id1, int id2) {
         String rval = "";
         
-        Entity ent1 = client.getEntity(id1);
-        Entity ent2 = client.getEntity(id2);
+        Entity ent1 = getClient().getEntity(id1);
+        Entity ent2 = getClient().getEntity(id2);
         if ((ent1 == null) || (ent2 == null)) {
             return "ID Mismatch!\n";
         }
@@ -139,7 +139,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     }
     
     private String strUnlinkID(int id) {
-        Entity ent = client.getEntity(id);
+        Entity ent = getClient().getEntity(id);
         
         if (ent == null) {
             return "ID Mismatch\n";
@@ -212,7 +212,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         
     private String strListNetwork(int id, boolean planned) {
         StringBuilder rval = new StringBuilder();
-        Entity ent = client.getEntity(id);
+        Entity ent = getClient().getEntity(id);
         if (ent != null) {
             for (Entity e : listNetwork(ent, planned)) {
                 rval.append("+ ").append(e.getId()).append(" ").append(e.getDisplayName()).append("\n");
@@ -257,8 +257,8 @@ public class AssignNovaNetworkCommand extends ClientCommand {
      */
     private List<Entity> getMyNovaUnits() {
         List<Entity> novaUnits = new LinkedList<>();
-        for (Entity ent : client.getEntitiesVector()) {
-            if ((ent.getOwnerId() == client.getLocalPlayer().getId()) && ent.hasNovaCEWS()) {
+        for (Entity ent : getClient().getEntitiesVector()) {
+            if ((ent.getOwnerId() == getClient().getLocalPlayer().getId()) && ent.hasNovaCEWS()) {
                 novaUnits.add(ent);
             }
         }

@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.0-SNAPSHOT on 2024-07-06
 <UnitType>
 Infantry
 </UnitType>
@@ -36,6 +27,10 @@ IS Level 3
 Beast:Branth
 </motion_type>
 
+<Troopers Equipment>
+Generic Infantry Kit
+</Troopers Equipment>
+
 <Field Guns Equipment>
 </Field Guns Equipment>
 
@@ -50,12 +45,4 @@ Beast:Branth
 <Primary>
 Needler Rifle
 </Primary>
-
-<antimek>
-5
-</antimek>
-
-<armorKit>
-Generic Infantry Kit
-</armorKit>
 

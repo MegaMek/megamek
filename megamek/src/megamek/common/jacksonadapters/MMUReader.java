@@ -171,4 +171,27 @@ public final class MMUReader {
             }
         }
     }
+
+    /**
+     * Tests the given node if
+     * it has any combination of at least two of the given fields. If that is the case, an IllegalArgumentException
+     * is thrown. The given objectType can be any String, it is only used as part of the error
+     * message. If none of the fields or only a single one of the fields is found, this method does nothing.
+     *
+     * @param objectType The object type such as "ASElement". Only used as part of the exception message
+     * @param node the node containing an object to be deserialized
+     * @param fields The field names, e.g. "chassis" or "size"
+     */
+    public static void disallowCombinedFields(String objectType, JsonNode node, String... fields) {
+        List<String> foundFields = new ArrayList<>();
+        for (String field : fields) {
+            if (node.has(field)) {
+                foundFields.add(field);
+                if (foundFields.size() > 1) {
+                    throw new IllegalArgumentException("Fields " + foundFields.get(0) + " and " + foundFields.get(1)
+                            + "found in " + objectType + " definition!");
+                }
+            }
+        }
+    }
 }

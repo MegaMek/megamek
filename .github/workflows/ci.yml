@@ -59,14 +59,14 @@ jobs:
           fail_ci_if_error: false
           verbose: true
 
-      - name: Upload Zip Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mm-release-zip-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: ./megamek/megamek/build/distributions/MegaMek-*.zip
+      #      - name: Upload Zip Artifacts
+      #        uses: actions/upload-artifact@v4
+      #        with:
+      #          name: mm-release-zip-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+      #          path: ./megamek/megamek/build/distributions/*.zip
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v4
         with:
           name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: ./megamek/megamek/build/distributions/MegaMek-*.tar.gz
+          path: ./megamek/megamek/build/distributions/*.tar.gz

@@ -27,6 +27,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
 import megamek.common.Coords;
 import megamek.common.Game;
+import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
@@ -123,6 +124,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovePathSpriteHandler movePathSpriteHandler;
 
+    private final SBFTargetDialog targetDialog;
+
     public SBFClientGUI(SBFClient client, MegaMekController c) {
         super(client);
         this.client = client;
@@ -143,6 +146,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
         miniReportDisplayDialog = new JDialog(getFrame());
         reportPanel = new SBFReportPanel(this);
+        targetDialog = new SBFTargetDialog(getFrame(), client.getGame());
     }
 
     private final ComponentListener resizeListener = new ComponentAdapter() {
@@ -471,6 +475,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     public void selectForAction(@Nullable SBFFormation formation) {
         formationSpriteHandler.setSelectedFormation(formation);
+        if (GUIP.getAutoCenter() && (formation != null) && (formation.getPosition() != null)) {
+            bv.centerOnHex(formation.getPosition().coords());
+        }
     }
 
     /**
@@ -491,5 +498,18 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     public void showMovePath(@Nullable SBFMovePath movePath) {
         movePathSpriteHandler.update(movePath);
+    }
+
+    public void showTargetDialog() {
+        targetDialog.setVisible(true);
+    }
+
+    public void showTargetDialog(InGameObject target) {
+        targetDialog.setTarget(target);
+        targetDialog.setVisible(true);
+    }
+
+    public void hideTargetDialog() {
+        targetDialog.setVisible(false);
     }
 }

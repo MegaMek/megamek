@@ -20,6 +20,7 @@ package megamek.client.ui.swing.sbf;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -31,11 +32,15 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.*;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
@@ -204,20 +209,28 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             return;
         }
 
-//        plannedMovement.clip;
-//        cmd.clipToPossible();
+        if (planJump(formation.get()).isConfirmed()) {
+            clientgui.getClient().moveUnit(plannedMovement);
+            endMyTurn();
+        }
+    }
 
-//        if (checkNags()) {
-//            return;
-//        }
-
-//        disableButtons();
-
-//        clientgui.clearTemporarySprites();
-//        clientgui.getBoardView().clearMovementData();
-
-        clientgui.getClient().moveUnit(plannedMovement);
-        endMyTurn();
+    private DialogResult planJump(SBFFormation formation) {
+        //TODO SBFRULES Can you use JUMP if you remain in the hex?
+        if (formation.getJumpMove() > 0) {
+            List<Integer> choices = Stream.iterate(0, n -> n + 1).limit(formation.getJumpMove() + 1).toList();
+            SBFJumpChoiceDialog jumpChoiceDialog = new SBFJumpChoiceDialog(clientgui.getFrame(), choices);
+            jumpChoiceDialog.setLocationRelativeTo(clientgui.getFrame());
+            jumpChoiceDialog.pack();
+            DialogResult result = jumpChoiceDialog.showDialog();
+            if (result.isConfirmed()) {
+                plannedMovement.setJumpUsed(jumpChoiceDialog.getFirstChoice());
+            }
+            return result;
+       } else {
+            plannedMovement.setJumpUsed(0);
+            return DialogResult.CONFIRMED;
+        }
     }
 
     /**

@@ -22,14 +22,8 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 
-public class SBFPhaseEndManager {
-    
-    private final SBFGameManager gameManager;
+public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
-    public SBFPhaseEndManager(SBFGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-    
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
@@ -109,9 +103,7 @@ public class SBFPhaseEndManager {
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-//                // write Weapon Attack Phase header
-//                addReport(new Report(3000, Report.PUBLIC));
-//                resolveWhatPlayersCanSeeWhatUnits();
+                addReport(Report.publicReport(3000));
 //                resolveAllButWeaponAttacks();
 //                resolveSelfDestructions();
 //                reportGhostTargetRolls();
@@ -121,11 +113,7 @@ public class SBFPhaseEndManager {
 //                handleAttacks();
 //                resolveScheduledNukes();
 //                applyBuildingDamage();
-//                checkForPSRFromDamage();
 //                cleanupDestroyedNarcPods();
-//                addReport(resolvePilotingRolls());
-//                checkForFlawedCooling();
-//                // check phase report
                 goToDependingOnReport(GamePhase.FIRING_REPORT, GamePhase.END);
                 break;
             case FIRING_REPORT:
@@ -208,7 +196,8 @@ public class SBFPhaseEndManager {
 //                    if (victory) {
 //                        gameManager.changePhase(GamePhase.VICTORY);
 //                    } else {
-//                        gameManager.changePhase(GamePhase.INITIATIVE);
+                //TODO: remove this and test that after firing, no more selection in firingdisplay, no more firing
+                gameManager.changePhase(GamePhase.INITIATIVE);
 //                    }
 //                }
 //                // Decrement the ASEWAffected counter

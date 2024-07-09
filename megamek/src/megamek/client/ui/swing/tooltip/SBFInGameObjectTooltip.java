@@ -37,6 +37,7 @@ public final class SBFInGameObjectTooltip {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String SHORT = "&nbsp;";
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
+    private static final int BASE_WIDTH = 420;
 
     public static String styles() {
         float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
@@ -47,7 +48,7 @@ public final class SBFInGameObjectTooltip {
         return "<style>" + ".value { font-family:Exo; font-size:20; }" +
                 ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }" +
                 ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray; text-align:right; }" +
-                ".unitname { padding-right:10; font-family:Noto Sans; font-size:" + valueSize + "; }" +
+                ".unitname { white-space:nowrap; padding-right:10; font-family:Noto Sans; font-size:" + valueSize + "; }" +
                 ".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
                 ".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }" +
                 ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
@@ -61,7 +62,10 @@ public final class SBFInGameObjectTooltip {
         Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : Color.BLACK;
         String styleColor = Integer.toHexString(ownerColor.getRGB() & 0xFFFFFF);
-        result.append("<div style=\"padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
+        int width = UIUtil.scaleForGUI(BASE_WIDTH);
+        result.append("<div style=\"width:").append(width)
+                .append("; padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
+//        result.append("<div style=\"padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
                 .append(styleColor).append(";\">");
         result.append(nameLines(unit, game));
         result.append(formationStats(unit));

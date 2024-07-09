@@ -18,7 +18,9 @@
  */
 package megamek.common.actions.sbf;
 
-public class AbstractSBFAttackAction implements SBFAttackAction {
+import java.io.Serializable;
+
+public abstract class AbstractSBFAttackAction implements SBFAttackAction, Serializable {
 
     private final int entityId;
     private final int targetId;

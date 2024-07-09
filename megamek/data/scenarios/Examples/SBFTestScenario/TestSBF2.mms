@@ -17,7 +17,7 @@ factions:
       at: [7, 5]
       id: 3
 
-    - include: "Example SBF Formation.mmu"
+    - include: "JumpCompany.mmu"
       at: [ 10, 4 ]
 
     - include: "Formation2.mmu"

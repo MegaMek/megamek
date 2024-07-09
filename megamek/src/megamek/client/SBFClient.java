@@ -211,7 +211,7 @@ public class SBFClient extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_MOVE, Objects.requireNonNull(movePath)));
     }
 
-    public void sendAttackData(List<EntityAction> attacks) {
-        send(new Packet(PacketCommand.ENTITY_ATTACK, Objects.requireNonNull(attacks)));
+    public void sendAttackData(List<EntityAction> attacks, int formationId) {
+        send(new Packet(PacketCommand.ENTITY_ATTACK, formationId, Objects.requireNonNull(attacks)));
     }
 }

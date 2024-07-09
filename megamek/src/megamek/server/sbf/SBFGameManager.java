@@ -19,6 +19,7 @@
 package megamek.server.sbf;
 
 import megamek.common.*;
+import megamek.common.actions.EntityAction;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -46,6 +47,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
     final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
     final SBFMovementProcessor movementProcessor = new SBFMovementProcessor(this);
+    final SBFAttackProcessor attackProcessor = new SBFAttackProcessor(this);
     final SBFInitiativeHelper initiativeHelper = new SBFInitiativeHelper(this);
     final SBFUnitUpdateHelper unitUpdateHelper = new SBFUnitUpdateHelper(this);
     final SBFDetectionHelper detectionHelper = new SBFDetectionHelper(this);
@@ -57,6 +59,9 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         switch (packet.getCommand()) {
             case ENTITY_MOVE:
                 receiveMovement(packet, connId);
+                break;
+            case ENTITY_ATTACK:
+                receiveAttack(packet, connId);
                 break;
         }
 
@@ -488,5 +493,57 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         for (Player player : game.getPlayersList()) {
             send(player.getId(), createGameStartUnitPacket(player));
         }
+    }
+
+    private void repeatTurn(int connId) {
+        send(connId, packetHelper.createTurnListPacket());
+        SBFTurn turn = game.getTurn();
+        send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
+    }
+
+    @SuppressWarnings("unchecked")
+    void receiveAttack(Packet packet, int connId) {
+        var attacks = (List<EntityAction>) packet.getObject(1);
+        int formationId = (int) packet.getObject(0);
+        Optional<SBFFormation> formationInfo = game.getFormation(formationId);
+
+        if (formationInfo.isEmpty() || !attacks.stream().map(EntityAction::getEntityId).allMatch(id -> id == formationId)) {
+            LogManager.getLogger().error("Invalid formation ID or diverging attacker IDs");
+            repeatTurn(connId);
+            return;
+        }
+
+        for (EntityAction action : attacks) {
+            if (!validateEntityAction(action, connId)) {
+                repeatTurn(connId);
+                return;
+            }
+        }
+
+        // is this the right phase?
+        if (!getGame().getPhase().isFiring() && !getGame().getPhase().isPhysical()
+                && !getGame().getPhase().isTargeting() && !getGame().getPhase().isOffboard()) {
+            LogManager.getLogger().error("Server got attack packet in wrong phase");
+            return;
+        }
+
+        // looks like mostly everything's okay
+        attackProcessor.processAttacks(attacks, formationInfo.get());
+    }
+
+    private boolean validateEntityAction(EntityAction action, int connId) {
+        //TODO unify firing/movement validity
+        Optional<SBFFormation> formationInfo = game.getFormation(action.getEntityId());
+        if (formationInfo.isEmpty()) {
+            LogManager.getLogger().error("Incorrect formation ID {}", action.getEntityId());
+            return false;
+        }
+        SBFTurn turn = game.getTurn();
+        if ((turn == null) || !turn.isValid(connId, formationInfo.get(), game)) {
+            LogManager.getLogger().error("It is not player {}'s turn! ", connId);
+            return false;
+        }
+
+        return true;
     }
 }

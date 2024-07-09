@@ -123,6 +123,9 @@ public class Princess extends BotClient {
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
 
+    private List<HeatMap> enemyHeatMaps;
+    private HeatMap friendlyHeatMap;
+
     private Integer spinupThreshold = null;
 
     private BehaviorSettings behaviorSettings;
@@ -1886,7 +1889,12 @@ public class Princess extends BotClient {
     @Override
     protected @Nullable MovePath calculateMoveTurn() {
         try {
-            return continueMovementFor(getEntityToMove());
+            MovePath path = continueMovementFor(getEntityToMove());
+            // Update the friendly heat map with movement of ground units
+            if (path != null && path.getEntity().isGround()) {
+                friendlyHeatMap.updateTrackers(path);
+            }
+            return path;
         } catch (Exception ignored) {
             return null;
         }
@@ -2478,6 +2486,10 @@ public class Princess extends BotClient {
                 }
             }
 
+            // Set up heat mapping
+            initEnemyHeatMaps();
+            initFriendlyHeatMap();
+
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } catch (Exception ignored) {
@@ -2743,6 +2755,8 @@ public class Princess extends BotClient {
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
         setAMSModes();
+        updateEnemyHeatMaps();
+        updateFriendlyHeatMap();
     }
 
     @Override
@@ -3157,6 +3171,112 @@ public class Princess extends BotClient {
         }
         manualAMSIds.clear();
     }
+
+    /**
+     * Get a list of all hotspots (positions of high activity) for opposing units
+     * @return
+     */
+    public List<Coords> getEnemyHotspots () {
+        List<Coords> accumulatedHotspots = new ArrayList<>();
+        for (HeatMap curMap : enemyHeatMaps) {
+            List<Coords> mapHotspots = curMap.getHotSpots();
+            if (mapHotspots != null) {
+                for (Coords curPosition : mapHotspots) {
+                    if (!accumulatedHotspots.contains(curPosition)) {
+                        accumulatedHotspots.add(curPosition);
+                    }
+                }
+            }
+        }
+
+        return accumulatedHotspots;
+    }
+
+    /**
+     * Get the best hotspot (positions of high activity) for friendly units
+     * @return  {@code Coords} with high friendly activity; may return null
+     */
+    public Coords getFriendlyHotspot () {
+        return friendlyHeatMap.getHotSpot();
+    }
+
+    /**
+     * Get the nearest top-rated hotspot for friendly units
+     * @param testPosition
+     * @return
+     */
+    public Coords getFriendlyHotspot (Coords testPosition) {
+        return friendlyHeatMap.getHotSpot(testPosition, true);
+    }
+
+    /**
+     * Set up heat maps to track enemy unit positions over time
+     */
+    protected void initEnemyHeatMaps () {
+        enemyHeatMaps = new ArrayList<>();
+        int princessTeamId = getGame().getTeamForPlayer(this.getLocalPlayer()).getId();
+        for (Team curTeam : getGame().getTeams()) {
+            if (curTeam.getId() != princessTeamId) {
+                HeatMap newMap = new HeatMap(curTeam.getId());
+                newMap.setMapTrimThreshold(0.5);
+                newMap.setActivityDecay(-200);
+                enemyHeatMaps.add(newMap);
+            }
+        }
+    }
+
+    /**
+     * Set up heat map to track friendly units over time
+     */
+    protected void initFriendlyHeatMap () {
+        friendlyHeatMap = new HeatMap(getGame().getTeamForPlayer(this.getLocalPlayer()).getId());
+        friendlyHeatMap.setMovementWeightValue(5);
+        friendlyHeatMap.setMapTrimThreshold(0.6);
+        friendlyHeatMap.setActivityDecay(-200);
+        friendlyHeatMap.setIsTrackingFriendlyTeam(true);
+    }
+
+    /**
+     * Update the heat maps with known enemy unit positions, then apply decay
+     */
+    protected void updateEnemyHeatMaps() {
+
+        List<Entity> trackedEntities = getGame().
+                inGameTWEntities().
+                stream().
+                filter(HeatMap::validateForTracking).
+                collect(Collectors.toList());
+
+        // Process entities into each heat map, then age it
+        for (HeatMap curMap : enemyHeatMaps) {
+            if (!trackedEntities.isEmpty()) {
+                curMap.updateTrackers(trackedEntities);
+            }
+            curMap.ageMaps(game);
+        }
+    }
+
+    /**
+     * Update the heat map with allied unit positions (entities controlled by this bot have
+     * already been processed as they move), then apply decay
+     */
+    protected void updateFriendlyHeatMap () {
+
+        List<Entity> trackedEntities = getGame().
+                inGameTWEntities().
+                stream().
+                filter(e -> e.getOwner().getId() != this.getLocalPlayer().getId() &&
+                    HeatMap.validateForTracking(e)).
+                collect(Collectors.toList());
+
+        if (!trackedEntities.isEmpty()) {
+            friendlyHeatMap.updateTrackers(trackedEntities);
+        }
+        // Units may have skidded, fallen, etc. and need their actual last position updated
+        friendlyHeatMap.refreshLastKnownCache(game);
+        friendlyHeatMap.ageMaps(game);
+    }
+
 
     public void sendChat(final String message, final Level logLevel) {
         if (LogManager.getLogger().getLevel().isLessSpecificThan(logLevel)) {

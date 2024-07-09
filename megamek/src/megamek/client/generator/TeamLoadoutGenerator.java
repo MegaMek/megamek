@@ -61,6 +61,8 @@ public class TeamLoadoutGenerator {
         }
     }
 
+    public static float UNSET_FILL_RATIO = Float.NEGATIVE_INFINITY;
+
     public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of(
             "Armor-Piercing", "Tandem-Charge"));
 
@@ -92,8 +94,14 @@ public class TeamLoadoutGenerator {
             "Thunder", "FASCAM", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
             "Thunder-Inferno", "Flare", "ThunderBomb", "TAGBomb", "TorpedoBomb", "ASEWMissile Ammo"));
 
+    // Guided munitions come in two main flavors
     public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of(
-            "Semi-Guided", "Narc-capable", "Homing", "Copperhead", "LGBomb", "ArrowIVHomingMissile Ammo"));
+            "Semi-Guided", "Narc-capable", "Homing", "Copperhead", "LGBomb", "ArrowIVHomingMissile Ammo"
+    ));
+    public static final ArrayList<String> TAG_GUIDED_MUNITIONS = new ArrayList<>(List.of(
+            "Semi-Guided", "Homing", "Copperhead", "LGBomb", "ArrowIVHomingMissile Ammo"
+    ));
+    public static final ArrayList<String> NARC_GUIDED_MUNITIONS = new ArrayList<>(List.of("Narc-capable"));
 
     // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
     public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of(
@@ -511,7 +519,7 @@ public class TeamLoadoutGenerator {
         }
 
         return generateParameters(
-                g, gOpts, ownEntities, team.getFaction(), etEntities, enemyFactions
+                g, gOpts, ownEntities, friendlyFaction, etEntities, enemyFactions, ForceDescriptor.RATING_5, 1.0f
         );
     }
 
@@ -521,7 +529,9 @@ public class TeamLoadoutGenerator {
             ArrayList<Entity> ownEntities,
             String friendlyFaction,
             ArrayList<Entity> enemyEntities,
-            ArrayList<String> enemyFactions
+            ArrayList<String> enemyFactions,
+            int rating,
+            float fillRatio
     ) {
 
         boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
@@ -542,7 +552,9 @@ public class TeamLoadoutGenerator {
                 blind,
                 darkEnvironment,
                 groundMap,
-                spaceEnvironment
+                spaceEnvironment,
+                rating,
+                fillRatio
         );
     }
 
@@ -554,12 +566,18 @@ public class TeamLoadoutGenerator {
             boolean blind,
             boolean darkEnvironment,
             boolean groundMap,
-            boolean spaceEnvironment
+            boolean spaceEnvironment,
+            int rating,
+            float fillRatio
     ) {
         ReconfigurationParameters rp = new ReconfigurationParameters();
 
-        // Set own faction
+        // Set own faction and quality rating
         rp.friendlyFaction = friendlyFaction;
+        rp.friendlyQuality = rating;
+
+        // Fill desired bin fill ratio / percentage (as float)
+        rp.binFillPercent = fillRatio;
 
         // Get our own side's numbers for comparison
         rp.friendlyCount = ownTeamEntities.size();
@@ -784,19 +802,37 @@ public class TeamLoadoutGenerator {
 
         // Section: Friendly capabilities
 
-        // Guided munitions are worth more with guidance
+        // Guided munitions are worth exponentially more with guidance and supporting missile units
         if (rp.friendlyTAGs >= castPropertyDouble("mtGuidedAmmoFriendlyTAGThreshold", 1.0)
                 || rp.friendlyNARCs >= castPropertyDouble("mtGuidedAmmoFriendlyNARCThreshold", 1.0)) {
-            mwc.increaseGuidedMunitions();
 
             // And worth even more with more guidance around
             if (rp.friendlyMissileBoats >= rp.friendlyCount /
                     castPropertyDouble("mtGuidedAmmoFriendlyMissileBoatFractionDivisor", 3.0)) {
-                mwc.increaseGuidedMunitions();
+                for (int i=0;i<rp.friendlyMissileBoats;i++) {
+                    mwc.increaseGuidedMunitions();
+                }
+            }
+
+            // Increase the relevant types depending on the present guidance systems and their counts
+            for (int i = 0; i < rp.friendlyTAGs; i++) {
+                mwc.increaseTagGuidedMunitions();
+            }
+            for (int i = 0; i < rp.friendlyNARCs; i++) {
+                mwc.increaseNARCGuidedMunitions();
+            }
+
+            // TAG-guided rounds may have _some_ use, but not as much as base rounds, without TAG support
+            if (rp.friendlyTAGs == 0) {
+                mwc.decreaseTagGuidedMunitions();
+            }
+            // Narc-capables are just not worth it without NARC support
+            if (rp.friendlyNARCs == 0) {
+                mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Narc-capable")));
             }
         } else {
             // Expensive waste without guidance
-            mwc.decreaseGuidedMunitions();
+            mwc.zeroMunitionsWeight(GUIDED_MUNITIONS);
         }
 
         // Downgrade utility munitions unless there are multiple units that could use them; off-board arty
@@ -826,6 +862,13 @@ public class TeamLoadoutGenerator {
         // This is a seperate mechanism from the legality check.
         if (rp.nukesBannedForMe) {
             mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Davy Crockett-M", "AlamoMissile Ammo")));
+        }
+
+        // L-K Missiles are essentially useless after 3042
+        // TODO: add more precise faction and year checks here so Wolf's Dragoons can have them before everybody
+        // else.
+        if (rp.allowedYear < 3028 || rp.allowedYear > 3042) {
+            mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Listen-Kill")));
         }
 
         // The main event!
@@ -878,8 +921,6 @@ public class TeamLoadoutGenerator {
     // region reconfigureEntities
     /**
      * Wrapper to streamline bot team configuration using standardized defaults
-     *
-     * @param team
      */
     public void reconfigureBotTeamWithDefaults(Team team, String faction) {
         // Load in some hard-coded defaults now before calculating more.
@@ -912,22 +953,33 @@ public class TeamLoadoutGenerator {
      * @param mt       MunitionTree defining all applicable loadout imperatives
      */
     public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt, ReconfigurationParameters rp) {
+        // For Pirate forces, assume fewer rounds per bin at lower quality levels, minimum 20%
+        // If fill ratio is already set, leave it.
+        if (rp.binFillPercent == UNSET_FILL_RATIO) {
+            if (rp.isPirate) {
+                rp.binFillPercent = (float) (Math.min(1.0f, Math.max(0.2f, (Math.random() / 4.0) + (rp.friendlyQuality / 8.0))));
+            } else {
+                // If we get this far without setting the ratio, but are not pirates, reset to fill
+                rp.binFillPercent = 1.0f;
+            }
+        }
+
         ArrayList<Entity> aeros = new ArrayList<>();
         for (Entity e : entities) {
             if (e.isAero()) {
                 // TODO: Will be used when A2G attack errata are implemented
                 aeros.add(e);
             } else {
-                reconfigureEntity(e, mt, faction);
+                reconfigureEntity(e, mt, faction, rp.binFillPercent);
             }
         }
 
         populateAeroBombs(
             entities,
             this.allowedYear,
-                rp.groundMap || rp.enemyCount > rp.enemyFliers,
-            ForceDescriptor.RATING_5,
-            faction.equals("PIR")
+            rp.groundMap || rp.enemyCount > rp.enemyFliers,
+            rp.friendlyQuality,
+            rp.isPirate
         );
     }
 
@@ -954,7 +1006,18 @@ public class TeamLoadoutGenerator {
     }
     // endregion reconfigureEntities
 
-    // region reconfigureEntity
+    //region reconfigureEntity
+
+    /**
+     * Wrapper that assumes full bins, mostly for testing
+     * @param e
+     * @param mt
+     * @param faction
+     */
+    public void reconfigureEntity(Entity e, MunitionTree mt, String faction) {
+        reconfigureEntity(e, mt, faction, 1.0f);
+    }
+
     /**
      * Method to apply a MunitionTree to a specific unit.
      * Main application logic
@@ -962,8 +1025,9 @@ public class TeamLoadoutGenerator {
      * @param e
      * @param mt
      * @param faction
+     * @param binFillRatio float setting the max fill rate for all bins in this entity (mostly for Pirates)
      */
-    public void reconfigureEntity(Entity e, MunitionTree mt, String faction) {
+    public void reconfigureEntity(Entity e, MunitionTree mt, String faction, float binFillRatio) {
         String chassis = e.getFullChassis();
         String model = e.getModel();
         String pilot = e.getCrew().getName(0);
@@ -988,14 +1052,31 @@ public class TeamLoadoutGenerator {
         for (String binName : binLists.keySet()) {
             iterativelyLoadAmmo(e, mt, binLists.get(binName), binName, faction);
         }
+
+        // Apply requested fill ratio to all final bin loadouts (between max fill and 0)
+        clampAmmoShots(e, binFillRatio);
+    }
+
+    /**
+     * Applies specified ammo fill ratio to all bins
+     * @param e
+     * @param binFillRatio
+     */
+    protected void clampAmmoShots(Entity e, float binFillRatio) {
+        if (binFillRatio < 1.0f) {
+            for (Mounted<AmmoType> ammo : e.getAmmo()) {
+                int maxShots = ammo.getType().getShots();
+                ammo.setShotsLeft(Math.min(maxShots, (int) Math.max(0, Math.ceil(binFillRatio * maxShots))));
+            }
+        }
     }
     // endregion reconfigureEntity
 
     // region reconfigureAero
 
     /**
-     * This method should mirror reconfigureEntity but with more restrictions based
-     * on the types of alternate
+     * TODO: implement in 0.50.1 with other new errata changes
+     * This method should mirror reconfigureEntity but with more restrictions based on the types of alternate
      * munitions allowed by Aerospace rules.
      *
      * @param e
@@ -1005,7 +1086,7 @@ public class TeamLoadoutGenerator {
     public void reconfigureAero(Entity e, MunitionTree mt, String faction) {
 
     }
-    // endregion reconfigureAero
+    //endregion reconfigureAero
 
     // region iterativelyLoadAmmo
     private void iterativelyLoadAmmo(
@@ -1061,8 +1142,9 @@ public class TeamLoadoutGenerator {
             // If not trueRandom, only select from munitions that deal damage
 
             boolean random = priorities.get(i).contains("Random");
-            String binType = (random) ? getRandomBin(binName, trueRandom) : priorities.get(i);
-            Mounted bin = binList.get(0);
+            String binType = (random) ?
+                    getRandomBin(binName, trueRandom) : priorities.get(i);
+            Mounted<AmmoType> bin = binList.get(0);
             AmmoType desired = null;
 
             // Load matching AmmoType
@@ -1830,8 +1912,24 @@ class MunitionWeightCollection {
         increaseMunitions(TeamLoadoutGenerator.GUIDED_MUNITIONS);
     }
 
+    public void increaseTagGuidedMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.TAG_GUIDED_MUNITIONS);
+    }
+
+    public void increaseNARCGuidedMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.NARC_GUIDED_MUNITIONS);
+    }
+
     public void decreaseGuidedMunitions() {
         decreaseMunitions(TeamLoadoutGenerator.GUIDED_MUNITIONS);
+    }
+
+    public void decreaseTagGuidedMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.TAG_GUIDED_MUNITIONS);
+    }
+
+    public void decreaseNARCGuidedMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.NARC_GUIDED_MUNITIONS);
     }
 
     public void increaseAmmoReducingMunitions() {

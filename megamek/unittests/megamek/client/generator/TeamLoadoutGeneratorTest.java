@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -495,5 +496,60 @@ class TeamLoadoutGeneratorTest {
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
         assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));
+    }
+
+    @Test
+    void testClampAmmoShotsReduceAmmoBinsToZero() throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 0.0f);
+        assertEquals(0, bin1.getUsableShotsLeft());
+        assertEquals(0, bin2.getUsableShotsLeft());
+    }
+
+    @Test
+    void testClampAmmoShotsPositiveSmallFloatGivesOneShot() throws LocationFullException {
+        // LRM15s carry 8 shots, the clamp function should give 1 shot at 10% / 0.1f ratio
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 0.1f);
+        assertEquals(1, bin1.getUsableShotsLeft());
+        assertEquals(1, bin2.getUsableShotsLeft());
+    }
+
+    @Test
+    void testClampAmmoShotsSetToHalf() throws LocationFullException {
+        // LRM15s carry 8 shots, the clamp function should give 4 shot at 40% / 0.5f ratio
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 0.5f);
+        assertEquals(4, bin1.getUsableShotsLeft());
+        assertEquals(4, bin2.getUsableShotsLeft());
+    }
+
+    @Test
+    void testClampAmmoShotsCannotExceedFull() throws LocationFullException {
+        // LRM15s carry 8 shots, the clamp function should give 8 shot at 100% or over
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 1.5f);
+        assertEquals(8, bin1.getUsableShotsLeft());
+        assertEquals(8, bin2.getUsableShotsLeft());
     }
 }

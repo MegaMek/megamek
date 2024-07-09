@@ -19,6 +19,10 @@
 
 package megamek.client.generator;
 
+import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ratgenerator.Ruleset;
+import megamek.common.enums.AbstractRating;
+
 import java.util.HashSet;
 
 /**
@@ -54,7 +58,10 @@ public class ReconfigurationParameters {
     public HashSet<String> enemyFactions = new HashSet<String>();
 
     // Friendly stats
+    //
+    public int friendlyQuality = ForceDescriptor.RATING_5;
     public String friendlyFaction = "";
+    public boolean isPirate = false;
     public long friendlyCount = 0;
     public long friendlyTAGs = 0;
     public long friendlyNARCs = 0;
@@ -69,6 +76,9 @@ public class ReconfigurationParameters {
     // User-selected directives
     // Nukes may be banned for a given team but allowed in general (boo, hiss)
     public boolean nukesBannedForMe = true;
+
+    // Allow setting bin filled percentages (e.g. for destitute pirates)
+    public float binFillPercent = 1.0f;
 
     // Datatype for passing around game parameters the Loadout Generator cares about
     ReconfigurationParameters() {

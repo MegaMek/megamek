@@ -433,6 +433,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if ((clientgui != null) && (clientgui.chatlounge != null)) {
             ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
             if (null != munitionTree && null != rp) {
+                rp.friendlyFaction = faction;
+                rp.binFillPercent = (rp.isPirate) ? TeamLoadoutGenerator.UNSET_FILL_RATIO : 1.0f;
                 // TODO: create and set up default adf file path for bots
                 tlg.reconfigureEntities(updateEntities, faction, munitionTree, rp);
                 // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
@@ -631,6 +633,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butRandomize.setEnabled(true);
                 // Set nuke ban state before generating the tree
                 rp = tlg.generateParameters(team);
+                rp.isPirate = getFactionCode().equalsIgnoreCase("PIR");
                 rp.nukesBannedForMe = chkBanNukes.isSelected();
                 ArrayList<Entity> entities = clientgui.getClient().getGame().getPlayerEntities(player, false);
                 munitionTree = tlg.generateMunitionTree(rp, entities, "");

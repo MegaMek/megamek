@@ -371,6 +371,9 @@ public class LobbyMekPopupActions implements ActionListener {
         ReconfigurationParameters rp = tlg.generateParameters(el, faction, team);
         // Extra nuke controls don't apply in the context menu; rely on game option!
         rp.nukesBannedForMe = lobby.game().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+        // Reduce Pirate ammo somewhat; others get full loadouts
+        rp.isPirate = faction.toUpperCase().equals("PIR");
+        rp.binFillPercent = (rp.isPirate) ? TeamLoadoutGenerator.UNSET_FILL_RATIO : 1.0f;
 
         boolean reconfigured = false;
 

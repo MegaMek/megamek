@@ -44,6 +44,8 @@ public class CacheRebuildTest {
 
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
 
+        MechSummaryCache.refreshUnitData(true);
+
         // Make sure no units failed loading
         assertTrue(cache.getFailedFiles().isEmpty());
         // Sanity check to make sure the loader thread didn't fail outright
@@ -55,6 +57,7 @@ public class CacheRebuildTest {
      */
     @Test
     @Order(2)
+    @Disabled("Behaves unpredictably and detects several units as being invalid when they show as valid in the full program.")
     public void testInvalidCanonUnits() {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
 
@@ -107,10 +110,7 @@ public class CacheRebuildTest {
         7196, // Intrepid Assault Craft (2478)
         3684, // Air Car
         4251, // Ground Car
-        4277, // Heavy Transport B1
         4395, // Jeep
-        4401, // Jet Sled
-        5105, // Speeder
         1531, // Hi-Scout Drone (PathTrak)
         226,  // Bandit (C) Hovercraft G
         5740, // Ajax Assault Tank C

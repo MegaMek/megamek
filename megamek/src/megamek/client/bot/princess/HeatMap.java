@@ -532,8 +532,10 @@ public class HeatMap {
      * @param adjustment  modifier to existing value
      */
     private void updateTeamActivityMap(Coords position, int adjustment) {
-        int mapValue = teamActivity.getOrDefault(position, 0) + adjustment;
-        teamActivity.put(position, mapValue);
+        if (position != null) {
+            int mapValue = teamActivity.getOrDefault(position, 0) + adjustment;
+            teamActivity.put(position, mapValue);
+        }
     }
 
     /**

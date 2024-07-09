@@ -52,6 +52,16 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             cmd = c;
         }
 
+        public static DeployMinefieldCommand fromString(String command) {
+        	for (DeployMinefieldCommand value : values()) {
+        		if (value.getCmd().equals(command)) {
+        			return value;
+        		}
+        	}
+        	
+        	return null;
+        }
+        
         @Override
         public String getCmd() {
             return cmd;
@@ -444,7 +454,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        currentCommand = DeployMinefieldCommand.valueOf(ev.getActionCommand());
+        currentCommand = DeployMinefieldCommand.fromString(ev.getActionCommand());
     } // End public void actionPerformed(ActionEvent ev)
 
     @Override

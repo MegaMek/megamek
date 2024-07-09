@@ -3305,9 +3305,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Get a list of all the objects on the ground at the given coordinates
+     * guaranteed to return non-null, but may return empty list
      */
     public List<ICarryable> getGroundObjects(Coords coords) {
-    	return groundObjects.containsKey(coords) ? groundObjects.get(coords) : new ArrayList<ICarryable>();
+    	return groundObjects.containsKey(coords) ? groundObjects.get(coords) : new ArrayList<>(); 
     }
     
     /**

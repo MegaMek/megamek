@@ -19,10 +19,17 @@
 
 package megamek.common;
 
+import java.io.Serializable;
+
 /**
  * Represents a basic carryable object with no additional other properties
  */
-public class Briefcase implements ICarryable {
+public class Briefcase implements ICarryable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8849879320465375457L;
+	
 	private double tonnage;
 	private String name;
 	

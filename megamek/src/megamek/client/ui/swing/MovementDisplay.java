@@ -1204,6 +1204,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // clear board cursors
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
+        // Needed to clear best move modifiers
+        clientgui.clearTemporarySprites();
 
         if (ce == null) {
             return;
@@ -4342,6 +4344,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public void computeMovementEnvelope(Entity suggestion) {
         // do nothing if deactivated in the settings
         if (!GUIP.getMoveEnvelope()) {
+            // Issue #5700 : Move envelope doesn't clear when turning off move envelopes from menu or shortcut.
+            clientgui.clearTemporarySprites();
             return;
         }
 

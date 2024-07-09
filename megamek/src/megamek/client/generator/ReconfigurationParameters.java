@@ -20,8 +20,6 @@
 package megamek.client.generator;
 
 import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.common.enums.AbstractRating;
 
 import java.util.HashSet;
 

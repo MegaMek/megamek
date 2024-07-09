@@ -34,19 +34,20 @@ public class MunitionTree {
     // Validated munition names that will work in ADF files.
     // TODO: validate all these strings!
     public static final ArrayList<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Follow The Leader", "Heat-Seeking", "Semi-guided", "Smoke", "Swarm", "Swarm-I", "Thunder",
-            "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno", "Anti-TSM",
-            "Artemis-capable", "Dead-Fire", "Fragmentation", "Listen-Kill", "Mine Clearance", "Narc-capable",
-            "Standard"
+            "Dead-Fire", "Standard", "Swarm-I", "Swarm", "Heat-Seeking", "Semi-guided",
+            "Artemis-capable", "Narc-capable", "Follow The Leader", "Fragmentation",
+            "Thunder", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
+            "Thunder-Inferno", "Anti-TSM", "Listen-Kill", "Smoke", "Mine Clearance"
     ));
 
     public static final ArrayList<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Acid", "Heat-Seeking", "Inferno", "Smoke", "Tandem-Charge", "Anti-TSM", "Artemis-capable",
-            "Dead-Fire", "Fragmentation", "Listen-Kill", "Mine Clearance", "Narc-capable", "Standard"
+            "Dead-Fire", "Standard", "Tandem-Charge", "Inferno", "Heat-Seeking",
+            "Artemis-capable", "Narc-capable", "Fragmentation", "Acid",
+            "Anti-TSM", "Listen-Kill", "Mine Clearance", "Smoke"
     ));
 
     public static final ArrayList<String> AC_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Armor-Piercing", "Caseless", "Flak", "Flechette", "Precision", "Tracer", "Standard"
+            "Precision", "Standard", "Armor-Piercing", "Caseless", "Flak", "Tracer", "Flechette"
     ));
 
     public static final ArrayList<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of(
@@ -54,13 +55,14 @@ public class MunitionTree {
     ));
 
     public static final ArrayList<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
-            "ADA", "Cluster", "Homing", "Illumination", "Inferno-IV", "Laser Inhibiting", "Smoke",
-            "Thunder", "Thunder Vibrabomb-IV", "Davy Crockett-M", "Fuel-Air", "Standard"
+            "Fuel-Air", "Standard", "ADA", "Cluster", "Inferno-IV", "Homing",
+            "Thunder", "Thunder Vibrabomb-IV", "Illumination", "Smoke", "Laser Inhibiting", "Davy Crockett-M"
     ));
 
     public static final ArrayList<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Cluster", "Copperhead", "FASCAM", "Flechette", "Illumination", "Smoke", "Fuel-Air", "Davy Crockett-M",
-            "Standard"
+            "Fuel-Air", "Standard", "Cluster", "Copperhead",
+            "FASCAM", "Flechette", "Illumination", "Smoke", "Davy Crockett-M"
+
     ));
 
     public static final ArrayList<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of(
@@ -68,7 +70,7 @@ public class MunitionTree {
     ));
 
     public static final ArrayList<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Airburst", "Anti-personnel", "Flare", "Semi-Guided", "Smoke", "Standard"
+            "Standard", "Semi-Guided", "Anti-personnel", "Airburst", "Flare", "Smoke"
     ));
 
     public static final ArrayList<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of(

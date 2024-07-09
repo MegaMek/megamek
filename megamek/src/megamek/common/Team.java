@@ -19,6 +19,7 @@
  */
 package megamek.common;
 
+import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public final class Team extends TurnOrdered {
 
     private final List<Player> players = new ArrayList<>();
     private final int id;
-    private String faction = "IS";
+    private String faction = FactionRecord.IS_GENERAL_KEY;
 
     public Team(int newID) {
         id = newID;

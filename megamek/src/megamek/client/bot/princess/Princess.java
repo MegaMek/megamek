@@ -3244,7 +3244,7 @@ public class Princess extends BotClient {
         List<Entity> trackedEntities = getGame().
                 inGameTWEntities().
                 stream().
-                filter(e -> HeatMap.validateForTracking(e)).
+                filter(HeatMap::validateForTracking).
                 collect(Collectors.toList());
 
         // Process entities into each heat map, then age it

@@ -957,7 +957,16 @@ public class TeamLoadoutGenerator {
         // If fill ratio is already set, leave it.
         if (rp.binFillPercent == UNSET_FILL_RATIO) {
             if (rp.isPirate) {
-                rp.binFillPercent = (float) (Math.min(1.0f, Math.max(0.2f, (Math.random() / 4.0) + (rp.friendlyQuality / 8.0))));
+                rp.binFillPercent = (float) (
+                    Math.min(
+                        castPropertyDouble("pirateMaxAllowedBinFillRatio",1.0),
+                        Math.max(
+                            castPropertyDouble("pirateMinAllowedBinFillRatio", 0.2),
+                            Math.random() / castPropertyDouble("pirateRandomRangeDivisor", 4.0)
+                                + (rp.friendlyQuality / castPropertyDouble("pirateQualityDivisor", 8.0))
+                        )
+                    )
+                );
             } else {
                 // If we get this far without setting the ratio, but are not pirates, reset to fill
                 rp.binFillPercent = 1.0f;

@@ -108,4 +108,11 @@
     <entry key="bombRandomReplaceRating2PlusThreshold">25</entry>
     <entry key="bombRandomReplaceRating1PlusThreshold">40</entry>
     <entry key="bombRandomReplaceRating0PlusThreshold">80</entry>
+    <entry key="commentPirateBinFillRatio">Pirates and Rebels get ammo bins filled at random ratios</entry>
+    <entry key="commentPirateBinFillRatio2">Min(maxAllowed, Max(minAllowed, random/rangeDivisor + quality/qualityDivisor))</entry>
+    <entry key="commentPirateBinFillRatio3">E.g. the defaults give a range of 20% to 100%, with Quality Rating 0 giving ~20% and Rating 5 giving ~75% on average</entry>
+    <entry key="pirateMaxAllowedBinFillRatio">1.0</entry>
+    <entry key="pirateMinAllowedBinFillRatio">0.2</entry>
+    <entry key="pirateRandomRangeDivisor">4.0</entry>
+    <entry key="pirateQualityDivisor">8.0</entry>
 </properties>

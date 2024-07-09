@@ -17,6 +17,7 @@
  */
 package megamek.client.ui.swing;
 
+import com.formdev.flatlaf.extras.FlatInspector;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
@@ -109,6 +110,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      */
     private void createGUI(boolean show) {
         createController();
+
+        // This is a handy tool to inspect the UI
+        FlatInspector.install( "ctrl shift alt X" );
 
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
 

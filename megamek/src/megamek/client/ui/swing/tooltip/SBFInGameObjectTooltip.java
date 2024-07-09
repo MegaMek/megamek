@@ -67,7 +67,6 @@ public final class SBFInGameObjectTooltip {
         int width = UIUtil.scaleForGUI(BASE_WIDTH);
         result.append("<div style=\"width:").append(width)
                 .append("; padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
-//        result.append("<div style=\"padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
                 .append(styleColor).append(";\">");
         result.append(nameLines(unit, game));
         result.append(formationStats(unit));

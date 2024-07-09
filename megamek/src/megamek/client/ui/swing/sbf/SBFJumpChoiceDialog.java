@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing.sbf;
 
 import megamek.client.ui.swing.AbstractChoiceDialog;
@@ -27,6 +26,8 @@ import megamek.client.ui.swing.util.UIUtil;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.util.List;
+
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
 
@@ -41,10 +42,10 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
 
     @Override
     protected void detailLabel(JToggleButton button, Integer target) {
-        int fontSize = UIUtil.scaleForGUI(BASE_JUMP_SIZE);
-        String targetText = target > 0 ? Integer.toString(target) : "None";
-        String text = "<HTML><BODY><div style=\"font-family:Exo; font-size:" + fontSize
-                + ";\">" + targetText + "</div></BODY></HTML>";
+        String targetText = (target > 0) ? Integer.toString(target) : "None";
+        String text = "<HTML><HEAD>" + styles() + "</HEAD><BODY>"
+                + spanCSS("button", targetText)
+                + "</BODY></HTML>";
         button.setText(text);
     }
 
@@ -64,28 +65,30 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
     }
 
     private static String titleMessage() {
-        return "<HTML><HEAD>"+styles()+"</HEAD><BODY><div class=frame>" +
-                "<span class=label>Choose the</span>" +
-                "<span class=speccell> JUMP </span>" +
-                "<span class=label>points to use:</span></div></BODY></HTML>";
+        return "<HTML><HEAD>" + styles() + "</HEAD><BODY><div class=frame>"
+                + spanCSS("label", "Choose the")
+                + spanCSS("speccell", " JUMP ")
+                + spanCSS("label", "points to use:")
+                + "</div></BODY></HTML>";
     }
 
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
             UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+            pack();
         }
-        pack();
         super.setVisible(visible);
     }
 
     public static String styles() {
         float labelSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE2);
         int padding = UIUtil.scaleForGUI(BASE_PADDING);
+        int buttonSize = UIUtil.scaleForGUI(BASE_JUMP_SIZE);
         return "<style> " +
                 ".label { font-family:Noto Sans; font-size:" + labelSize + ";  }" +
                 ".frame { padding:" + padding + " " + 2 * padding + " 0 0;  }" +
-                ".speccell { font-family:Exo; font-size:" + labelSize + "; }";
+                ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
+                ".button { font-family:Exo; font-size:" + buttonSize + "; }";
     }
-
 }

@@ -78,6 +78,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int deployRound = 0;
     private BoardLocation position;
     private boolean isDone = false;
+    private int jumpUsedThisTurn = 0;
 
     public String getName() {
         return name;
@@ -471,5 +472,13 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public boolean isDone() {
         return isDone;
+    }
+
+    public int getJumpUsedThisTurn() {
+        return jumpUsedThisTurn;
+    }
+
+    public void setJumpUsedThisTurn(int jumpUsedThisTurn) {
+        this.jumpUsedThisTurn = jumpUsedThisTurn;
     }
 }

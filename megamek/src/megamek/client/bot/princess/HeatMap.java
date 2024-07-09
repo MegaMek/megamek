@@ -358,12 +358,8 @@ public class HeatMap {
         // i.e. crew is alive, unit is deployed, can be seen, and is not a concealed unit
         for (Entity curTracked : tracked.
                 stream().
-                filter(e -> e.getOwner().getTeam() == teamId &&
-                    !e.isCarcass() &&
-                    e.isDeployed() &&
-                    (isFriendlyTeam || e.isVisibleToEnemy() || e.isDetectedByEnemy()) &&
-                    !e.isHidden()).
-                collect(Collectors.toList())) {
+                filter(e -> e.getOwner().getTeam() == teamId && isTrackable(e)).
+                toList()) {
 
             // Immobile - once you know where it is, it's (hopefully!) not moving ... or
             // Non-combat - not worth tracking
@@ -474,11 +470,7 @@ public class HeatMap {
 
         for (int curId : lastPositionCache.keySet()) {
             Entity curEntity = game.getEntity(curId);
-            if (curEntity != null &&
-                    curEntity.isDeployed() &&
-                    curEntity.getPosition() != null &&
-                    !curEntity.isCarcass() &&
-                    (isFriendlyTeam || curEntity.isVisibleToEnemy() || curEntity.isDetectedByEnemy())) {
+            if (curEntity != null && isTrackable(curEntity)) {
                 lastPositionCache.put(curId, curEntity.getPosition());
             }
         }
@@ -569,11 +561,7 @@ public class HeatMap {
         List<Coords> activePositions = new ArrayList<>();
         for (int curId : lastPositionCache.keySet()) {
             Entity curEntity = game.getEntity(curId);
-            if (curEntity != null &&
-                    !curEntity.isDestroyed() &&
-                    curEntity.isDeployed() &&
-                    !curEntity.isCarcass() &&
-                    (isFriendlyTeam || curEntity.isVisibleToEnemy() || curEntity.isDetectedByEnemy())) {
+            if (curEntity != null && isTrackable(curEntity)) {
                 activePositions.add(lastPositionCache.get(curId));
             }
         }
@@ -685,6 +673,45 @@ public class HeatMap {
             }
         }
 
+    }
+
+    /**
+     * Determines if a particular entity is valid for tracking i.e. it is a ground unit, deployed,
+     * on map, not hidden, and either considered a friendly unit or an enemy unit that is detected
+     * visually or through sensors. Ejected MechWarriors and vehicle crews, gun emplacements, and
+     * entities with dead crews ('carcass') are rejected.
+     * @param testEntity  entity to check
+     * @return            true, if entity is valid for tracking
+     */
+    public boolean isTrackable (Entity testEntity) {
+        return (testEntity != null) &&
+                !testEntity.isDestroyed() &&
+                testEntity.isGround() &&
+                testEntity.isDeployed() &&
+                !testEntity.isOffBoard() &&
+                !testEntity.isCarcass() &&
+                !testEntity.isHidden() &&
+                (isFriendlyTeam || testEntity.isVisibleToEnemy() || testEntity.isDetectedByEnemy()) &&
+                !(testEntity instanceof EjectedCrew) &&
+                !(testEntity instanceof GunEmplacement);
+    }
+
+    /**
+     * Convenience method for external callers to pre-filter entities prior to passing them
+     * for processing into a heat map
+     * @param testEntity  entity to check
+     * @return            true, if entity is valid for testing
+     */
+    public static boolean validateForTracking (Entity testEntity) {
+        return (testEntity != null) &&
+                !testEntity.isDestroyed() &&
+                testEntity.isGround() &&
+                testEntity.isDeployed() &&
+                !testEntity.isOffBoard() &&
+                !testEntity.isCarcass() &&
+                !testEntity.isHidden() &&
+                !(testEntity instanceof EjectedCrew) &&
+                !(testEntity instanceof GunEmplacement);
     }
 
     /**

@@ -3244,10 +3244,7 @@ public class Princess extends BotClient {
         List<Entity> trackedEntities = getGame().
                 inGameTWEntities().
                 stream().
-                filter(e -> e.isDeployed() &&
-                !e.isOffBoard() &&
-                !(e instanceof EjectedCrew) &&
-                e.isGround()).
+                filter(e -> HeatMap.validateForTracking(e)).
                 collect(Collectors.toList());
 
         // Process entities into each heat map, then age it
@@ -3268,11 +3265,8 @@ public class Princess extends BotClient {
         List<Entity> trackedEntities = getGame().
                 inGameTWEntities().
                 stream().
-                filter(e -> e.isDeployed() &&
-                    !(e instanceof EjectedCrew) &&
-                    e.getOwner().getId() != this.getLocalPlayer().getId() &&
-                    e.isGround() &&
-                    !e.isOffBoard()).
+                filter(e -> e.getOwner().getId() != this.getLocalPlayer().getId() &&
+                    HeatMap.validateForTracking(e)).
                 collect(Collectors.toList());
 
         if (!trackedEntities.isEmpty()) {

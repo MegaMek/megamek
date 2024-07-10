@@ -491,7 +491,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
-        groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv);
+        groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
 
@@ -1180,7 +1180,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             // otherwise, hide the panel
             panSecondary.setVisible(false);
         }
-
+        
         // Set the new panel's listeners
         if (curPanel instanceof BoardViewListener) {
             bv.addBoardViewListener((BoardViewListener) curPanel);
@@ -2854,7 +2854,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();
-        groundObjectSpriteHandler.clear();
         firingSolutionSpriteHandler.clear();
         firingArcSpriteHandler.clear();
     }

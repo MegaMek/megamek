@@ -104,7 +104,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     // buttons
     protected Map<DeployMinefieldCommand,MegamekButton> buttons;
 
-    DeployMinefieldCommand currentCommand;
+    DeployMinefieldCommand currentCommand = DeployMinefieldCommand.COMMAND_NONE;
 
     private boolean deployingConventionalMinefields() {
     	return currentCommand.equals(DeployMinefieldCommand.DEPLOY_MINE_CONV);

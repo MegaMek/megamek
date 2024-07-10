@@ -19,15 +19,19 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.common.Coords;
-import java.util.List;
+import megamek.common.Game;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GamePhaseChangeEvent;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 
-    // Cache the warn list; thus, when CF warning is turned on the sprites can easily be created
+    // Cache the ground object list as it does not change very often
     private Iterable<Coords> currentGroundObjectList;
+    private final Game game;
 
-    public GroundObjectSpriteHandler(BoardView boardView) {
+    public GroundObjectSpriteHandler(BoardView boardView, Game game) {
         super(boardView);
+        this.game = game;
     }
 
     public void setGroundObjectSprites(Iterable<Coords> objectCoordList) {
@@ -50,10 +54,22 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 
     @Override
     public void initialize() {
+    	game.addGameListener(this);
     }
 
     @Override
     public void dispose() {
         clear();
+        game.removeGameListener(this);
+    }
+    
+    @Override
+    public void gameBoardChanged(GameBoardChangeEvent e) {
+    	setGroundObjectSprites(game.getGroundObjects().keySet());
+    }   
+    
+    @Override
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    	setGroundObjectSprites(game.getGroundObjects().keySet());
     }
 }

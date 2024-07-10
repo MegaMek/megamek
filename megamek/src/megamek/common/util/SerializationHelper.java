@@ -67,7 +67,8 @@ public class SerializationHelper {
                 megamek.server.SmokeCloud.class,
                 megamek.common.EntityFluff.class,
                 megamek.common.NarcPod.class,
-                megamek.common.INarcPod.class
+                megamek.common.INarcPod.class,
+                megamek.common.Briefcase.class
         });
         xStream.allowTypeHierarchy(megamek.common.BTObject.class);
         xStream.allowTypeHierarchy(megamek.common.Building.class);

@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.DropdownDialog;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -34,6 +35,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      * @author arlith
      */
     public static enum DeployMinefieldCommand implements PhaseCommand {
+    	COMMAND_NONE("noCommand"),
         DEPLOY_MINE_CONV("deployMineConv"),
         DEPLOY_MINE_COM("deployMineCom"),
         DEPLOY_MINE_VIBRA("deployMineVibra"),
@@ -41,6 +43,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         DEPLOY_MINE_INFERNO("deployMineInferno"),
         DEPLOY_CARRYABLE("deployCarriable"),
         REMOVE_MINES("removeMines");
+    	
+    	private static DeployMinefieldCommand[] actualCommands =
+    		{ DEPLOY_MINE_CONV, DEPLOY_MINE_COM, DEPLOY_MINE_VIBRA, DEPLOY_MINE_ACTIVE,
+    				DEPLOY_MINE_INFERNO, DEPLOY_CARRYABLE, REMOVE_MINES }; 
 
         /**
          * Priority that determines this buttons order
@@ -52,6 +58,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             cmd = c;
         }
 
+        /**
+         * Given a string, figure out the command value
+         */
         public static DeployMinefieldCommand fromString(String command) {
         	for (DeployMinefieldCommand value : values()) {
         		if (value.getCmd().equals(command)) {
@@ -60,6 +69,13 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         	}
         	
         	return null;
+        }
+        
+        /**
+         * Get all the commands that aren't NO-OP
+         */
+        public static DeployMinefieldCommand[] getActualCommands() {
+        	return actualCommands;
         }
         
         @Override
@@ -137,16 +153,16 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     @Override
     protected void setButtons() {
-        buttons = new HashMap<>((int) (DeployMinefieldCommand.values().length * 1.25 + 0.5));
-        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.values()) {
-            buttons.put(cmd, createButton(cmd.getCmd(), "DeployMinefieldDisplay."));
+        buttons = new HashMap<>((int) (DeployMinefieldCommand.getActualCommands().length * 1.25 + 0.5));
+        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.getActualCommands()) {
+        	buttons.put(cmd, createButton(cmd.getCmd(), "DeployMinefieldDisplay."));
         }
         numButtonGroups = (int) Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
     }
 
     @Override
     protected void setButtonsTooltips() {
-        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.values()) {
+        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.getActualCommands()) {
             String tt = createToolTip(cmd.getCmd(), "DeployMinefieldDisplay.", cmd.getHotKeyDesc());
             buttons.get(cmd).setToolTipText(tt);
         }
@@ -155,7 +171,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     @Override
     protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
-        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.values()) {
+        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.getActualCommands()) {
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -253,15 +269,34 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             
             // remove all carryables here as well and put them back to the player
             for (ICarryable carryable : game.getGroundObjects(coords)) {
-            	clientgui.getClient().getLocalPlayer().getGroundObjectsToPlace().add(carryable);
+            	p.getGroundObjectsToPlace().add(carryable);
             }
             
             game.getGroundObjects().remove(coords);
             
+            clientgui.showGroundObjects(game.getGroundObjects().keySet());
+            
+        } else if (currentCommand == DeployMinefieldCommand.DEPLOY_CARRYABLE) {
+        	List<ICarryable> groundObjects = p.getGroundObjectsToPlace();
+        	
+        	ICarryable toDeploy = groundObjects.get(0);
+        	
+        	if (groundObjects.size() > 1) {
+        		DropdownDialog<ICarryable> ddl = new DropdownDialog<>(clientgui.frame, "DeployMinefieldDisplay.deployCarriable", "DeployMinefieldDisplay.deployCarriable", clientgui.getClient().getLocalPlayer().getGroundObjectsToPlace());
+        		ddl.setVisible(true);
+        		toDeploy = ddl.getSelectedItem();
+        	}
+        	
+        	game.placeGroundObject(coords, toDeploy);
+        	groundObjects.remove(toDeploy);
+        	
+        	if (groundObjects.size() <= 0) {
+        		currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+        	}
+        	
+        	clientgui.showGroundObjects(game.getGroundObjects().keySet());
         } else {
-        	
-        	
-            // first check that there is not already a mine of this type
+        	// first check that there is not already a mine of this type
             // deployed
             Enumeration<?> mfs = game.getMinefields(coords).elements();
             while (mfs.hasMoreElements()) {
@@ -300,6 +335,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                             Minefield.TYPE_CONVENTIONAL, mfd.getDensity(), sea,
                             depth);
                     p.setNbrMFConventional(p.getNbrMFConventional() - 1);
+                    
+                    if (p.getNbrMFConventional() <= 0) {
+                    	currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                    }
                 }
             } else if (deployingCommandMinefields()) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
@@ -310,6 +349,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                             Minefield.TYPE_COMMAND_DETONATED, mfd.getDensity(),
                             sea, depth);
                     p.setNbrMFCommand(p.getNbrMFCommand() - 1);
+                    
+                    if (p.getNbrMFCommand() <= 0) {
+                    	currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                    }
                 }
             } else if (deployingActiveMinefields()) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
@@ -319,6 +362,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                     mf = Minefield.createMinefield(coords, p.getId(),
                             Minefield.TYPE_ACTIVE, mfd.getDensity());
                     p.setNbrMFActive(p.getNbrMFActive() - 1);
+                    
+                    if (p.getNbrMFActive() <= 0) {
+                    	currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                    }
                 }
             } else if (deployingInfernoMinefields()) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
@@ -329,6 +376,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                             Minefield.TYPE_INFERNO, mfd.getDensity(), sea,
                             depth);
                     p.setNbrMFInferno(p.getNbrMFInferno() - 1);
+                    
+                    if (p.getNbrMFInferno() <= 0) {
+                    	currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                    }
                 }
             } else if (deployingVibrabombMinefields()) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
@@ -343,6 +394,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                             Minefield.TYPE_VIBRABOMB, mfd.getDensity(),
                             vsd.getSetting());
                     p.setNbrMFVibra(p.getNbrMFVibra() - 1);
+                    
+                    if (p.getNbrMFVibra() <= 0) {
+                    	currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                    }
                 }
             } else {
                 return;
@@ -365,7 +420,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void clear() {
-        //TODO: undefined for now
+
     }
 
     //

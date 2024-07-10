@@ -39,11 +39,9 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import org.apache.commons.collections4.IteratorUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

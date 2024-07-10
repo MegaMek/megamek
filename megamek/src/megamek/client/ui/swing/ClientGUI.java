@@ -233,6 +233,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
+    private GroundObjectSpriteHandler groundObjectSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
     private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
@@ -490,12 +491,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
+        groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
                 sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
-                firingSolutionSpriteHandler, firingArcSpriteHandler));
+                groundObjectSpriteHandler, firingSolutionSpriteHandler, firingArcSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -2852,6 +2854,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();
+        groundObjectSpriteHandler.clear();
         firingSolutionSpriteHandler.clear();
         firingArcSpriteHandler.clear();
     }
@@ -2888,10 +2891,19 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     /**
      * Shows collapse warnings in the given list of Coords in the BoardView
      *
-     * @param warnList The Coords to show the warning on
+     * @param warnList The list of coordinates to show the warning on
      */
     public void showCollapseWarning(List<Coords> warnList) {
         collapseWarningSpriteHandler.setCFWarningSprites(warnList);
+    }
+    
+    /**
+     * Shows ground object icons in the given list of Coords in the BoardView
+     *
+     * @param groundObjectList The list of coordinates to show
+     */
+    public void showGroundObjects(Iterable<Coords> groundObjectList) {
+    	groundObjectSpriteHandler.setGroundObjectSprites(groundObjectList);
     }
 
     /**

@@ -141,7 +141,8 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0);
+        return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0) 
+        		|| getGroundObjectsToPlace().size() > 0;
     }
 
     public void setNbrMFConventional(int nbrMF) {

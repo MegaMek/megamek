@@ -2862,11 +2862,18 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
+     * Removes visibility to the Movement Envelope.
+     */
+    public void clearMovementEnvelope() {
+        this.movementEnvelopeHandler.clear();
+    }
+
+    /**
      * Removes all temporary sprites from the board, such as pending actions, movement envelope,
      * collapse warnings etc. Does not remove game-state sprites such as units or flares.
      */
     public void clearTemporarySprites() {
-        movementEnvelopeHandler.clear();
+        clearMovementEnvelope();
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();

@@ -58,6 +58,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.lobby.LobbyMekPopupActions.resetBombChoices;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -435,7 +436,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             if (null != munitionTree && null != rp) {
                 rp.friendlyFaction = faction;
                 rp.binFillPercent = (rp.isPirate) ? TeamLoadoutGenerator.UNSET_FILL_RATIO : 1.0f;
-                // TODO: create and set up default adf file path for bots
+                // Clear any bomb assignments
+                resetBombChoices(clientgui, client.getGame(), updateEntities);
                 tlg.reconfigureEntities(updateEntities, faction, munitionTree, rp);
                 // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
                 clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());

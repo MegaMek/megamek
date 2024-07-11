@@ -380,13 +380,13 @@ public class LobbyMekPopupActions implements ActionListener {
         switch (command) {
             case LMP_AUTOCONFIG:
                 mt = tlg.generateMunitionTree(rp, el, "");
-                resetBombChoices(clientgui, el);
+                resetBombChoices(clientgui, lobby.game(), el);
                 tlg.reconfigureEntities(el, faction, mt, rp);
                 reconfigured = true;
                 break;
             case LMP_RANDOMCONFIG:
                 mt = TeamLoadoutGenerator.generateRandomizedMT();
-                resetBombChoices(clientgui, el);
+                resetBombChoices(clientgui, lobby.game(), el);
                 tlg.reconfigureEntities(el, faction, mt, rp);
                 reconfigured = true;
                 break;
@@ -398,7 +398,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 mt = loadLoadout();
                 if (null != mt && null != clientgui) {
                     // Apply to entities
-                    resetBombChoices(clientgui, el);
+                    resetBombChoices(clientgui, lobby.game(), el);
                     tlg.reconfigureEntities(el, faction, mt, rp);
                     reconfigured = true;
                 }
@@ -410,7 +410,7 @@ public class LobbyMekPopupActions implements ActionListener {
         }
     }
 
-    private void resetBombChoices(ClientGUI clientgui, ArrayList<Entity> el) {
+    public static void resetBombChoices(ClientGUI clientgui, Game game, ArrayList<Entity> el) {
         ArrayList<Entity> resetBombers = new ArrayList();
         for (Entity entity: el) {
             if (entity.isBomber() && !entity.isVehicle()) {
@@ -422,7 +422,7 @@ public class LobbyMekPopupActions implements ActionListener {
             }
         }
         if (!resetBombers.isEmpty()) {
-            clientgui.chatlounge.sendProxyUpdates(resetBombers, lobby.game().getPlayer(el.get(0).getOwnerId()));
+            clientgui.chatlounge.sendProxyUpdates(resetBombers, game.getPlayer(el.get(0).getOwnerId()));
         }
     }
 

@@ -385,6 +385,13 @@ public class Client extends AbstractClient {
     public void sendDeployMinefields(Vector<Minefield> minefields) {
         send(new Packet(PacketCommand.DEPLOY_MINEFIELDS, minefields));
     }
+    
+    /**
+     * Sends an updated state of ground objects (i.e. cargo etc)
+     */
+    public void sendDeployGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
+    	send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, groundObjects));
+    }
 
     /**
      * Sends a "set Artillery Autohit Hexes" packet
@@ -575,6 +582,11 @@ public class Client extends AbstractClient {
             // call it everytime
             game.processGameEvent(new GameEntityChangeEvent(this, e));
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void receiveUpdateGroundObjects(Packet packet) {
+    	game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -890,6 +902,9 @@ public class Client extends AbstractClient {
             case REMOVE_MINEFIELD:
                 receiveRemoveMinefield(packet);
                 break;
+            case UPDATE_GROUND_OBJECTS:
+            	receiveUpdateGroundObjects(packet);
+            	break;
             case ADD_SMOKE_CLOUD:
                 SmokeCloud cloud = (SmokeCloud) packet.getObject(0);
                 game.addSmokeCloud(cloud);

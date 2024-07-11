@@ -28,7 +28,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -40,6 +42,9 @@ import java.util.Vector;
  */
 public class MoveStep implements Serializable {
     private static final long serialVersionUID = -6075640793056182285L;
+    public static final int CARGO_PICKUP_INDEX = 0;
+    public static final int CARGO_PICKUP_LOCATION = 1;
+    
     private MoveStepType type;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;
@@ -156,6 +161,12 @@ public class MoveStep implements Serializable {
     private boolean maneuver = false;
 
     int braceLocation = Entity.LOC_NONE;
+    
+    /**
+     * A map used to hold any additional data that this move step requires.
+     * Preferable to constantly adding new fields for low-usage one-shot data
+     */
+    Map<Integer, Integer> additionalData = new HashMap<>();
 
     private Minefield mf;
 
@@ -255,8 +266,10 @@ public class MoveStep implements Serializable {
 
         if (type == MoveStepType.BRACE) {
             this.braceLocation = additionalIntData;
-        } else {
+        } else if (type == MoveStepType.LAY_MINE) {
             this.mineToLay = additionalIntData;
+        } else if (type == MoveStepType.PICKUP) {
+        	this.additionalData.put(CARGO_PICKUP_INDEX, additionalIntData);
         }
     }
 
@@ -402,6 +415,8 @@ public class MoveStep implements Serializable {
                 return "Brace";
             case CHAFF:
                 return "Chaff";
+            case PICKUP:
+            	return "Pickup";
             default:
                 return "???";
         }
@@ -469,6 +484,10 @@ public class MoveStep implements Serializable {
         return targetPos;
     }
 
+    public Integer getAdditionalData(int key) {
+    	return additionalData.containsKey(key) ? additionalData.get(key) : null;
+    }
+    
     public TreeMap<Integer, Vector<Integer>> getLaunched() {
         if (launched == null) {
             launched = new TreeMap<>();
@@ -1211,6 +1230,7 @@ public class MoveStep implements Serializable {
         nStraight = prev.nStraight;
         nDown = prev.nDown;
         nMoved = prev.nMoved;
+        additionalData = new HashMap<>(additionalData);
     }
 
     /**
@@ -2815,6 +2835,10 @@ public class MoveStep implements Serializable {
                 danger = true;
             }
         }
+        
+        if (stepType == MoveStepType.PICKUP) {
+        	movementType = EntityMovementType.MOVE_NONE;
+        }
 
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState)
@@ -3370,6 +3394,10 @@ public class MoveStep implements Serializable {
 
         if (type == MoveStepType.MOUNT) {
             return true;
+        }
+        
+        if (type == MoveStepType.PICKUP) {
+        	return !isProne();
         }
 
         // The entity is trying to load. Check for a valid move.
@@ -4100,7 +4128,21 @@ public class MoveStep implements Serializable {
     public Minefield getMinefield() {
         return mf;
     }
+    
+    /**
+     * For serialization purposes
+     */
+    public Map<Integer, Integer> getAdditionalData() {
+    	return additionalData;
+    }
 
+    /**
+     * Setter for serialization purposes
+     */
+    public void setAdditionalData(Map<Integer, Integer> value) {
+    	additionalData = value;
+    }
+    
     /**
      * Should we treat this movement as if it is occurring for an aerodyne unit
      * flying in atmosphere?

@@ -1078,6 +1078,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
+        
+        // can't fire arm/forward facing torso weapons if carrying cargo in hands
+        if ((weapon != null)) {
+        	int loc = weapon.getLocation();
+        	
+        	if ((ae instanceof Mech) && !weapon.isRearMounted() && !((Mech) ae).canFireWeapon(loc)) {
+        		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
+        	}
+        }
 
         // Only large spacecraft can shoot while evading
         if (ae.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {

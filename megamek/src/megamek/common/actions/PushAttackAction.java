@@ -62,6 +62,12 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (ae.isEvading()) {
             return "attacker is evading.";
         }
+        
+        if ((ae instanceof Mech) &&
+        		!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ||
+        		!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ) {
+    		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
+    	}        
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.

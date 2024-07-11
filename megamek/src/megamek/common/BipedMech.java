@@ -90,8 +90,7 @@ public class BipedMech extends Mech {
      * Returns true if the entity can pick up ground objects
      */
     public boolean canPickupGroundObject() {
-    	return !isProne() &&
-    			hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ||
+    	return hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ||
     			hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM);
     }
     

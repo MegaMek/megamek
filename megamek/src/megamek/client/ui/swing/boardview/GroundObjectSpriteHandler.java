@@ -39,8 +39,8 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         currentGroundObjectList = objectCoordList;
         if (currentGroundObjectList != null) {
         	for (Coords coords : currentGroundObjectList) {
-        		CollapseWarningSprite cws = new CollapseWarningSprite(boardView, coords);
-        		currentSprites.add(cws);
+        		GroundObjectSprite gos = new GroundObjectSprite(boardView, coords);
+        		currentSprites.add(gos);
         	}
         }
         boardView.addSprites(currentSprites);

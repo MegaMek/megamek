@@ -541,6 +541,11 @@ public class MovePath implements Cloneable, Serializable {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }
+        
+        // if we have a PICKUP, then we can't do anything else after it
+        if (contains(MoveStepType.PICKUP)) {
+        	step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        }
     }
 
     public void compile(final Game g, final Entity en) {
@@ -575,6 +580,8 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
             } else if (null != step.getMinefield()) {
                 step = new MoveStep(this, step.getType(), step.getMinefield());
+            } else if (null != step.getAdditionalData(MoveStep.CARGO_PICKUP_INDEX)) {
+            	step = new MoveStep(this, step.getType(), step.getAdditionalData(MoveStep.CARGO_PICKUP_INDEX));
             } else {
                 step = new MoveStep(this, step.getType());
             }

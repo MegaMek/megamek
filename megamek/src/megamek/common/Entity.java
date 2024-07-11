@@ -836,7 +836,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Primarily used by Princess to speed up TAG utility calculations.
      */
     protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
+    
+    /** 
+     * Map containing all the objects this entity is carrying as cargo, indexed by location
+     */
+    private Map<Integer, ICarryable> carriedObjects = new HashMap<>();
 
+    /**
+     * Round-long flag indicating that this entity has picked up an object this round.
+     */
+    private boolean pickedUpObject;
+    
     /** The icon for this unit; This is empty unless the unit file has an embedded icon. */
     protected Base64Image icon = new Base64Image();
 
@@ -878,6 +888,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<WeaponAttackAction>();
+        carriedObjects = new HashMap<>();
     }
 
     /**
@@ -2774,6 +2785,41 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public double maxGroundObjectTonnage() {
     	return 0.0;
+    }
+    
+    /**
+     * Put a ground object into the given location
+     */
+    public void pickupGroundObject(ICarryable carryable, int location) {
+    	if (carriedObjects == null) {
+    		carriedObjects = new HashMap<>();
+    	}
+    	
+    	carriedObjects.put(location, carryable);
+    	pickedUpObject = true;
+    }
+    
+    /** 
+     * Remove a ground object from the given location
+     */
+    public void dropGroundObject(int location) {
+    	carriedObjects.remove(location);
+    	pickedUpObject = true;
+    }
+    
+    /**
+     * Get the object carried in the given location. May return null.
+     */
+    public ICarryable getCarriedObject(int location) {
+    	return carriedObjects.get(location);
+    }
+    
+    public Map<Integer, ICarryable> getCarriedObjects() {
+    	return carriedObjects;
+    }
+    
+    public void setCarriedObjects(Map<Integer, ICarryable> value) {
+    	carriedObjects = value;
     }
 
     /**
@@ -6542,6 +6588,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         setClimbMode(GUIP.getMoveDefaultClimbMode());
 
+        pickedUpObject = false;
+        
         setTurnInterrupted(false);
     }
 
@@ -12207,6 +12255,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean turnWasInterrupted() {
         return turnWasInterrupted;
+    }
+    
+    public boolean pickedUpObjectThisTurn() {
+    	return pickedUpObject;
     }
 
     public Vector<Sensor> getSensors() {

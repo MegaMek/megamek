@@ -139,7 +139,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Piles of carry-able objects, sorted by coordinates
      */
-    private HashMap<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+    private Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
     
     /**
      * Constructor
@@ -3336,14 +3336,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 	 * @return Collection of objects on the ground. Best to use getGroundObjects(Coords) 
 	 * if looking for objects in specific hex
 	 */
-	public HashMap<Coords, List<ICarryable>> getGroundObjects() {
+	public Map<Coords, List<ICarryable>> getGroundObjects() {
+		// ground objects not going out to server for some stupid farking reason; 
+		// check deployment display
 		return groundObjects;
 	}
 
 	/**
 	 * @param groundObjects the groundObjects to set
 	 */
-	public void setGroundObjects(HashMap<Coords, List<ICarryable>> groundObjects) {
+	public void setGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
 		this.groundObjects = groundObjects;
 	}
 

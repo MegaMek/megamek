@@ -985,6 +985,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     @Override
     protected void updateDonePanel() {
+    	// we don't need to be doing all this stuff if we're not showing this
+    	if (!getClientgui().getClient().getGame().getPhase().isMovement()) {
+    		return;
+    	}
+    	
         if (cmd == null || cmd.length() == 0) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             return;
@@ -1122,6 +1127,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().clearMovementData();
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
+        cmd = null; 
     }
 
     /**
@@ -2810,7 +2816,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	final Entity ce = ce();
     	// there has to be an entity, objects are on the ground,
     	// the entity can pick them up
-    	if ((ce == null) || (game().getGroundObjects(finalPosition(), ce()).size() <= 0) ||
+    	if ((ce == null) || (game().getGroundObjects(finalPosition(), ce).size() <= 0) ||
     			((cmd.getLastStep() != null) && 
     					(cmd.getLastStep().getType() == MoveStepType.PICKUP))) {
     		setPickupEnabled(false);

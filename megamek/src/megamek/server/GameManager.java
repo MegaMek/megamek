@@ -36,8 +36,6 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.Report;
-import megamek.common.ReportMessages;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -630,6 +628,9 @@ public class GameManager extends AbstractGameManager {
             case DEPLOY_MINEFIELDS:
                 receiveDeployMinefields(packet, connId);
                 break;
+            case UPDATE_GROUND_OBJECTS:
+            	receiveGroundObjectUpdate(packet, connId);
+            	break;
             case ENTITY_ATTACK:
                 receiveAttack(packet, connId);
                 break;
@@ -7298,6 +7299,37 @@ public class GameManager extends AbstractGameManager {
                 }
             } // End STEP_MOUNT
 
+            if (step.getType() == MovePath.MoveStepType.PICKUP) {
+            	var groundObjects = game.getGroundObjects(step.getPosition());
+            	Integer cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_INDEX);
+            	
+            	// there have to be objects on the ground and we have to be trying to pick up one of them
+            	if ((groundObjects.size() > 0) &&
+            			 (cargoPickupIndex != null) && (cargoPickupIndex >= 0) && (cargoPickupIndex < groundObjects.size())) {
+            		
+            		ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
+            		if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+            			groundObjects.remove(cargoPickupIndex);
+            			// hack for now: goes into both arms
+            			entity.pickupGroundObject(pickupTarget, Mech.LOC_LARM);
+            			entity.pickupGroundObject(pickupTarget, Mech.LOC_RARM);
+
+            			r = new Report(2513);
+            			r.subject = entity.getId();
+                    	r.add(entity.getDisplayName());
+                    	r.add(pickupTarget.toString());
+                    	addReport(r);
+                    	
+                    	entityUpdate(entity.getId());
+                    	return; // a pickup should be the last step
+            		} else {
+            			// add report about entity not being able to pick it up or maybe log it or something
+            		}
+            	} else {
+            		// add report about there not being a valid object to pick up
+            	}
+            }
+            
             // handle fighter recovery, and also DropShip docking with another large craft
             if (step.getType() == MovePath.MoveStepType.RECOVER) {
 
@@ -12325,6 +12357,18 @@ public class GameManager extends AbstractGameManager {
                             SpecialHexDisplay.SHD_OBSCURED_TEAM));
         }
         endCurrentTurn(null);
+    }
+    
+    /**
+     * Receives an updated data structure containing carryable objects on the ground
+     */
+    private void receiveGroundObjectUpdate(Packet packet, int connId) {
+    	Map<Coords, List<ICarryable>> groundObjects = (Map<Coords, List<ICarryable>>) packet.getObject(0);
+    	
+    	getGame().setGroundObjects(groundObjects);
+    	
+    	// make sure to update the other clients with the new ground objects data structure
+    	send(packet);
     }
 
     /**

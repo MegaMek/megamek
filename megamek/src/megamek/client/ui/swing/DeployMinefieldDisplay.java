@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.dialog.DropdownDialog;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -519,6 +518,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     @Override
     public void ready() {
         endMyTurn();
+        clientgui.getClient().sendDeployGroundObjects(clientgui.getClient().getGame().getGroundObjects());
         clientgui.getClient().sendDeployMinefields(deployedMinefields);
         clientgui.getClient().sendPlayerInfo();
     }

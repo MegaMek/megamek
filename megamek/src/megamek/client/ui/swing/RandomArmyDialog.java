@@ -940,11 +940,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     };
 
-    private void updatePlayerChoice() {
-        String lastChoice = (String) m_chPlayer.getSelectedItem();
+    private void updatePlayerChoice(String selectionName) {
         String clientName = m_clientgui.getClient().getName();
+        m_chPlayer.setEnabled(false);
         m_chPlayer.removeAllItems();
-        m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
         for (AbstractClient client : m_clientgui.getLocalBots().values()) {
             Player player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
@@ -953,12 +952,25 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 m_chPlayer.addItem(client.getName());
             }
         }
-        if (m_chPlayer.getItemCount() == 1) {
-            m_chPlayer.setEnabled(false);
+        if (m_chPlayer.getItemCount() > 1) {
+            m_chPlayer.setEnabled(true);
         }
-        m_chPlayer.setSelectedItem(lastChoice);
+        m_chPlayer.setSelectedItem(selectionName);
         if (m_chPlayer.getSelectedIndex() < 0) {
             m_chPlayer.setSelectedIndex(0);
+        }
+    }
+
+    private void updatePlayerChoice() {
+        String lastChoice = (String) m_chPlayer.getSelectedItem();
+        updatePlayerChoice(lastChoice);
+    }
+
+    public void setPlayerFromClient(Client c) {
+        if (c != null) {
+            updatePlayerChoice(c.getName());
+        } else {
+            updatePlayerChoice();
         }
     }
 
@@ -1089,6 +1101,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
 
         adaptToGUIScale();
+        m_chPlayer.grabFocus();
         super.setVisible(show);
     }
 

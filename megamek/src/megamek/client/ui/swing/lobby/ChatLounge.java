@@ -1604,11 +1604,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Pop up the dialog to load a mech
      */
     private void addUnit() {
+        Client c = getSelectedClient();
         clientgui.getMechSelectorDialog().updateOptionValues();
+        clientgui.getMechSelectorDialog().setPlayerFromClient(c);
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 
     private void createArmy() {
+        Client c = getSelectedClient();
+        clientgui.getRandomArmyDialog().setPlayerFromClient(c);
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 

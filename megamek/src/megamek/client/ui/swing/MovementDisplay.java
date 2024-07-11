@@ -4345,7 +4345,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // do nothing if deactivated in the settings
         if (!GUIP.getMoveEnvelope()) {
             // Issue #5700 : Move envelope doesn't clear when turning off move envelopes from menu or shortcut.
-            clientgui.clearTemporarySprites();
+            clientgui.clearMovementEnvelope();
             return;
         }
 

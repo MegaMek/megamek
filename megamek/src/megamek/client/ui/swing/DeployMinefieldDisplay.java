@@ -25,6 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+import javax.swing.JOptionPane;
+
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -1243277953037374936L;
 
@@ -282,19 +284,11 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         	ICarryable toDeploy = groundObjects.get(0);
         	
         	if (groundObjects.size() > 1) {
-        		// lol use this instead
-        		/*String input = (String) JOptionPane.showInputDialog(
-                        clientgui.getFrame(),
-                        Messages.getString("MovementDisplay.UnloadUnitDialog.message", ce.getShortName(), ce.getUnusedString()),
-                        Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        SharedUtility.getDisplayArray(loadedUnits), null);
-                        getTargetPicked() to get result*/
-        		DropdownDialog<ICarryable> ddl = new DropdownDialog<>(clientgui.frame, 
-        				"DeployMinefieldDisplay.deployCarriableDialogHeader", 
-        				"DeployMinefieldDisplay.deployCarriableDialogHeader", clientgui.getClient().getLocalPlayer().getGroundObjectsToPlace());
-        		ddl.setVisible(true);
-        		toDeploy = ddl.getSelectedItem();
+        		String title = "Choose Cargo to Place";
+                String body = "Choose the cargo to place:";
+                toDeploy = (ICarryable) JOptionPane.showInputDialog(clientgui.getFrame(),
+                        body, title, JOptionPane.QUESTION_MESSAGE, null,
+                        groundObjects.toArray(), groundObjects.get(0));
         	}
         	
         	game.placeGroundObject(coords, toDeploy);

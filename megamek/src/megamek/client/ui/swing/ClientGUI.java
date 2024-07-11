@@ -104,6 +104,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
+    public static final String FILE_GAME_CONNECT_SBF = "fileGameConnectSbf";
     public static final String FILE_GAME_EDIT_BOTS = "editBots";
     // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
@@ -235,7 +236,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
-    private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
+
     private JPanel panTop;
     private JSplitPane splitPaneA;
     private JPanel panA1;
@@ -1048,7 +1049,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
-        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
@@ -2543,6 +2543,24 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public JComponent turnTimerComponent() {
         return menuBar;
+    }
+
+    @Override
+    public void setChatBoxActive(boolean active) {
+        bv.setChatterBoxActive(active);
+    }
+
+    @Override
+    public void clearChatBox() {
+        if (cb2 != null) {
+            cb2.clearMessage();
+            setChatBoxActive(false);
+        }
+    }
+
+    @Override
+    public boolean isChatBoxActive() {
+        return bv.getChatterBoxActive();
     }
 
     public Map<String, AbstractClient> getLocalBots() {

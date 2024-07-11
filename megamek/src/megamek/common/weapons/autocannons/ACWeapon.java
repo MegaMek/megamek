@@ -20,6 +20,7 @@ import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ACAPHandler;
 import megamek.common.weapons.ACCaselessHandler;
@@ -108,10 +109,12 @@ public abstract class ACWeapon extends AmmoWeapon {
             return dmg;
         }
 
-        if ((Server.getServerInstance() != null)
-                && Server.getServerInstance().getGame().getOptions()
-                        .getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG).booleanValue()) {
-            dmg++;
+        if (Server.getServerInstance() != null) {
+            IOption increasedAc = Server.getServerInstance().getGame()
+                    .getOptions().getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
+            if ((increasedAc != null) && increasedAc.booleanValue()) {
+                dmg++;
+            }
         }
 
         return dmg;
@@ -139,7 +142,8 @@ public abstract class ACWeapon extends AmmoWeapon {
         super.adaptToGameOptions(gOp);
 
         // Modes for allowing standard and light AC rapid fire
-        if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
+        IOption rapidAc = gOp.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
+        if ((rapidAc != null) && rapidAc.booleanValue()) {
             addMode("");
             addMode(Weapon.MODE_AC_RAPID);
         } else {

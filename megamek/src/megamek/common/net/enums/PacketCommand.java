@@ -48,7 +48,13 @@ public enum PacketCommand {
 
     ENTITY_PREPHASE,
     ENTITY_GTA_HEX_SELECT,
+
+    /** A packet informing the receiver of an unspecified change to a unit. */
     ENTITY_UPDATE,
+
+    /** A packet instructing the Client to forget the unit of the given id as it is / has become invisible (SBF). */
+    UNIT_INVISIBLE,
+
     ENTITY_MULTIUPDATE,
     ENTITY_WORDER_UPDATE,
     ENTITY_ASSIGN,
@@ -143,7 +149,10 @@ public enum PacketCommand {
     CFR_HIDDEN_PBS,
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
-    GAME_VICTORY_EVENT;
+    GAME_VICTORY_EVENT,
+
+    /** A packet containing other packets to be processed in the order they are stored. */
+    MULTI_PACKET;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

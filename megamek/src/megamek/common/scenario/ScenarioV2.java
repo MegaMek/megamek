@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
@@ -29,6 +30,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.BoardDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
@@ -45,6 +47,7 @@ public class ScenarioV2 implements Scenario {
     private static final String MAP = "map";
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
+    private static final String OPTIONS = "options";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -104,7 +107,7 @@ public class ScenarioV2 implements Scenario {
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
         parsePlayers(game);
-        game.setupTeams();
+//        game.setupTeams();
         game.setBoard(0, createBoard());
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
@@ -147,6 +150,14 @@ public class ScenarioV2 implements Scenario {
         } else {
             game.getOptions().loadOptions();
         }
+        if (node.has(OPTIONS)) {
+            JsonNode optionsNode = node.get(OPTIONS);
+            if (optionsNode.isArray()) {
+                optionsNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+            } else if (optionsNode.isTextual()) {
+                game.getOptions().getOption(optionsNode.textValue()).setValue(true);
+            }
+        }
     }
 
     private IGame selectGameType() {
@@ -172,13 +183,15 @@ public class ScenarioV2 implements Scenario {
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
-        int entityId = 0;
+        final PlayerColour[] colours = PlayerColour.values();
+
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
             MMUReader.requireFields("Player", playerNode, NAME, UNITS);
 
             Player player = new Player(playerId, playerNode.get(NAME).textValue());
             result.add(player);
+            player.setColour(colours[playerId % colours.length]);
             playerId++;
 
             // scenario players start out as ghosts to be logged into
@@ -205,19 +218,22 @@ public class ScenarioV2 implements Scenario {
 
             JsonNode unitsNode = playerNode.get(UNITS);
             if (game instanceof Game) {
-                List<Entity> entities = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
+                List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
                         .filter(o -> o instanceof Entity)
                         .map(o -> (Entity) o)
                         .collect(Collectors.toList());
-                for (Entity entity : entities) {
-                    entity.setOwner(player);
-                    entity.setId(entityId);
-                    ++ entityId;
-                    ((Game) game).addEntity(entity);
+                int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                for (Entity unit : units) {
+                    unit.setOwner(player);
+                    if (unit.getId() == Entity.NONE) {
+                        unit.setId(entityId);
+                        entityId++;
+                    }
+                    ((Game) game).addEntity(unit);
                     // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
                     // they're not on a space map.
-                    if (entity.isLargeCraft() && !entity.isAirborne()) {
-                        entity.setAltitude(0);
+                    if (unit.isLargeCraft() && !unit.isAirborne()) {
+                        unit.setAltitude(0);
                     }
                 }
             } else if (game instanceof SBFGame) {
@@ -225,7 +241,12 @@ public class ScenarioV2 implements Scenario {
                         .filter(o -> o instanceof InGameObject)
                         .map(o -> (InGameObject) o)
                         .collect(Collectors.toList());
+                int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
                 for (InGameObject unit : units) {
+                    if (unit.getId() == Entity.NONE) {
+                        unit.setId(entityId);
+                        entityId++;
+                    }
                     unit.setOwnerId(player.getId());
                     ((SBFGame) game).addUnit(unit);
                 }
@@ -235,6 +256,10 @@ public class ScenarioV2 implements Scenario {
         }
 
         return result;
+    }
+
+    private int smallestFreeUnitID(List<? extends InGameObject> units) {
+        return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
     private Board createBoard() throws ScenarioLoaderException {

@@ -422,7 +422,6 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";
     public static final String ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE = "indirect_always_possible";
     public static final String ADVCOMBAT_INCREASED_AC_DMG = "increased_ac_dmg";
-    public static final String ADVCOMBAT_INCREASED_ISERLL_RANGE = "increased_iserll_range";
     public static final String ADVCOMBAT_UNJAM_UAC = "unjam_uac";
     public static final String ADVCOMBAT_UAC_TWOROLLS = "uac_tworolls";
     public static final String ADVCOMBAT_CLUBS_PUNCH = "clubs_punch";

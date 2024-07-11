@@ -22,12 +22,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import megamek.common.ForceAssignable;
 import megamek.common.alphaStrike.*;
-import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFUnitDeserializer;
 import megamek.common.jacksonadapters.SBFUnitSerializer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +40,8 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 @JsonRootName(value = "SBFUnit")
 @JsonSerialize(using = SBFUnitSerializer.class)
 @JsonDeserialize(using = SBFUnitDeserializer.class)
-public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, BattleForceSUAFormatter {
+public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormatter,
+        Serializable {
 
     private String name = "Unknown";
     private SBFElementType type = SBFElementType.UNKNOWN;
@@ -60,11 +60,6 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     @JsonIgnore
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private List<AlphaStrikeElement> elements = new ArrayList<>();
-
-    private String forceString = "";
-    private int forceId = Force.NO_FORCE;
-    private int id;
-    private int ownerId;
 
     public String getName() {
         return name;
@@ -207,9 +202,16 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     /**
      * Returns true if this SBF Unit represents an aerospace Unit.
      */
-    @Override
     public boolean isAerospace() {
         return type.isAerospace();
+    }
+
+    /**
+     * Returns true if this SBF Unit represents a ground Unit.
+     */
+
+    public boolean isGround() {
+        return !type.isAerospace();
     }
 
     @Override
@@ -269,71 +271,11 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     }
 
     @Override
-    public boolean isUnitGroup() {
-        return true;
-    }
-
-    @Override
-    public String generalName() {
-        return name;
-    }
-
-    @Override
-    public String specificName() {
-        return "";
-    }
-
-    @Override
     public String toString() {
         return "[SBFUnit] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
                 + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
                 + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
                 + "; A" + armor + "; " + damage + "; " + pointValue + "@" + skill + "; " + elements.size() + " elements"
                 + "; " + specialAbilities.getSpecialsDisplayString(this);
-    }
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int newId) {
-        id = newId;
-    }
-
-    @Override
-    public String getForceString() {
-        return forceString;
-    }
-
-    @Override
-    public void setForceString(String newForceString) {
-        forceString = newForceString;
-    }
-
-    @Override
-    public int getForceId() {
-        return forceId;
-    }
-
-    @Override
-    public void setForceId(int newId) {
-        forceId = newId;
-    }
-
-    @Override
-    public int getOwnerId() {
-        return ownerId;
-    }
-
-    @Override
-    public void setOwnerId(int newOwnerId) {
-        ownerId = newOwnerId;
-    }
-
-    @Override
-    public int getStrength() {
-        return pointValue;
     }
 }

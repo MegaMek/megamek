@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-class GameManagerSaveHelper {
+public class GameManagerSaveHelper {
 
     private final AbstractGameManager gameManager;
 

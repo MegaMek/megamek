@@ -16,26 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.server.sbf;
 
 import megamek.MegaMek;
-import megamek.common.GameTurn;
+import megamek.common.InGameObject;
 import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.strategicBattleSystems.SBFFormation;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.stream.Collectors;
-
-class SBFPhasePreparationManager {
-
-    private final SBFGameManager gameManager;
-
-    public SBFPhasePreparationManager(SBFGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
     void managePhase() {
-        switch (gameManager.getGame().getPhase()) {
+        switch (game().getPhase()) {
             case LOUNGE:
                 gameManager.clearPendingReports();
 //                MapSettings mapSettings = game.getMapSettings();
@@ -49,30 +43,26 @@ class SBFPhasePreparationManager {
             case INITIATIVE:
                 // remove the last traces of last round
 //                game.handleInitiativeCompensation();
-                gameManager.getGame().clearActions();
+                game().clearActions();
 //                game.resetTagInfo();
 //                sendTagInfoReset();
                 gameManager.clearPendingReports();
 //                resetEntityRound();
-//                resetEntityPhase(phase);
+                resetEntityPhase(game().getPhase());
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
-
-                // roll 'em
                 gameManager.resetActivePlayersDone();
-                gameManager.rollInitiative();
-                //Cockpit command consoles that switched crew on the previous round are ineligible for force
-                // commander initiative bonus. Now that initiative is rolled, clear the flag.
-//                game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
-                if (!gameManager.getGame().shouldDeployThisRound()) {
-//                    incrementAndSendGameRound();
-                    gameManager.autoSaveService.performRollingAutosave();
+                // new round
+                gameManager.rollInitiative();
+
+                if (!game().shouldDeployThisRound()) {
+                    gameManager.incrementAndSendGameRound();
+                    gameManager.getAutoSaveService().performRollingAutosave();
                 }
 
-                // setIneligible(phase);
-//                gameManager.determineTurnOrder(gameManager.getGame().getPhase());
-//                writeInitiativeReport(false);
+                gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
+                gameManager.initiativeHelper.writeInitiativeReport();
 //
 //                // checks for environmental survival
 //                checkForConditionDeath();
@@ -88,22 +78,14 @@ class SBFPhasePreparationManager {
 //                bvReports(true);
 
                 LogManager.getLogger().info("Round {} memory usage: {}",
-                        gameManager.getGame().getCurrentRound(), MegaMek.getMemoryUsed());
+                        game().getCurrentRound(), MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
 //                resetActivePlayersDone();
 //                setIneligible(phase);
-                gameManager.getGame().clearTurns();
-                if (gameManager.getGame().getBoard().onGround()) {
-                    gameManager.getGame().setTurns(gameManager.getGame().getPlayersList().stream()
-                            .filter(Player::hasMinefields)
-                            .map(p -> new GameTurn(p.getId()))
-                            .collect(Collectors.toList()));
-                }
-                gameManager.getGame().resetTurnIndex();
-                gameManager.sendCurrentTurns();
+                gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
 //                deployOffBoardEntities();
@@ -138,7 +120,7 @@ class SBFPhasePreparationManager {
 //                    }
 //                }
 //                game.setTurnVector(turn);
-                gameManager.getGame().resetTurnIndex();
+                game().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
             case PREMOVEMENT:
@@ -164,18 +146,18 @@ class SBFPhasePreparationManager {
 //                if (doBlind()) {
 //                    updateVisibilityIndicator(null);
 //                }
-//                resetEntityPhase(phase);
+                resetEntityPhase(game().getPhase());
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
 //                resetActivePlayersDone();
 //                setIneligible(phase);
-//                determineTurnOrder(phase);
-//                entityAllUpdate();
+                gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
+                gameManager.unitUpdateHelper.sendAllUnitUpdate();
                 gameManager.clearPendingReports();
 //                doTryUnstuck();
                 break;
             case END:
-//                resetEntityPhase(phase);
+                resetEntityPhase(game().getPhase());
                 gameManager.clearPendingReports();
 //                resolveHeat();
 //                PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -221,8 +203,12 @@ class SBFPhasePreparationManager {
 //
 //                checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
-//                entityAllUpdate();
+                gameManager.entityAllUpdate();
                 break;
+            case SBF_DETECTION:
+                gameManager.detectionHelper.performSensorDetection();
+                gameManager.unitUpdateHelper.sendAllUnitUpdate();
+            case SBF_DETECTION_REPORT:
             case INITIATIVE_REPORT:
                 gameManager.autoSave();
             case TARGETING_REPORT:
@@ -231,10 +217,10 @@ class SBFPhasePreparationManager {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
-//                resetActivePlayersDone();
-//                sendReport();
-//                entityAllUpdate();
-                if (gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
+                gameManager.resetActivePlayersDone();
+                gameManager.sendReport();
+//                gameManager.entityAllUpdate();  //TODO really needed in report phase?
+                if (game().getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     gameManager.autoSave();
                 }
                 break;
@@ -246,10 +232,10 @@ class SBFPhasePreparationManager {
                 gameManager.addPendingReportsToGame();
 //                EmailService mailer = Server.getServerInstance().getEmailService();
 //                if (mailer != null) {
-//                    for (var player: mailer.getEmailablePlayers(gameManager.getGame())) {
+//                    for (var player: mailer.getEmailablePlayers(game())) {
 //                        try {
 //                            var message = mailer.newReportMessage(
-//                                    gameManager.getGame(), gameManager.getPendingReports(), player
+//                                    game(), gameManager.getPendingReports(), player
 //                            );
 //                            mailer.send(message);
 //                        } catch (Exception ex) {
@@ -264,7 +250,15 @@ class SBFPhasePreparationManager {
             default:
                 break;
         }
-
-
     }
+
+    private void resetEntityPhase(GamePhase phase) {
+        for (InGameObject unit : game().getInGameObjects()) {
+            if (unit instanceof SBFFormation formation) {
+                formation.setDone(formation.isDone());
+            }
+        }
+    }
+
+
 }

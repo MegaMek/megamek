@@ -67,8 +67,6 @@ public class Client extends AbstractClient {
      */
     protected final Game game = new Game();
 
-    // Hashtable for storing image tags containing base64Text src
-    private Hashtable<Integer, String> imgCache;
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
     private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
@@ -477,8 +475,8 @@ public class Client extends AbstractClient {
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
                 game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                imgCache != null && !imgCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
-            ImageUtil.createDoubleBlindHiddenImage(imgCache);
+                iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+            ImageUtil.createDoubleBlindHiddenImage(iconCache);
         }
     }
 
@@ -758,10 +756,10 @@ public class Client extends AbstractClient {
      */
     private String getCachedImgTag(int id) {
         if (!GUIPreferences.getInstance().getMiniReportShowSprites()
-                || (imgCache == null) || !imgCache.containsKey(id)) {
+                || (iconCache == null) || !iconCache.containsKey(id)) {
             return null;
         }
-        return imgCache.get(id);
+        return iconCache.get(id);
     }
 
     /**
@@ -772,19 +770,14 @@ public class Client extends AbstractClient {
             return;
         }
 
-        // remove images that should be refreshed
-        if (imgCache == null) {
-            imgCache = new Hashtable<>();
-        } else {
-            imgCache.remove(entity.getId());
-        }
+        iconCache.remove(entity.getId());
 
         if (getTargetImage(entity) != null) {
             // convert image to base64, add to the <img> tag and store in cache
             BufferedImage image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             String base64Text = ImageUtil.base64TextEncodeImage(image);
             String img = "<img src='data:image/png;base64," + base64Text + "'>";
-            imgCache.put(entity.getId(), img);
+            iconCache.put(entity.getId(), img);
         }
     }
 

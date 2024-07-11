@@ -29,17 +29,6 @@ public class HexTarget implements Targetable {
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
 
-    /**
-     * Creates a new HexTarget given a set of coordinates and a type defined in Targetable.
-     * the board parameter is ignored.
-     */
-    @Deprecated
-    public HexTarget(Coords c, Board board, int nType) {
-        m_coords = c;
-        m_type = nType;
-        m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
-    }
-
     @Override
     public int getTargetType() {
         return m_type;

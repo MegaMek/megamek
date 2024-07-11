@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -556,6 +555,31 @@ public class Protomech extends Entity {
     @Override
     public boolean hasRearArmor(int loc) {
         return false;
+    }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return !isProne() &&
+    			!(isLocationBad(Mech.LOC_LARM) ||
+    					isLocationBad(Mech.LOC_RARM));
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	double percentage = 0.0;
+    	
+    	if (!isLocationBad(Mech.LOC_LARM)) {
+    		percentage += 0.05;
+    	}
+    	if (!isLocationBad(Mech.LOC_RARM)) {
+    		percentage += 0.05;
+    	}
+    	
+    	return getWeight() * percentage;
     }
 
     @Override

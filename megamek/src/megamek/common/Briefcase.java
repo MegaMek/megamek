@@ -50,6 +50,6 @@ public class Briefcase implements ICarryable, Serializable {
 	}
 	
 	public String toString() {
-		return name + " (" + tonnage + ")";
+		return name + " (" + tonnage + " tons)";
 	}
 }

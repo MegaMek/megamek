@@ -2761,6 +2761,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean canFlipArms() {
         return false;
     }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return false;
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	return 0.0;
+    }
 
     /**
      * Returns this entity's original walking movement points

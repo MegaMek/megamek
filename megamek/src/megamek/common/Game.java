@@ -3312,6 +3312,27 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
     
     /**
+     * Get a list of all objects on the ground at the given coordinates
+     * that can be picked up by the given entity
+     */
+    public List<ICarryable> getGroundObjects(Coords coords, Entity entity) {
+    	if (!groundObjects.containsKey(coords)) {
+    		return new ArrayList<>();
+    	}
+    	
+    	double maxTonnage = entity.maxGroundObjectTonnage();
+    	ArrayList<ICarryable> result = new ArrayList<>();
+    	
+    	for (ICarryable object : groundObjects.get(coords)) {
+    		if (maxTonnage >= object.getTonnage()) {
+    			result.add(object);
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    /**
 	 * @return Collection of objects on the ground. Best to use getGroundObjects(Coords) 
 	 * if looking for objects in specific hex
 	 */

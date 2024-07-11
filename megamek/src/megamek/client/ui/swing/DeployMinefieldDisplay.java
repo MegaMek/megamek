@@ -282,7 +282,17 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         	ICarryable toDeploy = groundObjects.get(0);
         	
         	if (groundObjects.size() > 1) {
-        		DropdownDialog<ICarryable> ddl = new DropdownDialog<>(clientgui.frame, "DeployMinefieldDisplay.deployCarriable", "DeployMinefieldDisplay.deployCarriable", clientgui.getClient().getLocalPlayer().getGroundObjectsToPlace());
+        		// lol use this instead
+        		/*String input = (String) JOptionPane.showInputDialog(
+                        clientgui.getFrame(),
+                        Messages.getString("MovementDisplay.UnloadUnitDialog.message", ce.getShortName(), ce.getUnusedString()),
+                        Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        SharedUtility.getDisplayArray(loadedUnits), null);
+                        getTargetPicked() to get result*/
+        		DropdownDialog<ICarryable> ddl = new DropdownDialog<>(clientgui.frame, 
+        				"DeployMinefieldDisplay.deployCarriableDialogHeader", 
+        				"DeployMinefieldDisplay.deployCarriableDialogHeader", clientgui.getClient().getLocalPlayer().getGroundObjectsToPlace());
         		ddl.setVisible(true);
         		toDeploy = ddl.getSelectedItem();
         	}

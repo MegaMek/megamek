@@ -77,12 +77,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int CMD_AIRMECH = 1 << 7;
     // Command used only in menus and has no associated button
     public static final int CMD_NO_BUTTON = 1 << 8;
+    public static final int CMD_PROTOMECH = 1 << 9;
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
-    public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF;
-    public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO;
-    public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED;
-    public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
+    public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_PROTOMECH;
+    public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_PROTOMECH;
+    public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMECH;
+    public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMECH;
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
@@ -179,6 +180,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_LONGEST_WALK("MoveLongestWalk", CMD_NONE),
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE),
+        MOVE_PICKUP("movePickup", CMD_MECH | CMD_PROTOMECH),
         MOVE_MORE("MoveMore", CMD_NONE);
 
         /**
@@ -566,7 +568,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else if ((ce instanceof Mech) && ((Mech) ce).hasTracks()) {
                 flag = CMD_MECH | CMD_CONVERTER;
             } else if ((ce instanceof Protomech) && ce.getMovementMode().isWiGE()) {
-                flag = CMD_MECH | CMD_AIRMECH;
+                flag = CMD_PROTOMECH | CMD_MECH | CMD_AIRMECH;
+            } else if (ce instanceof Protomech) {
+            	flag = CMD_PROTOMECH;
             }
         }
         return getButtonList(flag);
@@ -1188,6 +1192,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setManeuverEnabled(false);
         setStrafeEnabled(false);
         setBombEnabled(false);
+        setPickupEnabled(false);
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
@@ -2797,8 +2802,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateUnloadButton();
         updateTowingButtons();
         updateMountButton();
+        updatePickupButton();
     }
 
+    /** Updates the status of the "pickup" button */
+    private void updatePickupButton() {
+    	final Entity ce = ce();
+    	// there has to be an entity, objects are on the ground,
+    	// the entity can pick them up
+    	if ((ce == null) || (game().getGroundObjects(finalPosition(), ce()).size() <= 0) ||
+    			((cmd.getLastStep() != null) && 
+    					(cmd.getLastStep().getType() == MoveStepType.PICKUP))) {
+    		setPickupEnabled(false);
+    		return;
+    	}
+    	
+    	setPickupEnabled(true);
+    }
+    
     /** Updates the status of the Load button. */
     private void updateLoadButton() {
         final Entity ce = ce();
@@ -4870,6 +4891,35 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     addStepToMovePath(MoveStepType.UNLOAD, other);
                 }
             } // else - Player canceled the unload.
+        } else if (actionCmd.equals(MoveCommand.MOVE_PICKUP.getCmd())) {
+        	// this is kind of obnoxious:
+        	// we have a list of all the possible ground objects
+        	// we supply a list of eligible ground objects to the dropdown dialog
+        	// we use the selected object to look up the ground object index in the hex
+        	// and pass it to the generated move step
+        	
+        	var options = game().getGroundObjects(finalPosition());
+        	var displayedOptions = game().getGroundObjects(finalPosition(), ce());
+        	
+            if (displayedOptions.size() == 1) {
+            	int index = options.indexOf(displayedOptions.get(0));
+                addStepToMovePath(MoveStepType.PICKUP, index);
+                updateDonePanel();
+            } else if (displayedOptions.size() > 1) {
+                // Dialog for choosing which object to pick up
+                String title = "Choose Cargo to Pick Up";
+                String body = "Choose the cargo to pick up:";
+                ICarryable option = (ICarryable) JOptionPane.showInputDialog(clientgui.getFrame(),
+                        body, title, JOptionPane.QUESTION_MESSAGE, null,
+                        displayedOptions.toArray(), displayedOptions.get(0));
+
+                // Verify that we have a valid option...
+                if (option != null) {
+                    int index = options.indexOf(option);
+                    addStepToMovePath(MoveStepType.PICKUP, index);
+                    updateDonePanel();
+                }
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
@@ -5674,6 +5724,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setBombEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_BOMB).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
+    }
+    
+    private void setPickupEnabled(boolean enabled) {
+    	getBtn(MoveCommand.MOVE_PICKUP).setEnabled(enabled);
+    	clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_PICKUP.getCmd(), enabled);
     }
 
     @Override

@@ -180,7 +180,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_LONGEST_WALK("MoveLongestWalk", CMD_NONE),
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE),
-        MOVE_PICKUP("movePickup", CMD_MECH | CMD_PROTOMECH),
+        MOVE_PICKUP_CARGO("movePickupCargo", CMD_MECH | CMD_PROTOMECH),
+        MOVE_DROP_CARGO("moveDropCargo", CMD_MECH | CMD_PROTOMECH),
         MOVE_MORE("MoveMore", CMD_NONE);
 
         /**
@@ -1198,7 +1199,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setManeuverEnabled(false);
         setStrafeEnabled(false);
         setBombEnabled(false);
-        setPickupEnabled(false);
+        setPickupCargoEnabled(false);
+        setDropCargoEnabled(false);
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
@@ -2808,22 +2810,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateUnloadButton();
         updateTowingButtons();
         updateMountButton();
-        updatePickupButton();
+        updatePickupCargoButton();
+        updateDropCargoButton();
     }
 
-    /** Updates the status of the "pickup" button */
-    private void updatePickupButton() {
+    /** Updates the status of the "pickup cargo" button */
+    private void updatePickupCargoButton() {
     	final Entity ce = ce();
     	// there has to be an entity, objects are on the ground,
     	// the entity can pick them up
     	if ((ce == null) || (game().getGroundObjects(finalPosition(), ce).size() <= 0) ||
     			((cmd.getLastStep() != null) && 
     					(cmd.getLastStep().getType() == MoveStepType.PICKUP))) {
-    		setPickupEnabled(false);
+    		setPickupCargoEnabled(false);
     		return;
     	}
     	
-    	setPickupEnabled(true);
+    	setPickupCargoEnabled(true);
+    }
+    
+    /** Updates the status of the "drop cargo" button */
+    private void updateDropCargoButton() {
+    	final Entity ce = ce();
+    	// there has to be an entity, objects are on the ground,
+    	// the entity can pick them up
+    	if ((ce == null) || ce.getCarriedObjects().size() == 0) {
+    		setDropCargoEnabled(false);
+    		return;
+    	}
+    	
+    	setDropCargoEnabled(true);
     }
     
     /** Updates the status of the Load button. */
@@ -4897,7 +4913,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     addStepToMovePath(MoveStepType.UNLOAD, other);
                 }
             } // else - Player canceled the unload.
-        } else if (actionCmd.equals(MoveCommand.MOVE_PICKUP.getCmd())) {
+        } else if (actionCmd.equals(MoveCommand.MOVE_PICKUP_CARGO.getCmd())) {
         	// this is kind of obnoxious:
         	// we have a list of all the possible ground objects
         	// we supply a list of eligible ground objects to the dropdown dialog
@@ -5732,9 +5748,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
     }
     
-    private void setPickupEnabled(boolean enabled) {
-    	getBtn(MoveCommand.MOVE_PICKUP).setEnabled(enabled);
-    	clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_PICKUP.getCmd(), enabled);
+    private void setPickupCargoEnabled(boolean enabled) {
+    	getBtn(MoveCommand.MOVE_PICKUP_CARGO).setEnabled(enabled);
+    	clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_PICKUP_CARGO.getCmd(), enabled);
+    }
+    
+    private void setDropCargoEnabled(boolean enabled) {
+    	getBtn(MoveCommand.MOVE_DROP_CARGO).setEnabled(enabled);
+    	clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DROP_CARGO.getCmd(), enabled);
     }
 
     @Override

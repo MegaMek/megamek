@@ -136,7 +136,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int DMG_CRIPPLED = 4;
 
     public static final int USE_STRUCTURAL_RATING = -1;
-
+    
     protected transient Game game;
 
     protected int id = Entity.NONE;
@@ -2820,6 +2820,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     public void setCarriedObjects(Map<Integer, ICarryable> value) {
     	carriedObjects = value;
+    }
+    
+    /**
+     * Whether a weapon in a given location can be fired, 
+     * given the entity's currently carried cargo
+     */
+    public boolean canFireWeapon(int location) {
+    	if (getBlockedFiringLocations() == null) {
+    		return true;
+    	}
+    	
+    	// loop through everything we are carrying
+    	// if the weapon location is blocked by the carried object, then we cannot fire the weapon
+    	for (int carriedObjectLocation : getCarriedObjects().keySet()) {
+    		if (getBlockedFiringLocations().containsKey(carriedObjectLocation) &&
+    				getBlockedFiringLocations().get(carriedObjectLocation).contains(location)) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return null;
     }
 
     /**

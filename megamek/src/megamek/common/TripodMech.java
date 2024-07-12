@@ -139,9 +139,8 @@ public class TripodMech extends Mech {
      * Returns true if the entity can pick up ground objects
      */
     public boolean canPickupGroundObject() {
-    	return !isProne() &&
-    			hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ||
-    			hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM);
+    	return hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) ||
+    			hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null);
     }
     
     /**
@@ -150,10 +149,10 @@ public class TripodMech extends Mech {
     public double maxGroundObjectTonnage() {
     	double percentage = 0.0;
     	
-    	if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+    	if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null)) {
     		percentage += 0.05;
     	}
-    	if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+    	if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null)) {
     		percentage += 0.05;
     	}
     	

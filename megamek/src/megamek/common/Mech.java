@@ -6476,19 +6476,6 @@ public abstract class Mech extends Entity {
         return true;
     }
     
-    public boolean canFireWeapon(int location) {
-    	// loop through everything we are carrying
-    	// if the weapon location is blocked by the carried object, then we cannot fire the weapon
-    	for (int carriedObjectLocation : getCarriedObjects().keySet()) {
-    		if (BLOCKED_FIRING_LOCATIONS.containsKey(carriedObjectLocation) &&
-    				BLOCKED_FIRING_LOCATIONS.get(carriedObjectLocation).contains(location)) {
-    			return false;
-    		}
-    	}
-    	
-    	return true;
-    }
-
     public static Map<Integer, String> getAllCockpitCodeName() {
         Map<Integer, String> result = new HashMap<>();
 
@@ -6514,5 +6501,14 @@ public abstract class Mech extends Entity {
         result.put(COCKPIT_UNKNOWN, getCockpitDisplayString(COCKPIT_UNKNOWN));
 
         return result;
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    @Override
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return BLOCKED_FIRING_LOCATIONS;
     }
 }

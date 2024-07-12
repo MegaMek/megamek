@@ -563,6 +563,7 @@ public class GameManager extends AbstractGameManager {
             send(connId, createFlarePacket());
             send(connId, createSpecialHexDisplayPacket(connId));
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
+            send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
         }
     }
 
@@ -7309,10 +7310,15 @@ public class GameManager extends AbstractGameManager {
             		
             		ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
             		if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
-            			groundObjects.remove(cargoPickupIndex);
+            			game.removeGroundObject(step.getPosition(), pickupTarget);
             			// hack for now: goes into both arms
-            			entity.pickupGroundObject(pickupTarget, Mech.LOC_LARM);
-            			entity.pickupGroundObject(pickupTarget, Mech.LOC_RARM);
+            			if (entity instanceof Mech) {
+            				entity.pickupGroundObject(pickupTarget, Mech.LOC_LARM);
+            				entity.pickupGroundObject(pickupTarget, Mech.LOC_RARM);
+            			} else if (entity instanceof Protomech) {
+            				entity.pickupGroundObject(pickupTarget, Protomech.LOC_LARM);
+            				entity.pickupGroundObject(pickupTarget, Protomech.LOC_RARM);
+            			}
 
             			r = new Report(2513);
             			r.subject = entity.getId();
@@ -7321,7 +7327,7 @@ public class GameManager extends AbstractGameManager {
                     	addReport(r);
                     	
                     	entityUpdate(entity.getId());
-                    	return; // a pickup should be the last step
+                    	//return; // a pickup should be the last step
             		} else {
             			// add report about entity not being able to pick it up or maybe log it or something
             		}

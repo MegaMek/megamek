@@ -24,7 +24,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -88,6 +90,22 @@ public class Protomech extends Entity {
     public static final int[] POSSIBLE_PILOT_DAMAGE = { 0, 1, 3, 1, 1, 1, 0 };
 
     public static final String[] systemNames = { "Arm", "Leg", "Head", "Torso" };
+    
+    /**
+     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
+     */
+    public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
+    
+    static {
+    	BLOCKED_FIRING_LOCATIONS = new HashMap<>();
+    	BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_TORSO);
+    	
+    	BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_TORSO);
+    }
 
     // For grapple attacks
     private int grappled_id = Entity.NONE;
@@ -561,9 +579,8 @@ public class Protomech extends Entity {
      * Returns true if the entity can pick up ground objects
      */
     public boolean canPickupGroundObject() {
-    	return !isProne() &&
-    			!(isLocationBad(Mech.LOC_LARM) ||
-    					isLocationBad(Mech.LOC_RARM));
+    	return !isLocationBad(Protomech.LOC_LARM) && (getCarriedObject(Protomech.LOC_LARM) == null) ||
+    			!isLocationBad(Protomech.LOC_RARM) && (getCarriedObject(Protomech.LOC_RARM) == null);
     }
     
     /**
@@ -572,10 +589,10 @@ public class Protomech extends Entity {
     public double maxGroundObjectTonnage() {
     	double percentage = 0.0;
     	
-    	if (!isLocationBad(Mech.LOC_LARM)) {
+    	if (!isLocationBad(Protomech.LOC_LARM) && (getCarriedObject(Protomech.LOC_LARM) == null)) {
     		percentage += 0.05;
     	}
-    	if (!isLocationBad(Mech.LOC_RARM)) {
+    	if (!isLocationBad(Protomech.LOC_RARM) && (getCarriedObject(Protomech.LOC_RARM) == null)) {
     		percentage += 0.05;
     	}
     	
@@ -1550,6 +1567,13 @@ public class Protomech extends Entity {
             }
         }
         return null;
-
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return BLOCKED_FIRING_LOCATIONS;
     }
 }

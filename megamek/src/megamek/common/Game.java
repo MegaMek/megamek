@@ -1314,7 +1314,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         resetPSRs();
         resetArtilleryAttacks();
         resetAttacks();
-        // removeMinefields();  Broken and bad!
         clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
@@ -1328,6 +1327,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         lastEntityId = 0;
         planetaryConditions = new PlanetaryConditions();
         forces = new Forces(this);
+        groundObjects = new HashMap<>();
     }
 
     private void removeArtyAutoHitHexes() {
@@ -3320,6 +3320,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     		return new ArrayList<>();
     	}
     	
+    	// if the entity doesn't have working actuators etc
+    	if (!entity.canPickupGroundObject()) {
+    		return new ArrayList<>();
+    	}
+    	
     	double maxTonnage = entity.maxGroundObjectTonnage();
     	ArrayList<ICarryable> result = new ArrayList<>();
     	
@@ -3337,8 +3342,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 	 * if looking for objects in specific hex
 	 */
 	public Map<Coords, List<ICarryable>> getGroundObjects() {
-		// ground objects not going out to server for some stupid farking reason; 
-		// check deployment display
 		return groundObjects;
 	}
 

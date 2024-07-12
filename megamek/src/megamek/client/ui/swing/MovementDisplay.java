@@ -4942,7 +4942,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     updateDonePanel();
                 }
             }
-        } else if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
+        } else if (actionCmd.equals(MoveCommand.MOVE_DROP_CARGO.getCmd())) {
+        	// need to figure out a way to state which hand
+        	// to drop if necessary var options = ce().getCarriedObjects().values().
+        }
+        if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
             if (ce.isAero()) {

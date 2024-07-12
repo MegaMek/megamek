@@ -143,11 +143,11 @@ Skye
 </primaryFactory>
 
 <systemManufacturers>
-CHASSIS:Lockhead/CBM 200
+CHASSIS:Lockheed/CBM 200
 ENGINE:Edasich Motors 195 XL
 ARMOR:StarScale Ferro-Aluminum
-COMMUNICATIONS:Lockhead/CBM COMSET 100
-TARGETING:Lockhead/CBM TarSet 55
+COMMUNICATIONS:Lockheed/CBM COMSET 100
+TARGETING:Lockheed/CBM TarSet 55
 </systemManufacturers>
 
 

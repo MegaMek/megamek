@@ -537,8 +537,8 @@ public class TeamLoadoutGenerator {
         boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                 || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
-        boolean groundMap = g.getBoard().onGround();
-        boolean spaceEnvironment = g.getBoard().inSpace();
+        boolean groundMap = (g.getMapSettings().getMedium() == MapSettings.MEDIUM_GROUND);
+        boolean spaceEnvironment = (g.getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE);
 
         if (blind) {
             enemyEntities.clear();

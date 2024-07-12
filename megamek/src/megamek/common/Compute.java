@@ -2000,11 +2000,6 @@ public class Compute {
                 continue; // useless to us...
             }
 
-            // Must have LoS, Compute.canSee considers sensors and visual range
-            if (!LosEffects.calculateLOS(game, friend, target).canSee()) {
-                continue;
-            }
-
             int buddyRange = Compute.effectiveDistance(game, friend, target,
                     false);
 

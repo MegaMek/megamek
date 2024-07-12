@@ -75,6 +75,7 @@
     <entry key="defaultStandardMunitionWeight">2.0</entry>
     <entry key="defaultMissileStandardMunitionWeight">2.0</entry>
     <entry key="defaultDeadFireMunitionWeight">3.0</entry>
+    <entry key="defaultArtemisCapableMunitionWeight">0.0</entry>
     <entry key="defaultATMMunitionWeight">2.0</entry>
     <entry key="defaultATMStandardWeight">1.0</entry>
     <entry key="increaseWeightFactor">2.0</entry>

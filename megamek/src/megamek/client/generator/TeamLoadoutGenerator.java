@@ -1810,6 +1810,8 @@ class MunitionWeightCollection {
         weights.put("Standard", getPropDouble("defaultMissileStandardMunitionWeight", 2.0));
         // Dead-Fire should be even higher to start
         weights.put("Dead-Fire", getPropDouble("defaultDeadFireMunitionWeight", 3.0));
+        // Artemis should be zeroed; Artemis-equipped launchers will be handled separately
+        weights.put("Artemis-capable", getPropDouble("defaultArtemisCapableMunitionWeight", 0.0));
         return weights;
     }
 

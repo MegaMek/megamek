@@ -1624,7 +1624,7 @@ public class MechView {
 
         @Override
         public String toDiscord() {
-            return DiscordFormat.BOLD.toString() + DiscordFormat.UNDERLINE + DiscordFormat.PINK + title + DiscordFormat.RESET + '\n';
+            return DiscordFormat.BOLD.toString() + DiscordFormat.UNDERLINE + DiscordFormat.CYAN + title + DiscordFormat.RESET + '\n';
         }
     }
 

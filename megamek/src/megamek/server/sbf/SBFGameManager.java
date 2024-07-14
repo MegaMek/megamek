@@ -48,6 +48,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
     final SBFMovementProcessor movementProcessor = new SBFMovementProcessor(this);
     final SBFAttackProcessor attackProcessor = new SBFAttackProcessor(this);
+    final SBFActionsProcessor actionsProcessor = new SBFActionsProcessor(this);
     final SBFInitiativeHelper initiativeHelper = new SBFInitiativeHelper(this);
     final SBFUnitUpdateHelper unitUpdateHelper = new SBFUnitUpdateHelper(this);
     final SBFDetectionHelper detectionHelper = new SBFDetectionHelper(this);
@@ -78,6 +79,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // each player must receive the packets directed at them as well as any undirected packets
         // in the order they were stored in pendingPackets
         if (!pendingPackets.isEmpty()) {
+            reducePendingPackets();
             // Send each player what they should receive ...
             for (int playerId : game.getPlayersList().stream().map(Player::getId).toList()) {
                 List<Packet> packets = pendingPackets.stream()
@@ -90,6 +92,10 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             }
             pendingPackets.clear();
         }
+    }
+
+    private void reducePendingPackets() {
+        //TODO remove redundant packets, maybe consolidate packets
     }
 
     void addPendingPacket(int recipient, Packet packet) {
@@ -509,7 +515,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
         if (formationInfo.isEmpty() || !attacks.stream().map(EntityAction::getEntityId).allMatch(id -> id == formationId)) {
             LogManager.getLogger().error("Invalid formation ID or diverging attacker IDs");
-            repeatTurn(connId);
+            repeatTurn(connId); //TODO: This is untested; questionable if this can save a game after an error
             return;
         }
 
@@ -545,5 +551,12 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         }
 
         return true;
+    }
+
+    /**
+     * Sends the game's pending actions to all Clients for them to replace any previous actions
+     */
+    void sendPendingActions() {
+        send(new Packet(PacketCommand.ACTIONS, new ArrayList<>(game.getActionsVector())));
     }
 }

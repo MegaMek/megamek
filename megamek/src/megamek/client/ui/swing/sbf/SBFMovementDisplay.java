@@ -209,7 +209,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             return;
         }
 
-        if (planJump(formation.get()).isConfirmed()) {
+        if (plannedMovement.getSteps().isEmpty() || planJump(formation.get()).isConfirmed()) {
             clientgui.getClient().moveUnit(plannedMovement);
             endMyTurn();
         }

@@ -110,7 +110,7 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
 //                reportLargeCraftECCMRolls();
 //                resolveOnlyWeaponAttacks();
 //                assignAMS();
-//                handleAttacks();
+                gameManager.actionsProcessor.handleActions();
 //                resolveScheduledNukes();
 //                applyBuildingDamage();
 //                cleanupDestroyedNarcPods();

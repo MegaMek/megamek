@@ -16,16 +16,38 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.actions.sbf;
+package megamek.server.sbf;
 
 import megamek.common.actions.EntityAction;
-import megamek.server.sbf.SBFActionHandler;
-import megamek.server.sbf.SBFGameManager;
-import megamek.server.sbf.SBFGameManagerHelper;
 
-public interface SBFAttackAction extends EntityAction {
+public abstract class AbstractSBFActionHandler implements SBFActionHandler {
 
-    int getTargetId();
+    private final EntityAction action;
+    private final SBFGameManager gameManager;
+    private boolean isFinished = false;
 
-    SBFActionHandler getHandler(SBFGameManager gameManager);
+    public AbstractSBFActionHandler(EntityAction action, SBFGameManager gameManager) {
+        this.action = action;
+        this.gameManager = gameManager;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    @Override
+    public void setFinished() {
+        isFinished = true;
+    }
+
+    @Override
+    public EntityAction getAction() {
+        return action;
+    }
+
+    @Override
+    public SBFGameManager gameManager() {
+        return gameManager;
+    }
 }

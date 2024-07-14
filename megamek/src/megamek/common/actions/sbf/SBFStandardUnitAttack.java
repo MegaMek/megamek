@@ -18,6 +18,10 @@
  */
 package megamek.common.actions.sbf;
 
+import megamek.server.sbf.SBFActionHandler;
+import megamek.server.sbf.SBFGameManager;
+import megamek.server.sbf.SBFStandardUnitAttackHandler;
+
 public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
 
     private final int unitNumber;
@@ -44,5 +48,10 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
      */
     public int getUnitNumber() {
         return unitNumber;
+    }
+
+    @Override
+    public SBFActionHandler getHandler(SBFGameManager gameManager) {
+        return new SBFStandardUnitAttackHandler(this, gameManager);
     }
 }

@@ -119,6 +119,11 @@ public class SBFClient extends AbstractClient {
                 break;
             case UNIT_INVISIBLE:
                 getGame().forget((int) packet.getObject(0));
+            case ACTIONS:
+                getGame().clearActions();
+                for (EntityAction action : (List<EntityAction>) packet.getObject(0)) {
+                    getGame().addAction(action);
+                }
             default:
                 return false;
         }
@@ -134,7 +139,7 @@ public class SBFClient extends AbstractClient {
         StringBuilder assembledReport = new StringBuilder();
         for (Report report : reports) {
             if (report != null) {
-                assembledReport.append(report.getText());
+                assembledReport.append(report.text());
             }
         }
 

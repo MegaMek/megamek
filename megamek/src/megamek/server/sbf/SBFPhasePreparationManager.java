@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
     void managePhase() {
+        clearActions();
         switch (game().getPhase()) {
             case LOUNGE:
                 gameManager.clearPendingReports();
@@ -256,5 +257,8 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
         }
     }
 
-
+    private void clearActions() {
+        game().clearActions();
+        gameManager.sendPendingActions();
+    }
 }

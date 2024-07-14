@@ -30,6 +30,7 @@ import megamek.common.event.UnitChangedGameEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.server.sbf.SBFActionHandler;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -48,6 +49,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
     private final List<SBFTurn> turnList = new ArrayList<>();
     private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper(this);
+    private final List<SBFActionHandler> actionHandlers = new ArrayList<>();
 
     /**
      * Contains all units that have left the game by any means.
@@ -504,5 +506,26 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     public void forget(int unitId) {
         inGameObjects.remove(unitId);
+    }
+
+    public void addActionHandler(SBFActionHandler handler) {
+        if (actionHandlers.contains(handler)) {
+            LogManager.getLogger().error("Tried to re-add action handler {}!", handler);
+        } else {
+            actionHandlers.add(handler);
+        }
+    }
+
+    public void removeActionHandler(SBFActionHandler handler) {
+        if (!actionHandlers.remove(handler)) {
+            LogManager.getLogger().error("Tried to remove non-existent action handler {}!", handler);
+        }
+    }
+
+    /**
+     * @return The currently active action handlers.
+     */
+    public List<SBFActionHandler> getActionHandlers() {
+        return actionHandlers;
     }
 }

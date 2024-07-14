@@ -674,7 +674,7 @@ public class Client extends AbstractClient {
 
         StringBuffer report = new StringBuffer();
         for (Report r : reports) {
-            report.append(r.getText());
+            report.append(r.text());
         }
 
         Set<Integer> setEntity = new HashSet<>();

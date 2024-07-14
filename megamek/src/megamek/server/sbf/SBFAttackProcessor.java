@@ -31,8 +31,10 @@ record SBFAttackProcessor(SBFGameManager gameManager) implements SBFGameManagerH
             return;
         }
 
+        actions.forEach(game()::addAction);
         formation.setDone(true);
         gameManager.sendUnitUpdate(formation);
+        gameManager.sendPendingActions();
         gameManager.endCurrentTurn(formation);
     }
 

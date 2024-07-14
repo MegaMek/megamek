@@ -24,13 +24,17 @@ import megamek.common.IGame;
 import megamek.common.InGameObject;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.*;
 
+import java.util.List;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -59,7 +63,7 @@ public final class SBFInGameObjectTooltip {
                 "th, td { padding:0 2; }";
     }
 
-    public static String getTooltip(InGameObject unit, @Nullable IGame game) {
+    public static String getTooltip(InGameObject unit, @Nullable SBFGame game) {
         StringBuilder result = new StringBuilder();
         Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : Color.BLACK;
@@ -70,6 +74,16 @@ public final class SBFInGameObjectTooltip {
                 .append(styleColor).append(";\">");
         result.append(nameLines(unit, game));
         result.append(formationStats(unit));
+
+        Predicate<EntityAction> thisFormation = a -> a.getEntityId() == unit.getId();
+        List<EntityAction> actions = game.getActionsVector().stream().filter(thisFormation).toList();
+        for (EntityAction action : actions) {
+            if (action instanceof SBFStandardUnitAttack attack) {
+                result.append("Attacking! Unit: " + attack.getUnitNumber() + " Target: " + attack.getTargetId());
+            }
+        }
+
+
         result.append("</div>");
         return result.toString();
     }
@@ -121,8 +135,12 @@ public final class SBFInGameObjectTooltip {
     }
 
     private static Stats statsOf(SBFFormation f) {
+        String jumpEntry = "" + f.getJumpMove();
+        if (f.getJumpUsedThisTurn() > 0) {
+            jumpEntry += " (used: " + f.getJumpUsedThisTurn() + ")";
+        }
         return new Stats("" + f.getType(), "" + f.getSize(), "" + f.getMorale(),
-                "" + f.getMovement(), f.getMovementCode(), "" + f.getJumpMove(),
+                "" + f.getMovement(), f.getMovementCode(), jumpEntry,
                 "" + f.getTrspMovement(), f.getTrspMovementCode(), "" + f.getTactics(),
                 "" + f.getTmm(), f.getSpecialsDisplayString(f), "" + f.getSkill());
     }
@@ -183,10 +201,15 @@ public final class SBFInGameObjectTooltip {
     private static StringBuilder unitLine(SBFUnit unit) {
         StringBuilder result = new StringBuilder();
         result.append("<TR>");
+        String armorText = unit.getArmor() + (unit.getCurrentArmor() != unit.getArmor() ? " (" + unit.getCurrentArmor() + ")" : "");
         result.append(tdCSS("unitname", abbrevUnitName(unit.getName())))
                 .append(tdCSS("label", "Armor"))
-                .append(tdCSS("valuecell", unit.getArmor()))
-                .append(tdCSS("label", "Dmg"))
+                .append(tdCSS("valuecell", armorText));
+//        if (unit.getCurrentArmor() != unit.getArmor()) {
+//            result.append(tdCSS("label", "CurrArmor"))
+//                    .append(tdCSS("valuecell", unit.getCurrentArmor()));
+//        }
+        result.append(tdCSS("label", "Dmg"))
                 .append(tdCSS("valuecell", unit.getDamage().toString()))
                 .append(tdCSS("label", "SPEC"))
                 .append(tdCSS("speccell", unit.getSpecialsDisplayString(unit)));

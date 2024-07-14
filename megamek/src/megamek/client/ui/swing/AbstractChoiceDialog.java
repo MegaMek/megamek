@@ -43,6 +43,7 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
     private boolean showDetails = false;
     private JPanel choicesPanel;
     private JToggleButton[] buttons;
+    private int columns = 2;
 
     /**
      * This creates a modal AbstractChoiceDialog using the default resource bundle as a Modal dialog.
@@ -55,7 +56,8 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
      * @param isMultiSelect if true, allows user to select multiple items. if false first,
      *                      item chosen will close the window
      */
-    protected AbstractChoiceDialog(JFrame frame, String title, String message, @Nullable List<T> targets, boolean isMultiSelect) {
+    protected AbstractChoiceDialog(JFrame frame, String title, String message,
+                                   @Nullable List<T> targets, boolean isMultiSelect) {
         super(frame, true, title, title);
         this.message = message;
         this.targets = targets;
@@ -68,6 +70,14 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
             showDetails = false;
         }
         detailsCheckBox.setVisible(useDetailed);
+    }
+
+    public void setColumns(int columns) {
+        if (columns < 1) {
+            throw new IllegalArgumentException("Cannot use less than one column.");
+        } else {
+            this.columns = columns;
+        }
     }
 
     @Override
@@ -95,7 +105,7 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
         result.add(listScroller, BorderLayout.CENTER);
 
         // button per-option
-        choicesPanel.setLayout(new GridLayout(0, 2, buttonGap, buttonGap));
+        choicesPanel.setLayout(new GridLayout(0, columns, buttonGap, buttonGap));
         choicesPanel.setBorder(new EmptyBorder(buttonGap, padding, padding, padding));
         buttons = new JToggleButton[targets.size()];
         for (int i = 0; i < buttons.length; i++) {

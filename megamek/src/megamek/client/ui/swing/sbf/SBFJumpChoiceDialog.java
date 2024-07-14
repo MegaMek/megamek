@@ -29,6 +29,9 @@ import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
+/**
+ * This dialog is used to ask the player how many JUMP points are to be used for a planned movement.
+ */
 public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
 
     private static final int BASE_PADDING = 10;
@@ -36,6 +39,7 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
 
     protected SBFJumpChoiceDialog(JFrame parent, List<Integer> targets) {
         super(parent, "SBFTargetDialog.title", titleMessage(), targets, false);
+        setColumns(1);
         initialize();
         setUseDetailed(false);
     }

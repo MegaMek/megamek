@@ -13,15 +13,12 @@
  */
 package megamek.client.ui.swing.widget;
 
-import megamek.client.Client;
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.SBFClientGUI;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SBFFullGameReport;
@@ -45,7 +42,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -326,7 +322,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         for (int round = startIndex; round <= numRounds; round++) {
             if (report.hasReportsforRound(round)) {
             String text=
-                report.get(round).stream().map(r -> r.getText()).collect(Collectors.joining());
+                report.get(round).stream().map(r -> r.text()).collect(Collectors.joining());
             tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
             }
 

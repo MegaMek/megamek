@@ -19,6 +19,8 @@
 package megamek.common.actions.sbf;
 
 import megamek.common.BoardLocation;
+import megamek.server.sbf.SBFActionHandler;
+import megamek.server.sbf.SBFGameManager;
 
 public class SBFUnitToHexAttack extends AbstractSBFAttackAction {
 
@@ -46,6 +48,11 @@ public class SBFUnitToHexAttack extends AbstractSBFAttackAction {
      */
     public int getUnitNumber() {
         return unitNumber;
+    }
+
+    @Override
+    public SBFActionHandler getHandler(SBFGameManager gameManager) {
+        return null;
     }
 
     //TODO must convert between id and location -> cant use hashcode

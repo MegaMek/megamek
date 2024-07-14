@@ -311,23 +311,30 @@ public class TeamLoadoutGenerator {
         showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
     }
 
-    // See if selected ammoType is legal under current game rules, availability, TL,
-    // tech base, etc.
+    /**
+     * Calculates legality of
+     * @param aType
+     * @param faction
+     * @param techBase
+     * @param mixedTech
+     * @return
+     */
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
         boolean legal = false;
         boolean clan = techBase.equals("CL");
 
+        // Check if tech exists at all (or is explicitly allowed despite being extinct)
+        // and whether it is available at the current tech level.
+        legal = aType.isAvailableIn(allowedYear, showExtinct)
+                && aType.isLegal(allowedYear, legalLevel, clan, mixedTech, showExtinct);
+
         if (eraBasedTechLevel) {
-            // Check if tech is legal to use in this game based on year, tech level, etc.
-            legal = aType.isLegal(allowedYear, legalLevel, clan,
-                    mixedTech, showExtinct);
-            // Check if tech is widely available, or if the specific faction has access to
-            // it
-            legal &= aType.isAvailableIn(allowedYear, showExtinct)
-                    || aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromIOAbbr(faction));
-        } else {
-            // Basic year check only
-            legal = aType.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
+            // Check if tech is available to this specific faction with the current year and tech base.
+            boolean eraBasedLegal = aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromMMAbbr(faction));
+            if (mixedTech) {
+                eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, ITechnology.getCodeFromMMAbbr(faction));
+            }
+            legal &= eraBasedLegal;
         }
 
         // Nukes are not allowed... unless they are!
@@ -1811,7 +1818,7 @@ class MunitionWeightCollection {
         // Dead-Fire should be even higher to start
         weights.put("Dead-Fire", getPropDouble("defaultDeadFireMunitionWeight", 3.0));
         // Artemis should be zeroed; Artemis-equipped launchers will be handled separately
-        weights.put("Artemis-capable", getPropDouble("defaultArtemisCapableMunitionWeight", 0.0));
+        weights.put("Artemis-capable", getPropDouble("defaultArtemiscapableMunitionWeight", 0.0));
         return weights;
     }
 

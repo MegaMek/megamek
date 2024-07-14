@@ -269,8 +269,10 @@ public class TechAdvancement implements ITechnology {
             // other factions after 3d6+5 years if it hasn't gone extinct by then.
             // Using the minimum value here.
             int date = getDate(PROTOTYPE, clan) + 8;
-            if ((getDate(PRODUCTION, clan) < date)
-                    || (getDate(COMMON, clan) < date)
+            int dateProduction = getDate(PRODUCTION, clan);
+            int dateCommon = getDate(COMMON, clan);
+            if ((dateProduction != DATE_NONE && dateProduction < date)
+                    || (dateCommon != DATE_NONE && dateCommon < date)
                     || isExtinct(date, clan)) {
                 return DATE_NONE;
             }
@@ -311,7 +313,7 @@ public class TechAdvancement implements ITechnology {
             // Per IO p. 34, tech with no common date becomes available to
             // other factions after 10 years if it hasn't gone extinct by then.
             int date = getDate(PRODUCTION, clan) + 10;
-            if ((getDate(COMMON, clan) <= date)
+            if ((getDate(COMMON, clan) != DATE_NONE && getDate(COMMON, clan) <= date)
                     || isExtinct(date, clan)) {
                 return DATE_NONE;
             }

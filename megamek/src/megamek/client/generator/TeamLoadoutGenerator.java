@@ -57,7 +57,8 @@ public class TeamLoadoutGenerator {
         try (InputStream is = new FileInputStream(LOADOUT_SETTINGS_PATH)) {
             weightProperties.loadFromXML(is);
         } catch (Exception e) {
-            LogManager.getLogger().error("Munition weight properties could not be loaded!  Using defaults...", e);
+            LogManager.getLogger().warn("Munition weight properties could not be loaded!  Using defaults...", e);
+            LogManager.getLogger().debug(LOADOUT_SETTINGS_PATH + " was not loaded: ", e);
         }
     }
 
@@ -105,17 +106,20 @@ public class TeamLoadoutGenerator {
 
     // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
     public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of(
-            "Heat-Seeking", "Listen-Kill", "Swarm", "Swarm-I"));
+            "Heat-Seeking", "Listen-Kill", "Swarm", "Swarm-I"
+    ));
 
     public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of(
             "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
             "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno",
             "AAAMissile Ammo", "ASMissile Ammo", "ASWEMissile Ammo", "ArrowIVMissile Ammo",
-            "AlamoMissile Ammo"));
+            "AlamoMissile Ammo"
+    ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
             "LRM", "SRM", "AC", "ATM", "Arrow IV", "Artillery", "Artillery Cannon",
-            "Mek Mortar", "Narc", "Bomb"));
+            "Mek Mortar", "Narc", "Bomb"
+    ));
 
     public static final Map<String, ArrayList<String>> TYPE_MAP = Map.ofEntries(
             entry("LRM", MunitionTree.LRM_MUNITION_NAMES),
@@ -127,7 +131,8 @@ public class TeamLoadoutGenerator {
             entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
             entry("Mek Mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
             entry("Narc", MunitionTree.NARC_MUNITION_NAMES),
-            entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES));
+            entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES)
+    );
 
     // subregion Bombs
     // bomb types assignable to aerospace units on ground maps
@@ -409,7 +414,7 @@ public class TeamLoadoutGenerator {
      * @return
      */
     private static long checkForEnergyBoats(ArrayList<Entity> el) {
-        return el.stream().filter(e -> e.getAmmo().isEmpty()).count();
+        return el.stream().filter(e -> e.tracksHeat() && e.getAmmo().isEmpty()).count();
     }
 
     /**
@@ -480,6 +485,10 @@ public class TeamLoadoutGenerator {
     private static long checkForECM(ArrayList<Entity> el) {
         return el.stream().filter(
                 Entity::hasECM).count();
+    }
+
+    private static long checkForTSM(ArrayList<Entity> el) {
+        return el.stream().filter(e -> e.isMek() && ((Mech) e).hasTSM(false)).count();
     }
     // endregion Check for various unit types, armor types, etc.
 
@@ -617,6 +626,7 @@ public class TeamLoadoutGenerator {
                 rp.enemyFastMovers += checkForFastMovers(etEntities);
                 rp.enemyOffBoard = checkForOffboard(etEntities);
                 rp.enemyECMCount = checkForECM(etEntities);
+                rp.enemyTSMCount = checkForTSM(etEntities);
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
             rp.enemiesVisible = false;
@@ -797,11 +807,23 @@ public class TeamLoadoutGenerator {
                 mwc.decreaseHeatMunitions();
             }
 
+            // Energy boats run hot; increase heat munitions and heat-seeking specifically
+            if (rp.enemyEnergyBoats > rp.enemyCount / castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
+                mwc.increaseHeatMunitions();
+                mwc.increaseHeatMunitions();
+                mwc.increaseMunitions(new ArrayList<>(List.of("Heat-Seeking")));
+            }
+
             // Counter EMC by swapping Seeking in for Guided
             if (rp.enemyECMCount > castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
                 mwc.decreaseGuidedMunitions();
                 mwc.increaseSeekingMunitions();
-            } else {
+            }
+            if (rp.enemyTSMCount > castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
+                // Seeking
+                mwc.increaseSeekingMunitions();
+            }
+            if (rp.enemyECMCount == 0.0 && rp.enemyTSMCount == 0.0 && rp.enemyEnergyBoats == 0.0) {
                 // Seeking munitions are generally situational
                 mwc.decreaseSeekingMunitions();
             }

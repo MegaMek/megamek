@@ -53,6 +53,7 @@ public class ReconfigurationParameters {
     public long enemyFastMovers = 0;
     public long enemyOffBoard = 0;
     public long enemyECMCount = 0;
+    public long enemyTSMCount = 0;
     public HashSet<String> enemyFactions = new HashSet<String>();
 
     // Friendly stats

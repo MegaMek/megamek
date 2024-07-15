@@ -19,6 +19,8 @@
     <entry key="mtGuidedAmmoFriendlyMissileBoatFractionDivisor">3.0</entry>
     <entry key="mtUtilityAmmoOffboardUnitsThreshold">2.0</entry>
     <entry key="mtUtilityAmmoFriendlyVsEnemyFractionDivisor">1.0</entry>
+    <entry key="mtEnergyBoatEnemyFractionDivisor">4.0</entry>
+    <entry key="mtSeekingAmmoEnemyTSMExceedThreshold">1.0</entry>
     <entry key="commentTopMunitionsSubsetCount">This count determines how many munition types (out of all options) are actually selected</entry>
     <entry key="mtTopMunitionsSubsetCount">4</entry>
     <entry key="commentStartTLGBombArea">The following entries are used by Bombs:</entry>

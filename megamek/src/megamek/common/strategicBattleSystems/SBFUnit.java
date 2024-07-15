@@ -336,4 +336,8 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
     public void setCurrentArmor(int currentArmor) {
         this.currentArmor = currentArmor;
     }
+
+    public boolean hasArmorDamage() {
+        return currentArmor != armor;
+    }
 }

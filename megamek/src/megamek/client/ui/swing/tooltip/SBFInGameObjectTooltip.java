@@ -44,18 +44,24 @@ public final class SBFInGameObjectTooltip {
     private static final String SHORT = "&nbsp;";
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
     private static final int BASE_WIDTH = 420;
+    private static final int BASE_UNIT_NAME_WIDTH = 110;
 
     public static String styles() {
         float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         int labelSize = (int) (0.8 * base);
         int valueSize = (int) (1.1 * base);
         int nameSize = (int) (1.3 * base);
+        int nameWidth = UIUtil.scaleForGUI(BASE_UNIT_NAME_WIDTH);
 
         return ".value { font-family:Exo; font-size:20; }" +
                 ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }" +
                 ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray; text-align:right; }" +
-                ".unitname { white-space:nowrap; padding-right:10; font-family:Noto Sans; font-size:" + valueSize + "; }" +
+                ".unitname { white-space:nowrap; padding-right:10; font-family:Noto Sans; font-size:"
+                + valueSize + "; width: " + nameWidth + "; }" +
                 ".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
+                ".armornodmg { font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
+                ".valuedmg { font-family:Exo; font-size:" + valueSize + "; text-align: center; color: #FAA; }" +
+                ".valuedeemph { font-family:Exo; font-size:" + labelSize + "; color:gray; }" +
                 ".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }" +
                 ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
                 ".fullwidth { width:100%; }" +
@@ -200,17 +206,18 @@ public final class SBFInGameObjectTooltip {
 
     private static StringBuilder unitLine(SBFUnit unit) {
         StringBuilder result = new StringBuilder();
+
+        String armorCss = unit.hasArmorDamage() ? "valuedmg" : "armornodmg";
+        String oa = unit.hasArmorDamage() ? "/ " + unit.getArmor() : "";
+        String dmgCss = unit.getDamageCrits() > 0 ? "valuedmg" : "armornodmg";
+
         result.append("<TR>");
-        String armorText = unit.getArmor() + (unit.getCurrentArmor() != unit.getArmor() ? " (" + unit.getCurrentArmor() + ")" : "");
         result.append(tdCSS("unitname", abbrevUnitName(unit.getName())))
                 .append(tdCSS("label", "Armor"))
-                .append(tdCSS("valuecell", armorText));
-//        if (unit.getCurrentArmor() != unit.getArmor()) {
-//            result.append(tdCSS("label", "CurrArmor"))
-//                    .append(tdCSS("valuecell", unit.getCurrentArmor()));
-//        }
-        result.append(tdCSS("label", "Dmg"))
-                .append(tdCSS("valuecell", unit.getDamage().toString()))
+                .append(tdCSS(armorCss, unit.getCurrentArmor()))
+                .append(tdCSS("valuedeemph", oa))
+                .append(tdCSS("label", "Dmg"))
+                .append(tdCSS(dmgCss, unit.getCurrentDamage().toString()))
                 .append(tdCSS("label", "SPEC"))
                 .append(tdCSS("speccell", unit.getSpecialsDisplayString(unit)));
         result.append("</TR>");
@@ -229,8 +236,10 @@ public final class SBFInGameObjectTooltip {
 
     private static String abbrevUnitName(String unitName) {
         String result = unitName;
-        for (String token : ABBREV_NAME_PARTS_UNIT) {
-            result = result.replace(" " + token, " " + token.charAt(0) + ".");
+        if (unitName.length() > 11) {
+            for (String token : ABBREV_NAME_PARTS_UNIT) {
+                result = result.replace(" " + token, " " + token.charAt(0) + ".");
+            }
         }
         return result;
     }

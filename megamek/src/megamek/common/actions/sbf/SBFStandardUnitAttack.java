@@ -18,6 +18,7 @@
  */
 package megamek.common.actions.sbf;
 
+import megamek.common.alphaStrike.ASRange;
 import megamek.server.sbf.SBFActionHandler;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.sbf.SBFStandardUnitAttackHandler;
@@ -25,6 +26,7 @@ import megamek.server.sbf.SBFStandardUnitAttackHandler;
 public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
 
     private final int unitNumber;
+    private final ASRange range;
 
     /**
      * Creates a standard attack of an SBF Unit on another formation.
@@ -35,9 +37,10 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
      * @param unitNumber The number of the attacking SBF Unit inside the formation
      * @param targetId The target's ID
      */
-    public SBFStandardUnitAttack(int formationId, int unitNumber, int targetId) {
+    public SBFStandardUnitAttack(int formationId, int unitNumber, int targetId, ASRange range) {
         super(formationId, targetId);
         this.unitNumber = unitNumber;
+        this.range = range;
     }
 
     /**
@@ -48,6 +51,10 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
      */
     public int getUnitNumber() {
         return unitNumber;
+    }
+
+    public ASRange getRange() {
+        return range;
     }
 
     @Override

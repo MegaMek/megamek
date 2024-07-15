@@ -19,7 +19,6 @@
 package megamek.server.sbf;
 
 import megamek.common.Report;
-import megamek.common.actions.EntityAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
@@ -31,11 +30,8 @@ import static org.apache.logging.log4j.LogManager.*;
 
 public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
 
-    public SBFStandardUnitAttackHandler(EntityAction action, SBFGameManager gameManager) {
+    public SBFStandardUnitAttackHandler(SBFStandardUnitAttack action, SBFGameManager gameManager) {
         super(action, gameManager);
-        if (!(action instanceof SBFStandardUnitAttack)) {
-            throw new IllegalArgumentException("Can only be used for standard unit attacks");
-        }
     }
 
     @Override
@@ -51,11 +47,11 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
             SBFFormation attacker = game().getFormation(attack.getEntityId()).get();
             //noinspection OptionalGetWithoutIsPresent
             SBFFormation target = game().getFormation(attack.getTargetId()).get();
-            // Unit number is 1 based
+            // Unit number is 1-based
             SBFUnit unit = attacker.getUnits().get(attack.getUnitNumber() - 1);
             List<SBFUnit> targetUnits = target.getUnits();
             SBFUnit targetUnit = targetUnits.get(0);
-            int damage = unit.getCurrentDamage().M.damage;
+            int damage = unit.getCurrentDamage().getDamage(attack.getRange()).damage;
             if (damage > 0) {
                 int newArmor = targetUnit.getCurrentArmor() - damage;
                 addReport(Report.publicReport(3100).add(damage).add(damage));
@@ -65,6 +61,9 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
                 targetUnits.get(0).setCurrentArmor(newArmor);
                 if (newArmor == 0) {
                     addReport(Report.publicReport(3092));
+                }
+                if (newArmor * 2 < targetUnit.getArmor()) {
+                    targetUnit.addDamageCrit();
                 }
                 gameManager().sendUnitUpdate(target);
             } else {

@@ -27,6 +27,7 @@ import megamek.common.BoardLocation;
 import megamek.common.InGameObject;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.strategicBattleSystems.*;
@@ -197,7 +198,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
         if (actingFormation().isEmpty() || !isMyTurn() || selectedTarget == null) {
             return;
         }
-        var attack = new SBFStandardUnitAttack(actingFormation().get().getId(), unit, selectedTarget.getId());
+        var attack = new SBFStandardUnitAttack(actingFormation().get().getId(), unit, selectedTarget.getId(), ASRange.LONG);
         plannedActions.add(attack);
         updateButtonStatus();
         updateDonePanel();

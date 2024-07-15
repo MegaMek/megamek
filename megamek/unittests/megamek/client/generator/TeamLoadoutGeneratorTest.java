@@ -385,17 +385,17 @@ class TeamLoadoutGeneratorTest {
         assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
         assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", true));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
-        // Should be available to everyone, although only as Mixed Tech for Clans
+        // Should be available to everyone
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Advanced");
         tlg.updateOptionValues();
         assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "CL", "CL", true));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
@@ -408,7 +408,9 @@ class TeamLoadoutGeneratorTest {
         assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "CL", "CL", true));
+        // Check mixed-tech and regular Clan tech, which should match IS at this point
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", false));
 
         // Set year back to 3025
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);
@@ -416,7 +418,7 @@ class TeamLoadoutGeneratorTest {
         assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
         assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", true));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
         // Move up to 3070. Because of game settings and lack of "Common" year, ADA
         // becomes available
@@ -424,9 +426,9 @@ class TeamLoadoutGeneratorTest {
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
         tlg.updateOptionValues();
         assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test

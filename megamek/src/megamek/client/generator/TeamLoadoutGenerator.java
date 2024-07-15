@@ -57,7 +57,8 @@ public class TeamLoadoutGenerator {
         try (InputStream is = new FileInputStream(LOADOUT_SETTINGS_PATH)) {
             weightProperties.loadFromXML(is);
         } catch (Exception e) {
-            LogManager.getLogger().error("Munition weight properties could not be loaded!  Using defaults...", e);
+            LogManager.getLogger().warn("Munition weight properties could not be loaded!  Using defaults...", e);
+            LogManager.getLogger().debug(LOADOUT_SETTINGS_PATH + " was not loaded: ", e);
         }
     }
 
@@ -105,17 +106,20 @@ public class TeamLoadoutGenerator {
 
     // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
     public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of(
-            "Heat-Seeking", "Listen-Kill", "Swarm", "Swarm-I"));
+            "Heat-Seeking", "Listen-Kill", "Swarm", "Swarm-I"
+    ));
 
     public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of(
             "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
             "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno",
             "AAAMissile Ammo", "ASMissile Ammo", "ASWEMissile Ammo", "ArrowIVMissile Ammo",
-            "AlamoMissile Ammo"));
+            "AlamoMissile Ammo"
+    ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
             "LRM", "SRM", "AC", "ATM", "Arrow IV", "Artillery", "Artillery Cannon",
-            "Mek Mortar", "Narc", "Bomb"));
+            "Mek Mortar", "Narc", "Bomb"
+    ));
 
     public static final Map<String, ArrayList<String>> TYPE_MAP = Map.ofEntries(
             entry("LRM", MunitionTree.LRM_MUNITION_NAMES),
@@ -127,7 +131,8 @@ public class TeamLoadoutGenerator {
             entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
             entry("Mek Mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
             entry("Narc", MunitionTree.NARC_MUNITION_NAMES),
-            entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES));
+            entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES)
+    );
 
     // subregion Bombs
     // bomb types assignable to aerospace units on ground maps
@@ -311,23 +316,31 @@ public class TeamLoadoutGenerator {
         showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
     }
 
-    // See if selected ammoType is legal under current game rules, availability, TL,
-    // tech base, etc.
+    /**
+     * Calculates legality of ammo types given a faction, tech base (IS/CL), mixed tech, and the instance's
+     * already-set year, tech level, and option for showing extinct equipment.
+     * @param aType the AmmoType of the munition under consideration.  q.v.
+     * @param faction MM-style faction code, per factions.xml and FactionRecord keys
+     * @param techBase either 'IS' or 'CL', used for clan boolean check.
+     * @param mixedTech makes munitions checks more lenient by allowing faction to access both IS and CL techbases.
+     * @return boolean true if legal for combination of inputs, false otherwise.  Determins if an AmmoType is loaded.
+     */
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
         boolean legal = false;
         boolean clan = techBase.equals("CL");
 
+        // Check if tech exists at all (or is explicitly allowed despite being extinct)
+        // and whether it is available at the current tech level.
+        legal = aType.isAvailableIn(allowedYear, showExtinct)
+                && aType.isLegal(allowedYear, legalLevel, clan, mixedTech, showExtinct);
+
         if (eraBasedTechLevel) {
-            // Check if tech is legal to use in this game based on year, tech level, etc.
-            legal = aType.isLegal(allowedYear, legalLevel, clan,
-                    mixedTech, showExtinct);
-            // Check if tech is widely available, or if the specific faction has access to
-            // it
-            legal &= aType.isAvailableIn(allowedYear, showExtinct)
-                    || aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromIOAbbr(faction));
-        } else {
-            // Basic year check only
-            legal = aType.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
+            // Check if tech is available to this specific faction with the current year and tech base.
+            boolean eraBasedLegal = aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromMMAbbr(faction));
+            if (mixedTech) {
+                eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, ITechnology.getCodeFromMMAbbr(faction));
+            }
+            legal &= eraBasedLegal;
         }
 
         // Nukes are not allowed... unless they are!
@@ -402,7 +415,7 @@ public class TeamLoadoutGenerator {
      * @return
      */
     private static long checkForEnergyBoats(ArrayList<Entity> el) {
-        return el.stream().filter(e -> e.getAmmo().isEmpty()).count();
+        return el.stream().filter(e -> e.tracksHeat() && e.getAmmo().isEmpty()).count();
     }
 
     /**
@@ -473,6 +486,10 @@ public class TeamLoadoutGenerator {
     private static long checkForECM(ArrayList<Entity> el) {
         return el.stream().filter(
                 Entity::hasECM).count();
+    }
+
+    private static long checkForTSM(ArrayList<Entity> el) {
+        return el.stream().filter(e -> e.isMek() && ((Mech) e).hasTSM(false)).count();
     }
     // endregion Check for various unit types, armor types, etc.
 
@@ -610,6 +627,7 @@ public class TeamLoadoutGenerator {
                 rp.enemyFastMovers += checkForFastMovers(etEntities);
                 rp.enemyOffBoard = checkForOffboard(etEntities);
                 rp.enemyECMCount = checkForECM(etEntities);
+                rp.enemyTSMCount = checkForTSM(etEntities);
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
             rp.enemiesVisible = false;
@@ -790,11 +808,23 @@ public class TeamLoadoutGenerator {
                 mwc.decreaseHeatMunitions();
             }
 
+            // Energy boats run hot; increase heat munitions and heat-seeking specifically
+            if (rp.enemyEnergyBoats > rp.enemyCount / castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
+                mwc.increaseHeatMunitions();
+                mwc.increaseHeatMunitions();
+                mwc.increaseMunitions(new ArrayList<>(List.of("Heat-Seeking")));
+            }
+
             // Counter EMC by swapping Seeking in for Guided
             if (rp.enemyECMCount > castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
                 mwc.decreaseGuidedMunitions();
                 mwc.increaseSeekingMunitions();
-            } else {
+            }
+            if (rp.enemyTSMCount > castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
+                // Seeking
+                mwc.increaseSeekingMunitions();
+            }
+            if (rp.enemyECMCount == 0.0 && rp.enemyTSMCount == 0.0 && rp.enemyEnergyBoats == 0.0) {
                 // Seeking munitions are generally situational
                 mwc.decreaseSeekingMunitions();
             }
@@ -1810,6 +1840,8 @@ class MunitionWeightCollection {
         weights.put("Standard", getPropDouble("defaultMissileStandardMunitionWeight", 2.0));
         // Dead-Fire should be even higher to start
         weights.put("Dead-Fire", getPropDouble("defaultDeadFireMunitionWeight", 3.0));
+        // Artemis should be zeroed; Artemis-equipped launchers will be handled separately
+        weights.put("Artemis-capable", getPropDouble("defaultArtemiscapableMunitionWeight", 0.0));
         return weights;
     }
 

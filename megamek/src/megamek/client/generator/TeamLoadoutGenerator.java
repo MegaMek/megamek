@@ -317,12 +317,13 @@ public class TeamLoadoutGenerator {
     }
 
     /**
-     * Calculates legality of
-     * @param aType
-     * @param faction
-     * @param techBase
-     * @param mixedTech
-     * @return
+     * Calculates legality of ammo types given a faction, tech base (IS/CL), mixed tech, and the instance's
+     * already-set year, tech level, and option for showing extinct equipment.
+     * @param aType the AmmoType of the munition under consideration.  q.v.
+     * @param faction MM-style faction code, per factions.xml and FactionRecord keys
+     * @param techBase either 'IS' or 'CL', used for clan boolean check.
+     * @param mixedTech makes munitions checks more lenient by allowing faction to access both IS and CL techbases.
+     * @return boolean true if legal for combination of inputs, false otherwise.  Determins if an AmmoType is loaded.
      */
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
         boolean legal = false;

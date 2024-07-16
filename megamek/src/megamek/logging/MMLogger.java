@@ -137,4 +137,28 @@ public class MMLogger {
         }
     }
 
+    /**
+     * Fatal Level Logging w/ Exception w/ Dialog
+     *
+     * @param exception Exception that was triggered. Probably uncaught.
+     * @param message   Message to report to the log file.
+     * @param title     Title of the error message box.
+     *
+     */
+    public static void fatal(Throwable exception, String message, String title) {
+        MMLogger.fatal(exception, message);
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Fatal Level Logging w/o Exception w/ Dialog
+     *
+     * @param message Message to report to the log file.
+     * @param title   Title of the error message box.
+     *
+     */
+    public static void fatal(String message, String title) {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
 }

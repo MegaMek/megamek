@@ -2607,7 +2607,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         StringBuilder result = new StringBuilder();
         for (Entity entity: entities) {
             // Chassis
-            result.append(entity.getChassis()).append("\t");
+            result.append(entity.getFullChassis()).append("\t");
             // Model
             result.append(entity.getModel()).append("\t");
             // Weight; format for locale to avoid wrong ",." etc.

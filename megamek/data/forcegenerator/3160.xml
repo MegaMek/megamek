@@ -4334,7 +4334,7 @@
 			<roles>marine</roles>
 			<availability>RD:6</availability>
 		</model>
-		<model name='(Naval) Bär&apos; (Sqd5)' mechanized='false'>
+		<model name='(Naval) &apos;Bär&apos; (Sqd5)' mechanized='false'>
 			<roles>marine</roles>
 			<availability>CWE:4-,RD:6,CDS:5,CLAN.IS:5,CP:6</availability>
 		</model>

@@ -66,6 +66,9 @@ public abstract class AbstractClient implements IClient {
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     protected Map<String, AbstractClient> bots = new TreeMap<>(String::compareTo);
 
+    // Image cache for storing unit icons in as base64 with the unit ID as key
+    protected Map<Integer, String> iconCache = new HashMap<>();
+
     /**
      * Construct a client which will try to connect. If the connection fails, it
      * will alert the player, free resources and hide the frame.
@@ -184,9 +187,7 @@ public abstract class AbstractClient implements IClient {
         send(new Packet(PacketCommand.PLAYER_UPDATE, getGame().getPlayer(localPlayerNumber)));
     }
 
-    /**
-     * Broadcast a general chat message from the local player
-     */
+    @Override
     public void sendChat(String message) {
         send(new Packet(PacketCommand.CHAT, message));
         flushConn();
@@ -328,14 +329,21 @@ public abstract class AbstractClient implements IClient {
             return;
         }
         try {
-            boolean isHandled = handleGameIndependentPacket(packet);
-            isHandled |= handleGameSpecificPacket(packet);
-            if (!isHandled) {
-                LogManager.getLogger().error("Attempted to parse unknown PacketCommand of "
-                        + packet.getCommand().name());
+            if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
+                @SuppressWarnings("unchecked")
+                var includedPackets = (List<Packet>) packet.getObject(0);
+                for (Packet includedPacket : includedPackets) {
+                    handlePacket(includedPacket);
+                }
+            } else {
+                boolean isHandled = handleGameIndependentPacket(packet);
+                isHandled |= handleGameSpecificPacket(packet);
+                if (!isHandled) {
+                    LogManager.getLogger().error("Unknown PacketCommand of {}", packet.getCommand().name());
+                }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse Packet command " + packet.getCommand(), ex);
+            LogManager.getLogger().error("Failed to parse Packet command {}", packet.getCommand(), ex);
         }
     }
 

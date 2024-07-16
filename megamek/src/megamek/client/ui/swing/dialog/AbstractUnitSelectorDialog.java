@@ -306,7 +306,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 3;
         panelFilterButtons.add(labelFilter, gridBagConstraintsWest);
-        
+
         textFilter = new JTextField("");
         textFilter.setName("textFilter");
         textFilter.getDocument().addDocumentListener(new DocumentListener() {
@@ -332,7 +332,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
         /** Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI **/
-        
+
         JLabel lblGun = new JLabel(Messages.getString("MechSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
@@ -364,7 +364,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             gridBagConstraintsWest.gridx = 1;
             gridBagConstraintsWest.gridy = 4;
             panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
-        };    
+        };
 
         JLabel lblPilot = new JLabel(Messages.getString("MechSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
@@ -396,8 +396,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             gridBagConstraintsWest.gridx = 1;
             gridBagConstraintsWest.gridy = 5;
             panelFilterButtons.add(textPilot, gridBagConstraintsWest);
-        }; 
-        
+        };
+
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         labelImage.setName("labelImage");
         gridBagConstraints = new GridBagConstraints();
@@ -408,7 +408,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         panelFilterButtons.add(labelImage, gridBagConstraints);
-        
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -417,7 +417,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = 0.0;
         gridBagConstraints.insets = new Insets(10, 10, 5, 0);
         selectionPanel.add(panelFilterButtons, gridBagConstraints);
-               
+
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
         buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
@@ -748,6 +748,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             adaptToGUIScale();
         }
 
+        validate();
+        repaint();
         super.setVisible(visible);
     }
 
@@ -992,7 +994,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         piloting = 5;
                     };
                 };
-                
+
                 double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery,piloting);
                 int modified_bv = (int) Math.round(ms.getBV() * gp_multiply);
                 return modified_bv;

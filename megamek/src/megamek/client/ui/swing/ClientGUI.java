@@ -42,7 +42,6 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.*;
-import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
@@ -104,6 +103,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
+    public static final String FILE_GAME_CONNECT_SBF = "fileGameConnectSbf";
     public static final String FILE_GAME_EDIT_BOTS = "editBots";
     // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
@@ -236,7 +236,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private GroundObjectSpriteHandler groundObjectSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
-    private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
+
     private JPanel panTop;
     private JSplitPane splitPaneA;
     private JPanel panA1;
@@ -257,7 +257,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
-    private AbstractUnitSelectorDialog mechSelectorDialog;
+    private MegaMekUnitSelectorDialog mechSelectorDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private PlanetaryConditionsDialog conditionsDialog;
@@ -1050,7 +1050,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
-        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
@@ -1100,7 +1099,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return gameOptionsDialog;
     }
 
-    public AbstractUnitSelectorDialog getMechSelectorDialog() {
+    public MegaMekUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
     }
 
@@ -1889,9 +1888,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
                 dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
                 dlgLoadList.setFileFilter(new FileNameExtensionFilter("MUL files", "mul", "mmu"));
-                // Default to the player's name.
-                dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
             }
+            // Default to the player's name.
+            dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
 
             int returnVal = dlgLoadList.showOpenDialog(frame);
             if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
@@ -2547,6 +2546,24 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return menuBar;
     }
 
+    @Override
+    public void setChatBoxActive(boolean active) {
+        bv.setChatterBoxActive(active);
+    }
+
+    @Override
+    public void clearChatBox() {
+        if (cb2 != null) {
+            cb2.clearMessage();
+            setChatBoxActive(false);
+        }
+    }
+
+    @Override
+    public boolean isChatBoxActive() {
+        return bv.getChatterBoxActive();
+    }
+
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
     }
@@ -2846,11 +2863,18 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
+     * Removes visibility to the Movement Envelope.
+     */
+    public void clearMovementEnvelope() {
+        this.movementEnvelopeHandler.clear();
+    }
+
+    /**
      * Removes all temporary sprites from the board, such as pending actions, movement envelope,
      * collapse warnings etc. Does not remove game-state sprites such as units or flares.
      */
     public void clearTemporarySprites() {
-        movementEnvelopeHandler.clear();
+        clearMovementEnvelope();
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();

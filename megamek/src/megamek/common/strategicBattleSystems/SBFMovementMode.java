@@ -139,4 +139,27 @@ public enum SBFMovementMode {
         }
         return UNKNOWN;
     }
+
+    public boolean isWheeled() {
+        return this == WHEELED;
+    }
+
+    public boolean isHover() {
+        return this == HOVER;
+    }
+
+    public boolean isNaval() {
+        return this == NAVAL;
+    }
+
+    public boolean isSubmarine() {
+        return this == SUBMARINE;
+    }
+
+    /**
+     * @return True when this movement mode requires deep water, i.e. naval or submarine vehicles.
+     */
+    public boolean isDeepWater() {
+        return isNaval() || isSubmarine();
+    }
 }

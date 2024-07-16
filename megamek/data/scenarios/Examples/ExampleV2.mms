@@ -109,9 +109,24 @@ maps:                                        # map and maps are 100% synonymous
 
 # Game Options -------------------------------------------------------------------------------------------
 options:                                    # default: MM's default options
-  from: Example_options.xml
-  fixed: no                                 # default: yes; in this case, the Game Options Dialog is
+  #from: Example_options.xml
+  #fixed: no                                 # default: yes; in this case, the Game Options Dialog is
                                             # not shown before the scenario starts
+  # Activate options by listing them; the values must be those from SBFRuleOptions, listed below
+  - base_recon
+  # base_team_vision
+  # base_hidden
+  # base_formation_change
+  # form_allow_detach
+  # form_allow_split
+  # form_allow_adhoc
+  # move_evasive
+  # move_hulldown
+  # move_sprint
+  - init_modifiers
+  # init_battlefield_int
+  # init_banking
+  # init_forcing
 
 
 # Planetary Conditions -----------------------------------------------------------------------------------

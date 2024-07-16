@@ -69,6 +69,9 @@ public class SerializationHelper {
                 megamek.common.NarcPod.class,
                 megamek.common.INarcPod.class,
                 megamek.common.Briefcase.class
+                megamek.common.net.packets.Packet.class,
+                megamek.common.BoardLocation.class,
+                megamek.common.strategicBattleSystems.SBFMovePath.class,
         });
         xStream.allowTypeHierarchy(megamek.common.BTObject.class);
         xStream.allowTypeHierarchy(megamek.common.Building.class);
@@ -84,6 +87,7 @@ public class SerializationHelper {
         xStream.allowTypeHierarchy(megamek.common.options.IOption.class);
         xStream.allowTypeHierarchy(megamek.common.weapons.AttackHandler.class);
         xStream.allowTypeHierarchy(megamek.server.victory.IVictoryConditions.class);
+        xStream.allowTypeHierarchy(megamek.common.strategicBattleSystems.SBFMoveStep.class);
         return xStream;
     }
 

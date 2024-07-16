@@ -34,6 +34,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -63,28 +64,34 @@ public class MechView {
         String toDiscord();
     }
 
-    private Entity entity;
-    private boolean isMech;
-    private boolean isInf;
-    private boolean isBA;
-    private boolean isVehicle;
-    private boolean isProto;
-    private boolean isGunEmplacement;
-    private boolean isAero;
-    private boolean isConvFighter;
-    @SuppressWarnings("unused")
-    private boolean isFixedWingSupport;
-    private boolean isSquadron;
-    private boolean isSmallCraft;
-    private boolean isJumpship;
-    @SuppressWarnings("unused")
-    private boolean isSpaceStation;
+    private static final Pattern numberPattern = Pattern.compile("\\b\\d+\\b");
+    private static String highlightNumbersForDiscord(String original) {
+        return numberPattern.matcher(original).replaceAll(DiscordFormat.NUMBER_COLOR + "$0" + DiscordFormat.WHITE);
+    }
 
-    private List<ViewElement> sHead = new ArrayList<>();
-    private List<ViewElement> sBasic = new ArrayList<>();
-    private List<ViewElement> sLoadout = new ArrayList<>();
-    private List<ViewElement> sFluff = new ArrayList<>();
-    private List<ViewElement> sInvalid = new ArrayList<>();
+    private final Entity entity;
+    private final boolean isMech;
+    private final boolean isInf;
+    private final boolean isBA;
+    private final boolean isVehicle;
+    private final boolean isProto;
+    private final boolean isGunEmplacement;
+    private final boolean isAero;
+    private final boolean isConvFighter;
+    @SuppressWarnings("unused")
+    private final boolean isFixedWingSupport;
+    private final boolean isSquadron;
+    private final boolean isSmallCraft;
+    private final boolean isJumpship;
+    @SuppressWarnings("unused")
+    private final boolean isSpaceStation;
+
+    private final List<ViewElement> sHead = new ArrayList<>();
+    private final List<ViewElement> sBasic = new ArrayList<>();
+    private final List<ViewElement> sLoadout = new ArrayList<>();
+    private final List<ViewElement> sFluff = new ArrayList<>();
+    private final List<ViewElement> sQuirks = new ArrayList<>();
+    private final List<ViewElement> sInvalid = new ArrayList<>();
 
     private final ViewFormatting formatting;
 
@@ -493,10 +500,10 @@ public class MechView {
                     .collect(Collectors.toList());
 
             if (!activeUnitQuirksNames.isEmpty()) {
-                sFluff.add(new SingleLine());
+                sQuirks.add(new SingleLine());
                 ItemList list = new ItemList(Messages.getString("MechView.Quirks"));
                 activeUnitQuirksNames.forEach(list::addItem);
-                sFluff.add(list);
+                sQuirks.add(list);
             }
 
             List<String> wpQuirksList = new ArrayList<>();
@@ -511,13 +518,13 @@ public class MechView {
                 }
             }
             if (!wpQuirksList.isEmpty()) {
-                sFluff.add(new SingleLine());
+                sQuirks.add(new SingleLine());
                 ItemList list = new ItemList(Messages.getString("MechView.WeaponQuirks"));
                 wpQuirksList.forEach(list::addItem);
-                sFluff.add(list);
+                sQuirks.add(list);
             }
         }
-
+        sFluff.addAll(sQuirks);
         if (!entity.getFluff().getOverview().isEmpty()) {
             sFluff.add(new SingleLine());
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
@@ -633,7 +640,8 @@ public class MechView {
      */
     public String getMechReadoutFluff() {
         if (formatting == ViewFormatting.DISCORD) {
-            return "";
+            // The rest of the fluff often doesn't fit in a Discord message
+            return getReadout(sQuirks);
         }
         return getReadout(sFluff);
     }
@@ -1185,10 +1193,10 @@ public class MechView {
                 cautionEnd = "";
                 break;
             case DISCORD:
-                warnBegin = DiscordFormat.RED.format();
-                warnEnd = DiscordFormat.RESET.format();
-                cautionBegin = DiscordFormat.YELLOW.format();
-                cautionEnd = DiscordFormat.RESET.format();
+                warnBegin = DiscordFormat.RED.toString();
+                warnEnd = DiscordFormat.RESET.toString();
+                cautionBegin = DiscordFormat.YELLOW.toString();
+                cautionEnd = DiscordFormat.RESET.toString();
                 break;
             default:
                 throw new IllegalStateException("Impossible");
@@ -1260,7 +1268,7 @@ public class MechView {
                 .replaceAll("<[Pp]> *", "\n\n")
                 .replaceAll("</[Pp]> *", "\n")
                 .replaceAll("<[^>]*>", "");
-            return DiscordFormat.BOLD.format() + label + DiscordFormat.RESET.format() + ": " + htmlCleanedText + '\n';
+            return DiscordFormat.BOLD + label + DiscordFormat.RESET + ": " + highlightNumbersForDiscord(htmlCleanedText) + '\n';
         }
     }
 
@@ -1433,35 +1441,27 @@ public class MechView {
         public String toDiscord() {
             final String COL_PADDING = "  ";
             StringBuilder sb = new StringBuilder();
-            sb.append(DiscordFormat.UNDERLINE.format());
+            sb.append(DiscordFormat.UNDERLINE).append(DiscordFormat.ROW_SHADING);
             for (int col = 0; col < colNames.length; col++) {
                 sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
                 if (col < colNames.length - 1) {
                     sb.append(COL_PADDING);
                 }
             }
-            sb.append(DiscordFormat.RESET.format());
+            sb.append(DiscordFormat.RESET);
             sb.append("\n");
             for (int r = 0; r < data.size(); r++) {
-                if (colors.containsKey(r)) {
-                    try {
-                        sb.append(DiscordFormat.valueOf(colors.get(r).toUpperCase()).format());
-                    } catch (IllegalArgumentException ignored) {}
-                }
                 final String[] row = data.get(r);
+                if (r % 2 == 1) {
+                    sb.append(DiscordFormat.ROW_SHADING);
+                }
                 for (int col = 0; col < row.length; col++) {
-                    sb.append(justify(justification[col], row[col], colWidth.get(col)));
+                    sb.append(highlightNumbersForDiscord(justify(justification[col], row[col], colWidth.get(col))));
                     if (col < row.length - 1) {
                         sb.append(COL_PADDING);
                     }
                 }
-                if (colors.containsKey(r)) {
-                    try {
-                        var ignored = DiscordFormat.valueOf(colors.get(r).toUpperCase()).format();
-                        sb.append(DiscordFormat.RESET.format());
-                    } catch (IllegalArgumentException ignored) {}
-                }
-                sb.append("\n");
+                sb.append(DiscordFormat.RESET).append("\n");
             }
             return sb.toString();
         }
@@ -1513,10 +1513,18 @@ public class MechView {
         public String toDiscord() {
             StringBuilder sb = new StringBuilder();
             if (null != heading) {
-                sb.append(DiscordFormat.BOLD.format()).append(heading).append(DiscordFormat.RESET.format()).append('\n');
+                sb.append(DiscordFormat.BOLD).append(heading).append(DiscordFormat.RESET).append('\n');
             }
+            boolean evenLine = false;
             for (String item : data) {
-                sb.append(item).append("\n");
+                if (evenLine) {
+                    sb.append(DiscordFormat.ROW_SHADING);
+                }
+                sb.append(highlightNumbersForDiscord(item)).append("\n");
+                if (evenLine) {
+                    sb.append(DiscordFormat.RESET);
+                }
+                evenLine = !evenLine;
             }
             return sb.toString();
         }
@@ -1588,7 +1596,7 @@ public class MechView {
 
         @Override
         public String toDiscord() {
-            String result = label.isBlank() ? "" : DiscordFormat.BOLD.format() + label + ": " + DiscordFormat.RESET.format();
+            String result = label.isBlank() ? "" : DiscordFormat.BOLD + label + ": " + DiscordFormat.RESET;
             return result + displayText + "\n";
         }
     }
@@ -1616,7 +1624,7 @@ public class MechView {
 
         @Override
         public String toDiscord() {
-            return DiscordFormat.BOLD.format() + DiscordFormat.UNDERLINE.format() + title + DiscordFormat.RESET.format() + '\n';
+            return DiscordFormat.BOLD.toString() + DiscordFormat.UNDERLINE + DiscordFormat.CYAN + title + DiscordFormat.RESET + '\n';
         }
     }
 
@@ -1632,7 +1640,7 @@ public class MechView {
             case NONE:
                 return "*";
             case DISCORD:
-                return DiscordFormat.RED.format();
+                return DiscordFormat.RED.toString();
             default:
                 throw new IllegalStateException("Impossible");
         }
@@ -1649,7 +1657,7 @@ public class MechView {
             case NONE:
                 return "*";
             case DISCORD:
-                return DiscordFormat.RESET.format();
+                return DiscordFormat.RESET.toString();
             default:
                 throw new IllegalStateException("Impossible");
         }
@@ -1667,7 +1675,7 @@ public class MechView {
             case NONE:
                 return "";
             case DISCORD:
-                return DiscordFormat.UNDERLINE.format();
+                return DiscordFormat.UNDERLINE.toString();
             default:
                 throw new IllegalStateException("Impossible");
         }
@@ -1684,7 +1692,7 @@ public class MechView {
             case NONE:
                 return "";
             case DISCORD:
-                return DiscordFormat.RESET.format();
+                return DiscordFormat.RESET.toString();
             default:
                 throw new IllegalStateException("Impossible");
         }

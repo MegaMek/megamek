@@ -31,6 +31,8 @@ import java.awt.*;
  */
 public interface BTObject {
 
+    int NONE = -1;
+
     /**
      * Returns true when this object is a Mek (Industrial Mek or BattleMek) or of type BM/IM for Alpha Strike.
      * Returns false for any type of unit group even if it is of the right type.

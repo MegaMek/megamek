@@ -1,15 +1,20 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.server;
 
@@ -57,33 +62,6 @@ import java.util.stream.Collectors;
  * Manages the Game and processes player actions.
  */
 public class GameManager extends AbstractGameManager {
-    private static class EntityTargetPair {
-        Entity ent;
-
-        Targetable target;
-
-        EntityTargetPair (Entity e, Targetable t) {
-            ent = e;
-            target = t;
-        }
-
-        @Override
-        public boolean equals(@Nullable Object o) {
-            if (this == o) {
-                return true;
-            } else if ((null == o) || (getClass() != o.getClass())) {
-                return false;
-            } else {
-                final EntityTargetPair other = (EntityTargetPair) o;
-                return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(ent, target);
-        }
-    }
 
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -1869,14 +1847,6 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * Increment's the server's game round and send it to all the clients
-     */
-    void incrementAndSendGameRound() {
-        game.incrementRoundCount();
-        send(packetHelper.createCurrentRoundNumberPacket());
-    }
-
-    /**
      * Hand over a turn to the next player. This is only possible if you haven't
      * yet started your turn (i.e. not yet moved anything like infantry where
      * you have to move multiple units)
@@ -2022,19 +1992,6 @@ public class GameManager extends AbstractGameManager {
         } else if ((null == game.getFirstEntity()) && (null != player) && !minefieldPhase && !artyPhase) {
             sendTurnErrorSkipMessage(player);
         }
-    }
-
-    /**
-     * Sends out a notification message indicating that a ghost player may be
-     * skipped.
-     *
-     * @param ghost - the <code>Player</code> who is ghosted. This value must not
-     *              be <code>null</code>.
-     */
-    private void sendGhostSkipMessage(Player ghost) {
-        String message = "Player '" + ghost.getName() +
-                "' is disconnected.  You may skip his/her current turn with the /skip command.";
-        sendServerChat(message);
     }
 
     /**
@@ -3696,7 +3653,7 @@ public class GameManager extends AbstractGameManager {
      * the current turn.
      */
     private void receiveMovement(Packet packet, int connId) {
-        Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
+        Map<UnitTargetPair, LosEffects> losCache = new HashMap<>();
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovePath md = (MovePath) packet.getObject(1);
         md.setGame(getGame());
@@ -5358,7 +5315,7 @@ public class GameManager extends AbstractGameManager {
      *                 lot of LosEffects, so caching them can really speed
      *                 things up.
      */
-    private void processMovement(Entity entity, MovePath md, Map<EntityTargetPair,
+    private void processMovement(Entity entity, MovePath md, Map<UnitTargetPair,
             LosEffects> losCache) {
         // Make sure the cache isn't null
         if (losCache == null) {
@@ -13246,7 +13203,7 @@ public class GameManager extends AbstractGameManager {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
-        Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
+        Map<UnitTargetPair, LosEffects> losCache = new HashMap<>();
         for (Entity entity : game.getEntitiesVector()) {
             // We are hidden once again!
             entity.clearSeenBy();
@@ -28212,7 +28169,7 @@ public class GameManager extends AbstractGameManager {
      *                         double-blind games.
      */
     public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, boolean updateVisibility,
-                             Map<EntityTargetPair, LosEffects> losCache) {
+                             Map<UnitTargetPair, LosEffects> losCache) {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {
@@ -28321,7 +28278,7 @@ public class GameManager extends AbstractGameManager {
      * @return A vector of the players who can see the entity
      */
     private Vector<Player> whoCanSee(Entity entity, boolean useSensors,
-                                     Map<EntityTargetPair, LosEffects> losCache) {
+                                     Map<UnitTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -28364,7 +28321,7 @@ public class GameManager extends AbstractGameManager {
                 continue;
             }
             // See if the LosEffects is cached, and if not cache it
-            EntityTargetPair etp = new EntityTargetPair(spotter, entity);
+            UnitTargetPair etp = new UnitTargetPair(spotter, entity);
             LosEffects los = losCache.get(etp);
             if (los == null) {
                 los = LosEffects.calculateLOS(game, spotter, entity);
@@ -28397,7 +28354,7 @@ public class GameManager extends AbstractGameManager {
      */
     private Vector<Player> whoCanDetect(Entity entity,
                                         List<ECMInfo> allECMInfo,
-                                        Map<EntityTargetPair, LosEffects> losCache) {
+                                        Map<UnitTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -28418,7 +28375,7 @@ public class GameManager extends AbstractGameManager {
                 continue;
             }
             // See if the LosEffects is cached, and if not cache it
-            EntityTargetPair etp = new EntityTargetPair(spotter, entity);
+            UnitTargetPair etp = new UnitTargetPair(spotter, entity);
             LosEffects los = losCache.get(etp);
             if (los == null) {
                 los = LosEffects.calculateLOS(game, spotter, entity);
@@ -28489,7 +28446,7 @@ public class GameManager extends AbstractGameManager {
      */
     private List<Entity> filterEntities(Player pViewer,
                                         List<Entity> vEntities,
-                                        Map<EntityTargetPair, LosEffects> losCache) {
+                                        Map<UnitTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -28555,7 +28512,7 @@ public class GameManager extends AbstractGameManager {
                 }
 
                 // See if the LosEffects is cached, and if not cache it
-                EntityTargetPair etp = new EntityTargetPair(spotter, e);
+                UnitTargetPair etp = new UnitTargetPair(spotter, e);
                 LosEffects los = losCache.get(etp);
                 if (los == null) {
                     los = LosEffects.calculateLOS(game, spotter, e);
@@ -28748,7 +28705,7 @@ public class GameManager extends AbstractGameManager {
      *                  again and again, so in some cases where this may happen,
      *                  the LosEffects are cached.   This can safely be null.
      */
-    void updateVisibilityIndicator(Map<EntityTargetPair, LosEffects> losCache) {
+    void updateVisibilityIndicator(Map<UnitTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -29741,7 +29698,7 @@ public class GameManager extends AbstractGameManager {
      * Creates a packet containing all entities visible to the player in a blind game
      */
     private Packet createFilteredEntitiesPacket(Player p,
-                                                Map<EntityTargetPair, LosEffects> losCache) {
+                                                Map<UnitTargetPair, LosEffects> losCache) {
         return new Packet(PacketCommand.SENDING_ENTITIES,
                 filterEntities(p, getGame().getEntitiesVector(), losCache));
     }
@@ -29751,7 +29708,7 @@ public class GameManager extends AbstractGameManager {
      * the player in a blind game
      */
     private Packet createFilteredFullEntitiesPacket(Player p,
-                                                    Map<EntityTargetPair, LosEffects> losCache) {
+                                                    Map<UnitTargetPair, LosEffects> losCache) {
         return new Packet(PacketCommand.SENDING_ENTITIES,
                 filterEntities(p, getGame().getEntitiesVector(), losCache),
                 getGame().getOutOfGameEntitiesVector(), getGame().getForces());
@@ -29975,7 +29932,7 @@ public class GameManager extends AbstractGameManager {
             }
         }
 
-        for (Player p : game.getPlayersVector()) {
+        for (Player p : game.getPlayersList()) {
             send(p.getId(), tacticalGeniusReport ? createTacticalGeniusReportPacket(p) : createReportPacket(p));
         }
     }

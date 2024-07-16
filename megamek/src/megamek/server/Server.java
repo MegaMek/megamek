@@ -32,7 +32,7 @@ import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
@@ -758,7 +758,7 @@ public class Server implements Runnable {
         int team = Player.TEAM_UNASSIGNED;
         if (getGame().getPhase().isLounge()) {
             team = Player.TEAM_NONE;
-            final GameOptions gOpts = getGame().getOptions();
+            final BasicGameOptions gOpts = getGame().getOptions();
             if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
                 for (Player p : getGame().getPlayersList()) {
                     if (p.getTeam() > team) {

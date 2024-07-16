@@ -23,26 +23,23 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.Deployable;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFFormationDeserializer;
 import megamek.common.jacksonadapters.SBFFormationSerializer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.common.strategicBattleSystems.SBFElementType.AS;
-import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
@@ -51,7 +48,7 @@ import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 @JsonSerialize(using = SBFFormationSerializer.class)
 @JsonDeserialize(using = SBFFormationDeserializer.class)
 public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable,
-        Deployable {
+        Deployable, Serializable {
 
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
@@ -67,7 +64,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int morale;
     private int skill;
     private int pointValue;
-    private CalculationReport conversionReport = new DummyCalculationReport();
+    private transient CalculationReport conversionReport = new DummyCalculationReport();
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
     private String forceString = "";
@@ -75,8 +72,12 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int id = Entity.NONE;
     private int ownerId = Player.PLAYER_NONE;
 
+    /** Hidden deployment (not unseen) */
+    private boolean isHidden = false;
     private boolean isDeployed = false;
     private int deployRound = 0;
+    private BoardLocation position;
+    private boolean isDone = false;
 
     public String getName() {
         return name;
@@ -274,7 +275,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      */
     @Override
     public boolean isAerospace() {
-        return isAnyTypeOf(AS, LA);
+        return isAnyTypeOf(SBFElementType.AS, SBFElementType.LA);
     }
 
     /**
@@ -423,5 +424,52 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      */
     public void setDeployed(boolean deployed) {
         isDeployed = deployed;
+    }
+
+    /**
+     * Two formations are equal if their ids are equal
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final SBFFormation other = (SBFFormation) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    public BoardLocation getPosition() {
+        return position;
+    }
+
+    public void setPosition(BoardLocation boardLocation) {
+        position = boardLocation;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public boolean isEligibleForPhase(GamePhase phase) {
+        return !isDone && switch (phase) {
+            case PREMOVEMENT, PREFIRING -> isHidden;
+            default -> isDeployed;
+        };
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
+    public boolean isDone() {
+        return isDone;
     }
 }

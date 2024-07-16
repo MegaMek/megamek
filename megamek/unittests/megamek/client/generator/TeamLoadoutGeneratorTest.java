@@ -1,25 +1,5 @@
 package megamek.client.generator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.collections4.IteratorUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
@@ -28,6 +8,20 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import org.apache.commons.collections4.IteratorUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TeamLoadoutGeneratorTest {
 
@@ -103,7 +97,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Mauler", "MAL-1K", "Tyson");
         Mounted bin1 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
         Mounted bin2 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
@@ -128,7 +122,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechNoAmmoTypesRequested() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
@@ -143,7 +137,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechOneAmmoType() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
@@ -171,7 +165,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechThreeAmmoTypesFourBins() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
@@ -202,7 +196,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureTwoEntityMechsGenericAndNamed() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mech mockMech2 = createMech("Catapult", "CPLT-C1", "John Q. Public");
@@ -239,8 +233,9 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testReconfigureTeamOfMechs() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+    void testReconfigureTeamOfMechs()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        ReconfigurationParameters rp = new ReconfigurationParameters();
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -271,7 +266,7 @@ class TeamLoadoutGeneratorTest {
         // Kintaro's go under different keys
         mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
-        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt);
+        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt, rp);
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless
@@ -289,8 +284,8 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testRandomReconfigureBotTeam() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+    void testRandomReconfigureBotTeam()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -320,7 +315,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testLoadEntityListTwoEntities() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -346,8 +341,8 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testReconfigureBotTeamNoEnemyInfo() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+    void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -378,7 +373,7 @@ class TeamLoadoutGeneratorTest {
     // Section: legalityCheck tests
     @Test
     void testAmmoTypeIllegalByTechLevel() {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
@@ -390,22 +385,22 @@ class TeamLoadoutGeneratorTest {
         assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
         assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", true));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
-        // Should be available to everyone, although only as Mixed Tech for Clans
+        // Should be available to everyone
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Advanced");
         tlg.updateOptionValues();
         assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "CL", "CL", true));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
     void testAmmoTypeIllegalBeforeCreation() {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
@@ -413,7 +408,9 @@ class TeamLoadoutGeneratorTest {
         assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "CL", "CL", true));
+        // Check mixed-tech and regular Clan tech, which should match IS at this point
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", false));
 
         // Set year back to 3025
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);
@@ -421,7 +418,7 @@ class TeamLoadoutGeneratorTest {
         assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
         assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", true));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
         // Move up to 3070. Because of game settings and lack of "Common" year, ADA
         // becomes available
@@ -429,9 +426,9 @@ class TeamLoadoutGeneratorTest {
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
         tlg.updateOptionValues();
         assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
@@ -484,7 +481,7 @@ class TeamLoadoutGeneratorTest {
         ReconfigurationParameters rp = new ReconfigurationParameters();
         rp.nukesBannedForMe = true;
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
         // Have the Munition Tree generator use our pre-made mwc so we can see its
         // changes
@@ -494,5 +491,60 @@ class TeamLoadoutGeneratorTest {
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
         assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));
+    }
+
+    @Test
+    void testClampAmmoShotsReduceAmmoBinsToZero() throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 0.0f);
+        assertEquals(0, bin1.getUsableShotsLeft());
+        assertEquals(0, bin2.getUsableShotsLeft());
+    }
+
+    @Test
+    void testClampAmmoShotsPositiveSmallFloatGivesOneShot() throws LocationFullException {
+        // LRM15s carry 8 shots, the clamp function should give 1 shot at 10% / 0.1f ratio
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 0.1f);
+        assertEquals(1, bin1.getUsableShotsLeft());
+        assertEquals(1, bin2.getUsableShotsLeft());
+    }
+
+    @Test
+    void testClampAmmoShotsSetToHalf() throws LocationFullException {
+        // LRM15s carry 8 shots, the clamp function should give 4 shot at 40% / 0.5f ratio
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 0.5f);
+        assertEquals(4, bin1.getUsableShotsLeft());
+        assertEquals(4, bin2.getUsableShotsLeft());
+    }
+
+    @Test
+    void testClampAmmoShotsCannotExceedFull() throws LocationFullException {
+        // LRM15s carry 8 shots, the clamp function should give 8 shot at 100% or over
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+
+        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+
+        tlg.clampAmmoShots(mockMech, 1.5f);
+        assertEquals(8, bin1.getUsableShotsLeft());
+        assertEquals(8, bin2.getUsableShotsLeft());
     }
 }

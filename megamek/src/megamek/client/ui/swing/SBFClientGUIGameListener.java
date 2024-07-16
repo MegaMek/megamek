@@ -48,4 +48,19 @@ public class SBFClientGUIGameListener extends GameListenerAdapter {
 //        clientGUI.menuBar.setPhase(phase);
 //        clientGUI.cb.moveToEnd();
     }
+
+    @Override
+    public void gameBoardNew(GameBoardNewEvent e) {
+        clientGUI.bvGame.setBoard(e.getNewBoard());
+    }
+
+    @Override
+    public void gameEntityChange(GameEntityChangeEvent e) {
+        clientGUI.updateFormationSprites();
+    }
+
+    @Override
+    public void gameEntityNew(GameEntityNewEvent e) {
+        clientGUI.updateFormationSprites();
+    }
 }

@@ -59,6 +59,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     // BoardViews
     protected final Map<Integer, IBoardView> boardViews = new HashMap<>();
     protected final BoardViewsContainer boardViewsContainer = new BoardViewsContainer(this);
+    protected final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
 
     public AbstractClientGUI(IClient iClient) {
         initializeFrame();
@@ -102,6 +103,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     @Override
     public void die() {
+        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         frame.removeAll();
         frame.setVisible(false);
         frame.dispose();

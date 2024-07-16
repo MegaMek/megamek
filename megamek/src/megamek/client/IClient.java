@@ -127,4 +127,6 @@ public interface IClient {
 
     /** Sends a "this player is done/not done" message to the server. */
     void sendDone(boolean done);
+
+    void sendChat(String message);
 }

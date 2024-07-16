@@ -124,7 +124,16 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         return clientgui;
     }
 
-    //region Empty BoardListener
+    /**
+     * Sends a Done packet to the server. Shortcut for clientgui.getClient().sendDone(true).
+     *
+     * @see megamek.client.IClient#sendDone(boolean)
+     */
+    protected void sendDone() {
+        clientgui.getClient().sendDone(true);
+    }
+
+    //region Empty BoardViewListener
 
     @Override
     public void hexMoused(BoardViewEvent b) { }

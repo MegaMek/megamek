@@ -22,11 +22,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.common.BoardLocation;
+import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static megamek.common.jacksonadapters.MMUReader.*;
 import static megamek.common.jacksonadapters.SBFFormationSerializer.UNITS;
@@ -37,6 +42,12 @@ import static megamek.common.jacksonadapters.SBFFormationSerializer.UNITS;
  * ignored.
  */
 public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
+
+    private static final String ID = "id";
+    private static final String AT = "at";
+    private static final String X = "x";
+    private static final String Y = "y";
+    private static final String DEPLOYMENTROUND = "deploymentround";
 
     public SBFFormationDeserializer() {
         this(null);
@@ -61,6 +72,40 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
                 .map(o -> (SBFUnit) o)
                 .forEach(formation::addUnit);
         SBFFormationConverter.calculateStatsFromUnits(formation);
+
+        if (node.has(ID)) {
+            formation.setId(node.get(ID).intValue());
+        }
+        assignPosition(formation, node);
+        assignDeploymentRound(formation, node);
         return formation;
+    }
+
+    private void assignPosition(SBFFormation formation, JsonNode node) {
+        try {
+            if (node.has(AT)) {
+                List<Integer> xyList = new ArrayList<>();
+                node.get(AT).elements().forEachRemaining(n -> xyList.add(n.asInt()));
+                setDeployedPosition(formation, new Coords(xyList.get(0), xyList.get(1)));
+
+            } else if (node.has(X) || node.has(Y)) {
+                requireFields("SBFFormation", node, X, Y);
+                setDeployedPosition(formation, new Coords(node.get(X).asInt(), node.get(Y).asInt()));
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Illegal position information for formation " + formation, e);
+        }
+    }
+
+    private void setDeployedPosition(SBFFormation formation, Coords coords) {
+        formation.setDeployed(true);
+        // translate the position so "at: 2, 3" will place a unit on 0203 (instead of 0102)
+        formation.setPosition(new BoardLocation(new Coords(coords.getX() - 1, coords.getY() - 1), 0));
+    }
+
+    private void assignDeploymentRound(SBFFormation formation, JsonNode node) {
+        if (node.has(DEPLOYMENTROUND)) {
+            formation.setDeployRound(node.get(DEPLOYMENTROUND).asInt());
+        }
     }
 }

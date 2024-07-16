@@ -1046,7 +1046,7 @@
 		<ratingLevels>B</ratingLevels>
 		<parentFaction>MOC</parentFaction>
 	</faction>
-	<faction key='MOC.MRG' name='Magristracy Royal Guard' minor='false' clan='false' periphery='true'>
+	<faction key='MOC.MRG' name='Magistracy Royal Guard' minor='false' clan='false' periphery='true'>
 		<years>2530-</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>MOC</parentFaction>

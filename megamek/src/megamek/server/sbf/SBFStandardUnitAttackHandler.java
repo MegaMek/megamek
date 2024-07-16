@@ -21,6 +21,7 @@ package megamek.server.sbf;
 import megamek.common.Report;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFPublicReportEntry;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.List;
@@ -54,20 +55,20 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
             int damage = unit.getCurrentDamage().getDamage(attack.getRange()).damage;
             if (damage > 0) {
                 int newArmor = targetUnit.getCurrentArmor() - damage;
-                addReport(Report.publicReport(3100).add(damage).add(damage));
+                addReport(new SBFPublicReportEntry(3100).add(damage).add(damage));
                 if (newArmor < 0) {
                     newArmor = 0;
                 }
                 targetUnits.get(0).setCurrentArmor(newArmor);
                 if (newArmor == 0) {
-                    addReport(Report.publicReport(3092));
+                    addReport(new SBFPublicReportEntry(3092));
                 }
                 if (newArmor * 2 < targetUnit.getArmor()) {
                     targetUnit.addDamageCrit();
                 }
                 gameManager().sendUnitUpdate(target);
             } else {
-                addReport(Report.publicReport(3068));
+                addReport(new SBFPublicReportEntry(3068));
             }
         }
         setFinished();

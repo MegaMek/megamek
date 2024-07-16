@@ -31,6 +31,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFReportEntry;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -290,7 +291,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
 
     private JScrollPane loadHtmlScrollPane(String t) {
         JTextPane ta = new JTextPane();
-        Report.setupStylesheet(ta);
+        SBFReportEntry.setupStylesheet(ta);
         ta.addHyperlinkListener(this);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);

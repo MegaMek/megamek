@@ -254,7 +254,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @param reports the new reports to add
      */
-    public void addReports(List<Report> reports) {
+    public void addReports(List<SBFReportEntry> reports) {
         gameReport.add(getCurrentRound(), reports);
     }
 
@@ -272,7 +272,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @param newReports The new reports to keep as this game's reports
      */
-    public void replaceAllReports(Map<Integer, List<Report>> newReports) {
+    public void replaceAllReports(Map<Integer, List<SBFReportEntry>> newReports) {
         gameReport.replaceAllReports(newReports);
     }
 

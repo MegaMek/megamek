@@ -21,10 +21,7 @@ package megamek.server.sbf;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.strategicBattleSystems.SBFFormationTurn;
-import megamek.common.strategicBattleSystems.SBFPlayerTurn;
-import megamek.common.strategicBattleSystems.SBFTurn;
+import megamek.common.strategicBattleSystems.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,19 +80,20 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
         if (!gameManager.usesDoubleBlind()) {
             // The turn order is different in movement phase
             // if a player has any "even" moving units. ???????????????????????????????????? SBF?
-            Report r = new Report(1020, Report.PUBLIC);
+            SBFReportEntry r = new SBFReportEntry(1020);
+//            Report r = new Report(1020, Report.PUBLIC);
 
             boolean hasEven = false;
             for (SBFTurn turn : game().getTurnsList()) {
                 Player player = game().getPlayer(turn.playerId());
                 if (null != player) {
-                    r.add(player.getName());
+//                    r.add(player.getName());
 //                        if (player.getEvenTurns() > 0) {
 //                            hasEven = true;
 //                        }
                 }
             }
-            r.newlines = 2;
+//            r.newlines = 2;
             addReport(r);
 //                if (hasEven) {
 //                    r = new Report(1021, Report.PUBLIC);
@@ -127,16 +125,16 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                 .collect(Collectors.toList());
 
         if (!futureDeployments.isEmpty()) {
-            addReport(new Report(1060, Report.PUBLIC));
+            addReport(new SBFPublicReportEntry(1060));
             int round = -1;
 
             for (Deployable deployable : futureDeployments) {
                 if (round != deployable.getDeployRound()) {
                     round = deployable.getDeployRound();
-                    addReport(publicReport(1065).add(round));
+                    addReport(new SBFPublicReportEntry(1065).add(round));
                 }
 
-                Report r = new Report(1066).subject(((InGameObject) deployable).getId());
+                SBFReportEntry r = new SBFReportEntry(1066).subject(((InGameObject) deployable).getId());
                 r.add(((InGameObject) deployable).generalName());
                 r.add("1");
                 r.add("2");
@@ -146,17 +144,17 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
 //                r.add(s);
                 addReport(r);
             }
-            addReport(publicReport(1210).newLines(2));
+            addReport(new SBFPublicReportEntry(1210).newLines(2));
         }
     }
 
     private void writeWeatherReport() {
         PlanetaryConditions conditions = game().getPlanetaryConditions();
-        addReport(publicReport(1025).add(conditions.getWindDirection().toString()).noNL());
-        addReport(publicReport(1030).add(conditions.getWind().toString()).noNL());
-        addReport(publicReport(1031).add(conditions.getWeather().toString()).noNL());
-        addReport(publicReport(1032).add(conditions.getLight().toString()));
-        addReport(publicReport(1033).add(conditions.getFog().toString()));
+//        addReport(new SBFPublicReportEntry(1025).add(conditions.getWindDirection().toString()).noNL());
+//        addReport(new SBFPublicReportEntry(1030).add(conditions.getWind().toString()).noNL());
+//        addReport(new SBFPublicReportEntry(1031).add(conditions.getWeather().toString()).noNL());
+//        addReport(new SBFPublicReportEntry(1032).add(conditions.getLight().toString()));
+//        addReport(new SBFPublicReportEntry(1033).add(conditions.getFog().toString()));
     }
 
     private void writeInitiativeRolls() {
@@ -169,16 +167,16 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
             // If there is only one non-observer player, list them as the 'team', and use the team initiative
             if (team.getNonObserverSize() == 1) {
                 final Player player = team.nonObserverPlayers().get(0);
-                Report r = publicReport(1015).add(player.getColorForPlayer());
+                SBFReportEntry r = new SBFPublicReportEntry(1015).add(player.getColorForPlayer());
                 r.add(team.getInitiative().toString());
                 addReport(r);
             } else {
                 // Multiple players. List the team, then break it down.
-                Report r = publicReport(1015).add(Player.TEAM_NAMES[team.getId()]);
+                SBFReportEntry r = new SBFPublicReportEntry(1015).add(Player.TEAM_NAMES[team.getId()]);
                 r.add(team.getInitiative().toString());
                 addReport(r);
                 for (Player player : team.nonObserverPlayers()) {
-                    addReport(publicReport(1015).indent().add(player.getName()).add(player.getInitiative().toString()));
+                    addReport(new SBFPublicReportEntry(1015).indent().add(player.getName()).add(player.getInitiative().toString()));
                 }
             }
         }
@@ -187,16 +185,16 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
     private void writeHeader() {
         if (game().getLastPhase().isDeployment() || game().isDeploymentComplete()
                 || !game().shouldDeployThisRound()) {
-            addReport(publicReport(1000).add(game().getCurrentRound()));
+            addReport(new SBFReportHeader(1000).add(game().getCurrentRound()));
         } else {
 //            deployment = true;
             if (game().getCurrentRound() == 0) {
-                addReport(publicReport(1005));
+                addReport(new SBFReportHeader(1005));
             } else {
-                addReport(publicReport(1010).add(game().getCurrentRound()));
+                addReport(new SBFReportHeader(1010).add(game().getCurrentRound()));
             }
         }
         // write separator
-        addReport(new Report(1200, Report.PUBLIC));
+        addReport(new SBFReportHeader(1200));
     }
 }

@@ -21,6 +21,7 @@ package megamek.server.sbf;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
+import megamek.common.strategicBattleSystems.SBFReportEntry;
 
 public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
@@ -103,7 +104,8 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-                addReport(Report.publicReport(3000));
+                addReport(new SBFReportEntry(3000));
+//                addReport(Report.publicReport(3000));
 //                resolveAllButWeaponAttacks();
 //                resolveSelfDestructions();
 //                reportGhostTargetRolls();
@@ -163,7 +165,8 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                     gameManager.changePhase(GamePhase.OFFBOARD_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
-                    gameManager.addReport(new Report(1205, Report.PUBLIC));
+                    gameManager.addReport(new SBFReportEntry(1205));
+//                    gameManager.addReport(new Report(1205, Report.PUBLIC));
                     gameManager.getGame().addReports(gameManager.getPendingReports());
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.PREFIRING);
@@ -239,7 +242,8 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
             gameManager.changePhase(reportPhase);
         } else {
             // just the header, so we'll add the <nothing> label
-            gameManager.addReport(new Report(1205, Report.PUBLIC));
+            gameManager.addReport(new SBFReportEntry(1205));
+//            gameManager.addReport(new Report(1205, Report.PUBLIC));
             gameManager.getGame().addReports(gameManager.getPendingReports());
             gameManager.sendReport();
             gameManager.changePhase(afterReportPhase);

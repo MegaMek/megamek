@@ -39,7 +39,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
     private SBFGame game;
 
-    private final List<Report> pendingReports = new ArrayList<>();
+    private final List<SBFReportEntry> pendingReports = new ArrayList<>();
 
     record PendingPacket(int recipient, Packet packet) { }
     private final List<PendingPacket> pendingPackets = new ArrayList<>();
@@ -144,7 +144,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
     @Override
     public void addReport(ReportEntry r) {
-        pendingReports.add((Report) r);
+        pendingReports.add((SBFReportEntry) r);
     }
 
     @Override
@@ -254,7 +254,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 break;
             case MOVEMENT:
                 // write Movement Phase header to report
-                addReport(new Report(2000, Report.PUBLIC));
+                addReport(new SBFReportEntry(2000)); //, Report.PUBLIC));
                 // intentional fall through
             case PREMOVEMENT:
             case SET_ARTILLERY_AUTOHIT_HEXES:
@@ -338,7 +338,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         pendingReports.clear();
     }
 
-    protected List<Report> getPendingReports() {
+    List<SBFReportEntry> getPendingReports() {
         return pendingReports;
     }
 

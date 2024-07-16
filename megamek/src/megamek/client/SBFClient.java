@@ -27,6 +27,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFMovePath;
+import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +81,7 @@ public class SBFClient extends AbstractClient {
                 receiveEntities(packet);
                 break;
             case SENDING_REPORTS_ALL:
-                var receivedReports = (Map<Integer, List<Report>>) packet.getObject(0);
+                var receivedReports = (Map<Integer, List<SBFReportEntry>>) packet.getObject(0);
                 game.replaceAllReports(receivedReports);
                 if (keepGameLog()) {
                     // Re-write the gamelog from scratch
@@ -95,7 +96,7 @@ public class SBFClient extends AbstractClient {
                 phaseReport = roundReport;
                 break;
             case SENDING_REPORTS:
-                phaseReport = assembleAndAddImages((List<Report>) packet.getObject(0));
+                phaseReport = assembleAndAddImages((List<SBFReportEntry>) packet.getObject(0));
                 if (keepGameLog()) {
                     if ((log == null) && (game.getCurrentRound() == 1)) {
                         initGameLog();
@@ -105,7 +106,7 @@ public class SBFClient extends AbstractClient {
 //                        log.append(phaseReport);
                     }
                 }
-                game.addReports((List<Report>) packet.getObject(0));
+                game.addReports((List<SBFReportEntry>) packet.getObject(0));
                 roundReport = assembleAndAddImages(game.getGameReport().get(game.getCurrentRound()));
                 break;
             case SENDING_TURNS:
@@ -130,14 +131,14 @@ public class SBFClient extends AbstractClient {
         return true;
     }
 
-    private String assembleAndAddImages(List<Report> reports) {
+    private String assembleAndAddImages(List<SBFReportEntry> reports) {
         if (reports == null) {
             LogManager.getLogger().error("Received a null list of reports!");
             return "";
         }
 
         StringBuilder assembledReport = new StringBuilder();
-        for (Report report : reports) {
+        for (SBFReportEntry report : reports) {
             if (report != null) {
                 assembledReport.append(report.text());
             }

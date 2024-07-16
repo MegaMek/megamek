@@ -1246,6 +1246,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         addEntities(filterToEntity(units));
     }
 
+    @Override
+    public List<InGameObject> getGraveyard() {
+        return new ArrayList<>(getOutOfGameEntitiesVector());
+    }
+
     /**
      * @return <code>true</code> if an entity with the specified id number exists in this game.
      */
@@ -2450,7 +2455,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Increments the round counter
      */
     public void incrementRoundCount() {
-        currentRound++;
+        incrementCurrentRound();
     }
 
     /**
@@ -3259,15 +3264,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         return uuid.toString();
 
-    }
-
-    /**
-     * Overwrites the current forces object with the provided object.
-     * Called from server messages when loading a game.
-     */
-    public synchronized void setForces(Forces fs) {
-        forces = fs;
-        forces.setGame(this);
     }
 
     public Map<String, BehaviorSettings> getBotSettings() {

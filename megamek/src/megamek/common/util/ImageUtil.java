@@ -22,9 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
 
 import megamek.MMConstants;
@@ -488,7 +486,7 @@ public final class ImageUtil {
     /**
      * creates a ? image, used when units are hidden in double blind
      */
-    public static void createDoubleBlindHiddenImage(Hashtable<Integer, String> imgCache) {
+    public static void createDoubleBlindHiddenImage(Map<Integer, String> imgCache) {
         BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         UIUtil.setHighQualityRendering(graphics);

@@ -116,7 +116,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
 
-    public static final int NONE = -1;
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;
@@ -8965,9 +8964,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     .append(next.getUnusedString())
                     .append("</font>");
             } else if (formatting == ViewFormatting.DISCORD && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
-                result.append(DiscordFormat.RED.format())
+                result.append(DiscordFormat.RED)
                     .append(next.getUnusedString())
-                    .append(DiscordFormat.RESET.format());
+                    .append(DiscordFormat.RESET);
             } else {
                 result.append(next.getUnusedString());
             }

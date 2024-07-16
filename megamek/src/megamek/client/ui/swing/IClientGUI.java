@@ -56,4 +56,8 @@ public interface IClientGUI {
     default boolean isChatBoxActive() {
         return false;
     }
+
+    void setChatBoxActive(boolean active);
+
+    void clearChatBox();
 }

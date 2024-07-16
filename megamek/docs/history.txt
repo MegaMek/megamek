@@ -15,6 +15,20 @@ MEGAMEK VERSION HISTORY:
 + PR #5695: Remove serial killer #5695
 + PR #5696: TargetRoll modernization
 + PR #5657: Enable testInvalidCanonUnits but skip known invalid units
++ Fix #5700: Move Modifiers and Move Envelope clear when disabled
++ Fix #5650: Weapon unselect after torso twist
++ PR #5707: Added trailing spaces that were needed for text to display correctly etc
++ PR #5708: Princess - using heat mapping for persistence/history awareness
++ PR #5714: Finish MegaMek munition generator development
++ PR #5717: Disable invalid unit test
++ PR #5693: SBF additions
++ PR #5726: Visual and Range sensor regression fix from #5700
++ PR #5724: Remove LoS requirement for C3 spotters
++ PR #5725: Prevent BA LB-X ACs from making aimed shots
++ PR #5727: Pass Selected Player through to add unit and random force dialogs
++ PR #5731: Fix incorrect onGround usage and make sure ASF bombs are always cleared before refitting
++ PR #5738: Munition autoconfig tweaks
++ PR #5735: Colorize discord export
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

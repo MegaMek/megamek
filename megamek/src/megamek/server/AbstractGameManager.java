@@ -27,7 +27,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
-abstract class AbstractGameManager implements IGameManager {
+public abstract class AbstractGameManager implements IGameManager {
 
     protected final GameManagerPacketHelper packetHelper = new GameManagerPacketHelper(this);
     protected final GameManagerSaveHelper saveHandler = new GameManagerSaveHelper(this);
@@ -37,7 +37,7 @@ abstract class AbstractGameManager implements IGameManager {
      * Sends the given packet to all connections (all connected Clients = players).
      * @see Server#send(Packet)
      */
-    protected final void send(Packet packet) {
+    public void send(Packet packet) {
         Server.getServerInstance().send(packet);
     }
 
@@ -45,7 +45,7 @@ abstract class AbstractGameManager implements IGameManager {
      * Sends the given packet to the given connection (= player ID).
      * @see Server#send(int, Packet)
      */
-    protected final void send(int connId, Packet p) {
+    public void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
 
@@ -81,7 +81,7 @@ abstract class AbstractGameManager implements IGameManager {
      * Switches to the given new Phase and preforms preparation, checks if it should be skipped
      * and executes it.
      */
-    protected final void changePhase(GamePhase newPhase) {
+    public final void changePhase(GamePhase newPhase) {
         getGame().setLastPhase(getGame().getPhase());
         getGame().setPhase(newPhase);
 
@@ -92,7 +92,6 @@ abstract class AbstractGameManager implements IGameManager {
         } else {
             // tell the players about the new phase
             send(packetHelper.createPhaseChangePacket());
-
             executeCurrentPhase();
         }
     }
@@ -161,7 +160,7 @@ abstract class AbstractGameManager implements IGameManager {
      *
      * @see #transmitPlayerUpdate(Player)
      */
-    protected void transmitAllPlayerUpdates() {
+    public void transmitAllPlayerUpdates() {
         getGame().getPlayersList().forEach(this::transmitPlayerUpdate);
     }
 
@@ -170,7 +169,7 @@ abstract class AbstractGameManager implements IGameManager {
      * Depending on the settings, the "autosave" filename is appended
      * with a timestamp and/or a chat message is sent announcing the autosave.
      */
-    protected void autoSave() {
+    public void autoSave() {
         String fileName = "autosave";
         if (PreferenceManager.getClientPreferences().stampFilenames()) {
             fileName = StringUtil.addDateTimeStamp(fileName);
@@ -208,7 +207,35 @@ abstract class AbstractGameManager implements IGameManager {
      * Sends the current list of player turns as stored in the game's turn list to the Clients.
      * @see IGame#getTurnsList()
      */
-    void sendCurrentTurns() {
+    public void sendCurrentTurns() {
         send(packetHelper.createTurnListPacket());
+    }
+
+    /**
+     * Increment's the server's game round and send it to all the clients
+     */
+    public void incrementAndSendGameRound() {
+        getGame().incrementCurrentRound();
+        send(packetHelper.createCurrentRoundNumberPacket());
+    }
+
+    public GameManagerPacketHelper getPacketHelper() {
+        return packetHelper;
+    }
+
+    public AutosaveService getAutoSaveService() {
+        return autoSaveService;
+    }
+
+    /**
+     * Sends out a notification message indicating that a ghost player's turn may be skipped with the
+     * /skip command.
+     *
+     * @param ghost the Player who is ghosted. This value must not be null.
+     */
+    protected void sendGhostSkipMessage(Player ghost) {
+        String message = "Player '" + ghost.getName() +
+                "' is disconnected. You may skip their current turn with the /skip command.";
+        sendServerChat(message);
     }
 }

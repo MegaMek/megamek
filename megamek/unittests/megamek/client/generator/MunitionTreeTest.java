@@ -4,6 +4,7 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.containers.MunitionTree;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -123,7 +124,7 @@ class MunitionTreeTest {
     }
 
     @Test
-    //@Disabled("Runtime is > 20 seconds")
+    @Disabled("Runtime is > 20 seconds")
     void testPopulateAllPossibleUnits() {
         MechSummaryCache instance = MechSummaryCache.getInstance(true);
         // Make sure no units failed loading

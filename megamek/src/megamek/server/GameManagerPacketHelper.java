@@ -34,7 +34,7 @@ import static megamek.common.net.enums.PacketCommand.*;
 /**
  * This is a helper class used by GameManagers (not Clients) to create packets to send to the Clients.
  */
-class GameManagerPacketHelper {
+public class GameManagerPacketHelper {
 
     private final AbstractGameManager gameManager;
 
@@ -43,28 +43,28 @@ class GameManagerPacketHelper {
     }
 
     /** @return A Packet containing information about a list of actions (not limited to Entity!). */
-    Packet createAttackPacket(List<? extends EntityAction> actions, boolean isChargeAttacks) {
+    public Packet createAttackPacket(List<? extends EntityAction> actions, boolean isChargeAttacks) {
         return new Packet(PacketCommand.ENTITY_ATTACK, actions, isChargeAttacks);
     }
 
     /** @return A Packet containing information about a single unit action (not limited to Entity!). */
-    Packet createChargeAttackPacket(EntityAction action) {
+    public Packet createChargeAttackPacket(EntityAction action) {
         // Redundant list construction because serialization doesn't like unmodifiable lists
         return createAttackPacket(new ArrayList<>(List.of(action)), true);
     }
 
     /** @return A Packet containing the player's current done status. */
-    Packet createPlayerDonePacket(int playerId) {
+    public Packet createPlayerDonePacket(int playerId) {
         return new Packet(PacketCommand.PLAYER_READY, playerId, game().getPlayer(playerId).isDone());
     }
 
     /** @return A Packet instructing the Client to set the round number to the GameManager's game's current round. */
-    Packet createCurrentRoundNumberPacket() {
+    public Packet createCurrentRoundNumberPacket() {
         return new Packet(ROUND_UPDATE, game().getCurrentRound());
     }
 
     /** @return A Packet informing the Client of a phase change to the GameManager's game's current phase. */
-    Packet createPhaseChangePacket() {
+    public Packet createPhaseChangePacket() {
         return new Packet(PHASE_CHANGE, game().getPhase());
     }
 
@@ -74,13 +74,13 @@ class GameManagerPacketHelper {
      * This method avoids throwing an IllegalArgumentException if the game doesn't use PlC as, in that case, the
      * sent packet is likely going to be ignored anyway and not cause the game to break.
      */
-    Packet createPlanetaryConditionsPacket() {
+    public Packet createPlanetaryConditionsPacket() {
         return new Packet(SENDING_PLANETARY_CONDITIONS, game() instanceof PlanetaryConditionsUsing
                 ? ((PlanetaryConditionsUsing) game()).getPlanetaryConditions() : new PlanetaryConditions());
     }
 
     /** @return A Packet containing the complete Map of boards and IDs to send from Server to Client. */
-    Packet createBoardsPacket() {
+    public Packet createBoardsPacket() {
         // The new HashMap is created because getBoards() returns an unmodifiable view that
         // XStream cannot deserialize properly
         return new Packet(SENDING_BOARD, new HashMap<>(game().getBoards()));
@@ -90,14 +90,14 @@ class GameManagerPacketHelper {
      * @return A packet containing the game settings. Note that this packet differs from the one sent by the
      * Client in that the Client's packet will also contain a password
      */
-    Packet createGameSettingsPacket() {
+    public Packet createGameSettingsPacket() {
         return new Packet(SENDING_GAME_SETTINGS, game().getOptions());
     }
 
     /**
      * @return A packet containing the current list of player turns.
      */
-    Packet createTurnListPacket() {
+    public Packet createTurnListPacket() {
         return new Packet(PacketCommand.SENDING_TURNS, game().getTurnsList());
     }
 
@@ -107,7 +107,7 @@ class GameManagerPacketHelper {
      *
      * @param previousPlayerId The ID of the player who triggered the turn change
      */
-    Packet createTurnIndexPacket(int previousPlayerId) {
+    public Packet createTurnIndexPacket(int previousPlayerId) {
         return new Packet(PacketCommand.TURN, game().getTurnIndex(), previousPlayerId);
     }
 

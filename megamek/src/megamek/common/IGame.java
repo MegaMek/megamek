@@ -23,7 +23,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,7 +60,7 @@ public interface IGame {
 
     //endregion
 
-    GameOptions getOptions();
+    BasicGameOptions getOptions();
 
     /**
      * @return The current game round, with 0 typically indicating deployment and 1 the first
@@ -75,6 +75,11 @@ public interface IGame {
      * @param currentRound The new round number
      */
     void setCurrentRound(int currentRound);
+
+    /**
+     * Adds 1 to the current round value. This method is intended for server use only.
+     */
+    void incrementCurrentRound();
 
     //region Phase Management
 
@@ -164,6 +169,13 @@ public interface IGame {
     /** @return The Forces present in this game. Can be empty, but not null. */
     Forces getForces();
 
+    /**
+     * Replaces the game's Forces with the given forces.
+     *
+     * @param forces The new Forces object to use
+     */
+    void setForces(Forces forces);
+
     // PLAYERS //////////////
 
     /**
@@ -232,7 +244,9 @@ public interface IGame {
 
     // UNITS //////////////
 
-    /** @return The next free id for InGameObjects (units and others). */
+    /**
+     * @return The next free ID for InGameObjects (unit/entity/formation/others).
+     */
     int getNextEntityId();
 
     /**
@@ -265,6 +279,14 @@ public interface IGame {
      * @param units The units to add or use as a replacement for current units.
      */
     void replaceUnits(List<InGameObject> units);
+
+
+
+    /**
+     * @return a list of units that are destroyed or otherwise no longer part of the game. These
+     * should have a reason for their removal set.
+     */
+    List<InGameObject> getGraveyard();
 
     //region Board
 

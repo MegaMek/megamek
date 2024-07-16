@@ -21,6 +21,7 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -122,10 +123,9 @@ public final class MMUReader {
 
     private Optional<Object> parseNode(JsonNode node, Class<?> objectType) throws IOException {
         if (node.has(INCLUDE)) {
-            node = yamlMapper.readTree(new File(currentDirectory, node.get(INCLUDE).textValue()));
-            if (node.isArray()) {
-                throw new IllegalArgumentException("An included MMU file may only contain a single object, not a list!");
-            }
+            JsonNode node2 = yamlMapper.readTree(new File(currentDirectory, node.get(INCLUDE).textValue()));
+            // add the included nodes to the present node as if they had been written directly in the original file
+            node2.fieldNames().forEachRemaining(n -> ((ObjectNode) node).set(n, node2.get(n)));
         }
 
         if (objectType != null) {

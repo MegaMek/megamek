@@ -416,7 +416,7 @@ public final class Forces implements Serializable {
      * Sets the game reference to the provided Game. Used when transferring
      * the forces between client and server.
      */
-    public void setGame(Game g) {
+    public void setGame(IGame g) {
         game = g;
     }
     

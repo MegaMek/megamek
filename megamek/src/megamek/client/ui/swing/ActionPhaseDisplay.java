@@ -43,8 +43,11 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     private boolean ignoreNoActionNag = false;
 
+    protected final ClientGUI clientgui;
+
     protected ActionPhaseDisplay(ClientGUI cg) {
         super(cg);
+        clientgui = cg;
     }
 
     @Override

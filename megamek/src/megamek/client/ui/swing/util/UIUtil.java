@@ -122,7 +122,47 @@ public final class UIUtil {
     public static String criticalSign() {
         return guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + WARNING_SIGN + "</FONT>";
     }
-    
+
+    /**
+     * Returns a span of the given CSS class with opening and closing tag and the content in between.
+     * The class should be defined in the header styles block, e.g. as <code>.myspan { ... }</code>,
+     * then it can be given as "myspan" here.
+     *
+     * @param cssClass the class as defined in CSS styles
+     * @param content the text to go in the span
+     * @return the complete span block
+     */
+    public static String spanCSS(String cssClass, String content) {
+        return "<span class=\"" + cssClass + "\">" + content + "</span>";
+    }
+
+    /**
+     * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between.
+     * The class should be defined in the header styles block, e.g. as <code>.mycell { ... }</code>, then it
+     * can be given as "mycell" here.
+     *
+     * @param cssClass the class as defined in CSS styles
+     * @param content the text to go in the table cell
+     * @return the complete TD block
+     */
+    public static String tdCSS(String cssClass, String content) {
+        return "<TD class=\"" + cssClass + "\">" + content + "</TD>";
+    }
+
+    /**
+     * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between
+     * (as text).
+     * The class should be defined in the header styles block, e.g. as <code>.mycell { ... }</code>, then it
+     * can be given as "mycell" here.
+     *
+     * @param cssClass the class as defined in CSS styles
+     * @param content the text to go in the table cell
+     * @return the complete TD block
+     */
+    public static String tdCSS(String cssClass, int content) {
+        return "<TD class=\"" + cssClass + "\">" + content + "</TD>";
+    }
+
     /** 
      * Helper method to place Strings in lines according to length. The Strings
      * in origList will be added to one line with separator sep between them as 

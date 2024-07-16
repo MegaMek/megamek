@@ -53,7 +53,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
-import megamek.server.SBFGameManager;
+import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -224,6 +224,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
+        MegamekButton connectSBF = new MegamekButton("Connect to SBF",
+                UIComponents.MainMenuButton.getComp(), true);
+        connectSBF.setActionCommand(ClientGUI.FILE_GAME_CONNECT_SBF);
+        connectSBF.addActionListener(actionListener);
         MegamekButton botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
@@ -316,8 +320,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.gridy++;
         addBag(connectB, gridbag, c);
         c.gridy++;
-        addBag(botB, gridbag, c);
+        addBag(connectSBF, gridbag, c);
         c.gridy++;
+//        addBag(botB, gridbag, c);
+//        c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(skinEditB, gridbag, c);
@@ -767,9 +773,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         // popup options dialog
-        if (!scenario.hasFixedGameOptions()) {
-            GameOptionsDialog god = new GameOptionsDialog(frame, game.getOptions(), false);
-            god.update(game.getOptions());
+        if (!scenario.hasFixedGameOptions() && game instanceof Game) {
+            GameOptionsDialog god = new GameOptionsDialog(frame, ((Game)game).getOptions(), false);
+            god.update(((Game)game).getOptions());
             god.setEditable(true);
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {
@@ -875,6 +881,17 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         cd.setVisible(true);
         if (cd.isConfirmed() && cd.dataValidation("MegaMek.ConnectDialog.title")) {
             startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
+        }
+    }
+
+    /**
+     * Connect to an existing game
+     */
+    void connectSbf() {
+        var cd = new ConnectDialog(frame);
+        cd.setVisible(true);
+        if (cd.isConfirmed() && cd.dataValidation("MegaMek.ConnectDialog.title")) {
+            startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort(), GameType.SBF);
         }
     }
 
@@ -1020,6 +1037,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 break;
             case ClientGUI.FILE_GAME_CONNECT_BOT:
                 connectBot();
+                break;
+            case ClientGUI.FILE_GAME_CONNECT_SBF:
+                connectSbf();
                 break;
             case ClientGUI.FILE_GAME_LOAD:
                 loadGame();

@@ -136,9 +136,9 @@ Donegal
 </primaryFactory>
 
 <systemManufacturers>
-CHASSIS:Lockhead/CBM 200
+CHASSIS:Lockheed/CBM 200
 ENGINE:WAS 195
 ARMOR:StarScale Type IV
-COMMUNICATIONS:Lockhead/CBM COMSET 100
-TARGETING:Lockhead/CBM TarSet 55
+COMMUNICATIONS:Lockheed/CBM COMSET 100
+TARGETING:Lockheed/CBM TarSet 55
 </systemManufacturers>

@@ -36,6 +36,14 @@ public class ForceDescriptor {
     public static final int EXP_REGULAR = 1;
     public static final int EXP_VETERAN = 2;
 
+    // Mapped to Dragoon Rating in MHQ
+    public static final int RATING_0 = 0;
+    public static final int RATING_1 = 1;
+    public static final int RATING_2 = 2;
+    public static final int RATING_3 = 3;
+    public static final int RATING_4 = 4;
+    public static final int RATING_5 = 5;
+
     public static final String[] ORDINALS = {
             "First", "Second", "Third", "Fourth", "Fifth",
             "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"
@@ -111,7 +119,7 @@ public class ForceDescriptor {
     private double cargo = 0.0;
 
     public ForceDescriptor() {
-        faction = "IS";
+        faction = FactionRecord.IS_GENERAL_KEY;
         year = 3067;
         movementModes = new HashSet<>();
         roles = new HashSet<>();

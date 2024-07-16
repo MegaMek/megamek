@@ -42,7 +42,6 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.*;
-import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
@@ -257,7 +256,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
-    private AbstractUnitSelectorDialog mechSelectorDialog;
+    private MegaMekUnitSelectorDialog mechSelectorDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private PlanetaryConditionsDialog conditionsDialog;
@@ -1098,7 +1097,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return gameOptionsDialog;
     }
 
-    public AbstractUnitSelectorDialog getMechSelectorDialog() {
+    public MegaMekUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
     }
 
@@ -1887,9 +1886,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
                 dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
                 dlgLoadList.setFileFilter(new FileNameExtensionFilter("MUL files", "mul", "mmu"));
-                // Default to the player's name.
-                dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
             }
+            // Default to the player's name.
+            dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
 
             int returnVal = dlgLoadList.showOpenDialog(frame);
             if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
@@ -2862,11 +2861,18 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
+     * Removes visibility to the Movement Envelope.
+     */
+    public void clearMovementEnvelope() {
+        this.movementEnvelopeHandler.clear();
+    }
+
+    /**
      * Removes all temporary sprites from the board, such as pending actions, movement envelope,
      * collapse warnings etc. Does not remove game-state sprites such as units or flares.
      */
     public void clearTemporarySprites() {
-        movementEnvelopeHandler.clear();
+        clearMovementEnvelope();
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();

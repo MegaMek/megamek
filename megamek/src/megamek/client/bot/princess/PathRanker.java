@@ -72,7 +72,12 @@ public abstract class PathRanker implements IPathRanker {
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         LogManager.getLogger().debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
 
-        Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
+        // If the heat map of friendly activity has sufficient data, use the nearest hotspot as
+        // the anchor point
+        Coords allyCenter = owner.getFriendlyHotspot(movePaths.get(0).getEntity().getPosition());
+        if (allyCenter == null) {
+            allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
+        }
 
         ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
 

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  * Container for all the rule nodes for a faction. Has methods for processing the rules to
  * fill out a ForceDescriptor.
- * 
+ *
  * @author Neoancient
  */
 public class Ruleset {
@@ -76,9 +76,9 @@ public class Ruleset {
     private HashMap<Integer,String> customRanks;
     private ArrayList<ForceNode> forceNodes;
     private String parent;
-    
+
     private Ruleset() {
-        faction = "IS";
+        faction = FactionRecord.IS_GENERAL_KEY;
         ratingSystem = RatingSystem.IS;
         defaults = new DefaultsNode();
         toc = new TOCNode();
@@ -105,7 +105,7 @@ public class Ruleset {
 
     public static Ruleset findRuleset(String faction) {
         if (faction == null) {
-            faction = "IS";
+            faction = FactionRecord.IS_GENERAL_KEY;
         }
         if (rulesets.containsKey(faction)) {
             return rulesets.get(faction);
@@ -143,7 +143,7 @@ public class Ruleset {
     public interface ProgressListener {
         /**
          * Notifies listener of progress in generating force.
-         * 
+         *
          * @param progress The fraction of the task that has been completed in this step.
          * @param message A message that describes the current step.
          *
@@ -164,7 +164,7 @@ public class Ruleset {
         fd.recalcWeightClass();
         fd.assignCommanders();
         fd.assignPositions();
-        
+
         if (null != l) {
             l.updateProgress(0.05, "Finalizing formation");
         }
@@ -187,7 +187,7 @@ public class Ruleset {
     /**
      * Recursively build the force structure by assigning appropriate values to the current node,
      * including number and type of subforce and attached force nodes, and process those as well.
-     * 
+     *
      * @param fd
      */
     private void buildForceTree (ForceDescriptor fd, ProgressListener l, double progress) {
@@ -437,11 +437,11 @@ public class Ruleset {
                 if (fRec == null) {
                     retVal.parent = null;
                 } else if (fRec.isClan()) {
-                    retVal.parent = "CLAN"; 
+                    retVal.parent = FactionRecord.CL_GENERAL_KEY;
                 } else if (fRec.isPeriphery()) {
-                    retVal.parent = "PERIPHERY"; 
+                    retVal.parent = FactionRecord.PER_GENERAL_KEY;
                 } else {
-                    retVal.parent = "IS";
+                    retVal.parent = FactionRecord.IS_GENERAL_KEY;
                 }
 
                 if (retVal.faction.equals(retVal.parent)) {
@@ -503,9 +503,9 @@ public class Ruleset {
                     try {
                         fn = ForceNode.createFromXml(wn);
                     } catch (IllegalArgumentException ex) {
-                        LogManager.getLogger().error("In file " + f.getName() + " while processing force node" 
-                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? "" : " " 
-                                        + wn.getAttributes().getNamedItem("eschName")) 
+                        LogManager.getLogger().error("In file " + f.getName() + " while processing force node"
+                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? "" : " "
+                                        + wn.getAttributes().getNamedItem("eschName"))
                                 + ": " + ex.getMessage());
                     }
                     if (fn != null) {

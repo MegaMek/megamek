@@ -2000,11 +2000,6 @@ public class Compute {
                 continue; // useless to us...
             }
 
-            // Must have LoS, Compute.canSee considers sensors and visual range
-            if (!LosEffects.calculateLOS(game, friend, target).canSee()) {
-                continue;
-            }
-
             int buddyRange = Compute.effectiveDistance(game, friend, target,
                     false);
 
@@ -7077,9 +7072,10 @@ public class Compute {
         AmmoMounted ammo = usesAmmo ? weapon.getLinkedAmmo() : null;
         AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
-        // Leg and swarm attacks can't be aimed.
+        // Leg, swarm, and BA LB-X AC attacks can't be aimed.
         if (wtype.getInternalName().equals(Infantry.LEG_ATTACK)
-                || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
+                || wtype.getInternalName().equals(Infantry.SWARM_MEK)
+                || wtype.getInternalName().equals("Battle Armor LB-X AC")) {
             return false;
         }
 

@@ -29,6 +29,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5731: Fix incorrect onGround usage and make sure ASF bombs are always cleared before refitting
 + PR #5738: Munition autoconfig tweaks
 + PR #5735: Colorize discord export
++ PR #5742: fixing Bär unit name and associated model record entries
++ PR #5743: Lobby: export full chassis to clipboard for meks with clan/is names
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

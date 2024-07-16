@@ -59,14 +59,13 @@ public class SBFReportEntry implements ReportEntry {
         GUIPreferences GUIP = GUIPreferences.getInstance();
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
-        styleSheet.addRule("pre { font-family: NotoSans; font-size: " + size + "pt; }");
+        styleSheet.addRule("pre { font-family:Noto Sans; font-size:" + size + "pt; }");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");
-        styleSheet.addRule("header { font-weight: bold; }");
-        styleSheet.addRule("h1 { font-family: NotoSans; font-weight: bold; font-size: "
-                + (int) (1.2 * size) + "pt; padding:0; margin:0; text-decoration: underline; }");
+        styleSheet.addRule(".header { font-weight:bold; font-size: "
+                + (int) (1.2 * size) + "pt; padding:10 0; margin:0; text-decoration: underline; }");
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
     }
 
@@ -147,7 +146,7 @@ public class SBFReportEntry implements ReportEntry {
 
     @Override
     public String text() {
-        return SBFReportMessages.getString(String.valueOf(messageId), data.stream().map(d -> (Object) d.data).toList());
+        return SBFReportMessages.getString(String.valueOf(messageId), data.stream().map(d -> (Object) d.data).toList())+"<BR>";
     }
 
     @Override

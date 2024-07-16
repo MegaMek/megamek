@@ -150,11 +150,11 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
 
     private void writeWeatherReport() {
         PlanetaryConditions conditions = game().getPlanetaryConditions();
-//        addReport(new SBFPublicReportEntry(1025).add(conditions.getWindDirection().toString()).noNL());
-//        addReport(new SBFPublicReportEntry(1030).add(conditions.getWind().toString()).noNL());
-//        addReport(new SBFPublicReportEntry(1031).add(conditions.getWeather().toString()).noNL());
-//        addReport(new SBFPublicReportEntry(1032).add(conditions.getLight().toString()));
-//        addReport(new SBFPublicReportEntry(1033).add(conditions.getFog().toString()));
+        addReport(new SBFPublicReportEntry(1025).add(conditions.getWindDirection().toString()));
+        addReport(new SBFPublicReportEntry(1030).add(conditions.getWind().toString()));
+        addReport(new SBFPublicReportEntry(1031).add(conditions.getWeather().toString()));
+        addReport(new SBFPublicReportEntry(1032).add(conditions.getLight().toString()));
+        addReport(new SBFPublicReportEntry(1033).add(conditions.getFog().toString()));
     }
 
     private void writeInitiativeRolls() {
@@ -167,8 +167,9 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
             // If there is only one non-observer player, list them as the 'team', and use the team initiative
             if (team.getNonObserverSize() == 1) {
                 final Player player = team.nonObserverPlayers().get(0);
-                SBFReportEntry r = new SBFPublicReportEntry(1015).add(player.getColorForPlayer());
-                r.add(team.getInitiative().toString());
+                SBFReportEntry r = new SBFPublicReportEntry(1015)
+                        .add(player.getColorForPlayer())
+                        .add(team.getInitiative().toString());
                 addReport(r);
             } else {
                 // Multiple players. List the team, then break it down.
@@ -194,7 +195,5 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                 addReport(new SBFReportHeader(1010).add(game().getCurrentRound()));
             }
         }
-        // write separator
-        addReport(new SBFReportHeader(1200));
     }
 }

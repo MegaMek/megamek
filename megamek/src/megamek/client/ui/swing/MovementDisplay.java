@@ -4923,33 +4923,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             } // else - Player canceled the unload.
         } else if (actionCmd.equals(MoveCommand.MOVE_PICKUP_CARGO.getCmd())) {
-        	// this is kind of obnoxious:
-        	// we have a list of all the possible ground objects
-        	// we supply a list of eligible ground objects to the dropdown dialog
-        	// we use the selected object to look up the ground object index in the hex
-        	// and pass it to the generated move step
-        	
-        	var options = game().getGroundObjects(finalPosition());
-        	var displayedOptions = game().getGroundObjects(finalPosition(), ce());
-        	
-            if (displayedOptions.size() == 1) {
-            	addStepToMovePath(MoveStepType.PICKUP_CARGO);
-                updateDonePanel();
-            } else if (displayedOptions.size() > 1) {
-                // Dialog for choosing which object to pick up
-                String title = "Choose Cargo to Pick Up";
-                String body = "Choose the cargo to pick up:";
-                ICarryable option = (ICarryable) JOptionPane.showInputDialog(clientgui.getFrame(),
-                        body, title, JOptionPane.QUESTION_MESSAGE, null,
-                        displayedOptions.toArray(), displayedOptions.get(0));
-
-                // Verify that we have a valid option...
-                if (option != null) {
-                    int index = options.indexOf(option);
-                    addStepToMovePath(MoveStepType.PICKUP_CARGO, index);
-                    updateDonePanel();
-                }
-            }
+        	processPickupCargoCommand();
         } else if (actionCmd.equals(MoveCommand.MOVE_DROP_CARGO.getCmd())) {
         	var options = ce().getDistinctCarriedObjects();
         	
@@ -5340,6 +5314,87 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
+    /**
+     * Worker function containing the "pickup cargo" command.
+     */
+    private void processPickupCargoCommand() {
+    	var options = game().getGroundObjects(finalPosition());
+    	var displayedOptions = game().getGroundObjects(finalPosition(), ce());
+    	
+    	// if there's only one thing to pick up, just pick it up.
+    	// regardless of how many objects we are picking up, 
+    	// we may have to choose the location with which to pick it up
+        if (displayedOptions.size() == 1) { 
+        	Integer pickupLocation = getPickupLocation(options.get(0));
+        	
+        	if (pickupLocation != null) {   
+	        	Map<Integer, Integer> data = new HashMap<>();
+	        	data.put(MoveStep.CARGO_PICKUP_KEY, 0);
+	        	data.put(MoveStep.CARGO_LOCATION_KEY, pickupLocation);
+	        	
+	        	addStepToMovePath(MoveStepType.PICKUP_CARGO, data);
+	            updateDonePanel();
+        	}
+        } else if (displayedOptions.size() > 1) {
+            // Dialog for choosing which object to pick up
+            String title = "Choose Cargo to Pick Up";
+            String body = "Choose the cargo to pick up:";
+            ICarryable option = (ICarryable) JOptionPane.showInputDialog(clientgui.getFrame(),
+                    body, title, JOptionPane.QUESTION_MESSAGE, null,
+                    displayedOptions.toArray(), displayedOptions.get(0));
+
+            if (option != null) {
+            	Integer pickupLocation = getPickupLocation(option);
+            	
+            	if (pickupLocation != null) {            	
+	            	int cargoIndex = options.indexOf(option);
+	            	Map<Integer, Integer> data = new HashMap<>();
+	            	data.put(MoveStep.CARGO_PICKUP_KEY, cargoIndex);
+	            	data.put(MoveStep.CARGO_LOCATION_KEY, pickupLocation);
+	            	
+	                addStepToMovePath(MoveStepType.PICKUP_CARGO, data);
+	                updateDonePanel();
+            	}
+            }
+        }
+    }
+    
+    /**
+     * Worker function to chose a limb (or whatever) with which to pick up cargo
+     */
+    private Integer getPickupLocation(ICarryable cargo) {
+    	var validPickupLocations = ce().getValidHalfWeightPickupLocations(cargo);
+    	int pickupLocation = Entity.LOC_NONE;
+    	
+    	// if we need to choose a pickup location, then do so
+    	if (validPickupLocations.size() > 1) {
+        	// reverse lookup: location name to location ID - we're going to wind up with a name chosen
+    		// but need to send the ID in the move path.
+    		Map<String, Integer> locationMap = new HashMap<>();
+    		
+    		for (int location : ce().getValidHalfWeightPickupLocations(cargo)) {
+    			locationMap.put(ce().getLocationName(location), location);
+    		}
+    		
+    		// Dialog for choosing which object to pick up
+            String title = "Choose Pickup Location";
+            String body = "Choose the location with which to pick up cargo:";
+            String locationChoice = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                    body, title, JOptionPane.QUESTION_MESSAGE, null,
+                    locationMap.keySet().toArray(), locationMap.keySet().toArray()[0]);
+            
+            if (locationChoice != null) {
+            	pickupLocation = locationMap.get(locationChoice);
+            } else {
+            	return null;
+            }
+    	} else if (validPickupLocations.size() == 1) {
+    		pickupLocation = validPickupLocations.get(0);
+    	}
+    	
+    	return pickupLocation;
+    }
+    
     /**
      * Add enough <code>MoveStepType.CONVERT_MODE</code> steps to get to the requested mode, or
      * clear the path if the unit is in the requested mode at the beginning of the turn.

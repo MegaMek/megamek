@@ -598,6 +598,38 @@ public class Protomech extends Entity {
     	
     	return getWeight() * percentage;
     }
+    
+    @Override
+    public List<Integer> getDefaultPickupLocations() {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	if ((getCarriedObject(Protomech.LOC_LARM) == null) && !isLocationBad(Protomech.LOC_LARM)) {
+    		result.add(Protomech.LOC_LARM);
+    	}
+    	if ((getCarriedObject(Protomech.LOC_RARM) == null) && !isLocationBad(Protomech.LOC_RARM)) {
+    		result.add(Protomech.LOC_RARM);
+    	}
+    	
+    	return result;
+    }
+    
+    @Override
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	// if we can pick the object up according to "one handed pick up rules" in TacOps
+    	if (cargo.getTonnage() <= (getWeight() / 20)) {
+    		if ((getCarriedObject(Protomech.LOC_LARM) == null) && !isLocationBad(Protomech.LOC_LARM)) {
+    			result.add(Protomech.LOC_LARM);
+    		}
+    		
+    		if ((getCarriedObject(Protomech.LOC_RARM) == null) && !isLocationBad(Protomech.LOC_RARM)) {
+    			result.add(Protomech.LOC_RARM);
+    		}
+    	}
+    	
+    	return result;
+    }
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {

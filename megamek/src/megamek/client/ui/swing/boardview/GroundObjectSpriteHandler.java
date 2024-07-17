@@ -25,7 +25,6 @@ import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.ICarryable;
 import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GamePhaseChangeEvent;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 
@@ -49,6 +48,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         		}
         	}
         }
+        
         boardView.addSprites(currentSprites);
     }
 

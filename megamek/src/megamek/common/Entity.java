@@ -2789,14 +2789,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Put a ground object into the given location
      */
-    public void pickupGroundObject(ICarryable carryable, int location) {
+    public void pickupGroundObject(ICarryable carryable, Integer location) {
     	if (carriedObjects == null) {
     		carriedObjects = new HashMap<>();
     	}
     	
-    	carriedObjects.put(location, carryable);
+    	// "none" means we should just put it wherever it goes by default.
+    	// rules checks are done prior to this, so we just set the data
+    	if (location == null || location == LOC_NONE) {
+    		for (Integer defaultLocation : getDefaultPickupLocations()) {
+    			carriedObjects.put(defaultLocation, carryable);
+    		}
+    	} else {
+    		carriedObjects.put(location, carryable);
+    	}
     	pickedUpObject = true;
     }
+    
+    
     
     /** 
      * Remove a ground object (cargo) from the given location
@@ -2832,10 +2842,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     /**
-     * A list of all the locations that the entity can use to pick up cargo.
+     * A list of the "default" cargo pick up locations for when none is specified
      */
-    public List<Integer> getValidPickupLocations() {
-    	return null;
+    protected List<Integer> getDefaultPickupLocations() {
+    	return Arrays.asList(LOC_NONE);
+    }
+    
+    /**
+     * A list of all the locations that the entity can use to pick up cargo following the TacOps 
+     * "one handed" pickup rules
+     */
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	return Arrays.asList(LOC_NONE);
     }
     
     /**

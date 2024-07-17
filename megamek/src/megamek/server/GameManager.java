@@ -7268,6 +7268,8 @@ public class GameManager extends AbstractGameManager {
                 	cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY);
             	}
             	
+            	Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
+            	
             	// there have to be objects on the ground and we have to be trying to pick up one of them
             	if ((groundObjects.size() > 0) &&
             			 (cargoPickupIndex != null) && (cargoPickupIndex >= 0) && (cargoPickupIndex < groundObjects.size())) {
@@ -7275,14 +7277,7 @@ public class GameManager extends AbstractGameManager {
             		ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
             		if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
             			game.removeGroundObject(step.getPosition(), pickupTarget);
-            			// hack for now: goes into both arms
-            			if (entity instanceof Mech) {
-            				entity.pickupGroundObject(pickupTarget, Mech.LOC_LARM);
-            				entity.pickupGroundObject(pickupTarget, Mech.LOC_RARM);
-            			} else if (entity instanceof Protomech) {
-            				entity.pickupGroundObject(pickupTarget, Protomech.LOC_LARM);
-            				entity.pickupGroundObject(pickupTarget, Protomech.LOC_RARM);
-            			}
+            			entity.pickupGroundObject(pickupTarget, cargoPickupLocation);
 
             			r = new Report(2513);
             			r.subject = entity.getId();

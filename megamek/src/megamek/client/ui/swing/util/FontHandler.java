@@ -21,6 +21,7 @@ package megamek.client.ui.swing.util;
 import megamek.MMConstants;
 import megamek.client.ui.swing.CommonSettingsDialog;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
@@ -137,16 +138,18 @@ public final class FontHandler {
      * @param directory the directory to parse
      */
     public static void parseFontsInDirectory(final File directory) {
+        List<String> errors = new ArrayList<>();
         for (String fontFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.TRUETYPE_FONT)) {
             try (InputStream fis = new FileInputStream(fontFile)) {
                 Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
                 if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font)) {
-                    LogManager.getLogger().warn("Failed to register font " + fontFile);
+                    errors.add("    Failed to register font " + fontFile);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().warn("Failed to read font ", ex);
+                errors.add("    Failed to read font " + fontFile);
             }
         }
+        MMLogger.warn("Some fonts failed to register.\n" + String.join("\n", errors));
     }
 
     private static void ensureInitialization() {

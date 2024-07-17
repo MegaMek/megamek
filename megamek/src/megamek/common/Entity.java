@@ -2799,11 +2799,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     /** 
-     * Remove a ground object from the given location
+     * Remove a ground object (cargo) from the given location
      */
     public void dropGroundObject(int location) {
     	carriedObjects.remove(location);
-    	pickedUpObject = true;
+    }
+    
+    /**
+     * Convenience method to drop all cargo.
+     */
+    public void dropGroundObjects() {
+    	carriedObjects.clear();
     }
     
     /**
@@ -2819,6 +2825,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     public void setCarriedObjects(Map<Integer, ICarryable> value) {
     	carriedObjects = value;
+    }
+    
+    public List<ICarryable> getDistinctCarriedObjects() {
+    	return carriedObjects.values().stream().distinct().toList();
+    }
+    
+    /**
+     * A list of all the locations that the entity can use to pick up cargo.
+     */
+    public List<Integer> getValidPickupLocations() {
+    	return null;
     }
     
     /**

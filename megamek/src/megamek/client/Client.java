@@ -585,6 +585,7 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateGroundObjects(Packet packet) {
     	game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
+    	game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
     @SuppressWarnings("unchecked")

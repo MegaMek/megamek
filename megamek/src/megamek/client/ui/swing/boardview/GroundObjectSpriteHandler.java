@@ -18,15 +18,19 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.util.List;
+import java.util.Map;
+
 import megamek.common.Coords;
 import megamek.common.Game;
+import megamek.common.ICarryable;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 
     // Cache the ground object list as it does not change very often
-    private Iterable<Coords> currentGroundObjectList;
+    private Map<Coords, List<ICarryable>> currentGroundObjectList;
     private final Game game;
 
     public GroundObjectSpriteHandler(BoardView boardView, Game game) {
@@ -34,13 +38,15 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         this.game = game;
     }
 
-    public void setGroundObjectSprites(Iterable<Coords> objectCoordList) {
+    public void setGroundObjectSprites(Map<Coords, List<ICarryable>> objectCoordList) {
         clear();
         currentGroundObjectList = objectCoordList;
         if (currentGroundObjectList != null) {
-        	for (Coords coords : currentGroundObjectList) {
-        		GroundObjectSprite gos = new GroundObjectSprite(boardView, coords);
-        		currentSprites.add(gos);
+        	for (Coords coords : currentGroundObjectList.keySet()) {
+        		for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
+	        		GroundObjectSprite gos = new GroundObjectSprite(boardView, coords);
+	        		currentSprites.add(gos);
+        		}
         	}
         }
         boardView.addSprites(currentSprites);
@@ -65,11 +71,6 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
     
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
-    	setGroundObjectSprites(game.getGroundObjects().keySet());
-    }   
-    
-    @Override
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
-    	setGroundObjectSprites(game.getGroundObjects().keySet());
+    	setGroundObjectSprites(game.getGroundObjects());
     }
 }

@@ -278,7 +278,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             
             game.getGroundObjects().remove(coords);
             
-            clientgui.showGroundObjects(game.getGroundObjects().keySet());
+            clientgui.showGroundObjects(game.getGroundObjects());
             
         } else if (currentCommand == DeployMinefieldCommand.DEPLOY_CARRYABLE) {
         	List<ICarryable> groundObjects = p.getGroundObjectsToPlace();
@@ -300,7 +300,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         		currentCommand = DeployMinefieldCommand.COMMAND_NONE;
         	}
         	
-        	clientgui.showGroundObjects(game.getGroundObjects().keySet());
+        	clientgui.showGroundObjects(game.getGroundObjects());
         } else {
         	// first check that there is not already a mine of this type
             // deployed

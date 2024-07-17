@@ -2925,7 +2925,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      *
      * @param groundObjectList The list of coordinates to show
      */
-    public void showGroundObjects(Iterable<Coords> groundObjectList) {
+    public void showGroundObjects(Map<Coords, List<ICarryable>> groundObjectList) {
     	groundObjectSpriteHandler.setGroundObjectSprites(groundObjectList);
     }
 

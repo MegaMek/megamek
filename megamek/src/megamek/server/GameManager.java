@@ -7257,9 +7257,16 @@ public class GameManager extends AbstractGameManager {
                 }
             } // End STEP_MOUNT
 
-            if (step.getType() == MovePath.MoveStepType.PICKUP) {
+            if (step.getType() == MovePath.MoveStepType.PICKUP_CARGO) {
             	var groundObjects = game.getGroundObjects(step.getPosition());
-            	Integer cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_INDEX);
+            	Integer cargoPickupIndex;
+            	
+            	// if there's only one object on the ground, let's just get that one and ignore any parameters
+            	if (groundObjects.size() == 1) {
+            		cargoPickupIndex = 0;
+            	} else {
+                	cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY);
+            	}
             	
             	// there have to be objects on the ground and we have to be trying to pick up one of them
             	if ((groundObjects.size() > 0) &&
@@ -7281,16 +7288,47 @@ public class GameManager extends AbstractGameManager {
             			r.subject = entity.getId();
                     	r.add(entity.getDisplayName());
                     	r.add(pickupTarget.toString());
+                    	r.add(step.getPosition().toFriendlyString());
                     	addReport(r);
                     	
-                    	entityUpdate(entity.getId());
-                    	//return; // a pickup should be the last step
+                    	// a pickup should be the last step. Send an update for the overall ground object list.
+                        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+                        break;
             		} else {
-            			// add report about entity not being able to pick it up or maybe log it or something
+            			LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up object but it is too heavy. Carry capacity: " 
+            					+ entity.maxGroundObjectTonnage() + ", object weight: " + pickupTarget.getTonnage());
             		}
             	} else {
-            		// add report about there not being a valid object to pick up
+            		LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up non existent object at coords " 
+            					+ step.getPosition() + ", index " + cargoPickupIndex);
             	}
+            }
+            
+            if (step.getType() == MovePath.MoveStepType.DROP_CARGO) {
+            	Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
+            	ICarryable cargo;
+            	
+            	// if we're not supplied a specific location, then the assumption is we only have one
+            	// piece of cargo and we're going to just drop that one
+            	if (cargoLocation == null) {
+            		cargo = entity.getDistinctCarriedObjects().get(0);
+            		entity.dropGroundObjects();
+            	} else {
+            		cargo = entity.getCarriedObject(cargoLocation);
+            		entity.dropGroundObject(cargoLocation);
+            	}
+            	
+            	game.placeGroundObject(step.getPosition(), cargo);
+            	
+            	r = new Report(2514);
+            	r.subject = entity.getId();
+            	r.add(entity.getDisplayName());
+            	r.add(cargo.getName());
+            	r.add(step.getPosition().toFriendlyString());
+            	addReport(r);
+            	
+            	// a drop changes board state. Send an update for the overall ground object list.
+                send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
             }
             
             // handle fighter recovery, and also DropShip docking with another large craft

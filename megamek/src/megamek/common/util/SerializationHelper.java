@@ -68,7 +68,7 @@ public class SerializationHelper {
                 megamek.common.EntityFluff.class,
                 megamek.common.NarcPod.class,
                 megamek.common.INarcPod.class,
-                megamek.common.Briefcase.class
+                megamek.common.Briefcase.class,
                 megamek.common.net.packets.Packet.class,
                 megamek.common.BoardLocation.class,
                 megamek.common.strategicBattleSystems.SBFMovePath.class,

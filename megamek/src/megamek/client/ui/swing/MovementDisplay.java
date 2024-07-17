@@ -949,6 +949,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.addStep(moveStep, recover, mineToLay);
         updateMove();
     }
+    
+    private void addStepToMovePath(MoveStepType moveStep, Map<Integer, Integer> additionalIntData) {
+    	cmd.addStep(moveStep, additionalIntData);
+    	updateMove();
+    }
 
     private void updateMove() {
         updateMove(true);
@@ -2823,7 +2828,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	// the entity can pick them up
     	if ((ce == null) || (game().getGroundObjects(finalPosition(), ce).size() <= 0) ||
     			((cmd.getLastStep() != null) && 
-    					(cmd.getLastStep().getType() == MoveStepType.PICKUP))) {
+    					(cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
     		setPickupCargoEnabled(false);
     		return;
     	}
@@ -4928,8 +4933,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         	var displayedOptions = game().getGroundObjects(finalPosition(), ce());
         	
             if (displayedOptions.size() == 1) {
-            	int index = options.indexOf(displayedOptions.get(0));
-                addStepToMovePath(MoveStepType.PICKUP, index);
+            	addStepToMovePath(MoveStepType.PICKUP_CARGO);
                 updateDonePanel();
             } else if (displayedOptions.size() > 1) {
                 // Dialog for choosing which object to pick up
@@ -4942,13 +4946,39 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // Verify that we have a valid option...
                 if (option != null) {
                     int index = options.indexOf(option);
-                    addStepToMovePath(MoveStepType.PICKUP, index);
+                    addStepToMovePath(MoveStepType.PICKUP_CARGO, index);
                     updateDonePanel();
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_DROP_CARGO.getCmd())) {
-        	// need to figure out a way to state which hand
-        	// to drop if necessary var options = ce().getCarriedObjects().values().
+        	var options = ce().getDistinctCarriedObjects();
+        	
+        	if (options.size() == 1) {
+        		addStepToMovePath(MoveStepType.DROP_CARGO);
+        		updateDonePanel();
+        	} else if (options.size() > 1) {
+        		// reverse lookup: location name to location ID - we're going to wind up with a name chosen
+        		// but need to send the ID in the move path.
+        		Map<String, Integer> locationMap = new HashMap<>();
+        		
+        		for (int location : ce().getCarriedObjects().keySet()) {
+        			locationMap.put(ce().getLocationName(location), location);
+        		}
+        		
+        		// Dialog for choosing which object to pick up
+                String title = "Choose Cargo to Drop";
+                String body = "Choose the cargo to drop:";
+                String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                        body, title, JOptionPane.QUESTION_MESSAGE, null,
+                        locationMap.keySet().toArray(), locationMap.keySet().toArray()[0]);
+
+                // Verify that we have a valid option...
+                if (option != null) {
+                    int location = locationMap.get(option);
+                    addStepToMovePath(MoveStepType.DROP_CARGO, location);
+                    updateDonePanel();
+                }
+        	}
         }
         if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);

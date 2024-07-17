@@ -42,8 +42,16 @@ import java.util.Vector;
  */
 public class MoveStep implements Serializable {
     private static final long serialVersionUID = -6075640793056182285L;
-    public static final int CARGO_PICKUP_INDEX = 0;
-    public static final int CARGO_PICKUP_LOCATION = 1;
+    /**
+     * When supplying additional int data, use this to key the index of the cargo being picked up
+     */
+    public static final int CARGO_PICKUP_KEY = 0;
+    
+    /**
+     * When supplying additional int data, use this to key the location of the cargo being picked up 
+     * (i.e. mech left arm/right arm, vehicle body, etc)
+     */
+    public static final int CARGO_LOCATION_KEY = 1;
     
     private MoveStepType type;
     private int targetId = Entity.NONE;
@@ -268,9 +276,20 @@ public class MoveStep implements Serializable {
             this.braceLocation = additionalIntData;
         } else if (type == MoveStepType.LAY_MINE) {
             this.mineToLay = additionalIntData;
-        } else if (type == MoveStepType.PICKUP) {
-        	this.additionalData.put(CARGO_PICKUP_INDEX, additionalIntData);
+        } else if (type == MoveStepType.PICKUP_CARGO) {
+        	this.additionalData.put(CARGO_PICKUP_KEY, additionalIntData);
+        } else if (type == MoveStepType.DROP_CARGO) {
+        	this.additionalData.put(CARGO_LOCATION_KEY, additionalIntData);
         }
+    }
+    
+    /**
+     * Creates a step with an arbitrary int-to-int mapping of additional data.
+     */
+    public MoveStep(MovePath path, MoveStepType type, Map<Integer, Integer> additionalIntData) {
+    	this(path, type);
+    	
+    	additionalData.putAll(additionalIntData);
     }
 
     /**
@@ -415,8 +434,10 @@ public class MoveStep implements Serializable {
                 return "Brace";
             case CHAFF:
                 return "Chaff";
-            case PICKUP:
-            	return "Pickup";
+            case PICKUP_CARGO:
+            	return "Pickup Cargo";
+            case DROP_CARGO:
+            	return "Drop Cargo";
             default:
                 return "???";
         }
@@ -1125,6 +1146,9 @@ public class MoveStep implements Serializable {
             case BRACE:
                 setMp(entity.getBraceMPCost());
                 break;
+            case DROP_CARGO:
+            	setMp(1);
+            	break;
             case CHAFF:
             default:
                 setMp(0);
@@ -2836,7 +2860,8 @@ public class MoveStep implements Serializable {
             }
         }
         
-        if (stepType == MoveStepType.PICKUP) {
+        if (stepType == MoveStepType.PICKUP_CARGO ||
+        		stepType == MoveStepType.DROP_CARGO) {
         	movementType = EntityMovementType.MOVE_NONE;
         }
 
@@ -3396,7 +3421,8 @@ public class MoveStep implements Serializable {
             return true;
         }
         
-        if (type == MoveStepType.PICKUP) {
+        if (type == MoveStepType.PICKUP_CARGO ||
+        		type == MoveStepType.DROP_CARGO) {
         	return !isProne();
         }
 

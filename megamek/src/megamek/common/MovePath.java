@@ -58,7 +58,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE, CHAFF, PICKUP;
+        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE, CHAFF, PICKUP_CARGO, DROP_CARGO;
 
         /**
          * Whether this move step type will result in the unit entering a new hex
@@ -206,6 +206,10 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, noCost));
     }
 
+    public MovePath addStep(final MoveStepType type, final Map<Integer, Integer> additionalIntData) {
+    	return addStep(new MoveStep(this, type, additionalIntData));
+    }
+    
     public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver, final int maneuverType) {
         return addStep(new MoveStep(this, type, noCost, isManeuver, maneuverType));
     }
@@ -543,7 +547,7 @@ public class MovePath implements Cloneable, Serializable {
         }
         
         // if we have a PICKUP, then we can't do anything else after it
-        if (contains(MoveStepType.PICKUP)) {
+        if (contains(MoveStepType.PICKUP_CARGO)) {
         	step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
     }
@@ -580,8 +584,8 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
             } else if (null != step.getMinefield()) {
                 step = new MoveStep(this, step.getType(), step.getMinefield());
-            } else if (null != step.getAdditionalData(MoveStep.CARGO_PICKUP_INDEX)) {
-            	step = new MoveStep(this, step.getType(), step.getAdditionalData(MoveStep.CARGO_PICKUP_INDEX));
+            } else if (null != step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY)) {
+            	step = new MoveStep(this, step.getType(), step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY));
             } else {
                 step = new MoveStep(this, step.getType());
             }

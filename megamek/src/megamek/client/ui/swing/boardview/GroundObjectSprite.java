@@ -18,39 +18,27 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Rectangle;
 
-import megamek.client.ui.swing.tileset.HexTileset;
-import megamek.client.ui.swing.util.FontHandler;
-import megamek.client.ui.swing.util.StringDrawer;
-import megamek.client.ui.swing.util.UIUtil;
+
+import megamek.common.Configuration;
 import megamek.common.Coords;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- *  Represents structure CF warnings for entities during deployment
- *  and movement phase that will collapse if the entity lands-on 
- *  or is deployed on that structure.
- * 
- *  From TW: If a units tonnage exceeds the CF of a building
- *  or bridge, it will collapse.  (Or the sum of tonnage of stacked
- *  units if multiple units occupy the hex)
+ *  Represents cargo that can be picked up from the ground.
  */
 public class GroundObjectSprite extends HexSprite {
+	private static final String FILENAME_CARGO_IMAGE = "cargo.png";
+    private static final Image CARGO_IMAGE;
 
-    private static final int TEXT_SIZE = HexTileset.HEX_H / 2;
-    private static final Color TEXT_COLOR = new Color(255, 255, 255, 128);
-    private static final Color OUTLINE_COLOR = new Color(40, 40, 40,200);
-
-    private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
-    private static final int HEX_CENTER_Y = HexTileset.HEX_H / 2;
-
-    // Draw a special character 'warning sign'.
-    private final StringDrawer xWriter = new StringDrawer("\uF3C1")
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(TEXT_COLOR)
-            .fontSize(TEXT_SIZE)
-            .absoluteCenter().outline(OUTLINE_COLOR, 2.5f);
+    static {
+    	CARGO_IMAGE = ImageUtil.loadImageFromFile(
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_CARGO_IMAGE).toString());
+    }
 
     /**
      * @param boardView1 - parent BoardView object this sprite will be displayed on.
@@ -58,26 +46,17 @@ public class GroundObjectSprite extends HexSprite {
      */
     public GroundObjectSprite(BoardView boardView1, Coords loc) {
         super(boardView1, loc);
+        image = CARGO_IMAGE;
+    }
+    
+    @Override
+    public Rectangle getBounds() {
+        Dimension dim = new Dimension(bv.hex_size.width, bv.hex_size.height);
+        bounds = new Rectangle(dim);
+        bounds.setLocation(bv.getHexLocation(loc));
+        return bounds;
     }
 
     @Override
-    public void prepare() {
-        Graphics2D graph = spriteSetup();
-        xWriter.draw(graph);
-        graph.dispose();
-    }
-
-    /*
-     * Standard Hex Sprite 2D Graphics setup.  Creates the context, base hex image
-     * settings, scale, and fonts.
-     */
-    private Graphics2D spriteSetup() {
-        updateBounds();
-        image = createNewHexImage();
-        Graphics2D graph = (Graphics2D) image.getGraphics();
-        UIUtil.setHighQualityRendering(graph);
-        graph.scale(bv.scale, bv.scale);
-        graph.setFont(FontHandler.symbolFont());
-        return graph;
-    }
+    public void prepare() { }
 }

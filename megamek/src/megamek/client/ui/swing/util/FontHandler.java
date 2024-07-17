@@ -22,7 +22,6 @@ import megamek.MMConstants;
 import megamek.client.ui.swing.CommonSettingsDialog;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
-import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.io.File;
@@ -37,6 +36,8 @@ import java.util.List;
  * calling {@link #getAvailableNonSymbolFonts()} and {@link #getAvailableFonts()}.
  */
 public final class FontHandler {
+
+    private static final MMLogger logger = MMLogger.create(FontHandler.class);
 
     private static final FontHandler instance = new FontHandler();
     private static final String SYMBOL_TEST_STRING = "abcdefgnzABCDEFGNZ1234567890/()[]";
@@ -101,16 +102,16 @@ public final class FontHandler {
     }
 
     private void initializeFonts() {
-        LogManager.getLogger().info("Loading fonts from " + MMConstants.FONT_DIRECTORY);
+        logger.info("Loading fonts from " + MMConstants.FONT_DIRECTORY);
         parseFontsInDirectory(MMConstants.FONT_DIRECTORY);
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
-            LogManager.getLogger().info("Loading fonts from " + userDir);
+            logger.info("Loading fonts from {}", userDir);
             parseFontsInDirectory(userDir);
         }
 
-        LogManager.getLogger().info("Loading fonts from Java's GraphicsEnvironment");
+        logger.info("Loading fonts from Java's GraphicsEnvironment");
         for (String fontName : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             allFontNames.add(fontName);
             Font font = Font.decode(fontName);
@@ -149,7 +150,7 @@ public final class FontHandler {
                 errors.add("    Failed to read font " + fontFile);
             }
         }
-        LogManager.getLogger().warn("Could not register some fonts\n" + String.join("\n", errors));
+        logger.warn("Could not register some fonts\n{}", String.join("\n", errors));
     }
 
     private static void ensureInitialization() {

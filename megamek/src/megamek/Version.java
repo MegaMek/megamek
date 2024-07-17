@@ -34,6 +34,8 @@ public final class Version implements Comparable<Version>, Serializable {
     // region Variable Declarations
     private static final long serialVersionUID = 3121116859864232639L;
 
+    private static final MMLogger logger = MMLogger.create(Version.class);
+
     private int release;
     private int major;
     private int minor;
@@ -238,7 +240,7 @@ public final class Version implements Comparable<Version>, Serializable {
             final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
             final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
                     nullOrBlank);
-            MMLogger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -247,7 +249,7 @@ public final class Version implements Comparable<Version>, Serializable {
 
         if ((snapshotSplit.length > 2) || (versionSplit.length < 3)) {
             final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
-            MMLogger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -255,7 +257,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setRelease(Integer.parseInt(versionSplit[0]));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_RELEASE, text);
-            MMLogger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -263,7 +265,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setMajor(Integer.parseInt(versionSplit[1]));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MAJOR, text);
-            MMLogger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -271,7 +273,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setMinor(Integer.parseInt(versionSplit[2]));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MINOR, text);
-            MMLogger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 

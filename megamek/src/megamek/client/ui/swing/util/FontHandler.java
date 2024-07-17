@@ -149,7 +149,7 @@ public final class FontHandler {
                 errors.add("    Failed to read font " + fontFile);
             }
         }
-        MMLogger.warn("Some fonts failed to register.\n" + String.join("\n", errors));
+        LogManager.getLogger().warn("Could not register some fonts\n" + String.join("\n", errors));
     }
 
     private static void ensureInitialization() {

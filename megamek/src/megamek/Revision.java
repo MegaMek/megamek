@@ -90,6 +90,5 @@ public final class Revision {
             return UNKNOWN;
         }
     }
-
     // endregion
 }

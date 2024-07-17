@@ -21,8 +21,11 @@ package megamek.logging;
 
 import javax.swing.JOptionPane;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.AbstractLogger;
+import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 
 import io.sentry.Sentry;
 
@@ -34,13 +37,40 @@ import io.sentry.Sentry;
  * log level before logging, additional checks are added to ensure
  * we're only ever logging data based upon the currently active log level.
  */
-public class MMLogger {
+public class MMLogger extends ExtendedLoggerWrapper {
+    private final ExtendedLoggerWrapper exLoggerWrapper;
+    private static final String FQCN = MMLogger.class.getName();
+
     /**
      * Private constructor as there should never be an instance of this
      * class.
      */
-    private MMLogger() {
-        throw new IllegalStateException("MMLogger Utility Class");
+    private MMLogger(final Logger logger) {
+        super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
+        this.exLoggerWrapper = this;
+    }
+
+    /**
+     * Returns a custom Logger with the name of the calling class.
+     *
+     * @return The custom Logger for the calling class.
+     */
+    public static MMLogger create() {
+        final Logger wrapped = LogManager.getLogger();
+        return new MMLogger(wrapped);
+    }
+
+    /**
+     * Returns a custom Logger using the fully qualified name of the Class as
+     * the Logger name.
+     *
+     * @param loggerName The Class whose name should be used as the Logger name.
+     *                   If null it will default to the calling class.
+     * @return The custom Logger.
+     */
+    public static MMLogger create(final Class<?> loggerName) {
+        final Logger wrapped = LogManager.getLogger(loggerName);
+        return new MMLogger(wrapped);
     }
 
     /**
@@ -48,12 +78,9 @@ public class MMLogger {
      *
      * @param message Message to be sent to the log file.
      */
-    public static void info(String message) {
-        Logger logger = LogManager.getLogger();
-
-        if (logger.isInfoEnabled()) {
-            logger.info(message);
-        }
+    @Override
+    public void info(String message) {
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.INFO, null, message);
     }
 
     /**
@@ -61,12 +88,9 @@ public class MMLogger {
      *
      * @param message Message to be written to the log file.
      */
-    public static void warn(String message) {
-        Logger logger = LogManager.getLogger();
-
-        if (logger.isWarnEnabled()) {
-            logger.warn(message);
-        }
+    @Override
+    public void warn(String message) {
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message);
     }
 
     /**
@@ -75,13 +99,9 @@ public class MMLogger {
      * @param exception Exception that was caught via a try/catch block.
      * @param message   Additional message to report to the log file.
      */
-    public static void error(Throwable exception, String message) {
+    public void error(Throwable exception, String message) {
         Sentry.captureException(exception);
-        Logger logger = LogManager.getLogger();
-
-        if (logger.isErrorEnabled()) {
-            logger.error(message, exception);
-        }
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
     }
 
     /**
@@ -89,12 +109,9 @@ public class MMLogger {
      *
      * @param message Message to be written to the log file.
      */
-    public static void error(String message) {
-        Logger logger = LogManager.getLogger();
-
-        if (logger.isErrorEnabled()) {
-            logger.error(message);
-        }
+    @Override
+    public void error(String message) {
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message);
     }
 
     /**
@@ -105,8 +122,8 @@ public class MMLogger {
      *                  error pane.
      * @param title     Title of the error message box.
      */
-    public static void error(Throwable exception, String message, String title) {
-        MMLogger.error(exception, message);
+    public void error(Throwable exception, String message, String title) {
+        error(exception, message);
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
@@ -117,8 +134,8 @@ public class MMLogger {
      *                error pane.
      * @param title   Title of the error message box.
      */
-    public static void error(String message, String title) {
-        MMLogger.error(message);
+    public void error(String message, String title) {
+        error(message);
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
@@ -128,13 +145,9 @@ public class MMLogger {
      * @param exception Exception that was triggered. Probably uncaught.
      * @param message   Message to report to the log file.
      */
-    public static void fatal(Throwable exception, String message) {
+    public void fatal(Throwable exception, String message) {
         Sentry.captureException(exception);
-
-        Logger logger = LogManager.getLogger();
-        if (logger.isFatalEnabled()) {
-            logger.fatal(message, exception);
-        }
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.FATAL, null, message, exception);
     }
 
     /**
@@ -145,8 +158,8 @@ public class MMLogger {
      * @param title     Title of the error message box.
      *
      */
-    public static void fatal(Throwable exception, String message, String title) {
-        MMLogger.fatal(exception, message);
+    public void fatal(Throwable exception, String message, String title) {
+        fatal(exception, message);
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
@@ -157,8 +170,8 @@ public class MMLogger {
      * @param title   Title of the error message box.
      *
      */
-    public static void fatal(String message, String title) {
+    public void fatal(String message, String title) {
+        fatal(message);
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
-
 }

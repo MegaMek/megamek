@@ -65,6 +65,8 @@ public class MegaMek {
 
     private static final NumberFormat numberFormatter = NumberFormat.getInstance();
 
+    private static final MMLogger logger = MMLogger.create(MegaMek.class);
+
     public static void main(String... args) {
         // Configure Sentry with defaults. Although the client defaults to enabled, the
         // properties file is used to disable
@@ -86,7 +88,7 @@ public class MegaMek {
             final String name = t.getClass().getName();
             final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
             final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
-            MMLogger.error(t, message, title);
+            logger.error(t, message, title);
         });
 
         // Second, let's handle logging
@@ -99,7 +101,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            MMLogger.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+            logger.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
                     parser.help()));
             System.exit(1);
         }
@@ -137,7 +139,7 @@ public class MegaMek {
     }
 
     public static void initializeLogging(final String originProject) {
-        MMLogger.info(getUnderlyingInformation(originProject));
+        logger.info(getUnderlyingInformation(originProject));
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -164,7 +166,7 @@ public class MegaMek {
         }
 
         if (!new File(filename).exists()) {
-            MMLogger.warn("MegaMek.jar not found. Returning null checksum.");
+            logger.warn("MegaMek.jar not found. Returning null checksum.");
             return null;
         }
 
@@ -172,7 +174,7 @@ public class MegaMek {
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            MMLogger.error(e, "SHA-256 Algorithm Can't be Found");
+            logger.error(e, "SHA-256 Algorithm Can't be Found");
             return null;
         }
 
@@ -186,7 +188,7 @@ public class MegaMek {
                 sb.append(String.format("%02x", d));
             }
         } catch (Exception e) {
-            MMLogger.error(e, "Error Calculating Hash");
+            logger.error(e, "Error Calculating Hash");
             return null;
         }
 
@@ -212,7 +214,7 @@ public class MegaMek {
      * @param args the arguments to the dedicated server.
      */
     private static void startDedicatedServer(String... args) {
-        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args)));
+        logger.info(String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args)));
         DedicatedServer.start(args);
     }
 
@@ -233,7 +235,7 @@ public class MegaMek {
         } catch (AbstractCommandLineParser.ParseException e) {
             final String message = String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
                     parser.help());
-            MMLogger.error(e, message);
+            logger.error(e, message);
             System.exit(1);
         }
 
@@ -243,7 +245,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
+        logger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -275,7 +277,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            MMLogger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
                     parser.help()));
             System.exit(1);
         }
@@ -286,7 +288,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
+        logger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -319,7 +321,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            MMLogger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
+            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
                     parser.help()));
             System.exit(1);
         }
@@ -328,7 +330,7 @@ public class MegaMek {
                 null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        MMLogger.info(String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args)));
+        logger.info(String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args)));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -341,7 +343,7 @@ public class MegaMek {
      * Starts MegaMek's splash GUI
      */
     private static void startGUI() {
-        MMLogger.info("Starting MegaMekGUI.");
+        logger.info("Starting MegaMekGUI.");
         SwingUtilities.invokeLater(() -> new MegaMekGUI().start(true));
     }
 

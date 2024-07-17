@@ -1417,5 +1417,16 @@ public final class UIUtil {
         return y;
     }
 
+    /**
+     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red. Includes the #.
+     * Does not include any alpha components.
+     *
+     * @param color The color to convert
+     * @return The color as a string value for use in tags or styles
+     */
+    public static String hexColor(Color color) {
+        return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
+    }
+
     private UIUtil() { }
 }

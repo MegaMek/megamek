@@ -167,10 +167,9 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
             // If there is only one non-observer player, list them as the 'team', and use the team initiative
             if (team.getNonObserverSize() == 1) {
                 final Player player = team.nonObserverPlayers().get(0);
-                SBFReportEntry r = new SBFPublicReportEntry(1015)
-                        .add(player.getColorForPlayer())
-                        .add(team.getInitiative().toString());
-                addReport(r);
+                addReport(new SBFPlayerNameReportEntry(player));
+                addReport(new SBFPublicReportEntry(1015).add(team.getInitiative().toString()));
+//                addReport(r);
             } else {
                 // Multiple players. List the team, then break it down.
                 SBFReportEntry r = new SBFPublicReportEntry(1015).add(Player.TEAM_NAMES[team.getId()]);

@@ -21,6 +21,8 @@ on:
       - "megamek/src/megamek/common/Building.java"
       - "megamek/src/megamek/common/Terrains.java"
       - "megamek/src/megamek/utilities/BoardsValidator.java"
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
 
 jobs:
   board_validator:
@@ -33,7 +35,10 @@ jobs:
         java-version: [17]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: "Check out MegaMek"
+        uses: actions/checkout@v4
+        with:
+          path: megamek
 
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
@@ -43,6 +48,10 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          build-scan-publish: false
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
 
       - name: Validate Boards
         working-directory: megamek

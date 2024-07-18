@@ -152,6 +152,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private int scrollYDifference = 0;
     // are we drag-scrolling?
     private boolean dragging = false;
+    private boolean wantsPopup = false;
+
     /** True when the right mouse button was pressed to start a drag */
     private boolean shouldScroll = false;
 
@@ -3777,7 +3779,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         if (me.isPopupTrigger() && !dragging) {
-            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx(), me.getButton());
+            wantsPopup = true;
+            // mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx(), me.getButton());
             return;
         }
 
@@ -3800,11 +3803,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     @Override
     public void mouseReleased(MouseEvent me) {
         // don't show the popup if we are drag-scrolling
-        if (me.isPopupTrigger() && !dragging) {
+        if ((me.isPopupTrigger() || wantsPopup) && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP,
                     me.getModifiersEx(), me.getButton());
             // stop scrolling
             shouldScroll = false;
+            wantsPopup = false;
             return;
         }
 

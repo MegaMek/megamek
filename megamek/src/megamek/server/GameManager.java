@@ -21251,6 +21251,39 @@ public class GameManager extends AbstractGameManager {
 
         // Allocate the damage
         while (damage > 0) {
+        	
+        	// damage some cargo if we're taking damage
+        	// maybe move past "exterior passenger" check
+        	if (!ammoExplosion) {
+        		int damageLeftToCargo = damage;
+        		
+        		for (ICarryable cargo : te.getDistinctCarriedObjects()) {
+        			double tonnage = cargo.getTonnage();
+        			cargo.damage(damageLeftToCargo);
+        			damageLeftToCargo -= Math.ceil(tonnage);
+        			
+        			// if we have destroyed the cargo, remove it, add a report
+        			// and move on to the next piece of cargo
+        			if (cargo.getTonnage() <= 0) {
+        				te.dropGroundObject(cargo);
+        				
+        				r = new Report(6721);
+        				r.subject = te_n;
+        				r.indent(2);
+        				r.add(cargo.getName());
+        				vDesc.addElement(r);
+        			// we have not destroyed the cargo means there is no damage left
+        			// report and stop destroying cargo
+        			} else {
+        				r = new Report(6720);
+        				r.subject = te_n;
+        				r.indent(2);
+        				r.add(cargo.getName());
+        				r.add(Double.toString(cargo.getTonnage()));
+        				break;
+        			}
+        		}
+        	}
 
             // first check for ammo explosions on aeros separately, because it
             // must be done before

@@ -24,5 +24,6 @@ package megamek.common;
  */
 public interface ICarryable {
 	double getTonnage();
+	void damage(double amount);
 	String getName();
 }

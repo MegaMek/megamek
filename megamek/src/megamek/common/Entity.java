@@ -2806,7 +2806,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     	pickedUpObject = true;
     }
     
-    
+    /**
+     * Remove a specific carried object - useful for when you have the object
+     * but not its location, or when an object is being carried in multiple locations.
+     */
+    public void dropGroundObject(ICarryable carryable) {
+    	// build list of locations to clear out
+    	List<Integer> locationsToClear = new ArrayList<>();
+    	
+    	for (Integer location : carriedObjects.keySet()) {
+    		if (carriedObjects.get(location).equals(carryable)) {
+    			locationsToClear.add(location);
+    		}
+    	}
+    	
+    	for (Integer location : locationsToClear) {
+    		carriedObjects.remove(location);
+    	}
+    }
     
     /** 
      * Remove a ground object (cargo) from the given location

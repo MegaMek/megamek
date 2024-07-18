@@ -1650,17 +1650,29 @@ public class Board implements Serializable {
     }
 
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
+        Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
         for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: specialHexes.entrySet()) {
             for (SpecialHexDisplay special: e.getValue()) {
                 if (special.getType() == SpecialHexDisplay.Type.ARTILLERY_MISS) {
-                    if (!shd.containsKey(e.getKey())) {
-                        shd.put(e.getKey(), new LinkedList<>());
+                    if (!temp.containsKey(e.getKey())) {
+                        temp.put(e.getKey(), new LinkedList<>());
                     }
-                    shd.get(e.getKey()).add(special);
+                    temp.get(e.getKey()).add(special);
                 }
             }
         }
+        // Swap new Hashtable in for old
         specialHexes = shd;
+
+        // Add miss instances back
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: temp.entrySet()) {
+            for(SpecialHexDisplay miss: e.getValue()) {
+                if (!specialHexes.containsKey(e.getKey())) {
+                    specialHexes.put(e.getKey(), new LinkedList<>());
+                }
+                specialHexes.get(e.getKey()).add(miss);
+            }
+        }
     }
 
     public void setType(int t) {

@@ -485,6 +485,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     disp.isMouseOver(point, drawDimension);
                 }
 
+                // Reset popup flag if the user moves their mouse away
+                wantsPopup = false;
+
                 final Coords mcoords = getCoordsAt(point);
                 if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
                     lastCoords = mcoords;
@@ -3819,6 +3822,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             scrollYDifference = 0;
             dragging = false;
             shouldScroll = false;
+            wantsPopup = false;
             boardPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
 

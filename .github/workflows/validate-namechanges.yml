@@ -1,6 +1,5 @@
 name: Validate Name Changes List
 
-# This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
 on:
   push:
     branches: [master]
@@ -22,16 +21,12 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest] # For CI/CD running on *nix is sufficient
+        os: [ubuntu-latest]
         java-distribution: [temurin]
         java-version: [17]
-      fail-fast: false
 
     steps:
-      - name: "Checkout MegaMek"
-        uses: actions/checkout@v4
-        with:
-          path: megamek
+      - uses: actions/checkout@v4
 
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
@@ -42,10 +37,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build with Gradle
+      - name: Validate Boards
         working-directory: megamek
-        run: ./gradlew build
-
-      - name: Validate Name Changes
-        working-directory: megamek
-        run: java -cp build/libs/MegaMek.jar megamek.utilities.NameChangesValidator
+        run: ./gradlew nameChangesValidator

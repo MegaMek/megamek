@@ -86,13 +86,6 @@ ext {
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
-
-    mmGitRoot = 'https://github.com/MegaMek/megamek.git'
-    // Work on MML or MHQ sometimes requires changes in MM as well. The maven publishing tasks use
-    // these properties to append the branch name to the artifact id if the repo is not in the master
-    // branch, making it available separately to the child project.
-    mmBranch = versionDetails().branchName
-    mmBranchTag = mmBranch.equals('master') ? '' : '-' + mmBranch
 }
 
 run {
@@ -111,7 +104,7 @@ jar {
     }
 }
 
-task generatedGitFiles() {
+task generateDynamicFiles() {
     doLast {
         new File("${projectDir}/docs/mm-revision.txt").text = versionDetails().gitHashFull
         new File("${projectDir}/MegaMek.l4j.ini").text = """# Launch4j runtime config
@@ -142,7 +135,7 @@ task copyFiles(type: Copy) {
 
     dependsOn officialUnitList
     dependsOn equipmentList
-    dependsOn generatedGitFiles
+    dependsOn generateDynamicFiles
 
     from projectDir
     include "${data}/**"
@@ -341,4 +334,27 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+}
+
+// These are utility classes for all of the classes with the src/utilities folder.
+
+task alphaStrikeMassConvert(type: JavaExec, dependsOn: jar) {
+    description = 'Outputs the Alpha Strike conversion of all units'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.AlphaStrikeMassConvert'
+}
+
+task boardsValidator(type: JavaExec, dependsOn: jar) {
+    description = 'Validates all boards'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.BoardsValidator'
+}
+
+task nameChangesValidator(type: JavaExec, dependsOn: jar) {
+    description = 'Checks for issues related to name changes.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.NameChangesValidator'
 }

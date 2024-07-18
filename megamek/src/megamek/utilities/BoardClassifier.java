@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The Megamek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The Megamek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,6 +20,7 @@ package megamek.utilities;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,23 +33,24 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardsTagger.Tags;
 
 /**
- * This class scans the boards directory and allows the selection of a random 
+ * This class scans the boards directory and allows the selection of a random
  * board based on given size criteria.
+ *
  * @author NickAragua
  */
 public class BoardClassifier {
-    private static BoardClassifier instance;    
-    
+    private static BoardClassifier instance;
+
     // boards, grouped by tag
-    private Map<Tags, List<String>> boardsByTag = new HashMap<>();
+    private Map<Tags, List<String>> boardsByTag = new EnumMap<>(Tags.class);
     // boards, grouped by height
     private Map<Integer, List<String>> boardsByHeight = new HashMap<>();
     // boards, grouped by width
     private Map<Integer, List<String>> boardsByWidth = new HashMap<>();
-    
+
     // function that maps full board paths to partial board paths
     private Map<String, String> boardPaths = new HashMap<>();
-    
+
     public Map<Tags, List<String>> getBoardsByTag() {
         return boardsByTag;
     }
@@ -89,88 +91,89 @@ public class BoardClassifier {
             instance = new BoardClassifier();
             instance.scanForBoards();
         }
-        
+
         return instance;
     }
-    
+
     /**
-     * Scans through the boards in the default and user-data directories, 
-     * and populates the "boardsBy[x]" indices. WARNING: This is a very time-consuming 
-     * operation, so use very sparingly.
+     * Scans through the boards in the default and user-data directories,
+     * and populates the "boardsBy[x]" indices. WARNING: This is a very
+     * time-consuming operation, so use very sparingly.
      */
     private void scanForBoards() {
         // Scan the MegaMek boards directory
         File boardDir = Configuration.boardsDir();
         scanForBoardsInDir(boardDir, "");
-        
+
         // Scan the userData directory
         boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
         if (boardDir.isDirectory()) {
             scanForBoardsInDir(boardDir, "");
         }
     }
-    
+
     /**
-     * Scans the given boardDir directory for map boards and populates the "boardsBy[x]" indices.
-     * Potentially a very time-consuming operation.
+     * Scans the given boardDir directory for map boards and populates the
+     * "boardsBy[x]" indices. Potentially a very time-consuming operation.
      */
     private void scanForBoardsInDir(final File boardDir, final String basePath) {
         String[] fileList = boardDir.list();
         if (fileList != null) {
             for (String filename : fileList) {
                 File filePath = new MegaMekFile(boardDir, filename).getFile();
-                
+
                 // this is a "partial" board path that omits the "data/boards" part of the path
-                // and is usable 
+                // and is usable
                 String partialBoardPath = basePath + File.separator + filename;
                 if (filePath.isDirectory()) {
                     scanForBoardsInDir(filePath, partialBoardPath);
                 } else {
                     if (filename.endsWith(".board")) {
                         BoardDimensions dimension = Board.getSize(filePath);
-                        
+
                         if (dimension != null) {
                             getBoardsByHeight().putIfAbsent(dimension.height(), new ArrayList<>());
                             getBoardsByWidth().putIfAbsent(dimension.width(), new ArrayList<>());
-                            
+
                             getBoardsByHeight().get(dimension.height()).add(filePath.getPath());
                             getBoardsByWidth().get(dimension.width()).add(filePath.getPath());
                         }
-                        
+
                         for (String tagString : Board.getTags(filePath)) {
                             Tags tag = Tags.parse(tagString);
                             getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
                             getBoardsByTag().get(tag).add(filePath.getPath());
                         }
-                        
+
                         getBoardPaths().put(filePath.getPath(), partialBoardPath);
                     }
                 }
             }
         }
     }
-    
+
     /**
-     * Gets a list of all the boards that are within xVariance of width and yVariance of height
+     * Gets a list of all the boards that are within xVariance of width and
+     * yVariance of height
      */
     public List<String> getMatchingBoards(int width, int height, int xVariance, int yVariance,
             List<Tags> tags) {
         List<String> xBoards = new ArrayList<>();
         List<String> yBoards = new ArrayList<>();
         List<String> tagBoards = new ArrayList<>();
-        
+
         for (int widthIndex = width - xVariance; widthIndex <= width + xVariance; widthIndex++) {
             if (getBoardsByWidth().containsKey(widthIndex)) {
                 xBoards.addAll(getBoardsByWidth().get(widthIndex));
             }
         }
-        
+
         for (int heightIndex = height - yVariance; heightIndex <= height + yVariance; heightIndex++) {
             if (getBoardsByWidth().containsKey(heightIndex)) {
                 yBoards.addAll(getBoardsByWidth().get(heightIndex));
             }
         }
-        
+
         if (!boardsByTag.isEmpty()) {
             for (Tags tag : tags) {
                 if (getBoardsByTag().containsKey(tag)) {
@@ -178,7 +181,7 @@ public class BoardClassifier {
                 }
             }
         }
-        
+
         if (tagBoards.isEmpty()) {
             return xBoards.stream().distinct().filter(yBoards::contains).collect(Collectors.toList());
         } else {

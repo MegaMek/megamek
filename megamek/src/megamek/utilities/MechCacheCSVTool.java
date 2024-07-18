@@ -2,7 +2,7 @@
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,17 +18,21 @@
  */
 package megamek.utilities;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.stream.Stream;
+
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.templates.TROView;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.util.stream.Stream;
 
 /**
  * This class provides a utility to read in all the /data/mechfiles and print
@@ -44,7 +48,6 @@ public final class MechCacheCSVTool {
     private static final String DELIM = "|";
     private static boolean includeGunEmplacement = false; // Variable to control inclusion of Gun Emplacement units
 
-
     private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Clan",
             "Source", "File Location", "Weight", "Intro Date", "Experimental year", "Advanced year",
             "Standard year", "Extinct Year", "Unit Type", "Role", "BV", "Cost", "Rules", "Engine Name",
@@ -56,9 +59,9 @@ public final class MechCacheCSVTool {
         if (args.length > 0) {
             includeGunEmplacement = Boolean.parseBoolean(args[0]);
         }
-        
+
         try (PrintWriter pw = new PrintWriter(FILE_NAME);
-             BufferedWriter bw = new BufferedWriter(pw)) {
+                BufferedWriter bw = new BufferedWriter(pw)) {
             MechSummaryCache cache = MechSummaryCache.getInstance(true);
             MechSummary[] units = cache.getAllMechs();
 
@@ -112,7 +115,7 @@ public final class MechCacheCSVTool {
                 csvLine.append(unit.getDryCost()).append(DELIM);
                 // Unit Tech Level
                 csvLine.append(unit.getLevel()).append(DELIM);
-                //Engine Type
+                // Engine Type
                 csvLine.append(unit.getEngineName()).append(DELIM);
 
                 // Internals Type
@@ -185,7 +188,7 @@ public final class MechCacheCSVTool {
                     }
 
                     if (Stream.of("Bay", "Ammo", "Infantry Auto Rifle", Infantry.LEG_ATTACK,
-                                    Infantry.SWARM_MEK, Infantry.SWARM_WEAPON_MEK, Infantry.STOP_SWARM)
+                            Infantry.SWARM_MEK, Infantry.SWARM_WEAPON_MEK, Infantry.STOP_SWARM)
                             .anyMatch(name::contains)) {
                         continue;
                     }

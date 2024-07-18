@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,19 +18,20 @@
  */
 package megamek.utilities;
 
-import megamek.common.*;
-import megamek.common.loaders.MtfFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.loaders.MtfFile;
+
 /**
- * This is not a functional tool, just some template code to use when changing unit files programmatically.
- * Last used to move the unit roles into the unit files.
- * I leave this in so I don't have to reinvent the wheel.
+ * This is not a functional tool, just some template code to use when changing
+ * unit files programmatically. Last used to move the unit roles into the unit
+ * files. I leave this in so I don't have to reinvent the wheel.
  */
 public class UnitFileMigrationTool {
 
@@ -44,25 +45,24 @@ public class UnitFileMigrationTool {
                 if (lines.get(0).startsWith("Version:")) {
                     lines.remove(0);
                 } else {
-                    System.out.println(unit + " doesnt have Version");
+                    System.out.println(unit + " doesn't have Version");
                     continue;
                 }
                 if (!lines.get(0).contains(":")) {
                     String chassis = lines.remove(0);
                     lines.add(0, MtfFile.CHASSIS + chassis);
                 } else {
-                    System.out.println(unit + " doesnt have chassis without :");
+                    System.out.println(unit + " doesn't have chassis without :");
                     continue;
                 }
                 if (!lines.get(1).contains(":")) {
                     String model = lines.remove(1);
                     lines.add(1, MtfFile.MODEL + model);
                 } else {
-                    System.out.println(unit + " doesnt have model without :");
+                    System.out.println(unit + " doesn't have model without :");
                     continue;
                 }
                 Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
-//                System.out.println(lines);
             }
         }
     }

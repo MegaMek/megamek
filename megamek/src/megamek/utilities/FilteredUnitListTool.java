@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,42 +18,56 @@
  */
 package megamek.utilities;
 
-import megamek.common.*;
+import java.io.File;
+
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
 import megamek.common.annotations.Nullable;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestEntity;
-
-import java.io.File;
 
 /**
- * This util will go through all available units and filter them according to the filter() method and
- * print out any units that match the filter. Edit {@link #filter(Entity, MechSummary)} to apply the
- * desired filter.
+ * This util will go through all available units and filter them according to
+ * the filter() method and print out any units that match the filter. Edit
+ * {@link #filter(Entity, MechSummary)} to apply the desired filter.
  */
 public final class FilteredUnitListTool {
 
     /**
-     * Edit the return value filter to any sort of check on entity or summary that, when true,
-     * should make the unit be listed.
-     * E.g. when looking for all SV with a fusion engine, use:
-     * passesFilter = entity.isSupportVehicle() && entity.getEngine().isFusion();
-     * All Primitive Meks with a standard gyro:
-     * passesFilter = entity instanceof Mech && entity.isPrimitive() && entity.getGyroType() == Mech.GYRO_STANDARD;
-     * SV with amphibious chassis:
-     * passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
-     * Note that the MechSummary contains Alpha Strike values and can be filtered using those.
+     * Edit the return value filter to any sort of check on entity or summary that,
+     * when true, should make the unit be listed. E.g. when looking for all SV with
+     * a fusion engine, use:
      *
-     * @param entity The full Entity of the current unit to be tested
+     * passesFilter = entity.isSupportVehicle() && entity.getEngine().isFusion();
+     *
+     * All Primitive Meks with a standard gyro:
+     *
+     * passesFilter = entity instanceof Mech && entity.isPrimitive() &&
+     * entity.getGyroType() == Mech.GYRO_STANDARD;
+     *
+     * SV with amphibious chassis:
+     *
+     * passesFilter = entity.isSupportVehicle() &&
+     * entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
+     *
+     * Note that the MechSummary contains Alpha Strike values and can be filtered
+     * using those.
+     *
+     * @param entity  The full Entity of the current unit to be tested
      * @param summary The MechSummary of the current unit to be tested
      * @return True if this unit is to be listed
      */
     private static boolean filter(final Entity entity, final MechSummary summary) {
-//        return summary.getASUnitType().isBattleArmor() && entity.getMovementMode().isJumpInfantry()
-//                && entity.getJumpMP() == 0;
+        // return summary.getASUnitType().isBattleArmor() &&
+        // entity.getMovementMode().isJumpInfantry()
+        // && entity.getJumpMP() == 0;
         if (!entity.isBattleArmor()) {
             return false;
         }
+
         EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
                 "data/mechfiles/UnitVerifierOptions.xml"));
         TestBattleArmor testBattleArmor = new TestBattleArmor((BattleArmor) entity, entityVerifier.baOption, null);
@@ -84,5 +98,6 @@ public final class FilteredUnitListTool {
         }
     }
 
-    private FilteredUnitListTool() { }
+    private FilteredUnitListTool() {
+    }
 }

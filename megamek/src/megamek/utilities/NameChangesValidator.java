@@ -18,33 +18,37 @@
  */
 package megamek.utilities;
 
-import megamek.common.Configuration;
-import megamek.common.MechSummaryCache;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import megamek.common.Configuration;
+import megamek.common.MechSummaryCache;
+
 /**
  * This tool goes through the name_changes.txt file and performs various tests:
- * - it finds all lines where the left and right side are equal (i.e. are useless and should be deleted)
- * - it finds all lines where the left side (the out-of-date unit name that is no longer an active cache entry)
- * is, in fact, an existing cache unit name and the line is unnecessary (it should be turned around or deleted)
- * - it finds all lines where the right-side entry (the real and existing unit name) does not actually exist
- * in the cache (those lines should probably be kept and the right side entry corrected)
+ * - it finds all lines where the left and right side are equal (i.e. are
+ * useless and should be deleted)
+ * - it finds all lines where the left side (the out-of-date unit name that is
+ * no longer an active cache entry) is, in fact, an existing cache unit name and
+ * the line is unnecessary (it should be turned around or deleted)
+ * - it finds all lines where the right-side entry (the real and existing unit
+ * name) does not actually exist in the cache (those lines should probably be
+ * kept and the right side entry corrected)
  *
- * To perform the second test, the name-changes.txt file is renamed (to deactivate it - otherwise the
- * left sides would always be found because of the name-changes function itself). After the test, the rename
- * is reversed.
+ * To perform the second test, the name-changes.txt file is renamed (to
+ * deactivate it - otherwise the left sides would always be found because of the
+ * name-changes function itself). After the test, the rename is reversed.
  */
 public class NameChangesValidator {
 
     private static MechSummaryCache mechSummaryCache = null;
     private int errors;
     private final File lookupNames = new File(Configuration.unitsDir(), MechSummaryCache.FILENAME_LOOKUP);
-    private final File lookupNamesHidden = new File(Configuration.unitsDir(), MechSummaryCache.FILENAME_LOOKUP + ".xxx");
+    private final File lookupNamesHidden = new File(Configuration.unitsDir(),
+            MechSummaryCache.FILENAME_LOOKUP + ".xxx");
 
     public static void main(String... args) {
         NameChangesValidator validator = new NameChangesValidator();
@@ -57,8 +61,8 @@ public class NameChangesValidator {
         // Find equal left and right sides
         System.out.println("Looking for equal left and right sides...");
         try (FileInputStream fis = new FileInputStream(lookupNames);
-             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(isr)) {
+                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(isr)) {
             String line;
             while (null != (line = br.readLine())) {
                 if (line.startsWith("#")) {
@@ -90,8 +94,8 @@ public class NameChangesValidator {
             mechSummaryCache.getAllMechs();
             System.out.println("Rename successful. Testing lookup names...");
             try (FileInputStream fis = new FileInputStream(lookupNamesHidden);
-                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                 BufferedReader br = new BufferedReader(isr)) {
+                    InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 while (null != (line = br.readLine())) {
                     if (line.startsWith("#")) {
@@ -128,8 +132,8 @@ public class NameChangesValidator {
             mechSummaryCache.loadMechData(true);
             mechSummaryCache.getAllMechs();
             try (FileInputStream fis = new FileInputStream(lookupNames);
-                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                 BufferedReader br = new BufferedReader(isr)) {
+                    InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 while (null != (line = br.readLine())) {
                     if (line.startsWith("#")) {

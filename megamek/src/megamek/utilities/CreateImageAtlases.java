@@ -1,25 +1,25 @@
 /*
  * Copyright (c) 2000-2016 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.utilities;
 
-import megamek.client.ui.swing.tileset.HexTileset;
-import megamek.client.ui.swing.util.ImageAtlasMap;
-import megamek.common.Configuration;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,6 +27,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+import megamek.client.ui.swing.tileset.HexTileset;
+import megamek.client.ui.swing.util.ImageAtlasMap;
+import megamek.common.Configuration;
 
 /**
  * Program that will scan the data/images directory for images and take all of
@@ -181,10 +187,6 @@ public class CreateImageAtlases {
         imgFileToAtlasMap.writeToFile();
     }
 
-    public static void printUsage() {
-
-    }
-
     public static void main(String[] args) {
         CreateImageAtlases atlasCreator = new CreateImageAtlases();
 
@@ -197,7 +199,7 @@ public class CreateImageAtlases {
         atlasCreator.writeImgFileToAtlasMap();
 
         try (FileWriter fw = new FileWriter("atlasedImages.txt"); // TODO : Remove inline file path
-             BufferedWriter bw = new BufferedWriter(fw)) {
+                BufferedWriter bw = new BufferedWriter(fw)) {
             for (String imgFile : atlasCreator.imagesStored) {
                 bw.write(imgFile);
                 bw.write("\n");

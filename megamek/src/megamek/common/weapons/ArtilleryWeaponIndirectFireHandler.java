@@ -481,7 +481,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                     SpecialHexDisplay.SHD_OBSCURED_ALL
                             )
                     );
-                    //
+                    // Only visible to teammates.
                     String artyMsg = "Artillery missed here on round "
                             + game.getRoundCount() + ", fired by "
                             + game.getPlayer(aaa.getPlayerId()).getName();

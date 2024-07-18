@@ -593,6 +593,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
 
+        SpecialHexDisplay.Type.ARTILLERY_MISS.init();
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init();

@@ -37,10 +37,6 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
 
-      - name: Add MMRevision file
-        run: |
-          echo ${{ github.sha }} >> megamek/megamek/mm-revision.txt
-
       - name: Build with Gradle
         working-directory: megamek
         run: ./gradlew build  --stacktrace --scan

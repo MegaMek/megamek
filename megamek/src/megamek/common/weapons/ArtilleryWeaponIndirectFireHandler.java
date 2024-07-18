@@ -470,16 +470,29 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
+                    // Everyone should see the drifted hit
+                    game.getBoard().addSpecialHexDisplay(
+                            targetPos,
+                            new SpecialHexDisplay(
+                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                                    .getRoundCount(), game
+                                    .getPlayer(aaa.getPlayerId()),
+                                    "Artillery drifted here",
+                                    SpecialHexDisplay.SHD_OBSCURED_ALL
+                            )
+                    );
+                    //
                     String artyMsg = "Artillery missed here on round "
                             + game.getRoundCount() + ", fired by "
                             + game.getPlayer(aaa.getPlayerId()).getName();
                     game.getBoard().addSpecialHexDisplay(
                             origPos,
                             new SpecialHexDisplay(
-                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                                    SpecialHexDisplay.Type.ARTILLERY_MISS, game
                                             .getRoundCount(), game
                                             .getPlayer(aaa.getPlayerId()),
-                                    artyMsg));
+                                    artyMsg,
+                                    SpecialHexDisplay.SHD_OBSCURED_TEAM));
                 } else {
                     r = new Report(3192);
                 }

@@ -337,7 +337,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     + game.getRoundCount() + ", fired by "
                     + game.getPlayer(aaa.getPlayerId()).getName();
             game.getBoard().addSpecialHexDisplay(origPos,
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(),
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
                             game.getPlayer(aaa.getPlayerId()), artyMsg));
             while (nweaponsHit > 0) {
                 //We'll generate a new report and scatter for each weapon fired
@@ -352,6 +352,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         r.add(atype.getShortName());
                         r.add(targetPos.getBoardNum());
                         vPhaseReport.addElement(r);
+                        // Show scatter
+                        game.getBoard().addSpecialHexDisplay(targetPos,
+                                new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(),
+                                        game.getPlayer(aaa.getPlayerId()),"Artillery drifted here",
+                                        SpecialHexDisplay.SHD_OBSCURED_ALL));
                     } else {
                         r = new Report(3192);
                         r.subject = subjectId;

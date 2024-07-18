@@ -18,6 +18,7 @@ import java.awt.Image;
 import java.io.Serializable;
 import java.util.Objects;
 
+import megamek.MegaMek;
 import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -59,6 +60,12 @@ public class SpecialHexDisplay implements Serializable {
             }
         },
         ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(), "artyhit.gif").toString()) {
+            @Override
+            public boolean drawBefore() {
+                return false;
+            }
+        },
+        ARTILLERY_MISS(new MegaMekFile(Configuration.hexesDir(), "artymiss.gif").toString()) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -206,14 +213,14 @@ public class SpecialHexDisplay implements Serializable {
             obscured = o;
         }
     }
-    
+
     public int getObscuredLevel() {
         return obscured;
     }
-    
+
     /**
      * Determines whether this special hex should be obscured from the given <code>Player</code>.
-     * 
+     *
      * @param other
      * @return
      */
@@ -245,17 +252,18 @@ public class SpecialHexDisplay implements Serializable {
                 || (futureRound(curRound) && type.drawAfter());
 
         if (phase.isBefore(GamePhase.OFFBOARD)
-                && ((type == Type.ARTILLERY_TARGET) 
+                && ((type == Type.ARTILLERY_TARGET)
+                        || type == Type.ARTILLERY_MISS
                         || (type == Type.ARTILLERY_HIT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
-        
+
         // Arty icons for the owner are drawn in BoardView1.drawArtillery
         //  and shouldn't be drawn twice
         if (isOwner(playerChecking)
                 && (type == Type.ARTILLERY_AUTOHIT
                         || type == Type.ARTILLERY_ADJUSTED
-                        || type == Type.ARTILLERY_INCOMING 
+                        || type == Type.ARTILLERY_INCOMING
                         || type == Type.ARTILLERY_TARGET)) {
             return false;
         }
@@ -275,7 +283,7 @@ public class SpecialHexDisplay implements Serializable {
     public boolean isOwner(Player toPlayer) {
         return (owner == null) || owner.equals(toPlayer);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -287,12 +295,12 @@ public class SpecialHexDisplay implements Serializable {
         final SpecialHexDisplay other = (SpecialHexDisplay) obj;
         return (type == other.type) && Objects.equals(owner, other.owner) && (round == other.round);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(type, owner, round);
     }
-    
+
     @Override
     public String toString() {
         return "SHD: " + type.name() + ", " + "round " + round + ", by "

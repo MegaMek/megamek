@@ -1650,6 +1650,16 @@ public class Board implements Serializable {
     }
 
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: specialHexes.entrySet()) {
+            for (SpecialHexDisplay special: e.getValue()) {
+                if (special.getType() == SpecialHexDisplay.Type.ARTILLERY_MISS) {
+                    if (!shd.containsKey(e.getKey())) {
+                        shd.put(e.getKey(), new LinkedList<>());
+                    }
+                    shd.get(e.getKey()).add(special);
+                }
+            }
+        }
         specialHexes = shd;
     }
 

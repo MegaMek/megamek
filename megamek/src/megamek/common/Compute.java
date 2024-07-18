@@ -2835,10 +2835,10 @@ public class Compute {
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
                                && (entityTarget.getElevation() < hex.getLevel());
-        boolean isAboveStructures = (entityTarget != null) && 
-                ((entityTarget.relHeight() > hex.ceiling()) || 
+        boolean isAboveStructures = (entityTarget != null) &&
+                ((entityTarget.relHeight() > hex.ceiling()) ||
                         entityTarget.isAirborne());
-                
+
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -7538,9 +7538,9 @@ public class Compute {
 
             // Try to keep the current position within the homing radius, unless they're real fast...
             if (homing) {
-                leadAmount = (mp * (turnsTilHit)) + HOMING_RADIUS;
+                leadAmount = (mp * (turnsTilHit + 1)) + HOMING_RADIUS;
             } else {
-                leadAmount = mp * (turnsTilHit + 1);
+                leadAmount = mp * (turnsTilHit + 2);
             }
 
             // Guess at the target's movement direction

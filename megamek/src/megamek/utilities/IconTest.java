@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.tileset;
+package megamek.utilities;
+
+import megamek.client.ui.swing.tileset.GenerateGenericIconList;
+import megamek.client.ui.swing.tileset.MechSetTest;
 
 import java.io.IOException;
 

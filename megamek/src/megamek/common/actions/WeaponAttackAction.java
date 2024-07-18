@@ -1079,6 +1079,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
+        // can't fire weapons if loading/unloading cargo
+        if (ae.endOfTurnCargoInteraction()) {
+        	return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
+        }
+        
         // can't fire arm/forward facing torso weapons if carrying cargo in hands
         if ((weapon != null)) {
         	int loc = weapon.getLocation();

@@ -7307,23 +7307,51 @@ public class GameManager extends AbstractGameManager {
             	// piece of cargo and we're going to just drop that one
             	if (cargoLocation == null) {
             		cargo = entity.getDistinctCarriedObjects().get(0);
-            		entity.dropGroundObjects();
             	} else {
             		cargo = entity.getCarriedObject(cargoLocation);
-            		entity.dropGroundObject(cargoLocation);
             	}
             	
-            	game.placeGroundObject(step.getPosition(), cargo);
+            	entity.dropGroundObject(cargo, isLastStep);
+            	boolean cargoDestroyed = false;
             	
-            	r = new Report(2514);
-            	r.subject = entity.getId();
-            	r.add(entity.getDisplayName());
-            	r.add(cargo.getName());
-            	r.add(step.getPosition().toFriendlyString());
-            	addReport(r);
-            	
-            	// a drop changes board state. Send an update for the overall ground object list.
-                send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+            	if (!isLastStep) {
+            		// cargo may be destroyed if we're not carefully unloading it
+            		// very likely to be destroyed if we're airborne for some reason
+            		int destructionThreshold = (step.isFlying() || step.isJumping()) ? 6 : 4;
+            		int destructionRoll = Compute.d6();
+            		
+            		r = new Report(2515);
+        			r.subject = entity.getId();
+        			r.add(entity.getDisplayName());
+        			r.add(cargo.getName());
+        			r.add(destructionThreshold);
+        			r.add(destructionRoll);            		
+            		
+            		if (destructionRoll < destructionThreshold) {
+            			cargoDestroyed = true;
+            			r.choose(false);
+            		} else {
+            			r.choose(true);
+            		}
+            		
+            		addReport(r);
+            	}
+
+            	// note that this should not be moved into the "!isLastStep" block above
+            	// as cargo may be either unloaded peacefully or dumped on the move
+            	if (!cargoDestroyed) {
+	            	game.placeGroundObject(step.getPosition(), cargo);
+
+	            	r = new Report(2514);
+	            	r.subject = entity.getId();
+	            	r.add(entity.getDisplayName());
+	            	r.add(cargo.getName());
+	            	r.add(step.getPosition().toFriendlyString());
+	            	addReport(r);
+	            	
+	            	// a drop changes board state. Send an update for the overall ground object list.
+	                send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+            	}
             }
             
             // handle fighter recovery, and also DropShip docking with another large craft
@@ -21265,7 +21293,7 @@ public class GameManager extends AbstractGameManager {
         			// if we have destroyed the cargo, remove it, add a report
         			// and move on to the next piece of cargo
         			if (cargo.getTonnage() <= 0) {
-        				te.dropGroundObject(cargo);
+        				te.dropGroundObject(cargo, false);
         				
         				r = new Report(6721);
         				r.subject = te_n;

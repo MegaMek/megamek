@@ -844,7 +844,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Round-long flag indicating that this entity has picked up an object this round.
      */
-    private boolean pickedUpObject;
+    private boolean endOfTurnCargoInteraction;
     
     /** The icon for this unit; This is empty unless the unit file has an embedded icon. */
     protected Base64Image icon = new Base64Image();
@@ -2803,14 +2803,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     	} else {
     		carriedObjects.put(location, carryable);
     	}
-    	pickedUpObject = true;
+    	endOfTurnCargoInteraction = true;
     }
     
     /**
      * Remove a specific carried object - useful for when you have the object
      * but not its location, or when an object is being carried in multiple locations.
      */
-    public void dropGroundObject(ICarryable carryable) {
+    public void dropGroundObject(ICarryable carryable, boolean isUnload) {
     	// build list of locations to clear out
     	List<Integer> locationsToClear = new ArrayList<>();
     	
@@ -2823,6 +2823,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     	for (Integer location : locationsToClear) {
     		carriedObjects.remove(location);
     	}
+    	
+    	endOfTurnCargoInteraction = isUnload;
     }
     
     /** 
@@ -6668,7 +6670,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         setClimbMode(GUIP.getMoveDefaultClimbMode());
 
-        pickedUpObject = false;
+        endOfTurnCargoInteraction = false;
         
         setTurnInterrupted(false);
     }
@@ -12337,8 +12339,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return turnWasInterrupted;
     }
     
-    public boolean pickedUpObjectThisTurn() {
-    	return pickedUpObject;
+    public boolean endOfTurnCargoInteraction() {
+    	return endOfTurnCargoInteraction;
     }
 
     public Vector<Sensor> getSensors() {

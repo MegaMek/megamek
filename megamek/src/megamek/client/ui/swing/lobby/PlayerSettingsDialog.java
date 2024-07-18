@@ -345,7 +345,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
     
     private JPanel groundObjectConfigSection() {
-    	JPanel result = new OptionPanel("Carryable Ground Objects");
+    	JPanel result = new OptionPanel("PlayerSettingsDialog.header.GroundObjects");
     	result.setToolTipText("Define carryable objects that can be placed prior to unit deployment");
     	groundSectionContent = new Content(new GridBagLayout());
     	GridBagConstraints gbc = new GridBagConstraints();

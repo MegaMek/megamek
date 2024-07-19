@@ -323,7 +323,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Buffel Engineering Support Vehicle VII' unitType='Tank'>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 		<availability>LA:4</availability>
 		<model name=''>
 			<roles>support,engineer</roles>

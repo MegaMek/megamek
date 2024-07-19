@@ -2426,7 +2426,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Buffel Engineering Support Vehicle VII' unitType='Tank'>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
 		<model name=''>
 			<roles>support,engineer</roles>
@@ -9328,7 +9328,7 @@
 			<availability>CS:8,WOB:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Pion-Laurier Cascatelle' unitType='VTOL'>
+	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
 		<availability>IS:3</availability>
 		<model name=''>
 			<roles>support</roles>

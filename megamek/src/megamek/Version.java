@@ -21,13 +21,9 @@ package megamek;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
-import javax.swing.JOptionPane;
-
-import org.apache.logging.log4j.LogManager;
-
-import io.sentry.Sentry;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
@@ -37,6 +33,8 @@ import megamek.utilities.xml.MMXMLUtility;
 public final class Version implements Comparable<Version>, Serializable {
     // region Variable Declarations
     private static final long serialVersionUID = 3121116859864232639L;
+
+    private static final MMLogger logger = MMLogger.create(Version.class);
 
     private int release;
     private int major;
@@ -239,15 +237,10 @@ public final class Version implements Comparable<Version>, Serializable {
 
     public void fillFromText(final @Nullable String text) {
         if (StringUtility.isNullOrBlank(text)) {
-            final String message = String.format(
-                    "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
-                    ((text == null) ? "a null string" : "a blank string"));
-            LogManager.getLogger().fatal(message);
-            JOptionPane.showMessageDialog(
-                    null,
-                    message,
-                    MMLoggingConstants.VERSION_PARSE_FAILURE,
-                    JOptionPane.ERROR_MESSAGE);
+            final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
+            final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
+                    nullOrBlank);
+            logger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -255,60 +248,32 @@ public final class Version implements Comparable<Version>, Serializable {
         final String[] versionSplit = snapshotSplit[0].split("\\.");
 
         if ((snapshotSplit.length > 2) || (versionSplit.length < 3)) {
-            final String message = String.format(
-                    "Version text %s is in an illegal version format. Versions should be in the format 'release.major.minor-SNAPSHOT', with the snapshot being an optional inclusion. This may lead to severe issues that cannot be otherwise explained.",
-                    text);
-            LogManager.getLogger().fatal(message);
-            JOptionPane.showMessageDialog(
-                    null,
-                    message,
-                    MMLoggingConstants.VERSION_PARSE_FAILURE,
-                    JOptionPane.ERROR_MESSAGE);
-
+            final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
+            logger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
         try {
             setRelease(Integer.parseInt(versionSplit[0]));
         } catch (Exception e) {
-            Sentry.captureException(e);
-            final String message = String.format(
-                    "Failed to parse the release value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
-                    text);
-            LogManager.getLogger().fatal(message, e);
-            JOptionPane.showMessageDialog(
-                    null,
-                    message,
-                    MMLoggingConstants.VERSION_PARSE_FAILURE,
-                    JOptionPane.ERROR_MESSAGE);
+            final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_RELEASE, text);
+            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
         try {
             setMajor(Integer.parseInt(versionSplit[1]));
         } catch (Exception e) {
-            Sentry.captureException(e);
-            final String message = String.format(
-                    "Failed to parse the major value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
-                    text);
-            LogManager.getLogger().fatal(message, e);
-            JOptionPane.showMessageDialog(null, message,
-                    MMLoggingConstants.VERSION_PARSE_FAILURE,
-                    JOptionPane.ERROR_MESSAGE);
+            final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MAJOR, text);
+            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
         try {
             setMinor(Integer.parseInt(versionSplit[2]));
         } catch (Exception e) {
-            Sentry.captureException(e);
-            final String message = String.format(
-                    "Failed to parse the minor value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
-                    text);
-            LogManager.getLogger().fatal(message, e);
-            JOptionPane.showMessageDialog(null, message,
-                    MMLoggingConstants.VERSION_PARSE_FAILURE,
-                    JOptionPane.ERROR_MESSAGE);
+            final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MINOR, text);
+            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 

@@ -3448,14 +3448,14 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Buffel Engineering Support Vehicle VIII' unitType='Tank'>
+	<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
 		<availability>LA:2</availability>
 		<model name=''>
 			<roles>support,engineer</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Buffel Engineering Support Vehicle VII' unitType='Tank'>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CP:2,DC:2</availability>
 		<model name=''>
 			<roles>support,engineer</roles>
@@ -4474,7 +4474,7 @@
 			<roles>marine</roles>
 			<availability>RD:6</availability>
 		</model>
-		<model name='(Naval) Bär&apos; (Sqd5)' mechanized='false'>
+		<model name='(Naval) &apos;Bär&apos; (Sqd5)' mechanized='false'>
 			<roles>marine</roles>
 			<availability>CWE:4-,RD:6,CDS:5,CLAN.IS:5,CP:6,CWIE:6</availability>
 		</model>
@@ -8081,7 +8081,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Gurteltier MBT' unitType='Tank'>
+	<chassis name='Gürteltier MBT' unitType='Tank'>
 		<availability>LA:6,ROS:4,FS:4</availability>
 		<model name=''>
 			<availability>General:8</availability>
@@ -12205,7 +12205,7 @@
 			<availability>CC:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Mengqin' unitType='AeroSpaceFighter'>
+	<chassis name='Mĕngqín' unitType='AeroSpaceFighter'>
 		<availability>CC:8,MOC:7,MERC:4</availability>
 		<model name='MNG-8L'>
 			<availability>General:8</availability>
@@ -14246,7 +14246,7 @@
 			<availability>ROS:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Pion-Laurier Cascatelle' unitType='VTOL'>
+	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
 		<availability>IS:5</availability>
 		<model name=''>
 			<roles>support</roles>
@@ -15440,13 +15440,13 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='SM1 Tank Destroyer' unitType='Tank'>
+	<chassis name='SM Tank Destroyer' unitType='Tank'>
 		<availability>CP:7,DC:5</availability>
 		<model name='SM1'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='SM1A Tank Destroyer' unitType='Tank'>
+	<chassis name='SM Tank Destroyer' unitType='Tank'>
 		<availability>CP:5,DC:4</availability>
 		<model name='SM1A'>
 			<availability>General:8</availability>
@@ -15463,7 +15463,7 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='SM3 Tank Destroyer' unitType='Tank'>
+	<chassis name='SM Tank Destroyer' unitType='Tank'>
 		<availability>CP:3,DC:3</availability>
 		<model name='SM3'>
 			<availability>General:8</availability>
@@ -17727,7 +17727,7 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Teppo Artillery Vehicle' unitType='Tank'>
+	<chassis name='Teppō Artillery Vehicle' unitType='Tank'>
 		<availability>DC:4</availability>
 		<model name=''>
 			<roles>artillery,missile_artillery</roles>
@@ -20233,7 +20233,7 @@
 			<availability>CC:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Yun' unitType='AeroSpaceFighter'>
+	<chassis name='Yùn' unitType='AeroSpaceFighter'>
 		<availability>CC:5,MOC:4</availability>
 		<model name='Y-2'>
 			<roles>apc</roles>

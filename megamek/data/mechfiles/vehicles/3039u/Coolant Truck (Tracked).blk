@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.0-SNAPSHOT on 2024-07-13
 <UnitType>
 Tank
 </UnitType>
@@ -28,6 +19,10 @@ Coolant Truck
 2592
 </year>
 
+<originalBuildYear>
+2592
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
@@ -41,8 +36,8 @@ Tracked
 </motion_type>
 
 <transporters>
-insulatedcargobay:4.35:1:1
-insulatedcargobay:1.74:1:2
+insulatedcargobay:4.35:1:1::-1:0
+insulatedcargobay:1.74:1:2::-1:0
 </transporters>
 
 <cruiseMP>
@@ -52,6 +47,14 @@ insulatedcargobay:1.74:1:2
 <engine_type>
 1
 </engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech>
+0
+</armor_tech>
 
 <armor>
 24
@@ -79,8 +82,8 @@ IS Vehicle Flamer Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-Vehicle Flamer
-Vehicle Flamer
+Flamer (Vehicle)
+Flamer (Vehicle)
 </Turret Equipment>
 
 <source>
@@ -90,3 +93,8 @@ TRO: 3039
 <tonnage>
 30.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

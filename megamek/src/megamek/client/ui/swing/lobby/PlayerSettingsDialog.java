@@ -240,6 +240,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private Content groundSectionContent = new Content(new GridLayout(2, 3));
     private final JTextField txtGroundObjectName = new JTextField();
     private final JFormattedTextField txtGroundObjectTonnage = new JFormattedTextField(formatterFactory, 0);
+    private final JCheckBox chkGroundObjectInvulnerable = new JCheckBox();
     private List<List<Component>> groundSectionComponents = new ArrayList<>();
 
     // Bot Settings Section
@@ -359,6 +360,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     	JLabel lblTonnage = new JLabel("Tonnage");
     	groundSectionContent.add(lblTonnage, gbc);
     	
+    	gbc.gridx = 2;
+    	JLabel lblInvulnerable = new JLabel("Invulnerable");
+    	groundSectionContent.add(lblInvulnerable);
+    	
     	gbc.gridy = 1;
     	gbc.gridx = 0;
     	groundSectionContent.add(txtGroundObjectName, gbc);
@@ -367,6 +372,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     	groundSectionContent.add(txtGroundObjectTonnage, gbc);
     	
     	gbc.gridx = 2;
+    	groundSectionContent.add(chkGroundObjectInvulnerable, gbc);
+    	
+    	gbc.gridx = 3;
     	JButton btnAdd = new JButton("Add");
     	btnAdd.setActionCommand(CMD_ADD_GROUND_OBJECT);
     	btnAdd.addActionListener(listener);
@@ -399,6 +407,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 		row.add(tonnageLabel);
     	
 		gbc.gridx = 2;
+		JLabel flagLabel = new JLabel(groundObject.isInvulnerable() ? "Yes" : "No");
+		groundSectionContent.add(flagLabel, gbc);
+		row.add(flagLabel);
+		
+		gbc.gridx = 3;
     	JButton btnRemove = new JButton("Remove");
     	btnRemove.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, player.getGroundObjectsToPlace().size() - 1));
     	btnRemove.addActionListener(listener);
@@ -416,6 +429,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     	Briefcase briefcase = new Briefcase();
     	briefcase.setName(txtGroundObjectName.getText());
     	briefcase.setTonnage(Double.parseDouble(txtGroundObjectTonnage.getText()));
+    	briefcase.setInvulnerable(chkGroundObjectInvulnerable.isSelected());
     	player.getGroundObjectsToPlace().add(briefcase);
     	
     	addGroundObjectToUI(briefcase);

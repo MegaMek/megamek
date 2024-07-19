@@ -32,6 +32,7 @@ public class Briefcase implements ICarryable, Serializable {
 	
 	private double tonnage;
 	private String name;
+	private boolean invulnerable;
 	
 	public void damage(double amount) {
 		tonnage -= amount;
@@ -43,6 +44,14 @@ public class Briefcase implements ICarryable, Serializable {
 	
 	public double getTonnage() {
 		return tonnage;
+	}
+	
+	public boolean isInvulnerable() {
+		return invulnerable;
+	}
+	
+	public void setInvulnerable(boolean value) {
+		invulnerable = value;
 	}
 	
 	public void setName(String value) {

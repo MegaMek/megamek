@@ -26,4 +26,5 @@ public interface ICarryable {
 	double getTonnage();
 	void damage(double amount);
 	String getName();
+	boolean isInvulnerable();
 }

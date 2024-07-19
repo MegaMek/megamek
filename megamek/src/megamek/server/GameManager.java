@@ -7314,27 +7314,8 @@ public class GameManager extends AbstractGameManager {
             	entity.dropGroundObject(cargo, isLastStep);
             	boolean cargoDestroyed = false;
             	
-            	if (!isLastStep) {
-            		// cargo may be destroyed if we're not carefully unloading it
-            		// very likely to be destroyed if we're airborne for some reason
-            		int destructionThreshold = (step.isFlying() || step.isJumping()) ? 6 : 4;
-            		int destructionRoll = Compute.d6();
-            		
-            		r = new Report(2515);
-        			r.subject = entity.getId();
-        			r.add(entity.getDisplayName());
-        			r.add(cargo.getName());
-        			r.add(destructionThreshold);
-        			r.add(destructionRoll);            		
-            		
-            		if (destructionRoll < destructionThreshold) {
-            			cargoDestroyed = true;
-            			r.choose(false);
-            		} else {
-            			r.choose(true);
-            		}
-            		
-            		addReport(r);
+            	if (!isLastStep && !cargo.isInvulnerable()) {
+            		cargoDestroyed = damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
             	}
 
             	// note that this should not be moved into the "!isLastStep" block above
@@ -27525,6 +27506,12 @@ public class GameManager extends AbstractGameManager {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
         }
+        
+        // drop cargo
+        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        	entity.dropGroundObject(cargo, false);
+        	damageCargo(false, entity, cargo);
+        }
 
         // set how deep the mech has fallen
         if (entity instanceof Mech) {
@@ -34144,6 +34131,42 @@ public class GameManager extends AbstractGameManager {
             addReport(r);
             entity.setLayingMines(true);
         }
+    }
+    
+    /**
+     * Worker function that potentially damages a piece of cargo being carried
+     * by the given entity during the given move step.
+     * 
+     * @param isFlying whether the entity's movement involved being in the air in any way 
+     */
+    private boolean damageCargo(boolean isFlying, Entity entity, ICarryable cargo) {
+    	if (cargo.isInvulnerable()) {
+    		return false;
+    	}    	
+    	
+    	boolean cargoDestroyed = false;
+    	
+    	// cargo may be destroyed if we're not carefully unloading it
+		// very likely to be destroyed if we're airborne for some reason
+		int destructionThreshold = isFlying ? 6 : 4;
+		int destructionRoll = Compute.d6();
+		
+		Report r = new Report(2515);
+		r.subject = entity.getId();
+		r.add(cargo.getName());
+		r.add(destructionThreshold);
+		r.add(destructionRoll);            		
+		
+		if (destructionRoll < destructionThreshold) {
+			cargoDestroyed = true;
+			r.choose(false);
+		} else {
+			r.choose(true);
+		}
+		
+		addReport(r);
+		
+		return cargoDestroyed;
     }
 
     public Set<Coords> getHexUpdateSet() {

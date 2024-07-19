@@ -5299,6 +5299,14 @@ public class GameManager extends AbstractGameManager {
             game.removeEntity(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED);
             send(createRemoveEntityPacket(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED));
         }
+        
+        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        	r = new Report(2016, Report.PUBLIC);
+        	r.indent();
+        	r.add(cargo.getName());
+        	addReport(r);
+        }
+        
         entity.setRetreatedDirection(fleeDirection);
         game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));

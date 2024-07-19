@@ -52,7 +52,9 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.RoundingMode;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -87,8 +89,28 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             currentPlayerStartPos -= 10;
         }
 
+        NumberFormat numFormat = NumberFormat.getIntegerInstance();
+        numFormat.setGroupingUsed(false);
+        
+        NumberFormatter numFormatter = new NumberFormatter(numFormat);
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);
+        
+        DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
+        
+        txtOffset = new JFormattedTextField(formatterFactory, 0);
+        txtWidth = new JFormattedTextField(formatterFactory, 3);
+        
+        DecimalFormat tonnageFormat = new DecimalFormat();
+        tonnageFormat.setGroupingUsed(false);
+        tonnageFormat.setRoundingMode(RoundingMode.UNNECESSARY);
+        /*NumberFormatter tonnageFormatter = new NumberFormatter(tonnageFormat);
+        tonnageFormatter.setMinimum(0);
+        tonnageFormatter.setCommitsOnValidEdit(true);
+        DefaultFormatterFactory tonnageFormatterFactory = new DefaultFormatterFactory(tonnageFormatter);*/
+        
+        txtGroundObjectTonnage = new JFormattedTextField(tonnageFormat);
+        txtGroundObjectTonnage.setText("0");
 
         initialize();
     }
@@ -225,12 +247,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
     private final TipButton[] butStartPos = new TipButton[11];
-    // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
-    // takes both a number formatter and a default value.
-    private final NumberFormatter numFormatter = new NumberFormatter(NumberFormat.getIntegerInstance());
-    private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
-    private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
-    private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
+
+    private final JFormattedTextField txtOffset;
+    private final JFormattedTextField txtWidth;
     private JSpinner spinStartingAnyNWx;
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
@@ -239,7 +258,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // ground object config section
     private Content groundSectionContent = new Content(new GridLayout(2, 3));
     private final JTextField txtGroundObjectName = new JTextField();
-    private final JFormattedTextField txtGroundObjectTonnage = new JFormattedTextField(formatterFactory, 0);
+    private final JFormattedTextField txtGroundObjectTonnage;
     private final JCheckBox chkGroundObjectInvulnerable = new JCheckBox();
     private List<List<Component>> groundSectionComponents = new ArrayList<>();
 

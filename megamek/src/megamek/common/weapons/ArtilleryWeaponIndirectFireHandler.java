@@ -477,7 +477,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                     SpecialHexDisplay.Type.ARTILLERY_HIT, game
                                     .getRoundCount(), game
                                     .getPlayer(aaa.getPlayerId()),
-                                    "Artillery drifted here",
+                                    Messages.getString("ArtilleryMessage.drifted"),
                                     SpecialHexDisplay.SHD_OBSCURED_ALL
                             )
                     );

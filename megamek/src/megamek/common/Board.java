@@ -31,6 +31,7 @@ import java.io.*;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
+import static megamek.common.SpecialHexDisplay.Type.*;
 
 public class Board implements Serializable {
     //region Variable Declarations
@@ -1653,7 +1654,7 @@ public class Board implements Serializable {
         Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
         for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: specialHexes.entrySet()) {
             for (SpecialHexDisplay special: e.getValue()) {
-                if (special.getType() == SpecialHexDisplay.Type.ARTILLERY_MISS) {
+                if (Set.of(ARTILLERY_MISS, BOMB_MISS, BOMB_HIT).contains(special.getType())) {
                     if (!temp.containsKey(e.getKey())) {
                         temp.put(e.getKey(), new LinkedList<>());
                     }

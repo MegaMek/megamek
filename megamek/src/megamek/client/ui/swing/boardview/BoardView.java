@@ -604,6 +604,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.BOMB_MISS.init();
+        SpecialHexDisplay.Type.BOMB_HIT.init();
         SpecialHexDisplay.Type.PLAYER_NOTE.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
@@ -2022,7 +2024,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer)) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer, GUIP)) {
                         scaledImage = getScaledImage(shd.getType().getDefaultImage(), true);
                         g.drawImage(scaledImage, 0, 0, boardPanel);
                     }

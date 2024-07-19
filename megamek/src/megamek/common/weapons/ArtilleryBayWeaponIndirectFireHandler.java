@@ -355,7 +355,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         // Show scatter
                         game.getBoard().addSpecialHexDisplay(targetPos,
                                 new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(),
-                                        game.getPlayer(aaa.getPlayerId()),"Artillery drifted here",
+                                        game.getPlayer(aaa.getPlayerId()),
+                                        Messages.getString("ArtilleryMessage.drifted"),
                                         SpecialHexDisplay.SHD_OBSCURED_ALL));
                     } else {
                         r = new Report(3192);

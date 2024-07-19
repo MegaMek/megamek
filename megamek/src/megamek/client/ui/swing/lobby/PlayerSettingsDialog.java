@@ -104,10 +104,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         DecimalFormat tonnageFormat = new DecimalFormat();
         tonnageFormat.setGroupingUsed(false);
         tonnageFormat.setRoundingMode(RoundingMode.UNNECESSARY);
-        /*NumberFormatter tonnageFormatter = new NumberFormatter(tonnageFormat);
-        tonnageFormatter.setMinimum(0);
-        tonnageFormatter.setCommitsOnValidEdit(true);
-        DefaultFormatterFactory tonnageFormatterFactory = new DefaultFormatterFactory(tonnageFormatter);*/
         
         txtGroundObjectTonnage = new JFormattedTextField(tonnageFormat);
         txtGroundObjectTonnage.setText("0");

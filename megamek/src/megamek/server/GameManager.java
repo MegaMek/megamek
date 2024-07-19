@@ -7322,7 +7322,7 @@ public class GameManager extends AbstractGameManager {
             	entity.dropGroundObject(cargo, isLastStep);
             	boolean cargoDestroyed = false;
             	
-            	if (!isLastStep && !cargo.isInvulnerable()) {
+            	if (!isLastStep) {
             		cargoDestroyed = damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
             	}
 
@@ -21275,6 +21275,10 @@ public class GameManager extends AbstractGameManager {
         		int damageLeftToCargo = damage;
         		
         		for (ICarryable cargo : te.getDistinctCarriedObjects()) {
+        			if (cargo.isInvulnerable()) {
+        				continue;
+        			}
+        			
         			double tonnage = cargo.getTonnage();
         			cargo.damage(damageLeftToCargo);
         			damageLeftToCargo -= Math.ceil(tonnage);

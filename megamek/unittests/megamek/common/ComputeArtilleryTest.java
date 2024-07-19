@@ -107,27 +107,27 @@ public class ComputeArtilleryTest {
         setupTarget(target, new Coords(15, 17), new Coords(15, 21));
         leadPos = Compute.calculateArtilleryLead(mockGame, shooter, target, false);
         assertEquals(15, leadPos.getX());
-        assertEquals(13, leadPos.getY());
+        assertEquals(9, leadPos.getY());
 
         // Mobile target 1 map sheet away to the S (3) direction, speed 4, non-homing
         setupTarget(target, new Coords(15, 25), new Coords(15, 29));
         leadPos = Compute.calculateArtilleryLead(mockGame, shooter, target, false);
         assertEquals(15, leadPos.getX());
-        assertEquals(17, leadPos.getY());
+        assertEquals(13, leadPos.getY());
 
         // Mobile target 1 map sheet away to the S (3) direction, speed 4, homing, should be closer to shooter
         // for better chance to catch mobile unit in TAG-able area
         setupTarget(target, new Coords(15, 25), new Coords(15, 29));
         leadPos = Compute.calculateArtilleryLead(mockGame, shooter, target, true);
         assertEquals(15, leadPos.getX());
-        assertEquals(13, leadPos.getY());
+        assertEquals(9, leadPos.getY());
 
         // Mobile target 1 map sheet away to the NE (1) direction, speed 4, non-homing
         shooterPos = new Coords(0, 35);
         when(shooter.getPosition()).thenReturn(shooterPos);
         setupTarget(target, new Coords(32, 1), new Coords(36, 0));
         leadPos = Compute.calculateArtilleryLead(mockGame, shooter, target, false);
-        assertEquals(24, leadPos.getX());
-        assertEquals(5, leadPos.getY());
+        assertEquals(20, leadPos.getX());
+        assertEquals(7, leadPos.getY());
     }
 }

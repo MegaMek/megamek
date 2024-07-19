@@ -85,6 +85,9 @@ public class BombAttackHandler extends WeaponHandler {
         int[] payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;
+        Player player = game.getEntity(waa.getEntityId()).getOwner();
+        String bombMsg;
+
         // now go through the payload and drop the bombs one at a time
         for (int type = 0; type < payload.length; type++) {
             // to hit, adjusted for bomb-type specific rules
@@ -198,6 +201,12 @@ public class BombAttackHandler extends WeaponHandler {
                     r.subject = subjectId;
                     r.newlines = 1;
                     vPhaseReport.add(r);
+
+                    bombMsg = "Bomb hit here on round " + game.getRoundCount()
+                            + ", dropped by " + ((player != null) ? player.getName() : "somebody");
+                    game.getBoard().addSpecialHexDisplay(coords,
+                            new SpecialHexDisplay(SpecialHexDisplay.Type.BOMB_HIT, game.getRoundCount(),
+                                    player, bombMsg));
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -232,6 +241,15 @@ public class BombAttackHandler extends WeaponHandler {
                         r.add(BombType.getBombName(type));
                         r.add(drop.getBoardNum());
                         vPhaseReport.addElement(r);
+                        bombMsg = "Bomb missed here on round " + game.getRoundCount()
+                                + ", dropped by " + ((player != null) ? player.getName() : "somebody");
+                        game.getBoard().addSpecialHexDisplay(coords,
+                                new SpecialHexDisplay(SpecialHexDisplay.Type.BOMB_MISS, game.getRoundCount(),
+                                        player, bombMsg));
+                        game.getBoard().addSpecialHexDisplay(drop,
+                                new SpecialHexDisplay(SpecialHexDisplay.Type.BOMB_HIT, game.getRoundCount(),
+                                        player, Messages.getString("BombMessage.drifted")));
+
                     } else {
                         // misses and scatters off-board
                         r = new Report(6699);

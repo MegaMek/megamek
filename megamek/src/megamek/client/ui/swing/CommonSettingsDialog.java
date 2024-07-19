@@ -218,6 +218,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom"));
     private final JCheckBox mouseWheelZoomFlip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip"));
 
+    // Bomb and Artillery displays
+    private final JCheckBox artilleryDisplayMisses = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryMisses"));
+    private final JCheckBox artilleryDisplayDriftedHits = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits"));
+    private final JCheckBox bombsDisplayMisses = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses"));
+    private final JCheckBox bombsDisplayHits = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowBombHits"));
+
 
     private final JCheckBox moveDefaultClimbMode = new JCheckBox(Messages.getString("CommonSettingsDialog.moveDefaultClimbMode"));
     private ColourSelectorButton csbMoveDefaultColor;
@@ -677,6 +683,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         darkenMapAtNight.setSelected(GUIP.getDarkenMapAtNight());
         comps.add(checkboxEntry(translucentHiddenUnits, null));
         translucentHiddenUnits.setSelected(GUIP.getTranslucentHiddenUnits());
+        comps.add(checkboxEntry(artilleryDisplayMisses, Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryMisses.tooltip")));
+
+        // Artillery and bomb display choices
+        artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
+        comps.add(checkboxEntry(artilleryDisplayDriftedHits, Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip")));
+        artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        comps.add(checkboxEntry(bombsDisplayMisses, Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip")));
+        bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
+        comps.add(checkboxEntry(bombsDisplayHits, Messages.getString("CommonSettingsDialog.hexes.ShowBombHits.tooltip")));
+        bombsDisplayHits.setSelected(GUIP.getShowBombHits());
 
         row = new ArrayList<>();
 
@@ -1988,6 +2004,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         darkenMapAtNight.setSelected(GUIP.getDarkenMapAtNight());
         translucentHiddenUnits.setSelected(GUIP.getTranslucentHiddenUnits());
 
+        artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
+        artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
+        bombsDisplayHits.setSelected(GUIP.getShowBombHits());
+
         for (String option: savedAdvancedOpt.keySet()) {
             GUIP.setValue(option, savedAdvancedOpt.get(option));
         }
@@ -2178,6 +2199,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
         GUIP.setDarkenMapAtNight(darkenMapAtNight.isSelected());
         GUIP.setTranslucentHiddenUnits(translucentHiddenUnits.isSelected());
+
+        GUIP.setShowArtilleryMisses(artilleryDisplayMisses.isSelected());
+        GUIP.setShowArtilleryDrifts(artilleryDisplayDriftedHits.isSelected());
+        GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
+        GUIP.setShowBombHits(bombsDisplayHits.isSelected());
 
         GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
         try {

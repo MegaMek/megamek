@@ -34017,4 +34017,8 @@ public class GameManager extends AbstractGameManager {
     List<DynamicTerrainProcessor> getTerrainProcessors() {
         return terrainProcessors;
     }
+
+    void clearBombIcons() {
+        game.getBoard().clearBombIcons();
+    }
 }

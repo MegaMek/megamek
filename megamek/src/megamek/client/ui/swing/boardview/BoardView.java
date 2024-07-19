@@ -3785,7 +3785,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         if (me.isPopupTrigger() && !dragging) {
             wantsPopup = true;
-            // mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx(), me.getButton());
             return;
         }
 

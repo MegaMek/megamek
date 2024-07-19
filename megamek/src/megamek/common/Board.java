@@ -1255,6 +1255,27 @@ public class Board implements Serializable {
         infernos.remove(coords);
     }
 
+    public void removeBombIconsFrom(Coords coords) {
+        // Do nothing if the coords aren't on this board.
+        if (!this.contains(coords) || null == specialHexes.get(coords)) {
+            return;
+        }
+
+        // Use iterator so we can remove while traversing
+        for (Iterator<SpecialHexDisplay> iterator = specialHexes.get(coords).iterator(); iterator.hasNext();) {
+            SpecialHexDisplay shd = iterator.next();
+            if (Set.of(BOMB_HIT, BOMB_MISS).contains(shd.getType())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    public void clearBombIcons() {
+        for (Coords coords: specialHexes.keySet()) {
+            removeBombIconsFrom(coords);
+        }
+    }
+
     /**
      * Determine if the given coordinates has a burning inferno.
      *
@@ -1652,16 +1673,16 @@ public class Board implements Serializable {
 
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
         Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
+
+        // Grab all current ARTILLERY_MISS instances
         for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: specialHexes.entrySet()) {
             for (SpecialHexDisplay special: e.getValue()) {
-                if (Set.of(ARTILLERY_MISS, BOMB_MISS, BOMB_HIT).contains(special.getType())) {
-                    if (!temp.containsKey(e.getKey())) {
-                        temp.put(e.getKey(), new LinkedList<>());
-                    }
-                    temp.get(e.getKey()).add(special);
+                if (Set.of(ARTILLERY_MISS).contains(special.getType())) {
+                    temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
                 }
             }
         }
+
         // Swap new Hashtable in for old
         specialHexes = shd;
 

@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static megamek.client.ui.swing.util.UIUtil.hexColor;
+
 public class SBFReportEntry implements ReportEntry {
 
     record DataEntry(String data, boolean isObscured) implements Serializable { }
@@ -40,13 +42,11 @@ public class SBFReportEntry implements ReportEntry {
 
     private final int messageId;
     private final List<DataEntry> data = new ArrayList<>();
+    private boolean endLine = true;
+    private int indentation = 0;
 
     public SBFReportEntry(int messageId) {
         this.messageId = messageId;
-    }
-
-    private static String hexColor(Color color) {
-        return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
     }
 
     public static void setupStylesheet(JTextPane pane) {
@@ -64,6 +64,8 @@ public class SBFReportEntry implements ReportEntry {
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");
+        styleSheet.addRule(".roll { font-weight:bold; }");
+        styleSheet.addRule(".dice { font-family:Noto Sans Symbols 2; }");
         styleSheet.addRule(".header { font-weight:bold; font-size: "
                 + (int) (1.2 * size) + "pt; padding:10 0; margin:0; text-decoration: underline; }");
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
@@ -145,8 +147,8 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     @Override
-    public String text() {
-        return SBFReportMessages.getString(String.valueOf(messageId), data.stream().map(d -> (Object) d.data).toList())+"<BR>";
+    public final String text() {
+        return " ".repeat(indentation) + reportText() + lineEnd();
     }
 
     @Override
@@ -154,7 +156,22 @@ public class SBFReportEntry implements ReportEntry {
         return this;
     }
 
+    /**
+     * Indent the report. Equivalent to calling {@link #indent(int)} with a parameter of 1.
+     * @return This Report to allow chaining
+     */
     public SBFReportEntry indent() {
+        return indent(1);
+    }
+
+    /**
+     * Indent the report n times.
+     *
+     * @param n the number of times to indent the report
+     * @return This Report to allow chaining
+     */
+    public SBFReportEntry indent(int n) {
+        indentation += (n * Report.DEFAULT_INDENTATION);
         return this;
     }
 
@@ -164,5 +181,23 @@ public class SBFReportEntry implements ReportEntry {
 
     public SBFReportEntry newLines(int count) {
         return this;
+    }
+
+    public SBFReportEntry noNL() {
+        endLine = false;
+        return this;
+    }
+
+    public SBFReportEntry addNL() {
+        endLine = true;
+        return this;
+    }
+
+    private String lineEnd() {
+        return endLine ? "<BR>" : "";
+    }
+
+    protected String reportText() {
+        return SBFReportMessages.getString(String.valueOf(messageId), data.stream().map(d -> (Object) d.data).toList());
     }
 }

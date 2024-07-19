@@ -26,8 +26,6 @@ import megamek.common.strategicBattleSystems.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.common.Report.publicReport;
-
 public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
     /**
@@ -44,7 +42,20 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                     .filter(Player::hasMinefields)
                     .map(p -> new SBFPlayerTurn(p.getId()))
                     .collect(Collectors.toList());
+
+        } else if (phase.isFiring()) {
+            turns = game().getInGameObjects().stream()
+                    .filter(unit -> unit instanceof SBFFormation)
+                    .filter(unit -> ((SBFFormation) unit).isDeployed()) //TODO roll into eligible!!! may be offboard
+                    .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
+                    .map(InGameObject::getOwnerId)
+                    .map(SBFFormationTurn::new)
+                    .collect(Collectors.toList());
+
+            turns.sort(Comparator.comparing(t -> game().getPlayer(t.playerId()).getInitiative()));
+
         } else {
+            // As a fallback, provide unsorted turns
             turns = game().getInGameObjects().stream()
                     .filter(unit -> unit instanceof SBFFormation)
                     .filter(unit -> ((SBFFormation) unit).isDeployed())
@@ -52,8 +63,45 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                     .map(InGameObject::getOwnerId)
                     .map(SBFFormationTurn::new)
                     .collect(Collectors.toList());
+
+            // Now, assemble formations and sort by initiative and relative formation count
+            Map<Integer, Long> unitCountsByPlayer = game().getInGameObjects().stream()
+                    .filter(unit -> unit instanceof SBFFormation)
+                    .filter(unit -> ((SBFFormation) unit).isDeployed())
+                    .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
+                    .collect(Collectors.groupingBy(InGameObject::getOwnerId, Collectors.counting()));
+
+            if (!unitCountsByPlayer.isEmpty()) {
+                final long lowestUnitCount = Collections.min(unitCountsByPlayer.values());
+
+                int playerWithLowestUnitCount = unitCountsByPlayer.entrySet().stream()
+                        .filter(e -> e.getValue() == lowestUnitCount)
+                        .map(Map.Entry::getKey)
+                        .findAny().orElse(Player.PLAYER_NONE);
+
+                List<Integer> playersByInitiative = new ArrayList<>(unitCountsByPlayer.keySet());
+                playersByInitiative.sort(Comparator.comparing(id -> game().getPlayer(id).getInitiative()));
+
+                if ((playerWithLowestUnitCount != Player.PLAYER_NONE) && (lowestUnitCount > 0)) {
+                    List<SBFTurn> sortedTurns = new ArrayList<>();
+                    for (int initCycle = 0; initCycle < lowestUnitCount; initCycle++) {
+                        long currentLowestUnitCount = Collections.min(unitCountsByPlayer.values());
+                        for (int playerId : playersByInitiative) {
+                            long unitsToMove = unitCountsByPlayer.get(playerId) / currentLowestUnitCount;
+                            long remainingUnits = unitCountsByPlayer.get(playerId);
+                            unitsToMove = Math.min(unitsToMove, remainingUnits);
+                            for (int i = 0; i < unitsToMove; i++) {
+                                sortedTurns.add(new SBFFormationTurn(playerId));
+                            }
+                            unitCountsByPlayer.put(playerId, remainingUnits - unitsToMove);
+                        }
+                    }
+                    // When here, sorting has been successful; replace the unsorted turns
+                    turns.clear();
+                    turns.addAll(sortedTurns);
+                }
+            }
         }
-        //TODO sort by init and uneven count
 
         if (gameManager.usesAdvancedInitiative()) {
             //TODO ...
@@ -78,36 +126,12 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
 
     private void writeTurnOrder() {
         if (!gameManager.usesDoubleBlind()) {
-            // The turn order is different in movement phase
-            // if a player has any "even" moving units. ???????????????????????????????????? SBF?
-            SBFReportEntry r = new SBFReportEntry(1020);
-//            Report r = new Report(1020, Report.PUBLIC);
+            addReport(new SBFReportEntry(1020));
 
-            boolean hasEven = false;
             for (SBFTurn turn : game().getTurnsList()) {
                 Player player = game().getPlayer(turn.playerId());
-                if (null != player) {
-//                    r.add(player.getName());
-//                        if (player.getEvenTurns() > 0) {
-//                            hasEven = true;
-//                        }
-                }
+                addReport(new SBFPlayerNameReportEntry(player).indent().addNL());
             }
-//            r.newlines = 2;
-            addReport(r);
-//                if (hasEven) {
-//                    r = new Report(1021, Report.PUBLIC);
-//                    if ((game().getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN)
-//                            || game().getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN))
-//                            && !game().getLastPhase().isEndReport()) {
-//                        r.choose(true);
-//                    } else {
-//                        r.choose(false);
-//                    }
-//                    r.indent();
-//                    r.newlines = 2;
-//                    addReport(r);
-//                }
         }
     }
 
@@ -168,8 +192,8 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
             if (team.getNonObserverSize() == 1) {
                 final Player player = team.nonObserverPlayers().get(0);
                 addReport(new SBFPlayerNameReportEntry(player));
-                addReport(new SBFPublicReportEntry(1015).add(team.getInitiative().toString()));
-//                addReport(r);
+                addReport(new SBFPublicReportEntry(1015).noNL());
+                addReport(new SBFInitiativeRollReportEntry(team.getInitiative()));
             } else {
                 // Multiple players. List the team, then break it down.
                 SBFReportEntry r = new SBFPublicReportEntry(1015).add(Player.TEAM_NAMES[team.getId()]);
@@ -187,7 +211,6 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                 || !game().shouldDeployThisRound()) {
             addReport(new SBFReportHeader(1000).add(game().getCurrentRound()));
         } else {
-//            deployment = true;
             if (game().getCurrentRound() == 0) {
                 addReport(new SBFReportHeader(1005));
             } else {

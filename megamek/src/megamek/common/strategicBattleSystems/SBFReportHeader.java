@@ -28,9 +28,7 @@ public class SBFReportHeader extends SBFReportEntry {
     }
 
     @Override
-    public String text() {
-//        return super.text();
-//        return "<H1>" + super.text() + "</H1>";
-        return UIUtil.spanCSS("header", super.text());
+    protected String reportText() {
+        return UIUtil.spanCSS("header", super.reportText());
     }
 }

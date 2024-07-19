@@ -18,33 +18,32 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Player;
+import megamek.common.InitiativeRoll;
 
-public class SBFPlayerNameReportEntry extends SBFReportEntry {
+import java.util.List;
 
-    private final String playerName;
-    private final String playerColorHex;
+public class SBFInitiativeRollReportEntry extends SBFReportEntry {
 
-    public SBFPlayerNameReportEntry(Player player) {
-        this(player.getName(), player.getColour());
-        noNL();
-    }
+    private static final String ONE = "\u2680";
+    private static final String TWO = "\u2681";
+    private static final String THREE = "\u2682";
+    private static final String FOUR = "\u2683";
+    private static final String FIVE = "\u2684";
+    private static final String SIX = "\u2685";
 
-    public SBFPlayerNameReportEntry(String playerName, String playerColorHex) {
+    private static final List<String> DICE = List.of(ONE, TWO, THREE, FOUR, FIVE, SIX);
+
+    private final String rollText;
+
+
+    public SBFInitiativeRollReportEntry(InitiativeRoll roll) {
         super(0);
-        this.playerName = playerName;
-        this.playerColorHex = playerColorHex;
-    }
-
-    public SBFPlayerNameReportEntry(String playerName, PlayerColour color) {
-        this(playerName, UIUtil.hexColor(color.getColour()));
+        rollText = roll.toString();
     }
 
     @Override
     protected String reportText() {
-        return "<span style='color:" + playerColorHex + ";'>" + playerName + "</span>";
+        return UIUtil.spanCSS("dice", SIX) + " " + UIUtil.spanCSS("roll", rollText);
     }
-
 }

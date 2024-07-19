@@ -30,6 +30,18 @@ factions:
     - include: "Formation2.mmu"
       at: [ 8, 3 ]
 
+    - include: Noble's Company.mmu
+      at: [8, 5]
+      id: 3
+
+    - include: "Example SBF Formation.mmu"
+      at: [ 4, 4 ]
+
+    - include: Noble's Company.mmu
+      at: [ 3, 3 ]
+
+
+
 - name: OpFor
   camo: Draconis Combine/Alshain Avengers/11th Alshain Avengers.jpg
   units:
@@ -41,7 +53,7 @@ factions:
       at: [ 12, 3 ]
 
     - include: Noble's Company.mmu
-      at: [ 9, 15]
+      at: [ 11, 15 ]
 
 
 

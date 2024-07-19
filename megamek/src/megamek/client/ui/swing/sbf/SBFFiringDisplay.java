@@ -333,6 +333,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay {
         if (!game().getActiveFormationsAt(new BoardLocation(b.getCoords(), 0)).isEmpty()) {
             setTarget(game().getActiveFormationsAt(new BoardLocation(b.getCoords(), 0)).get(0));
             clientgui.showTargetDialog(selectedTarget);
+
         }
     }
 }

@@ -6,6 +6,7 @@ generalname: Romy's Company
 units:
   - type: SBFUnit
     generalname: Smäther's Lance
+    status: com
     elements:
     - type: ASElement
       fullname: Atlas AS7-D
@@ -20,6 +21,7 @@ units:
       skill: 5
   - type: SBFUnit
     generalname: Swófer's Lance
+    status: lead
     elements:
     - type: ASElement
       fullname: Stinger STG-3R

@@ -23,6 +23,7 @@ import megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip;
 import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFToHitData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +31,9 @@ import java.awt.*;
 public class SBFTargetDialog extends AbstractDialog {
 
     private static final String NO_TARGET = "No Target";
+    private final JLabel header = new JLabel("Target");
     private final JLabel targetDisplay = new JLabel(NO_TARGET);
+    private final JLabel toHitInformation = new JLabel();
     private final SBFGame game;
 
     private InGameObject target;
@@ -43,6 +46,12 @@ public class SBFTargetDialog extends AbstractDialog {
 
     public void setTarget(@Nullable InGameObject target) {
         this.target = target;
+        update();
+    }
+
+    public void setTarget(@Nullable InGameObject target, @Nullable SBFToHitData data) {
+        this.target = target;
+        toHitInformation.setText(data.toString());
         update();
     }
 
@@ -64,8 +73,9 @@ public class SBFTargetDialog extends AbstractDialog {
     protected Container createCenterPane() {
         Box box = Box.createVerticalBox();
         box.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        box.add(new JLabel("Target"));
+        box.add(header);
         box.add(targetDisplay);
+        box.add(toHitInformation);
         return box;
     }
 }

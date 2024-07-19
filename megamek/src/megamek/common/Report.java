@@ -119,7 +119,7 @@ public class Report implements ReportEntry {
     /**
      * Number of spaces to use per indentation level.
      */
-    private static final int DEFAULT_INDENTATION = 4;
+    public static final int DEFAULT_INDENTATION = 4;
 
     /**
      * Prefix for entity hyperlinks

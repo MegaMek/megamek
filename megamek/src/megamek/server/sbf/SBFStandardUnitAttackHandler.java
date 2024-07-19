@@ -18,11 +18,10 @@
  */
 package megamek.server.sbf;
 
-import megamek.common.Report;
+import megamek.common.Compute;
+import megamek.common.Roll;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
-import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.strategicBattleSystems.SBFPublicReportEntry;
-import megamek.common.strategicBattleSystems.SBFUnit;
+import megamek.common.strategicBattleSystems.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,26 +48,43 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
             //noinspection OptionalGetWithoutIsPresent
             SBFFormation target = game().getFormation(attack.getTargetId()).get();
             // Unit number is 1-based
-            SBFUnit unit = attacker.getUnits().get(attack.getUnitNumber() - 1);
+            SBFUnit attackingUnit = attacker.getUnits().get(attack.getUnitNumber() - 1);
             List<SBFUnit> targetUnits = target.getUnits();
             SBFUnit targetUnit = targetUnits.get(0);
-            int damage = unit.getCurrentDamage().getDamage(attack.getRange()).damage;
-            if (damage > 0) {
-                int newArmor = targetUnit.getCurrentArmor() - damage;
-                addReport(new SBFPublicReportEntry(3100).add(damage).add(damage));
-                if (newArmor < 0) {
-                    newArmor = 0;
-                }
-                targetUnits.get(0).setCurrentArmor(newArmor);
-                if (newArmor == 0) {
-                    addReport(new SBFPublicReportEntry(3092));
-                }
-                if (newArmor * 2 < targetUnit.getArmor()) {
-                    targetUnit.addDamageCrit();
-                }
-                gameManager().sendUnitUpdate(target);
+
+            SBFToHitData toHit = SBFToHitData.compiletoHit(
+                    new SBFToHitData.ActionEnvironment(game(), attacker, attackingUnit, target, attack));
+
+            if (toHit.cannotSucceed()) {
+                addReport(new SBFReportEntry(2010));
             } else {
-                addReport(new SBFPublicReportEntry(3068));
+                Roll roll = Compute.rollD6(2);
+                addReport(new SBFPlayerNameReportEntry(game().getPlayer(attacker.getOwnerId())));
+                addReport(new SBFPublicReportEntry(1015).noNL());
+                addReport(new SBFRollReportEntry(roll).noNL());
+                if (roll.getIntValue() < toHit.getValue()) {
+                    addReport(new SBFPublicReportEntry(2012));
+                } else {
+                    addReport(new SBFPublicReportEntry(2013));
+                    int damage = attackingUnit.getCurrentDamage().getDamage(attack.getRange()).damage;
+                    if (damage > 0) {
+                        int newArmor = targetUnit.getCurrentArmor() - damage;
+                        addReport(new SBFPublicReportEntry(3100).add(damage).add(damage));
+                        if (newArmor < 0) {
+                            newArmor = 0;
+                        }
+                        targetUnits.get(0).setCurrentArmor(newArmor);
+                        if (newArmor == 0) {
+                            addReport(new SBFPublicReportEntry(3092));
+                        }
+                        if (newArmor * 2 < targetUnit.getArmor()) {
+                            targetUnit.addDamageCrit();
+                        }
+                        gameManager().sendUnitUpdate(target);
+                    } else {
+                        addReport(new SBFPublicReportEntry(3068));
+                    }
+                }
             }
         }
         setFinished();

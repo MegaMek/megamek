@@ -22,7 +22,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
@@ -381,9 +380,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if ((entityTarget != null)
                 && !entityTarget.isAirborne()
                 && !entityTarget.isAirborneVTOLorWIGE()
-                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
+                && ((bldg == null) && (
+                    wtype.getFireTN() != TargetRoll.IMPOSSIBLE
+                    && (atype == null || atype.getFireTN() != TargetRoll.IMPOSSIBLE)
+                )
+        )) {
             gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3, vPhaseReport);
+                    getFireTNRoll(), 3, vPhaseReport);
         }
 
         // shots that miss an entity can also potential cause explosions in a

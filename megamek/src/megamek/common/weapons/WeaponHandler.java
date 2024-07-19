@@ -436,6 +436,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         gameManager = (GameManager) Server.getServerInstance().getGameManager();
     }
 
+    protected TargetRoll getFireTNRoll() {
+        int targetNumber = (atype == null) ? wtype.getFireTN()
+            : Math.min(wtype.getFireTN(), atype.getFireTN());
+        return new TargetRoll(targetNumber, wtype.getName());
+    }
+
     /**
      * @return a <code>boolean</code> value indicating whether or not this attack
      *         needs further calculating, like a missed shot hitting a building,
@@ -449,9 +455,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((entityTarget != null)
                 && !entityTarget.isAirborne()
                 && !entityTarget.isAirborneVTOLorWIGE()
-                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
+                && ((bldg == null) && (
+                        wtype.getFireTN() != TargetRoll.IMPOSSIBLE
+                        && (atype == null || atype.getFireTN() != TargetRoll.IMPOSSIBLE)
+                )
+        )) {
             gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
+                    getFireTNRoll(), 3,
                     vPhaseReport);
         }
 
@@ -1643,7 +1653,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = getFireTNRoll();
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
@@ -1678,7 +1688,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                        getFireTNRoll(), 5, vPhaseReport)) {
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);

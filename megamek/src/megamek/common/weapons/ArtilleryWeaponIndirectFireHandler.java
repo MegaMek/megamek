@@ -492,7 +492,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                             .getRoundCount(), game
                                             .getPlayer(aaa.getPlayerId()),
                                     artyMsg,
-                                    SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                                    SpecialHexDisplay.SHD_OBSCURED_ALL));
                 } else {
                     r = new Report(3192);
                 }

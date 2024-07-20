@@ -6,15 +6,18 @@
  *
  * This file is part of MegaMek.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.utilities;
 
@@ -25,7 +28,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.codeUtilities.StringUtility;
@@ -33,6 +35,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.templates.TROView;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides a utility to read in all the /data/mechfiles and print
@@ -42,11 +45,14 @@ import megamek.common.templates.TROView;
  * @author Simon (Juliez)
  */
 public final class MechCacheCSVTool {
+    private static final MMLogger logger = MMLogger.create(MechCacheCSVTool.class);
 
     // Excel import works better with the .txt extension instead of .csv
     private static final String FILE_NAME = "Units.txt";
     private static final String DELIM = "|";
     private static boolean includeGunEmplacement = false; // Variable to control inclusion of Gun Emplacement units
+
+    private static final String NOT_APPLICABLE = "Not Applicable";
 
     private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Clan",
             "Source", "File Location", "Weight", "Intro Date", "Experimental year", "Advanced year",
@@ -124,7 +130,7 @@ public final class MechCacheCSVTool {
                     isString += EquipmentType.structureNames[unit.getInternalsType()] + DELIM;
                     csvLine.append(isString);
                 } else if (unit.getInternalsType() < 0) {
-                    csvLine.append("Not Applicable").append(DELIM);
+                    csvLine.append(NOT_APPLICABLE).append(DELIM);
                 }
 
                 // Myomer type
@@ -138,20 +144,22 @@ public final class MechCacheCSVTool {
                         csvLine.append(Aero.COCKPIT_STRING[unit.getCockpitType()]).append(DELIM);
                     }
                 } else {
-                    csvLine.append("Not Applicable").append(DELIM);
+                    csvLine.append(NOT_APPLICABLE).append(DELIM);
                 }
 
                 // Gyro Type
                 if (unit.getGyroType() >= 0) {
                     csvLine.append(Mech.GYRO_STRING[unit.getGyroType()]).append(DELIM);
                 } else if (unit.getGyroType() < 0) {
-                    csvLine.append("Not Applicable").append(DELIM);
+                    csvLine.append(NOT_APPLICABLE).append(DELIM);
                 }
 
                 // Armor type - prints different armor types on the unit
-                Vector<Integer> armorType = new Vector<>();
-                Vector<Integer> armorTech = new Vector<>();
-                int[] at, att;
+                ArrayList<Integer> armorType = new ArrayList<>();
+                ArrayList<Integer> armorTech = new ArrayList<>();
+                int[] at;
+                int[] att;
+
                 at = unit.getArmorTypes();
                 att = unit.getArmorTechTypes();
                 for (int i = 0; i < at.length; i++) {
@@ -249,10 +257,9 @@ public final class MechCacheCSVTool {
                 bw.write(csvLine.toString());
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Could not open file for output!");
+            logger.error(e, "Could not open file for output!");
         } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
-            e.printStackTrace();
+            logger.error(e, "IO Exception");
         }
     }
 

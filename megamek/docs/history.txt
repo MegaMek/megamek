@@ -34,6 +34,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5702, #5747: Code internals: MMLogger with Sentry Tracking
 + PR #5746: Tweaked FontHandler logging
 + PR #5751: Add "miss" and "drifted"/"hit" markers for Artillery and Bomb attacks, with concomitant client settings
++ Commit ffcccdf: Data update that adds improved markers for Artillery and Bomb attacks
++ Fix #5287: Infernos do not ignite buildings when using "Ignite" target option
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

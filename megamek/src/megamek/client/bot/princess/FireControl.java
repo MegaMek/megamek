@@ -1883,6 +1883,8 @@ public class FireControl {
         final FiringPlan diveBombPlan = new FiringPlan(target);
         final HexTarget hexToBomb = new HexTarget(target.getPosition(),
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);
+        // Need this for to-hit calcs
+        BombMounted exampleBomb = null;
 
         // things that cause us to avoid calculating a bomb plan:
         // not having any bombs (in the first place)
@@ -1892,8 +1894,11 @@ public class FireControl {
         }
 
         // not having any bombs (due to expenditure/damage)
-        if (shooter.getBombs(BombType.F_GROUND_BOMB).isEmpty()) {
+        List<BombMounted> groundBombs = shooter.getBombs(BombType.F_GROUND_BOMB);
+        if (groundBombs.isEmpty()) {
             return diveBombPlan;
+        } else {
+            exampleBomb = groundBombs.get(0);
         }
 
         while (weaponIter.hasNext()) {
@@ -1922,7 +1927,7 @@ public class FireControl {
                                                                     hexToBomb,
                                                                     null,
                                                                     weapon,
-                                                                    null,
+                                                                    exampleBomb,
                                                                     game,
                                                                     passedOverTarget,
                                                                     guess,

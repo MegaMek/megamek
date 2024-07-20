@@ -185,13 +185,6 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
                 + (parent.getSize().height / 2)) - (size.height / 2));
     }
 
-    /**
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(500,200);
-    }
-    */
-
     private void setupButtons() {
         butOK.addActionListener(this);
         butCancel.addActionListener(this);

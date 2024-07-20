@@ -333,7 +333,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 // The exception is auto hits.  There will be an icon for auto
                 // hits, so we need to draw a tooltip
                 if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(game.getPhase(), round, localPlayer)
+                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP)
                         || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (Objects.equals(localPlayer, shd.getOwner())) {

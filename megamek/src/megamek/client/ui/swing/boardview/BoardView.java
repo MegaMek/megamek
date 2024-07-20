@@ -152,6 +152,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private int scrollYDifference = 0;
     // are we drag-scrolling?
     private boolean dragging = false;
+    private boolean wantsPopup = false;
+
     /** True when the right mouse button was pressed to start a drag */
     private boolean shouldScroll = false;
 
@@ -483,6 +485,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     disp.isMouseOver(point, drawDimension);
                 }
 
+                // Reset popup flag if the user moves their mouse away
+                wantsPopup = false;
+
                 final Coords mcoords = getCoordsAt(point);
                 if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
                     lastCoords = mcoords;
@@ -593,11 +598,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
 
+        SpecialHexDisplay.Type.ARTILLERY_MISS.init();
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.BOMB_MISS.init();
+        SpecialHexDisplay.Type.BOMB_HIT.init();
         SpecialHexDisplay.Type.PLAYER_NOTE.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
@@ -2016,7 +2024,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer)) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer, GUIP)) {
                         scaledImage = getScaledImage(shd.getType().getDefaultImage(), true);
                         g.drawImage(scaledImage, 0, 0, boardPanel);
                     }
@@ -3776,7 +3784,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         if (me.isPopupTrigger() && !dragging) {
-            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx(), me.getButton());
+            wantsPopup = true;
             return;
         }
 
@@ -3799,11 +3807,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     @Override
     public void mouseReleased(MouseEvent me) {
         // don't show the popup if we are drag-scrolling
-        if (me.isPopupTrigger() && !dragging) {
+        if ((me.isPopupTrigger() || wantsPopup) && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP,
                     me.getModifiersEx(), me.getButton());
             // stop scrolling
             shouldScroll = false;
+            wantsPopup = false;
             return;
         }
 
@@ -3814,6 +3823,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             scrollYDifference = 0;
             dragging = false;
             shouldScroll = false;
+            wantsPopup = false;
             boardPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
 

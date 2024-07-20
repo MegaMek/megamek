@@ -88,6 +88,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_TRANSLUCENT_HIDDEN_UNITS = "BoardTranslucentHiddenUnits";
     public static final String BOARD_TMM_PIP_MODE = "BoardTmmPipMode";
 
+    public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
+    public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
+    public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
+    public static final String SHOW_BOMB_HITS = "ShowBombHits";
+
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
 
@@ -517,6 +522,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOARD_DARKEN_MAP_AT_NIGHT, true);
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
+
+        store.setDefault(SHOW_ARTILLERY_MISSES, true);
+        store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(SHOW_BOMB_MISSES, true);
+        store.setDefault(SHOW_BOMB_HITS, false);
+
 
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
@@ -2782,6 +2793,35 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setTranslucentHiddenUnits(boolean b) {
         store.setValue(BOARD_TRANSLUCENT_HIDDEN_UNITS, b);
     }
+
+    public void setShowArtilleryMisses(boolean b){
+        store.setValue(SHOW_ARTILLERY_MISSES, b);
+    }
+    public boolean getShowArtilleryMisses(){
+        return getBoolean(SHOW_ARTILLERY_MISSES);
+    }
+
+    public void setShowArtilleryDrifts(boolean b) {
+        store.setValue(SHOW_ARTILLERY_DRIFTS, b);
+    }
+    public boolean getShowArtilleryDrifts(){
+        return getBoolean(SHOW_ARTILLERY_DRIFTS);
+    }
+
+    public void setShowBombMisses(boolean b) {
+        store.setValue(SHOW_BOMB_MISSES, b);
+    }
+    public boolean getShowBombMisses(){
+        return getBoolean(SHOW_BOMB_MISSES);
+    }
+
+    public void setShowBombHits(boolean b) {
+        store.setValue(SHOW_BOMB_HITS, b);
+    }
+    public boolean getShowBombHits(){
+        return getBoolean(SHOW_BOMB_HITS);
+    }
+
 
     public int getTMMPipMode() {
         return getInt(BOARD_TMM_PIP_MODE);

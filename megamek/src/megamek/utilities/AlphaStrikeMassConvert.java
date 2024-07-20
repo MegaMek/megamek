@@ -24,8 +24,6 @@ import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
-
 import megamek.common.Entity;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -47,7 +45,7 @@ public class AlphaStrikeMassConvert {
     private static final String COLUMN_SEPARATOR = "\t";
     private static final String INTERNAL_DELIMITER = ",";
 
-    private static final Logger logger = MMLogger.create(AlphaStrikeMassConvert.class);
+    private static final MMLogger logger = MMLogger.create(AlphaStrikeMassConvert.class);
 
     /**
      * Main entry point for unit -> AS conversion.

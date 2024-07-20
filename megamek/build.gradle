@@ -347,6 +347,13 @@ task alphaStrikeMassConvert(type: JavaExec, dependsOn: jar) {
     mainClass = 'megamek.utilities.AlphaStrikeMassConvert'
 }
 
+task boardsTagger(type: JavaExec, dependsOn: jar) {
+    description = 'Tags all boards'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.BoardsTagger'
+}
+
 task boardsValidator(type: JavaExec, dependsOn: jar) {
     description = 'Validates all boards'
     group = 'utility'

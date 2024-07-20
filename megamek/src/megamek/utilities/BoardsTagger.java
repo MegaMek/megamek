@@ -38,6 +38,7 @@ import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Configuration;
 import megamek.common.Hex;
+import megamek.logging.MMLogger;
 
 /**
  * Scans all boards and applies automated tags to them.
@@ -48,8 +49,9 @@ import megamek.common.Hex;
  * @author Simon (Juliez)
  */
 public class BoardsTagger {
+    private static final MMLogger logger = MMLogger.create(BoardsTagger.class);
 
-    /** When true, will print some information to System.out. */
+    /** When true, will print some information to Logger. */
     private static final boolean DEBUG = false;
 
     /**
@@ -127,11 +129,11 @@ public class BoardsTagger {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
         } catch (Exception ex) {
-            System.out.println("Board tagger cannot scan boards");
-            ex.printStackTrace();
+            logger.error(ex, "Board tagger cannot scan boards");
             System.exit(64);
         }
-        System.out.println("Finished.");
+
+        logger.info("Finished.");
     }
 
     /**
@@ -171,11 +173,13 @@ public class BoardsTagger {
             List<String> errors = new ArrayList<>();
             board.load(is, errors, true);
             if (!errors.isEmpty()) {
-                System.out.println("Board has errors: " + boardFile);
+                String message = String.format("Board has errors: %s", boardFile);
+                logger.debug(message);
                 return;
             }
         } catch (Exception e) {
-            System.out.println("Could not load board: " + boardFile);
+            String message = String.format("Could not load board: %s", boardFile);
+            logger.error(e, message);
             return;
         }
 
@@ -319,11 +323,12 @@ public class BoardsTagger {
                 .collect(toSet());
 
         if (DEBUG) {
-            System.out.println("----- Board: " + boardFile);
+            String message = String.format("----- Board: %s", boardFile);
+            logger.debug(message);
             if (toRemove.equals(toAdd)) {
-                System.out.println("No changes");
+                logger.debug("No changes.");
             } else {
-                toAdd.forEach(System.out::println);
+                toAdd.forEach(logger::debug);
             }
         }
 
@@ -337,8 +342,8 @@ public class BoardsTagger {
             try (OutputStream os = new FileOutputStream(boardFile)) {
                 board.save(os);
             } catch (Exception ex) {
-                System.out.println("Error: Could not save board: " + boardFile);
-                ex.printStackTrace();
+                String message = String.format("Could not save board: %s", boardFile);
+                logger.error(ex, message);
             }
         }
     }

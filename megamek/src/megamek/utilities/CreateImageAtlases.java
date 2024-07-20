@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.common.Configuration;
+import megamek.logging.MMLogger;
 
 /**
  * Program that will scan the data/images directory for images and take all of
@@ -43,6 +44,7 @@ import megamek.common.Configuration;
  * @author arlith
  */
 public class CreateImageAtlases {
+    private static final MMLogger logger = MMLogger.create(CreateImageAtlases.class);
 
     /**
      * Keeps track of how many images per row we should have in the atlas
@@ -108,12 +110,16 @@ public class CreateImageAtlases {
      * @param dir
      */
     void processDirectory(File dir) {
-        System.out.println("Processing: " + dir.toString());
+        String message = String.format("Processing: %s", dir.toString());
+        logger.info(message);
+
         File[] imageFiles = dir.listFiles((dir1, name) -> {
             // Ignore other atlas files, just in case
-            return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif")
-                    || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"))
-                    && !name.endsWith("_atlas.png");
+            return ((name.toLowerCase().endsWith(".png") ||
+                    name.toLowerCase().endsWith(".gif") ||
+                    name.toLowerCase().endsWith(".jpg") ||
+                    name.toLowerCase().endsWith(".jpeg"))
+                    && !name.endsWith("_atlas.png"));
         });
 
         int numRows = (int) Math.ceil(imageFiles.length / (imagesPerRow + 0.0));
@@ -127,27 +133,37 @@ public class CreateImageAtlases {
         File atlasFile = new File(dir, dir.getName() + "_atlas.png");
         String atlasLoc;
 
-        int row, col;
+        int row;
+        int col;
+
         row = col = 0;
-        int x, y;
+        int x;
+        int y;
+
         int writtenImages = 0;
         for (File imgFile : imageFiles) {
-            BufferedImage currImg;
+            BufferedImage currentImg;
+
             try {
-                currImg = ImageIO.read(imgFile);
+                currentImg = ImageIO.read(imgFile);
             } catch (IOException e) {
-                // If we can't read it, ignore it
+                logger.error(e, "Error reading image.");
                 e.printStackTrace();
                 continue;
             }
 
             // Error checking
-            if (currImg.getHeight() != hexHeight || currImg.getWidth() != hexWidth) {
-                System.out.println("Skipping image " + imgFile + " because dimensions don't match.  Image is "
-                        + currImg.getWidth() + " x " + currImg.getHeight());
+            if (currentImg.getHeight() != hexHeight || currentImg.getWidth() != hexWidth) {
+                message = String.format("Skipping image %s because dimensions don't match. Image is %d x %d",
+                        imgFile,
+                        currentImg.getWidth(),
+                        currentImg.getHeight());
+
+                logger.info(message);
                 improperImgDimsCount++;
                 continue;
             }
+
             x = col * hexWidth;
             y = row * hexHeight;
 
@@ -158,7 +174,7 @@ public class CreateImageAtlases {
             imagesStored.add(imgFile.toString());
 
             // Draw image in atlas
-            g.drawImage(currImg, x, y, null);
+            g.drawImage(currentImg, x, y, null);
 
             // Update indices
             col++;
@@ -175,7 +191,7 @@ public class CreateImageAtlases {
             try {
                 ImageIO.write(atlas, "png", atlasFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e, "Unable to write atlas.");
             }
         }
     }
@@ -187,7 +203,25 @@ public class CreateImageAtlases {
         imgFileToAtlasMap.writeToFile();
     }
 
+    /**
+     * Main entrypoint for the Image Atlas creation system. Can be ran from gradle
+     * with
+     *
+     * ./gradlew createImageAtlases
+     *
+     * or from the jar file with
+     *
+     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases <optional filename>
+     *
+     * @param args
+     */
     public static void main(String[] args) {
+        String fileName = "atlasedImages.txt";
+
+        if (args.length > 0) {
+            fileName = args[0];
+        }
+
         CreateImageAtlases atlasCreator = new CreateImageAtlases();
 
         atlasCreator.imageDirPath = Configuration.unitImagesDir().toPath();
@@ -198,17 +232,18 @@ public class CreateImageAtlases {
 
         atlasCreator.writeImgFileToAtlasMap();
 
-        try (FileWriter fw = new FileWriter("atlasedImages.txt"); // TODO : Remove inline file path
+        try (FileWriter fw = new FileWriter(fileName);
                 BufferedWriter bw = new BufferedWriter(fw)) {
             for (String imgFile : atlasCreator.imagesStored) {
                 bw.write(imgFile);
                 bw.write("\n");
             }
         } catch (IOException e) {
-            System.out.println("Failed to write out list of atlased images!");
-            e.printStackTrace();
+            logger.error(e, "Failed to write out list of atlased images!");
         }
 
-        System.out.println("Skipped " + atlasCreator.improperImgDimsCount + " images due to improper dimensions.");
+        String message = String.format("SKipped %d images due to improper dimensions.",
+                atlasCreator.improperImgDimsCount);
+        logger.info(message);
     }
 }

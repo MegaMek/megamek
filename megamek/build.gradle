@@ -166,8 +166,6 @@ task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "megamek.utilities.CreateImageAtlases"
     workingDir = file(fileStagingDir)
-    inputs.dir "${projectDir}/${data}/images/units"
-    outputs.dir "${fileStagingDir}/${data}/images/units"
 }
 
 task deleteAtlasedImages(dependsOn: createImageAtlases) {

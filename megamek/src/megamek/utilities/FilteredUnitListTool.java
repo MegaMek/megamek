@@ -28,6 +28,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.annotations.Nullable;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
+import megamek.logging.MMLogger;
 
 /**
  * This util will go through all available units and filter them according to
@@ -35,6 +36,8 @@ import megamek.common.verifier.TestBattleArmor;
  * {@link #filter(Entity, MechSummary)} to apply the desired filter.
  */
 public final class FilteredUnitListTool {
+    private static final MMLogger logger = MMLogger.create(FilteredUnitListTool.class);
+    private static final String UNIT_VERIFIER_OPTIONS = "data/mechfiles/UnitVerifierOptions.xml";
 
     /**
      * Edit the return value filter to any sort of check on entity or summary that,
@@ -56,20 +59,15 @@ public final class FilteredUnitListTool {
      * Note that the MechSummary contains Alpha Strike values and can be filtered
      * using those.
      *
-     * @param entity  The full Entity of the current unit to be tested
-     * @param summary The MechSummary of the current unit to be tested
+     * @param entity The full Entity of the current unit to be tested
      * @return True if this unit is to be listed
      */
-    private static boolean filter(final Entity entity, final MechSummary summary) {
-        // return summary.getASUnitType().isBattleArmor() &&
-        // entity.getMovementMode().isJumpInfantry()
-        // && entity.getJumpMP() == 0;
+    private static boolean filter(final Entity entity) {
         if (!entity.isBattleArmor()) {
             return false;
         }
 
-        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-                "data/mechfiles/UnitVerifierOptions.xml"));
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(UNIT_VERIFIER_OPTIONS));
         TestBattleArmor testBattleArmor = new TestBattleArmor((BattleArmor) entity, entityVerifier.baOption, null);
         return !testBattleArmor.correctEntity(new StringBuffer(), entity.getTechLevel());
     }
@@ -77,17 +75,21 @@ public final class FilteredUnitListTool {
     // No changes necessary after here:
     public static void main(String[] args) {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
-        System.out.println("Filtering...");
+        logger.info("Filtering...");
+
         int countFound = 0;
+
         for (MechSummary unitSummary : cache.getAllMechs()) {
             Entity entity = loadEntity(unitSummary.getSourceFile(), unitSummary.getEntryName());
-            if ((entity != null) && filter(entity, unitSummary)) {
-                System.out.println(entity.getShortName());
+            if ((entity != null) && filter(entity)) {
+                logger.info(entity.getShortName());
                 countFound++;
             }
         }
-        System.out.println("-------------------------");
-        System.out.println("Found " + countFound + " units.");
+
+        logger.info("-------------------------");
+        String message = String.format("Found %s units.", countFound);
+        logger.info(message);
     }
 
     public static @Nullable Entity loadEntity(File f, String entityName) {

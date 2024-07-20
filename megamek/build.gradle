@@ -359,6 +359,13 @@ task boardsValidator(type: JavaExec, dependsOn: jar) {
     mainClass = 'megamek.utilities.BoardsValidator'
 }
 
+task filteredUnitListTool(type: JavaExec, dependsOn: jar) {
+    description = 'Filter Unit List Tool'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.FilteredUnitListTool'
+}
+
 task nameChangesValidator(type: JavaExec, dependsOn: jar) {
     description = 'Checks for issues related to name changes.'
     group = 'utility'

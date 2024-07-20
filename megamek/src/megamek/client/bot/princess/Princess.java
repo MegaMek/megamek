@@ -717,7 +717,7 @@ public class Princess extends BotClient {
                             primaryFire.getTarget() != null &&
                             plan.stream().allMatch(curFire -> primaryFire.getTarget().getId() == targetID) &&
                             checkForEnhancedTargeting(shooter,
-                                    (Entity) primaryFire.getTarget(),
+                                    primaryFire.getTarget(),
                                     primaryFire.getToHit().getCover())) {
 
                         Entity aimTarget = (Mech) primaryFire.getTarget();
@@ -1214,13 +1214,17 @@ public class Princess extends BotClient {
      * against a given target. This includes some basic filtering for unit types and equipment such
      * targeting computers.
      * @param shooter           Entity doing the shooting
-     * @param target           Entity being shot at
+     * @param targetable        Hex, Building, or Entity being shot at (Enhanced Targeting only works on the last one)
      * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
      * @return                 true, if aimed or called shots should be checked
      */
     protected boolean checkForEnhancedTargeting (Entity shooter,
-                                                 Entity target,
+                                                 Targetable targetable,
                                                  int cover) {
+        // Only works on entities
+        if (!(targetable instanceof Entity)){
+            return false;
+        }
 
         if (!enableEnhancedTargeting) {
             return false;
@@ -1238,6 +1242,7 @@ public class Princess extends BotClient {
             return false;
         }
 
+        Entity target = (Entity) targetable;
         if (!isValidEnhancedTargetingTarget(target.getUnitType())) {
             return false;
         }

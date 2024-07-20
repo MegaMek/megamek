@@ -42,7 +42,7 @@ public class BoardsValidator {
     private int numBoardErrors = 0;
     private boolean isVerbose;
 
-    private static final MMLogger logger = MMLogger.create(BoardsValidator.class, true);
+    private static final MMLogger logger = MMLogger.create(BoardsValidator.class);
 
     /**
      * Sets a value indicating whether a full listing of errors

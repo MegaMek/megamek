@@ -39,7 +39,6 @@ import io.sentry.Sentry;
  */
 public class MMLogger extends ExtendedLoggerWrapper {
     private final ExtendedLoggerWrapper exLoggerWrapper;
-    private boolean verbose = false;
 
     private static final String FQCN = MMLogger.class.getName();
 
@@ -53,18 +52,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Private constructor as there should never be an instance of this
-     * class.
-     *
-     * @param verbose Output to System.out as well.
-     */
-    private MMLogger(final Logger logger, boolean verbose) {
-        super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
-        this.exLoggerWrapper = this;
-        this.verbose = verbose;
-    }
-
-    /**
      * Returns a custom Logger with the name of the calling class.
      *
      * @return The custom Logger for the calling class.
@@ -72,17 +59,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public static MMLogger create() {
         final Logger wrapped = LogManager.getLogger();
         return new MMLogger(wrapped);
-    }
-
-    /**
-     * Returns a custom Logger with the name of the calling class.
-     *
-     * @param verbose Output to System.out as well.
-     * @return The custom Logger for the calling class.
-     */
-    public static MMLogger create(boolean verbose) {
-        final Logger wrapped = LogManager.getLogger();
-        return new MMLogger(wrapped, verbose);
     }
 
     /**
@@ -99,20 +75,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Returns a custom Logger using the fully qualified name of the Class as
-     * the Logger name.
-     *
-     * @param loggerName The Class whose name should be used as the Logger name.
-     *                   If null it will default to the calling class.
-     * @param verbose    Output to System.out as well.
-     * @return The custom Logger.
-     */
-    public static MMLogger create(final Class<?> loggerName, boolean verbose) {
-        final Logger wrapped = LogManager.getLogger(loggerName);
-        return new MMLogger(wrapped, verbose);
-    }
-
-    /**
      * Info Level Logging.
      *
      * @param message Message to be sent to the log file.
@@ -120,10 +82,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     @Override
     public void info(String message) {
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.INFO, null, message);
-
-        if (verbose) {
-            System.out.println(message);
-        }
     }
 
     /**
@@ -134,10 +92,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     @Override
     public void warn(String message) {
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message);
-
-        if (verbose) {
-            System.out.println(message);
-        }
     }
 
     /**
@@ -149,10 +103,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void error(Throwable exception, String message) {
         Sentry.captureException(exception);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
-
-        if (verbose) {
-            System.out.println(message);
-        }
     }
 
     /**
@@ -163,10 +113,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     @Override
     public void error(String message) {
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message);
-
-        if (verbose) {
-            System.out.println(message);
-        }
     }
 
     /**
@@ -203,10 +149,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void fatal(Throwable exception, String message) {
         Sentry.captureException(exception);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.FATAL, null, message, exception);
-
-        if (verbose) {
-            System.out.println(message);
-        }
     }
 
     /**

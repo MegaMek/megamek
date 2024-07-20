@@ -139,7 +139,8 @@ public class MegaMek {
     }
 
     public static void initializeLogging(final String originProject) {
-        logger.info(getUnderlyingInformation(originProject));
+        String message = getUnderlyingInformation(originProject);
+        logger.info(message);
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -214,7 +215,8 @@ public class MegaMek {
      * @param args the arguments to the dedicated server.
      */
     private static void startDedicatedServer(String... args) {
-        logger.info(String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args)));
+        String message = String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
+        logger.info(message);
         DedicatedServer.start(args);
     }
 
@@ -245,7 +247,8 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        logger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
+        String message = String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
+        logger.info(message);
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -288,7 +291,8 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        logger.info(String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args)));
+        String message = String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
+        logger.info(message);
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -330,7 +334,8 @@ public class MegaMek {
                 null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        logger.info(String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args)));
+        String message = String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
+        logger.info(message);
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();

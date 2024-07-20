@@ -47,7 +47,7 @@ public class AlphaStrikeMassConvert {
     private static final String COLUMN_SEPARATOR = "\t";
     private static final String INTERNAL_DELIMITER = ",";
 
-    private static final Logger logger = MMLogger.create(AlphaStrikeMassConvert.class, true);
+    private static final Logger logger = MMLogger.create(AlphaStrikeMassConvert.class);
 
     /**
      * Main entry point for unit -> AS conversion.

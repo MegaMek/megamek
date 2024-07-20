@@ -1594,6 +1594,7 @@ Sniper Artillery (Standard)|Sniper Artillery
 Snow Fox (Standard)|Snow Fox
 Snowden Mining Station (Standard)|Snowden Mining Station
 SOAR (Standard)|SOAR
+SOAR|SOAR VTOL
 Soarece Superheavy MBT (Standard)|Soarece Superheavy MBT
 Sokar Urban Combat Unit (Standard)|Sokar Urban Combat Unit
 Solitaire (Standard)|Solitaire

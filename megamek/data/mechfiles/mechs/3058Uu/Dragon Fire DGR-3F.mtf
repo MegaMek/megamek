@@ -161,7 +161,7 @@ capabilities:<p>Based on the original design blueprints, the Dragon Fire was dev
 
 deployment:A basic model featuring a combination of large laser and medium pulse lasers, making it a reliable choice for many combat scenarios.
 
-history:The Dragon Fire walked off the JBBMI production lines in late 3058, with the first company going directly to the Draconis Combine. It proved itself in Operation Bulldog and the subsequent Great Refusal, which caused orders for the design to surge among units facing the Clan threat. A subsidiary contract with the Word of Blake in the mid-3060s incorporated the Word’s improved C3 technology, helping JBBMI achieve solid profit goals. In early 3068, JBBMI encountered a financial crisis when three stockholders gained over sixty percent of the corporation, leading to the closure of most production facilities in the Alliance, the Combine, and the Suns, with massive layoffs. Unconfirmed reports suggest new production facilities have been opened on Epsilon Eridani, Caph, and New Earth.
+history:The Dragon Fire walked off the JBBMI production lines in late 3058, with the first company going directly to the Draconis Combine. It proved itself in Operation Bulldog and the subsequent Great Refusal, which caused orders for the design to surge among units facing the Clan threat. A subsidiary contract with the Word of Blake in the mid-3060s incorporated the Word's improved C3 technology, helping JBBMI achieve solid profit goals. In early 3068, JBBMI encountered a financial crisis when three stockholders gained over sixty percent of the corporation, leading to the closure of most production facilities in the Alliance, the Combine, and the Suns, with massive layoffs. Unconfirmed reports suggest new production facilities have been opened on Epsilon Eridani, Caph, and New Earth.
 
 manufacturer:J.B. BattleMechs Inc
 primaryfactory:Storfors
@@ -170,4 +170,3 @@ systemmanufacturer:ENGINE:Pitban 300 XL
 systemmanufacturer:ARMOR:ArcShield Maxi II
 systemmanufacturer:COMMUNICATIONS:CeresCom Model 21-Rs with Guardian ECM
 systemmanufacturer:TARGETING:FireScan with IndirecTrack
-

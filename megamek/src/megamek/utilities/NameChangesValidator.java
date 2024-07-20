@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 import megamek.common.Configuration;
 import megamek.common.MechSummaryCache;
+import megamek.logging.MMLogger;
 
 /**
  * This tool goes through the name_changes.txt file and performs various tests:
@@ -43,8 +44,12 @@ import megamek.common.MechSummaryCache;
  * name-changes function itself). After the test, the rename is reversed.
  */
 public class NameChangesValidator {
+    private static final MMLogger logger = MMLogger.create(NameChangesValidator.class);
 
-    private static MechSummaryCache mechSummaryCache = null;
+    private static final String STRING_FINISHED = "Finished.";
+    private static final String STRING_EXCEPTION = "Exception";
+
+    private MechSummaryCache mechSummaryCache = null;
     private int errors;
     private final File lookupNames = new File(Configuration.unitsDir(), MechSummaryCache.FILENAME_LOOKUP);
     private final File lookupNamesHidden = new File(Configuration.unitsDir(),
@@ -59,7 +64,7 @@ public class NameChangesValidator {
 
     private void testEqualSides() {
         // Find equal left and right sides
-        System.out.println("Looking for equal left and right sides...");
+        logger.info("Looking for equal left and right sides...");
         try (FileInputStream fis = new FileInputStream(lookupNames);
                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
                 BufferedReader br = new BufferedReader(isr)) {
@@ -73,26 +78,32 @@ public class NameChangesValidator {
                     String lookupName = line.substring(0, index);
                     String entryName = line.substring(index + 1);
                     if (lookupName.equals(entryName)) {
-                        System.out.println("Equal lookup name and cache entry in line: " + line);
+                        String message = String.format("Equal lookup name and cache entry in line: %s", line);
+                        logger.info(message);
                         errors++;
                     }
                 }
             }
         } catch (Exception ex) {
-            System.out.println("Exception " + ex.getMessage());
+            logger.error(ex, STRING_EXCEPTION);
             System.exit(64);
         }
-        System.out.println("Finished.");
+
+        logger.info(STRING_FINISHED);
     }
 
     private void testLeftSide() {
+        String message = String.format("Trying to rename %s to %s", lookupNames, lookupNamesHidden);
+        logger.info(message);
+
         // Find left side entries that are present in the cache
-        System.out.println("Trying to rename " + lookupNames + " to " + lookupNamesHidden);
         if (lookupNames.renameTo(lookupNamesHidden) && lookupNamesHidden.exists()) {
-            System.out.println("Loading Unit Cache...");
+            logger.info("Loading Unit Cache...");
+
             mechSummaryCache = MechSummaryCache.getInstance(true);
             mechSummaryCache.getAllMechs();
-            System.out.println("Rename successful. Testing lookup names...");
+            logger.info("Rename successful. Testing lookup names...");
+
             try (FileInputStream fis = new FileInputStream(lookupNamesHidden);
                     InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
                     BufferedReader br = new BufferedReader(isr)) {
@@ -105,36 +116,41 @@ public class NameChangesValidator {
                     if (index > 0) {
                         String lookupName = line.substring(0, index);
                         if (mechSummaryCache.getMech(lookupName) != null) {
-                            System.out.println("Lookup name (left side) is an existing unit in line: " + line);
+                            message = String.format("Lookup name (left side) is an existing unit in line: %s", line);
+                            logger.info(message);
                             errors++;
                         }
                     }
                 }
             } catch (Exception ex) {
-                System.out.println("Exception " + ex.getMessage());
+                logger.error(ex, STRING_EXCEPTION);
                 System.exit(64);
             }
         }
 
-        System.out.println("Finished.");
-        System.out.println("Trying to rename " + lookupNamesHidden + " back to " + lookupNames);
+        logger.info(STRING_FINISHED);
+        message = String.format("Trying to rename %s back to %s", lookupNamesHidden, lookupNames);
+        logger.info(message);
+
         if (!lookupNamesHidden.renameTo(lookupNames)) {
-            System.out.println("ERROR: Could not rename! Check the files!");
+            logger.error("ERROR: Could not rename! Check the files!");
             System.exit(64);
         }
-        System.out.println("Rename successful.");
+
+        logger.info("Rename successful.");
     }
 
     private void testRightSide() {
         if (lookupNames.exists()) {
-            System.out.println("Testing actual names...");
-            System.out.println("Reloading Unit Cache...");
+            logger.info("Testing actual names...");
+            logger.info("Reloading Unit Cache...");
             mechSummaryCache.loadMechData(true);
             mechSummaryCache.getAllMechs();
             try (FileInputStream fis = new FileInputStream(lookupNames);
                     InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
                     BufferedReader br = new BufferedReader(isr)) {
                 String line;
+
                 while (null != (line = br.readLine())) {
                     if (line.startsWith("#")) {
                         continue;
@@ -143,20 +159,22 @@ public class NameChangesValidator {
                     if (index > 0) {
                         String entryName = line.substring(index + 1);
                         if (mechSummaryCache.getMech(entryName) == null) {
-                            System.out.println("Actual name (right side) not found in line: " + line);
+                            String message = String.format("Actual name (right side) not found in line: %s", line);
+                            logger.info(message);
                             errors++;
                         }
                     }
                 }
             } catch (Exception ex) {
-                System.out.println("Exception " + ex.getMessage());
+                logger.error(ex, STRING_EXCEPTION);
                 System.exit(64);
             }
         } else {
-            System.out.println("Cannot find the name-changes file " + MechSummaryCache.FILENAME_LOOKUP);
+            String message = String.format("Cannot find the name-changes file %s", MechSummaryCache.FILENAME_LOOKUP);
+            logger.info(message);
             System.exit(64);
         }
-        System.out.println("Finished.");
+        logger.info(STRING_FINISHED);
         System.exit(errors > 0 ? 1 : 0);
     }
 }

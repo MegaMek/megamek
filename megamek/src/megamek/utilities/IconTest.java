@@ -22,28 +22,30 @@ import java.io.IOException;
 
 import megamek.client.ui.swing.tileset.GenerateGenericIconList;
 import megamek.client.ui.swing.tileset.MechSetTest;
+import megamek.logging.MMLogger;
 
 /**
  * Executes both {@link MechSetTest} and {@link GenerateGenericIconList} for a
  * combined icon problems result.
  */
 public final class IconTest {
+    private static final MMLogger logger = MMLogger.create(IconTest.class);
 
     public static void main(final String[] args) throws IOException {
+        logger.info("Executing MechSetTest");
+
         try {
-            System.out.println("Executing MechSetTest");
             MechSetTest.main(new String[0]);
         } catch (final Exception e) {
-            System.out.println("There was a problem in MechSetTest!");
-            e.printStackTrace();
+            logger.error(e, "Error with MechSetTest");
         }
+
+        logger.info("\nExecuting GenerateGenericIconList");
+
         try {
-            System.out.println();
-            System.out.println("Executing GenerateGenericIconList");
             GenerateGenericIconList.main(new String[0]);
         } catch (final Exception e) {
-            System.out.println("There was a problem in GenerateGenericIconList!");
-            e.printStackTrace();
+            logger.error(e, "Error with GenerateGenericIconList");
         }
     }
 

@@ -713,6 +713,7 @@ public class Princess extends BotClient {
                         targetID = Entity.NONE;
                     }
 
+                    // TODO: gate this block on a game option or client option
                     if (targetID > Entity.NONE &&
                             primaryFire.getTarget() != null &&
                             plan.stream().allMatch(curFire -> primaryFire.getTarget().getId() == targetID) &&

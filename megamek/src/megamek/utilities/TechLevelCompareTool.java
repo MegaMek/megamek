@@ -32,6 +32,7 @@ import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.logging.MMLogger;
 
 /**
  * Compares computed static tech level to what is in the unit file and reports
@@ -46,65 +47,96 @@ import megamek.common.loaders.EntityLoadingException;
  */
 
 public class TechLevelCompareTool {
+    private static final MMLogger logger = MMLogger.create(TechLevelCompareTool.class);
 
     static Set<EquipmentType> weaponSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
     static Set<EquipmentType> ammoSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
     static Set<EquipmentType> miscSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
 
+    private static final String EQUIPMENT_TYPE_FORMATTED_STRING = "\t%s (%s)";
+    private static int badMechs = 0;
+
     public static void main(String[] args) {
-        int bad = 0;
         MechSummaryCache msc = MechSummaryCache.getInstance();
+
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
+                logger.error(ignored, "Ignored Exception");
             }
         }
+
+        logger.info("Any output you see from here are errors with the units.");
+
         for (MechSummary ms : msc.getAllMechs()) {
             Entity en = null;
+
             try {
                 en = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-            } catch (EntityLoadingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (EntityLoadingException ignored) {
+                String message = String.format("Could not load entity %s", ms.getName());
+                logger.error(message);
+                continue;
             }
-            if (null != en) {
-                SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(en.getTechLevel());
-                SimpleTechLevel calc = en.getStaticTechLevel();
-                if (fixed.compareTo(calc) < 0) {
-                    System.out.println(en.getShortName() + ": " + fixed + "/" + calc);
-                    for (Mounted m : en.getEquipment()) {
-                        if (fixed.compareTo(m.getType().getStaticTechLevel()) < 0) {
-                            if (m.getType() instanceof WeaponType) {
-                                weaponSet.add(m.getType());
-                            } else if (m.getType() instanceof AmmoType) {
-                                ammoSet.add(m.getType());
-                            } else {
-                                miscSet.add(m.getType());
-                            }
-                        }
-                    }
-                    bad++;
-                }
-            } else {
-                System.err.println("Could not load entity " + ms.getName());
-            }
+
+            handleBadEntity(en);
+
         }
-        System.out.println("Weapons:");
-        for (EquipmentType et : weaponSet) {
-            System.out.println("\t" + et.getName() + " (" + et.getStaticTechLevel().toString() + ")");
-        }
-        System.out.println("Ammo:");
-        for (EquipmentType et : ammoSet) {
-            System.out.println("\t" + et.getName() + " (" + et.getStaticTechLevel().toString() + ")");
-        }
-        System.out.println("MiscType:");
-        for (EquipmentType et : miscSet) {
-            System.out.println("\t" + et.getName() + " (" + et.getStaticTechLevel().toString() + ")");
-        }
-        System.out.println("Failed: " + bad + "/" + msc.getAllMechs().length);
+
+        printDetails();
     }
 
+    private static void handleBadEntity(Entity entity) {
+
+        SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(entity.getTechLevel());
+        SimpleTechLevel calc = entity.getStaticTechLevel();
+
+        if (fixed.compareTo(calc) < 0) {
+            String message = String.format("%s: %s/%s", entity.getShortName(), fixed, calc);
+            logger.info(message);
+
+            for (Mounted<?> m : entity.getEquipment()) {
+                EquipmentType mountedEquipmentType = m.getType();
+
+                if (fixed.compareTo(mountedEquipmentType.getStaticTechLevel()) < 0) {
+                    if (mountedEquipmentType instanceof WeaponType weaponType) {
+                        weaponSet.add(weaponType);
+                    } else if (mountedEquipmentType instanceof AmmoType ammoType) {
+                        ammoSet.add(ammoType);
+                    } else {
+                        miscSet.add(mountedEquipmentType);
+                    }
+                }
+            }
+
+            badMechs++;
+        }
+    }
+
+    private static void printDetails() {
+        String message = "";
+
+        logger.info("Weapons:");
+        for (EquipmentType et : weaponSet) {
+            message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
+            logger.info(message);
+        }
+
+        logger.info("Ammo:");
+        for (EquipmentType et : ammoSet) {
+            message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
+            logger.info(message);
+        }
+
+        logger.info("MiscType:");
+        for (EquipmentType et : miscSet) {
+            message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
+            logger.info(message);
+        }
+
+        message = String.format("Failed: %d/%d", badMechs, MechSummaryCache.getInstance().getAllMechs().length);
+        logger.info(message);
+
+    }
 }

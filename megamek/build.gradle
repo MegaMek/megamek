@@ -386,3 +386,17 @@ task nameChangesValidator(type: JavaExec, dependsOn: jar) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.NameChangesValidator'
 }
+
+task ratGeneratorEditor(type: JavaExec, dependsOn: copyFiles) {
+    description = 'Checks for issues related to name changes.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.RATGeneratorEditor'
+}
+
+task techLevelCompareTool(type: JavaExec, dependsOn: jar) {
+    description = 'Tech Level Comparison Tool'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.TechLevelCompareTool'
+}

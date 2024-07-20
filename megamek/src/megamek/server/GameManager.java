@@ -9649,6 +9649,7 @@ public class GameManager extends AbstractGameManager {
                 // fall through
             case Targetable.TYPE_HEX_CLEAR:
             case Targetable.TYPE_HEX_IGNITE:
+            case Targetable.TYPE_BLDG_IGNITE:
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(t.getPosition());
                 if ((h != null) && h.hasTerrainFactor()) {
@@ -9663,7 +9664,6 @@ public class GameManager extends AbstractGameManager {
                 tryIgniteHex(t.getPosition(), attId, false, true,
                         new TargetRoll(0, "inferno"), -1, vPhaseReport);
                 break;
-            case Targetable.TYPE_BLDG_IGNITE:
             case Targetable.TYPE_BUILDING:
                 Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()),
                         2 * missiles, t.getPosition());
@@ -13811,6 +13811,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // is the hex ignitable (how are infernos handled?)
+        // TODO: implement TO:AR modifiers and impossibility check (p. 42)
         if (!hex.isIgnitable()) {
             return false;
         }

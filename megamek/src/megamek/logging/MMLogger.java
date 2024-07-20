@@ -39,6 +39,7 @@ import io.sentry.Sentry;
  */
 public class MMLogger extends ExtendedLoggerWrapper {
     private final ExtendedLoggerWrapper exLoggerWrapper;
+
     private static final String FQCN = MMLogger.class.getName();
 
     /**

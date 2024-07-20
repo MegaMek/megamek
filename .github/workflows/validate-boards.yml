@@ -1,10 +1,5 @@
-# Validates Boards
-#
-# Jobs:
-#    - board_validator: Validate boards in MM
 name: Validate Boards
 
-# This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
 on:
   push:
     branches: [master]
@@ -26,22 +21,25 @@ on:
       - "megamek/src/megamek/common/Building.java"
       - "megamek/src/megamek/common/Terrains.java"
       - "megamek/src/megamek/utilities/BoardsValidator.java"
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
 
 jobs:
   board_validator:
     runs-on: ${{ matrix.os }}
 
-    # Run this job once for each combination in the matrix below.
     strategy:
       matrix:
-        os: [ubuntu-latest] # For Board Validation running on *nix is sufficient
+        os: [ubuntu-latest]
         java-distribution: [temurin]
         java-version: [17]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: "Check out MegaMek"
+        uses: actions/checkout@v4
+        with:
+          path: megamek
 
-      # Setup the requested Java Distribution and Version from the matrix
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
         with:
@@ -50,16 +48,11 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          build-scan-publish: false
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
 
-      - name: Build with Gradle
-        working-directory: megamek
-        run: ./gradlew jar
-
-      # Run the Boards Validator
       - name: Validate Boards
         working-directory: megamek
-        # Runs the BoardsValidator in default mode, which rips through
-        # the ./data directory of the current working directory.
-        #
-        # The -q flag tells the validator to only print the filenames that are invalid.
-        run: java -cp build/libs/MegaMek.jar megamek.utilities.BoardsValidator -q
+        run: ./gradlew boardsValidator

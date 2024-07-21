@@ -366,6 +366,13 @@ task filteredUnitListTool(type: JavaExec, dependsOn: jar) {
     mainClass = 'megamek.utilities.FilteredUnitListTool'
 }
 
+task entityVerifier(type: JavaExec, dependsOn: jar) {
+    description = 'Entity Verifier'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.common.verifier.EntityVerifier'
+}
+
 task iconTest(type: JavaExec, dependsOn: jar) {
     description = 'Icon Tool'
     group = 'utility'

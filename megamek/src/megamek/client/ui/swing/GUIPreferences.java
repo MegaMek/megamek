@@ -2762,11 +2762,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_UNIT_TEXT_COLOR, getColorString(color));
     }
 
-    public int getAttachArrowTransparency() {
+    public int getAttackArrowTransparency() {
         return getInt(BOARD_ATTACK_ARROW_TRANSPARENCY);
     }
 
-    public void setAttachArrowTransparency(int i) {
+    public void setAttackArrowTransparency(int i) {
         store.setValue(BOARD_ATTACK_ARROW_TRANSPARENCY, i);
     }
 

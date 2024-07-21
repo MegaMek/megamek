@@ -715,7 +715,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        SpinnerNumberModel mAttackArrowTransparency = new SpinnerNumberModel(GUIP.getAttachArrowTransparency(), 0, 256, 1);
+        SpinnerNumberModel mAttackArrowTransparency = new SpinnerNumberModel(GUIP.getAttackArrowTransparency(), 0, 256, 1);
         attackArrowTransparency = new JSpinner(mAttackArrowTransparency);
         attackArrowTransparency.setMaximumSize(new Dimension(150, 40));
         JLabel attackArrowTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.attackArrowTransparency"));
@@ -1993,7 +1993,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
         csbMapsheetColor.setColour(GUIP.getMapsheetColor());
 
-        attackArrowTransparency.setValue(GUIP.getAttachArrowTransparency());
+        attackArrowTransparency.setValue(GUIP.getAttackArrowTransparency());
         ecmTransparency.setValue(GUIP.getECMTransparency());
         buttonsPerRow.setText(String.format("%d", GUIP.getButtonsPerRow()));
         playersRemainingToShow.setText(String.format("%d", GUIP.getPlayersRemainingToShow()));
@@ -2182,7 +2182,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
         GUIP.setMapsheetColor(csbMapsheetColor.getColour());
 
-        GUIP.setAttachArrowTransparency((Integer) attackArrowTransparency.getValue());
+        GUIP.setAttackArrowTransparency((Integer) attackArrowTransparency.getValue());
         GUIP.setECMTransparency((Integer) ecmTransparency.getValue());
 
         try {

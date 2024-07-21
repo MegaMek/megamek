@@ -20,8 +20,8 @@ import megamek.common.Entity;
  * long diagonal lines.
  *
  * Appears as an arrow pointing to the hex this entity will move to based on
- * current movement vectors. 
- * 
+ * current movement vectors.
+ *
  * TODO: Different color depending upon whether
  * entity has already moved this turn
  */
@@ -80,13 +80,13 @@ class MovementSprite extends Sprite {
         // red if offboard
         if (!this.bv.game.getBoard().contains(end)) {
             int colour = 0xff0000; // red
-            int transparency = GUIP.getAttachArrowTransparency();
+            int transparency = GUIP.getAttackArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
         // dark gray if done
         if (en.isDone()) {
             int colour = 0x696969; // gray
-            int transparency = GUIP.getAttachArrowTransparency();
+            int transparency = GUIP.getAttackArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
 

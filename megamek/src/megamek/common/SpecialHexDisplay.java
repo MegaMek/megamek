@@ -66,6 +66,12 @@ public class SpecialHexDisplay implements Serializable {
                 return false;
             }
         },
+        ARTILLERY_DRIFT(new MegaMekFile(Configuration.hexesDir(), "artydrift.gif").toString()) {
+            @Override
+            public boolean drawBefore() {
+                return false;
+            }
+        },
         ARTILLERY_MISS(new MegaMekFile(Configuration.hexesDir(), "artymiss.gif").toString()) {
             @Override
             public boolean drawBefore() {
@@ -73,6 +79,12 @@ public class SpecialHexDisplay implements Serializable {
             }
         },
         BOMB_HIT(new MegaMekFile(Configuration.hexesDir(), "bombhit.gif").toString()) {
+            @Override
+            public boolean drawBefore() {
+                return false;
+            }
+        },
+        BOMB_DRIFT(new MegaMekFile(Configuration.hexesDir(), "bombdrift.gif").toString()) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -255,8 +267,13 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
+     * Determine whether the current SpecialHexDisplay should be displayed
+     * Note Artillery Hits and Bomb Hits (direct hits on their targets) will always display
+     * in the appropriate phase.  Other bomb- or artillery-related graphics are optional.
      * @param phase
      * @param curRound
+     * @param playerChecking
+     * @param guiPref
      * @return
      */
     public boolean drawNow(GamePhase phase, int curRound, Player playerChecking, GUIPreferences guiPref) {
@@ -290,11 +307,11 @@ public class SpecialHexDisplay implements Serializable {
         if (guiPref != null) {
             switch (type) {
                 case ARTILLERY_MISS -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_MISSES);
-                case ARTILLERY_HIT -> shouldDisplay |=
+                case ARTILLERY_DRIFT -> shouldDisplay |=
                         (guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS)
                                 || !this.info.contains(Messages.getString("ArtilleryMessage.drifted")));
                 case BOMB_MISS -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
-                case BOMB_HIT -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_HITS);
+                case BOMB_DRIFT -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_DRIFTS);
             }
         }
 

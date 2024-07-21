@@ -222,7 +222,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox artilleryDisplayMisses = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryMisses"));
     private final JCheckBox artilleryDisplayDriftedHits = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits"));
     private final JCheckBox bombsDisplayMisses = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses"));
-    private final JCheckBox bombsDisplayHits = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowBombHits"));
+    private final JCheckBox bombsDisplayDrifts = new JCheckBox(Messages.getString("CommonSettingsDialog.hexes.ShowBombDrifts"));
 
 
     private final JCheckBox moveDefaultClimbMode = new JCheckBox(Messages.getString("CommonSettingsDialog.moveDefaultClimbMode"));
@@ -691,8 +691,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
         comps.add(checkboxEntry(bombsDisplayMisses, Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip")));
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
-        comps.add(checkboxEntry(bombsDisplayHits, Messages.getString("CommonSettingsDialog.hexes.ShowBombHits.tooltip")));
-        bombsDisplayHits.setSelected(GUIP.getShowBombHits());
+        comps.add(checkboxEntry(bombsDisplayDrifts, Messages.getString("CommonSettingsDialog.hexes.ShowBombDrifts.tooltip")));
+        bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
         row = new ArrayList<>();
 
@@ -2007,7 +2007,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
-        bombsDisplayHits.setSelected(GUIP.getShowBombHits());
+        bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
         for (String option: savedAdvancedOpt.keySet()) {
             GUIP.setValue(option, savedAdvancedOpt.get(option));
@@ -2203,7 +2203,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setShowArtilleryMisses(artilleryDisplayMisses.isSelected());
         GUIP.setShowArtilleryDrifts(artilleryDisplayDriftedHits.isSelected());
         GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
-        GUIP.setShowBombHits(bombsDisplayHits.isSelected());
+        GUIP.setShowBombDrifts(bombsDisplayDrifts.isSelected());
 
         GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
         try {

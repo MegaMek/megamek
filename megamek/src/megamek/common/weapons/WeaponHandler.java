@@ -16,6 +16,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
@@ -2211,4 +2212,26 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
         }
     }
+
+    protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa, Vector<Integer> hitIds) {
+        String msg = Messages.getString("ArtilleryMessage.drifted" + targetPos.toString());
+        final SpecialHexDisplay shd;
+        if (hitIds.isEmpty()) {
+            shd = new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.ARTILLERY_DRIFT, game
+                    .getRoundCount(), game
+                    .getPlayer(aaa.getPlayerId()),
+                    msg
+            );
+        } else {
+            shd = new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                    .getRoundCount(), game
+                    .getPlayer(aaa.getPlayerId()),
+                    Messages.getString("ArtilleryMessage.drifted" + targetPos.toString())
+            );
+        }
+        game.getBoard().addSpecialHexDisplay(finalPos, shd);
+    }
+
 }

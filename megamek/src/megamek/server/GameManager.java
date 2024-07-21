@@ -9422,10 +9422,11 @@ public class GameManager extends AbstractGameManager {
      * @param ae        the attacking <code>entity</code>
      * @param subjectId the <code>int</code> id of the target
      */
-    public void deliverArtilleryInferno(Coords coords, Entity ae,
+    public Vector<Integer> deliverArtilleryInferno(Coords coords, Entity ae,
                                         int subjectId, Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
+        Vector<Integer> alreadyHit = new Vector<>();
         if (null != h) {
             // Unless there is a fire in the hex already, start one.
             if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
@@ -9437,6 +9438,7 @@ public class GameManager extends AbstractGameManager {
             }
         }
         for (Entity entity : game.getEntitiesVector(coords)) {
+            alreadyHit.add(entity.getId());
             // TacOps, p. 356 - treat as if hit by 5 inferno missiles
             r = new Report(6695);
             r.indent(3);
@@ -9471,6 +9473,7 @@ public class GameManager extends AbstractGameManager {
                 }
             }
             for (Entity entity : game.getEntitiesVector(tempcoords)) {
+                alreadyHit.add(entity.getId());
                 r = new Report(6695);
                 r.indent(3);
                 r.add(entity.getDisplayName());
@@ -9486,6 +9489,7 @@ public class GameManager extends AbstractGameManager {
                 vPhaseReport.addAll(vDamageReport);
             }
         }
+        return alreadyHit;
     }
 
     public void deliverScreen(Coords coords, Vector<Report> vPhaseReport) {
@@ -33549,7 +33553,7 @@ public class GameManager extends AbstractGameManager {
      * @param attackingBA  How many BA suits are in the squad if this is a BA Tube arty
      *                     attack, -1 otherwise
      */
-    public void artilleryDamageArea(Coords centre, Coords attackSource,
+    public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource,
                                     AmmoType ammo, int subjectId, Entity killer, boolean flak,
                                     int altitude, boolean mineClear, Vector<Report> vPhaseReport,
                                     boolean asfFlak, int attackingBA) {
@@ -33561,7 +33565,7 @@ public class GameManager extends AbstractGameManager {
             attackSource = centre;
         }
 
-        artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
+        return artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
                 damage, falloff, flak, altitude, vPhaseReport, asfFlak);
     }
 
@@ -33592,7 +33596,7 @@ public class GameManager extends AbstractGameManager {
      * @param asfFlak
      *            Is this flak against ASF?
      */
-    public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
+    public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
                                     Entity killer, int damage, int falloff, boolean flak, int altitude,
                                     Vector<Report> vPhaseReport, boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
@@ -33605,9 +33609,12 @@ public class GameManager extends AbstractGameManager {
             }
             attackSource = centre; // all splash comes from ground zero
         }
+
+        // Lets reports assess if anything was caught in area
+        return alreadyHit;
     }
 
-    public void deliverBombDamage(Coords centre, int type, int subjectId, Entity killer,
+    public Vector<Integer> deliverBombDamage(Coords centre, int type, int subjectId, Entity killer,
                                   Vector<Report> vPhaseReport) {
         int range = 0;
         int damage = 10;
@@ -33631,6 +33638,9 @@ public class GameManager extends AbstractGameManager {
                         alreadyHit, false);
             }
         }
+
+        // Lets reports assess if anything was caught in area
+        return alreadyHit;
     }
 
     /**
@@ -33640,10 +33650,11 @@ public class GameManager extends AbstractGameManager {
      * @param ae        the attacking <code>entity</code>
      * @param subjectId the <code>int</code> id of the target
      */
-    public void deliverBombInferno(Coords coords, Entity ae, int subjectId,
+    public Vector<Integer> deliverBombInferno(Coords coords, Entity ae, int subjectId,
                                    Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
+        Vector<Integer> alreadyHit = new Vector<>();
         // Unless there is a fire in the hex already, start one.
         if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_BOMB) {
             ignite(coords, Terrains.FIRE_LVL_INFERNO_BOMB, vPhaseReport);
@@ -33656,6 +33667,7 @@ public class GameManager extends AbstractGameManager {
             if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
                 continue;
             }
+            alreadyHit.add(entity.getId());
             // TacOps, p. 359 - treat as if hit by 5 inferno missiles
             r = new Report(6696);
             r.indent(3);
@@ -33670,6 +33682,7 @@ public class GameManager extends AbstractGameManager {
             Report.indentAll(vDamageReport, 2);
             vPhaseReport.addAll(vDamageReport);
         }
+        return alreadyHit;
     }
 
     /**

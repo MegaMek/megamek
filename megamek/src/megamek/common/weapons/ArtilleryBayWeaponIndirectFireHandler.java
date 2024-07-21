@@ -148,6 +148,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             return true;
         }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
+        Coords origPos = target.getPosition();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
@@ -321,7 +322,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
-            Coords origPos = targetPos;
             int moF = toHit.getMoS();
             if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
                 // getMoS returns a negative MoF
@@ -333,15 +333,15 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
             }
             // We're only going to display one missed shot hex on the board, at the intended target
-            artyMsg = "Artillery missed here on round "
-                    + game.getRoundCount() + ", fired by "
+            artyMsg = "Bay Artillery missed here on round "
+                    + game.getRoundCount() + ", by "
                     + game.getPlayer(aaa.getPlayerId()).getName();
             game.getBoard().addSpecialHexDisplay(origPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
                             game.getPlayer(aaa.getPlayerId()), artyMsg));
             while (nweaponsHit > 0) {
                 //We'll generate a new report and scatter for each weapon fired
-                targetPos = Compute.scatterDirectArty(targetPos, moF);
+                targetPos = Compute.scatterDirectArty(origPos, moF);
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
                     // misses and scatters to another hex
@@ -352,12 +352,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         r.add(atype.getShortName());
                         r.add(targetPos.getBoardNum());
                         vPhaseReport.addElement(r);
-                        // Show scatter
-                        game.getBoard().addSpecialHexDisplay(targetPos,
-                                new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(),
-                                        game.getPlayer(aaa.getPlayerId()),
-                                        Messages.getString("ArtilleryMessage.drifted"),
-                                        SpecialHexDisplay.SHD_OBSCURED_ALL));
                     } else {
                         r = new Report(3192);
                         r.subject = subjectId;
@@ -439,7 +433,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
-                    gameManager.deliverArtilleryInferno(c, ae, subjectId, vPhaseReport);
+
+                    handleArtilleryDriftMarker(origPos, c, aaa,
+                            gameManager.deliverArtilleryInferno(c, ae, subjectId, vPhaseReport)
+                    );
                 }
             }
             return false;
@@ -550,8 +547,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         gameManager.removeMinefield(mf);
                     }
                 }
-                gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
-                        altitude, mineClear, vPhaseReport, asfFlak, -1);
+                handleArtilleryDriftMarker(origPos, c, aaa,
+                    gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
+                            altitude, mineClear, vPhaseReport, asfFlak, -1)
+                );
             }
 
         }

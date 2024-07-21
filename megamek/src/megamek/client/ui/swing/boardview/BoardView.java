@@ -600,12 +600,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         SpecialHexDisplay.Type.ARTILLERY_MISS.init();
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
+        SpecialHexDisplay.Type.ARTILLERY_DRIFT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
         SpecialHexDisplay.Type.BOMB_MISS.init();
         SpecialHexDisplay.Type.BOMB_HIT.init();
+        SpecialHexDisplay.Type.BOMB_DRIFT.init();
         SpecialHexDisplay.Type.PLAYER_NOTE.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);

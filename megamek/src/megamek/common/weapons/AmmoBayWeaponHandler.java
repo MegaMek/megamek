@@ -13,11 +13,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
@@ -73,10 +70,10 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     && !bayW.isJammed()
                     && bayWAmmo != null
                     && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
-                WeaponType bayWType = ((WeaponType) bayW.getType());
+                WeaponType bayWType = bayW.getType();
                 // need to cycle through weapons and add av
                 double current_av = 0;
-                AmmoType atype = (AmmoType) bayWAmmo.getType();
+                AmmoType atype = bayWAmmo.getType();
 
                 if (range == WeaponType.RANGE_SHORT) {
                     current_av = bayWType.getShortAV();
@@ -121,7 +118,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
 
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
+        if (atype.getMunitionType().contains(Munitions.M_CLUSTER)) {
             current_av = Math.floor(0.6 * current_av);
         }
         return current_av;

@@ -1264,7 +1264,7 @@ public class Board implements Serializable {
         // Use iterator so we can remove while traversing
         for (Iterator<SpecialHexDisplay> iterator = specialHexes.get(coords).iterator(); iterator.hasNext();) {
             SpecialHexDisplay shd = iterator.next();
-            if (Set.of(BOMB_HIT, BOMB_MISS).contains(shd.getType())) {
+            if (Set.of(BOMB_HIT, BOMB_MISS, BOMB_DRIFT).contains(shd.getType())) {
                 iterator.remove();
             }
         }
@@ -1671,13 +1671,21 @@ public class Board implements Serializable {
         return specialHexes;
     }
 
+    /**
+     * Sets the current board's specialHexes hashtable to a new set.
+     * To avoid opponent updates wiping local copies of SHDs, specifically Artillery Miss and
+     * Drift markers, back up the local copies.  Add them back if the remote table doesn't
+     * contain them.
+     *
+     * @param shd
+     */
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
         Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
 
         // Grab all current ARTILLERY_MISS instances
         for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: specialHexes.entrySet()) {
             for (SpecialHexDisplay special: e.getValue()) {
-                if (Set.of(ARTILLERY_MISS).contains(special.getType())) {
+                if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
                     temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
                 }
             }
@@ -1692,7 +1700,9 @@ public class Board implements Serializable {
                 if (!specialHexes.containsKey(e.getKey())) {
                     specialHexes.put(e.getKey(), new LinkedList<>());
                 }
-                specialHexes.get(e.getKey()).add(miss);
+                if (!specialHexes.get(e.getKey()).contains(miss)) {
+                    specialHexes.get(e.getKey()).add(miss);
+                }
             }
         }
     }

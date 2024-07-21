@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Messages;
 import org.apache.logging.log4j.LogManager;
@@ -103,7 +102,7 @@ public enum PlayerColour {
 
     public Color getColour(boolean allowTransparency) {
         if (allowTransparency) {
-            int transparency = GUIP.getAttachArrowTransparency();
+            int transparency = GUIP.getAttackArrowTransparency();
             return new Color(getHex() | (transparency << 24), true);
         } else {
             return new Color(getHex());

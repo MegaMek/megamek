@@ -91,7 +91,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
     public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
-    public static final String SHOW_BOMB_HITS = "ShowBombHits";
+    public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
 
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
@@ -526,7 +526,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
         store.setDefault(SHOW_BOMB_MISSES, true);
-        store.setDefault(SHOW_BOMB_HITS, false);
+        store.setDefault(SHOW_BOMB_DRIFTS, false);
 
 
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
@@ -2762,11 +2762,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_UNIT_TEXT_COLOR, getColorString(color));
     }
 
-    public int getAttachArrowTransparency() {
+    public int getAttackArrowTransparency() {
         return getInt(BOARD_ATTACK_ARROW_TRANSPARENCY);
     }
 
-    public void setAttachArrowTransparency(int i) {
+    public void setAttackArrowTransparency(int i) {
         store.setValue(BOARD_ATTACK_ARROW_TRANSPARENCY, i);
     }
 
@@ -2815,11 +2815,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(SHOW_BOMB_MISSES);
     }
 
-    public void setShowBombHits(boolean b) {
-        store.setValue(SHOW_BOMB_HITS, b);
+    public void setShowBombDrifts(boolean b) {
+        store.setValue(SHOW_BOMB_DRIFTS, b);
     }
-    public boolean getShowBombHits(){
-        return getBoolean(SHOW_BOMB_HITS);
+    public boolean getShowBombDrifts(){
+        return getBoolean(SHOW_BOMB_DRIFTS);
     }
 
 

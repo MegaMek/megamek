@@ -16,6 +16,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
@@ -2209,6 +2210,38 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
+        }
+    }
+
+    /**
+     * Used by certain artillery handlers to draw drift markers with "hit" graphics if
+     * anything is caught in the blast, or "drift" marker if nothing is damaged.
+     * No-op for direct hits.
+     * @param targetPos
+     * @param finalPos
+     * @param aaa
+     * @param hitIds
+     */
+    protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa, Vector<Integer> hitIds) {
+        if (bMissed) {
+            String msg = Messages.getString("ArtilleryMessage.drifted") + " " + targetPos.getBoardNum();
+            final SpecialHexDisplay shd;
+            if (hitIds.isEmpty()) {
+                shd = new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ARTILLERY_DRIFT, game
+                        .getRoundCount(), game
+                        .getPlayer(aaa.getPlayerId()),
+                        msg
+                );
+            } else {
+                shd = new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                        .getRoundCount(), game
+                        .getPlayer(aaa.getPlayerId()),
+                        msg
+                );
+            }
+            game.getBoard().addSpecialHexDisplay(finalPos, shd);
         }
     }
 }

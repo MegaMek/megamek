@@ -306,12 +306,11 @@ public class SpecialHexDisplay implements Serializable {
         // Hide icons the player doesn't want to see
         if (guiPref != null) {
             switch (type) {
-                case ARTILLERY_MISS -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_MISSES);
-                case ARTILLERY_DRIFT -> shouldDisplay |=
-                        (guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS)
-                                || !this.info.contains(Messages.getString("ArtilleryMessage.drifted")));
-                case BOMB_MISS -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
-                case BOMB_DRIFT -> shouldDisplay |= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_DRIFTS);
+                case ARTILLERY_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_MISSES);
+                case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
+                                //|| !this.info.contains(Messages.getString("ArtilleryMessage.drifted")));
+                case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
+                case BOMB_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_DRIFTS);
             }
         }
 
@@ -335,7 +334,8 @@ public class SpecialHexDisplay implements Serializable {
             return false;
         }
         final SpecialHexDisplay other = (SpecialHexDisplay) obj;
-        return (type == other.type) && Objects.equals(owner, other.owner) && (round == other.round);
+        return (type == other.type) && Objects.equals(owner, other.owner) && (round == other.round)
+                && info.equals(other.info);
     }
 
     @Override

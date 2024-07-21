@@ -2213,25 +2213,35 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
+    /**
+     * Used by certain artillery handlers to draw drift markers with "hit" graphics if
+     * anything is caught in the blast, or "drift" marker if nothing is damaged.
+     * No-op for direct hits.
+     * @param targetPos
+     * @param finalPos
+     * @param aaa
+     * @param hitIds
+     */
     protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa, Vector<Integer> hitIds) {
-        String msg = Messages.getString("ArtilleryMessage.drifted" + targetPos.toString());
-        final SpecialHexDisplay shd;
-        if (hitIds.isEmpty()) {
-            shd = new SpecialHexDisplay(
-                    SpecialHexDisplay.Type.ARTILLERY_DRIFT, game
-                    .getRoundCount(), game
-                    .getPlayer(aaa.getPlayerId()),
-                    msg
-            );
-        } else {
-            shd = new SpecialHexDisplay(
-                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                    .getRoundCount(), game
-                    .getPlayer(aaa.getPlayerId()),
-                    Messages.getString("ArtilleryMessage.drifted" + targetPos.toString())
-            );
+        if (bMissed) {
+            String msg = Messages.getString("ArtilleryMessage.drifted") + " " + targetPos.getBoardNum();
+            final SpecialHexDisplay shd;
+            if (hitIds.isEmpty()) {
+                shd = new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ARTILLERY_DRIFT, game
+                        .getRoundCount(), game
+                        .getPlayer(aaa.getPlayerId()),
+                        msg
+                );
+            } else {
+                shd = new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                        .getRoundCount(), game
+                        .getPlayer(aaa.getPlayerId()),
+                        msg
+                );
+            }
+            game.getBoard().addSpecialHexDisplay(finalPos, shd);
         }
-        game.getBoard().addSpecialHexDisplay(finalPos, shd);
     }
-
 }

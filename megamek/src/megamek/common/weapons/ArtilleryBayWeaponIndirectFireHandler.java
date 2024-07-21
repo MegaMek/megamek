@@ -333,6 +333,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
             }
             // We're only going to display one missed shot hex on the board, at the intended target
+            // Any drifted shots will be indicated at their end points
             artyMsg = "Bay Artillery missed here on round "
                     + game.getRoundCount() + ", by "
                     + game.getPlayer(aaa.getPlayerId()).getName();

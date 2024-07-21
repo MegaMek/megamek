@@ -245,7 +245,7 @@ public class BombAttackHandler extends WeaponHandler {
                         vPhaseReport.addElement(r);
                         bombMsg = "Bomb missed!  Round " + game.getRoundCount()
                                 + ", by " + ((player != null) ? player.getName() : "somebody") + ", drifted to "
-                                + drop;
+                                + drop.getBoardNum();
                         game.getBoard().addSpecialHexDisplay(coords,
                                 new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
                                         player, bombMsg));
@@ -283,11 +283,13 @@ public class BombAttackHandler extends WeaponHandler {
                 if (hitIds == null || hitIds.isEmpty()) {
                     game.getBoard().addSpecialHexDisplay(drop,
                             new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
-                                    player, Messages.getString("BombMessage.drifted") + coords));
+                                    player, Messages.getString("BombMessage.drifted")
+                                    + " " + coords.getBoardNum()));
                 } else {
                     game.getBoard().addSpecialHexDisplay(drop,
                             new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
-                                    player, Messages.getString("BombMessage.drifted") + coords));
+                                    player, Messages.getString("BombMessage.drifted")
+                                    + " " + coords.getBoardNum()));
                 }
 
                 // Finally, we need a new attack roll for the next bomb, if any.

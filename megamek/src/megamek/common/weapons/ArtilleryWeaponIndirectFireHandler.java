@@ -481,7 +481,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     String artyMsg = "Artillery missed here on round "
                             + game.getRoundCount() + ", by "
                             + game.getPlayer(aaa.getPlayerId()).getName()
-                            + ", drifted to " + targetPos;
+                            + ", drifted to " + targetPos.getBoardNum();
                     game.getBoard().addSpecialHexDisplay(
                             origPos,
                             new SpecialHexDisplay(Type.ARTILLERY_MISS,

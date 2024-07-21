@@ -1,4 +1,4 @@
-3085 Cappellan Confederation Medium Mech D
+3085 Capellan Confederation Medium Mech D
 Wolverine WVR-6R,1
 Huron Warrior HUR-WO-R4O,2
 Snake SNK-1V,3

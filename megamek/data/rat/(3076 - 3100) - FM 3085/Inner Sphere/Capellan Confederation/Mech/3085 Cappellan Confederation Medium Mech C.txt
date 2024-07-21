@@ -1,4 +1,4 @@
-3085 Cappellan Confederation Medium Mech C
+3085 Capellan Confederation Medium Mech C
 Snake SNK-1V,1
 Vindicator VND-3Lr,2
 Phoenix Hawk PXH-5L,3

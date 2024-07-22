@@ -411,11 +411,11 @@ public class WeaponType extends EquipmentType {
         } else if (hasFlag(F_FLAMER)) {
             return 4;
         } else if (hasFlag(F_PLASMA)) {
-            return 2;
+            return TargetRoll.AUTOMATIC_SUCCESS;
         } else if (hasFlag(F_PLASMA_MFUK)) {
-            return 2;
+            return TargetRoll.AUTOMATIC_SUCCESS;
         } else if (hasFlag(F_INFERNO)) {
-            return 2;
+            return TargetRoll.AUTOMATIC_SUCCESS;
         } else if (hasFlag(F_INCENDIARY_NEEDLES)) {
             return 6;
         } else if (hasFlag(F_PPC) || hasFlag(F_LASER)) {

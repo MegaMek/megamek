@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,54 +18,70 @@
  */
 package megamek.utilities;
 
-import megamek.common.*;
-import megamek.common.alphaStrike.AlphaStrikeHelper;
-import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.loaders.EntityLoadingException;
-
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.Entity;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.logging.MMLogger;
+
 /**
- * This utility converts all units that can be converted and for which filter() returns true to AlphaStrike
- * elements and outputs the stats to the clipboard. This can be pasted to Excel (best use the Text
- * Import Wizard to set the column spacer to TAB and set the format of the Damage column to "Text").
+ * This utility converts all units that can be converted and for which filter()
+ * returns true to AlphaStrike elements and outputs the stats to the clipboard.
+ * This can be pasted to Excel (best use the Text Import Wizard to set the
+ * column spacer to TAB and set the format of the Damage column to "Text").
  */
 public class AlphaStrikeMassConvert {
 
     private static final String COLUMN_SEPARATOR = "\t";
     private static final String INTERNAL_DELIMITER = ",";
 
+    private static final MMLogger logger = MMLogger.create(AlphaStrikeMassConvert.class);
+
+    /**
+     * Main entry point for unit -> AS conversion.
+     *
+     * @param args
+     * @throws EntityLoadingException
+     */
     public static void main(String[] args) throws EntityLoadingException {
-        System.out.println("Starting AlphaStrike conversion.");
+        logger.debug("Starting AlphaStrike conversion.");
         StringBuilder table = new StringBuilder(clipboardHeaderString());
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+
         for (MechSummary unit : units) {
             Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+
             if (!ASConverter.canConvert(entity) || !entity.hasMulId()) {
                 continue;
             }
-            if (filter(entity)) {
-                System.out.println(entity.getShortName());
-                AlphaStrikeElement ase = ASConverter.convert(entity);
-                table.append(clipboardElementString(ase));
-            }
+
+            String message = String.format("Processing %s...", entity.getShortName());
+            logger.debug(message);
+            AlphaStrikeElement ase = ASConverter.convert(entity);
+            table.append(clipboardElementString(ase));
         }
+
         StringSelection stringSelection = new StringSelection(table.toString());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
-        System.out.println("Finished.");
         System.exit(0);
     }
 
-    private static boolean filter(Entity entity) {
-        return true;
-    }
-    
+    /**
+     * Creates a tab separated header for the file.
+     *
+     * @return
+     */
     private static String clipboardHeaderString() {
         List<String> headers = new ArrayList<>();
         headers.add("Chassis");
@@ -86,7 +102,12 @@ public class AlphaStrikeMassConvert {
         return String.join("\t", headers);
     }
 
-    /** Returns a String representing the entities to export to the clipboard. */
+    /**
+     * Returns a String representing the entities to export to the clipboard.
+     *
+     * @param element
+     * @return
+     */
     private static StringBuilder clipboardElementString(AlphaStrikeElement element) {
         List<String> stats = new ArrayList<>();
         stats.add(element.getChassis());
@@ -101,11 +122,15 @@ public class AlphaStrikeMassConvert {
         stats.add(element.usesThreshold() ? element.getThreshold() + "" : " ");
         stats.add(element.getStandardDamage() + "");
         stats.add(element.getOV() + "");
-        stats.add(element.getPointValue()+"");
+        stats.add(element.getPointValue() + "");
         stats.add(AlphaStrikeHelper.getSpecialsExportString(INTERNAL_DELIMITER, element));
         stats.add("\n");
         return new StringBuilder(String.join(COLUMN_SEPARATOR, stats));
     }
 
-    private AlphaStrikeMassConvert() { }
+    /**
+     * Private Constructor
+     */
+    private AlphaStrikeMassConvert() {
+    }
 }

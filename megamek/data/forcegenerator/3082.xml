@@ -3109,14 +3109,14 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Buffel Engineering Support Vehicle VIII' unitType='Tank'>
+	<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
 		<availability>LA:2</availability>
 		<model name=''>
 			<roles>support,engineer</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Buffel Engineering Support Vehicle VII' unitType='Tank'>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,DC:2</availability>
 		<model name=''>
 			<roles>support,engineer</roles>
@@ -3962,7 +3962,7 @@
 		<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='true'>
 			<availability>CW:5</availability>
 		</model>
-		<model name='(Naval) Bär&apos; (Sqd5)' mechanized='false'>
+		<model name='(Naval) &apos;Bär&apos; (Sqd5)' mechanized='false'>
 			<roles>marine</roles>
 			<availability>CDS:4,CW:4-,CNC:7,CLAN.IS:4,CGB:6,CWIE:6</availability>
 		</model>
@@ -7009,7 +7009,7 @@
 			<availability>FS:4,DC:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Gurteltier MBT' unitType='Tank'>
+	<chassis name='Gürteltier MBT' unitType='Tank'>
 		<availability>LA:5+,ROS:4,FS:4</availability>
 		<model name=''>
 			<availability>General:8</availability>
@@ -10589,7 +10589,7 @@
 			<availability>CC:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Mengqin' unitType='AeroSpaceFighter'>
+	<chassis name='Mĕngqín' unitType='AeroSpaceFighter'>
 		<availability>CC:4,MOC:4,MERC:2</availability>
 		<model name='MNG-8L'>
 			<availability>General:8</availability>
@@ -12403,7 +12403,7 @@
 			<availability>ROS:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Pion-Laurier Cascatelle' unitType='VTOL'>
+	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
 		<availability>IS:5</availability>
 		<model name=''>
 			<roles>support</roles>
@@ -13332,19 +13332,19 @@
 			<availability>PIR:1</availability>
 		</model>
 	</chassis>
-	<chassis name='SM1 Tank Destroyer' unitType='Tank'>
+	<chassis name='SM Tank Destroyer' unitType='Tank'>
 		<availability>CNC:7,DC:5</availability>
 		<model name='SM1'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='SM1A Tank Destroyer' unitType='Tank'>
+	<chassis name='SM Tank Destroyer' unitType='Tank'>
 		<availability>CNC:5,DC:4</availability>
 		<model name='SM1A'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='SM3 Tank Destroyer' unitType='Tank'>
+	<chassis name='SM Tank Destroyer' unitType='Tank'>
 		<availability>CNC:3,DC:3</availability>
 		<model name='SM3'>
 			<availability>General:8</availability>

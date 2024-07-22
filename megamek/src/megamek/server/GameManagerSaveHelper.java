@@ -18,19 +18,27 @@
  */
 package megamek.server;
 
-import megamek.MMConstants;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
-import megamek.common.util.SerializationHelper;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
+import megamek.MMConstants;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.common.util.SerializationHelper;
+import megamek.logging.MMLogger;
+
 public class GameManagerSaveHelper {
+    private static final MMLogger logger = MMLogger.create(GameManagerSaveHelper.class);
 
     private final AbstractGameManager gameManager;
 
@@ -39,8 +47,8 @@ public class GameManagerSaveHelper {
     }
 
     /**
-     * Saves the game server-side. Will announce the save (or error) in chat if the given sendChat
-     * is true.
+     * Saves the game server-side. Will announce the save (or error) in chat if the
+     * given sendChat is true.
      *
      * @param fileName The filename to use
      * @param sendChat When true, the saving (or error) is announced in chat
@@ -55,6 +63,7 @@ public class GameManagerSaveHelper {
         if (!finalFileName.endsWith(MMConstants.SAVE_FILE_EXT)) {
             finalFileName = fileName + MMConstants.SAVE_FILE_EXT;
         }
+
         File saveGameDir = new File(MMConstants.SAVEGAME_DIR);
         if (!saveGameDir.exists()) {
             saveGameDir.mkdir();
@@ -63,11 +72,13 @@ public class GameManagerSaveHelper {
         finalFileName = saveGameDir + File.separator + finalFileName;
 
         try (OutputStream os = new FileOutputStream(finalFileName + ".gz");
-             OutputStream gzo = new GZIPOutputStream(os);
-             Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
+                OutputStream gzo = new GZIPOutputStream(os);
+                Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
             SerializationHelper.getSaveGameXStream().toXML(gameManager.getGame(), writer);
         } catch (Exception e) {
-            LogManager.getLogger().error("Unable to save file: {}", finalFileName, e);
+            String message = String.format("Unable to save file: %s", finalFileName);
+            logger.error(e, message);
+
             if (sendChat) {
                 gameManager.sendChat("MegaMek", "Could not save the game to " + finalFileName);
             }
@@ -81,12 +92,14 @@ public class GameManagerSaveHelper {
     /**
      * Saves the game and sends it to the specified connection
      *
-     * @param connId The <code>int</code> connection id to send to
-     * @param fileName The <code>String</code> filename to use
-     * @param localPath The <code>String</code> path to the file to be used on the client
+     * @param connId    The <code>int</code> connection id to send to
+     * @param fileName  The <code>String</code> filename to use
+     * @param localPath The <code>String</code> path to the file to be used on the
+     *                  client
      */
     public void sendSaveGame(int connId, String fileName, String localPath) {
         saveGame(fileName, false);
+
         String finalFileName = fileName;
         if (!finalFileName.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
             if (finalFileName.endsWith(MMConstants.SAVE_FILE_EXT)) {
@@ -95,8 +108,10 @@ public class GameManagerSaveHelper {
                 finalFileName = fileName + MMConstants.SAVE_FILE_GZ_EXT;
             }
         }
-        localPath = localPath.replaceAll("\\|", " ");
+
+        localPath = localPath.replace("|", " ");
         String localFile = MMConstants.SAVEGAME_DIR + File.separator + finalFileName;
+
         try (InputStream in = new FileInputStream(localFile); InputStream bin = new BufferedInputStream(in)) {
             List<Integer> data = new ArrayList<>();
             int input;
@@ -106,7 +121,8 @@ public class GameManagerSaveHelper {
             gameManager.send(connId, new Packet(PacketCommand.SEND_SAVEGAME, finalFileName, data, localPath));
             gameManager.sendChat(connId, "***Server", "Save game has been sent to you.");
         } catch (Exception ex) {
-            LogManager.getLogger().error("Unable to load file: {}", localFile, ex);
+            String message = String.format("Unable to load file: %s", localFile);
+            logger.error(ex, message);
         }
     }
 }

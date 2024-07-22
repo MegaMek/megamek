@@ -95,7 +95,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         c.gridwidth = 4;
         c.gridheight = 1;
         c.gridx = 0;
-        c.gridy = 0;
+        //c.gridy = 0;
         c.insets = new Insets(5, 5, 5, 5);
 
         description = new JLabel();
@@ -156,10 +156,12 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             c.gridy = i+1;
             c.anchor = GridBagConstraints.EAST;
             add(b_labels[i], c);
+            gridbag.setConstraints(b_labels[i], c);
             c.gridx = 2;
             c.gridy = i+1;
             c.anchor = GridBagConstraints.WEST;
             add(b_choices[i], c);
+            gridbag.setConstraints(b_choices[i], c);
         }
 
         // Allow the player to confirm or abort the choice.
@@ -181,11 +183,6 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         setLocation((parent.getLocation().x + (parent.getSize().width / 2))
                 - (size.width / 2), (parent.getLocation().y
                 + (parent.getSize().height / 2)) - (size.height / 2));
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(500,200);
     }
 
     private void setupButtons() {

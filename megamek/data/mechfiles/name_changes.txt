@@ -674,6 +674,8 @@ Nova (Black Hawk) S|Black Hawk (Nova) S
 'OMEGA' SHP-4X|Omega SHP-4X
 Peregrine (Horned Owl) (Standard)|Peregrine (Horned Owl)
 Phoenix Hawk LAM PXH-HK2|Phoenix Hawk LAM PHX-HK2
+Phoenix Hawk PXH-1b (Special)|Phoenix Hawk PXH-1b 'Special'
+Phoenix Hawk PXH-1c (Special)|Phoenix Hawk PXH-1c 'Special'
 Piranha (Standard)|Piranha
 Raijin RJN101-A|Raijin RJN-101-A
 Raijin RJN101-C|Raijin RJN-101-C
@@ -1592,6 +1594,7 @@ Sniper Artillery (Standard)|Sniper Artillery
 Snow Fox (Standard)|Snow Fox
 Snowden Mining Station (Standard)|Snowden Mining Station
 SOAR (Standard)|SOAR
+SOAR|SOAR VTOL
 Soarece Superheavy MBT (Standard)|Soarece Superheavy MBT
 Sokar Urban Combat Unit (Standard)|Sokar Urban Combat Unit
 Solitaire (Standard)|Solitaire

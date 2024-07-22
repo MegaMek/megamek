@@ -31,6 +31,7 @@ import java.io.*;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
+import static megamek.common.SpecialHexDisplay.Type.*;
 
 public class Board implements Serializable {
     //region Variable Declarations
@@ -1254,6 +1255,27 @@ public class Board implements Serializable {
         infernos.remove(coords);
     }
 
+    public void removeBombIconsFrom(Coords coords) {
+        // Do nothing if the coords aren't on this board.
+        if (!this.contains(coords) || null == specialHexes.get(coords)) {
+            return;
+        }
+
+        // Use iterator so we can remove while traversing
+        for (Iterator<SpecialHexDisplay> iterator = specialHexes.get(coords).iterator(); iterator.hasNext();) {
+            SpecialHexDisplay shd = iterator.next();
+            if (Set.of(BOMB_HIT, BOMB_MISS, BOMB_DRIFT).contains(shd.getType())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    public void clearBombIcons() {
+        for (Coords coords: specialHexes.keySet()) {
+            removeBombIconsFrom(coords);
+        }
+    }
+
     /**
      * Determine if the given coordinates has a burning inferno.
      *
@@ -1649,8 +1671,40 @@ public class Board implements Serializable {
         return specialHexes;
     }
 
+    /**
+     * Sets the current board's specialHexes hashtable to a new set.
+     * To avoid opponent updates wiping local copies of SHDs, specifically Artillery Miss and
+     * Drift markers, back up the local copies.  Add them back if the remote table doesn't
+     * contain them.
+     *
+     * @param shd
+     */
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
+        Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
+
+        // Grab all current ARTILLERY_MISS instances
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: specialHexes.entrySet()) {
+            for (SpecialHexDisplay special: e.getValue()) {
+                if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
+                    temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
+                }
+            }
+        }
+
+        // Swap new Hashtable in for old
         specialHexes = shd;
+
+        // Add miss instances back
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e: temp.entrySet()) {
+            for(SpecialHexDisplay miss: e.getValue()) {
+                if (!specialHexes.containsKey(e.getKey())) {
+                    specialHexes.put(e.getKey(), new LinkedList<>());
+                }
+                if (!specialHexes.get(e.getKey()).contains(miss)) {
+                    specialHexes.get(e.getKey()).add(miss);
+                }
+            }
+        }
     }
 
     public void setType(int t) {

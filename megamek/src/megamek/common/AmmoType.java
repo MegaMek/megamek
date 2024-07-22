@@ -485,6 +485,24 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
+     * Analog to WeaponType.getFireTNRoll(), but based on munitions.
+     * See TO:AR pg 42
+     * @return
+     */
+    public int getFireTN() {
+        if (munitionType.contains(Munitions.M_INFERNO)) {
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        } else if (EnumSet.of(
+                Munitions.M_INCENDIARY,
+                Munitions.M_INCENDIARY_AC,
+                Munitions.M_INCENDIARY_LRM).containsAll(munitionType)) {
+            return 5;
+        } else {
+            return 9;
+        }
+    }
+
+    /**
      * Gets a value indicating whether this is a certain ammo type.
      *
      * @param ammoType The ammo type to compare against.

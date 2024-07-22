@@ -80,6 +80,9 @@ class TWPhaseEndManager {
                 } else {
                     gameManager.changePhase(GamePhase.TARGETING);
                 }
+                // Clean up bomb icons
+                gameManager.clearBombIcons();
+                gameManager.sendSpecialHexDisplayPackets();
                 break;
             case PREMOVEMENT:
                 gameManager.changePhase(GamePhase.MOVEMENT);
@@ -147,6 +150,8 @@ class TWPhaseEndManager {
                     gameManager.getGame().addReports(gameManager.getvPhaseReport());
                     gameManager.changePhase(GamePhase.PHYSICAL);
                 }
+                // For bomb markers
+                gameManager.sendSpecialHexDisplayPackets();
                 break;
             case FIRING_REPORT:
                 gameManager.changePhase(GamePhase.PHYSICAL);

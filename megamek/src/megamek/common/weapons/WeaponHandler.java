@@ -16,6 +16,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
@@ -436,6 +437,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         gameManager = (GameManager) Server.getServerInstance().getGameManager();
     }
 
+    protected TargetRoll getFireTNRoll() {
+        int targetNumber = (atype == null) ? wtype.getFireTN()
+            : Math.min(wtype.getFireTN(), atype.getFireTN());
+        return new TargetRoll(targetNumber, wtype.getName());
+    }
+
     /**
      * @return a <code>boolean</code> value indicating whether or not this attack
      *         needs further calculating, like a missed shot hitting a building,
@@ -449,9 +456,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((entityTarget != null)
                 && !entityTarget.isAirborne()
                 && !entityTarget.isAirborneVTOLorWIGE()
-                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
+                && ((bldg == null) && (
+                        wtype.getFireTN() != TargetRoll.IMPOSSIBLE
+                        && (atype == null || atype.getFireTN() != TargetRoll.IMPOSSIBLE)
+                )
+        )) {
             gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
+                    getFireTNRoll(), 3,
                     vPhaseReport);
         }
 
@@ -1643,7 +1654,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = getFireTNRoll();
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
@@ -1678,7 +1689,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                        getFireTNRoll(), 5, vPhaseReport)) {
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
@@ -2199,6 +2210,38 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
+        }
+    }
+
+    /**
+     * Used by certain artillery handlers to draw drift markers with "hit" graphics if
+     * anything is caught in the blast, or "drift" marker if nothing is damaged.
+     * No-op for direct hits.
+     * @param targetPos
+     * @param finalPos
+     * @param aaa
+     * @param hitIds
+     */
+    protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa, Vector<Integer> hitIds) {
+        if (bMissed) {
+            String msg = Messages.getString("ArtilleryMessage.drifted") + " " + targetPos.getBoardNum();
+            final SpecialHexDisplay shd;
+            if (hitIds.isEmpty()) {
+                shd = new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ARTILLERY_DRIFT, game
+                        .getRoundCount(), game
+                        .getPlayer(aaa.getPlayerId()),
+                        msg
+                );
+            } else {
+                shd = new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                        .getRoundCount(), game
+                        .getPlayer(aaa.getPlayerId()),
+                        msg
+                );
+            }
+            game.getBoard().addSpecialHexDisplay(finalPos, shd);
         }
     }
 }

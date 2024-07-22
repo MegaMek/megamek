@@ -18,23 +18,29 @@
  */
 package megamek.utilities;
 
-import megamek.common.*;
-import megamek.common.equipment.WeaponMounted;
-
-import java.util.List;
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.List;
+
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.Protomech;
+import megamek.common.Transporter;
+import megamek.common.equipment.WeaponMounted;
 
 /**
- * This class is for debugging Entity with respect to the internal state of equipment.
+ * This class is for debugging Entity with respect to the internal state of
+ * equipment.
  */
-@SuppressWarnings("unused") // to be used as a debugging tool, e.g. in breakpoints
 public final class DebugEntity {
 
     /**
-     * Gets a full listing of the internal representation of the unit's equipment and crit slots with most
-     * of the internal state of each ({@link #getEquipmentState(Entity)}) and copies it to the clipboard.
+     * Gets a full listing of the internal representation of the unit's equipment
+     * and crit slots with most of the internal state of each
+     * ({@link #getEquipmentState(Entity)}) and copies it to the clipboard.
      *
      * @param entity The entity to debug
      */
@@ -50,8 +56,8 @@ public final class DebugEntity {
     }
 
     /**
-     * Returns a full listing of the internal representation of the unit's equipment and crit slots with most
-     * of the internal state of each.
+     * Returns a full listing of the internal representation of the unit's equipment
+     * and crit slots with most of the internal state of each.
      *
      * @param entity The entity to debug
      * @return A String describing the internal state of the Entity's equipment
@@ -126,5 +132,6 @@ public final class DebugEntity {
         return result.toString();
     }
 
-    private DebugEntity() { }
+    private DebugEntity() {
+    }
 }

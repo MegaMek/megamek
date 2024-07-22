@@ -37,7 +37,7 @@ public class AeroGroundPathFinder {
     public static final int NAP_OF_THE_EARTH = 1;
     public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
 
-    protected static final int STACK_DEPTH = 512;
+    protected static final int STACK_DEPTH = 256;
 
     protected int getMinimumVelocity(IAero mover) {
         return 1;
@@ -273,7 +273,7 @@ public class AeroGroundPathFinder {
     protected List<MovePath> generateSidePaths(MovePath mp, MoveStepType stepType) {
         List<MovePath> retval = new ArrayList<>();
         MovePath straightLine = mp.clone();
-        // TODO: remove
+
         if (logger.isDebugEnabled() && STACK_DEPTH - mp.length() < 10) {
             logger.debug("Aero pathing stack depth: " + mp.length() + " (out of " + STACK_DEPTH + ")");
         }

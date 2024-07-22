@@ -45,6 +45,10 @@ import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -52,6 +56,8 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.math.RoundingMode;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -104,9 +110,21 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         DecimalFormat tonnageFormat = new DecimalFormat();
         tonnageFormat.setGroupingUsed(false);
         tonnageFormat.setRoundingMode(RoundingMode.UNNECESSARY);
-        
+
         txtGroundObjectTonnage = new JFormattedTextField(tonnageFormat);
         txtGroundObjectTonnage.setText("0");
+
+        txtGroundObjectName = new JTextField();
+        txtGroundObjectName.setColumns(20);
+        // if it's longer than 20 characters, undo the edit
+        txtGroundObjectName.getDocument().addUndoableEditListener(new UndoableEditListener( ) {
+			@Override
+			public void undoableEditHappened(UndoableEditEvent e) {
+				if (txtGroundObjectName.getText().length() > 20 && e.getEdit().canUndo()) {
+					e.getEdit().undo();
+				}
+			}
+        });
 
         initialize();
     }
@@ -253,7 +271,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     
     // ground object config section
     private Content groundSectionContent = new Content(new GridLayout(2, 3));
-    private final JTextField txtGroundObjectName = new JTextField();
+    private final JTextField txtGroundObjectName;
     private final JFormattedTextField txtGroundObjectTonnage;
     private final JCheckBox chkGroundObjectInvulnerable = new JCheckBox();
     private List<List<Component>> groundSectionComponents = new ArrayList<>();
@@ -443,7 +461,21 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void addGroundObject() {
     	Briefcase briefcase = new Briefcase();
     	briefcase.setName(txtGroundObjectName.getText());
-    	briefcase.setTonnage(Double.parseDouble(txtGroundObjectTonnage.getText()));
+    	
+    	Double tonnage = 0.0;
+    	
+    	try {
+    		tonnage = Double.parseDouble(txtGroundObjectTonnage.getText());
+    		
+    		// don't allow negative tonnage as we do not have anti-gravity technology
+    		if (tonnage < 0) {
+    			tonnage = 0.0;
+    		}
+    	} catch (Exception ignored) {
+    		
+    	}
+    	
+    	briefcase.setTonnage(tonnage);
     	briefcase.setInvulnerable(chkGroundObjectInvulnerable.isSelected());
     	player.getGroundObjectsToPlace().add(briefcase);
     	

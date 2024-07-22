@@ -18,13 +18,15 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
+import megamek.MMConstants;
+
 import javax.swing.*;
 
 public class BoardEditorHelpDialog extends AbstractHelpDialog {
     //region Constructors
     public BoardEditorHelpDialog(final JFrame frame) {
         // TODO : Remove Inline File Path
-        super(frame, "BoardEditorHelpDialog", "docs\\Boards Stuff\\Map Editor-readme.txt");
+        super(frame, "BoardEditorHelpDialog", MMConstants.BOARD_README_FILE_PATH);
     }
     //endregion Constructors
 }

@@ -143,6 +143,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             ammoCarrier = aaa.getEntity(game, aaa.getAmmoCarrier());
         }
 
+	// Use the Artillery skill for spotting if enabled, as per page 144 of the
+	// third printing of A Time of War.
+	boolean useArtillerySkill = game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
+
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
@@ -173,12 +177,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 } else if (ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)
                         && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     bestSpotter = ent;
-                } else if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()
+                } else if ((useArtillerySkill ? (ent.getCrew().getArtillery() < bestSpotter.getCrew().getArtillery()) : (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()))
                         && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     bestSpotter = ent;
                 } else if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)
                         && ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                    if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()) {
+                    if (useArtillerySkill ? (ent.getCrew().getArtillery() < bestSpotter.getCrew().getArtillery()) : (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery())) {
                         bestSpotter = ent;
                     }
                 }
@@ -191,7 +195,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                 foMod = -1;
             }
-            int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
+            int mod = ((useArtillerySkill ? bestSpotter.getCrew().getArtillery() : bestSpotter.getCrew().getGunnery()) - 4) / 2;
             mod += foMod;
             toHit.addModifier(mod, "Spotting modifier");
         }

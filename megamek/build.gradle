@@ -69,6 +69,10 @@ ext {
         'java.base/java.util.concurrent=ALL-UNNAMED',
         '-Dsun.awt.disablegrab=true'
     ]
+    l4jOptions = [
+         '-Xmx2048m',
+        '-Dsun.awt.disablegrab=true'
+    ]
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -271,7 +275,7 @@ launch4j {
     copyright = '2024 MegaMek Development Team.'
     trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
-    jvmOptions = project.ext.mmJvmOptions
+    jvmOptions = project.ext.l4jOptions
     jreMinVersion = '17'
     dontWrapJar = true
     messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'

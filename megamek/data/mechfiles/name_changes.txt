@@ -786,12 +786,8 @@ O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Mate
 'Oppie' (HMRV Salvage Bed Trailer) |HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
 Pion-Laurier Cascatelle|Cascatelle Firefighting VTOL
 Prime Mover|Prime Mover (LRM)
-Schildkröte Line Tank (HPPC)|Schildkröte Line Tank (HPPC)
-Schildkröte Line Tank (Light Gauss)|Schildkröte Line Tank (Light Gauss)
-Schildkröte Line Tank (Plasma)|Schildkröte Line Tank (Plasma)
 Schildkröte Line Tank (Standard)|Schildkröte Line Tank
 Schildkrote Line Tank|Schildkröte Line Tank
-Schildkröte Line Tank|Schildkröte Line Tank
 Sleipnir AP Tank (SRM)|Sleipnir APC Tank (SRM)
 Sleipnir AP Tank|Sleipnir APC Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)

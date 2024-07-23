@@ -544,7 +544,7 @@ public class EquipmentType implements ITechnology {
             return false;
         }
 
-        // Iterator<Integer> iter = list.iterator(); iter.hasNext();
+        // Avoid Concurrent Modification exception with this one simple trick!
         for (Iterator<EquipmentMode> iterator = modes.iterator(); iterator.hasNext(); ) {
             if (iterator.next().getName().equals(modeType)) {
                 return true;

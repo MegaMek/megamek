@@ -16,9 +16,9 @@
  */
 package megamek.client.ui;
 
+import javax.swing.*;
 import java.awt.*;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import java.util.StringTokenizer;
 
 /**
  * This class has been downloaded from a third-party source:
@@ -102,14 +102,13 @@ public class WrapLayout extends FlowLayout {
             // When the container width = 0, the preferred width of the container
             // has not yet been calculated so lets ask for the maximum.
 
-            int targetWidth;
             Container container = target;
 
             while ((container.getSize().width == 0) && (container.getParent() != null)) {
                 container = container.getParent();
             }
 
-            targetWidth = container.getSize().width;
+            int targetWidth = container.getSize().width;
 
             if (targetWidth == 0) {
                 targetWidth = Integer.MAX_VALUE;
@@ -190,5 +189,32 @@ public class WrapLayout extends FlowLayout {
         }
 
         dim.height += rowHeight;
+    }
+
+    /**
+     * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length.
+     *
+     * @param input The input string to be wrapped.
+     * @param maxLineLength The maximum length of each line.
+     * @return The string with line breaks inserted.
+     */
+    public static String wordWrap(String input, int maxLineLength) {
+        StringTokenizer token = new StringTokenizer(input, " ");
+        StringBuilder output = new StringBuilder(input.length());
+
+        int lineLen = 0;
+
+        while (token.hasMoreTokens()) {
+            String word = token.nextToken();
+
+            if (lineLen + word.length() > maxLineLength) {
+                output.append('\n');
+                lineLen = 0;
+            }
+            output.append(word).append(' ');
+            lineLen += word.length();
+        }
+
+        return output.toString();
     }
 }

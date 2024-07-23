@@ -3970,7 +3970,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             List<WeaponMounted> combinedWeaponList = new ArrayList<WeaponMounted>(weaponBayList);
             for (Iterator<WeaponMounted> iterator = weaponList.iterator(); iterator.hasNext(); ) {
                 WeaponMounted next = iterator.next();
-                if (next.isGroundBomb()) {
+                if (next.isGroundBomb() || next.isBombMounted()) {
                     combinedWeaponList.add(next);
                 }
             }
@@ -4320,7 +4320,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (!foundSpaceBomb
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
                     && m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
-                    && isFighter()
+                    && isBomber()
                     && game.getBoard().inSpace()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);

@@ -3964,7 +3964,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public List<WeaponMounted> getWeaponList() {
         if (usesWeaponBays()) {
-            return weaponBayList;
+            if (!hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
+                return weaponBayList;
+            }
+            List<WeaponMounted> combinedWeaponList = new ArrayList<WeaponMounted>(weaponBayList);
+            for (Iterator<WeaponMounted> iterator = weaponList.iterator(); iterator.hasNext(); ) {
+                WeaponMounted next = iterator.next();
+                if (next.isGroundBomb() || next.isBombMounted()) {
+                    combinedWeaponList.add(next);
+                }
+            }
+            return combinedWeaponList;
+
         }
         if (isCapitalFighter()) {
             return weaponGroupList;
@@ -4309,7 +4320,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (!foundSpaceBomb
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
                     && m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
-                    && isFighter()
+                    && isBomber()
                     && game.getBoard().inSpace()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
@@ -4327,7 +4338,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMech)
                             && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
-                if (numGroundBombs < 1) {
+                if (numGroundBombs <= 1) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(diveBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4339,7 +4350,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     }
                 }
 
-                if ((numGroundBombs < 10) && isFighter()) {
+                if ((numGroundBombs <= 10) && isBomber()) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {

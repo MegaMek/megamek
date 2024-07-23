@@ -18,6 +18,8 @@ import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
+import megamek.logging.MMLogger;
+import megamek.server.AbstractGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -30,9 +32,12 @@ import java.util.*;
  */
 public class AeroGroundPathFinder {
 
+    private static final MMLogger logger = MMLogger.create(AbstractGameManager.class);
     public static final int OPTIMAL_STRIKE_ALTITUDE = 5; // also great for dive bombs
     public static final int NAP_OF_THE_EARTH = 1;
     public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
+
+    protected static final int STACK_DEPTH = 256;
 
     protected int getMinimumVelocity(IAero mover) {
         return 1;
@@ -269,8 +274,12 @@ public class AeroGroundPathFinder {
         List<MovePath> retval = new ArrayList<>();
         MovePath straightLine = mp.clone();
 
+        if (logger.isDebugEnabled() && STACK_DEPTH - mp.length() < 10) {
+            logger.debug("Aero pathing stack depth: " + mp.length() + " (out of " + STACK_DEPTH + ")");
+        }
+
         boolean firstTurn = true;
-        while (straightLine.getFinalVelocityLeft() > 0 &&
+        while (mp.length() < STACK_DEPTH && straightLine.getFinalVelocityLeft() > 0 &&
                 game.getBoard().contains(straightLine.getFinalCoords())) {
 
             // little dirty hack to get around the problem where if this is the first step of a path

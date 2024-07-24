@@ -7295,7 +7295,7 @@ public class GameManager extends AbstractGameManager {
                     	addReport(r);
                     	
                     	// a pickup should be the last step. Send an update for the overall ground object list.
-                        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+                        sendGroundObjectUpdate();
                         break;
             		} else {
             			LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up object but it is too heavy. Carry capacity: " 
@@ -7339,7 +7339,7 @@ public class GameManager extends AbstractGameManager {
 	            	addReport(r);
 	            	
 	            	// a drop changes board state. Send an update for the overall ground object list.
-	                send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+	                sendGroundObjectUpdate();
             	}
             }
             
@@ -27534,6 +27534,8 @@ public class GameManager extends AbstractGameManager {
         		r.subject = entity.getId();
         		r.add(cargo.getName());
         		vPhaseReport.add(r);
+        		
+        		game.placeGroundObject(fallPos, cargo);
         	}
         }
 
@@ -34220,5 +34222,12 @@ public class GameManager extends AbstractGameManager {
 
     void clearBombIcons() {
         game.getBoard().clearBombIcons();
+    }
+    
+    /**
+     * Convenience function to send a ground object update.
+     */
+    public void sendGroundObjectUpdate() {
+    	send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
     }
 }

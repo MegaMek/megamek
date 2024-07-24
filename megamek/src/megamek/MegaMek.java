@@ -69,9 +69,8 @@ public class MegaMek {
 
     public static void main(String... args) {
         // Configure Sentry with defaults. Although the client defaults to enabled, the
-        // properties file is used to disable
-        // it and additional configuration can be done inside of the sentry.properties
-        // file. The defaults for everything else
+        // properties file is used to disable it and additional configuration can be
+        // done inside of the sentry.properties file. The defaults for everything else
         // is set here.
         Sentry.init(options -> {
             options.setEnableExternalConfiguration(true);
@@ -139,8 +138,7 @@ public class MegaMek {
     }
 
     public static void initializeLogging(final String originProject) {
-        String message = getUnderlyingInformation(originProject);
-        logger.info(message);
+        logger.info(getUnderlyingInformation(originProject));
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -215,8 +213,7 @@ public class MegaMek {
      * @param args the arguments to the dedicated server.
      */
     private static void startDedicatedServer(String... args) {
-        String message = String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
         DedicatedServer.start(args);
     }
 
@@ -247,8 +244,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        String message = String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -291,8 +287,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        String message = String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -334,8 +329,7 @@ public class MegaMek {
                 null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        String message = String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();

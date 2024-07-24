@@ -4313,7 +4313,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         weaponBayList.removeAll(bombAttacksToRemove);
 
         boolean foundSpaceBomb = false;
-        int numGroundBombs = 0;
+        int addedBombAttacks = 0;
 
         for (BombMounted m : getBombs()) {
             // Add the space bomb attack
@@ -4338,7 +4338,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMech)
                             && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
-                if (numGroundBombs <= 1) {
+                if (addedBombAttacks < 1) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(diveBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4350,7 +4350,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     }
                 }
 
-                if ((numGroundBombs <= 10) && isBomber()) {
+                if ((addedBombAttacks < 10) && isBomber()) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4361,7 +4361,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                     }
                 }
-                numGroundBombs++;
+                addedBombAttacks++;
             }
         }
     }

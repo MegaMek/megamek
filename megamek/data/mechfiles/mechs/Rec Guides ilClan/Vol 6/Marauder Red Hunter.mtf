@@ -1,6 +1,6 @@
-generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
+generator:MegaMek Suite 0.50.0-SNAPSHOT on 2024-07-23
 chassis:Marauder
-model:Red Hunter
+model:(Red Hunter-3146)
 mul id:7536
 
 Config:Biped

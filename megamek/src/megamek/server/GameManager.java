@@ -27527,7 +27527,14 @@ public class GameManager extends AbstractGameManager {
         // drop cargo
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
         	entity.dropGroundObject(cargo, false);
-        	damageCargo(false, entity, cargo);
+        	// if the cargo was dropped but not destroyed.
+        	if (!damageCargo(false, entity, cargo)) {
+        		r = new Report(6722);
+        		r.indent();
+        		r.subject = entity.getId();
+        		r.add(cargo.getName());
+        		vPhaseReport.add(r);
+        	}
         }
 
         // set how deep the mech has fallen

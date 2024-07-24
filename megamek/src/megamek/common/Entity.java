@@ -2824,7 +2824,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     		carriedObjects.remove(location);
     	}
     	
-    	endOfTurnCargoInteraction = isUnload;
+    	// if it's not an "unload", we're going to leave the "end of turn cargo interaction" flag alone
+    	if (isUnload) {
+    		endOfTurnCargoInteraction = true;
+    	}
     }
     
     /** 

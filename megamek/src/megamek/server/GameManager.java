@@ -27048,11 +27048,42 @@ public class GameManager extends AbstractGameManager {
                 sendChangedHex(curPos);
             }
         }
+        
+        // drop cargo
+        dropCargo(entity, curPos); 
 
         // update our entity, so clients have correct data needed for MekWars stuff
         entityUpdate(entity.getId());
 
         return vDesc;
+    }
+    
+    /**
+     * Worker function that drops cargo from an entity at the given coordinates.
+     */
+    private void dropCargo(Entity entity, Coords coords) {
+    	boolean cargoDropped = false;
+    	
+        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        	entity.dropGroundObject(cargo, false);
+        	// if the cargo was dropped but not destroyed.
+        	if (!damageCargo(false, entity, cargo)) {
+        		Report r = new Report(6722);
+        		r.indent();
+        		r.subject = entity.getId();
+        		r.add(cargo.getName());
+        		vPhaseReport.add(r);
+        		
+        		if (game.getBoard().contains(coords)) {
+        			game.placeGroundObject(coords, cargo);
+        			cargoDropped = true;
+        		}
+        	}
+        }
+        
+        if (cargoDropped) {
+        	sendGroundObjectUpdate();
+        }
     }
 
     /**
@@ -27524,20 +27555,8 @@ public class GameManager extends AbstractGameManager {
             return vPhaseReport;
         }
         
-        // drop cargo
-        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-        	entity.dropGroundObject(cargo, false);
-        	// if the cargo was dropped but not destroyed.
-        	if (!damageCargo(false, entity, cargo)) {
-        		r = new Report(6722);
-        		r.indent();
-        		r.subject = entity.getId();
-        		r.add(cargo.getName());
-        		vPhaseReport.add(r);
-        		
-        		game.placeGroundObject(fallPos, cargo);
-        	}
-        }
+        // drop cargo if necessary
+        dropCargo(entity, fallPos);
 
         // set how deep the mech has fallen
         if (entity instanceof Mech) {

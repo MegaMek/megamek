@@ -1933,10 +1933,7 @@ public class FireControl {
                                                                     guess,
                                                                     bombPayloads);
                 diveBombPlan.add(diveBomb);
-                // Hack to prevent adding more than one dive bomb action to the plan
-                // TODO: find out why too many actions are getting added
-                // Having more than one DiveBomb in the plan invalidates the whole plane
-                // (see WeaponAttackAction.java:2033
+                //To prevent adding more than one dive bomb action to the plan
                 break;
             }
         }

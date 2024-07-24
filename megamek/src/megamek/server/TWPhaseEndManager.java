@@ -23,8 +23,6 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
 
 class TWPhaseEndManager {
 

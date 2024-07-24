@@ -1,38 +1,55 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
-import megamek.common.annotations.Nullable;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.util.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 9/6/13 6:50 PM
  */
 public class BehaviorSettingsFactory {
+    private final static MMLogger logger = MMLogger.create(BehaviorSettingsFactory.class);
 
     private static final String PRINCESS_BEHAVIOR_PATH = "mmconf" + File.separator + "princessBehaviors.xml";
 
@@ -46,10 +63,11 @@ public class BehaviorSettingsFactory {
     public static BehaviorSettingsFactory getInstance() {
         return instance;
     }
-    
+
     /**
-     * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache. If the cache is empty, it will load from
-     * mmconf/princessBehaviors.xml. Also, if the "DEFAULT behavior is missing, it will be added.
+     * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache.
+     * If the cache is empty, it will load from mmconf/princessBehaviors.xml. Also,
+     * if the "DEFAULT behavior is missing, it will be added.
      *
      * @param reinitialize Set TRUE to force the cache to be completely rebuilt.
      */
@@ -81,20 +99,24 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Adds a {@link megamek.client.bot.princess.BehaviorSettings} to the cache.  If a behavior with the same name is already in the cache, it will
-     * be overwritten.
+     * Adds a {@link megamek.client.bot.princess.BehaviorSettings} to the cache. If
+     * a behavior with the same name is already in the cache, it will be
+     * overwritten.
      *
-     * @param behaviorSettings The {@link megamek.client.bot.princess.BehaviorSettings} to be added to the cache.
+     * @param behaviorSettings The
+     *                         {@link megamek.client.bot.princess.BehaviorSettings}
+     *                         to be added to the cache.
      */
     public void addBehavior(BehaviorSettings behaviorSettings) {
         synchronized (behaviorMap) {
             behaviorMap.put(behaviorSettings.getDescription().trim(), behaviorSettings);
         }
     }
-    
+
     /**
-     * Removes the behavior setting with the given name from the cache. Returns the BehaviorSettings that was 
-     * removed (or null if there was no such BehaviorSettings). 
+     * Removes the behavior setting with the given name from the cache. Returns the
+     * BehaviorSettings that was removed (or null if there was no such
+     * BehaviorSettings).
      */
     public BehaviorSettings removeBehavior(String settingName) {
         synchronized (behaviorMap) {
@@ -105,7 +127,8 @@ public class BehaviorSettingsFactory {
     /**
      * Returns the named {@link megamek.client.bot.princess.BehaviorSettings}.
      *
-     * @param desc The name of the behavior; matched to {@link megamek.client.bot.princess.BehaviorSettings#getDescription()}.
+     * @param desc The name of the behavior; matched to
+     *             {@link megamek.client.bot.princess.BehaviorSettings#getDescription()}.
      * @return The named behavior or NULL if no match is found.
      */
     public BehaviorSettings getBehavior(String desc) {
@@ -116,7 +139,8 @@ public class BehaviorSettingsFactory {
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
-                LogManager.getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
+                String message = String.format("Could not load %s", PRINCESS_BEHAVIOR_PATH);
+                logger.error(message);
                 return null;
             }
 
@@ -124,47 +148,53 @@ public class BehaviorSettingsFactory {
                 return MMXMLUtility.newSafeDocumentBuilder().parse(is);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "Build Princess Exception");
             return null;
         }
     }
 
     /**
-     * Loads the contents of the mmconf/princessBehaviors.xml file into the cache.  If the "DEFAULT" behavior is
-     * missing it will be automatically added.
+     * Loads the contents of the mmconf/princessBehaviors.xml file into the cache.
+     * If the "DEFAULT" behavior is missing it will be automatically added.
      *
      * @return TRUE if the load completes successfully.
      */
     boolean loadBehaviorSettings(Document princessBehaviorDoc) {
         synchronized (behaviorMap) {
+            addDefaultBehaviors();
+
+            if (princessBehaviorDoc == null) {
+                return false;
+            }
+
+            Element root = princessBehaviorDoc.getDocumentElement();
+            BehaviorSettings behaviorSettings;
+
             try {
-                if (princessBehaviorDoc == null) {
-                    return false;
-                }
-                Element root = princessBehaviorDoc.getDocumentElement();
-                BehaviorSettings behaviorSettings;
                 for (int i = 0; i < root.getChildNodes().getLength(); i++) {
                     Node child = root.getChildNodes().item(i);
+
                     if (!"behavior".equalsIgnoreCase(child.getNodeName())) {
                         continue;
                     }
+
                     behaviorSettings = new BehaviorSettings((Element) child);
                     addBehavior(behaviorSettings);
                 }
-                return true;
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error(e, "Load Behavior Settings Exception");
                 return false;
-            } finally {
-                addDefaultBehaviors();
             }
+
+            return true;
         }
     }
 
     /**
      * Saves the contents of the cache to the mmconf/princessBehaviors.xml file.
      *
-     * @param includeTargets Set TRUE to include the contents of the Strategic Targets list.
+     * @param includeTargets Set TRUE to include the contents of the Strategic
+     *                       Targets list.
      * @return TRUE if the save is successful.
      */
     public boolean saveBehaviorSettings(boolean includeTargets) {
@@ -172,19 +202,24 @@ public class BehaviorSettingsFactory {
 
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
+
             if (!behaviorFile.exists()) {
                 if (!behaviorFile.createNewFile()) {
-                    LogManager.getLogger().error("Could not create " + PRINCESS_BEHAVIOR_PATH);
+                    String message = String.format("Could not create %s", PRINCESS_BEHAVIOR_PATH);
+                    logger.error(message);
                     return false;
                 }
             }
+
             if (!behaviorFile.canWrite()) {
-                LogManager.getLogger().error("Could not write to " + PRINCESS_BEHAVIOR_PATH);
+                String message = String.format("Could not write to %s", PRINCESS_BEHAVIOR_PATH);
+                logger.error(message);
                 return false;
             }
 
             Document behaviorDoc = MMXMLUtility.newSafeDocumentBuilder().newDocument();
             Node rootNode = behaviorDoc.createElement("princessBehaviors");
+
             synchronized (behaviorMap) {
                 for (String key : behaviorMap.keySet()) {
                     BehaviorSettings settings = behaviorMap.get(key);
@@ -197,32 +232,36 @@ public class BehaviorSettingsFactory {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(behaviorDoc);
-            try (Writer writer = new FileWriter(behaviorFile)) {
-                StreamResult result = new StreamResult(writer);
-                transformer.transform(source, result);
-                return true;
-            }
+
+            Writer writer = new FileWriter(behaviorFile);
+            StreamResult result = new StreamResult(writer);
+            transformer.transform(source, result);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "Save Behavior Settings Exception");
             return false;
         }
+
+        return true;
     }
 
     /**
-     * @return an array of the names of all the {@link megamek.client.bot.princess.BehaviorSettings} in the cache.
+     * @return an array of the names of all the
+     *         {@link megamek.client.bot.princess.BehaviorSettings} in the cache.
      */
     public String[] getBehaviorNames() {
         init(false);
         List<String> names;
+
         synchronized (behaviorMap) {
             names = new ArrayList<>(behaviorMap.keySet());
         }
+
         Collections.sort(names);
         return names.toArray(new String[0]);
     }
-    
-    /** 
-     * Returns a list of the names of all the available 
+
+    /**
+     * Returns a list of the names of all the available
      * {@link megamek.client.bot.princess.BehaviorSettings BehaviorSettings}.
      */
     public List<String> getBehaviorNameList() {
@@ -232,9 +271,9 @@ public class BehaviorSettingsFactory {
         }
     }
 
-    //******************
+    // ******************
     // DEFAULT BEHAVIORS
-    //******************
+    // ******************
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br>
      * Retreat Edge: {@link CardinalEdge#NONE} <br>
@@ -249,9 +288,7 @@ public class BehaviorSettingsFactory {
      * Strategic Targets: None
      */
     // Used by MekHQ
-    @SuppressWarnings("WeakerAccess")
     public final BehaviorSettings BERSERK_BEHAVIOR = buildBerserkBehavior();
-    @SuppressWarnings("WeakerAccess")
     public static final String BERSERK_BEHAVIOR_DESCRIPTION = "BERSERK";
 
     private BehaviorSettings buildBerserkBehavior() {
@@ -269,7 +306,7 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             return berserkBehavior;
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "Berserker Behavior Exception");
             return null;
         }
     }
@@ -305,7 +342,7 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             return cowardlyBehavior;
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "Cowardly Behavior Exception");
             return null;
         }
     }
@@ -324,9 +361,7 @@ public class BehaviorSettingsFactory {
      * Strategic Targets: None
      */
     // Used by MekHQ
-    @SuppressWarnings("WeakerAccess")
     public final BehaviorSettings ESCAPE_BEHAVIOR = buildEscapeBehavior();
-    @SuppressWarnings("WeakerAccess")
     public static final String ESCAPE_BEHAVIOR_DESCRIPTION = "ESCAPE";
 
     private BehaviorSettings buildEscapeBehavior() {
@@ -344,10 +379,14 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             return escapeBehavior;
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "Escape Behavior Exception");
             return null;
         }
     }
+
+    // ******************
+    // DEFAULT BEHAVIORS
+    // ******************
 
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br>
@@ -380,12 +419,8 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             return defaultBehavior;
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "Default Behavior Exception");
             return null;
         }
     }
-    //******************
-    // DEFAULT BEHAVIORS
-    //******************
-
 }

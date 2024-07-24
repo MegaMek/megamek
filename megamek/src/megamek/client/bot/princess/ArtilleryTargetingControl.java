@@ -1,20 +1,33 @@
 /*
-* MegaMek - Copyright (C) 2018 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package megamek.client.bot.princess;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -23,38 +36,45 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 /**
- * This class handles the creation of firing plans for indirect-fire artillery and other weapons that get used during the
- * targeting phase.
+ * This class handles the creation of firing plans for indirect-fire artillery
+ * and other weapons that get used during the targeting phase.
+ *
  * @author NickAragua
  *
  */
 public class ArtilleryTargetingControl {
     private static final int NO_AMMO = -1;
-    // biggest known kaboom is the 120 cruise missile with a 4-hex radius, but it's not very common
-    // and greatly increases the number of spaces we need to check
+    // biggest known kaboom is the 120 cruise missile with a 4-hex radius, but it's
+    // not very common and greatly increases the number of spaces we need to check
     private static final int MAX_ARTILLERY_BLAST_RADIUS = 2;
 
     // per TacOps, this is the to-hit modifier for indirect artillery attacks.
     private static final int ARTILLERY_ATTACK_MODIFIER = 7;
 
-    // The main principle here isn't to try to anticipate enemy movement: that's unlikely, especially for faster or jump-capable units.
-    // The main principle instead is to put down fire that a) may land on enemy units
-    // b) is less likely to land on my units
+    // The main principle here isn't to try to anticipate enemy movement: that's
+    // unlikely, especially for faster or jump-capable units. The main principle
+    // instead is to put down fire that
+    // - a) may land on enemy units
+    // - b) is less likely to land on my units
 
     // Each potential hex is evaluated as follows:
-    // (summed over all units within blast radius of hex) (1/unit run speed + 1) * odds of hitting hex * unit friendliness factor (1 for enemy, -1 for ally)
+    // (summed over all units within blast radius of hex) (1/unit run speed + 1) *
+    // odds of hitting hex * unit friendliness factor (1 for enemy, -1 for ally)
     // repeat and sum over all hexes within scatter pattern
 
-    // this is a data structure that maps artillery damage value (which directly correlates with blast radius)
-    // to a dictionary containing sets of coordinates and the damage value if one of those coordinates were hit by a shell
-    // does not take into account hit odds or anything like that
+    // this is a data structure that maps artillery damage value (which directly
+    // correlates with blast radius) to a dictionary containing sets of coordinates
+    // and the damage value if one of those coordinates were hit by a shell does not
+    // take into account hit odds or anything like that
     private Map<Integer, HashMap<Coords, Double>> damageValues = new HashMap<>();
 
     private Set<Targetable> targetSet;
 
     /**
-     * Wrapper for calculateDamageValue that accounts for leading with artillery shots by accounting for both
-     * the original target hex and the computed target hex in damage calculations.
+     * Wrapper for calculateDamageValue that accounts for leading with artillery
+     * shots by accounting for both the original target hex and the computed target
+     * hex in damage calculations.
+     *
      * @param damage
      * @param hex
      * @param shooter
@@ -63,38 +83,42 @@ public class ArtilleryTargetingControl {
      * @return
      */
     public double calculateDamageValue(int damage, HexTarget hex, Entity shooter, Game game, Princess owner) {
-        // For leading shots, this will be the computed end point.  Might contain friendlies.
-        // For non-leading shots, this is the original target hex.
+        // For leading shots, this will be the computed end point. Might contain
+        // friendlies. For non-leading shots, this is the original target hex.
         double totalDamage = calculateDamageValue(damage, hex.getPosition(), shooter, game, owner);
+
         if (null != hex.getOriginalTarget()) {
-            // For leading shots, the expected damage is based on the units in and around the _current_ location,
-            // which is stored as the "getOriginalTarget".
+            // For leading shots, the expected damage is based on the units in and around
+            // the _current_ location, which is stored as the "getOriginalTarget".
             totalDamage += calculateDamageValue(damage, hex.getOriginalTarget().getPosition(), shooter, game, owner);
         }
         return totalDamage;
     }
 
     /**
-     * Worker function that calculates the total damage that would be done if a shot with the given damage value
-     * would hit the target coordinates.
+     * Worker function that calculates the total damage that would be done if a shot
+     * with the given damage value would hit the target coordinates.
      *
      * Caches computation results to avoid repeat
+     *
      * @param damage
      * @param coords
      * @param shooter
-     * @param game The current {@link Game}
-     * @param owner the {@link Princess} bot to calculate for
+     * @param game    The current {@link Game}
+     * @param owner   the {@link Princess} bot to calculate for
      */
     public double calculateDamageValue(int damage, Coords coords, Entity shooter, Game game,
-                                       Princess owner) {
+            Princess owner) {
         if (getDamageValue(damage, coords) != null) {
             return getDamageValue(damage, coords);
         }
 
         // calculate blast radius = ceiling(damage / 10) - 1
         // for each hex in blast radius, value is
-        // (damage - (distance from center * 10)) * [over all units] 1/(unit run MP + 1) * +/-1 (depending on if unit is friendly or not
-        // it's not correct for cruise missiles, but I don't think the bot will be using those.
+        // (damage - (distance from center * 10)) * [over all units] 1/(unit run MP + 1)
+        // * +/-1 (depending on if unit is friendly or not
+        // it's not correct for cruise missiles, but I don't think the bot will be using
+        // those.
         int blastRadius = (int) Math.ceil(damage / 10.0) - 1;
         double totalDamage = calculateDamageValueForHex(damage, coords, shooter, game, owner);
 
@@ -115,11 +139,12 @@ public class ArtilleryTargetingControl {
     /**
      * Worker function that calculates the "damage value" of a single hex.
      * The formula is (summed over all units in target hex)
-     *  [incoming damage] * [1 / (unit run mp + 1)] * [-1 if friendly, +1 if enemy]
-     * @param damage How much damage will we do
-     * @param coords Coordinates to hit
+     * [incoming damage] * [1 / (unit run mp + 1)] * [-1 if friendly, +1 if enemy]
+     *
+     * @param damage  How much damage will we do
+     * @param coords  Coordinates to hit
      * @param shooter Entity doing the shooting
-     * @param game The current {@link Game}
+     * @param game    The current {@link Game}
      */
     private double calculateDamageValueForHex(int damage, Coords coords, Entity shooter, Game game, Princess owner) {
         double value = 0;
@@ -158,6 +183,7 @@ public class ArtilleryTargetingControl {
 
     /**
      * Cache a calculated damage value for the given damage/coordinates combo
+     *
      * @param damage
      * @param coords
      * @param value
@@ -172,6 +198,7 @@ public class ArtilleryTargetingControl {
 
     /**
      * Retrieve a calculated damage value for the given damage/coords combo
+     *
      * @param damage
      * @param coords
      * @return
@@ -192,12 +219,13 @@ public class ArtilleryTargetingControl {
         targetSet = null;
     }
 
-    private boolean getAmmoTypeAvailable(Entity shooter, AmmoType.Munitions mtype) {
+    private boolean getAmmoTypeAvailable(Entity shooter, AmmoType.Munitions munitions) {
         boolean available = false;
-        for (WeaponMounted weapon: shooter.getWeaponList()){
-            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)){
-                for (AmmoMounted ammo: shooter.getAmmo(weapon)) {
-                    if (((AmmoType) ammo.getType()).getMunitionType().contains(mtype)
+
+        for (WeaponMounted weapon : shooter.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                for (AmmoMounted ammo : shooter.getAmmo(weapon)) {
+                    if (((AmmoType) ammo.getType()).getMunitionType().contains(munitions)
                             && !weapon.isFired() && ammo.getUsableShotsLeft() > 0) {
                         available = true;
                         break;
@@ -208,12 +236,15 @@ public class ArtilleryTargetingControl {
         return available;
 
     }
+
     /**
-     * Iterates over all artillery weapons and checks if it can make an ADA attack later in the turn.
+     * Iterates over all artillery weapons and checks if it can make an ADA attack
+     * later in the turn.
+     *
      * @param shooter who will make the attack
      * @return true if ADA rounds are available for any weapons, false otherwise
      */
-    private boolean getADAAvailable(Entity shooter){
+    private boolean getADAAvailable(Entity shooter) {
         return getAmmoTypeAvailable(shooter, AmmoType.Munitions.M_ADA);
     }
 
@@ -222,12 +253,13 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Builds a list of eligible targets for artillery strikes.
-     * This includes hexes on and within the max radius of all non-airborne enemy entities
-     * and hexes on and within the max radius of all strategic targets.
+     * Builds a list of eligible targets for artillery strikes. This includes hexes
+     * on and within the max radius of all non-airborne enemy entities and hexes on
+     * and within the max radius of all strategic targets.
+     *
      * @param shooter Entity doing the shooting
-     * @param game The current {@link Game}
-     * @param owner Bot pointer
+     * @param game    The current {@link Game}
+     * @param owner   Bot pointer
      */
     private void buildTargetList(Entity shooter, Game game, Princess owner) {
         targetSet = new HashSet<>();
@@ -237,18 +269,21 @@ public class ArtilleryTargetingControl {
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
 
-            // Given how accurate and long-ranged ADA missiles are, prioritize airborne targets if ADA is available
-            if(adaAvailable){
+            // Given how accurate and long-ranged ADA missiles are, prioritize airborne
+            // targets if ADA is available
+            if (adaAvailable) {
                 // We will check these first, but still look at other possible shots.
-                if (e.isAirborne() || e.isAirborneVTOLorWIGE() || e.isAirborneAeroOnGroundMap()){
+                if (e.isAirborne() || e.isAirborneVTOLorWIGE() || e.isAirborneAeroOnGroundMap()) {
                     targetSet.add(e);
-               }
+                }
             }
-            // Otherwise skip airborne entities, and those off board - we'll handle them later and don't target ignored units
-            if (!e.isAirborne()
-                    && !e.isAirborneVTOLorWIGE()
-                    && !e.isOffBoard()
-                    && !owner.getBehaviorSettings().getIgnoredUnitTargets().contains(e.getId())) {
+
+            // Otherwise skip airborne entities, and those off board - we'll handle them
+            // later and don't target ignored units
+            if (!e.isAirborne() &&
+                    !e.isAirborneVTOLorWIGE() &&
+                    !e.isOffBoard() &&
+                    !owner.getBehaviorSettings().getIgnoredUnitTargets().contains(e.getId())) {
 
                 HexTarget hex = new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY);
 
@@ -262,11 +297,12 @@ public class ArtilleryTargetingControl {
                         Targetable.TYPE_HEX_ARTILLERY);
                 homingHex.setOriginalTarget(hex);
 
-                // Decide which target to use; if all are the same position, use the first hex position
-                if (!(leadHex.getPosition().equals(hex.getPosition())
-                        && homingHex.getPosition().equals(hex.getPosition()))) {
+                // Decide which target to use; if all are the same position, use the first hex
+                // position
+                if (!(leadHex.getPosition().equals(hex.getPosition()) &&
+                        homingHex.getPosition().equals(hex.getPosition()))) {
                     if (leadHex.getPosition().equals(homingHex.getPosition())) {
-                        // Either the target is hella fast, or we're not going to use homing
+                        // Either the target is fast, or we're not going to use homing
                         hex = leadHex;
                     } else {
                         // Homing is in play, lead farther (probably)
@@ -297,11 +333,12 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Adds on-board HexTargets within the MAX_ARTILLERY_BLAST_RADIUS of the given coordinates
-     * to the given HexTarget set.
-     * @param coords Center coordinates
+     * Adds on-board HexTargets within the MAX_ARTILLERY_BLAST_RADIUS of the given
+     * coordinates to the given HexTarget set.
+     *
+     * @param coords     Center coordinates
      * @param targetList List of target hexes
-     * @param game The current {@link Game}
+     * @param game       The current {@link Game}
      */
     private void addHexDonuts(Coords coords, Set<Targetable> targetList, Game game) {
         // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
@@ -317,38 +354,41 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Calculate an indirect artillery "fire plan", taking into account the possibility of rotating the turret.
+     * Calculate an indirect artillery "fire plan", taking into account the
+     * possibility of rotating the turret.
+     *
      * @param shooter Entity doing the shooting
-     * @param game The current {@link Game}
-     * @param owner Princess pointer
+     * @param game    The current {@link Game}
+     * @param owner   Princess pointer
      * @return Firing plan
      */
     public FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner) {
-        FiringPlan bestPlan = calculateIndirectArtilleryPlan(shooter, game, owner, 0);
-
-        return bestPlan;
+        return calculateIndirectArtilleryPlan(shooter, game, owner, 0);
     }
 
     /**
      * Put together an indirect artillery "fire plan".
+     *
      * @param shooter Entity doing the shooting
-     * @param game The current {@link Game}
-     * @param owner Princess pointer
+     * @param game    The current {@link Game}
+     * @param owner   Princess pointer
      * @return Firing plan
      */
     private FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner, int facingChange) {
-        FiringPlan retval = new FiringPlan();
+        FiringPlan returnValue = new FiringPlan();
         FiringPlan TAGPlan = new FiringPlan();
 
-        // if we're fleeing and haven't been shot at, then try not to agitate guys that may pursue us.
+        // if we're fleeing and haven't been shot at, then try not to agitate guys that
+        // may pursue us.
         if (owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter)) {
-            return retval;
+            return returnValue;
         }
 
         // set the plan's torso twist/turret rotation
         // also set the
-        // make sure to remember the entity's original rotation as we're manipulating it directly
-        retval.setTwist(facingChange);
+        // make sure to remember the entity's original rotation as we're manipulating it
+        // directly
+        returnValue.setTwist(facingChange);
         int originalFacing = shooter.getSecondaryFacing();
         shooter.setSecondaryFacing(FireControl.correctFacing(originalFacing + facingChange));
 
@@ -359,13 +399,14 @@ public class ArtilleryTargetingControl {
             buildTargetList(shooter, game, owner);
             // If we decided not to shoot this phase, no reason to continue calculating.
             if (targetSet == null) {
-                return retval;
+                return returnValue;
             }
         }
 
         // loop through all weapons on entity
         // each indirect artillery piece randomly picks a target from the priority list
-        // by the end of this loop, we either have 0 max damage/0 top valued coordinates, which indicates there's nothing worth shooting at
+        // by the end of this loop, we either have 0 max damage/0 top valued
+        // coordinates, which indicates there's nothing worth shooting at
         // or we have a 1+ top valued coordinates.
         // Track ADA WFIs separately.
         List<WeaponFireInfo> topValuedADAInfos = new ArrayList<>();
@@ -374,7 +415,8 @@ public class ArtilleryTargetingControl {
             double maxDamage = 0;
             if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 WeaponType wType = currentWeapon.getType();
-                int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values for arty pieces in tacops
+                int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values
+                                                  // for arty pieces in TacOps
 
                 // Iterate over all loaded Artillery ammo so we can compare various options
                 for (final AmmoMounted ammo : shooter.getAmmo(currentWeapon)) {
@@ -392,31 +434,33 @@ public class ArtilleryTargetingControl {
                                 damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);
                             } else if (isSmoke) {
                                 damageValue = 0;
-                            }
-                            else {
+                            } else {
                                 // No ADA attacks except at Entities.
                                 continue;
                             }
                         }
 
-                        // ADA attacks should be handled as Direct Fire but we'll calc hits here for comparison.
+                        // ADA attacks should be handled as Direct Fire but we'll calc hits here for
+                        // comparison.
                         wfi = new WeaponFireInfo(shooter, target, currentWeapon, ammo, game, false, owner);
 
-                        // factor the chance to hit when picking a target - if we've got a spotted hex or an auto-hit hex
-                        // we should prefer to hit that over something that may scatter to who knows where
+                        // factor the chance to hit when picking a target - if we've got a spotted hex
+                        // or an auto-hit hex
+                        // we should prefer to hit that over something that may scatter to who knows
+                        // where
                         if (wfi.getProbabilityToHit() > 0) {
                             damageValue *= wfi.getProbabilityToHit();
 
                             if (damageValue > maxDamage) {
                                 if (((AmmoType) (wfi.getAmmo().getType())).getMunitionType()
-                                        .contains(AmmoType.Munitions.M_HOMING)){
+                                        .contains(AmmoType.Munitions.M_HOMING)) {
                                     wfi.getAmmo().setSwitchedReason(1505);
                                 } else {
                                     wfi.getAmmo().setSwitchedReason(1503);
                                 }
                                 if (isADA) {
                                     topValuedADAInfos.clear();
-                                    maxDamage = damage;  // Actual expected damage will be higher
+                                    maxDamage = damage; // Actual expected damage will be higher
                                     topValuedADAInfos.add(wfi);
                                 } else {
                                     topValuedFireInfos.clear();
@@ -424,7 +468,8 @@ public class ArtilleryTargetingControl {
                                     topValuedFireInfos.add(wfi);
                                 }
                             } else if ((damageValue == maxDamage) && (damageValue > 0)) {
-                                if (((AmmoType) wfi.getAmmo().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                                if (((AmmoType) wfi.getAmmo().getType()).getMunitionType()
+                                        .contains(AmmoType.Munitions.M_ADA)) {
                                     topValuedADAInfos.add(wfi);
                                 } else {
                                     topValuedFireInfos.add(wfi);
@@ -453,13 +498,14 @@ public class ArtilleryTargetingControl {
                     HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
 
                     if (ammo.equipmentNum > NO_AMMO) {
-                        //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
+                        // This can happen if princess is towing ammo trailers, which she really
+                        // shouldn't be doing...
                         aaa.setAmmoId(ammo.equipmentNum);
                         aaa.setAmmoMunitionType(ammo.munitionType);
                         aaa.setAmmoCarrier(shooter.getId());
                         actualFireInfo.setAction(aaa);
-                        retval.add(actualFireInfo);
-                        retval.setUtility(retval.getUtility() + maxDamage);
+                        returnValue.add(actualFireInfo);
+                        returnValue.setUtility(returnValue.getUtility() + maxDamage);
                         owner.sendAmmoChange(
                                 shooter.getId(),
                                 shooter.getEquipmentNum(actualFireInfo.getWeapon()),
@@ -472,49 +518,53 @@ public class ArtilleryTargetingControl {
 
                 if (tagInfo != null) {
                     TAGPlan.add(tagInfo);
-                    TAGPlan.setUtility(retval.getUtility() + tagInfo.getProbabilityToHit());
+                    TAGPlan.setUtility(returnValue.getUtility() + tagInfo.getProbabilityToHit());
                 }
             }
         }
 
-        // Clear all artillery attacks if we have valid ADA attacks that do damage, but keep any TAG attacks.
+        // Clear all artillery attacks if we have valid ADA attacks that do damage, but
+        // keep any TAG attacks.
         if (!topValuedADAInfos.isEmpty()) {
             if (topValuedADAInfos.get(0).getExpectedDamage() > 0) {
-                retval = TAGPlan;
+                returnValue = TAGPlan;
             }
         } else {
             for (WeaponFireInfo tagInfo : TAGPlan) {
-                retval.add(tagInfo);
-                retval.setUtility(retval.getUtility() + tagInfo.getProbabilityToHit());
+                returnValue.add(tagInfo);
+                returnValue.setUtility(returnValue.getUtility() + tagInfo.getProbabilityToHit());
             }
         }
 
         shooter.setSecondaryFacing(originalFacing);
 
-        return retval;
+        return returnValue;
     }
 
     /**
-     * Worker function that calculates the shooter's "best" actions that result in a TAG being fired.
+     * Worker function that calculates the shooter's "best" actions that result in a
+     * TAG being fired.
+     *
      * @param shooter
-     * @param game The current {@link Game}
+     * @param game    The current {@link Game}
      * @param owner
      * @return
      */
     private WeaponFireInfo getTAGInfo(WeaponMounted weapon, Entity shooter, Game game, Princess owner) {
-        WeaponFireInfo retval = null;
+        WeaponFireInfo returnValue = null;
         double hitOdds = 0.0;
 
         // pretty simple logic here: take the best shot that you have
-        for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game, owner.getFireControlState())) {
+        for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game,
+                owner.getFireControlState())) {
             WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, null, game, false, owner);
             if (wfi.getProbabilityToHit() > hitOdds) {
                 hitOdds = wfi.getProbabilityToHit();
-                retval = wfi;
+                returnValue = wfi;
             }
         }
 
-        return retval;
+        return returnValue;
     }
 
     private static class HelperAmmo {
@@ -528,22 +578,25 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Worker function that selects the appropriate ammo for the given entity and weapon.
+     * Worker function that selects the appropriate ammo for the given entity and
+     * weapon.
+     *
      * @param shooter
      * @param currentWeapon
      * @return
      */
-    private HelperAmmo findAmmo(Entity shooter, Mounted currentWeapon, Mounted preferredAmmo) {
+    private HelperAmmo findAmmo(Entity shooter, Mounted<?> currentWeapon, Mounted<?> preferredAmmo) {
         int ammoEquipmentNum = NO_AMMO;
         EnumSet<AmmoType.Munitions> ammoMunitionType = EnumSet.noneOf(AmmoType.Munitions.class);
 
-        if (preferredAmmo != null && preferredAmmo.isAmmoUsable() && AmmoType.isAmmoValid(preferredAmmo, (WeaponType) currentWeapon.getType())){
+        if (preferredAmmo != null && preferredAmmo.isAmmoUsable() &&
+                AmmoType.isAmmoValid(preferredAmmo, (WeaponType) currentWeapon.getType())) {
             // Use the ammo we used for calculations.
             ammoEquipmentNum = shooter.getEquipmentNum(preferredAmmo);
             ammoMunitionType = ((AmmoType) preferredAmmo.getType()).getMunitionType();
         } else {
             // simply grab the first valid ammo and let 'er rip.
-            for (Mounted ammo : shooter.getAmmo()) {
+            for (Mounted<?> ammo : shooter.getAmmo()) {
                 if (!ammo.isAmmoUsable() || !AmmoType.isAmmoValid(ammo, (WeaponType) currentWeapon.getType())) {
                     continue;
                 }
@@ -553,7 +606,8 @@ public class ArtilleryTargetingControl {
                 break;
 
                 // TODO: Attempt to select homing ammo if the target is tagged.
-                // To do so, check ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING
+                // To do so, check
+                // ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING)
             }
         }
 
@@ -563,6 +617,7 @@ public class ArtilleryTargetingControl {
     /**
      * Function that calculates the potential damage if an artillery attack
      * were to land on target.
+     *
      * @param coords
      * @param operator
      * @return
@@ -570,21 +625,25 @@ public class ArtilleryTargetingControl {
     public static double evaluateIncomingArtilleryDamage(Coords coords, Princess operator) {
         double sum = 0;
 
-        for (Enumeration<ArtilleryAttackAction> attackEnum = operator.getGame().getArtilleryAttacks(); attackEnum.hasMoreElements();) {
+        for (Enumeration<ArtilleryAttackAction> attackEnum = operator.getGame().getArtilleryAttacks(); attackEnum
+                .hasMoreElements();) {
             ArtilleryAttackAction aaa = attackEnum.nextElement();
 
             // calculate damage: damage - (10 * distance to me), floored at 0
-            // we only say that it will actually be damage if the attack coming in is landing right after the movement phase
+            // we only say that it will actually be damage if the attack coming in is
+            // landing right after the movement phase
             double actualDamage = 0.0;
 
             if ((aaa.getTurnsTilHit() == 0) && (aaa.getTarget(operator.getGame()) != null)) {
-                // damage for artillery weapons is, for some reason, derived from the weapon type's rack size
+                // damage for artillery weapons is, for some reason, derived from the weapon
+                // type's rack size
                 int damage = 0;
-                Mounted weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
+                Mounted<?> weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
                 if (null == weapon) {
-                    // The weaponId couldn't get us a weapon; probably a bomb Arrow IV dropped on a prior turn.
-                    BombType btype = BombType.createBombByType(BombType.getBombTypeFromName("Arrow IV Missile"));
-                    damage = btype.getRackSize();
+                    // The weaponId couldn't get us a weapon; probably a bomb Arrow IV dropped on a
+                    // prior turn.
+                    BombType bombType = BombType.createBombByType(BombType.getBombTypeFromName("Arrow IV Missile"));
+                    damage = bombType.getRackSize();
                 } else {
                     if (weapon.getType() instanceof BombType) {
                         damage = (weapon.getExplosionDamage());

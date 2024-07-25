@@ -33,6 +33,7 @@ public class ArmorType extends MiscType {
 
     private static final List<ArmorType> allTypes = new ArrayList<>();
 
+    public static final int STEALTH_ARMOR_HEAT = 10;
     public static ArmorType of(int type, boolean clan) {
         if (armorTypeLookupClan.isEmpty() && armorTypeLookupIS.isEmpty()) {
             initializeTypes();

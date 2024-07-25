@@ -20,6 +20,7 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.*;
 import megamek.common.verifier.TestEntity;
@@ -103,6 +104,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     private final JLabel labHidden = new JLabel(Messages.getString("CustomMechDialog.labHidden"),
             SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
+
+    private final JLabel labDeployStealth = new JLabel(Messages.getString("CustomMechDialog.labDeployStealth"),
+            SwingConstants.RIGHT);
+    private final JCheckBox chDeployStealth = new JCheckBox();
+
     private final JLabel labOffBoard = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT);
     private final JCheckBox chOffBoard = new JCheckBox();
@@ -513,6 +519,12 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         labHidden.setEnabled(enableHidden);
         chHidden.setEnabled(enableHidden);
         chHidden.addActionListener(this);
+
+        chDeployStealth.removeActionListener(this);
+        boolean enableStealthed = (entity.hasStealth());
+        labDeployStealth.setEnabled(enableStealthed);
+        chDeployStealth.setEnabled(enableStealthed);
+        chDeployStealth.addActionListener(this);
     }
 
     @Override
@@ -839,6 +851,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         // Apply multiple-entity settings
         for (Entity entity : entities) {
             entity.setHidden(chHidden.isSelected());
+            setStealth(entity, chDeployStealth.isSelected());
 
             if (chOffBoard.isSelected()) {
                 try {
@@ -1032,6 +1045,18 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 
+    private void setStealth(Entity e, boolean stealthed) {
+        int newStealth = (stealthed) ? 1 : 0;
+        EquipmentMode newMode = (stealthed) ? EquipmentMode.getMode("On") : EquipmentMode.getMode("Off");
+        for (MiscMounted m: e.getMiscEquipment(MiscType.F_STEALTH)) {
+            if (m.curMode() == newMode) {
+                continue;
+            };
+            m.setMode(newStealth);
+            m.newRound(-1);
+        }
+    }
+
     @Override
     protected Container createCenterPane() {
         final Entity entity = entities.get(0);
@@ -1046,6 +1071,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         final boolean isQuadVee = entities.stream().allMatch(e -> e instanceof QuadVee);
         final boolean isLAM = entities.stream().allMatch(e -> e instanceof LandAirMech);
         final boolean isGlider = entities.stream().allMatch(e -> (e instanceof Protomech) && e.getMovementMode().isWiGE());
+        final boolean hasStealth = entities.stream().allMatch(e -> e.hasStealth());
         boolean eligibleForOffBoard = true;
 
         int bh = clientgui.getClient().getMapSettings().getBoardHeight();
@@ -1255,6 +1281,12 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             chHidden.setSelected(entity.isHidden());
         }
 
+        if (hasStealth) {
+            panDeploy.add(labDeployStealth, GBC.std());
+            panDeploy.add(chDeployStealth, GBC.std());
+            chDeployStealth.setSelected(entity.isStealthOn());
+        }
+
         if (eligibleForOffBoard) {
             panDeploy.add(labOffBoard, GBC.std());
             panDeploy.add(chOffBoard, GBC.eol());
@@ -1313,6 +1345,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
             chHidden.setEnabled(false);
+            chDeployStealth.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);

@@ -26,14 +26,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import megamek.common.BipedMech;
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
 
@@ -65,7 +58,7 @@ public class MockGenerators {
 
 	/**
 	 * Generates a MockBoard object.
-	 * 
+	 *
 	 * @return
 	 */
 	public static Board generateMockBoard() {
@@ -80,14 +73,21 @@ public class MockGenerators {
 	}
 
 	/**
-	 * Generates an entity at specific coordinates Vital statistics: ID: 1 Max
-	 * weapon range: 21 (LRMs, obviously) Final path coordinates: (10, 10) Final
-	 * path facing: straight north No SPAs Default crew
+	 * Generates an entity at specific coordinates Vital statistics:
+	 * - ID: 1 Max
+	 * - weapon range: 21 (LRMs, obviously)
+	 * - Final path coordinates: (10, 10)
+	 * - Final path facing: straight north
+	 * - No SPAs
+	 * - Default crew
 	 *
+	 * @param x          X Coord on Board
+	 * @param y          Y Coord on Board
+	 * @param mockEntity The Entity that we are mocking
 	 * @return
 	 */
-	public static Entity generateMockEntity(int x, int y) {
-		final Entity mockEntity = mock(BipedMech.class);
+
+	public static Entity generateMockEntity(int x, int y, Entity mockEntity) {
 		when(mockEntity.getMaxWeaponRange()).thenReturn(21);
 
 		final Crew mockCrew = mock(Crew.class);
@@ -107,9 +107,22 @@ public class MockGenerators {
 		return mockEntity;
 	}
 
+	public static Entity generateMockBipedMech(int x, int y) {
+		final Entity mockEntity = mock(BipedMech.class);
+		return generateMockEntity(x, y, mockEntity);
+	}
+
+	public static Entity generateMockAerospace(int x, int y) {
+		final Entity mockAero = mock(Aero.class);
+		when(mockAero.isAero()).thenReturn(true);
+		when(mockAero.isAirborne()).thenReturn(true);
+		when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
+		return generateMockEntity(x, y, mockAero);
+	}
+
 	/**
 	 * Generates a MockPath object when passed a given entity and coords to move to.
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param mockEntity
@@ -124,5 +137,36 @@ public class MockGenerators {
 		when(mockPath.getFinalFacing()).thenReturn(0);
 
 		return mockPath;
+	}
+
+	/**
+	 * Generates a MockPath object when passed a given entity and coords to move to.
+	 *
+	 * @param coords
+	 * @param mockEntity
+	 * @return
+	 */
+	public static MovePath generateMockPath(Coords coords, Entity mockEntity) {
+		final MovePath mockPath = mock(MovePath.class);
+		when(mockPath.getEntity()).thenReturn(mockEntity);
+
+		final Coords mockMyCoords = new Coords(coords.getX(), coords.getY());
+		when(mockPath.getFinalCoords()).thenReturn(mockMyCoords);
+		when(mockPath.getFinalFacing()).thenReturn(0);
+
+		return mockPath;
+	}
+
+	/**
+	 * Mock a Target Roll with a given value.
+	 *
+	 * @param value
+	 * @return
+	 */
+	public static TargetRoll mockTargetRoll(int value) {
+		final TargetRoll mockTargetRoll = mock(TargetRoll.class);
+		when(mockTargetRoll.getValue()).thenReturn(value);
+		when(mockTargetRoll.getDesc()).thenReturn("mock");
+		return mockTargetRoll;
 	}
 }

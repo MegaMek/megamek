@@ -27,16 +27,17 @@ import org.junit.jupiter.api.Test;
 
 import megamek.common.Entity;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.utils.MockGenerators;
 
 /**
  * @author Richard J Hancock
  * @since 07/24/2024
  */
-public class AeroPathUtilTest {
+class AeroPathUtilTest {
 	@Test
-	public void testAssertWillStallOnAtmosphereGroundMap() {
-		final Entity mockEntity = MockGenerators.generateMockEntity(0, 0);
+	void testAssertWillStallOnAtmosphereGroundMap() {
+		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
 		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(false);
 
@@ -45,16 +46,60 @@ public class AeroPathUtilTest {
 	}
 
 	@Test
-	public void testAssertWillStallNotOnAtmosphereGroundMap() {
-		final Entity mockEntity = MockGenerators.generateMockEntity(0, 0);
+	void testAssertWillStallNotOnAtmosphereGroundMap() {
+		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 		when(mockEntity.isAirborne()).thenReturn(true);
 
 		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
-		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(false);
+		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
 		when(mockPath.getFinalVelocity()).thenReturn(0);
 
 		boolean result = AeroPathUtil.willStall(mockPath);
 		assertTrue(result);
+	}
+
+	@Test
+	void testAssertWillStallAsSpheroidDropshipWithVLAND() {
+		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+		when(mockEntity.isAirborne()).thenReturn(true);
+		when(mockEntity.isAero()).thenReturn(true);
+		when(mockEntity.isSpheroid()).thenReturn(true);
+
+		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
+		when(mockPath.getFinalVelocity()).thenReturn(0);
+		when(mockPath.getFinalNDown()).thenReturn(0);
+		when(mockPath.getMpUsed()).thenReturn(0);
+		when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
+
+		boolean result = AeroPathUtil.willStall(mockPath);
+		assertFalse(result);
+	}
+
+	@Test
+	void testAssertWillCrashWithOutLandOrVland() {
+		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+		when(mockEntity.isAero()).thenReturn(true);
+
+		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+		when(mockPath.getFinalVelocity()).thenReturn(1);
+
+		boolean result = AeroPathUtil.willCrash(mockPath);
+		assertTrue(result);
+	}
+
+	@Test
+	void testAssertWillCrashWithLandOrVland() {
+		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+		when(mockEntity.isAero()).thenReturn(true);
+
+		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+		when(mockPath.getFinalVelocity()).thenReturn(0);
+		when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
+		when(mockPath.contains(MoveStepType.LAND)).thenReturn(true);
+
+		boolean result = AeroPathUtil.willCrash(mockPath);
+		assertFalse(result);
 	}
 
 }

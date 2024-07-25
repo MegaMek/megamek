@@ -167,6 +167,8 @@ public class Client extends AbstractClient {
     public void changePhase(GamePhase phase) {
         super.changePhase(phase);
         switch (phase) {
+            case LOUNGE:
+                tilesetManager.reset();
             case DEPLOYMENT:
             case TARGETING:
             case MOVEMENT:

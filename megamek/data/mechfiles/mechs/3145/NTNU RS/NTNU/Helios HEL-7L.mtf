@@ -1,16 +1,16 @@
+generator:MegaMek Suite 0.50.0-SNAPSHOT on 2024-07-24
 chassis:Helios
 model:HEL-7L
 mul id:7989
+
 Config:Biped
 techbase:Inner Sphere
 era:3144
 source:Record Sheets: 3150
 rules level:3
-
-
+role:Sniper
 
 quirk:easy_maintain
-
 
 mass:60
 engine:240 XL Engine(IS)
@@ -92,8 +92,8 @@ Fusion Engine
 ISMML5
 ISMML5
 ISMML5
-IS Ammo MML-5 LRM
 IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM
 IS Gauss Ammo
 IS Gauss Ammo
 ISCASEII

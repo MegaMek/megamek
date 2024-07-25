@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.0-SNAPSHOT on 2024-07-23
 <UnitType>
 Tank
 </UnitType>
@@ -16,9 +7,9 @@ Tank
 Mobile Headquarters
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 2201
@@ -27,6 +18,10 @@ Mobile Headquarters
 <year>
 2620
 </year>
+
+<originalBuildYear>
+2620
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -41,7 +36,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:0.5:1
+cargobay:0.5:1:1::-1:0
 </transporters>
 
 <cruiseMP>
@@ -52,6 +47,14 @@ cargobay:0.5:1
 0
 </engine_type>
 
+<armor_type>
+0
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
 16
 19
@@ -61,7 +64,7 @@ cargobay:0.5:1
 </armor>
 
 <Body Equipment>
-Communications Equipment (7 ton)
+Communications Equipment:SIZE:7.0
 </Body Equipment>
 
 <Front Equipment>
@@ -87,3 +90,4 @@ TRO: 3039
 <tonnage>
 25.0
 </tonnage>
+

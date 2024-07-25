@@ -1933,9 +1933,10 @@ public class FireControl {
                                                                     guess,
                                                                     bombPayloads);
                 diveBombPlan.add(diveBomb);
+                //To prevent adding more than one dive bomb action to the plan
+                break;
             }
         }
-
         return diveBombPlan;
     }
 

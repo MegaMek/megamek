@@ -280,16 +280,19 @@ public class BombAttackHandler extends WeaponHandler {
                     hitIds= gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
 
-                if (hitIds == null || hitIds.isEmpty()) {
-                    game.getBoard().addSpecialHexDisplay(drop,
-                            new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
-                                    player, Messages.getString("BombMessage.drifted")
-                                    + " " + coords.getBoardNum()));
-                } else {
-                    game.getBoard().addSpecialHexDisplay(drop,
-                            new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
-                                    player, Messages.getString("BombMessage.drifted")
-                                    + " " + coords.getBoardNum()));
+                // Display drifts that hit nothing separately from drifts that dealt damage
+                if (bMissed) {
+                    if (hitIds == null || hitIds.isEmpty()) {
+                        game.getBoard().addSpecialHexDisplay(drop,
+                                new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
+                                        player, Messages.getString("BombMessage.drifted")
+                                        + " " + coords.getBoardNum()));
+                    } else {
+                        game.getBoard().addSpecialHexDisplay(drop,
+                                new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
+                                        player, Messages.getString("BombMessage.drifted")
+                                        + " " + coords.getBoardNum()));
+                    }
                 }
 
                 // Finally, we need a new attack roll for the next bomb, if any.

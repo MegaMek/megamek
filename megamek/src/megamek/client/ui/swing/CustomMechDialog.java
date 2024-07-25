@@ -1054,7 +1054,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             };
             m.setMode(newStealth);
             m.newRound(-1);
-            // client.sendModeChange(e.getId(), e.getEquipmentNum(m), newStealth);
         }
     }
 

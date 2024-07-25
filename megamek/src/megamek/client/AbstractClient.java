@@ -462,6 +462,7 @@ public abstract class AbstractClient implements IClient {
                 MechSummaryCache.dispose();
                 break;
             case LOUNGE:
+                iconCache.clear();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
                 if (MechSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();

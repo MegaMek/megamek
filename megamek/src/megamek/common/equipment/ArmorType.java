@@ -780,7 +780,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -809,7 +809,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMechSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)

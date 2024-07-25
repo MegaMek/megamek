@@ -41,14 +41,17 @@ import megamek.logging.MMLogger;
  * @author NickAragua
  */
 public class AeroPathUtil {
-    private final static MMLogger logger = MMLogger.create(AeroPathUtil.class);
+    private AeroPathUtil() {
 
-    public static List<List<MoveStepType>> TURNS;
+    }
+
+    private static final MMLogger logger = MMLogger.create(AeroPathUtil.class);
+
+    protected static final List<List<MoveStepType>> TURNS = new ArrayList<>();
 
     static {
         // put together a pre-defined array of turns. Indexes correspond to the
         // directional values found in Coords.java
-        TURNS = new ArrayList<>();
         TURNS.add(new ArrayList<>()); // "no turns"
 
         TURNS.add(new ArrayList<>());
@@ -69,6 +72,12 @@ public class AeroPathUtil {
 
         TURNS.add(new ArrayList<>());
         TURNS.get(5).add(MoveStepType.TURN_LEFT);
+    }
+
+    // Used to protect the TURNS List to ensure it can't be modified outside of the
+    // class.
+    public static List<List<MoveStepType>> getTurns() {
+        return TURNS;
     }
 
     /**
@@ -96,13 +105,9 @@ public class AeroPathUtil {
             return true;
         }
 
-        if (isSpheroid && (movePath.getFinalNDown() == 0)
-                && (movePath.getMpUsed() == 0)
-                && !movePath.contains(MoveStepType.VLAND)) {
-            return true;
-        }
-
-        return false;
+        return (isSpheroid && (movePath.getFinalNDown() == 0) &&
+                (movePath.getMpUsed() == 0) &&
+                !movePath.contains(MoveStepType.VLAND));
     }
 
     /**
@@ -206,8 +211,7 @@ public class AeroPathUtil {
      * @return The max thrust.
      */
     public static int calculateMaxSafeThrust(IAero aero) {
-        int maxThrust = Math.min(aero.getCurrentThrust(), aero.getSI()); // we should only thrust up to our SI
-        return maxThrust;
+        return Math.min(aero.getCurrentThrust(), aero.getSI()); // we should only thrust up to our SI
     }
 
     /**

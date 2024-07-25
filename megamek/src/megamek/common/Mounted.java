@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -25,7 +24,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import org.apache.logging.log4j.LogManager;

@@ -2104,6 +2104,8 @@ public class GameManager extends AbstractGameManager {
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
+            // Need to set map type prior to loading to adjust foliage height, etc.
+            sheetBoards[i].setType(mapSettings.getMedium());
             String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {

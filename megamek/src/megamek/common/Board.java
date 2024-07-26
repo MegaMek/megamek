@@ -1020,6 +1020,10 @@ public class Board implements Serializable {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval + "" : st.sval;
                     }
                     int elevation = Integer.parseInt(args[1]);
+                    if (mapType == T_ATMOSPHERE) {
+                        // All foliage on low-altitude maps have height 1
+                        args[2] = args[2].replaceAll("foliage_elev:\\d{1,}", "foliage_elev:1");
+                    }
                     // The coordinates in the .board file are ignored!
                     nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw));
                     index++;

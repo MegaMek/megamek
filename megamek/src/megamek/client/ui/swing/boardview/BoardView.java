@@ -4306,7 +4306,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         overTerrainSprites.clear();
         behindTerrainHexSprites.clear();
-//        hexSprites.clear();
 
         super.clearSprites();
     }

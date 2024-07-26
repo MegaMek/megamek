@@ -237,6 +237,6 @@ class IsometricSprite extends Sprite {
 
     @Override
     protected int getSpritePriority() {
-        return entity.getSpriteDrawPriority();
+        return entity.getSpriteDrawPriority() + 10;
     }
 }

@@ -65,4 +65,9 @@ public class Briefcase implements ICarryable, Serializable {
 	public String specificName() {
 		return name + " (" + tonnage + " tons)";
 	}
+	
+	@Override
+	public String toString() {
+		return specificName();
+	}
 }

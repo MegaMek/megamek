@@ -378,7 +378,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // to specialized lists when created
     private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
     private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
-    private final TreeSet<HexSprite> hexSprites = new TreeSet<>();
 
     /**
      * Construct a new board view for the specified game
@@ -4308,7 +4307,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         overTerrainSprites.clear();
         behindTerrainHexSprites.clear();
-        hexSprites.clear();
+//        hexSprites.clear();
 
         super.clearSprites();
     }
@@ -4880,7 +4879,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
         allSprites.forEach(Sprite::prepare);
-        hexSprites.forEach(HexSprite::updateBounds);
 
         clearHexImageCache();
         updateBoard();
@@ -5112,10 +5110,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 .map(s -> (HexSprite) s)
                 .filter(HexSprite::isBehindTerrain)
                 .forEach(behindTerrainHexSprites::add);
-        sprites.stream()
-                .filter(s -> s instanceof HexSprite)
-                .map(s -> (HexSprite) s)
-                .forEach(hexSprites::add);
     }
 
     @Override
@@ -5123,6 +5117,5 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         super.removeSprites(sprites);
         overTerrainSprites.removeAll(sprites);
         behindTerrainHexSprites.removeAll(sprites);
-        hexSprites.removeAll(sprites);
     }
 }

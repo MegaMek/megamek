@@ -22,9 +22,12 @@ package megamek.common;
 /**
  * An interface defining all the required properties of a carryable object.
  */
-public interface ICarryable {
+public interface ICarryable extends BTObject {
 	double getTonnage();
 	void damage(double amount);
-	String getName();
 	boolean isInvulnerable();
+	
+	default boolean isCarryableObject() {
+		return true;
+	}
 }

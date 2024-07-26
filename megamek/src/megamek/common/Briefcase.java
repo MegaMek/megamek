@@ -58,11 +58,11 @@ public class Briefcase implements ICarryable, Serializable {
 		name = value;
 	}
 	
-	public String getName() {
+	public String generalName() {
 		return name;
 	}
 	
-	public String toString() {
+	public String specificName() {
 		return name + " (" + tonnage + " tons)";
 	}
 }

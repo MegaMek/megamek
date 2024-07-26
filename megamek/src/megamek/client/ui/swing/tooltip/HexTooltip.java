@@ -164,7 +164,7 @@ public final class HexTooltip {
         	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
         		result.append("&nbsp");
         		result.append(guiScaledFontHTML(UIUtil.uiWhite()));
-        		result.append(groundObject.toString());
+        		result.append(groundObject.specificName());
         		result.append("</font>");
         		result.append("<br/>");
         	}

@@ -493,7 +493,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             
             // show cargo.
             for (ICarryable cargo : en.getDistinctCarriedObjects()) {
-            	carrysR.append(cargo.toString());
+            	carrysR.append(cargo.specificName());
             	carrysR.append("\n");
             }
 

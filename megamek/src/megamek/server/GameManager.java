@@ -5303,7 +5303,7 @@ public class GameManager extends AbstractGameManager {
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
         	r = new Report(2016, Report.PUBLIC);
         	r.indent();
-        	r.add(cargo.getName());
+        	r.add(cargo.generalName());
         	addReport(r);
         }
         
@@ -7290,7 +7290,7 @@ public class GameManager extends AbstractGameManager {
             			r = new Report(2513);
             			r.subject = entity.getId();
                     	r.add(entity.getDisplayName());
-                    	r.add(pickupTarget.toString());
+                    	r.add(pickupTarget.specificName());
                     	r.add(step.getPosition().toFriendlyString());
                     	addReport(r);
                     	
@@ -7334,7 +7334,7 @@ public class GameManager extends AbstractGameManager {
 	            	r = new Report(2514);
 	            	r.subject = entity.getId();
 	            	r.add(entity.getDisplayName());
-	            	r.add(cargo.getName());
+	            	r.add(cargo.generalName());
 	            	r.add(step.getPosition().toFriendlyString());
 	            	addReport(r);
 	            	
@@ -21296,7 +21296,7 @@ public class GameManager extends AbstractGameManager {
         				r = new Report(6721);
         				r.subject = te_n;
         				r.indent(2);
-        				r.add(cargo.getName());
+        				r.add(cargo.generalName());
         				vDesc.addElement(r);
         			// we have not destroyed the cargo means there is no damage left
         			// report and stop destroying cargo
@@ -21304,7 +21304,7 @@ public class GameManager extends AbstractGameManager {
         				r = new Report(6720);
         				r.subject = te_n;
         				r.indent(2);
-        				r.add(cargo.getName());
+        				r.add(cargo.generalName());
         				r.add(Double.toString(cargo.getTonnage()));
         				break;
         			}
@@ -27071,7 +27071,7 @@ public class GameManager extends AbstractGameManager {
         		Report r = new Report(6722);
         		r.indent();
         		r.subject = entity.getId();
-        		r.add(cargo.getName());
+        		r.add(cargo.generalName());
         		vPhaseReport.add(r);
         		
         		if (game.getBoard().contains(coords)) {
@@ -34207,7 +34207,7 @@ public class GameManager extends AbstractGameManager {
 		
 		Report r = new Report(2515);
 		r.subject = entity.getId();
-		r.add(cargo.getName());
+		r.add(cargo.generalName());
 		r.add(destructionThreshold);
 		r.add(destructionRoll);            		
 		

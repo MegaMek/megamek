@@ -429,7 +429,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     	gbc.gridy = groundSectionComponents.size() + 2; // there's always two extra rows - header + text fields 
 		gbc.gridx = 0;
 		
-		JLabel nameLabel = new JLabel(groundObject.getName());
+		JLabel nameLabel = new JLabel(groundObject.generalName());
 		groundSectionContent.add(nameLabel, gbc);
 		List<Component> row = new ArrayList<>();
 		row.add(nameLabel);

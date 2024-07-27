@@ -67,6 +67,11 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     public void update(Entity entity, WeaponMounted weapon, @Nullable MovePath movePath) {
         firingEntity = entity;
         int weaponId = entity.getEquipmentNum(weapon);
+        if (weaponId == -1) {
+            // entities are replaced all the time by server-sent changes, must always guard
+            clearValues();
+            return;
+        }
         // findRanges must be called before any call to testUnderWater due to usage of 
         // global-style variables for some reason
         findRanges(weapon);

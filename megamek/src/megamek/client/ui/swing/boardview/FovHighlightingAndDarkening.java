@@ -75,10 +75,14 @@ class FovHighlightingAndDarkening {
         Coords src;
         boolean hasLoS = true;
         // in movement phase, calc LOS based on selected hex, otherwise use selected Entity
-        if (this.boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
-            src = this.boardView1.selected;
-        } else if (this.boardView1.getSelectedEntity() != null) {
-            src = this.boardView1.getSelectedEntity().getPosition();
+        if (boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
+            src = boardView1.selected;
+        } else if (boardView1.getSelectedEntity() != null) {
+            Entity viewer = boardView1.getSelectedEntity();
+            src = viewer.getPosition();
+            // multi-hex units look from the hex closest to the target to avoid self-blocking
+            src = viewer.getSecondaryPositions().values().stream()
+                    .min(Comparator.comparingInt(co -> co.distance(c))).orElse(src);
         } else {
             src = null;
         }

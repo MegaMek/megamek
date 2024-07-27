@@ -654,6 +654,7 @@ Mad Dog (Vulture) A|Vulture (Mad Dog) A
 Mad Dog (Vulture) B|Vulture (Mad Dog) B
 Mad Dog (Vulture) C|Vulture (Mad Dog) C
 Mad Dog (Vulture) Prime|Vulture (Mad Dog) Prime
+Marauder Red Hunter|Marauder (Red Hunter-3146)
 Marauder IIC (Standard)|Marauder IIC
 Mist Lynx (Koshi) A|Koshi (Mist Lynx) A
 Mist Lynx (Koshi) B|Koshi (Mist Lynx) B

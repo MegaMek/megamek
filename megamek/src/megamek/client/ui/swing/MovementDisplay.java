@@ -1255,12 +1255,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateAeroButtons();
         updateLayMineButton();
 
-        loadedUnits = ce.getLoadedUnits();
-        for (Entity e : ce.getUnitsUnloadableFromBays()) {
-            if (!loadedUnits.contains(e)) {
-                loadedUnits.add(e);
-            }
-        }
+        loadedUnits = ce.getUnloadableUnits();
         towedUnits = ce.getLoadedTrailers();
 
         updateLoadButtons();

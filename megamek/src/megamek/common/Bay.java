@@ -42,7 +42,7 @@ public class Bay implements Transporter, ITechnology {
     int doors = 1;
     int doorsNext = 1;
     int currentdoors = doors;
-    protected int unloadedThisTurn = 0;
+    private int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
     List<Integer> recoverySlots = new ArrayList<>();
     int bayNumber = 0;
@@ -182,10 +182,8 @@ public class Bay implements Transporter, ITechnology {
     }
 
     /**
-     * To unload units, a bay must have more doors available than units unloaded
-     * this turn. Can't load, launch or recover into a damaged bay, but you can unload it
-     *
-     * @return True when further doors are available to unload units this turn
+     * @return True when further doors are available to unload units this turn. This method checks only
+     * the state of bay doors, not if it has units left to unload or the status of those.
      */
     public boolean canUnloadUnits() {
         return currentdoors > unloadedThisTurn;
@@ -235,6 +233,7 @@ public class Bay implements Transporter, ITechnology {
     /** @return A (possibly empty) list of units from this bay that can be unloaded on the ground. */
     public List<Entity> getUnloadableUnits() {
         // TODO: we need to handle aeros and VTOLs differently
+        // TODO: shouldn't this check the entity state like wasLoadedThisTurn()? It is equal to getLoadedUnits()
         return troops.stream().map(game::getEntity).filter(Objects::nonNull).collect(toList());
     }
 

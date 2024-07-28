@@ -2426,21 +2426,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
-		<model name=''>
-			<roles>support,engineer</roles>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Cargo)'>
-			<roles>support,engineer</roles>
-			<availability>General:4</availability>
-		</model>
-		<model name='(Reverse)'>
-			<roles>support,engineer</roles>
-			<availability>General:2</availability>
-		</model>
-	</chassis>
 	<chassis name='Bulldog Medium Tank' unitType='Tank'>
 		<availability>MOC:7,CC:8,HL:4,FRR:7,IS:5,Periphery.Deep:7,SIC:8,FS:4,CIR:6,MERC:5,Periphery:5,TC:7,LA:4,FWL:4,DC:7</availability>
 		<model name=''>
@@ -2491,6 +2476,21 @@
 			<availability>LA:4,General:3,MERC:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
+		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
+		<model name=''>
+			<roles>support,engineer</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='(Cargo)'>
+			<roles>support,engineer</roles>
+			<availability>General:4</availability>
+		</model>
+		<model name='(Reverse)'>
+			<roles>support,engineer</roles>
+			<availability>General:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Caesar' unitType='Mek'>
 		<availability>CS:3,LA:4,FS:5,MERC:3</availability>
 		<model name='CES-3R'>
@@ -2539,6 +2539,13 @@
 		<model name='(2882)'>
 			<roles>asf_carrier</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
+		<availability>IS:3</availability>
+		<model name=''>
+			<roles>support</roles>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Cataphract' unitType='Mek'>
@@ -9248,14 +9255,20 @@
 			<roles>recon</roles>
 			<availability>FRR:2,DC:3</availability>
 		</model>
-		<model name='PXH-1b (Special)'>
+		<model name='PXH-1b &apos;Special&apos;'>
+			<availability>CLAN:5,BAN:1</availability>
+		</model>
+		<model name='PXH-1b &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:5,BAN:1</availability>
 		</model>
 		<model name='PXH-1bC'>
 			<availability>CS:1,WOB:1</availability>
 		</model>
-		<model name='PXH-1c (Special)'>
+		<model name='PXH-1c &apos;Special&apos;'>
+			<availability>CLAN:3,CGS:5</availability>
+		</model>
+		<model name='PXH-1c &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:3,CGS:5</availability>
 		</model>
@@ -9326,13 +9339,6 @@
 		<availability>CS:6,WOB:4</availability>
 		<model name=''>
 			<availability>CS:8,WOB:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
-		<availability>IS:3</availability>
-		<model name=''>
-			<roles>support</roles>
-			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Piranha' unitType='Mek'>

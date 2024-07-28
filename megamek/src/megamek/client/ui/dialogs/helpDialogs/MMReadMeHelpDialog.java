@@ -18,13 +18,15 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
+import megamek.MMConstants;
+
 import javax.swing.*;
 
 public class MMReadMeHelpDialog extends AbstractHelpDialog {
     //region Constructors
     public MMReadMeHelpDialog(final JFrame frame) {
         // TODO : Remove Inline File Path
-        super(frame, "MMReadMeHelpDialog", "docs\\1-Readme\\readme.txt");
+        super(frame, "MMReadMeHelpDialog", MMConstants.MEGAMEK_README_FILE_PATH);
     }
     //endregion Constructors
 }

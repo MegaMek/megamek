@@ -18,6 +18,8 @@
  */
 package megamek;
 
+import java.nio.file.Paths;
+
 /**
  * These are constants that hold across MegaMek.
  */
@@ -49,23 +51,25 @@ public final class MMConstants extends SuiteConstants {
 
     // region File Paths
     // This holds all required file paths not saved as part of MegaMek Options
-    public static final String NAME_FACTIONS_DIRECTORY_PATH = "data/names/factions/";
-    public static final String CALLSIGN_FILE_PATH = "data/names/callsigns.csv";
-    public static final String GIVEN_NAME_FEMALE_FILE = "data/names/femaleGivenNames.csv";
-    public static final String HISTORICAL_ETHNICITY_FILE = "data/names/historicalEthnicity.csv";
-    public static final String GIVEN_NAME_MALE_FILE = "data/names/maleGivenNames.csv";
-    public static final String SURNAME_FILE = "data/names/surnames.csv";
-    public static final String BOT_README_FILE_PATH = "docs/Bot Stuff/Princess Notes.txt";
-    public static final String USER_DIR_README_FILE = "docs/UserDirHelp.html";
-    public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
-    public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = "userdata/data/names/factions/";
-    public static final String USER_CALLSIGN_FILE_PATH = "userdata/data/names/callsigns.csv";
-    public static final String USER_GIVEN_NAME_FEMALE_FILE = "userdata/data/names/femaleGivenNames.csv";
-    public static final String USER_HISTORICAL_ETHNICITY_FILE = "userdata/data/names/historicalEthnicity.csv";
-    public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
-    public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
-    public static final String ERAS_FILE_PATH = "data/universe/eras.xml";
-    public static final String USER_LOADOUTS_DIR = "userdata/data/";
+    public static final String NAME_FACTIONS_DIRECTORY_PATH = Paths.get("data/names/factions/").toString();
+    public static final String CALLSIGN_FILE_PATH = Paths.get("data/names/callsigns.csv").toString();
+    public static final String GIVEN_NAME_FEMALE_FILE = Paths.get("data/names/femaleGivenNames.csv").toString();
+    public static final String HISTORICAL_ETHNICITY_FILE = Paths.get("data/names/historicalEthnicity.csv").toString();
+    public static final String GIVEN_NAME_MALE_FILE = Paths.get("data/names/maleGivenNames.csv").toString();
+    public static final String SURNAME_FILE = Paths.get("data/names/surnames.csv").toString();
+    public static final String BOT_README_FILE_PATH = Paths.get("docs/Bot Stuff/Princess Notes.txt").toString();
+    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Archive Stuff/maps/Map Editor-readme.txt").toString();
+    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/1-Readme/readme.txt").toString();
+    public static final String USER_DIR_README_FILE = Paths.get("docs/UserDirHelp.html").toString();
+    public static final String SERIALKILLER_CONFIG_FILE = Paths.get("mmconf/serialkiller.xml").toString();
+    public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/").toString();
+    public static final String USER_CALLSIGN_FILE_PATH = Paths.get("userdata/data/names/callsigns.csv").toString();
+    public static final String USER_GIVEN_NAME_FEMALE_FILE = Paths.get("userdata/data/names/femaleGivenNames.csv").toString();
+    public static final String USER_HISTORICAL_ETHNICITY_FILE = Paths.get("userdata/data/names/historicalEthnicity.csv").toString();
+    public static final String USER_GIVEN_NAME_MALE_FILE = Paths.get("userdata/data/names/maleGivenNames.csv").toString();
+    public static final String USER_SURNAME_FILE = Paths.get("userdata/data/names/surnames.csv").toString();
+    public static final String ERAS_FILE_PATH = Paths.get("data/universe/eras.xml").toString();
+    public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();
     // endregion File Paths
 
     // region ClientServer

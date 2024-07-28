@@ -18210,7 +18210,7 @@ public class GameManager extends AbstractGameManager {
 
             // If a Mek had an active Stealth suite, add 10 heat.
             if (entity.isStealthOn()) {
-                entity.heatBuildup += 10;
+                entity.heatBuildup += ArmorType.STEALTH_ARMOR_HEAT;
                 r = new Report(5015);
                 r.subject = entity.getId();
                 heatEffectsReports.add(r);

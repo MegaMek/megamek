@@ -10047,12 +10047,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
+        if (getPosition() == null) {
+            return false; // not on board?
+        }
+
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
             Hex hex = game.getBoard().getHex(getPosition());
+            if (hex == null) {
+                return false;
+            }
             return hex.containsTerrain(Terrains.BUILDING);
         }
+
         // only mechs and protos have physical attacks (except tank charges)
         if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;
@@ -10091,10 +10099,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (moved == EntityMovementType.MOVE_SPRINT
                 || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             return false;
-        }
-
-        if (getPosition() == null) {
-            return false; // not on board?
         }
 
         // check if we have iNarc pods attached that can be brushed off

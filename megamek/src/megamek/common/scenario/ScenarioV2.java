@@ -29,6 +29,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.BoardDeserializer;
+import megamek.common.jacksonadapters.CarryableDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
 import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -48,6 +49,7 @@ public class ScenarioV2 implements Scenario {
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
+    private static final String OBJECTS = "objects";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -215,6 +217,23 @@ public class ScenarioV2 implements Scenario {
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
 
             //TODO minefields
+
+            // Carryables
+            if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
+                JsonNode carryablesNode = playerNode.get(OBJECTS);
+                List<CarryableDeserializer.CarryableInfo> carryables = new MMUReader(scenariofile)
+                        .read(carryablesNode, CarryableDeserializer.CarryableInfo.class).stream()
+                        .filter(o -> o instanceof CarryableDeserializer.CarryableInfo)
+                        .map(o -> (CarryableDeserializer.CarryableInfo) o)
+                        .toList();
+                for (CarryableDeserializer.CarryableInfo carryableInfo : carryables) {
+                    if (carryableInfo.position() == null) {
+                        player.getGroundObjectsToPlace().add(carryableInfo.carryable());
+                    } else {
+                        ((AbstractGame) game).placeGroundObject(carryableInfo.position(), carryableInfo.carryable());
+                    }
+                }
+            }
 
             JsonNode unitsNode = playerNode.get(UNITS);
             if (game instanceof Game) {

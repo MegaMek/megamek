@@ -196,6 +196,29 @@ factions:
           piloting: 4
           gunnery: 3
 
+    # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present
+    # player will deploy them. When pre-deployed (they have a position), the owner is irrelevant.
+    objects:
+
+      # All objects require a name and weight. Currently the type is automatically Briefcase, later new
+      # types may be incoming; currently no ID, might make sense
+      - name: Black Briefcase With Codes
+        # weight in tons, need not be integer
+        weight: 1
+        # pre-deployed at a position
+        at: [ 2, 3 ]
+        # currently the only available status: invulnerable
+        # ideas:
+        # forbidden_owner (may only be picked up by enemies) - this would require them to have an owner
+        # respawn (respawns if destroyed or removed from the map)
+        status: invulnerable
+
+      - name: Cargo Crate
+        weight: 5
+
+      - name: Ambassador Hisho
+        weight: 0.08
+
   - name: "Player B"
     home: "E"
     units:

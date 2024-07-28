@@ -4422,13 +4422,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Increment the entity's delta-v then compute the movement envelope.
-        Aero ae = (Aero)entity;
+        // LAM and Aeros both implement this interface
+        IAero ae = (IAero) entity;
         int currentVelocity = ae.getCurrentVelocity();
         ae.setCurrentVelocity(cmd.getFinalVelocity());
 
         // Refresh the new velocity envelope on the map.
         try {
-            computeMovementEnvelope(ae);
+            computeMovementEnvelope(entity);
             updateMove();
         } catch (Exception e) {
             LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");

@@ -1224,7 +1224,7 @@ public class LosEffects {
             // Intervening Smoke and Woods
             int woodsLevel = hex.terrainLevel(Terrains.WOODS);
             int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
-            int foliageElev = hex.terrainLevel(Terrains.FOLIAGE_ELEV);
+            int foliageElev = Terrains.getTerrainElevation(Terrains.FOLIAGE_ELEV, hex.terrainLevel(Terrains.FOLIAGE_ELEV), ai.lowAltitude);
             int smokeLevel = hex.terrainLevel(Terrains.SMOKE);
             boolean hasFoliage = (woodsLevel != Terrain.LEVEL_NONE) || (jungleLevel != Terrain.LEVEL_NONE);
 

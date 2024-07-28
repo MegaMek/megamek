@@ -19,10 +19,11 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 
-
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.util.ImageUtil;
@@ -58,5 +59,12 @@ public class GroundObjectSprite extends HexSprite {
     }
 
     @Override
-    public void prepare() { }
+    public void prepare() {
+        updateBounds();
+        image = createNewHexImage();
+        Graphics2D graph = (Graphics2D) image.getGraphics();
+        UIUtil.setHighQualityRendering(graph);
+        graph.scale(bv.scale, bv.scale);
+        graph.drawImage(CARGO_IMAGE, 0, 0, null);
+    }
 }

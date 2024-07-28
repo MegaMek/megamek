@@ -10046,6 +10046,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
             Hex hex = game.getBoard().getHex(getPosition());
+            if (hex == null) {
+                return false;
+            }
             return hex.containsTerrain(Terrains.BUILDING);
         }
         // only mechs and protos have physical attacks (except tank charges)

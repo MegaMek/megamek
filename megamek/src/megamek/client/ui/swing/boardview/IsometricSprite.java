@@ -16,7 +16,7 @@ import java.awt.image.ImageObserver;
 /**
  * Sprite used for isometric rendering to render an entity partially hidden behind a hill.
  */
-class IsometricSprite extends Sprite {
+class IsometricSprite extends HexSprite {
 
     Entity entity;
     private Image radarBlipImage;
@@ -26,7 +26,7 @@ class IsometricSprite extends Sprite {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public IsometricSprite(BoardView boardView1, Entity entity, int secondaryPos, Image radarBlipImage) {
-        super(boardView1);
+        super(boardView1, secondaryPos == -1 ? entity.getPosition() : entity.getSecondaryPositions().get(secondaryPos));
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
@@ -176,6 +176,7 @@ class IsometricSprite extends Sprite {
 
     @Override
     public void prepare() {
+        updateBounds();
         // create image for buffer
         GraphicsConfiguration config = GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice()
@@ -237,6 +238,6 @@ class IsometricSprite extends Sprite {
 
     @Override
     protected int getSpritePriority() {
-        return entity.getSpriteDrawPriority();
+        return entity.getSpriteDrawPriority() + 10;
     }
 }

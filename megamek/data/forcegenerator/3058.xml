@@ -2004,21 +2004,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
-		<model name=''>
-			<roles>support,engineer</roles>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Cargo)'>
-			<roles>support,engineer</roles>
-			<availability>General:4</availability>
-		</model>
-		<model name='(Reverse)'>
-			<roles>support,engineer</roles>
-			<availability>General:2</availability>
-		</model>
-	</chassis>
 	<chassis name='Bulldog Medium Tank' unitType='Tank'>
 		<availability>MOC:8,CC:9,HL:5,FRR:8,IS:6,Periphery.Deep:6,SIC:9,FS:5,CIR:7,MERC:6,Periphery:6,TC:8,LA:5,FWL:5,DC:8</availability>
 		<model name=''>
@@ -2058,6 +2043,21 @@
 		</model>
 		<model name='BSW-X2'>
 			<availability>LA:4,General:4,MERC:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
+		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
+		<model name=''>
+			<roles>support,engineer</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='(Cargo)'>
+			<roles>support,engineer</roles>
+			<availability>General:4</availability>
+		</model>
+		<model name='(Reverse)'>
+			<roles>support,engineer</roles>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Caesar' unitType='Mek'>
@@ -7502,14 +7502,20 @@
 			<roles>recon</roles>
 			<availability>FRR:3,DC:4</availability>
 		</model>
-		<model name='PXH-1b (Special)'>
+		<model name='PXH-1b &apos;Special&apos;'>
+			<availability>CLAN:5,BAN:1</availability>
+		</model>
+		<model name='PXH-1b &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:5,BAN:1</availability>
 		</model>
 		<model name='PXH-1bC'>
 			<availability>CS:1,WOB:1</availability>
 		</model>
-		<model name='PXH-1c (Special)'>
+		<model name='PXH-1c &apos;Special&apos;'>
+			<availability>CLAN:3,CGS:5</availability>
+		</model>
+		<model name='PXH-1c &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:3,CGS:5</availability>
 		</model>

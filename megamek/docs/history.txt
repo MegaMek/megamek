@@ -52,6 +52,17 @@ MEGAMEK VERSION HISTORY:
 + PR #5783: Update Ammunition Autoconfig doc for 0.50.0
 + Fix #5794: Fixes Sprite-Swap
 + PR #5792: Update princess Stealth handling
++ PR #5800: Bearings-only launches are no longer being prevented at ranges below 51 hexes
++ PR #5791: Added much-needed whitespace to some menu items of the board right click menu
++ PR #5798: Fix Reflective armor not appearing in MML dropdown
++ Fix #5803: Removes a number of duplicated infantry weapons
++ Fix #5795: Terrain altitude rules and line of sight are now implemented for Low Altitude maps 
++ Fix #5790: The combat computer heat report message is now clearer, indicating that the heat bonus has already been applied in the reported values
++ Fix #5740: Lobby copy-paste will now also work for units that have no model name
++ Fix #5789: Prevent errors with showing the firing arcs
++ Fix #5793: Units are no longer able to be unloaded without regard for the bay door limits
++ Fix #5611: Prevent NPE when removing forces from Force that exists but is not registered yet (when quickly closing MM after an MHQ scenario start)
+
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

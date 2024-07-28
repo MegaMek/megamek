@@ -3369,28 +3369,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
-		<availability>LA:2</availability>
-		<model name=''>
-			<roles>support,engineer</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CP:2,DC:2</availability>
-		<model name=''>
-			<roles>support,engineer</roles>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Cargo)'>
-			<roles>support,engineer</roles>
-			<availability>General:4</availability>
-		</model>
-		<model name='(Reverse)'>
-			<roles>support,engineer</roles>
-			<availability>General:2</availability>
-		</model>
-	</chassis>
 	<chassis name='Bulldog Medium Tank' unitType='Tank'>
 		<availability>LA:3,FS:4,MERC:3,Periphery:1-,DC:5</availability>
 		<model name=''>
@@ -3486,6 +3464,28 @@
 		</model>
 		<model name='Prime'>
 			<availability>CJF:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
+		<availability>LA:2</availability>
+		<model name=''>
+			<roles>support,engineer</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
+		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CP:2,DC:2</availability>
+		<model name=''>
+			<roles>support,engineer</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='(Cargo)'>
+			<roles>support,engineer</roles>
+			<availability>General:4</availability>
+		</model>
+		<model name='(Reverse)'>
+			<roles>support,engineer</roles>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Cadaver' unitType='Mek'>
@@ -3607,6 +3607,13 @@
 		<availability>FWL:6,MERC:4,CP:6</availability>
 		<model name='CRN-7M'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
+		<availability>IS:5</availability>
+		<model name=''>
+			<roles>support</roles>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Cataphract' unitType='Mek'>
@@ -7876,16 +7883,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Gürteltier MBT' unitType='Tank'>
-		<availability>LA:6,FS:4</availability>
-		<model name=''>
-			<availability>General:8</availability>
-		</model>
-		<model name='(C3M)'>
-			<roles>spotter</roles>
-			<availability>General:4</availability>
-		</model>
-	</chassis>
 	<chassis name='Gurzil Support Tank' unitType='Tank'>
 		<availability>IS:3,CLAN.IS:3-,CJF:4-</availability>
 		<model name=''>
@@ -7905,6 +7902,16 @@
 		</model>
 		<model name='4'>
 			<availability>General:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Gürteltier MBT' unitType='Tank'>
+		<availability>LA:6,FS:4</availability>
+		<model name=''>
+			<availability>General:8</availability>
+		</model>
+		<model name='(C3M)'>
+			<roles>spotter</roles>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Ha Otoko' unitType='Mek'>
@@ -11932,12 +11939,6 @@
 			<availability>CC:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Mĕngqín' unitType='AeroSpaceFighter'>
-		<availability>CC:8,MOC:7,MERC:4</availability>
-		<model name='MNG-8L'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Mercer' unitType='Dropship'>
 		<availability>CWE:5,CLAN:4</availability>
 		<model name='(3065)'>
@@ -12440,6 +12441,12 @@
 		</model>
 		<model name='Type 2'>
 			<availability>CC:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Mĕngqín' unitType='AeroSpaceFighter'>
+		<availability>CC:8,MOC:7,MERC:4</availability>
+		<model name='MNG-8L'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='NL-45 Gunboat' unitType='Small Craft'>
@@ -13796,11 +13803,17 @@
 			<roles>recon</roles>
 			<availability>BAN:6,Periphery:1-</availability>
 		</model>
-		<model name='PXH-1b (Special)'>
+		<model name='PXH-1b &apos;Special&apos;'>
+			<availability>CLAN:5,FWL:5,CP:5,BAN:1</availability>
+		</model>
+		<model name='PXH-1b &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:5,FWL:5,CP:5,BAN:1</availability>
 		</model>
-		<model name='PXH-1c (Special)'>
+		<model name='PXH-1c &apos;Special&apos;'>
+			<availability>CC:4,CLAN:3,FWL:4,MERC:4,DA:4,CP:4</availability>
+		</model>
+		<model name='PXH-1c &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CC:4,CLAN:3,FWL:4,MERC:4,DA:4,CP:4</availability>
 		</model>
@@ -13905,13 +13918,6 @@
 		</model>
 		<model name='3'>
 			<availability>CJF:4</availability>
-		</model>
-	</chassis>
-	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
-		<availability>IS:5</availability>
-		<model name=''>
-			<roles>support</roles>
-			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Piranha' unitType='Mek'>
@@ -14986,14 +14992,14 @@
 		</model>
 	</chassis>
 	<chassis name='SM Tank Destroyer' unitType='Tank'>
-		<availability>CP:7,DC:5</availability>
+		<availability>CP:3,DC:3</availability>
 		<model name='SM1'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
-	<chassis name='SM Tank Destroyer' unitType='Tank'>
-		<availability>CP:5,DC:4</availability>
 		<model name='SM1A'>
+			<availability>General:8</availability>
+		</model>
+		<model name='SM3'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -15006,12 +15012,6 @@
 		<model name='(LTC)'>
 			<roles>artillery</roles>
 			<availability>General:2</availability>
-		</model>
-	</chassis>
-	<chassis name='SM Tank Destroyer' unitType='Tank'>
-		<availability>CP:3,DC:3</availability>
-		<model name='SM3'>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>

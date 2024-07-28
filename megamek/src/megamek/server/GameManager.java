@@ -27050,7 +27050,7 @@ public class GameManager extends AbstractGameManager {
         }
         
         // drop cargo
-        dropCargo(entity, curPos); 
+        dropCargo(entity, curPos, vDesc); 
 
         // update our entity, so clients have correct data needed for MekWars stuff
         entityUpdate(entity.getId());
@@ -27061,7 +27061,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Worker function that drops cargo from an entity at the given coordinates.
      */
-    private void dropCargo(Entity entity, Coords coords) {
+    private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
     	boolean cargoDropped = false;
     	
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
@@ -27555,9 +27555,6 @@ public class GameManager extends AbstractGameManager {
             return vPhaseReport;
         }
         
-        // drop cargo if necessary
-        dropCargo(entity, fallPos);
-
         // set how deep the mech has fallen
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -27765,6 +27762,9 @@ public class GameManager extends AbstractGameManager {
             }
         } // End dislodge-infantry
 
+        // drop cargo if necessary
+        dropCargo(entity, fallPos, vPhaseReport);
+        
         // clear all PSRs after a fall -- the Mek has already failed ONE and
         // fallen, it'd be cruel to make it fail some more!
         game.resetPSRs(entity);

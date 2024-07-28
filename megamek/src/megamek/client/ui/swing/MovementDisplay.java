@@ -5325,11 +5325,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	// regardless of how many objects we are picking up, 
     	// we may have to choose the location with which to pick it up
         if (displayedOptions.size() == 1) { 
-        	Integer pickupLocation = getPickupLocation(options.get(0));
+        	Integer pickupLocation = getPickupLocation(displayedOptions.get(0));
         	
         	if (pickupLocation != null) {   
 	        	Map<Integer, Integer> data = new HashMap<>();
-	        	data.put(MoveStep.CARGO_PICKUP_KEY, 0);
+	        	// we pick the only eligible object out of all the objects on the ground
+	        	data.put(MoveStep.CARGO_PICKUP_KEY, options.indexOf(displayedOptions.get(0)));
 	        	data.put(MoveStep.CARGO_LOCATION_KEY, pickupLocation);
 	        	
 	        	addStepToMovePath(MoveStepType.PICKUP_CARGO, data);

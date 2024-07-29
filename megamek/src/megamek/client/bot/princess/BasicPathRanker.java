@@ -838,10 +838,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
                     break;
                 case Terrains.SWAMP:
-                    hazardValue += calcSwampHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
+                    hazardValue += calcSwampHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
                     break;
                 case Terrains.MUD:
-                    hazardValue += calcMudHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
+                    hazardValue += calcMudHazard(endHex, movingUnit, logMsg);
                     break;
             }
         }
@@ -1110,9 +1110,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                    StringBuilder logMsg) {
         logMsg.append("\n\tCalculating magma hazard:  ");
 
-        // Hovers are unaffected.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        // Hovers / WiGE are normally unaffected.
+        if ((EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+            EntityMovementMode.WIGE == movingUnit.getMovementMode()) && !endHex) {
             logMsg.append("Hovering above magma (0).");
             return 0;
         }
@@ -1122,14 +1122,14 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         // Liquid magma.
         if (magmaLevel == 2) {
-            return calcLavaHazard(endHex, movingUnit, step, logMsg);
+            return calcLavaHazard(endHex, jumpLanding, movingUnit, step, logMsg);
         } else {
             double breakThroughMod = jumpLanding ? 0.5 : 0.1667;
             logMsg.append("\n\t\tChance to break through crust = ")
                   .append(LOG_PERCENT.format(breakThroughMod));
 
             // Factor in the chance to break through.
-            double lavalHazard = calcLavaHazard(endHex, movingUnit, step,
+            double lavalHazard = calcLavaHazard(endHex, jumpLanding, movingUnit, step,
                                                 logMsg) * breakThroughMod;
             logMsg.append("\n\t\t\tLava hazard (")
                   .append(LOG_DECIMAL.format(lavalHazard)).append(").");
@@ -1147,15 +1147,14 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazardValue;
     }
 
-    private double calcLavaHazard(boolean endHex, Entity movingUnit,
+    private double calcLavaHazard(boolean endHex, boolean jumpLanding, Entity movingUnit,
                                   MoveStep step, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating laval hazard:  ");
 
         double dmg;
 
-        // Hovers are unaffected _unless_ they end on the hex and are in danger of losing mobility.
-        if (EntityMovementMode.VTOL == movingUnit.getMovementMode()
-                || EntityMovementMode.HOVER == movingUnit.getMovementMode()
+        // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of losing mobility.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
                 || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logMsg.append("Hovering/VTOL while traversing lava (0).");
@@ -1180,16 +1179,18 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         double psrFactor = 1.0;
 
         // Adjust hazard by chance of getting stuck
-        if (endHex && step.isJumping()) {
+        if (endHex && jumpLanding) {
             // Chance of getting stuck in magma is the chance of failing one PSR.
             // Factor applied to damage should also include the expected number of turns _not_ escaping.
             // Former is: %chance _not_ passing PSR
-            // Latter is: N = log(desired failure to escape chance, e.g. 10%)/log(%chance Pass PSR)
+            // Latter is: N = log(desired failure to escape chance, e.g. 10%)/log(%chance Fail PSR)
             logMsg.append("Possibly jumping onto lava hex, may get bogged down.");
-            double oddsPSR = (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100);
+            int pilotSkill = movingUnit.getCrew().getPiloting();
+            double oddsPSR = Compute.oddsAbove(pilotSkill) / 100;
             double oddsBogged = (1.0 - oddsPSR);
-            double expectedTurns = Math.log10(0.10)/Math.log10(oddsPSR);
-            logMsg.append("\n\t\tChance to fail piloting roll: ").append(LOG_PERCENT.format(oddsBogged));
+            double expectedTurns = Math.log10(0.10)/Math.log10(oddsBogged);
+            logMsg.append("\n\t\tEffective Piloting Skill: ").append(LOG_INT.format(pilotSkill));
+            logMsg.append("\n\t\tChance to bog down: ").append(LOG_PERCENT.format(oddsBogged));
             logMsg.append("\n\t\tExpected turns before escape: ").append(LOG_DECIMAL.format(expectedTurns));
             psrFactor = 1.0 + oddsBogged + (expectedTurns);
         }
@@ -1197,8 +1198,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // Factor in heat.
         double heat = endHex ? 10.0 : 5.0;
         hazardValue += heat;
-        logMsg.append("\n\t\tHeat gain (").append(heat)
-              .append(LOG_DECIMAL.format(heat)).append(").");
+        logMsg.append("\n\t\tHeat gain (").append(LOG_DECIMAL.format(heat)).append(").");
 
         // Factor in potential damage.
         logMsg.append("\n\t\tDamage to ");
@@ -1219,39 +1219,125 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         hazardValue += dmg;
 
         // Multiply total hazard value by the chance of getting stuck for 1 or more additional turns
-        logMsg.append("Factor applied to hazard value: ").append(LOG_DECIMAL.format(psrFactor));
-        return hazardValue * psrFactor;
+        logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(psrFactor));
+        return Math.round(hazardValue * psrFactor);
     }
 
+    private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,
+                                     int modifier, StringBuilder logMsg) {
+        return calcBogDownFactor(name, endHex, jumpLanding, pilotSkill, modifier, true, logMsg);
+    }
+    /**
+     * Calculate a PSR-related factor for increasing the hazard of terrain where bogging down is
+     * possible
+     * @param name Name of terrain type, for logging.
+     * @param endHex If this is checking the final hex of a movement path or not.
+     * @param jumpLanding Whether unit will be jumping into the end hex or not.
+     * @param pilotSkill base pilot/driver/etc. skill used for the PSR checks to escape bogging down.
+     * @param modifier Modifier, based on unit type and terrain type
+     * @param bogPossible whether the unit can actually get bogged own in this terrain type, or just calculating
+     * @param logMsg Ref to StringBuilder used for logging.
+     * @return double Factor to multiply by terrain hazards.
+     */
+    private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,
+                                     int modifier, boolean bogPossible, StringBuilder logMsg) {
+        double factor;
+        int effectiveSkill = pilotSkill + modifier;
+        double oddsPSR = Math.max((Compute.oddsAbove(effectiveSkill) / 100.0), 0.0);
+        double oddsBogged = 0.0;
 
-    private double calcSwampHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding,
-                                 StringBuilder logMsg) {
+        // Adjust hazard by chance of getting stuck
+        if (endHex && jumpLanding) {
+            // Chance of getting stuck in swamp/mud is the chance of failing one PSR, or 100% if jumping.
+            logMsg.append("\nJumping onto ");
+            logMsg.append(name);
+            logMsg.append((bogPossible) ? " hex, would get bogged down." : " hex but cannot bog down.");
+            oddsBogged = 1.0;
+        } else if (!jumpLanding) {
+            logMsg.append("\nEntering ");
+            logMsg.append(name);
+            logMsg.append((bogPossible) ? " hex, may get bogged down." : " hex but cannot bog down.");
+            oddsBogged = 1.0 - oddsPSR;
+        }
+        // (Reuse PSR odds to avoid infinite trapped time on turns when jumping into terrain causes 100% bog-down)
+        double expectedTurns = ((1 - oddsPSR) < 1.0) ? Math.log10(0.10)/Math.log10(1 - oddsPSR) : UNIT_DESTRUCTION_FACTOR;
+
+        logMsg.append("\n\t\tEffective Piloting Skill: ").append(LOG_INT.format(effectiveSkill));
+        if (bogPossible) {
+            logMsg.append("\n\t\tChance to bog down: ").append(LOG_PERCENT.format(oddsBogged));
+            logMsg.append("\n\t\tExpected turns before escape: ").append(LOG_DECIMAL.format(expectedTurns));
+        }
+        factor = 1.0 + oddsBogged + (expectedTurns);
+
+        return factor;
+    }
+
+    private double calcSwampHazard(Hex hex, boolean endHex, Entity movingUnit,
+                                   boolean jumpLanding, MoveStep step,
+                                   StringBuilder logMsg) {
         logMsg.append("\n\tCalculating Swamp hazard:  ");
 
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logMsg.append("Hovering above swamp (0).");
             return 0;
         }
 
-        double hazard = 0.0;
-        return hazard;
+        // Base hazard is the chance of becoming Quicksand and destroying this unit
+        // If currently Swamp, could become Quicksand if 12 on 2d6 is rolled.
+        // If already Quicksand...
+        boolean quicksand = hex.terrainLevel(Terrains.SWAMP) > 1;
+        String type = (quicksand) ? "Quicksand" : "Swamp";
+        double quicksandChance = (quicksand) ? 1.0 : 1/36.0;
+        // Height + 1 turns to fully sink and be destroyed
+        double hazard = quicksandChance * UNIT_DESTRUCTION_FACTOR/(1 + movingUnit.getHeight());
+        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+
+        // Mod is to difficulty, not to PSR roll results
+        // Quicksand makes PSRs an additional +3!
+        int psrMod = (movingUnit instanceof Mech) ? +1 : +2;
+        psrMod += (quicksand) ? +3 : 0;
+
+        int pilotSkill = movingUnit.getCrew().getPiloting();
+
+        double factor = calcBogDownFactor(type, endHex, jumpLanding, pilotSkill, psrMod, logMsg);
+        logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(factor));
+
+        // The danger is increased if pilot skill is low, as the chance of succumbing or getting
+        // permanently stuck increases!
+        hazard = hazard * factor;
+
+        return Math.round(hazard);
     }
 
-    private double calcMudHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding,
-                                StringBuilder logMsg) {
+    private double calcMudHazard(boolean endHex, Entity movingUnit, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating Mud hazard:  ");
 
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logMsg.append("Hovering above Mud (0).");
             return 0;
         }
 
-        double hazard = 0.0;
-        return hazard;
+        int psrMod = +1;
+        int pilotSkill = movingUnit.getCrew().getPiloting();
+        double hazard;
+
+        if (movingUnit instanceof Mech) {
+            // The only hazard is the +1 to PSRs, which are difficult to quantify
+            // Even jumping mechs cannot bog down in mud.
+            hazard = calcBogDownFactor(
+                    "Mud", endHex, false, pilotSkill, psrMod, false, logMsg);
+        } else {
+            // Mud is more dangerous for units that can actually bog down
+            // Base hazard is arbitrarily set to 10
+            hazard = 10 * calcBogDownFactor(
+                            "Mud", endHex, false, pilotSkill, psrMod, logMsg);
+        }
+        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+        return Math.round(hazard);
     }
 
     /**

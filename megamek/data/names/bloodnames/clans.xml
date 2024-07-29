@@ -1,0 +1,131 @@
+<clans>
+	<clan code="CBS" end="3084">
+		<fullName>Clan Blood Spirit</fullName>
+		<rivals>CB,CFM,CMG,CSV</rivals>
+		<rivals start="3059">CSA</rivals>
+		<homeClan />
+	</clan>
+	<clan code="CB" end="3059">
+		<fullName>Clan Burrock</fullName>
+		<rivals>CBS</rivals>
+	</clan>
+	<clan code="CCC">
+		<fullName>Clan Cloud Cobra</fullName>
+		<rivals>CCO</rivals>
+		<homeClan />
+	</clan>
+	<clan code="CCO">
+		<fullName>Clan Coyote</fullName>
+		<rivals>CCC,CSA,CSJ,CJF</rivals>
+		<homeClan />
+	</clan>
+	<clan code="CDS">
+		<fullName>Clan Sea Fox</fullName>
+		<nameChange start="2985" end="3100">Clan Diamond Shark</nameChange>
+		<rivals>CSR</rivals>
+	</clan>
+	<clan code="CFM" end="3073">
+		<fullName>Clan Fire Mandrill</fullName>
+		<rivals>CBS,CGS,CHH,CSA,CSV</rivals>
+	</clan>
+	<clan code="CGS" end="3080">
+		<fullName>Clan Goliath Scorpion</fullName>
+		<nameChange start="3080">Escorpión Imperio</nameChange>
+		<abjured>3078</abjured>
+		<rivals>CFM,CNC</rivals>
+		<homeClan />
+	</clan>
+	<clan code="CEI">
+		<fullName>Escorpión Imperio</fullName>
+		<abjured>3078</abjured>
+		<generateAsIf>CGS</generateAsIf>
+	</clan>
+	<clan code="CGB" end="3103">
+		<fullName>Clan Ghost Bear</fullName>
+		<nameChange start="3060" end="3103">Ghost Bear Dominion</nameChange>
+		<nameChange start="3103">Rasalhague Dominion</nameChange>
+		<rivals end="3070">CHH</rivals>
+		<rivals start="3062">CNC</rivals>
+		<rivals>CSV</rivals>
+	</clan>
+	<clan code="RD" start="3103">
+		<fullname>Rasalhague Dominion</fullname>
+		<generateAsIf>CGB</generateAsIf>
+	</clan>
+	<clan code="CHH">
+		<fullName>Clan Hell's Horses</fullName>
+		<rivals>CFM</rivals>
+		<rivals end="3070">CGB</rivals>
+	</clan>
+	<clan code="CIH" end="3074">
+		<fullName>Clan Ice Hellion</fullName>
+	</clan>
+	<clan code="CJF">
+		<fullName>Clan Jade Falcon</fullName>
+		<rivals>CCO,CW,CWIE</rivals>
+	</clan>
+	<clan code="CMG" end="2868">
+		<fullName>Clan Mongoose</fullName>
+		<rivals>CBS,CSR,CSA</rivals>
+	</clan>
+	<clan code="CNC" end="3143">
+		<fullName>Clan Nova Cat</fullName>
+		<abjured>3060</abjured>
+		<rivals>CGS</rivals>
+		<rivals start="3062">CGB</rivals>
+	</clan>
+	<clan code="CSR" end="3083">
+		<fullName>Clan Snow Raven</fullName>
+		<nameChange start="3083">Raven Alliance</nameChange>
+		<rivals>CDS,CMG,CSV,CWOV</rivals>
+	</clan>
+	<clan code="RA" start="3083">
+		<fullName>Raven Alliance</fullName>
+		<generateAsIf>CSR</generateAsIf>
+	</clan>
+	<clan code="CSJ" end="3060">
+		<fullName>Clan Smoke Jaguar</fullName>
+		<rivals>CCO,CW</rivals>
+		<rivals start="2868">CSA</rivals>
+	</clan>
+	<clan code="CSA">
+		<fullName>Clan Star Adder</fullName>
+		<rivals>CCO,CFM,CMG</rivals>
+		<rivals start="2868">CSJ</rivals>
+		<rivals start="3059">CBS</rivals>
+		<homeClan />
+	</clan>
+	<clan code="CSV" end="3075">
+		<fullName>Clan Steel Viper</fullName>
+		<rivals>CBS,CFM,CGB,CSR</rivals>
+	</clan>
+	<clan code="CSL" start="3075">
+		<fullName>Clan Stone Lion</fullName>
+		<homeClan />
+	</clan>
+	<clan code="CWI" end="2834">
+		<fullName>Clan Widowmaker</fullName>
+		<rivals>CW</rivals>
+	</clan>
+	<clan code="CW" end="3142">
+		<fullName>Clan Wolf</fullName>
+		<nameChange start="3142">Wolf Empire</nameChange>
+		<rivals>CJF,CSJ,CWI,CWOV</rivals>
+		<rivals end="3136">CWIE</rivals>
+	</clan>
+	<clan code="CWE" start="3142">
+		<fullName>Wolf Empire</fullName>
+		<rivals>CJF</rivals>
+		<generateAsIf>CW</generateAsIf>
+	</clan>
+	<clan code="CWIE" start="3057">
+		<fullName>Clan Wolf-in-Exile</fullName>
+		<abjured>3057</abjured>
+		<rivals>CJF</rivals>
+		<rivals end="3136">CW</rivals>
+	</clan>
+	<clan code="CWOV" end="2823">
+		<fullName>Clan Wolverine</fullName>
+		<rivals>CW,CSR</rivals>
+	</clan>
+</clans>

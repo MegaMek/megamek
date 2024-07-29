@@ -19,6 +19,7 @@ import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
@@ -48,6 +49,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
     private Map<Integer, Double> bestDamageByEnemies;
+
+    protected int blackIce = -1;
 
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
@@ -474,6 +477,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
 
+        if (blackIce == -1) {
+            blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+                    && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
+                    || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+        }
+
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
 
@@ -791,7 +800,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                               Terrains.BRIDGE,
                                               Terrains.BLACK_ICE,
                                               Terrains.SWAMP,
-                                              Terrains.MUD));
+                                              Terrains.MUD,
+                                              Terrains.TUNDRA));
+
+        // Black Ice can appear if the conditions are favorable
+        if (blackIce > 0) {
+            HAZARDS.add(Terrains.PAVEMENT);
+        }
 
         int[] terrainTypes = hex.getTerrainTypes();
         Set<Integer> hazards = new HashSet<>();
@@ -842,6 +857,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
                 case Terrains.MUD:
                     hazardValue += calcMudHazard(endHex, movingUnit, logMsg);
+                    break;
+                case Terrains.TUNDRA:
+                    hazardValue += calcTundraHazard(endHex, jumpLanding, movingUnit, logMsg);
+                    break;
+                case Terrains.PAVEMENT:
+                    // 1 in 3 chance to hit Black Ice on any given Pavement hex
+                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg) / 3.0;
                     break;
             }
         }
@@ -921,11 +943,24 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
+        // Categorize chance to skid / fall
+        double hazard = 0.0;
+        if (!movePath.isCareful()) {
+            // Most falling and skidding damage is weight-based...
+            double arbitraryHazard = movingUnit.getWeight();
+            hazard += Math.round(arbitraryHazard *
+                    (1 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100.0)));
+            if (movingUnit.isReckless()) {
+                // Double the hazard for Reckless
+                hazard *= 2;
+            }
+        }
+
         // If there is no water under the ice, don't worry about breaking
         // through.
         if (hex.depth() < 1) {
             logMsg.append("No water under ice (0).");
-            return 0;
+            return hazard;
         }
 
         // Hazard is based on chance to break through to the water underneath.
@@ -933,7 +968,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         logMsg.append("\n\t\tChance to break through ice: ")
               .append(LOG_PERCENT.format(breakthroughMod));
 
-        double hazard = calcWaterHazard(movingUnit, hex, step, movePath, logMsg) *
+        hazard += calcWaterHazard(movingUnit, hex, step, movePath, logMsg) *
                         breakthroughMod;
         logMsg.append("\n\t\tHazard value (")
               .append(LOG_DECIMAL.format(hazard)).append(").");
@@ -1295,11 +1330,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
 
         // Mod is to difficulty, not to PSR roll results
-        // Quicksand makes PSRs an additional +3!
-        int psrMod = (movingUnit instanceof Mech) ? +1 : +2;
-        psrMod += (quicksand) ? +3 : 0;
+        // Quicksand makes PSRs an additional +3!  Otherwise +1 for Mechs, +2 for all other types
+        int psrMod = (quicksand) ? +3 : (movingUnit instanceof Mech) ? +1 : +2;
 
-        int pilotSkill = movingUnit.getCrew().getPiloting();
+        // Infantry use 4+ check instead of Pilot / Driving skill
+        int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
 
         double factor = calcBogDownFactor(type, endHex, jumpLanding, pilotSkill, psrMod, logMsg);
         logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(factor));
@@ -1321,8 +1356,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
-        int psrMod = +1;
-        int pilotSkill = movingUnit.getCrew().getPiloting();
+        // PSR checks _to bog down_ and _escape bogged down_ are at -1; all others are at +1!
+        int psrMod = -1;
+        // Infantry use 4+ check instead of Pilot / Driving skill
+        int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
         double hazard;
 
         if (movingUnit instanceof Mech) {
@@ -1336,6 +1373,29 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             hazard = 10 * calcBogDownFactor(
                             "Mud", endHex, false, pilotSkill, psrMod, logMsg);
         }
+        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+        return Math.round(hazard);
+    }
+
+    private double calcTundraHazard(boolean endHex, boolean jumpLanding, Entity movingUnit, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating Tundra hazard:  ");
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above Tundra (0).");
+            return 0;
+        }
+
+        // PSR checks _to bog down_ and _escape bogged down_ are at -1; all others are at +1!
+        int psrMod = -1;
+        // Infantry use 4+ check instead of Pilot / Driving skill
+        int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
+        double hazard;
+
+        // Base hazard is arbitrarily set to 10
+        hazard = 10 * calcBogDownFactor(
+                "Tundra", endHex, jumpLanding, pilotSkill, psrMod, logMsg);
         logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
         return Math.round(hazard);
     }

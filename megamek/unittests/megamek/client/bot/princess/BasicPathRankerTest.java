@@ -29,6 +29,8 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Weather;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -381,11 +383,17 @@ public class BasicPathRankerTest {
 
         final GameOptions mockGameOptions = mock(GameOptions.class);
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
+        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVANCED_BLACK_ICE))).thenReturn(false);
+
+        final PlanetaryConditions mockPC = new PlanetaryConditions();
+        mockPC.setTemperature(25);
+        mockPC.setWeather(Weather.CLEAR);
 
         final Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         when(mockPrincess.getGame()).thenReturn(mockGame);
 
         final List<Entity> testEnemies = new ArrayList<>();
@@ -1516,9 +1524,9 @@ public class BasicPathRankerTest {
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(1);
         assertEquals(35.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(2);
-        assertEquals(3033.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(2094.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(3);
-        assertEquals(3033.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(2094.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test walking into Swamp, Swamp-turned-Quicksand, and Quicksand.
         // Hazard is lower due to better chance to escape getting bogged down initially, but still high.
@@ -1526,9 +1534,9 @@ public class BasicPathRankerTest {
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(1);
         assertEquals(28.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(2);
-        assertEquals(2941.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(1955.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(3);
-        assertEquals(2941.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(1955.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test non-hover vehicle hazard
         // It takes one fewer round to destroy a 1-height tank _and_ the initial PSR is harder!
@@ -1543,9 +1551,9 @@ public class BasicPathRankerTest {
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(1);
         assertEquals(112.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(2);
-        assertEquals(14519.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        assertEquals(5865.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(3);
-        assertEquals(14519.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        assertEquals(5865.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
 
         // Confirm hovers are immune
         when(mockTank.getMovementMode()).thenReturn(EntityMovementMode.HOVER);
@@ -1591,7 +1599,7 @@ public class BasicPathRankerTest {
         when(mockPath.isJumping()).thenReturn(false);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MUD});
-        assertEquals(3.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(2.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test non-hover vehicle hazard
         // PSR malus and chance to bog down makes this slightly hazardous for vehicles
@@ -1604,11 +1612,47 @@ public class BasicPathRankerTest {
         when(mockTank.getMovementMode()).thenReturn(EntityMovementMode.TRACKED);
         when(mockUnit.getHeight()).thenReturn(1);
         when(mockFinalHex.terrainLevel(Terrains.MUD)).thenReturn(1);
-        assertEquals(31.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        assertEquals(20.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
 
         // Confirm hovers are immune
         when(mockTank.getMovementMode()).thenReturn(EntityMovementMode.HOVER);
         when(mockFinalHex.terrainLevel(Terrains.MUD)).thenReturn(1);
         assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+    }
+
+    @Test
+    public void testBlackIceHazard() {
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        testRanker.blackIce = 1;
+
+        final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
+
+        final List<Hex> testHexes = setupHexes(testCoords);
+        final Hex mockPenultimateHex = testHexes.get(2);
+
+        final Vector<MoveStep> stepVector = setupMoveStepVector(testCoords);
+
+        final MovePath mockPath = setupPath(stepVector);
+
+        final Entity mockUnit = mock(BipedMech.class);
+        when(mockUnit.getWeight()).thenReturn(70.0);
+        when(mockUnit.locations()).thenReturn(8);
+        when(mockUnit.getArmor(anyInt())).thenReturn(10);
+        when(mockUnit.getHeight()).thenReturn(2);
+        when(mockPath.isJumping()).thenReturn(false);
+
+        final Game mockGame = setupGame(testCoords, testHexes);
+
+        final Crew mockCrew = mock(Crew.class);
+        when(mockUnit.getCrew()).thenReturn(mockCrew);
+        when(mockCrew.getPiloting()).thenReturn(5);
+
+        // Test visible black ice hazard value
+        when(mockPenultimateHex.getTerrainTypes()).thenReturn(new int[]{Terrains.BLACK_ICE});
+        assertEquals(12.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        // Test _possible_ black ice hazard value (1/3 lower)
+        when(mockPenultimateHex.getTerrainTypes()).thenReturn(new int[]{Terrains.PAVEMENT});
+        assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 }

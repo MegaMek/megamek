@@ -789,7 +789,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                               Terrains.WATER,
                                               Terrains.BUILDING,
                                               Terrains.BRIDGE,
-                                              Terrains.BLACK_ICE));
+                                              Terrains.BLACK_ICE,
+                                              Terrains.SWAMP,
+                                              Terrains.MUD));
 
         int[] terrainTypes = hex.getTerrainTypes();
         Set<Integer> hazards = new HashSet<>();
@@ -834,6 +836,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
                 case Terrains.BLACK_ICE:
                     hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
+                    break;
+                case Terrains.SWAMP:
+                    hazardValue += calcSwampHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
+                    break;
+                case Terrains.MUD:
+                    hazardValue += calcMudHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
                     break;
             }
         }
@@ -959,6 +967,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
+        // Submarine units should be fine; Orca-riding Infantry goes here.
+        if (EntityMovementMode.SUBMARINE == movingUnit.getMovementMode()) {
+            logMsg.append("Submarine locomotion unit (0).");
+            return 0;
+        }
+
         // if we are crossing a bridge, then we'll be fine. Trust me.
         // 1. Determine bridge elevation
         // 2. If unit elevation is equal to bridge elevation, skip.
@@ -970,9 +984,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             }
         }
 
-        // Most other units are automatically destroyed.
+        // Most other units are automatically destroyed. UMU-equipped units _may_ not drown immediately,
+        // but all other hazards (e.g. breaches, crush depth) still apply.
         if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech ||
-              movingUnit instanceof BattleArmor)) {
+              movingUnit instanceof BattleArmor || movingUnit.hasUMU())) {
             logMsg.append("Ill drown (1000).");
             return UNIT_DESTRUCTION_FACTOR;
         }
@@ -989,6 +1004,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             logMsg.append(String.format("Industrial mechs drown too (%f).", destructionFactor));
             return destructionFactor;
         }
+
+        // TODO: implement crush depth calcs (TO:AR pg. 40)
 
         // Find the submerged locations.
         Set<Integer> submergedLocations = new HashSet<>();
@@ -1021,7 +1038,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         for (int loc : submergedLocations) {
             logMsg.append("\n\t\t\tLocation ").append(loc).append(" is ");
 
-            // Only locations withou armor can breach in movement phase.
+            // Only locations without armor can breach in movement phase.
             if (movingUnit.getArmor(loc) > 0) {
                 logMsg.append(" not breached (0).");
                 continue;
@@ -1134,12 +1151,23 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                   MoveStep step, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating laval hazard:  ");
 
+        double dmg;
 
-        // Hovers are unaffected.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above lava (0).");
-            return 0;
+        // Hovers are unaffected _unless_ they end on the hex and are in danger of losing mobility.
+        if (EntityMovementMode.VTOL == movingUnit.getMovementMode()
+                || EntityMovementMode.HOVER == movingUnit.getMovementMode()
+                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            if (!endHex) {
+                logMsg.append("Hovering/VTOL while traversing lava (0).");
+                return 0;
+            } else {
+                // Estimate chance of being disabled or immobilized over open lava; this is fatal!
+                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) * UNIT_DESTRUCTION_FACTOR
+                dmg = (movingUnit.getDamageLevel()/4.0) * UNIT_DESTRUCTION_FACTOR;
+                logMsg.append("Ending hover/VTOL movement over lava (");
+                logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
+                return dmg;
+            }
         }
 
         // Non-mech units auto-destroyed.
@@ -1149,6 +1177,22 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         double hazardValue = 0;
+        double psrFactor = 1.0;
+
+        // Adjust hazard by chance of getting stuck
+        if (endHex && step.isJumping()) {
+            // Chance of getting stuck in magma is the chance of failing one PSR.
+            // Factor applied to damage should also include the expected number of turns _not_ escaping.
+            // Former is: %chance _not_ passing PSR
+            // Latter is: N = log(desired failure to escape chance, e.g. 10%)/log(%chance Pass PSR)
+            logMsg.append("Possibly jumping onto lava hex, may get bogged down.");
+            double oddsPSR = (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100);
+            double oddsBogged = (1.0 - oddsPSR);
+            double expectedTurns = Math.log10(0.10)/Math.log10(oddsPSR);
+            logMsg.append("\n\t\tChance to fail piloting roll: ").append(LOG_PERCENT.format(oddsBogged));
+            logMsg.append("\n\t\tExpected turns before escape: ").append(LOG_DECIMAL.format(expectedTurns));
+            psrFactor = 1.0 + oddsBogged + (expectedTurns);
+        }
 
         // Factor in heat.
         double heat = endHex ? 10.0 : 5.0;
@@ -1157,7 +1201,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
               .append(LOG_DECIMAL.format(heat)).append(").");
 
         // Factor in potential damage.
-        double dmg;
         logMsg.append("\n\t\tDamage to ");
         if (step.isProne()) {
             dmg = 7 * movingUnit.locations();
@@ -1175,7 +1218,40 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
         hazardValue += dmg;
 
-        return hazardValue;
+        // Multiply total hazard value by the chance of getting stuck for 1 or more additional turns
+        logMsg.append("Factor applied to hazard value: ").append(LOG_DECIMAL.format(psrFactor));
+        return hazardValue * psrFactor;
+    }
+
+
+    private double calcSwampHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding,
+                                 StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating Swamp hazard:  ");
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above swamp (0).");
+            return 0;
+        }
+
+        double hazard = 0.0;
+        return hazard;
+    }
+
+    private double calcMudHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding,
+                                StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating Mud hazard:  ");
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above Mud (0).");
+            return 0;
+        }
+
+        double hazard = 0.0;
+        return hazard;
     }
 
     /**

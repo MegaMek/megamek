@@ -239,7 +239,6 @@ distributions {
         contents {
             from ("${buildDir}/launch4j") {
                 include '*.exe'
-                include '*.ini'
             }
             from(jar) {
                 into "${lib}"

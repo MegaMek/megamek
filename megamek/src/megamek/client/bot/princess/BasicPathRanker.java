@@ -1164,8 +1164,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                   .append(LOG_PERCENT.format(breakThroughMod));
 
             // Factor in the chance to break through.
-            double lavalHazard = calcLavaHazard(endHex, jumpLanding, movingUnit, step,
-                                                logMsg) * breakThroughMod;
+            double lavalHazard = Math.round(calcLavaHazard(endHex, jumpLanding, movingUnit, step,
+                                                logMsg) * breakThroughMod);
             logMsg.append("\n\t\t\tLava hazard (")
                   .append(LOG_DECIMAL.format(lavalHazard)).append(").");
             hazardValue += lavalHazard;
@@ -1186,6 +1186,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                   MoveStep step, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating laval hazard:  ");
 
+        int unitDamageLevel = movingUnit.getDamageLevel();
         double dmg;
 
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of losing mobility.
@@ -1197,7 +1198,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             } else {
                 // Estimate chance of being disabled or immobilized over open lava; this is fatal!
                 // Calc expected damage as ((current damage level [0 ~ 4]) / 4) * UNIT_DESTRUCTION_FACTOR
-                dmg = (movingUnit.getDamageLevel()/4.0) * UNIT_DESTRUCTION_FACTOR;
+                dmg = (unitDamageLevel/4.0) * UNIT_DESTRUCTION_FACTOR;
                 logMsg.append("Ending hover/VTOL movement over lava (");
                 logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
                 return dmg;
@@ -1251,7 +1252,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             logMsg.append("legs (");
         }
         logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
-        hazardValue += dmg;
+        hazardValue += (unitDamageLevel + 1) * dmg;
 
         // Multiply total hazard value by the chance of getting stuck for 1 or more additional turns
         logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(psrFactor));

@@ -1268,7 +1268,7 @@ public class BasicPathRankerTest {
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(166.7, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);
+        assertEquals(167.0, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(0);
 
@@ -1341,7 +1341,7 @@ public class BasicPathRankerTest {
         when(mockHexTwo.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(17.8351, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(17.500, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
@@ -1379,7 +1379,7 @@ public class BasicPathRankerTest {
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(32.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(32.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
         assertEquals(59.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
@@ -1428,9 +1428,10 @@ public class BasicPathRankerTest {
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
         // Only 50% chance to break through Crust, but must make PSR to avoid getting bogged down.
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(32.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(32.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // 100% chance to take damage when Magma is Liquid (aka Lava) and PSR chance to get stuck.
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
         assertEquals(59.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test jumping with worse piloting score (hazard should increase quickly)
@@ -1444,16 +1445,41 @@ public class BasicPathRankerTest {
         assertEquals(39.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // 100% chance to take damage when Magma is Liquid (aka Lava)
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
         assertEquals(74.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // Only 50% chance to break through Crust
         when(mockCrew.getPiloting()).thenReturn(7);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(51.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockFinalHex.depth()).thenReturn(0);
+        assertEquals(51.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // 100% chance to take damage when Magma is Liquid (aka Lava)
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
         assertEquals(97.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
-        // Check damaged Hover ending on Magma crust
+        // Test damaged 'mech walking hazard (should increase hazard as damage level increases)
+        when(mockCrew.getPiloting()).thenReturn(5);
+        when(mockPath.isJumping()).thenReturn(false);
+        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(10);
+        when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        when(mockFinalHex.depth()).thenReturn(0);
+        // Moderate damage means moderate hazard
+        when(mockUnit.getDamageLevel()).thenReturn(Entity.DMG_MODERATE);
+        assertEquals(13.1665, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
+        assertEquals(52, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        // Crippled should be very high hazard
+        when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        when(mockFinalHex.depth()).thenReturn(0);
+        when(mockUnit.getDamageLevel()).thenReturn(Entity.DMG_CRIPPLED);
+        assertEquals(17.1665, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
+        assertEquals(80, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+
+
+        // Check damaged Hover ending on Liquid Magma
         // Ramps up quickly with damage state!
         final Entity mockTank = mock(Tank.class);
         when(mockTank.locations()).thenReturn(5);
@@ -1465,6 +1491,7 @@ public class BasicPathRankerTest {
         when(mockTank.getHeatCapacity()).thenReturn(Entity.DOES_NOT_TRACK_HEAT);
 
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
         when(mockTank.getDamageLevel()).thenReturn(0);
         assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
 
@@ -1480,10 +1507,10 @@ public class BasicPathRankerTest {
         assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
 
         when(mockTank.getDamageLevel()).thenReturn(1);
-        assertEquals(41.675, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        assertEquals(42.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
 
         when(mockTank.getDamageLevel()).thenReturn(2);
-        assertEquals(83.350, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        assertEquals(83.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
     }
 
 

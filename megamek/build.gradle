@@ -5,7 +5,7 @@ plugins {
     id 'edu.sc.seis.launch4j' version '3.0.6'
     id 'jacoco'
     id 'java'
-    id "io.sentry.jvm.gradle" version '4.9.0'
+    id "io.sentry.jvm.gradle" version '4.10.0'
     id 'com.palantir.git-version' version '3.1.0'
 }
 
@@ -141,7 +141,7 @@ task copyFiles(type: Copy) {
     include "SubmitBug.html"
     include "license.txt"
     include "sentry.properties"
-    include "MegaMek.l4j.ini"
+    include "*.ini"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
@@ -149,12 +149,6 @@ task copyFiles(type: Copy) {
     include "${userdata}/"
 
     into fileStagingDir
-
-    inputs.dir "${data}"
-    inputs.dir "${docs}"
-    inputs.dir "${mmconf}"
-    inputs.files 'license.txt', 'SubmitBug.html', 'sentry.properties', 'MegaMek.l4j.ini'
-    outputs.dir fileStagingDir
 }
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {

@@ -462,10 +462,10 @@ public class LosEffects {
         // Adjust units' altitudes for low-altitude map LOS caclulations
         // Revisit once we have ground units on low-alt and dual-map functional
         final boolean lowAlt = game.getBoard().inAtmosphere() && !game.getBoard().onGround();
-        if (attacker.isAirborne()) {
+        if (attacker.isAirborne() && lowAlt) {
             ai.attLowAlt = true;
         }
-        if (target.isAirborne()) {
+        if (target.isAirborne() && lowAlt) {
             ai.targetLowAlt = true;
         }
         if (lowAlt) {
@@ -473,7 +473,7 @@ public class LosEffects {
         }
 
         ai.targetInfantry = target instanceof Infantry;
-        ai.attackHeight = attacker.getHeight();
+        ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attacker.getHeight();
         ai.targetHeight = (ai.targetLowAlt) ? target.getAltitude() : target.getHeight() + targetHeightAdjustment;
 
         int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() : attacker.relHeight() + attackerHex.getLevel();
@@ -1150,7 +1150,7 @@ public class LosEffects {
         double weightedHeight = ai.targetAbsHeight * ai.attackPos.distance(coords)
                 + ai.attackAbsHeight * ai.targetPos.distance(coords);
         double totalDistance = ai.targetPos.distance(coords) + ai.attackPos.distance(coords);
-        double losElevation = 1 + weightedHeight / totalDistance;
+        double losElevation = (ai.lowAltitude) ? weightedHeight / totalDistance : 1 + weightedHeight / totalDistance;
 
         // The higher of the attacker's height and defender's height
         int maxUnitHeight = Math.max(ai.attackAbsHeight, ai.targetAbsHeight);

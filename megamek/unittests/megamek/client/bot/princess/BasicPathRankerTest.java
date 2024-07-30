@@ -1379,9 +1379,9 @@ public class BasicPathRankerTest {
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(32.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(108.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
-        assertEquals(59.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(212.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.WOODS, Terrains.FIRE});
         assertEquals(5.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
@@ -1428,11 +1428,11 @@ public class BasicPathRankerTest {
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
         // Only 50% chance to break through Crust, but must make PSR to avoid getting bogged down.
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(32.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(108.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // 100% chance to take damage when Magma is Liquid (aka Lava) and PSR chance to get stuck.
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(1);
-        assertEquals(59.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(212.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test jumping with worse piloting score (hazard should increase quickly)
         when(mockPath.isJumping()).thenReturn(true);
@@ -1442,20 +1442,20 @@ public class BasicPathRankerTest {
         // Only 50% chance to break through Crust
         when(mockCrew.getPiloting()).thenReturn(6);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
-        assertEquals(39.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(176.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // 100% chance to take damage when Magma is Liquid (aka Lava)
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(1);
-        assertEquals(74.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(348.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // Only 50% chance to break through Crust
         when(mockCrew.getPiloting()).thenReturn(7);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(0);
-        assertEquals(51.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(344.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         // 100% chance to take damage when Magma is Liquid (aka Lava)
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(1);
-        assertEquals(97.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(684.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test damaged 'mech walking hazard (should increase hazard as damage level increases)
         when(mockCrew.getPiloting()).thenReturn(5);
@@ -1639,7 +1639,7 @@ public class BasicPathRankerTest {
         when(mockTank.getMovementMode()).thenReturn(EntityMovementMode.TRACKED);
         when(mockUnit.getHeight()).thenReturn(1);
         when(mockFinalHex.terrainLevel(Terrains.MUD)).thenReturn(1);
-        assertEquals(20.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        assertEquals(25.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
 
         // Confirm hovers are immune
         when(mockTank.getMovementMode()).thenReturn(EntityMovementMode.HOVER);

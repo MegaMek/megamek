@@ -6864,45 +6864,50 @@ public class GameManager extends AbstractGameManager {
             }
 
             // check for last move ending in magma TODO: build report for end of move
-            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
-                    && firstHex.terrainLevel(Terrains.MAGMA) == 2) {
-                r = new Report(2404);
-                r.addDesc(entity);
-                r.subject = entity.getId();
-                addReport(r);
-                doMagmaDamage(entity, false);
-            }
-
-            // check if we've moved into a swamp
-            rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
-                    lastPos, curPos, lastElevation, isPavementStep);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if (0 < doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                        curPos, rollTarget, false)) {
-                    entity.setStuck(true);
-                    entity.setCanUnstickByJumping(true);
-                    r = new Report(2081);
-                    r.add(entity.getDisplayName());
+            boolean jumpedIntoMagma = false;
+            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
+                if (firstHex.terrainLevel(Terrains.MAGMA) == 2){
+                    r = new Report(2404);
+                    r.addDesc(entity);
                     r.subject = entity.getId();
                     addReport(r);
-                    // check for quicksand
-                    addReport(checkQuickSand(curPos));
-                    // check for accidental stacking violation
-                    Entity violation = Compute.stackingViolation(game,
-                            entity.getId(), curPos, entity.climbMode());
-                    if (violation != null) {
-                        // target gets displaced, because of low elevation
-                        int direction = lastPos.direction(curPos);
-                        Coords targetDest = Compute.getValidDisplacement(game,
-                                entity.getId(), curPos, direction);
-                        addReport(doEntityDisplacement(violation, curPos,
-                                targetDest,
-                                new PilotingRollData(violation.getId(), 0,
-                                        "domino effect")));
-                        // Update the violating entity's position on the client.
-                        entityUpdate(violation.getId());
+                    doMagmaDamage(entity, false);
+                }
+            }
+
+            if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
+                // check if we've moved into a swamp
+                rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
+                        lastPos, curPos, lastElevation, isPavementStep);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    if (0 < doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false)) {
+                        entity.setStuck(true);
+                        entity.setCanUnstickByJumping(true);
+                        r = new Report(2081);
+                        r.add(entity.getDisplayName());
+                        r.subject = entity.getId();
+                        addReport(r);
+                        // check for quicksand
+                        addReport(checkQuickSand(curPos));
+                        // check for accidental stacking violation
+                        Entity violation = Compute.stackingViolation(game,
+                                entity.getId(), curPos, entity.climbMode());
+                        if (violation != null) {
+                            // target gets displaced, because of low elevation
+                            int direction = lastPos.direction(curPos);
+                            Coords targetDest = Compute.getValidDisplacement(game,
+                                    entity.getId(), curPos, direction);
+                            addReport(doEntityDisplacement(violation, curPos,
+                                    targetDest,
+                                    new PilotingRollData(violation.getId(), 0,
+                                            "domino effect")));
+                            // Update the violating entity's position on the client.
+                            entityUpdate(violation.getId());
+                        }
+                        break;
                     }
-                    break;
                 }
             }
 

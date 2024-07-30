@@ -1222,7 +1222,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // Latter is: N = log(desired failure to escape chance, e.g. 10%)/log(%chance Fail PSR)
             logMsg.append("Possibly jumping onto lava hex, may get bogged down.");
             int pilotSkill = movingUnit.getCrew().getPiloting();
-            double oddsPSR = Compute.oddsAbove(pilotSkill) / 100;
+            int psrMod = +4;
+            double oddsPSR = Compute.oddsAbove(pilotSkill + psrMod) / 100;
             double oddsBogged = (1.0 - oddsPSR);
             double expectedTurns = Math.log10(0.10)/Math.log10(oddsBogged);
             logMsg.append("\n\t\tEffective Piloting Skill: ").append(LOG_INT.format(pilotSkill));
@@ -1357,8 +1358,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
-        // PSR checks _to bog down_ and _escape bogged down_ are at -1; all others are at +1!
-        int psrMod = -1;
+        // PSR checks _to bog down_ and _escape bogged down_ are at (mod - 1); all others are at +1 mod
+        int psrMod = 0;
         // Infantry use 4+ check instead of Pilot / Driving skill
         int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
         double hazard;
@@ -1388,8 +1389,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
-        // PSR checks _to bog down_ and _escape bogged down_ are at -1; all others are at +1!
-        int psrMod = -1;
+        // PSR checks _to bog down_ and _escape bogged down_ are at (mod - 1); all others are at +1 mod
+        int psrMod = 0;
         // Infantry use 4+ check instead of Pilot / Driving skill
         int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
         double hazard;

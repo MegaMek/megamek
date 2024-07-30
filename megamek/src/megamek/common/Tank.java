@@ -285,9 +285,11 @@ public class Tank extends Entity {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
+        
         if (engineHit || isImmobile()) {
             return 0;
         }
+        
         if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
             mp = (int) Math.round(mp * 1.25);
         }

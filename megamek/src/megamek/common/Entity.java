@@ -135,7 +135,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int DMG_CRIPPLED = 4;
 
     public static final int USE_STRUCTURAL_RATING = -1;
-
+    
     protected transient Game game;
 
     protected int id = Entity.NONE;
@@ -835,7 +835,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Primarily used by Princess to speed up TAG utility calculations.
      */
     protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
+    
+    /** 
+     * Map containing all the objects this entity is carrying as cargo, indexed by location
+     */
+    private Map<Integer, ICarryable> carriedObjects = new HashMap<>();
 
+    /**
+     * Round-long flag indicating that this entity has picked up an object this round.
+     */
+    private boolean endOfTurnCargoInteraction;
+    
     /** The icon for this unit; This is empty unless the unit file has an embedded icon. */
     protected Base64Image icon = new Base64Image();
 
@@ -877,6 +887,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<WeaponAttackAction>();
+        carriedObjects = new HashMap<>();
     }
 
     /**
@@ -2759,6 +2770,141 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canFlipArms() {
         return false;
+    }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return false;
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	return 0.0;
+    }
+    
+    /**
+     * Put a ground object into the given location
+     */
+    public void pickupGroundObject(ICarryable carryable, Integer location) {
+    	if (carriedObjects == null) {
+    		carriedObjects = new HashMap<>();
+    	}
+    	
+    	// "none" means we should just put it wherever it goes by default.
+    	// rules checks are done prior to this, so we just set the data
+    	if (location == null || location == LOC_NONE) {
+    		for (Integer defaultLocation : getDefaultPickupLocations()) {
+    			carriedObjects.put(defaultLocation, carryable);
+    		}
+    	} else {
+    		carriedObjects.put(location, carryable);
+    	}
+    	endOfTurnCargoInteraction = true;
+    }
+    
+    /**
+     * Remove a specific carried object - useful for when you have the object
+     * but not its location, or when an object is being carried in multiple locations.
+     */
+    public void dropGroundObject(ICarryable carryable, boolean isUnload) {
+    	// build list of locations to clear out
+    	List<Integer> locationsToClear = new ArrayList<>();
+    	
+    	for (Integer location : carriedObjects.keySet()) {
+    		if (carriedObjects.get(location).equals(carryable)) {
+    			locationsToClear.add(location);
+    		}
+    	}
+    	
+    	for (Integer location : locationsToClear) {
+    		carriedObjects.remove(location);
+    	}
+    	
+    	// if it's not an "unload", we're going to leave the "end of turn cargo interaction" flag alone
+    	if (isUnload) {
+    		endOfTurnCargoInteraction = true;
+    	}
+    }
+    
+    /** 
+     * Remove a ground object (cargo) from the given location
+     */
+    public void dropGroundObject(int location) {
+    	carriedObjects.remove(location);
+    }
+    
+    /**
+     * Convenience method to drop all cargo.
+     */
+    public void dropGroundObjects() {
+    	carriedObjects.clear();
+    }
+    
+    /**
+     * Get the object carried in the given location. May return null.
+     */
+    public ICarryable getCarriedObject(int location) {
+    	return carriedObjects.get(location);
+    }
+    
+    public Map<Integer, ICarryable> getCarriedObjects() {
+    	return carriedObjects;
+    }
+    
+    public void setCarriedObjects(Map<Integer, ICarryable> value) {
+    	carriedObjects = value;
+    }
+    
+    public List<ICarryable> getDistinctCarriedObjects() {
+    	return carriedObjects.values().stream().distinct().toList();
+    }
+    
+    /**
+     * A list of the "default" cargo pick up locations for when none is specified
+     */
+    protected List<Integer> getDefaultPickupLocations() {
+    	return Arrays.asList(LOC_NONE);
+    }
+    
+    /**
+     * A list of all the locations that the entity can use to pick up cargo following the TacOps 
+     * "one handed" pickup rules
+     */
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	return Arrays.asList(LOC_NONE);
+    }
+    
+    /**
+     * Whether a weapon in a given location can be fired, 
+     * given the entity's currently carried cargo
+     */
+    public boolean canFireWeapon(int location) {
+    	if (getBlockedFiringLocations() == null) {
+    		return true;
+    	}
+    	
+    	// loop through everything we are carrying
+    	// if the weapon location is blocked by the carried object, then we cannot fire the weapon
+    	for (int carriedObjectLocation : getCarriedObjects().keySet()) {
+    		if (getBlockedFiringLocations().containsKey(carriedObjectLocation) &&
+    				getBlockedFiringLocations().get(carriedObjectLocation).contains(location)) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return null;
     }
 
     /**
@@ -6538,6 +6684,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         setClimbMode(GUIP.getMoveDefaultClimbMode());
 
+        endOfTurnCargoInteraction = false;
+        
         setTurnInterrupted(false);
     }
 
@@ -12212,6 +12360,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean turnWasInterrupted() {
         return turnWasInterrupted;
+    }
+    
+    public boolean endOfTurnCargoInteraction() {
+    	return endOfTurnCargoInteraction;
     }
 
     public Vector<Sensor> getSensors() {

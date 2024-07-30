@@ -85,6 +85,68 @@ public class BipedMech extends Mech {
 
         return canFlip;
     }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) ||
+    			hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null);
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	double percentage = 0.0;
+    	
+    	if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) &&
+    			!isLocationBad(Mech.LOC_LARM)) {
+    		percentage += 0.05;
+    	}
+    	if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null) &&
+    			!isLocationBad(Mech.LOC_RARM)) {
+    		percentage += 0.05;
+    	}
+    	
+    	return getWeight() * percentage;
+    }
+    
+    @Override
+    public List<Integer> getDefaultPickupLocations() {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) &&
+    			!isLocationBad(Mech.LOC_LARM)) {
+    		result.add(Mech.LOC_LARM);
+    	}
+    	if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null) &&
+    			!isLocationBad(Mech.LOC_RARM)) {
+    		result.add(Mech.LOC_RARM);
+    	}
+    	
+    	return result;
+    }
+    
+    @Override
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	// if we can pick the object up according to "one handed pick up rules" in TacOps
+    	if (cargo.getTonnage() <= (getWeight() / 20)) {
+    		if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) &&
+        			!isLocationBad(Mech.LOC_LARM)) {
+    			result.add(Mech.LOC_LARM);
+    		}
+    		
+    		if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null) &&
+        			!isLocationBad(Mech.LOC_RARM)) {
+    			result.add(Mech.LOC_RARM);
+    		}
+    	}
+    	
+    	return result;
+    }
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {

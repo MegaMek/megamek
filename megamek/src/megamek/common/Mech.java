@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
+import static java.util.Map.entry;
 import java.util.stream.Collectors;
 
 /**
@@ -183,6 +184,26 @@ public abstract class Mech extends Entity {
             "Small Command", "Tripod Industrial", "Superheavy Tripod Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
+    
+    /**
+     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
+     */
+    public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
+    
+    static {
+    	BLOCKED_FIRING_LOCATIONS = new HashMap<>();
+    	BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LT);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_CT);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_RT);
+    	
+    	BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_LT);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_CT);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RT);
+    }
 
     // jump types
     public static final int JUMP_UNKNOWN = -1;
@@ -6454,7 +6475,7 @@ public abstract class Mech extends Entity {
     public boolean getsAutoExternalSearchlight() {
         return true;
     }
-
+    
     public static Map<Integer, String> getAllCockpitCodeName() {
         Map<Integer, String> result = new HashMap<>();
 
@@ -6480,5 +6501,14 @@ public abstract class Mech extends Entity {
         result.put(COCKPIT_UNKNOWN, getCockpitDisplayString(COCKPIT_UNKNOWN));
 
         return result;
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    @Override
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return BLOCKED_FIRING_LOCATIONS;
     }
 }

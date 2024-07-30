@@ -41,8 +41,6 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.Report;
-import megamek.common.ReportMessages;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -543,6 +541,7 @@ public class GameManager extends AbstractGameManager {
             send(connId, createFlarePacket());
             send(connId, createSpecialHexDisplayPacket(connId));
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
+            send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
         }
     }
 
@@ -608,6 +607,9 @@ public class GameManager extends AbstractGameManager {
             case DEPLOY_MINEFIELDS:
                 receiveDeployMinefields(packet, connId);
                 break;
+            case UPDATE_GROUND_OBJECTS:
+            	receiveGroundObjectUpdate(packet, connId);
+            	break;
             case ENTITY_ATTACK:
                 receiveAttack(packet, connId);
                 break;
@@ -5299,6 +5301,14 @@ public class GameManager extends AbstractGameManager {
             game.removeEntity(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED);
             send(createRemoveEntityPacket(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED));
         }
+        
+        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        	r = new Report(2016, Report.PUBLIC);
+        	r.indent();
+        	r.add(cargo.generalName());
+        	addReport(r);
+        }
+        
         entity.setRetreatedDirection(fleeDirection);
         game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
@@ -7262,6 +7272,84 @@ public class GameManager extends AbstractGameManager {
                 }
             } // End STEP_MOUNT
 
+            if (step.getType() == MovePath.MoveStepType.PICKUP_CARGO) {
+            	var groundObjects = game.getGroundObjects(step.getPosition());
+            	Integer cargoPickupIndex;
+            	
+            	// if there's only one object on the ground, let's just get that one and ignore any parameters
+            	if (groundObjects.size() == 1) {
+            		cargoPickupIndex = 0;
+            	} else {
+                	cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY);
+            	}
+            	
+            	Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
+            	
+            	// there have to be objects on the ground and we have to be trying to pick up one of them
+            	if ((groundObjects.size() > 0) &&
+            			 (cargoPickupIndex != null) && (cargoPickupIndex >= 0) && (cargoPickupIndex < groundObjects.size())) {
+            		
+            		ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
+            		if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+            			game.removeGroundObject(step.getPosition(), pickupTarget);
+            			entity.pickupGroundObject(pickupTarget, cargoPickupLocation);
+
+            			r = new Report(2513);
+            			r.subject = entity.getId();
+                    	r.add(entity.getDisplayName());
+                    	r.add(pickupTarget.specificName());
+                    	r.add(step.getPosition().toFriendlyString());
+                    	addReport(r);
+                    	
+                    	// a pickup should be the last step. Send an update for the overall ground object list.
+                        sendGroundObjectUpdate();
+                        break;
+            		} else {
+            			LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up object but it is too heavy. Carry capacity: " 
+            					+ entity.maxGroundObjectTonnage() + ", object weight: " + pickupTarget.getTonnage());
+            		}
+            	} else {
+            		LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up non existent object at coords " 
+            					+ step.getPosition() + ", index " + cargoPickupIndex);
+            	}
+            }
+            
+            if (step.getType() == MovePath.MoveStepType.DROP_CARGO) {
+            	Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
+            	ICarryable cargo;
+            	
+            	// if we're not supplied a specific location, then the assumption is we only have one
+            	// piece of cargo and we're going to just drop that one
+            	if (cargoLocation == null) {
+            		cargo = entity.getDistinctCarriedObjects().get(0);
+            	} else {
+            		cargo = entity.getCarriedObject(cargoLocation);
+            	}
+            	
+            	entity.dropGroundObject(cargo, isLastStep);
+            	boolean cargoDestroyed = false;
+            	
+            	if (!isLastStep) {
+            		cargoDestroyed = damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
+            	}
+
+            	// note that this should not be moved into the "!isLastStep" block above
+            	// as cargo may be either unloaded peacefully or dumped on the move
+            	if (!cargoDestroyed) {
+	            	game.placeGroundObject(step.getPosition(), cargo);
+
+	            	r = new Report(2514);
+	            	r.subject = entity.getId();
+	            	r.add(entity.getDisplayName());
+	            	r.add(cargo.generalName());
+	            	r.add(step.getPosition().toFriendlyString());
+	            	addReport(r);
+	            	
+	            	// a drop changes board state. Send an update for the overall ground object list.
+	                sendGroundObjectUpdate();
+            	}
+            }
+            
             // handle fighter recovery, and also DropShip docking with another large craft
             if (step.getType() == MovePath.MoveStepType.RECOVER) {
 
@@ -12293,6 +12381,18 @@ public class GameManager extends AbstractGameManager {
                             SpecialHexDisplay.SHD_OBSCURED_TEAM));
         }
         endCurrentTurn(null);
+    }
+    
+    /**
+     * Receives an updated data structure containing carryable objects on the ground
+     */
+    private void receiveGroundObjectUpdate(Packet packet, int connId) {
+    	Map<Coords, List<ICarryable>> groundObjects = (Map<Coords, List<ICarryable>>) packet.getObject(0);
+    	
+    	getGame().setGroundObjects(groundObjects);
+    	
+    	// make sure to update the other clients with the new ground objects data structure
+    	send(packet);
     }
 
     /**
@@ -21180,6 +21280,43 @@ public class GameManager extends AbstractGameManager {
 
         // Allocate the damage
         while (damage > 0) {
+        	
+        	// damage some cargo if we're taking damage
+        	// maybe move past "exterior passenger" check
+        	if (!ammoExplosion) {
+        		int damageLeftToCargo = damage;
+        		
+        		for (ICarryable cargo : te.getDistinctCarriedObjects()) {
+        			if (cargo.isInvulnerable()) {
+        				continue;
+        			}
+        			
+        			double tonnage = cargo.getTonnage();
+        			cargo.damage(damageLeftToCargo);
+        			damageLeftToCargo -= Math.ceil(tonnage);
+        			
+        			// if we have destroyed the cargo, remove it, add a report
+        			// and move on to the next piece of cargo
+        			if (cargo.getTonnage() <= 0) {
+        				te.dropGroundObject(cargo, false);
+        				
+        				r = new Report(6721);
+        				r.subject = te_n;
+        				r.indent(2);
+        				r.add(cargo.generalName());
+        				vDesc.addElement(r);
+        			// we have not destroyed the cargo means there is no damage left
+        			// report and stop destroying cargo
+        			} else {
+        				r = new Report(6720);
+        				r.subject = te_n;
+        				r.indent(2);
+        				r.add(cargo.generalName());
+        				r.add(Double.toString(cargo.getTonnage()));
+        				break;
+        			}
+        		}
+        	}
 
             // first check for ammo explosions on aeros separately, because it
             // must be done before
@@ -26918,11 +27055,42 @@ public class GameManager extends AbstractGameManager {
                 sendChangedHex(curPos);
             }
         }
+        
+        // drop cargo
+        dropCargo(entity, curPos, vDesc); 
 
         // update our entity, so clients have correct data needed for MekWars stuff
         entityUpdate(entity.getId());
 
         return vDesc;
+    }
+    
+    /**
+     * Worker function that drops cargo from an entity at the given coordinates.
+     */
+    private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
+    	boolean cargoDropped = false;
+    	
+        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        	entity.dropGroundObject(cargo, false);
+        	// if the cargo was dropped but not destroyed.
+        	if (!damageCargo(false, entity, cargo)) {
+        		Report r = new Report(6722);
+        		r.indent();
+        		r.subject = entity.getId();
+        		r.add(cargo.generalName());
+        		vPhaseReport.add(r);
+        		
+        		if (game.getBoard().contains(coords)) {
+        			game.placeGroundObject(coords, cargo);
+        			cargoDropped = true;
+        		}
+        	}
+        }
+        
+        if (cargoDropped) {
+        	sendGroundObjectUpdate();
+        }
     }
 
     /**
@@ -27393,7 +27561,7 @@ public class GameManager extends AbstractGameManager {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
         }
-
+        
         // set how deep the mech has fallen
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -27601,6 +27769,9 @@ public class GameManager extends AbstractGameManager {
             }
         } // End dislodge-infantry
 
+        // drop cargo if necessary
+        dropCargo(entity, fallPos, vPhaseReport);
+        
         // clear all PSRs after a fall -- the Mek has already failed ONE and
         // fallen, it'd be cruel to make it fail some more!
         game.resetPSRs(entity);
@@ -34022,6 +34193,42 @@ public class GameManager extends AbstractGameManager {
             entity.setLayingMines(true);
         }
     }
+    
+    /**
+     * Worker function that potentially damages a piece of cargo being carried
+     * by the given entity during the given move step.
+     * 
+     * @param isFlying whether the entity's movement involved being in the air in any way 
+     */
+    private boolean damageCargo(boolean isFlying, Entity entity, ICarryable cargo) {
+    	if (cargo.isInvulnerable()) {
+    		return false;
+    	}    	
+    	
+    	boolean cargoDestroyed = false;
+    	
+    	// cargo may be destroyed if we're not carefully unloading it
+		// very likely to be destroyed if we're airborne for some reason
+		int destructionThreshold = isFlying ? 6 : 4;
+		int destructionRoll = Compute.d6();
+		
+		Report r = new Report(2515);
+		r.subject = entity.getId();
+		r.add(cargo.generalName());
+		r.add(destructionThreshold);
+		r.add(destructionRoll);            		
+		
+		if (destructionRoll < destructionThreshold) {
+			cargoDestroyed = true;
+			r.choose(false);
+		} else {
+			r.choose(true);
+		}
+		
+		addReport(r);
+		
+		return cargoDestroyed;
+    }
 
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
@@ -34041,5 +34248,12 @@ public class GameManager extends AbstractGameManager {
 
     void clearBombIcons() {
         game.getBoard().clearBombIcons();
+    }
+    
+    /**
+     * Convenience function to send a ground object update.
+     */
+    public void sendGroundObjectUpdate() {
+    	send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
     }
 }

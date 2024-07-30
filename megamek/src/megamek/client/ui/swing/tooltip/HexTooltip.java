@@ -22,6 +22,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
 import megamek.common.planetaryconditions.IlluminationLevel;
 
+import java.util.List;
 import java.util.Vector;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -203,16 +204,30 @@ public final class HexTooltip {
     }
 
     public static String getTerrainTip(Hex mhex, GUIPreferences GUIP, Game game) {
+        boolean inAtmosphere = game.getBoard().inAtmosphere();
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, mcoords).getIndicator();
         String illuminated = DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " " + indicator + "</FONT>";
         String result = "";
-        StringBuilder sTerrain = new StringBuilder(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + illuminated + "<BR>");
+        StringBuilder sTerrain = new StringBuilder(
+                Messages.getString(
+                        (inAtmosphere) ? "BoardView1.Tooltip.HexAlt": "BoardView1.Tooltip.Hex",
+                        mcoords.getBoardNum(),
+                        mhex.getLevel()
+                ) + illuminated + "<BR>"
+        );
+        // Types that represent Elevations need converting and possibly zeroing if board is in Atmosphere (Low Alt.)
+        List<Integer> typesThatNeedAltitudeChecked = List.of(
+                Terrains.INDUSTRIAL, Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV, Terrains.FOLIAGE_ELEV
+        );
 
         // cycle through the terrains and report types found
         for (int terType: mhex.getTerrainTypes()) {
             int tf = mhex.getTerrain(terType).getTerrainFactor();
             int ttl = mhex.getTerrain(terType).getLevel();
+            if (typesThatNeedAltitudeChecked.contains(terType)) {
+                ttl = Terrains.getTerrainElevation(terType, ttl, inAtmosphere);
+            }
             String name = Terrains.getDisplayName(terType, ttl);
 
             if (name != null) {

@@ -2569,23 +2569,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 StringTokenizer lines = new StringTokenizer(result, "\n");
                 while (lines.hasMoreTokens()) {
                     String line = lines.nextToken();
-                    StringTokenizer tabs = new StringTokenizer(line, "\t");
-                    String unit = "";
-                    if (tabs.hasMoreTokens()) {
-                        unit = tabs.nextToken();
-                    }
-                    if (tabs.hasMoreTokens()) {
-                        unit += " " + tabs.nextToken();
-                    }
-                    MechSummary ms = MechSummaryCache.getInstance().getMech(unit);
-                    if (ms == null) {
-                        continue;
-                    }
-                    Entity newEntity = new MechFileParser(ms.getSourceFile(),
-                            ms.getEntryName()).getEntity();
-                    if (newEntity != null) {
-                        newEntity.setOwner(localPlayer());
-                        newEntities.add(newEntity);
+                    String[] tokens = line.split("\t");
+                    if (tokens.length >= 2) {
+                        String unitName = (tokens[0] + " " + tokens[1]).trim();
+                        MechSummary ms = MechSummaryCache.getInstance().getMech(unitName);
+                        if (ms != null) {
+                            Entity newEntity = ms.loadEntity();
+                            if (newEntity != null) {
+                                newEntity.setOwner(localPlayer());
+                                newEntities.add(newEntity);
+                            }
+                        }
                     }
                 }
             } catch (Exception ex) {

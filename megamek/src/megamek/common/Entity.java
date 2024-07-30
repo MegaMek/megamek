@@ -8762,6 +8762,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the DockingCollar with the given ID or null
      */
     @Nullable
+    @SuppressWarnings("unused") // Used in MHQ
     public DockingCollar getCollarById(int collarNumber) {
         return getDockingCollars().stream()
                 .filter(dc -> dc.getCollarNumber() == collarNumber)
@@ -8838,47 +8839,50 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @return only entities in that can be unloaded on ground
+     * @return All Entities that can at this point be unloaded from any of the bays of this Entity. This
+     * does not include any units that were loaded this turn or any bays where the door capacity has
+     * been exceeded this turn.
+     * Note that the returned list may be unmodifiable.
+     *
+     * @see #wasLoadedThisTurn()
+     * @see Bay#canUnloadUnits()
      */
-    public Vector<Entity> getUnitsUnloadableFromBays() {
-        Vector<Entity> result = new Vector<>();
-
-        // Walk through this entity's transport components;
-        // add all of their lists to ours.
-
-        // I should only add entities in bays that are functional
-        for (Transporter next : transports) {
-            if ((next instanceof Bay) && (((Bay) next).canUnloadUnits())) {
-                Bay nextbay = (Bay) next;
-                for (Entity e : nextbay.getUnloadableUnits()) {
-                    if (!e.wasLoadedThisTurn()) {
-                        result.addElement(e);
-                    }
-                }
-            }
-        }
-
-        // Return the list.
-        return result;
+    public List<Entity> getUnitsUnloadableFromBays() {
+        return transports.stream()
+                .filter(t -> t instanceof Bay).map(t -> (Bay) t)
+                .filter(Bay::canUnloadUnits)
+                .flatMap(b -> b.getUnloadableUnits().stream())
+                .filter(e -> !e.wasLoadedThisTurn())
+                .toList();
     }
 
-    public Bay getLoadedBay(int bayID) {
+    /**
+     * @return All Entities that can at this point be unloaded from any transports of this Entity which are
+     * no Bays. This does not include any units that were loaded this turn.
+     * Note that the returned list may be unmodifiable.
+     *
+     * @see #wasLoadedThisTurn()
+     */
+    public List<Entity> getUnitsUnloadableFromNonBays() {
+        return transports.stream()
+                .filter(t -> !(t instanceof Bay))
+                .flatMap(b -> b.getLoadedUnits().stream())
+                .filter(e -> !e.wasLoadedThisTurn())
+                .toList();
+    }
 
-        Vector<Bay> bays = getFighterBays();
-        for (int nbay = 0; nbay < bays.size(); nbay++) {
-            Bay currentBay = bays.elementAt(nbay);
-            Vector<Entity> currentFighters = currentBay.getLoadedUnits();
-            for (int nfighter = 0; nfighter < currentFighters.size(); nfighter++) {
-                Entity fighter = currentFighters.elementAt(nfighter);
-                if (fighter.getId() == bayID) {
-                    // then we are in the right bay
-                    return currentBay;
-                }
-            }
-        }
-
-        return null;
-
+    /**
+     * @return All Entities that can at this point be unloaded from any transports of this Entity. This does
+     * not include any units that were loaded this turn nor units from bays where the door capacity has been
+     * exceeded this turn.
+     *
+     * @see #wasLoadedThisTurn()
+     * @see Bay#canUnloadUnits()
+     */
+    public List<Entity> getUnloadableUnits() {
+        List<Entity> loadedUnits = new ArrayList<>(getUnitsUnloadableFromNonBays());
+        loadedUnits.addAll(getUnitsUnloadableFromBays());
+        return loadedUnits;
     }
 
     /**
@@ -9067,6 +9071,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     @Override
+    @SuppressWarnings("unused") // Used in MHQ
     public void resetTransporter() {
         transports.forEach(Transporter::resetTransporter);
     }
@@ -10190,12 +10195,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
+        if (getPosition() == null) {
+            return false; // not on board?
+        }
+
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
             Hex hex = game.getBoard().getHex(getPosition());
+            if (hex == null) {
+                return false;
+            }
             return hex.containsTerrain(Terrains.BUILDING);
         }
+
         // only mechs and protos have physical attacks (except tank charges)
         if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;
@@ -10234,10 +10247,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (moved == EntityMovementType.MOVE_SPRINT
                 || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             return false;
-        }
-
-        if (getPosition() == null) {
-            return false; // not on board?
         }
 
         // check if we have iNarc pods attached that can be brushed off

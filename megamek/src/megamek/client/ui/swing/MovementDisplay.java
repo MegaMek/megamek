@@ -321,10 +321,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     // is the shift key held?
     private boolean shiftheld;
 
-    /**
-     * A local copy of the current entity's loaded units.
-     */
-    private List<Entity> loadedUnits = null;
+    private List<Entity> unloadableUnits = null;
 
     /**
      * A local copy of the current entity's towed trailers.
@@ -1273,12 +1270,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateAeroButtons();
         updateLayMineButton();
 
-        loadedUnits = ce.getLoadedUnits();
-        for (Entity e : ce.getUnitsUnloadableFromBays()) {
-            if (!loadedUnits.contains(e)) {
-                loadedUnits.add(e);
-            }
-        }
+        unloadableUnits = ce.getUnloadableUnits();
         towedUnits = ce.getLoadedTrailers();
 
         updateLoadButtons();
@@ -2873,7 +2865,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if ((ce instanceof SmallCraft) || ce.isSupportVehicle()) {
-            setUnloadEnabled(!loadedUnits.isEmpty() && !ce.isAirborne());
+            setUnloadEnabled(!unloadableUnits.isEmpty() && !ce.isAirborne());
             return;
         }
 
@@ -2884,13 +2876,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // A unit that has somehow exited the map is assumed to be unable to unload
         if (isFinalPositionOnBoard()) {
-            canUnloadHere = loadedUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0));
+            canUnloadHere = unloadableUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0));
             // Zip lines, TO pg 219
             if (game().getOptions().booleanOption(ADVGRNDMOV_TACOPS_ZIPLINES) && (ce instanceof VTOL)) {
-                canUnloadHere |= loadedUnits.stream().filter(Entity::isInfantry).anyMatch(en -> !((Infantry) en).isMechanized());
+                canUnloadHere |= unloadableUnits.stream().filter(Entity::isInfantry).anyMatch(en -> !((Infantry) en).isMechanized());
             }
         }
-        setUnloadEnabled(legalGear && canUnloadHere && !loadedUnits.isEmpty());
+        setUnloadEnabled(legalGear && canUnloadHere && !unloadableUnits.isEmpty());
     }
 
     /** Updates the status of the Mount button. */
@@ -3330,21 +3322,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity ce = ce();
         Entity choice = null;
         // Handle error condition.
-        if (loadedUnits.isEmpty()) {
+        if (unloadableUnits.isEmpty()) {
             LogManager.getLogger().error("MovementDisplay#getUnloadedUnit() called without loaded units.");
-        } else if (loadedUnits.size() > 1) {
+        } else if (unloadableUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(
                     clientgui.getFrame(),
                     Messages.getString("MovementDisplay.UnloadUnitDialog.message", ce.getShortName(), ce.getUnusedString()),
                     Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
                     JOptionPane.QUESTION_MESSAGE, null,
-                    SharedUtility.getDisplayArray(loadedUnits), null);
-            choice = (Entity) SharedUtility.getTargetPicked(loadedUnits, input);
+                    SharedUtility.getDisplayArray(unloadableUnits), null);
+            choice = (Entity) SharedUtility.getTargetPicked(unloadableUnits, input);
         } else {
             // Only one choice.
-            choice = loadedUnits.get(0);
-            loadedUnits.remove(0);
+            choice = unloadableUnits.get(0);
+            unloadableUnits.remove(0);
         }
 
         // Return the chosen unit.
@@ -4470,13 +4462,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Increment the entity's delta-v then compute the movement envelope.
-        Aero ae = (Aero)entity;
+        // LAM and Aeros both implement this interface
+        IAero ae = (IAero) entity;
         int currentVelocity = ae.getCurrentVelocity();
         ae.setCurrentVelocity(cmd.getFinalVelocity());
 
         // Refresh the new velocity envelope on the map.
         try {
-            computeMovementEnvelope(ae);
+            computeMovementEnvelope(entity);
             updateMove();
         } catch (Exception e) {
             LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
@@ -5325,11 +5318,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	// regardless of how many objects we are picking up, 
     	// we may have to choose the location with which to pick it up
         if (displayedOptions.size() == 1) { 
-        	Integer pickupLocation = getPickupLocation(options.get(0));
+        	Integer pickupLocation = getPickupLocation(displayedOptions.get(0));
         	
         	if (pickupLocation != null) {   
 	        	Map<Integer, Integer> data = new HashMap<>();
-	        	data.put(MoveStep.CARGO_PICKUP_KEY, 0);
+	        	// we pick the only eligible object out of all the objects on the ground
+	        	data.put(MoveStep.CARGO_PICKUP_KEY, options.indexOf(displayedOptions.get(0)));
 	        	data.put(MoveStep.CARGO_LOCATION_KEY, pickupLocation);
 	        	
 	        	addStepToMovePath(MoveStepType.PICKUP_CARGO, data);

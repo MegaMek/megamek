@@ -2106,6 +2106,8 @@ public class GameManager extends AbstractGameManager {
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
+            // Need to set map type prior to loading to adjust foliage height, etc.
+            sheetBoards[i].setType(mapSettings.getMedium());
             String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
@@ -6872,45 +6874,50 @@ public class GameManager extends AbstractGameManager {
             }
 
             // check for last move ending in magma TODO: build report for end of move
-            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
-                    && firstHex.terrainLevel(Terrains.MAGMA) == 2) {
-                r = new Report(2404);
-                r.addDesc(entity);
-                r.subject = entity.getId();
-                addReport(r);
-                doMagmaDamage(entity, false);
-            }
-
-            // check if we've moved into a swamp
-            rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
-                    lastPos, curPos, lastElevation, isPavementStep);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if (0 < doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                        curPos, rollTarget, false)) {
-                    entity.setStuck(true);
-                    entity.setCanUnstickByJumping(true);
-                    r = new Report(2081);
-                    r.add(entity.getDisplayName());
+            boolean jumpedIntoMagma = false;
+            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
+                if (firstHex.terrainLevel(Terrains.MAGMA) == 2){
+                    r = new Report(2404);
+                    r.addDesc(entity);
                     r.subject = entity.getId();
                     addReport(r);
-                    // check for quicksand
-                    addReport(checkQuickSand(curPos));
-                    // check for accidental stacking violation
-                    Entity violation = Compute.stackingViolation(game,
-                            entity.getId(), curPos, entity.climbMode());
-                    if (violation != null) {
-                        // target gets displaced, because of low elevation
-                        int direction = lastPos.direction(curPos);
-                        Coords targetDest = Compute.getValidDisplacement(game,
-                                entity.getId(), curPos, direction);
-                        addReport(doEntityDisplacement(violation, curPos,
-                                targetDest,
-                                new PilotingRollData(violation.getId(), 0,
-                                        "domino effect")));
-                        // Update the violating entity's position on the client.
-                        entityUpdate(violation.getId());
+                    doMagmaDamage(entity, false);
+                }
+            }
+
+            if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
+                // check if we've moved into a swamp
+                rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
+                        lastPos, curPos, lastElevation, isPavementStep);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    if (0 < doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false)) {
+                        entity.setStuck(true);
+                        entity.setCanUnstickByJumping(true);
+                        r = new Report(2081);
+                        r.add(entity.getDisplayName());
+                        r.subject = entity.getId();
+                        addReport(r);
+                        // check for quicksand
+                        addReport(checkQuickSand(curPos));
+                        // check for accidental stacking violation
+                        Entity violation = Compute.stackingViolation(game,
+                                entity.getId(), curPos, entity.climbMode());
+                        if (violation != null) {
+                            // target gets displaced, because of low elevation
+                            int direction = lastPos.direction(curPos);
+                            Coords targetDest = Compute.getValidDisplacement(game,
+                                    entity.getId(), curPos, direction);
+                            addReport(doEntityDisplacement(violation, curPos,
+                                    targetDest,
+                                    new PilotingRollData(violation.getId(), 0,
+                                            "domino effect")));
+                            // Update the violating entity's position on the client.
+                            entityUpdate(violation.getId());
+                        }
+                        break;
                     }
-                    break;
                 }
             }
 
@@ -27050,7 +27057,7 @@ public class GameManager extends AbstractGameManager {
         }
         
         // drop cargo
-        dropCargo(entity, curPos); 
+        dropCargo(entity, curPos, vDesc); 
 
         // update our entity, so clients have correct data needed for MekWars stuff
         entityUpdate(entity.getId());
@@ -27061,7 +27068,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Worker function that drops cargo from an entity at the given coordinates.
      */
-    private void dropCargo(Entity entity, Coords coords) {
+    private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
     	boolean cargoDropped = false;
     	
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
@@ -27555,9 +27562,6 @@ public class GameManager extends AbstractGameManager {
             return vPhaseReport;
         }
         
-        // drop cargo if necessary
-        dropCargo(entity, fallPos);
-
         // set how deep the mech has fallen
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -27765,6 +27769,9 @@ public class GameManager extends AbstractGameManager {
             }
         } // End dislodge-infantry
 
+        // drop cargo if necessary
+        dropCargo(entity, fallPos, vPhaseReport);
+        
         // clear all PSRs after a fall -- the Mek has already failed ONE and
         // fallen, it'd be cruel to make it fail some more!
         game.resetPSRs(entity);

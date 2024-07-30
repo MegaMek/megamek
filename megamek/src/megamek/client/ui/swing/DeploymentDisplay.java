@@ -720,6 +720,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         Messages.getString("DeploymentDisplay.loadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
                         choices);
 
+                // Abort here if no Entity was generated
+                if (other == null) {
+                    return;
+                }
+
+                // Otherwise continue
                 if (!(other instanceof Infantry)) {
                     List<Integer> bayChoices = new ArrayList<>();
                     for (Transporter t : ce().getTransports()) {
@@ -738,6 +744,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         String msg = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.message", ce().getShortName());
                         String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(), msg, title,
                                 JOptionPane.QUESTION_MESSAGE, null, retVal, null);
+
+                        // No choice made?  Bug out.
+                        if (bayString == null) {
+                            return;
+                        }
+
                         int bayNum = Integer.parseInt(bayString.substring(0, bayString.indexOf(" ")));
                         other.setTargetBay(bayNum);
                         // We need to update the entity here so that the server knows about our target bay
@@ -761,6 +773,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                     Messages.getString("MovementDisplay.loadProtoClampMountDialog.message", ce().getShortName()),
                                     Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
                                     JOptionPane.QUESTION_MESSAGE, null, retVal, null);
+
+                            // No choice made?  Bug out.
+                            if (bayString == null) {
+                                return;
+                            }
+
                             other.setTargetBay(bayString.equals(Messages.getString("MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
                             // We need to update the entity here so that the server knows about our target bay
                             clientgui.getClient().sendUpdateEntity(other);

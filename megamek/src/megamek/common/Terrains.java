@@ -57,7 +57,6 @@ public class Terrains implements Serializable {
     // LI smoke 4: Heavy LI smoke
     public static final int GEYSER = 21; // 1: dormant 2: active 3: magma vent
     // unimplemented
-    // Black Ice
     // Bug Storm
     // Extreme Depths
     // Hazardous Liquid Pools
@@ -476,7 +475,8 @@ public class Terrains implements Serializable {
 
     /**
      * Returns the number of elevations or altitudes above the hex level a given
-     * terrainType rises.
+     * terrainType rises.  Has to be explicit about the *_ELEV values, because _everything else_
+     * that comes through here is a "level", a ranking of "denseness", not an elevation _or_ altitude.
      *
      * @param terrainType this specifies the type of terrain to get the information for
      * @param inAtmosphere

@@ -33,6 +33,8 @@ public class Briefcase implements ICarryable, Serializable {
 	private double tonnage;
 	private String name;
 	private boolean invulnerable;
+	private int id;
+	private int ownerId;
 	
 	public void damage(double amount) {
 		tonnage -= amount;
@@ -69,5 +71,30 @@ public class Briefcase implements ICarryable, Serializable {
 	@Override
 	public String toString() {
 		return specificName();
+	}
+	
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int newId) {
+		this.id = newId;
+	}
+
+	@Override
+	public int getOwnerId() {
+		return ownerId;
+	}
+
+	@Override
+	public void setOwnerId(int newOwnerId) {
+		this.ownerId = newOwnerId;
+	}
+
+	@Override
+	public int getStrength() {
+		return 0;
 	}
 }

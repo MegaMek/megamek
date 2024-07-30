@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import megamek.logging.MMLogger;
 
 public class SanityInputFilter implements ObjectInputFilter {
-  public final static Pattern[] filterList = new Pattern[] {
+  protected static final Pattern[] filterList = new Pattern[] {
       // Arrays of Core Types
       Pattern.compile("[C", Pattern.LITERAL),
       Pattern.compile("[I", Pattern.LITERAL),
@@ -80,12 +80,12 @@ public class SanityInputFilter implements ObjectInputFilter {
       Pattern.compile("java.util.Vector", Pattern.LITERAL),
 
       // MegaMek Related
-      Pattern.compile("megamek.", Pattern.LITERAL),
-      Pattern.compile("mekhq.", Pattern.LITERAL),
-      Pattern.compile("megameklab.", Pattern.LITERAL),
+      Pattern.compile("megamek.*"),
+      Pattern.compile("mekhq.*"),
+      Pattern.compile("megameklab.*"),
   };
 
-  private final static MMLogger logger = MMLogger.create(SanityInputFilter.class);
+  private static final MMLogger logger = MMLogger.create(SanityInputFilter.class);
 
   @Override
   public Status checkInput(FilterInfo filterInfo) {
@@ -98,7 +98,8 @@ public class SanityInputFilter implements ObjectInputFilter {
 
     for (Pattern pattern : filterList) {
       Matcher match = pattern.matcher(className);
-      if (match.matches()) {
+
+      if (match.find()) {
         return Status.ALLOWED;
       }
 
@@ -110,5 +111,9 @@ public class SanityInputFilter implements ObjectInputFilter {
     logger.info("Class is Undecided: {}", className);
 
     return Status.UNDECIDED;
+  }
+
+  public static Pattern[] getFilterList() {
+    return filterList;
   }
 }

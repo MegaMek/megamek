@@ -47,7 +47,7 @@ public class SerializationHelper {
         // referencing objects in the XML graph
         xStream.setMode(XStream.ID_REFERENCES);
 
-        xStream.allowTypesByRegExp(SanityInputFilter.filterList);
+        xStream.allowTypesByRegExp(SanityInputFilter.getFilterList());
 
         xStream.allowTypeHierarchy(megamek.common.BTObject.class);
         xStream.allowTypeHierarchy(megamek.common.Building.class);

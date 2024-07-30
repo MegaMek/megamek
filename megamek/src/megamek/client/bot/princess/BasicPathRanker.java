@@ -779,6 +779,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                   game.getBoard(), logMsg);
                 previousCoords = coords;
             }
+            logMsg.append("Compiled Hazard for Path (")
+                    .append(path.toString()).append("): ").append(LOG_DECIMAL.format(totalHazard));
 
             return totalHazard;
         } finally {
@@ -1237,23 +1239,29 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         hazardValue += heat;
         logMsg.append("\n\t\tHeat gain (").append(LOG_DECIMAL.format(heat)).append(").");
 
-        // Factor in potential damage.
+        // Factor in potential to suffer fatal damage.
+        // Dependent on expected average damage / exposed remaining armor * UNIT_DESTRUCTION_FACTOR
+        int exposedArmor = 0;
         logMsg.append("\n\t\tDamage to ");
         if (step.isProne()) {
             dmg = 7 * movingUnit.locations();
+            exposedArmor = movingUnit.getTotalArmor();
             logMsg.append("everything [prone] (");
         } else if (movingUnit instanceof BipedMech) {
             dmg = 14;
+            exposedArmor = List.of(Mech.LOC_LLEG, Mech.LOC_RLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
             logMsg.append("legs (");
         } else if (movingUnit instanceof TripodMech) {
+            exposedArmor = List.of(Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
             dmg = 21;
             logMsg.append("legs (");
         } else {
+            exposedArmor = List.of(Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_LARM, Mech.LOC_RARM).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
             dmg = 28;
             logMsg.append("legs (");
         }
         logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
-        hazardValue += (unitDamageLevel + 1) * dmg;
+        hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg/Math.max(exposedArmor, 1)));
 
         // Multiply total hazard value by the chance of getting stuck for 1 or more additional turns
         logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(psrFactor));

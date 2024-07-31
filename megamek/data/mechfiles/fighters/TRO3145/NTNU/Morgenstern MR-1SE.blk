@@ -1,15 +1,6 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.0-SNAPSHOT on 2024-07-27
 <UnitType>
-Aero
+AeroSpaceFighter
 </UnitType>
 
 <Name>
@@ -44,9 +35,6 @@ Dogfighter
 Aerodyne
 </motion_type>
 
-<transporters>
-</transporters>
-
 <SafeThrust>
 6
 </SafeThrust>
@@ -76,7 +64,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+5
 </armor_tech>
 
 <omni>
@@ -93,7 +81,6 @@ Aerodyne
 <Nose Equipment>
 LRM 15:OMNI
 ISTargeting Computer:OMNI
-ISArtemisIV:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -112,9 +99,8 @@ ISERMediumLaser:OMNI
 </Wings Equipment>
 
 <Fuselage Equipment>
-IS Ammo LRM-15 Artemis-capable:OMNI
-IS Ammo LRM-15 Artemis-capable:OMNI
-IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15:OMNI
+IS Ammo LRM-15:OMNI
 </Fuselage Equipment>
 
 <source>
@@ -124,3 +110,4 @@ TRO: 3145 NTNU
 <tonnage>
 70.0
 </tonnage>
+

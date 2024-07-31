@@ -9,6 +9,12 @@ source:XTR: Caveat Emptor
 rules level:5
 role:Ambusher
 
+quirk:illegal_design
+quirk:gas_hog
+quirk:stable
+quirk:exp_actuator
+quirk:no_twist
+
 mass:30
 engine:90 ICE Engine(IS)
 structure:IS Industrial

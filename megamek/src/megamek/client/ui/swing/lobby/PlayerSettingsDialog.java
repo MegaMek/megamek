@@ -45,19 +45,29 @@ import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.math.RoundingMode;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import static megamek.client.ui.Messages.getString;
+
 import static megamek.client.ui.swing.lobby.LobbyMekPopupActions.resetBombChoices;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -71,6 +81,10 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  */
 public class PlayerSettingsDialog extends AbstractButtonDialog {
 
+	private static final String CMD_ADD_GROUND_OBJECT = "CMD_ADD_GROUND_OBJECT";
+	private static final String CMD_REMOVE_GROUND_OBJECT = "CMD_REMOVE_GROUND_OBJECT_%d";
+	private static final String CMD_REMOVE_GROUND_OBJECT_PREFIX = "CMD_REMOVE_GROUND_OBJECT_";
+	
     public PlayerSettingsDialog(ClientGUI cg, Client cl, BoardView bv) {
         super(cg.getFrame(), "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
@@ -81,8 +95,36 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             currentPlayerStartPos -= 10;
         }
 
+        NumberFormat numFormat = NumberFormat.getIntegerInstance();
+        numFormat.setGroupingUsed(false);
+        
+        NumberFormatter numFormatter = new NumberFormatter(numFormat);
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);
+        
+        DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
+        
+        txtOffset = new JFormattedTextField(formatterFactory, 0);
+        txtWidth = new JFormattedTextField(formatterFactory, 3);
+        
+        DecimalFormat tonnageFormat = new DecimalFormat();
+        tonnageFormat.setGroupingUsed(false);
+        tonnageFormat.setRoundingMode(RoundingMode.UNNECESSARY);
+
+        txtGroundObjectTonnage = new JFormattedTextField(tonnageFormat);
+        txtGroundObjectTonnage.setText("0");
+
+        txtGroundObjectName = new JTextField();
+        txtGroundObjectName.setColumns(20);
+        // if it's longer than 20 characters, undo the edit
+        txtGroundObjectName.getDocument().addUndoableEditListener(new UndoableEditListener( ) {
+			@Override
+			public void undoableEditHappened(UndoableEditEvent e) {
+				if (txtGroundObjectName.getText().length() > 20 && e.getEdit().canUndo()) {
+					e.getEdit().undo();
+				}
+			}
+        });
 
         initialize();
     }
@@ -92,7 +134,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
+                                                      boolean isSelected, boolean cellHasFocus) {
             if (value == null) {
                 setText("General");
             } else {
@@ -196,15 +238,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private Player player;
 
     // Initiative Section
-    private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"),
-            SwingConstants.RIGHT);
+    private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
     private final TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
-    private final JLabel labConventional = new JLabel(getString("PlayerSettingsDialog.labConventional"),
-            SwingConstants.RIGHT);
-    private final JLabel labVibrabomb = new JLabel(getString("PlayerSettingsDialog.labVibrabomb"),
-            SwingConstants.RIGHT);
+    private final JLabel labConventional = new JLabel(getString("PlayerSettingsDialog.labConventional"), SwingConstants.RIGHT);
+    private final JLabel labVibrabomb = new JLabel(getString("PlayerSettingsDialog.labVibrabomb"), SwingConstants.RIGHT);
     private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
     private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
     private final JTextField fldConventional = new JTextField(3);
@@ -222,17 +261,20 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
     private final TipButton[] butStartPos = new TipButton[11];
-    // this might seem like kind of a dumb way to declare it, but
-    // JFormattedTextField doesn't have an overload that
-    // takes both a number formatter and a default value.
-    private final NumberFormatter numFormatter = new NumberFormatter(NumberFormat.getIntegerInstance());
-    private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
-    private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
-    private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
+
+    private final JFormattedTextField txtOffset;
+    private final JFormattedTextField txtWidth;
     private JSpinner spinStartingAnyNWx;
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
     private JSpinner spinStartingAnySEy;
+    
+    // ground object config section
+    private Content groundSectionContent = new Content(new GridLayout(2, 3));
+    private final JTextField txtGroundObjectName;
+    private final JFormattedTextField txtGroundObjectTonnage;
+    private final JCheckBox chkGroundObjectInvulnerable = new JCheckBox();
+    private List<List<Component>> groundSectionComponents = new ArrayList<>();
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -273,6 +315,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
+        mainPanel.add(groundObjectConfigSection());
         mainPanel.add(skillsSection());
         if (!(client instanceof BotClient)) {
             mainPanel.add(emailSection());
@@ -334,6 +377,131 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         butRestoreMT.setEnabled(false);
         return result;
     }
+    
+    private JPanel groundObjectConfigSection() {
+    	JPanel result = new OptionPanel("PlayerSettingsDialog.header.GroundObjects");
+    	result.setToolTipText("Define carryable objects that can be placed prior to unit deployment");
+    	groundSectionContent = new Content(new GridBagLayout());
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	
+    	gbc.gridx = 0;
+    	gbc.gridy = 0;
+    	JLabel lblName = new JLabel("Name");
+    	groundSectionContent.add(lblName, gbc);
+    	
+    	gbc.gridx = 1;
+    	JLabel lblTonnage = new JLabel("Tonnage");
+    	groundSectionContent.add(lblTonnage, gbc);
+    	
+    	gbc.gridx = 2;
+    	JLabel lblInvulnerable = new JLabel("Invulnerable");
+    	groundSectionContent.add(lblInvulnerable);
+    	
+    	gbc.gridy = 1;
+    	gbc.gridx = 0;
+    	groundSectionContent.add(txtGroundObjectName, gbc);
+    	
+    	gbc.gridx = 1;
+    	groundSectionContent.add(txtGroundObjectTonnage, gbc);
+    	
+    	gbc.gridx = 2;
+    	groundSectionContent.add(chkGroundObjectInvulnerable, gbc);
+    	
+    	gbc.gridx = 3;
+    	JButton btnAdd = new JButton("Add");
+    	btnAdd.setActionCommand(CMD_ADD_GROUND_OBJECT);
+    	btnAdd.addActionListener(listener);
+    	groundSectionContent.add(btnAdd, gbc);
+    	
+    	for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
+    		addGroundObjectToUI(groundObject);
+    	}
+    	
+    	result.add(groundSectionContent);
+    	return result;
+    }
+ 
+    /**
+     * Worker function that adds the given ground object to the UI
+     */
+    private void addGroundObjectToUI(ICarryable groundObject) {
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	gbc.gridy = groundSectionComponents.size() + 2; // there's always two extra rows - header + text fields 
+		gbc.gridx = 0;
+		
+		JLabel nameLabel = new JLabel(groundObject.generalName());
+		groundSectionContent.add(nameLabel, gbc);
+		List<Component> row = new ArrayList<>();
+		row.add(nameLabel);
+    	
+		gbc.gridx = 1;
+		JLabel tonnageLabel = new JLabel(Double.toString(groundObject.getTonnage()));
+		groundSectionContent.add(tonnageLabel, gbc);
+		row.add(tonnageLabel);
+    	
+		gbc.gridx = 2;
+		JLabel flagLabel = new JLabel(groundObject.isInvulnerable() ? "Yes" : "No");
+		groundSectionContent.add(flagLabel, gbc);
+		row.add(flagLabel);
+		
+		gbc.gridx = 3;
+    	JButton btnRemove = new JButton("Remove");
+    	btnRemove.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, player.getGroundObjectsToPlace().size() - 1));
+    	btnRemove.addActionListener(listener);
+    	groundSectionContent.add(btnRemove, gbc);
+    	row.add(btnRemove);
+    	groundSectionComponents.add(row);
+    	validate();
+    }
+    
+    /**
+     * Worker function that uses the current state of the ground object inputs to
+     * add a new ground object to the backing player and the UI
+     */
+    private void addGroundObject() {
+    	Briefcase briefcase = new Briefcase();
+    	briefcase.setName(txtGroundObjectName.getText());
+    	
+    	Double tonnage = 0.0;
+    	
+    	try {
+    		tonnage = Double.parseDouble(txtGroundObjectTonnage.getText());
+    		
+    		// don't allow negative tonnage as we do not have anti-gravity technology
+    		if (tonnage < 0) {
+    			tonnage = 0.0;
+    		}
+    	} catch (Exception ignored) {
+    		
+    	}
+    	
+    	briefcase.setTonnage(tonnage);
+    	briefcase.setInvulnerable(chkGroundObjectInvulnerable.isSelected());
+    	player.getGroundObjectsToPlace().add(briefcase);
+    	
+    	addGroundObjectToUI(briefcase);
+    }
+    
+    /**
+     * Worker function that removes the chosen ground object from the backing player and the UI
+     */
+    private void removeGroundObject(String command) {
+    	int index = Integer.parseInt(command.substring(CMD_REMOVE_GROUND_OBJECT_PREFIX.length()));
+    	player.getGroundObjectsToPlace().remove(index);
+    	for(Component component : groundSectionComponents.get(index)) {
+    		groundSectionContent.remove(component);
+    	}
+    	groundSectionComponents.remove(index);
+    	
+    	// kind of a hack, but I'm being lazy - re-index all the CMD_REMOVE_GROUND_OBJECT commands beyond
+    	// the one that just removed, so they're not pointing to higher indexes than they need to
+    	for (int componentIndex = index; componentIndex < groundSectionComponents.size(); componentIndex++) {
+    		((JButton) groundSectionComponents.get(index).get(2))
+    			.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, componentIndex));
+    	}
+    	
+    	validate();
+    }
 
     private JPanel botSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.botPlayer");
@@ -390,6 +558,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return result;
     }
 
+
     private void useRuler() {
         if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
             int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
@@ -415,13 +584,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
 
-        // If the gameoption set_arty_player_homeedge is set, adjust the player's
-        // offboard
+        // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard
         // arty units to be behind the newly selected home edge.
         OffBoardDirection direction = OffBoardDirection.translateStartPosition(getStartPos());
         if (direction != OffBoardDirection.NONE &&
                 gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
-            for (Entity entity : client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
+            for (Entity entity: client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
                 if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
                     entity.setOffBoard(entity.getOffBoardDistance(), direction);
                 }
@@ -433,6 +601,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         team.setFaction(faction);
         if ((clientgui != null) && (clientgui.chatlounge != null)) {
             ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
+
             if (null != munitionTree && null != rp) {
                 rp.friendlyFaction = faction;
                 rp.binFillPercent = (rp.isPirate) ? TeamLoadoutGenerator.UNSET_FILL_RATIO : 1.0f;
@@ -526,7 +695,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         int bh = ms.getBoardHeight() * ms.getMapHeight();
         int bw = ms.getBoardWidth() * ms.getMapWidth();
 
-        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0, bw, 1);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0,bw, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
         SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(0, 0, bh, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
@@ -683,21 +852,26 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             // Bot settings button
             if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
                 BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
-                var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior,
-                        clientgui);
+                var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior, clientgui);
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
             }
+            
+            if (e.getActionCommand().equals(CMD_ADD_GROUND_OBJECT)) {
+            	addGroundObject();
+            }
+            
+            if (e.getActionCommand().contains(CMD_REMOVE_GROUND_OBJECT_PREFIX)) {
+            	removeGroundObject(e.getActionCommand());
+            }
         }
     };
 
     /**
-     * Let user select an ADF file (Autoconfiguration Definition File) from which to
-     * load munition loadout
+     * Let user select an ADF file (Autoconfiguration Definition File) from which to load munition loadout
      * imperatives, which can then be applied to selected units.
-     *
      * @return
      */
     private MunitionTree loadLoadout() {
@@ -712,7 +886,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         int returnVal = fc.showOpenDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // No file selected? No loadout!
+            // No file selected?  No loadout!
             return null;
         }
 
@@ -724,7 +898,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     private void saveLoadout(MunitionTree source) {
-        //ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
                 "adf files (*.adf)", "adf");
@@ -735,7 +908,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         int returnVal = fc.showSaveDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // No file selected? No loadout!
+            // No file selected?  No loadout!
             return;
         }
         if (fc.getSelectedFile() != null) {
@@ -758,9 +931,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             return 0;
         }
     }
-
     private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 
     public FactionRecord getFaction() {
@@ -773,8 +945,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     public FactionRecord getFactionFromCode(String code, int year) {
         for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
-            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year)
-                    && fRec.getKey().equals(code)) {
+            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year) && fRec.getKey().equals(code)) {
                 return fRec;
             }
         }

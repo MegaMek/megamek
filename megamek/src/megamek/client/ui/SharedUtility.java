@@ -310,6 +310,9 @@ public class SharedUtility {
 
             // check for magma
             int level = curHex.terrainLevel(Terrains.MAGMA);
+            boolean jumpedIntoMagma = (curPos.equals(lastPos)
+                    && (curHex.terrainLevel(Terrains.MAGMA) == 2)
+                    && (moveType == EntityMovementType.MOVE_JUMP));
             if ((level == 1) && (step.getElevation() == 0)
                     && (entity.getMovementMode() != EntityMovementMode.HOVER)
                     && (moveType != EntityMovementType.MOVE_JUMP)
@@ -336,53 +339,55 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // check if we've moved into swamp
-            rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
-                    lastPos, curPos, lastElevation, isPavementStep);
-            checkNag(rollTarget, nagReport, psrList);
+            // check if we've moved into swamp; skip Liquid Magma bog-down check if not jumping into the last hex
+            if (level != 2 || jumpedIntoMagma) {
+                rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
+                        lastPos, curPos, lastElevation, isPavementStep);
+                checkNag(rollTarget, nagReport, psrList);
 
-            // Check if used more MPs than Mech/Vehicle would have w/o gravity
-            if (!i.hasMoreElements() && !firstStep) {
-                if ((entity instanceof Mech) || (entity instanceof Tank)) {
-                    if ((moveType == EntityMovementType.MOVE_WALK)
-                            || (moveType == EntityMovementType.MOVE_VTOL_WALK)
-                            || (moveType == EntityMovementType.MOVE_RUN)
-                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                            || (moveType == EntityMovementType.MOVE_SPRINT)
-                            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-                        int limit = entity.getRunningGravityLimit();
-                        if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
-                            limit++;
-                        }
-                        if (step.getMpUsed() > limit) {
-                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                            checkNag(rollTarget, nagReport, psrList);
-                        }
-                    } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                        int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
-                        int gravWalkMP = entity.getWalkMP();
-                        if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
-                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                            checkNag(rollTarget, nagReport, psrList);
-                        } else if ((game.getPlanetaryConditions().getGravity() > 1)
-                                && ((origWalkMP - gravWalkMP) > 0)) {
-                            rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
-                            entity.addPilotingModifierForTerrain(rollTarget, step);
-                            int gravMod = game.getPlanetaryConditions()
-                                    .getGravityPilotPenalty();
-                            if ((gravMod != 0) && !game.getBoard().inSpace()) {
-                                rollTarget.addModifier(gravMod, game
-                                        .getPlanetaryConditions().getGravity()
-                                        + "G gravity");
+                // Check if used more MPs than Mech/Vehicle would have w/o gravity
+                if (!i.hasMoreElements() && !firstStep) {
+                    if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                        if ((moveType == EntityMovementType.MOVE_WALK)
+                                || (moveType == EntityMovementType.MOVE_VTOL_WALK)
+                                || (moveType == EntityMovementType.MOVE_RUN)
+                                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                                || (moveType == EntityMovementType.MOVE_SPRINT)
+                                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                            int limit = entity.getRunningGravityLimit();
+                            if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                                limit++;
                             }
-                            rollTarget.append(new PilotingRollData(entity
-                                    .getId(), 0, "jumped in high gravity"));
-                            SharedUtility.checkNag(rollTarget, nagReport,
-                                    psrList);
-                        }
-                        if (step.getMpUsed() > entity.getSprintMP(MPCalculationSetting.NO_GRAVITY)) {
-                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                            checkNag(rollTarget, nagReport, psrList);
+                            if (step.getMpUsed() > limit) {
+                                rollTarget = entity.checkMovedTooFast(step, overallMoveType);
+                                checkNag(rollTarget, nagReport, psrList);
+                            }
+                        } else if (moveType == EntityMovementType.MOVE_JUMP) {
+                            int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
+                            int gravWalkMP = entity.getWalkMP();
+                            if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
+                                rollTarget = entity.checkMovedTooFast(step, overallMoveType);
+                                checkNag(rollTarget, nagReport, psrList);
+                            } else if ((game.getPlanetaryConditions().getGravity() > 1)
+                                    && ((origWalkMP - gravWalkMP) > 0)) {
+                                rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
+                                entity.addPilotingModifierForTerrain(rollTarget, step);
+                                int gravMod = game.getPlanetaryConditions()
+                                        .getGravityPilotPenalty();
+                                if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                                    rollTarget.addModifier(gravMod, game
+                                            .getPlanetaryConditions().getGravity()
+                                            + "G gravity");
+                                }
+                                rollTarget.append(new PilotingRollData(entity
+                                        .getId(), 0, "jumped in high gravity"));
+                                SharedUtility.checkNag(rollTarget, nagReport,
+                                        psrList);
+                            }
+                            if (step.getMpUsed() > entity.getSprintMP(MPCalculationSetting.NO_GRAVITY)) {
+                                rollTarget = entity.checkMovedTooFast(step, overallMoveType);
+                                checkNag(rollTarget, nagReport, psrList);
+                            }
                         }
                     }
                 }

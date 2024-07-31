@@ -18,6 +18,7 @@ import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
@@ -630,7 +631,9 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
         correct &= correctCriticals(buff);
-
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
+        }
         return correct;
     }
 

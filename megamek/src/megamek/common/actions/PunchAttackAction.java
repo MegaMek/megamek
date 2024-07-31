@@ -176,6 +176,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (ae.hasActiveShield(armLoc)) {
             return "Cannot punch with shield in active mode";
         }
+        
+        if (!((Mech) ae).canFireWeapon(armLoc)) {
+    		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
+    	}
+        
         return null;
     }
 

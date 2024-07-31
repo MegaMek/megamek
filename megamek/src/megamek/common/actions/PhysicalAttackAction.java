@@ -65,6 +65,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (ae.isEvading()) {
             return "Attacker is evading.";
         }
+        
+        // can't make physical attacks if loading/unloading cargo
+        if (ae.endOfTurnCargoInteraction()) {
+        	return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
+        }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             // Checks specific to entity targets

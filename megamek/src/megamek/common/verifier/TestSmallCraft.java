@@ -18,6 +18,7 @@ import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 import java.math.BigInteger;
@@ -510,7 +511,9 @@ public class TestSmallCraft extends TestAero {
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
         correct &= correctCriticals(buff);
-
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
+        }
         return correct;
     }
 

@@ -14,6 +14,9 @@ engine:300 XXL (Clan) Engine(IS)
 structure:IS Industrial
 myomer:Standard
 
+quirk:illegal_design
+quirk:hard_pilot
+
 heat sinks:11 Single
 walk mp:10
 jump mp:0

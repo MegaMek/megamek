@@ -546,11 +546,16 @@ public class MechView {
         TestEntity testEntity = TestEntity.getEntityVerifier(entity);
 
         if (testEntity != null) {
-            testEntity.correctEntity(sb, entity.getTechLevel());
-
-            if (!sb.toString().isEmpty()) {
+            testEntity.correctEntity(sb);
+            if (!sb.isEmpty()) {
                 sInvalid.add(new SingleLine());
-                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), "\n" + sb));
+                String[] errorLines = sb.toString().split("\n");
+                String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ?
+                        Messages.getString("MechView.InvalidButIllegalQuirk") :
+                        Messages.getString("MechView.InvalidReasons");
+                ItemList errorList = new ItemList(label);
+                Arrays.stream(errorLines).forEach(errorList::addItem);
+                sInvalid.add(errorList);
             }
         }
     }
@@ -659,21 +664,17 @@ public class MechView {
     public String getMechReadout(@Nullable String fontName) {
         String docStart = "";
         String docEnd = "";
-        String preStart = "";
-        String preEnd = "";
 
         if (formatting == ViewFormatting.HTML && (fontName != null)) {
             docStart = "<div style=\"font-family:" + fontName + ";\">";
             docEnd = "</div>";
-            preStart = "<PRE style=\"font-family:" + fontName + ";\">";
-            preEnd = "</PRE>";
         } else if (formatting == ViewFormatting.DISCORD) {
             docStart = "```ansi\n";
             docEnd = "```";
         }
         return docStart + getMechReadoutHead()
                 + getMechReadoutBasic() + getMechReadoutLoadout()
-                + getMechReadoutFluff() + preStart + getMechReadoutInvalid() + preEnd + docEnd;
+                + getMechReadoutFluff() + getMechReadoutInvalid() + docEnd;
     }
 
     private List<ViewElement> getInternalAndArmor() {

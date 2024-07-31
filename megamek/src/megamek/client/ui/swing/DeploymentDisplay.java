@@ -228,7 +228,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getUnitDisplay().showPanel("movement");
             clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
-            computeCFWarningHexes(ce());
+            computeCFWarningHexes(ce());            
         } else {
             disableButtons();
             setNextEnabled(true);

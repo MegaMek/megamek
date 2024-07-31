@@ -160,6 +160,16 @@ public final class HexTooltip {
                 result.append("<BR>");
             }
         }
+        
+        if ((game != null) && game.getGroundObjects(mcoords).size() > 0) {
+        	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
+        		result.append("&nbsp");
+        		result.append(guiScaledFontHTML(UIUtil.uiWhite()));
+        		result.append(groundObject.specificName());
+        		result.append("</font>");
+        		result.append("<br/>");
+        	}
+        }
 
         return result.toString();
     }

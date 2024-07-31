@@ -164,6 +164,9 @@ public final class UnitToolTip {
 
         // Carried Units
         result += carriedUnits(entity);
+        
+        // carried cargo
+        result += carriedCargo(entity);
 
         // C3 Info
         result += c3Info(entity, details);
@@ -1842,6 +1845,25 @@ public final class UnitToolTip {
         }
 
         return new StringBuilder().append(result);
+    }
+    
+    private static StringBuilder carriedCargo(Entity entity) {
+    	StringBuilder sb = new StringBuilder();
+    	List<ICarryable> cargoList = entity.getDistinctCarriedObjects();
+    	
+    	if (!cargoList.isEmpty()) {
+    		sb.append(guiScaledFontHTML());
+    		sb.append(Messages.getString("MissionRole.cargo"));
+    		sb.append(":<br/>&nbsp;&nbsp;");
+    		
+	    	for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+	    		sb.append(cargo.toString());
+	    		sb.append("<br/>&nbsp;&nbsp;");
+	    	}
+	    	sb.append("</FONT>");
+    	}
+    	
+    	return sb;
     }
 
     /** Returns the full force chain the entity is in as one text line. */

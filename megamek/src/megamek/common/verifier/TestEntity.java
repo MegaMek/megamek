@@ -18,6 +18,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 
 import java.io.File;
@@ -74,7 +75,9 @@ public abstract class TestEntity implements TestEntityOption {
 
     public abstract String printWeightControls();
 
-    public abstract boolean correctEntity(StringBuffer buff);
+    public boolean correctEntity(StringBuffer buff) {
+        return correctEntity(buff, getEntity().getTechLevel());
+    }
 
     public abstract boolean correctEntity(StringBuffer buff, int ammoTechLvl);
 
@@ -1474,19 +1477,16 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
         }
-        if ((isMech() || isTank() || isAero())
-                && (!getEntity().hasEngine()
-                        || (!getEntity().getEngine().isFusion()
-                                && (getEntity().getEngine().getEngineType() != Engine.FISSION)))) {
-            for (Mounted m : getEntity().getWeaponList()) {
-                if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
-                    buff.append("Improved Heavy Gauss requires a fusion or fission engine.\n");
+        Engine engine = getEntity().getEngine();
+        if (!getEntity().hasEngine() || !(engine.isFusion() || engine.isFission())) {
+            for (WeaponMounted m : getEntity().getWeaponList()) {
+                if ((m.getType().getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                        || (m.getType().getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
+                    buff.append("Heavy Gauss Rifles require a fusion or fission engine\n");
                     illegal = true;
                 } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
-                        && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
-                        && (!getEntity().hasEngine() || (!getEntity().getEngine().isFusion()
-                                && (getEntity().getEngine().getEngineType() != Engine.FISSION)))) {
-                    buff.append("Standard flamers require a fusion or fission engine.\n");
+                        && (m.getType().getAmmoType() == AmmoType.T_NA)) {
+                    buff.append("Standard flamers require a fusion or fission engine\n");
                     illegal = true;
                 }
             }

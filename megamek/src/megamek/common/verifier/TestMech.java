@@ -1414,17 +1414,11 @@ public class TestMech extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((m.getType().hasFlag(WeaponType.F_TASER)
-                    || m.getType().hasFlag(WeaponType.F_HYPER))
+            if ((m.getType().hasFlag(WeaponType.F_TASER))
                     && !(mech.hasEngine() && mech.getEngine().isFusion())) {
                 buff.append(m.getType().getName()).append(" needs fusion engine\n");
                 illegal = true;
             }
-        }
-
-        if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-            buff.append("RISC Hyper Laser needs fusion engine\n");
-            illegal = true;
         }
 
         if (mech.hasFullHeadEject()) {

@@ -1477,6 +1477,7 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
         }
+
         Engine engine = getEntity().getEngine();
         if (!getEntity().hasEngine() || !(engine.isFusion() || engine.isFission())) {
             for (WeaponMounted m : getEntity().getWeaponList()) {
@@ -1488,9 +1489,13 @@ public abstract class TestEntity implements TestEntityOption {
                         && (m.getType().getAmmoType() == AmmoType.T_NA)) {
                     buff.append("Standard flamers require a fusion or fission engine\n");
                     illegal = true;
+                } else if (m.getType().hasFlag(WeaponType.F_HYPER)) {
+                    buff.append("RISC Hyper Lasers require a fusion or fission engine\n");
+                    illegal = true;
                 }
             }
         }
+
         if (hasExternalFuelTank
                 && (!getEntity().hasEngine() ||((getEntity().getEngine().getEngineType() != Engine.COMBUSTION_ENGINE)
                 && (getEntity().getEngine().getEngineType() != Engine.FUEL_CELL)))) {

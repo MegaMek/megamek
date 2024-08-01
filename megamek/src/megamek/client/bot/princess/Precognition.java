@@ -273,6 +273,9 @@ public class Precognition implements Runnable {
                 case ENTITY_MULTIUPDATE:
                     receiveEntitiesUpdate(c);
                     break;
+                case UPDATE_GROUND_OBJECTS:
+                    receiveUpdateGroundObjects(c);
+                    break;
                 case SERVER_GREETING:
                 case SERVER_CORRECT_NAME:
                 case CLOSE_CONNECTION:
@@ -857,6 +860,9 @@ public class Precognition implements Runnable {
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
+    }
 
+    private void receiveUpdateGroundObjects(Packet packet) {
+        game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
     }
 }

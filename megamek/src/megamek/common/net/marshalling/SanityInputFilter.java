@@ -25,95 +25,95 @@ import java.util.regex.Pattern;
 import megamek.logging.MMLogger;
 
 public class SanityInputFilter implements ObjectInputFilter {
-  protected static final Pattern[] filterList = new Pattern[] {
-      // Arrays of Core Types
-      Pattern.compile("[C", Pattern.LITERAL),
-      Pattern.compile("[I", Pattern.LITERAL),
-      Pattern.compile("[Z", Pattern.LITERAL),
+    protected static final Pattern[] filterList = new Pattern[] {
+            // Arrays of Core Types
+            Pattern.compile("[C", Pattern.LITERAL),
+            Pattern.compile("[I", Pattern.LITERAL),
+            Pattern.compile("[Z", Pattern.LITERAL),
 
-      // Arrays of java.lang items.
-      Pattern.compile("[Ljava.lang.Enum", Pattern.LITERAL),
-      Pattern.compile("[Ljava.lang.Object", Pattern.LITERAL),
+            // Arrays of java.lang items.
+            Pattern.compile("[Ljava.lang.Enum", Pattern.LITERAL),
+            Pattern.compile("[Ljava.lang.Object", Pattern.LITERAL),
 
-      // File IO
-      Pattern.compile("java.io.File", Pattern.LITERAL),
+            // File IO
+            Pattern.compile("java.io.File", Pattern.LITERAL),
 
-      // Java Lang
-      Pattern.compile("java.lang.Boolean", Pattern.LITERAL),
-      Pattern.compile("java.lang.Enum", Pattern.LITERAL),
-      Pattern.compile("java.lang.Integer", Pattern.LITERAL),
-      Pattern.compile("java.lang.Double", Pattern.LITERAL),
-      Pattern.compile("java.lang.Long", Pattern.LITERAL),
-      Pattern.compile("java.lang.Number", Pattern.LITERAL),
-      Pattern.compile("java.lang.StringBuffer", Pattern.LITERAL),
-      Pattern.compile("java.lang.[I", Pattern.LITERAL),
-      Pattern.compile("java.lang.Object", Pattern.LITERAL),
-      Pattern.compile("java.lang.String", Pattern.LITERAL),
+            // Java Lang
+            Pattern.compile("java.lang.Boolean", Pattern.LITERAL),
+            Pattern.compile("java.lang.Enum", Pattern.LITERAL),
+            Pattern.compile("java.lang.Integer", Pattern.LITERAL),
+            Pattern.compile("java.lang.Double", Pattern.LITERAL),
+            Pattern.compile("java.lang.Long", Pattern.LITERAL),
+            Pattern.compile("java.lang.Number", Pattern.LITERAL),
+            Pattern.compile("java.lang.StringBuffer", Pattern.LITERAL),
+            Pattern.compile("java.lang.[I", Pattern.LITERAL),
+            Pattern.compile("java.lang.Object", Pattern.LITERAL),
+            Pattern.compile("java.lang.String", Pattern.LITERAL),
 
-      // Java Util
-      Pattern.compile("java.util.ArrayList", Pattern.LITERAL),
-      Pattern.compile("java.util.Collections$SetFromMap", Pattern.LITERAL),
-      Pattern.compile("java.util.Collections$UnmodifiableCollection", Pattern.LITERAL),
-      Pattern.compile("java.util.Collections$UnmodifiableList", Pattern.LITERAL),
-      Pattern.compile("java.util.Collections$UnmodifiableRandomAccessList", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.ConcurrentHashMap", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.ConcurrentHashMap$Segment", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.CopyOnWriteArrayList", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.locks.AbstractOwnableSynchronizer", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.locks.AbstractQueuedSynchronizer", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.locks.ReentrantLock", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.locks.ReentrantLock$NonfairSync", Pattern.LITERAL),
-      Pattern.compile("java.util.concurrent.locks.ReentrantLock$Sync", Pattern.LITERAL),
-      Pattern.compile("java.util.UUID", Pattern.LITERAL),
-      Pattern.compile("java.util.EnumMap", Pattern.LITERAL),
-      Pattern.compile("java.util.EnumSet", Pattern.LITERAL),
-      Pattern.compile("java.util.HashMap", Pattern.LITERAL),
-      Pattern.compile("java.util.HashSet", Pattern.LITERAL),
-      Pattern.compile("java.util.Hashtable", Pattern.LITERAL),
-      Pattern.compile("java.util.LinkedHashMap", Pattern.LITERAL),
-      Pattern.compile("java.util.LinkedHashSet", Pattern.LITERAL),
-      Pattern.compile("java.util.LinkedList", Pattern.LITERAL),
-      Pattern.compile("java.util.RegularEnumSet", Pattern.LITERAL),
-      Pattern.compile("java.util.TreeMap", Pattern.LITERAL),
-      Pattern.compile("java.util.Map", Pattern.LITERAL),
-      Pattern.compile("java.util.TreeSet", Pattern.LITERAL),
-      Pattern.compile("java.util.Vector", Pattern.LITERAL),
+            // Java Util
+            Pattern.compile("java.util.ArrayList", Pattern.LITERAL),
+            Pattern.compile("java.util.Collections$SetFromMap", Pattern.LITERAL),
+            Pattern.compile("java.util.Collections$UnmodifiableCollection", Pattern.LITERAL),
+            Pattern.compile("java.util.Collections$UnmodifiableList", Pattern.LITERAL),
+            Pattern.compile("java.util.Collections$UnmodifiableRandomAccessList", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.ConcurrentHashMap", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.ConcurrentHashMap$Segment", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.CopyOnWriteArrayList", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.locks.AbstractOwnableSynchronizer", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.locks.AbstractQueuedSynchronizer", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.locks.ReentrantLock", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.locks.ReentrantLock$NonfairSync", Pattern.LITERAL),
+            Pattern.compile("java.util.concurrent.locks.ReentrantLock$Sync", Pattern.LITERAL),
+            Pattern.compile("java.util.UUID", Pattern.LITERAL),
+            Pattern.compile("java.util.EnumMap", Pattern.LITERAL),
+            Pattern.compile("java.util.EnumSet", Pattern.LITERAL),
+            Pattern.compile("java.util.HashMap", Pattern.LITERAL),
+            Pattern.compile("java.util.HashSet", Pattern.LITERAL),
+            Pattern.compile("java.util.Hashtable", Pattern.LITERAL),
+            Pattern.compile("java.util.LinkedHashMap", Pattern.LITERAL),
+            Pattern.compile("java.util.LinkedHashSet", Pattern.LITERAL),
+            Pattern.compile("java.util.LinkedList", Pattern.LITERAL),
+            Pattern.compile("java.util.RegularEnumSet", Pattern.LITERAL),
+            Pattern.compile("java.util.TreeMap", Pattern.LITERAL),
+            Pattern.compile("java.util.Map", Pattern.LITERAL),
+            Pattern.compile("java.util.TreeSet", Pattern.LITERAL),
+            Pattern.compile("java.util.Vector", Pattern.LITERAL),
 
-      // MegaMek Related
-      Pattern.compile("megamek.*"),
-      Pattern.compile("mekhq.*"),
-      Pattern.compile("megameklab.*"),
-  };
+            // MegaMek Related
+            Pattern.compile("megamek.*"),
+            Pattern.compile("mekhq.*"),
+            Pattern.compile("megameklab.*"),
+    };
 
-  private static final MMLogger logger = MMLogger.create(SanityInputFilter.class);
+    private static final MMLogger logger = MMLogger.create(SanityInputFilter.class);
 
-  @Override
-  public Status checkInput(FilterInfo filterInfo) {
-    Class<?> serialClass = filterInfo.serialClass();
-    if (serialClass == null) {
-      return Status.UNDECIDED;
+    @Override
+    public Status checkInput(FilterInfo filterInfo) {
+        Class<?> serialClass = filterInfo.serialClass();
+        if (serialClass == null) {
+            return Status.UNDECIDED;
+        }
+
+        String className = serialClass.getName();
+
+        for (Pattern pattern : filterList) {
+            Matcher match = pattern.matcher(className);
+
+            if (match.find()) {
+                return Status.ALLOWED;
+            }
+
+            if (className.contains(pattern.toString())) {
+                return Status.ALLOWED;
+            }
+        }
+
+        logger.info("Class is Undecided: {}", className);
+
+        return Status.UNDECIDED;
     }
 
-    String className = serialClass.getName();
-
-    for (Pattern pattern : filterList) {
-      Matcher match = pattern.matcher(className);
-
-      if (match.find()) {
-        return Status.ALLOWED;
-      }
-
-      if (className.contains(pattern.toString())) {
-        return Status.ALLOWED;
-      }
+    public static Pattern[] getFilterList() {
+        return filterList;
     }
-
-    logger.info("Class is Undecided: {}", className);
-
-    return Status.UNDECIDED;
-  }
-
-  public static Pattern[] getFilterList() {
-    return filterList;
-  }
 }

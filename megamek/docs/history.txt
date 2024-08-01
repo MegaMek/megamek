@@ -67,8 +67,12 @@ MEGAMEK VERSION HISTORY:
 + Fix #5796: Prevent NPE when units are ineligible for Physical Attack phase due to having loaded onto a transport this round
 + Fix #5818: correct issue with minimap autodisplay using wrong function
 + PR #5822: Implement RFE 5361: enhance Princess handling of hazardous terrain
-+ Issues #2577, #897, #353: Implement placeable/carryable cargo objects (for mechs and protomechs only at the moment)
++ Issues #2577, #897, #353: Implement placeable/carryable cargo objects (for mechs and protomechs only at the moment) (Carry Objects #5706)
 + Fix #5811, #5831: Updates to unit validation (Heavy Gauss Rifles and RISC Hyper Laser vs. engines), allow Illegal Design quirk to validate illegal units
++ Fix #5769:  Possibly fix ID overlap when reinforcing from MUL
++ PR #5835: Allow bot vs bot in ScenarioV2 and test setup
++ Fix #5833: GameReports: remove error message and deal with missing rounds
++ Fix #5833: Precognition: receive updated ground objects
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
@@ -1209,6 +1213,7 @@ MEGAMEK VERSION HISTORY:
 + New Sprites and Issue #2798 Wolfhounds Missing Full-Head Ejection Systems
 + Data: Issue #2774 - Kaji Maps Update.
 + Data: Updated 1st SW RATs, and some general unit data fixes.
+
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

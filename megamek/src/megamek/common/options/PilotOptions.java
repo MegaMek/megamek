@@ -39,7 +39,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
         addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false);
         // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false);
-        // addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
+        addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
         // addOption(adv, OptionsConstants.PILOT_HOPPER, false);
         addOption(adv, OptionsConstants.PILOT_HOPPING_JACK, false);
         addOption(adv, OptionsConstants.PILOT_HOT_DOG, false);

@@ -71,7 +71,7 @@ public final class DebugEntity {
 
             result.append("Equipment:\n");
             for (int i = 0; i < entity.getEquipment().size(); i++) {
-                result.append("[" + i + "] ").append(entity.getEquipment(i)).append("\n");
+                result.append("[").append(i).append("] ").append(entity.getEquipment(i)).append("\n");
                 if (entity != entity.getEquipment(i).getEntity()) {
                     result.append("Different Entity!");
                 }
@@ -100,7 +100,7 @@ public final class DebugEntity {
                 result.append("Transports:\n");
                 List<Transporter> transports = entity.getTransports();
                 for (int i = 0; i < transports.size(); i++) {
-                    result.append("[" + i + "] ").append(transports.get(i)).append("\n");
+                    result.append("[").append(i).append("] ").append(transports.get(i)).append("\n");
                 }
                 result.append("\n");
             }
@@ -111,7 +111,7 @@ public final class DebugEntity {
                 for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
                     CriticalSlot criticalSlot = entity.getCritical(location, slot);
                     if (criticalSlot != null) {
-                        result.append("[" + slot + "] ").append(criticalSlot);
+                        result.append("[").append(slot).append("] ").append(criticalSlot);
                         if (criticalSlot.getType() == 0) {
                             result.append(" (");
                             if (entity instanceof Mech) {
@@ -127,6 +127,14 @@ public final class DebugEntity {
             }
         } catch (Exception e) {
             result.append("\nAn exception was encountered here. ").append(e.getMessage());
+        }
+
+        if (entity instanceof FighterSquadron) {
+            FighterSquadron fighterSquadron = (FighterSquadron) entity;
+            for (Entity fighter : fighterSquadron.getLoadedUnits()) {
+                result.append("\n\n");
+                result.append(getEquipmentState(fighter));
+            }
         }
 
         return result.toString();

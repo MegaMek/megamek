@@ -29128,14 +29128,14 @@ public class GameManager extends AbstractGameManager {
             if (null != fighter) {
                 formerCarriers.addAll(ServerLobbyHelper.lobbyUnload(game, List.of(fighter)));
                 fs.load(fighter, false);
-                fs.autoSetMaxBombPoints();
                 fighter.setTransportId(fs.getId());
-                // If this is the lounge, we want to configure bombs
-                if (getGame().getPhase().isLounge()) {
-                    ((IBomber) fighter).setBombChoices(fs.getExtBombChoices());
-                }
                 entityUpdate(fighter.getId());
             }
+        }
+        // If this is the lounge, we want to configure bombs
+        fs.autoSetMaxBombPoints();
+        if (!getGame().getPhase().isLounge()) {
+            fs.applyBombs();
         }
         if (!formerCarriers.isEmpty()) {
             send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, formerCarriers));

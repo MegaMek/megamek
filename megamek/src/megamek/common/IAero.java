@@ -197,9 +197,8 @@ public interface IAero {
      * Refresh the capital fighter weapons groups.
      */
     default void updateWeaponGroups() {
-        if (this instanceof FighterSquadron
-                || ((((Entity) this).game != null)
-                && ((Entity) this).game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER))) {
+        if ((this instanceof Entity entity) && (entity.game != null)
+                && entity.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
             // first we need to reset all the weapons in our existing mounts to zero
             // until proven otherwise
             Set<String> set = getWeaponGroups().keySet();

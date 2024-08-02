@@ -29,13 +29,13 @@ public interface ICarryable extends InGameObject {
 	double getTonnage();
 
 	/**
-	 * Damages this carryable object, detracting the given amount of damage from the weight of the carryable object.
-	 * Returns true if the cargo is considered destroyed by applying the damage.
-	 * Note: This method does *not* check if the object is invulnerable; this must be tested by the caller.
+	 * Damages this carryable object by the given amount of damage. Returns true if the cargo is considered
+	 * destroyed by applying the damage.
+	 * Note: This method does *not* check if the object is invulnerable; it is up to the caller to do that.
 	 * Calling this method on an invulnerable carryable object behaves exactly like calling it on a vulnerable
 	 * one.
 	 *
-	 * @param amount The damage (a weight to remove in tons)
+	 * @param amount The damage
 	 * @return True if the cargo is destroyed by the damage, false otherwise
 	 * @see #getTonnage()
 	 */

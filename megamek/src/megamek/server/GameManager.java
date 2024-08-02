@@ -29132,7 +29132,9 @@ public class GameManager extends AbstractGameManager {
                 entityUpdate(fighter.getId());
             }
         }
-        // If this is the lounge, we want to configure bombs
+        fs.updateSkills();
+        fs.updateWeaponGroups();
+        fs.updateSensors();
         fs.autoSetMaxBombPoints();
         if (!getGame().getPhase().isLounge()) {
             fs.applyBombs();

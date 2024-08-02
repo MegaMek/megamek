@@ -21,7 +21,9 @@ package megamek.server.sbf;
 import megamek.common.actions.EntityAction;
 
 /**
- * This interface is implemented by SBF's action handlers, typically attack handlers.
+ * This interface is implemented by SBF's action handlers, typically attack handlers. As in TW,
+ * action handlers are extensions to the GameManager that handle all aspects of an action including
+ * modifying the game object and sending packets upon being called by the GameManager.
  */
 public interface SBFActionHandler extends SBFGameManagerHelper {
 

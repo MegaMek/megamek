@@ -24,9 +24,8 @@ import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.strategicBattleSystems.*;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.apache.logging.log4j.LogManager.*;
+import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
 
@@ -41,27 +40,32 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
 
     @Override
     public void handle() {
-        if (validate()) {
-            SBFStandardUnitAttack attack = (SBFStandardUnitAttack) getAction();
+        SBFStandardUnitAttack attack = (SBFStandardUnitAttack) getAction();
+        if (attack.isDataValid(game())) {
             //noinspection OptionalGetWithoutIsPresent
             SBFFormation attacker = game().getFormation(attack.getEntityId()).get();
             //noinspection OptionalGetWithoutIsPresent
             SBFFormation target = game().getFormation(attack.getTargetId()).get();
-            // Unit number is 1-based
-            SBFUnit attackingUnit = attacker.getUnits().get(attack.getUnitNumber() - 1);
+            SBFUnit attackingUnit = attacker.getUnits().get(attack.getUnitNumber());
             List<SBFUnit> targetUnits = target.getUnits();
             SBFUnit targetUnit = targetUnits.get(0);
 
-            SBFToHitData toHit = SBFToHitData.compiletoHit(
-                    new SBFToHitData.ActionEnvironment(game(), attacker, attackingUnit, target, attack));
+            SBFToHitData toHit = SBFToHitData.compiletoHit(game(), attack);
+            SBFReportEntry report = new SBFReportEntry(2001).noNL();
+            report.add(new SBFUnitReportEntry(attacker, attack.getUnitNumber(), ownerColor(attacker, game())).text());
+            report.add(new SBFFormationReportEntry(target, game()).text());
+            addReport(report);
 
             if (toHit.cannotSucceed()) {
-                addReport(new SBFReportEntry(2010));
+                addReport(new SBFReportEntry(2010).add(toHit.getDesc()));
             } else {
+                addReport(new SBFReportEntry(2003).add(toHit.getValue()).noNL());
                 Roll roll = Compute.rollD6(2);
-                addReport(new SBFPlayerNameReportEntry(game().getPlayer(attacker.getOwnerId())));
-                addReport(new SBFPublicReportEntry(1015).noNL());
-                addReport(new SBFRollReportEntry(roll).noNL());
+                report = new SBFReportEntry(2020).noNL();
+                report.add(new SBFPlayerNameReportEntry(game().getPlayer(attacker.getOwnerId())).text());
+                report.add(new SBFRollReportEntry(roll).noNL().text());
+                addReport(report);
+
                 if (roll.getIntValue() < toHit.getValue()) {
                     addReport(new SBFPublicReportEntry(2012));
                 } else {
@@ -89,29 +93,4 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
         }
         setFinished();
     }
-
-    private boolean validate() {
-        SBFStandardUnitAttack attack = (SBFStandardUnitAttack) getAction();
-        Optional<SBFFormation> possibleAttacker = game().getFormation(attack.getEntityId());
-        Optional<SBFFormation> possibleTarget = game().getFormation(attack.getTargetId());
-        if (attack.getEntityId() == attack.getTargetId()) {
-            getLogger().error("Formations cannot attack themselves! {}", attack);
-            return false;
-        } else if (possibleAttacker.isEmpty()) {
-            getLogger().error("Could not find attacking formation! {}", attack);
-            return false;
-        } else if (possibleTarget.isEmpty()) {
-            getLogger().error("Could not find target formation! {}", attack);
-            return false;
-        } else if (possibleAttacker.get().getUnits().size() < attack.getUnitNumber()
-                || attack.getUnitNumber() < 1) {
-            getLogger().error("SBF Unit not found! {}", attack);
-            return false;
-        } else if (possibleTarget.get().getUnits().isEmpty()) {
-            getLogger().error("Target has no units! {}", attack);
-            return false;
-        }
-        return true;
-    }
-
 }

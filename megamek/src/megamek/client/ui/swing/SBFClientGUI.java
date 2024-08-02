@@ -27,7 +27,6 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
 import megamek.common.Coords;
 import megamek.common.Game;
-import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
@@ -118,13 +117,11 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private final Map<String, String> mainNames = new HashMap<>();
 
     private final GameListener gameListener = new SBFClientGUIGameListener(this);
-    private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
+    protected final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
     private BoardView bv;
     private SBFFormationSpriteHandler formationSpriteHandler;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovePathSpriteHandler movePathSpriteHandler;
-
-    private final SBFTargetDialog targetDialog;
 
     public SBFClientGUI(SBFClient client, MegaMekController c) {
         super(client);
@@ -146,7 +143,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
         miniReportDisplayDialog = new JDialog(getFrame());
         reportPanel = new SBFReportPanel(this);
-        targetDialog = new SBFTargetDialog(getFrame(), client.getGame());
     }
 
     private final ComponentListener resizeListener = new ComponentAdapter() {
@@ -162,7 +158,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     @Override
     protected void initializeFrame() {
         super.initializeFrame();
-        frame.setJMenuBar(menuBar);
     }
 
     protected Game bvGame = new Game();
@@ -498,18 +493,5 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     public void showMovePath(@Nullable SBFMovePath movePath) {
         movePathSpriteHandler.update(movePath);
-    }
-
-    public void showTargetDialog() {
-        targetDialog.setVisible(true);
-    }
-
-    public void showTargetDialog(InGameObject target) {
-        targetDialog.setTarget(target);
-        targetDialog.setVisible(true);
-    }
-
-    public void hideTargetDialog() {
-        targetDialog.setVisible(false);
     }
 }

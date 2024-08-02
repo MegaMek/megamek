@@ -19,9 +19,15 @@
 package megamek.common.actions.sbf;
 
 import megamek.common.alphaStrike.ASRange;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.sbf.SBFActionHandler;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.sbf.SBFStandardUnitAttackHandler;
+
+import java.util.Optional;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
 
@@ -60,5 +66,28 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
     @Override
     public SBFActionHandler getHandler(SBFGameManager gameManager) {
         return new SBFStandardUnitAttackHandler(this, gameManager);
+    }
+
+    public boolean isDataValid(SBFGame game) {
+        Optional<SBFFormation> possibleAttacker = game.getFormation(getEntityId());
+        Optional<SBFFormation> possibleTarget = game.getFormation(getTargetId());
+        if (getEntityId() == getTargetId()) {
+            getLogger().error("Formations cannot attack themselves! {}", this);
+            return false;
+        } else if (possibleAttacker.isEmpty()) {
+            getLogger().error("Could not find attacking formation! {}", this);
+            return false;
+        } else if (possibleTarget.isEmpty()) {
+            getLogger().error("Could not find target formation! {}", this);
+            return false;
+        } else if ((getUnitNumber() >= possibleAttacker.get().getUnits().size())
+                || (getUnitNumber() < 0)) {
+            getLogger().error("SBF Unit not found! {}", this);
+            return false;
+        } else if (possibleTarget.get().getUnits().isEmpty()) {
+            getLogger().error("Target has no units! {}", this);
+            return false;
+        }
+        return true;
     }
 }

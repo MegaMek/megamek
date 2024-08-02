@@ -287,6 +287,6 @@ public class TargetRoll implements Serializable {
      * even if the total roll modifier is above 12.
      */
     public boolean cannotSucceed() {
-        return (getValue() != IMPOSSIBLE) && (getValue() != AUTOMATIC_FAIL);
+        return (getValue() == IMPOSSIBLE) || (getValue() == AUTOMATIC_FAIL);
     }
 }

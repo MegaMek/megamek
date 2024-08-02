@@ -18,10 +18,18 @@
  */
 package megamek.common.actions.sbf;
 
-public interface SBFAttackAction extends SBFAction {
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.server.sbf.SBFActionHandler;
+import megamek.server.sbf.SBFGameManager;
 
-    /**
-     * @return The game ID of the target of the attack
-     */
-    int getTargetId();
+public class SBFIndirectArtilleryAttack extends SBFArtilleryAttack {
+
+    public SBFIndirectArtilleryAttack(int entityId, int targetId, BattleForceSUA artilleryType) {
+        super(entityId, targetId, artilleryType);
+    }
+
+    @Override
+    public SBFActionHandler getHandler(SBFGameManager gameManager) {
+        return null;
+    }
 }

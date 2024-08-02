@@ -43,6 +43,7 @@ public class SBFReportEntry implements ReportEntry {
     private final int messageId;
     private final List<DataEntry> data = new ArrayList<>();
     private boolean endLine = true;
+    private boolean endSpace = false;
     private int indentation = 0;
 
     public SBFReportEntry(int messageId) {
@@ -188,13 +189,18 @@ public class SBFReportEntry implements ReportEntry {
         return this;
     }
 
+    public SBFReportEntry endSpace() {
+        endSpace = true;
+        return this;
+    }
+
     public SBFReportEntry addNL() {
         endLine = true;
         return this;
     }
 
     private String lineEnd() {
-        return endLine ? "<BR>" : "";
+        return (endSpace ? " " : "") + (endLine ? "<BR>" : "");
     }
 
     protected String reportText() {

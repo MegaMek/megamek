@@ -24,26 +24,23 @@ import megamek.common.IGame;
 import megamek.common.InGameObject;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.*;
 
-import java.util.List;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 public final class SBFInGameObjectTooltip {
 
+    public static final int TOOLTIP_BASE_WIDTH = 420;
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String SHORT = "&nbsp;";
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
-    private static final int BASE_WIDTH = 420;
     private static final int BASE_UNIT_NAME_WIDTH = 110;
 
     public static String styles() {
@@ -74,24 +71,51 @@ public final class SBFInGameObjectTooltip {
         Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : Color.BLACK;
         String styleColor = Integer.toHexString(ownerColor.getRGB() & 0xFFFFFF);
-        int width = UIUtil.scaleForGUI(BASE_WIDTH);
+        int width = UIUtil.scaleForGUI(TOOLTIP_BASE_WIDTH);
         result.append("<div style=\"width:").append(width)
                 .append("; padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
                 .append(styleColor).append(";\">");
         result.append(nameLines(unit, game));
         result.append(formationStats(unit));
-
-        Predicate<EntityAction> thisFormation = a -> a.getEntityId() == unit.getId();
-        List<EntityAction> actions = game.getActionsVector().stream().filter(thisFormation).toList();
-        for (EntityAction action : actions) {
-            if (action instanceof SBFStandardUnitAttack attack) {
-                result.append("Attacking! Unit: " + attack.getUnitNumber() + " Target: " + attack.getTargetId());
-            }
+        if (unit instanceof SBFFormation formation) {
+            result.append(unitsStats(formation));
         }
 
+//        Predicate<EntityAction> thisFormation = a -> a.getEntityId() == unit.getId();
+//        List<EntityAction> actions = game.getActionsVector().stream().filter(thisFormation).toList();
+//        for (EntityAction action : actions) {
+//            if (action instanceof SBFStandardUnitAttack attack) {
+//                result.append("Attacking! Unit: " + attack.getUnitNumber() + " Target: " + attack.getTargetId());
+//            }
+//        }
 
         result.append("</div>");
         return result.toString();
+    }
+
+    public static String getBaseTooltip(InGameObject unit, @Nullable SBFGame game) {
+        StringBuilder result = new StringBuilder();
+        int width = UIUtil.scaleForGUI(TOOLTIP_BASE_WIDTH) - 4;
+        result.append("<div style='width:").append(width).append("; padding:0 10; margin: 5 0; '>");
+        result.append(nameLines(unit, game));
+        result.append(formationStats(unit));
+        result.append("</div>");
+        return result.toString();
+    }
+
+    /**
+     * Returns the Color of the owner of the unit (InGameObject) or Color.GRAY, if it cannot be found.
+     *
+     * @param unit The unit
+     * @param game The game of that unit
+     * @return The owning player's color or GRAY
+     */
+    public static Color ownerColor(@Nullable InGameObject unit, @Nullable IGame game) {
+        try {
+            return game.getPlayer(unit.getOwnerId()).getColour().getColour();
+        } catch (NullPointerException exception) {
+            return Color.GRAY;
+        }
     }
 
     private static StringBuilder nameLines(InGameObject unit, @Nullable IGame game) {
@@ -189,12 +213,8 @@ public final class SBFInGameObjectTooltip {
                 .append(tdCSS("label", "SPEC"))
                 .append(tdCSS("valuecell", stats.spec));
         result.append("</TR></TABLE>");
-        if (unit instanceof SBFFormation formation) {
-            result.append(unitsStats(formation));
-        }
         return result;
     }
-
 
     private static StringBuilder unitsStats(SBFFormation formation) {
         StringBuilder result = new StringBuilder();
@@ -204,7 +224,7 @@ public final class SBFInGameObjectTooltip {
         return result;
     }
 
-    private static StringBuilder unitLine(SBFUnit unit) {
+    public static StringBuilder unitLine(SBFUnit unit) {
         StringBuilder result = new StringBuilder();
 
         String armorCss = unit.hasArmorDamage() ? "valuedmg" : "armornodmg";

@@ -20,9 +20,12 @@ package megamek.server.sbf;
 
 import megamek.common.actions.EntityAction;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFToHitData;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 record SBFAttackProcessor(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
@@ -45,7 +48,11 @@ record SBFAttackProcessor(SBFGameManager gameManager) implements SBFGameManagerH
         } else if (formation.isDone()) {
             LogManager.getLogger().error("Formation already done!");
             return false;
+        } else if (SBFToHitData.targetsOfFormation(formation, game()).size() > 2) {
+            getLogger().error("Formation targeting too many targets!");
+            return false;
         }
+
         return true;
     }
 }

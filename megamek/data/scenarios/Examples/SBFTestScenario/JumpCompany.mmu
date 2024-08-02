@@ -19,7 +19,6 @@ units:
     fullname: Shadow Hawk SHD-7H
 - type: SBFUnit
   generalname: Battle Lance
-  status: com
   elements:
   - type: ASElement
     fullname: Thug THG-11E

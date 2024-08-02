@@ -1184,7 +1184,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Add this Entity, ensuring that its id is unique
         int id = entity.getId();
-        if (inGameObjects.containsKey(id)) {
+        if (isIdUsed(id)) {
             id = getNextEntityId();
             entity.setId(id);
         }
@@ -1209,6 +1209,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
         }
+    }
+
+    /**
+     * @return true if the given ID is in use among active and dead units
+     */
+    private boolean isIdUsed(int id) {
+        return inGameObjects.containsKey(id) || isOutOfGame(id);
     }
 
     public void setEntity(int id, Entity entity) {
@@ -3273,13 +3280,41 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
     }
+    
+    /**
+     * Place a carryable object on the ground at the given coordinates
+     */
+    public void placeGroundObject(Coords coords, ICarryable carryable) {
+    	if (!getGroundObjects().containsKey(coords)) {
+    		getGroundObjects().put(coords, new ArrayList<>());
+    	}
 
+    	getGroundObjects().get(coords).add(carryable);
+    }
+
+    /**
+     * Remove the given carryable object from the ground at the given coordinates
+     */
+    public void removeGroundObject(Coords coords, ICarryable carryable) {
+    	if (getGroundObjects().containsKey(coords)) {
+    		getGroundObjects().get(coords).remove(carryable);
+    	}
+    }
+
+    /**
+     * Get a list of all the objects on the ground at the given coordinates
+     * guaranteed to return non-null, but may return empty list
+     */
+    public List<ICarryable> getGroundObjects(Coords coords) {
+    	return getGroundObjects().containsKey(coords) ? getGroundObjects().get(coords) : new ArrayList<>();
+    }
+    
     /**
      * Get a list of all objects on the ground at the given coordinates
      * that can be picked up by the given entity
      */
     public List<ICarryable> getGroundObjects(Coords coords, Entity entity) {
-        if (!groundObjects.containsKey(coords)) {
+        if (!getGroundObjects().containsKey(coords)) {
             return new ArrayList<>();
         }
 
@@ -3291,7 +3326,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         double maxTonnage = entity.maxGroundObjectTonnage();
         ArrayList<ICarryable> result = new ArrayList<>();
 
-        for (ICarryable object : groundObjects.get(coords)) {
+        for (ICarryable object : getGroundObjects().get(coords)) {
             if (maxTonnage >= object.getTonnage()) {
                 result.add(object);
             }
@@ -3299,6 +3334,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         return result;
     }
+    
+    /**
+	 * @return Collection of objects on the ground. Best to use getGroundObjects(Coords) 
+	 * if looking for objects in specific hex
+	 */
+	public Map<Coords, List<ICarryable>> getGroundObjects() {
+		if (groundObjects == null) {
+			groundObjects = new HashMap<>();
+		}
+
+		return groundObjects;
+	}
 
 	/**
      * Cancels a victory

@@ -28,7 +28,10 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ChatterBox2;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.EntityChoiceDialog;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
@@ -69,7 +72,8 @@ import java.util.Queue;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.client.ui.swing.tileset.HexTileset.*;
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_H;
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -3587,15 +3591,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if ((ae == null) || (te == null)) {
                 boolean mechInFirst = GUIP.getMechInFirst();
                 boolean mechInSecond = GUIP.getMechInSecond();
-                LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
-                ai.attackPos = c1;
-                ai.targetPos = c2;
-                ai.attackHeight = mechInFirst ? 1 : 0;
-                ai.targetHeight = mechInSecond ? 1 : 0;
-                ai.targetIsMech = mechInSecond;
-                ai.attackerIsMech = mechInFirst;
-                ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
-                ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+
+                LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
+                        game, ae, te, c1, c2, mechInFirst, mechInSecond);
+
                 le = LosEffects.calculateLos(game, ai);
                 message.append(Messages.getString("BoardView1.Attacker",
                         mechInFirst ? Messages.getString("BoardView1.Mech")

@@ -109,7 +109,9 @@ public class BipedMech extends Mech {
     		percentage += 0.05;
     	}
     	
-    	return getWeight() * percentage;
+    	double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+    	
+    	return getWeight() * percentage * heavyLifterMultiplier;
     }
     
     @Override

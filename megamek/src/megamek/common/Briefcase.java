@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -25,9 +24,6 @@ import java.io.Serializable;
  * Represents a basic carryable object with no additional other properties
  */
 public class Briefcase implements ICarryable, Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8849879320465375457L;
 	
 	private double tonnage;
@@ -35,7 +31,8 @@ public class Briefcase implements ICarryable, Serializable {
 	private boolean invulnerable;
 	private int id;
 	private int ownerId;
-	
+
+	@Override
 	public boolean damage(double amount) {
 		tonnage -= amount;
 		return tonnage <= 0;
@@ -44,11 +41,13 @@ public class Briefcase implements ICarryable, Serializable {
 	public void setTonnage(double value) {
 		tonnage = value;
 	}
-	
+
+	@Override
 	public double getTonnage() {
 		return tonnage;
 	}
-	
+
+	@Override
 	public boolean isInvulnerable() {
 		return invulnerable;
 	}
@@ -60,11 +59,13 @@ public class Briefcase implements ICarryable, Serializable {
 	public void setName(String value) {
 		name = value;
 	}
-	
+
+	@Override
 	public String generalName() {
 		return name;
 	}
-	
+
+	@Override
 	public String specificName() {
 		return name + " (" + tonnage + " tons)";
 	}

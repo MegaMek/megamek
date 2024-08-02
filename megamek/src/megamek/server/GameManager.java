@@ -21292,12 +21292,12 @@ public class GameManager extends AbstractGameManager {
         			}
         			
         			double tonnage = cargo.getTonnage();
-        			cargo.damage(damageLeftToCargo);
+                    boolean cargoDestroyed = cargo.damage(damageLeftToCargo);
         			damageLeftToCargo -= Math.ceil(tonnage);
         			
         			// if we have destroyed the cargo, remove it, add a report
         			// and move on to the next piece of cargo
-        			if (cargo.getTonnage() <= 0) {
+        			if (cargoDestroyed) {
         				te.dropGroundObject(cargo, false);
         				
         				r = new Report(6721);

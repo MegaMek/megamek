@@ -361,15 +361,15 @@ public abstract class AbstractGame implements IGame {
      * Place a carryable object on the ground at the given coordinates
      */
     public void placeGroundObject(Coords coords, ICarryable carryable) {
-        groundObjects.computeIfAbsent(coords, k -> new ArrayList<>()).add(carryable);
+        getGroundObjects().computeIfAbsent(coords, k -> new ArrayList<>()).add(carryable);
     }
 
     /**
      * Remove the given carryable object from the ground at the given coordinates
      */
     public void removeGroundObject(Coords coords, ICarryable carryable) {
-        if (groundObjects.containsKey(coords)) {
-            groundObjects.get(coords).remove(carryable);
+        if (getGroundObjects().containsKey(coords)) {
+            getGroundObjects().get(coords).remove(carryable);
         }
     }
 
@@ -378,7 +378,7 @@ public abstract class AbstractGame implements IGame {
      * guaranteed to return non-null, but may return empty list
      */
     public List<ICarryable> getGroundObjects(Coords coords) {
-        return groundObjects.getOrDefault(coords, new ArrayList<>());
+        return getGroundObjects().getOrDefault(coords, new ArrayList<>());
     }
 
     /**

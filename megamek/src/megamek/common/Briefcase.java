@@ -36,8 +36,9 @@ public class Briefcase implements ICarryable, Serializable {
 	private int id;
 	private int ownerId;
 	
-	public void damage(double amount) {
+	public boolean damage(double amount) {
 		tonnage -= amount;
+		return tonnage <= 0;
 	}
 	
 	public void setTonnage(double value) {

@@ -104,7 +104,6 @@ public class MechViewPanel extends JPanel {
         add(sp);
         addMouseWheelListener(wheelForwarder);
 
-        fluffImageLabel.addMouseListener(mouseListener);
         nextImageButton.addActionListener(e -> showNextFluffImage());
         prevImageButton.addActionListener(e -> showPrevFluffImage());
     }
@@ -170,13 +169,6 @@ public class MechViewPanel extends JPanel {
         MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MechViewPanel.this, e, scrMek);
         for (MouseWheelListener listener : scrMek.getMouseWheelListeners()) {
             listener.mouseWheelMoved(converted);
-        }
-    };
-
-    private final MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            showNextFluffImage();
         }
     };
 

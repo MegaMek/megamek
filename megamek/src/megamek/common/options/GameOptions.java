@@ -267,6 +267,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false);
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false);
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE, false);
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false);
 
         IBasicOptionGroup initiative = addGroup("initiative");

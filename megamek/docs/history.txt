@@ -75,6 +75,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5833: GameReports: remove error message and deal with missing rounds
 + Fix #5833: Precognition: receive updated ground objects
 + Fix #5825: ASF Low Altitude LOS, levels, and ground map terrain blocking
++ PR #5845: Force destruction of out-of-control DropShips and larger (implements #770)
 
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)

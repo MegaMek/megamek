@@ -608,8 +608,8 @@ public class GameManager extends AbstractGameManager {
                 receiveDeployMinefields(packet, connId);
                 break;
             case UPDATE_GROUND_OBJECTS:
-            	receiveGroundObjectUpdate(packet, connId);
-            	break;
+                receiveGroundObjectUpdate(packet, connId);
+                break;
             case ENTITY_ATTACK:
                 receiveAttack(packet, connId);
                 break;
@@ -1499,13 +1499,13 @@ public class GameManager extends AbstractGameManager {
             bvcPlayer.unitsModerateDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_MODERATE, game);
             bvcPlayer.unitsHeavyDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_HEAVY, game);
             bvcPlayer.unitsCrippledCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_CRIPPLED, game);
-            bvcPlayer.unitsDestroyedCount =  ServerReportsHelper.getUnitDestroyedCount(player, game);
+            bvcPlayer.unitsDestroyedCount = ServerReportsHelper.getUnitDestroyedCount(player, game);
             bvcPlayer.unitsCrewEjectedCount = ServerReportsHelper.getUnitCrewEjectedCount(player, game);
             bvcPlayer.unitsCrewTrappedCount = ServerReportsHelper.getUnitCrewTrappedCount(player, game);
             bvcPlayer.unitsCrewKilledCount = ServerReportsHelper.getUnitCrewKilledCount(player, game);
             bvcPlayer.unitsFledCount = ServerReportsHelper.getFledUnitsCount(player, game);
             bvcPlayer.ejectedCrewActiveCount = ServerReportsHelper.getEjectedCrewCount(player, game);
-            bvcPlayer.ejectedCrewPickedUpByTeamCount =  ServerReportsHelper.getEjectedCrewPickedUpByTeamCount(player, game);
+            bvcPlayer.ejectedCrewPickedUpByTeamCount = ServerReportsHelper.getEjectedCrewPickedUpByTeamCount(player, game);
             bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount = ServerReportsHelper.getEjectedCrewPickedUpByEnemyTeamCount(player, game);
             bvcPlayer.ejectedCrewKilledCount = ServerReportsHelper.getEjectedCrewKilledCount(player, game);
             bvcPlayer.ejectedCrewFledCount = ServerReportsHelper.getFledEjectedCrew(player, game);
@@ -2186,7 +2186,7 @@ public class GameManager extends AbstractGameManager {
      * @param phase the <code>int</code> id of the phase
      */
     private void determineTurnOrderIUI(GamePhase phase) {
-        for (Iterator<Entity> loop = game.getEntities(); loop.hasNext();) {
+        for (Iterator<Entity> loop = game.getEntities(); loop.hasNext(); ) {
             final Entity entity = loop.next();
             entity.resetOtherTurns();
             if (entity.isSelectableThisTurn()) {
@@ -2272,23 +2272,23 @@ public class GameManager extends AbstractGameManager {
         boolean infMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_EVEN)
                 && (game.getPhase().isInitiative() || game.getPhase().isMovement()))
                 || (game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN)
-                        && game.getPhase().isDeployment());
+                && game.getPhase().isDeployment());
         boolean infMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
                 && (game.getPhase().isInitiative() || game.getPhase().isMovement()
-                        || game.getPhase().isDeployment());
+                || game.getPhase().isDeployment());
         boolean protosMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)
                 && (game.getPhase().isInitiative() || game.getPhase().isMovement()
-                        || game.getPhase().isDeployment()))
+                || game.getPhase().isDeployment()))
                 || (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)
-                        && game.getPhase().isDeployment());
+                && game.getPhase().isDeployment());
         boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean protosMoveByPoint = !protosMoveMulti;
         boolean tankMoveByLance = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
                 && (game.getPhase().isInitiative() || game.getPhase().isMovement()
-                        || game.getPhase().isDeployment());
+                || game.getPhase().isDeployment());
         boolean mekMoveByLance = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
                 && (game.getPhase().isInitiative() || game.getPhase().isMovement()
-                        || game.getPhase().isDeployment());
+                || game.getPhase().isDeployment());
 
         int evenMask = 0;
         if (infMoveEven) {
@@ -2351,7 +2351,7 @@ public class GameManager extends AbstractGameManager {
         // Go through all entities, and update the turn categories of the
         // entity's player. The teams get their totals from their players.
         // N.B. ProtoMechs declare weapons fire based on their point.
-        for (Iterator<Entity> loop = game.getEntities(); loop.hasNext();) {
+        for (Iterator<Entity> loop = game.getEntities(); loop.hasNext(); ) {
             final Entity entity = loop.next();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
@@ -2504,7 +2504,7 @@ public class GameManager extends AbstractGameManager {
                     // turns during the movement phase
                     if (getGame().getPhase().isMovement() || getGame().getPhase().isDeployment()) {
                         turn = new EntityClassTurn(player.getId(), ~aeroMask);
-                    } else if (getGame().getPhase().isPremovement() || getGame().getPhase().isPrefiring()){
+                    } else if (getGame().getPhase().isPremovement() || getGame().getPhase().isPrefiring()) {
                         turn = new PrephaseTurn(player.getId());
                     } else {
                         turn = new GameTurn(player.getId());
@@ -4087,8 +4087,8 @@ public class GameManager extends AbstractGameManager {
             }
 
             // Have skidding units suffer falls (off a cliff).
-            else if ( (curAltitude > (nextAltitude + entity.getMaxElevationChange())
-                    || (curHex.hasCliffTopTowards(nextHex) && curAltitude > nextAltitude) )
+            else if ((curAltitude > (nextAltitude + entity.getMaxElevationChange())
+                    || (curHex.hasCliffTopTowards(nextHex) && curAltitude > nextAltitude))
                     && !(entity.getMovementMode() == EntityMovementMode.WIGE && elevation > curHex.ceiling())) {
                 addReport(doEntityFallsInto(entity, entity.getElevation(), curPos, nextPos,
                         entity.getBasePilotingRoll(moveType), true));
@@ -4592,7 +4592,7 @@ public class GameManager extends AbstractGameManager {
      * @param lastStepMoveType  The <code>EntityMovementType</code> of the last step in the path.
      * @param distance  The distance moved so far during the phase; used to calculate any potential skid.
      * @param modifier  The modifier to the maneuver failure roll.
-     * @return          true if the maneuver failure result ends the unit's turn.
+     * @return true if the maneuver failure result ends the unit's turn.
      */
     private boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection,
                                                  MoveStep prevStep, boolean isBackwards, EntityMovementType lastStepMoveType, int distance,
@@ -4657,7 +4657,7 @@ public class GameManager extends AbstractGameManager {
             r.messageId = 2507;
             // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
             if (turnDirection == 0) {
-                turnDirection = Compute.d6() < 4? -1 : 1;
+                turnDirection = Compute.d6() < 4 ? -1 : 1;
             } else {
                 turnDirection *= 2;
             }
@@ -4667,7 +4667,7 @@ public class GameManager extends AbstractGameManager {
             r.messageId = 2508;
             // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
             if (turnDirection == 0) {
-                turnDirection = Compute.d6() < 4? -1 : 1;
+                turnDirection = Compute.d6() < 4 ? -1 : 1;
             } else {
                 turnDirection *= 2;
             }
@@ -4898,6 +4898,7 @@ public class GameManager extends AbstractGameManager {
     private Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<>();
         Report r;
+        boolean destroyDropShip = false; // save for later
         if (c == null) {
             r = new Report(9701);
             r.subject = entity.getId();
@@ -4913,6 +4914,11 @@ public class GameManager extends AbstractGameManager {
             vReport.add(r);
             entity.setDoomed(true);
         } else {
+            // If out of control, destruction (of DropShips and larger) is assured.
+            destroyDropShip = (entity instanceof Dropship || entity instanceof Jumpship)
+                    && ((IAero) entity).isOutControlTotal();
+
+            // Technically bring to a halt; actual landing is handled elsewhere.
             ((IAero) entity).land();
         }
 
@@ -4930,6 +4936,7 @@ public class GameManager extends AbstractGameManager {
             crateredElevation = h.getLevel() - 2;
         }
         if (entity instanceof Dropship) {
+            Dropship ds = (Dropship) entity;
             for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
                 if (!game.getBoard().contains(adjCoords)) {
@@ -5161,6 +5168,14 @@ public class GameManager extends AbstractGameManager {
             }
         }
 
+        if (destroyDropShip) {
+            // Out-of-control DropShip that crashes is automatically destroyed.
+            r = new Report(9708, Report.PUBLIC);
+            r.indent();
+            r.addDesc(entity);
+            vReport.addAll(destroyEntity(entity, "Crashed while out of control!"));
+        }
+
         return vReport;
     }
 
@@ -5301,14 +5316,14 @@ public class GameManager extends AbstractGameManager {
             game.removeEntity(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED);
             send(createRemoveEntityPacket(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED));
         }
-        
+
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-        	r = new Report(2016, Report.PUBLIC);
-        	r.indent();
-        	r.add(cargo.generalName());
-        	addReport(r);
+            r = new Report(2016, Report.PUBLIC);
+            r.indent();
+            r.add(cargo.generalName());
+            addReport(r);
         }
-        
+
         entity.setRetreatedDirection(fleeDirection);
         game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
@@ -5353,7 +5368,7 @@ public class GameManager extends AbstractGameManager {
                 Coords legalPos = entity.getPosition();
                 //Get the step so we can pass it in and get the abandon coords from it
                 for (final Enumeration<MoveStep> i = md.getSteps(); i
-                        .hasMoreElements();) {
+                        .hasMoreElements(); ) {
                     final MoveStep step = i.nextElement();
                     if (step.getType() == MovePath.MoveStepType.EJECT) {
                         legalPos = step.getTargetPosition();
@@ -5577,7 +5592,7 @@ public class GameManager extends AbstractGameManager {
 
         Vector<UnitLocation> movePath = new Vector<>();
         EntityMovementType lastStepMoveType = md.getLastStepMovementType();
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
             EntityMovementType stepMoveType = step.getMovementType(md.isEndStep(step));
             wasProne = entity.isProne();
@@ -6531,7 +6546,7 @@ public class GameManager extends AbstractGameManager {
                     if (mof > 0) {
                         if (processFailedVehicleManeuver(entity, curPos,
                                 step.getFacing() - curFacing,
-                                (null == prevStep) ?step : prevStep,
+                                (null == prevStep) ? step : prevStep,
                                 step.isThisStepBackwards(),
                                 lastStepMoveType, distance, mof, mof)) {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
@@ -6877,7 +6892,7 @@ public class GameManager extends AbstractGameManager {
             boolean jumpedIntoMagma = false;
             if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
                 jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
-                if (firstHex.terrainLevel(Terrains.MAGMA) == 2){
+                if (firstHex.terrainLevel(Terrains.MAGMA) == 2) {
                     r = new Report(2404);
                     r.addDesc(entity);
                     r.subject = entity.getId();
@@ -7273,83 +7288,83 @@ public class GameManager extends AbstractGameManager {
             } // End STEP_MOUNT
 
             if (step.getType() == MovePath.MoveStepType.PICKUP_CARGO) {
-            	var groundObjects = game.getGroundObjects(step.getPosition());
-            	Integer cargoPickupIndex;
-            	
-            	// if there's only one object on the ground, let's just get that one and ignore any parameters
-            	if (groundObjects.size() == 1) {
-            		cargoPickupIndex = 0;
-            	} else {
-                	cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY);
-            	}
-            	
-            	Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
-            	
-            	// there have to be objects on the ground and we have to be trying to pick up one of them
-            	if ((groundObjects.size() > 0) &&
-            			 (cargoPickupIndex != null) && (cargoPickupIndex >= 0) && (cargoPickupIndex < groundObjects.size())) {
-            		
-            		ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
-            		if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
-            			game.removeGroundObject(step.getPosition(), pickupTarget);
-            			entity.pickupGroundObject(pickupTarget, cargoPickupLocation);
+                var groundObjects = game.getGroundObjects(step.getPosition());
+                Integer cargoPickupIndex;
 
-            			r = new Report(2513);
-            			r.subject = entity.getId();
-                    	r.add(entity.getDisplayName());
-                    	r.add(pickupTarget.specificName());
-                    	r.add(step.getPosition().toFriendlyString());
-                    	addReport(r);
-                    	
-                    	// a pickup should be the last step. Send an update for the overall ground object list.
+                // if there's only one object on the ground, let's just get that one and ignore any parameters
+                if (groundObjects.size() == 1) {
+                    cargoPickupIndex = 0;
+                } else {
+                    cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY);
+                }
+
+                Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
+
+                // there have to be objects on the ground and we have to be trying to pick up one of them
+                if ((groundObjects.size() > 0) &&
+                        (cargoPickupIndex != null) && (cargoPickupIndex >= 0) && (cargoPickupIndex < groundObjects.size())) {
+
+                    ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
+                    if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+                        game.removeGroundObject(step.getPosition(), pickupTarget);
+                        entity.pickupGroundObject(pickupTarget, cargoPickupLocation);
+
+                        r = new Report(2513);
+                        r.subject = entity.getId();
+                        r.add(entity.getDisplayName());
+                        r.add(pickupTarget.specificName());
+                        r.add(step.getPosition().toFriendlyString());
+                        addReport(r);
+
+                        // a pickup should be the last step. Send an update for the overall ground object list.
                         sendGroundObjectUpdate();
                         break;
-            		} else {
-            			LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up object but it is too heavy. Carry capacity: " 
-            					+ entity.maxGroundObjectTonnage() + ", object weight: " + pickupTarget.getTonnage());
-            		}
-            	} else {
-            		LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up non existent object at coords " 
-            					+ step.getPosition() + ", index " + cargoPickupIndex);
-            	}
+                    } else {
+                        LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up object but it is too heavy. Carry capacity: "
+                                + entity.maxGroundObjectTonnage() + ", object weight: " + pickupTarget.getTonnage());
+                    }
+                } else {
+                    LogManager.getLogger().warn(entity.getShortName() + " attempted to pick up non existent object at coords "
+                            + step.getPosition() + ", index " + cargoPickupIndex);
+                }
             }
-            
+
             if (step.getType() == MovePath.MoveStepType.DROP_CARGO) {
-            	Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
-            	ICarryable cargo;
-            	
-            	// if we're not supplied a specific location, then the assumption is we only have one
-            	// piece of cargo and we're going to just drop that one
-            	if (cargoLocation == null) {
-            		cargo = entity.getDistinctCarriedObjects().get(0);
-            	} else {
-            		cargo = entity.getCarriedObject(cargoLocation);
-            	}
-            	
-            	entity.dropGroundObject(cargo, isLastStep);
-            	boolean cargoDestroyed = false;
-            	
-            	if (!isLastStep) {
-            		cargoDestroyed = damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
-            	}
+                Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
+                ICarryable cargo;
 
-            	// note that this should not be moved into the "!isLastStep" block above
-            	// as cargo may be either unloaded peacefully or dumped on the move
-            	if (!cargoDestroyed) {
-	            	game.placeGroundObject(step.getPosition(), cargo);
+                // if we're not supplied a specific location, then the assumption is we only have one
+                // piece of cargo and we're going to just drop that one
+                if (cargoLocation == null) {
+                    cargo = entity.getDistinctCarriedObjects().get(0);
+                } else {
+                    cargo = entity.getCarriedObject(cargoLocation);
+                }
 
-	            	r = new Report(2514);
-	            	r.subject = entity.getId();
-	            	r.add(entity.getDisplayName());
-	            	r.add(cargo.generalName());
-	            	r.add(step.getPosition().toFriendlyString());
-	            	addReport(r);
-	            	
-	            	// a drop changes board state. Send an update for the overall ground object list.
-	                sendGroundObjectUpdate();
-            	}
+                entity.dropGroundObject(cargo, isLastStep);
+                boolean cargoDestroyed = false;
+
+                if (!isLastStep) {
+                    cargoDestroyed = damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
+                }
+
+                // note that this should not be moved into the "!isLastStep" block above
+                // as cargo may be either unloaded peacefully or dumped on the move
+                if (!cargoDestroyed) {
+                    game.placeGroundObject(step.getPosition(), cargo);
+
+                    r = new Report(2514);
+                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(cargo.generalName());
+                    r.add(step.getPosition().toFriendlyString());
+                    addReport(r);
+
+                    // a drop changes board state. Send an update for the overall ground object list.
+                    sendGroundObjectUpdate();
+                }
             }
-            
+
             // handle fighter recovery, and also DropShip docking with another large craft
             if (step.getType() == MovePath.MoveStepType.RECOVER) {
 
@@ -8628,7 +8643,7 @@ public class GameManager extends AbstractGameManager {
             } else {
                 // If the trailer is superheavy, place it in a hex by itself
                 if (trailer.isSuperHeavy()) {
-                    trailerPositionOffset ++;
+                    trailerPositionOffset++;
                     stepNumber = (trainPath.size() - (int) trailerPositionOffset);
                     trailerPos = trainPath.get(stepNumber);
                     trailer.setPosition(trailerPos);
@@ -8648,7 +8663,7 @@ public class GameManager extends AbstractGameManager {
                 } else {
                     // Otherwise, we can put two trailers in each hex
                     // starting trailer 1 in the hex behind the tractor
-                    trailerPositionOffset ++;
+                    trailerPositionOffset++;
                     trailerPositionOffset = Math.ceil((trailerPositionOffset / 2.0));
                     stepNumber = (trainPath.size() - (int) trailerPositionOffset);
                     trailerPos = trainPath.get(stepNumber);
@@ -8671,7 +8686,7 @@ public class GameManager extends AbstractGameManager {
      * Flips the order of a tractor's towed trailers list by index and
      * adds their starting coordinates to a list of hexes the tractor passed through
      *
-     * @return  Returns the properly sorted list of all train coordinates
+     * @return Returns the properly sorted list of all train coordinates
      */
     public List<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
         List<Coords> trainCoords = new ArrayList<>();
@@ -8697,7 +8712,7 @@ public class GameManager extends AbstractGameManager {
      *
      * @param entity  The unit using MASC/supercharger
      * @param md      The current <code>MovePath</code>
-     * @return        Whether the unit failed the check
+     * @return Whether the unit failed the check
      */
     private boolean checkMASCFailure(Entity entity, MovePath md) {
         HashMap<Integer, List<CriticalSlot>> crits = new HashMap<>();
@@ -8750,7 +8765,7 @@ public class GameManager extends AbstractGameManager {
      *
      * @param entity  The unit using MASC/supercharger
      * @param md      The current <code>MovePath</code>
-     * @return        Whether the unit failed the check
+     * @return Whether the unit failed the check
      */
     private boolean checkSuperchargerFailure(Entity entity, MovePath md) {
         HashMap<Integer, List<CriticalSlot>> crits = new HashMap<>();
@@ -8819,7 +8834,7 @@ public class GameManager extends AbstractGameManager {
     }
 
     private void ApplyMASCOrSuperchargerCriticals(Entity entity, MovePath md,
-                                                  HashMap<Integer, List<CriticalSlot>> crits ) {
+                                                  HashMap<Integer, List<CriticalSlot>> crits) {
         for (Integer loc : crits.keySet()) {
             List<CriticalSlot> lcs = crits.get(loc);
             for (CriticalSlot cs : lcs) {
@@ -9518,7 +9533,7 @@ public class GameManager extends AbstractGameManager {
      * @param subjectId the <code>int</code> id of the target
      */
     public Vector<Integer> deliverArtilleryInferno(Coords coords, Entity ae,
-                                        int subjectId, Vector<Report> vPhaseReport) {
+                                                   int subjectId, Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
         Vector<Integer> alreadyHit = new Vector<>();
@@ -9951,7 +9966,7 @@ public class GameManager extends AbstractGameManager {
                         int siDamage = te.heatFromExternal / 3;
                         te.heatFromExternal %= 3;
                         final ConvFighter ftr = (ConvFighter) te;
-                        int remaining = Math.max(0,  ftr.getSI() - siDamage);
+                        int remaining = Math.max(0, ftr.getSI() - siDamage);
                         r = new Report(9146);
                         r.subject = te.getId();
                         r.indent(2);
@@ -9968,7 +9983,7 @@ public class GameManager extends AbstractGameManager {
                                     && ftr.isCondEjectSIDest()))) {
                                 vPhaseReport.addAll(ejectEntity(te, true, false));
                             }
-                            vPhaseReport.addAll(destroyEntity(te,"Structural Integrity Collapse"));
+                            vPhaseReport.addAll(destroyEntity(te, "Structural Integrity Collapse"));
                             ftr.setSI(0);
                             if (null != ae) {
                                 creditKill(te, ae);
@@ -12382,17 +12397,17 @@ public class GameManager extends AbstractGameManager {
         }
         endCurrentTurn(null);
     }
-    
+
     /**
      * Receives an updated data structure containing carryable objects on the ground
      */
     private void receiveGroundObjectUpdate(Packet packet, int connId) {
-    	Map<Coords, List<ICarryable>> groundObjects = (Map<Coords, List<ICarryable>>) packet.getObject(0);
-    	
-    	getGame().setGroundObjects(groundObjects);
-    	
-    	// make sure to update the other clients with the new ground objects data structure
-    	send(packet);
+        Map<Coords, List<ICarryable>> groundObjects = (Map<Coords, List<ICarryable>>) packet.getObject(0);
+
+        getGame().setGroundObjects(groundObjects);
+
+        // make sure to update the other clients with the new ground objects data structure
+        send(packet);
     }
 
     /**
@@ -13575,7 +13590,7 @@ public class GameManager extends AbstractGameManager {
         }
         EquipmentType equip = mount.getType();
         if (!(equip instanceof MiscType) || !equip.hasFlag(MiscType.F_AP_POD)) {
-            LogManager.getLogger().error("Expecting to find an AP Pod at " + podId + " on the unit, "+ entity.getDisplayName()
+            LogManager.getLogger().error("Expecting to find an AP Pod at " + podId + " on the unit, " + entity.getDisplayName()
                     + " but found " + equip.getName() + " instead!!!");
             return;
         }
@@ -13978,7 +13993,7 @@ public class GameManager extends AbstractGameManager {
             if ((hex.terrainLevel(Terrains.SNOW) > 1) && (meltCheck == 12)) {
                 melted = true;
             } else if ((hex.containsTerrain(Terrains.ICE)
-            || hex.containsTerrain(Terrains.BLACK_ICE)) && (meltCheck > 9)) {
+                    || hex.containsTerrain(Terrains.BLACK_ICE)) && (meltCheck > 9)) {
                 melted = true;
             } else if (hex.containsTerrain(Terrains.SNOW) && (meltCheck > 7)) {
                 melted = true;
@@ -14458,7 +14473,7 @@ public class GameManager extends AbstractGameManager {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if (paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false,  Mech.LOC_RARM, Mech.LOC_LARM);
+                applyZweihanderSelfDamage(ae, false, Mech.LOC_RARM, Mech.LOC_LARM);
             }
 
             // And we're done!
@@ -14511,7 +14526,7 @@ public class GameManager extends AbstractGameManager {
             }
 
             damage = checkForSpikes(te, hit.getLocation(), damage, ae,
-                    (paa.getArm() == PunchAttackAction.LEFT) ?  Mech.LOC_LARM : Mech.LOC_RARM);
+                    (paa.getArm() == PunchAttackAction.LEFT) ? Mech.LOC_LARM : Mech.LOC_RARM);
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                     false, throughFront));
@@ -14565,7 +14580,7 @@ public class GameManager extends AbstractGameManager {
         addNewLines();
 
         if (paa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false,  Mech.LOC_RARM, Mech.LOC_LARM);
+            applyZweihanderSelfDamage(ae, false, Mech.LOC_RARM, Mech.LOC_LARM);
         }
 
         addNewLines();
@@ -17546,7 +17561,7 @@ public class GameManager extends AbstractGameManager {
      * @param attackerLocation  The location on the attacker that is damaged if the
      *                          target has spikes. Entity.LOC_NONE if the attacker
      *                          can't be damaged by spikes in this attack.
-     * @return          The damage after applying any reduction due to spikes
+     * @return The damage after applying any reduction due to spikes
      */
     private int checkForSpikes(Entity target, int targetLocation, int damage,
                                Entity attacker, int attackerLocation) {
@@ -17567,7 +17582,7 @@ public class GameManager extends AbstractGameManager {
      *                          can't be damaged by spikes in this attack.
      * @param attackerLocation2 If not Entity.LOC_NONE, the damage to the attacker
      *                          will be split between two locations.
-     * @return          The damage after applying any reduction due to spikes
+     * @return The damage after applying any reduction due to spikes
      */
     private int checkForSpikes(Entity target, int targetLocation, int damage,
                                Entity attacker, int attackerLocation, int attackerLocation2) {
@@ -18629,7 +18644,8 @@ public class GameManager extends AbstractGameManager {
                 r.add(boom);
                 if (entity.getCrew().hasActiveTechOfficer()) {
                     rollValue += 2;
-                    String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";;
+                    String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";
+                    ;
                     r.addDataWithTooltip(rollCalc, diceRoll.getReport());
                 } else {
                     r.add(diceRoll);
@@ -18875,7 +18891,7 @@ public class GameManager extends AbstractGameManager {
                 if (!(mech.doRISCEmergencyCoolantCheckFor(vDesc, crits))) {
                     mech.heat -= 6 + mech.getCoolantSystemMOS();
                     Report r = new Report(5027);
-                    r.add(6+mech.getCoolantSystemMOS());
+                    r.add(6 + mech.getCoolantSystemMOS());
                     vDesc.add(r);
                 }
                 addReport(vDesc);
@@ -18920,7 +18936,7 @@ public class GameManager extends AbstractGameManager {
                         // don't need to check ready or worry about null,
                         // we already know there is one, it's ready,
                         // and there can be at most one in a given location
-                        for (Mounted m: me.getMisc()) {
+                        for (Mounted m : me.getMisc()) {
                             if ((m.getLocation() == loc)
                                     && (m.getType().hasFlag(MiscType.F_HARJEL_II)
                                     || m.getType().hasFlag(MiscType.F_HARJEL_III))) {
@@ -19365,7 +19381,7 @@ public class GameManager extends AbstractGameManager {
      * phase
      */
     public void checkForFlamingDamage() {
-        for (Iterator<Entity> i = getGame().getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = getGame().getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((null == entity.getPosition()) || (entity instanceof Mech)
                     || entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard()) {
@@ -19389,7 +19405,7 @@ public class GameManager extends AbstractGameManager {
      * then attack one.
      */
     void checkForTeleMissileAttacks() {
-        for (Iterator<Entity> i = getGame().getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = getGame().getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if (entity instanceof TeleMissile) {
                 // check for enemy units
@@ -19482,7 +19498,7 @@ public class GameManager extends AbstractGameManager {
      */
     void checkForAtmosphereDeath() {
         Report r;
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((null == entity.getPosition()) || entity.isOffBoard()) {
                 // If it's not on the board - aboard something else, for
@@ -19506,7 +19522,7 @@ public class GameManager extends AbstractGameManager {
      * water last round
      */
     private void checkForIndustrialWaterDeath() {
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((null == entity.getPosition()) || entity.isOffBoard()) {
                 // If it's not on the board - aboard something else, for
@@ -19541,7 +19557,7 @@ public class GameManager extends AbstractGameManager {
      * industrial mechs might need to check for critical damage
      */
     private void checkForIndustrialCrit() {
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()) {
                 Mech mech = (Mech) entity;
@@ -19577,7 +19593,7 @@ public class GameManager extends AbstractGameManager {
      */
     void checkForSpaceDeath() {
         Report r;
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((null == entity.getPosition()) || entity.isOffBoard()) {
                 // If it's not on the board - aboard something else, for
@@ -19600,7 +19616,7 @@ public class GameManager extends AbstractGameManager {
      * life support. Called during the end phase.
      */
     void checkForSuffocation() {
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((null == entity.getPosition()) || entity.isOffBoard()) {
                 continue;
@@ -20119,6 +20135,7 @@ public class GameManager extends AbstractGameManager {
 
                     // different reports depending on out-of-control status
                     if (a != null && a.isOutControl()) {
+                        // Starting already out of control...
                         r = new Report(9360);
                         r.subject = e.getId();
                         r.add(target);
@@ -20132,12 +20149,14 @@ public class GameManager extends AbstractGameManager {
                             vReport.add(r);
                         }
                     } else {
+                        // Starting in control...
                         r = new Report(9315);
                         r.subject = e.getId();
                         r.add(target);
                         r.add(diceRoll);
                         r.newlines = 1;
                         if (diceRoll.getIntValue() < target.getValue()) {
+                            // Now out of control
                             r.choose(false);
                             vReport.add(r);
                             if (a != null) {
@@ -20329,7 +20348,7 @@ public class GameManager extends AbstractGameManager {
                 // Deal damage
                 if (explosion) {
                     HitData hd = new HitData(b.getBodyLocation(), false, HitData.EFFECT_NONE);
-                    vReport.addAll(damageEntity(e, hd, bombDamage, true, DamageType.NONE,true));
+                    vReport.addAll(damageEntity(e, hd, bombDamage, true, DamageType.NONE, true));
                     e.applyDamage();
                 }
             }
@@ -20370,7 +20389,7 @@ public class GameManager extends AbstractGameManager {
                 boolean wasGunner = crew.getCurrentGunnerIndex() == pos;
                 crew.setHits(crew.getHits(pos) + damage, pos);
                 if (en.isLargeCraft()) {
-                    r = new Report (6028);
+                    r = new Report(6028);
                     r.subject = en.getId();
                     r.indent(2);
                     r.addDesc(en);
@@ -20463,7 +20482,7 @@ public class GameManager extends AbstractGameManager {
      * @param slot      The slot index of the crew member that was incapacitated.
      * @param wasPilot  Whether the crew member was the pilot before becoming incapacitated.
      * @param wasGunner Whether the crew member was the gunner before becoming incapacitated.
-     * @return          A completed <code>Report</code> if the position was assumed by another
+     * @return A completed <code>Report</code> if the position was assumed by another
      *                  crew members, otherwise null.
      */
     private Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
@@ -20687,7 +20706,7 @@ public class GameManager extends AbstractGameManager {
      */
     private Vector<Report> checkFatalThresholds(int nextAE, int prevAE) {
         Vector<Report> vDesc = new Vector<>();
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext();) {
+        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
             Entity en = e.next();
             if (!en.isCapitalFighter() || (nextAE == Entity.NONE)) {
                 continue;
@@ -21280,43 +21299,43 @@ public class GameManager extends AbstractGameManager {
 
         // Allocate the damage
         while (damage > 0) {
-        	
-        	// damage some cargo if we're taking damage
-        	// maybe move past "exterior passenger" check
-        	if (!ammoExplosion) {
-        		int damageLeftToCargo = damage;
-        		
-        		for (ICarryable cargo : te.getDistinctCarriedObjects()) {
-        			if (cargo.isInvulnerable()) {
-        				continue;
-        			}
-        			
-        			double tonnage = cargo.getTonnage();
+
+            // damage some cargo if we're taking damage
+            // maybe move past "exterior passenger" check
+            if (!ammoExplosion) {
+                int damageLeftToCargo = damage;
+
+                for (ICarryable cargo : te.getDistinctCarriedObjects()) {
+                    if (cargo.isInvulnerable()) {
+                        continue;
+                    }
+
+                    double tonnage = cargo.getTonnage();
                     boolean cargoDestroyed = cargo.damage(damageLeftToCargo);
-        			damageLeftToCargo -= Math.ceil(tonnage);
-        			
-        			// if we have destroyed the cargo, remove it, add a report
-        			// and move on to the next piece of cargo
-        			if (cargoDestroyed) {
-        				te.dropGroundObject(cargo, false);
-        				
-        				r = new Report(6721);
-        				r.subject = te_n;
-        				r.indent(2);
-        				r.add(cargo.generalName());
-        				vDesc.addElement(r);
-        			// we have not destroyed the cargo means there is no damage left
-        			// report and stop destroying cargo
-        			} else {
-        				r = new Report(6720);
-        				r.subject = te_n;
-        				r.indent(2);
-        				r.add(cargo.generalName());
-        				r.add(Double.toString(cargo.getTonnage()));
-        				break;
-        			}
-        		}
-        	}
+                    damageLeftToCargo -= Math.ceil(tonnage);
+
+                    // if we have destroyed the cargo, remove it, add a report
+                    // and move on to the next piece of cargo
+                    if (cargoDestroyed) {
+                        te.dropGroundObject(cargo, false);
+
+                        r = new Report(6721);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(cargo.generalName());
+                        vDesc.addElement(r);
+                        // we have not destroyed the cargo means there is no damage left
+                        // report and stop destroying cargo
+                    } else {
+                        r = new Report(6720);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(cargo.generalName());
+                        r.add(Double.toString(cargo.getTonnage()));
+                        break;
+                    }
+                }
+            }
 
             // first check for ammo explosions on aeros separately, because it
             // must be done before
@@ -22033,7 +22052,7 @@ public class GameManager extends AbstractGameManager {
                                 && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
                         } else {
-                            vDesc.addAll(destroyEntity(te,"Structural Integrity Collapse"));
+                            vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse"));
                         }
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {
@@ -22703,7 +22722,7 @@ public class GameManager extends AbstractGameManager {
      * @param damage         The amount of damage to be allocated
      * @param vDesc          The {@link Report} <code>Vector</code>
      * @param passenger      The BA squad
-     * @return               The amount of damage remaining
+     * @return The amount of damage remaining
      */
     private int damageExternalPassenger(Entity te, HitData hit, int damage, Vector<Report> vDesc,
                                         Entity passenger) {
@@ -22959,8 +22978,8 @@ public class GameManager extends AbstractGameManager {
      */
     public void doFusionEngineExplosion(int engineRating, Coords position, Vector<Report> vDesc,
                                         Vector<Integer> vUnits) {
-        int[] myDamages = { engineRating, (engineRating / 10), (engineRating / 20),
-                (engineRating / 40) };
+        int[] myDamages = {engineRating, (engineRating / 10), (engineRating / 20),
+                (engineRating / 40)};
         doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true);
     }
 
@@ -23080,7 +23099,7 @@ public class GameManager extends AbstractGameManager {
 
         // Now we damage people near the explosion.
         List<Entity> loaded = new ArrayList<>();
-        for (Iterator<Entity> ents = game.getEntities(); ents.hasNext();) {
+        for (Iterator<Entity> ents = game.getEntities(); ents.hasNext(); ) {
             Entity entity = ents.next();
 
             if (entitiesHit.contains(entity)) {
@@ -23350,7 +23369,7 @@ public class GameManager extends AbstractGameManager {
             List<Coords> hexSet = position.allAtDistance(range);
 
             // Iterate through the hexes.
-            for (Coords myHexCoords: hexSet) {
+            for (Coords myHexCoords : hexSet) {
                 // ignore out of bounds coordinates
                 if (!game.getBoard().contains(myHexCoords)) {
                     continue;
@@ -25030,7 +25049,7 @@ public class GameManager extends AbstractGameManager {
             } else {
                 // TODO: handle critical hit on internal bomb bay (cargo bay when internal bombs are loaded)
                 // Ruling: calculate % of cargo space destroyed; user chooses that many bombs to destroy.
-                if(aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
+                if (aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
                     // Prompt user, but just randomize bot's bombs to lose.
                     destroyed = (int) percentDestroyed * aero.getMaxIntBombPoints();
                     r = new Report(5605);
@@ -25046,7 +25065,7 @@ public class GameManager extends AbstractGameManager {
                         r.subject = aero.getId();
                         r.addDesc(aero);
                         reports.add(r);
-                        for (BombMounted bomb: ((IBomber) aero).getBombs()) {
+                        for (BombMounted bomb : ((IBomber) aero).getBombs()) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
@@ -25061,7 +25080,7 @@ public class GameManager extends AbstractGameManager {
                         aero.applyDamage();
                     } else {
                         // This should always use the random method.
-                        for (BombMounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                        for (BombMounted bomb : randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
@@ -27055,41 +27074,41 @@ public class GameManager extends AbstractGameManager {
                 sendChangedHex(curPos);
             }
         }
-        
+
         // drop cargo
-        dropCargo(entity, curPos, vDesc); 
+        dropCargo(entity, curPos, vDesc);
 
         // update our entity, so clients have correct data needed for MekWars stuff
         entityUpdate(entity.getId());
 
         return vDesc;
     }
-    
+
     /**
      * Worker function that drops cargo from an entity at the given coordinates.
      */
     private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
-    	boolean cargoDropped = false;
-    	
+        boolean cargoDropped = false;
+
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-        	entity.dropGroundObject(cargo, false);
-        	// if the cargo was dropped but not destroyed.
-        	if (!damageCargo(false, entity, cargo)) {
-        		Report r = new Report(6722);
-        		r.indent();
-        		r.subject = entity.getId();
-        		r.add(cargo.generalName());
-        		vPhaseReport.add(r);
-        		
-        		if (game.getBoard().contains(coords)) {
-        			game.placeGroundObject(coords, cargo);
-        			cargoDropped = true;
-        		}
-        	}
+            entity.dropGroundObject(cargo, false);
+            // if the cargo was dropped but not destroyed.
+            if (!damageCargo(false, entity, cargo)) {
+                Report r = new Report(6722);
+                r.indent();
+                r.subject = entity.getId();
+                r.add(cargo.generalName());
+                vPhaseReport.add(r);
+
+                if (game.getBoard().contains(coords)) {
+                    game.placeGroundObject(coords, cargo);
+                    cargoDropped = true;
+                }
+            }
         }
-        
+
         if (cargoDropped) {
-        	sendGroundObjectUpdate();
+            sendGroundObjectUpdate();
         }
     }
 
@@ -27265,7 +27284,7 @@ public class GameManager extends AbstractGameManager {
         // exploding RISC laser pulse module should cause no normal crits, just
         // automatically crit the first uncritted crit of the laser it's
         // attached to
-        if ((mounted.getType() instanceof MiscType)  && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
             Mounted laser = mounted.getLinkedBy();
             if (en instanceof Mech) {
@@ -27561,7 +27580,7 @@ public class GameManager extends AbstractGameManager {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
         }
-        
+
         // set how deep the mech has fallen
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -27771,7 +27790,7 @@ public class GameManager extends AbstractGameManager {
 
         // drop cargo if necessary
         dropCargo(entity, fallPos, vPhaseReport);
-        
+
         // clear all PSRs after a fall -- the Mek has already failed ONE and
         // fallen, it'd be cruel to make it fail some more!
         game.resetPSRs(entity);
@@ -28436,7 +28455,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // Deal with players who can see all.
-        for (Enumeration<Player> p = game.getPlayers(); p.hasMoreElements();) {
+        for (Enumeration<Player> p = game.getPlayers(); p.hasMoreElements(); ) {
             Player player = p.nextElement();
             if (player.canIgnoreDoubleBlind() && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
@@ -28911,8 +28930,7 @@ public class GameManager extends AbstractGameManager {
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityAdd(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked")
-        final List<Entity> entities = (List<Entity>) c.getObject(0);
+        @SuppressWarnings("unchecked") final List<Entity> entities = (List<Entity>) c.getObject(0);
         List<Integer> entityIds = new ArrayList<>(entities.size());
         // Map client-received to server-given IDs:
         Map<Integer, Integer> idMap = new HashMap<>();
@@ -29004,7 +29022,7 @@ public class GameManager extends AbstractGameManager {
                 int realId = Force.NO_FORCE;
                 boolean topLevel = true;
 
-                for (Force force: forceList) {
+                for (Force force : forceList) {
                     if (!forceMapping.containsKey(force.getId())) {
                         if (topLevel) {
                             realId = game.getForces().addTopLevelForce(force, entity.getOwner());
@@ -29183,7 +29201,7 @@ public class GameManager extends AbstractGameManager {
         Set<Entity> newEntities = new HashSet<>();
         @SuppressWarnings("unchecked")
         Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             Entity oldEntity = game.getEntity(entity.getId());
             // Only update entities that existed and are owned by a teammate of the sender
             if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
@@ -30054,7 +30072,7 @@ public class GameManager extends AbstractGameManager {
     private void sendReport(boolean tacticalGeniusReport) {
         EmailService mailer = Server.getServerInstance().getEmailService();
         if (mailer != null) {
-            for (var player: mailer.getEmailablePlayers(game)) {
+            for (var player : mailer.getEmailablePlayers(game)) {
                 try {
                     var reports = filterReportVector(vPhaseReport, player);
                     var message = mailer.newReportMessage(game, reports, player);
@@ -30973,7 +30991,7 @@ public class GameManager extends AbstractGameManager {
         }
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {
-            for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements();) {
+            for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements(); ) {
                 coords = coordsEnum.nextElement();
                 collapseBuilding(bldg, game.getPositionMap(), coords, false, vPhaseReport);
             }
@@ -31660,14 +31678,13 @@ public class GameManager extends AbstractGameManager {
             toHit = caa.toHit(game);
             Entity target = (Entity) caa.getTarget(game);
 
-            if (target != null ) {
+            if (target != null) {
                 if (caa.getTarget(game) instanceof Entity) {
                     damage = ChargeAttackAction.getDamageFor(ae, target, game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
                 } else {
                     damage = ChargeAttackAction.getDamageFor(ae);
                 }
-            }
-            else {
+            } else {
                 damage = 0;
             }
         } else if (aaa instanceof AirmechRamAttackAction) {
@@ -31690,8 +31707,7 @@ public class GameManager extends AbstractGameManager {
                     damage += Compute.d6(2);
                 } else if (clubType.hasSubType(MiscType.S_ROCK_CUTTER)) {
                     damage += Compute.d6(3);
-                }
-                else if (clubType.hasSubType(MiscType.S_WRECKING_BALL)) {
+                } else if (clubType.hasSubType(MiscType.S_WRECKING_BALL)) {
                     damage += Compute.d6(4);
                 }
             }
@@ -31702,8 +31718,7 @@ public class GameManager extends AbstractGameManager {
 
             if (target != null) {
                 damage = DfaAttackAction.getDamageFor(ae, daa.getTarget(game).isConventionalInfantry());
-            }
-            else {
+            } else {
                 damage = 0;
             }
         } else if (aaa instanceof KickAttackAction) {
@@ -33732,9 +33747,9 @@ public class GameManager extends AbstractGameManager {
      *                     attack, -1 otherwise
      */
     public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource,
-                                    AmmoType ammo, int subjectId, Entity killer, boolean flak,
-                                    int altitude, boolean mineClear, Vector<Report> vPhaseReport,
-                                    boolean asfFlak, int attackingBA) {
+                                               AmmoType ammo, int subjectId, Entity killer, boolean flak,
+                                               int altitude, boolean mineClear, Vector<Report> vPhaseReport,
+                                               boolean asfFlak, int attackingBA) {
         AreaEffectHelper.DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammo, attackingBA, mineClear);
 
         int damage = damageFalloff.damage;
@@ -33775,8 +33790,8 @@ public class GameManager extends AbstractGameManager {
      *            Is this flak against ASF?
      */
     public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
-                                    Entity killer, int damage, int falloff, boolean flak, int altitude,
-                                    Vector<Report> vPhaseReport, boolean asfFlak) {
+                                               Entity killer, int damage, int falloff, boolean flak, int altitude,
+                                               Vector<Report> vPhaseReport, boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
             List<Coords> hexes = centre.allAtDistance(ring);
@@ -33793,7 +33808,7 @@ public class GameManager extends AbstractGameManager {
     }
 
     public Vector<Integer> deliverBombDamage(Coords centre, int type, int subjectId, Entity killer,
-                                  Vector<Report> vPhaseReport) {
+                                             Vector<Report> vPhaseReport) {
         int range = 0;
         int damage = 10;
         if (type == BombType.B_CLUSTER) {
@@ -33829,7 +33844,7 @@ public class GameManager extends AbstractGameManager {
      * @param subjectId the <code>int</code> id of the target
      */
     public Vector<Integer> deliverBombInferno(Coords coords, Entity ae, int subjectId,
-                                   Vector<Report> vPhaseReport) {
+                                              Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
         Vector<Integer> alreadyHit = new Vector<>();
@@ -33932,7 +33947,7 @@ public class GameManager extends AbstractGameManager {
      *
      * @param e   The {@link Entity} to check
      * @param loc The location index
-     * @return    A report showing the results of the roll
+     * @return A report showing the results of the roll
      */
     private Report checkBreakSpikes(Entity e, int loc) {
         Roll diceRoll = Compute.rollD6(2);
@@ -34193,41 +34208,41 @@ public class GameManager extends AbstractGameManager {
             entity.setLayingMines(true);
         }
     }
-    
+
     /**
      * Worker function that potentially damages a piece of cargo being carried
      * by the given entity during the given move step.
-     * 
-     * @param isFlying whether the entity's movement involved being in the air in any way 
+     *
+     * @param isFlying whether the entity's movement involved being in the air in any way
      */
     private boolean damageCargo(boolean isFlying, Entity entity, ICarryable cargo) {
-    	if (cargo.isInvulnerable()) {
-    		return false;
-    	}    	
-    	
-    	boolean cargoDestroyed = false;
-    	
-    	// cargo may be destroyed if we're not carefully unloading it
-		// very likely to be destroyed if we're airborne for some reason
-		int destructionThreshold = isFlying ? 6 : 4;
-		int destructionRoll = Compute.d6();
-		
-		Report r = new Report(2515);
-		r.subject = entity.getId();
-		r.add(cargo.generalName());
-		r.add(destructionThreshold);
-		r.add(destructionRoll);            		
-		
-		if (destructionRoll < destructionThreshold) {
-			cargoDestroyed = true;
-			r.choose(false);
-		} else {
-			r.choose(true);
-		}
-		
-		addReport(r);
-		
-		return cargoDestroyed;
+        if (cargo.isInvulnerable()) {
+            return false;
+        }
+
+        boolean cargoDestroyed = false;
+
+        // cargo may be destroyed if we're not carefully unloading it
+        // very likely to be destroyed if we're airborne for some reason
+        int destructionThreshold = isFlying ? 6 : 4;
+        int destructionRoll = Compute.d6();
+
+        Report r = new Report(2515);
+        r.subject = entity.getId();
+        r.add(cargo.generalName());
+        r.add(destructionThreshold);
+        r.add(destructionRoll);
+
+        if (destructionRoll < destructionThreshold) {
+            cargoDestroyed = true;
+            r.choose(false);
+        } else {
+            r.choose(true);
+        }
+
+        addReport(r);
+
+        return cargoDestroyed;
     }
 
     public Set<Coords> getHexUpdateSet() {
@@ -34249,11 +34264,11 @@ public class GameManager extends AbstractGameManager {
     void clearBombIcons() {
         game.getBoard().clearBombIcons();
     }
-    
+
     /**
      * Convenience function to send a ground object update.
      */
     public void sendGroundObjectUpdate() {
-    	send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
     }
 }

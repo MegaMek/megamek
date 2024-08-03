@@ -33,13 +33,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also
@@ -105,8 +102,32 @@ public final class FluffImageHelper {
      * @param unit The unit
      * @return a fluff image or null, if no match is found
      */
-    public static @Nullable List<Image> getFluffImages(@Nullable BTObject unit) {
+    public static List<Image> getFluffImages(@Nullable BTObject unit) {
         return getFluffImageList(unit, false);
+    }
+
+    /**
+     * Returns a list of all fluff images for the given unit/object to be shown e.g. in the
+     * unit summary.
+     *
+     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
+     * unit's file or is created by the unit itself, only this is returned. Note that this
+     * is not used for canon units, but may be used in custom ones by adding a fluff
+     * image to the unit in MML.
+     *
+     * <P>Otherwise, the fluff image directories are searched. First searches the user dir,
+     * then the internal dir. Tries to match the image by chassis + model or chassis alone.
+     * Chassis and model names are cleaned from " and / characters before matching. For
+     * Meks with clan names, both names and the combinations are searched. The model
+     * alone is not used to search.
+     *
+     * Returns null if no fluff image can be found.
+     *
+     * @param unit The unit
+     * @return a fluff image or null, if no match is found
+     */
+    public static List<FluffImageRecord> getFluffRecords(@Nullable BTObject unit) {
+        return getFluffImageRecords(unit, false);
     }
 
     /**
@@ -145,6 +166,27 @@ public final class FluffImageHelper {
      * @param recordSheet True if this image search is meant for a record sheet
      * @return Available fluff images or the embedded fluff image
      */
+    private static List<FluffImageRecord> getFluffImageRecords(@Nullable BTObject unit, boolean recordSheet) {
+        if (unit == null) {
+            return new ArrayList<>();
+        }
+        Image embeddedFluffImage = unit.getFluffImage();
+        if (embeddedFluffImage != null) {
+            return List.of(new FluffImageRecord(embeddedFluffImage, ""));
+        } else {
+            return findFluffFiles(unit, recordSheet).stream().map(FluffImageRecord::toRecord).toList();
+        }
+    }
+
+    /**
+     * Returns a list of available fluff images. If a fluff image is embedded in the unit file,
+     * only that image is returned, even if others are available from the fluff directories. The returned
+     * list may be empty, but not null.
+     *
+     * @param unit The unit
+     * @param recordSheet True if this image search is meant for a record sheet
+     * @return Available fluff images or the embedded fluff image
+     */
     private static List<Image> getFluffImageList(@Nullable BTObject unit, boolean recordSheet) {
         if (unit == null) {
             return new ArrayList<>();
@@ -161,8 +203,8 @@ public final class FluffImageHelper {
         }
     }
 
-    private static @Nullable List<File> findFluffFiles(BTObject unit, boolean recordSheet) {
-        List<File> fileCandidates = new ArrayList<>();
+    private static Set<File> findFluffFiles(BTObject unit, boolean recordSheet) {
+        Set<File> fileCandidates = new HashSet<>();
         var fluffDir = new File(Configuration.fluffImagesDir(), FluffImageHelper.getFluffPath(unit));
 
         List<String> nameCandidates = nameCandidates(unit);
@@ -194,7 +236,6 @@ public final class FluffImageHelper {
         }
 
         fileCandidates.addAll(getFluffInChassisDirs(unit, fluffDir));
-
         fileCandidates.removeIf(f -> !f.exists() || f.isDirectory());
         return fileCandidates;
     }
@@ -264,7 +305,7 @@ public final class FluffImageHelper {
     private static List<File> getFluffInDir(File dir) {
         List<File> result = new ArrayList<>();
         try (Stream<Path> entries = Files.walk(dir.toPath())) {
-            result.addAll(entries.map(Objects::toString).map(File::new).collect(toList()));
+            result.addAll(entries.map(Objects::toString).map(File::new).toList());
         } catch (IOException e) {
             LogManager.getLogger().warn("Error while reading files from " + dir, e);
         }
@@ -319,6 +360,17 @@ public final class FluffImageHelper {
             return DIR_NAME_VEHICLE;
         } else {
             return DIR_NAME_MECH;
+        }
+    }
+
+    public record FluffImageRecord(Image image, String fileName) {
+
+        public static FluffImageRecord toRecord(File file) {
+            return toRecord(file.toString());
+        }
+
+        public static FluffImageRecord toRecord(String fileName) {
+            return new FluffImageRecord(new ImageIcon(fileName).getImage(), fileName);
         }
     }
 }

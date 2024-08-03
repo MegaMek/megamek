@@ -1604,11 +1604,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Pop up the dialog to load a mech
      */
     private void addUnit() {
+        Client c = getSelectedClient();
         clientgui.getMechSelectorDialog().updateOptionValues();
+        clientgui.getMechSelectorDialog().setPlayerFromClient(c);
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 
     private void createArmy() {
+        Client c = getSelectedClient();
+        clientgui.getRandomArmyDialog().setPlayerFromClient(c);
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
@@ -2240,9 +2244,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
@@ -2568,23 +2569,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 StringTokenizer lines = new StringTokenizer(result, "\n");
                 while (lines.hasMoreTokens()) {
                     String line = lines.nextToken();
-                    StringTokenizer tabs = new StringTokenizer(line, "\t");
-                    String unit = "";
-                    if (tabs.hasMoreTokens()) {
-                        unit = tabs.nextToken();
-                    }
-                    if (tabs.hasMoreTokens()) {
-                        unit += " " + tabs.nextToken();
-                    }
-                    MechSummary ms = MechSummaryCache.getInstance().getMech(unit);
-                    if (ms == null) {
-                        continue;
-                    }
-                    Entity newEntity = new MechFileParser(ms.getSourceFile(),
-                            ms.getEntryName()).getEntity();
-                    if (newEntity != null) {
-                        newEntity.setOwner(localPlayer());
-                        newEntities.add(newEntity);
+                    String[] tokens = line.split("\t");
+                    if (tokens.length >= 2) {
+                        String unitName = (tokens[0] + " " + tokens[1]).trim();
+                        MechSummary ms = MechSummaryCache.getInstance().getMech(unitName);
+                        if (ms != null) {
+                            Entity newEntity = ms.loadEntity();
+                            if (newEntity != null) {
+                                newEntity.setOwner(localPlayer());
+                                newEntities.add(newEntity);
+                            }
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -2606,7 +2601,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         StringBuilder result = new StringBuilder();
         for (Entity entity: entities) {
             // Chassis
-            result.append(entity.getChassis()).append("\t");
+            result.append(entity.getFullChassis()).append("\t");
             // Model
             result.append(entity.getModel()).append("\t");
             // Weight; format for locale to avoid wrong ",." etc.

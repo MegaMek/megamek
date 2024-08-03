@@ -22,6 +22,7 @@ import megamek.client.ui.swing.tooltip.EntityActionLog;
 import megamek.common.actions.*;
 
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
+
     // client list of attacks user has input
     protected EntityActionLog attacks;
 
@@ -44,7 +45,6 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      */
     abstract protected String getSkipTurnButtonLabel();
 
-
     @Override
     protected void updateDonePanel() {
         if (attacks.isEmpty() || ((attacks.size() == 1) && (attacks.firstElement() instanceof TorsoTwistAction))) {
@@ -55,7 +55,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         }
     }
 
-    protected void removeAttack(Object o) {
+    protected void removeAttack(EntityAction o) {
         attacks.remove(o);
         updateDonePanel();
     }

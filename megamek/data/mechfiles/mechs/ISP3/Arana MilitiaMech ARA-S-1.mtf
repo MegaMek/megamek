@@ -1,11 +1,11 @@
-chassis:Arana
+chassis:Araña
 model:ARA-S-1 MilitiaMech
 mul id:5798
 
 Config:Quad
 TechBase:Clan
 Era:3087
-Source:Intersteller Players 3
+Source:Interstellar Players 3
 Rules Level:3
 
 Mass:40

@@ -1,7 +1,5 @@
 package megamek.client.generator;
 
-import megamek.common.BipedMech;
-import megamek.common.Entity;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.containers.MunitionTree;
@@ -22,7 +20,6 @@ class MunitionTreeTest {
     HashMap<String, String> lrmHash = new HashMap<>();
     HashMap<String, String> acHash = new HashMap<>();
     HashMap<String, String> ltHash = new HashMap<>();
-    HashMap<String, String> mgHash = new HashMap<>();
 
     @BeforeAll
     static void setUp() {

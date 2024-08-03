@@ -607,6 +607,7 @@ public class Terrain implements Serializable {
                     return 0;
                 }
             case MAGMA:
+                // Only applies when jumping into a hex.
                 return (level == 2) ? 0 : TargetRoll.AUTOMATIC_SUCCESS;
             case MUD:
                 if (moveMode.isBiped() || moveMode.isQuad()) {

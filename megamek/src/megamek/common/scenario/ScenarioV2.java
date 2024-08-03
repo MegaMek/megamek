@@ -22,11 +22,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
+import megamek.common.jacksonadapters.BoardDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -42,9 +44,9 @@ public class ScenarioV2 implements Scenario {
 
     private static final String DEPLOY = "deploy";
     private static final String MAP = "map";
-    private static final String COLUMNS = "columns";
-    private static final String ROWS = "rows";
+    private static final String MAPS = "maps";
     private static final String UNITS = "units";
+    private static final String OPTIONS = "options";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -99,12 +101,12 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public IGame createGame() throws IOException, ScenarioLoaderException {
-        LogManager.getLogger().info("Loading scenario from " + scenariofile);
+        LogManager.getLogger().info("Loading scenario from {}", scenariofile);
         IGame game = selectGameType();
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
         parsePlayers(game);
-        game.setupTeams();
+//        game.setupTeams();
         game.setBoard(0, createBoard());
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
@@ -112,13 +114,15 @@ public class ScenarioV2 implements Scenario {
 
         if (game instanceof Game) {
             Game twGame = (Game) game;
-            twGame.setupRoundDeployment();
+            twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
             }
             twGame.setVictoryContext(new HashMap<>());
             twGame.createVictoryConditions();
         }
+
+        // TODO: check the game for inconsistencies such as units outside board coordinates
         return game;
     }
 
@@ -145,6 +149,14 @@ public class ScenarioV2 implements Scenario {
         } else {
             game.getOptions().loadOptions();
         }
+        if (node.has(OPTIONS)) {
+            JsonNode optionsNode = node.get(OPTIONS);
+            if (optionsNode.isArray()) {
+                optionsNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+            } else if (optionsNode.isTextual()) {
+                game.getOptions().getOption(optionsNode.textValue()).setValue(true);
+            }
+        }
     }
 
     private IGame selectGameType() {
@@ -153,8 +165,6 @@ public class ScenarioV2 implements Scenario {
                 return new ASGame();
             case SBF:
                 return new SBFGame();
-//            case GAMETYPE_BF:
-//                return new BFGame();
             default:
                 return new Game();
         }
@@ -172,13 +182,15 @@ public class ScenarioV2 implements Scenario {
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
-        int entityId = 0;
+        final PlayerColour[] colours = PlayerColour.values();
+
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
-            MMUReader.requireFields("Player", playerNode, NAME, UNITS);
+            MMUReader.requireFields("Player", playerNode, NAME);
 
             Player player = new Player(playerId, playerNode.get(NAME).textValue());
             result.add(player);
+            player.setColour(colours[playerId % colours.length]);
             playerId++;
 
             // scenario players start out as ghosts to be logged into
@@ -203,79 +215,65 @@ public class ScenarioV2 implements Scenario {
 
             //TODO minefields
 
-            JsonNode unitsNode = playerNode.get(UNITS);
-            if (game instanceof Game) {
-                List<Entity> entities = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
-                        .filter(o -> o instanceof Entity)
-                        .map(o -> (Entity) o)
-                        .collect(Collectors.toList());
-                for (Entity entity : entities) {
-                    entity.setOwner(player);
-                    entity.setId(entityId);
-                    ++ entityId;
-                    ((Game) game).addEntity(entity);
-                    // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
-                    // they're not on a space map.
-                    if (entity.isLargeCraft() && !entity.isAirborne()) {
-                        entity.setAltitude(0);
+            if (playerNode.has(UNITS)) {
+                JsonNode unitsNode = playerNode.get(UNITS);
+                if (game instanceof Game) {
+                    List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
+                            .filter(o -> o instanceof Entity)
+                            .map(o -> (Entity) o)
+                            .collect(Collectors.toList());
+                    int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                    for (Entity unit : units) {
+                        unit.setOwner(player);
+                        if (unit.getId() == Entity.NONE) {
+                            unit.setId(entityId);
+                            entityId++;
+                        }
+                        ((Game) game).addEntity(unit);
+                        // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                        // they're not on a space map.
+                        if (unit.isLargeCraft() && !unit.isAirborne()) {
+                            unit.setAltitude(0);
+                        }
+                    }
+                } else if (game instanceof SBFGame) {
+                    List<InGameObject> units = new MMUReader(scenariofile).read(unitsNode).stream()
+                            .filter(o -> o instanceof InGameObject)
+                            .map(o -> (InGameObject) o)
+                            .collect(Collectors.toList());
+                    int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                    for (InGameObject unit : units) {
+                        if (unit.getId() == Entity.NONE) {
+                            unit.setId(entityId);
+                            entityId++;
+                        }
+                        unit.setOwnerId(player.getId());
+                        ((SBFGame) game).addUnit(unit);
                     }
                 }
-            } else if (game instanceof SBFGame) {
-                List<InGameObject> units = new MMUReader(scenariofile).read(unitsNode).stream()
-                        .filter(o -> o instanceof InGameObject)
-                        .map(o -> (InGameObject) o)
-                        .collect(Collectors.toList());
-                for (InGameObject unit : units) {
-                    unit.setOwnerId(player.getId());
-                    ((SBFGame) game).addUnit(unit);
-                }
             }
+            // TODO: look at unit individual camo and see if it's a file in the scenario directory; the entity parsers
+            // cannot handle this as they don't know it's a scenario
         }
 
         return result;
+    }
+
+    private int smallestFreeUnitID(List<? extends InGameObject> units) {
+        return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
     private Board createBoard() throws ScenarioLoaderException {
-        if (!node.has(MAP)) {
+        if (!node.has(MAP) && !node.has(MAPS)) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
         }
         JsonNode mapNode = node.get(MAP);
-        // "map: Xyz.board" will directly load that board with no modifiers
-        if (!mapNode.textValue().isBlank()) {
-            return loadBoard(mapNode.textValue());
+        if (mapNode == null) {
+            mapNode = node.get(MAPS);
         }
 
-        //TODO: Board handling - this is incomplete, compare ScenarioV1
-
-        // more complex map setup
-        int mapWidth = 16;
-        int mapHeight = 17;
-        int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
-        int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
-
-        // load available boards
-        // basically copied from Server.java. Should get moved somewhere neutral
-        List<String> boards = new ArrayList<>();
-
-        // Find subdirectories given in the scenario file
-        List<String> allDirs = new LinkedList<>();
-        // "" entry stands for the boards base directory
-        allDirs.add("");
-
-        return null;
-    }
-
-    private Board loadBoard(String fileName) throws ScenarioLoaderException {
-        File boardFile = new File(scenarioDirectory(), fileName);
-        if (!boardFile.exists()) {
-            boardFile = new File(Configuration.boardsDir(), fileName);
-            if (!boardFile.exists()) {
-                throw new ScenarioLoaderException("ScenarioLoaderException.nonexistentBoard", fileName);
-            }
-        }
-        Board result = new Board();
-        result.load(boardFile);
-        return result;
+        //TODO: currently, the first parsed board is used
+        return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
     }
 
     private File scenarioDirectory() {

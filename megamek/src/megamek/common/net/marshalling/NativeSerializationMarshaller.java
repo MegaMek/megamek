@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -13,18 +13,17 @@
  */
 package megamek.common.net.marshalling;
 
-import megamek.MMConstants;
-import megamek.common.net.packets.Packet;
-import megamek.common.net.enums.PacketCommand;
-import org.nibblesec.tools.SerialKiller;
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+
 /**
- * Marshaller that Java native serialization for <code>Packet</code> representation.
+ * Marshaller that Java native serialization for <code>Packet</code>
+ * representation.
  */
 class NativeSerializationMarshaller extends PacketMarshaller {
     protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
@@ -39,7 +38,7 @@ class NativeSerializationMarshaller extends PacketMarshaller {
 
     @Override
     public Packet unmarshall(final InputStream stream) throws Exception {
-        final ObjectInputStream in = new SerialKiller(stream, MMConstants.SERIALKILLER_CONFIG_FILE);
+        final ObjectInputStream in = new ObjectInputStream(stream);
         return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
     }
 }

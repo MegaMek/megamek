@@ -1,27 +1,60 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.server;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.zip.GZIPInputStream;
+
 import com.thoughtworks.xstream.XStream;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Game;
+import megamek.common.IGame;
+import megamek.common.Player;
+import megamek.common.Roll;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser.ParseException;
 import megamek.common.icons.Camouflage;
@@ -32,23 +65,13 @@ import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.SerializationHelper;
+import megamek.logging.MMLogger;
 import megamek.server.commands.ServerCommand;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-import java.util.zip.GZIPInputStream;
 
 /**
  * @author Ben Mazur
@@ -66,6 +89,8 @@ public class Server implements Runnable {
     private final String motd;
 
     private final EmailService mailer;
+
+    private static final MMLogger logger = MMLogger.create(Server.class);
 
     public static class ReceivedPacket {
         private int connectionId;
@@ -192,7 +217,8 @@ public class Server implements Runnable {
             AbstractConnection conn = e.getConnection();
 
             // write something in the log
-            LogManager.getLogger().info("s: connection " + conn.getId() + " disconnected");
+            String message = String.format("s: connect %d disconnected.", conn.getId());
+            logger.info(message);
 
             connections.remove(conn);
             synchronized (serverLock) {
@@ -243,9 +269,9 @@ public class Server implements Runnable {
      */
     public static String validateServerAddress(String serverAddress) throws ParseException {
         if ((serverAddress == null) || serverAddress.isBlank()) {
-            String msg = "serverAddress must not be null or empty";
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
+            String message = "serverAddress must not be null or empty";
+            logger.error(message);
+            throw new ParseException(message);
         } else {
             return serverAddress.trim();
         }
@@ -257,13 +283,13 @@ public class Server implements Runnable {
      */
     public static String validatePlayerName(String playerName) throws ParseException {
         if (playerName == null) {
-            String msg = "playerName must not be null";
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
+            String message = "playerName must not be null";
+            logger.error(message);
+            throw new ParseException(message);
         } else if (playerName.isBlank()) {
-            String msg = "playerName must not be empty string";
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
+            String message = "playerName must not be empty string";
+            logger.error(message);
+            throw new ParseException(message);
         } else {
             return playerName.trim();
         }
@@ -281,23 +307,26 @@ public class Server implements Runnable {
      * Checks a String against the server password
      *
      * @param password The password provided by the user.
-     * @return true if the user-supplied data matches the server password or no password is set.
+     * @return true if the user-supplied data matches the server password or no
+     *         password is set.
      */
     public boolean passwordMatches(Object password) {
         return StringUtility.isNullOrBlank(this.password) || this.password.equals(password);
     }
 
     /**
-     * @param port if 0 or less, will return default, if illegal number, throws ParseException
+     * @param port if 0 or less, will return default, if illegal number, throws
+     *             ParseException
      * @return valid port number
      */
     public static int validatePort(int port) throws ParseException {
         if (port <= 0) {
             return MMConstants.DEFAULT_PORT;
         } else if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
-            String msg = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT, MMConstants.MAX_PORT);
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
+            String message = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT,
+                    MMConstants.MAX_PORT);
+            logger.error(message);
+            throw new ParseException(message);
         } else {
             return port;
         }
@@ -308,30 +337,36 @@ public class Server implements Runnable {
     }
 
     public Server(@Nullable String password, int port, IGameManager gameManager,
-                  boolean registerWithServerBrowser, @Nullable String metaServerUrl) throws IOException {
+            boolean registerWithServerBrowser, @Nullable String metaServerUrl) throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, null, false);
     }
 
     /**
      * Construct a new GameHost and begin listening for incoming clients.
      *
-     * @param password                  the <code>String</code> that is set as a password
-     * @param port                      the <code>int</code> value that specifies the port that is
-     *                                  used
-     * @param gameManager               the {@link IGameManager} instance for this server instance.
-     * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register
-     *                                  with the master server browser on MegaMek.info
-     * @param mailer                    an email service instance to use for sending round reports.
-     * @param dedicated                 set to true if this server is started from a GUI-less context
+     * @param password                  the <code>String</code> that is set as a
+     *                                  password
+     * @param port                      the <code>int</code> value that specifies
+     *                                  the port that is used
+     * @param gameManager               the {@link IGameManager} instance for this
+     *                                  server instance.
+     * @param registerWithServerBrowser a <code>boolean</code> indicating whether we
+     *                                  should register with the master server
+     *                                  browser on https://api.megamek.org
+     * @param mailer                    an email service instance to use for sending
+     *                                  round reports.
+     * @param dedicated                 set to true if this server is started from a
+     *                                  GUI-less context
      */
     public Server(@Nullable String password, int port, IGameManager gameManager,
-                  boolean registerWithServerBrowser, @Nullable String metaServerUrl,
-                  @Nullable EmailService mailer, boolean dedicated) throws IOException {
+            boolean registerWithServerBrowser, @Nullable String metaServerUrl,
+            @Nullable EmailService mailer, boolean dedicated) throws IOException {
         this.metaServerUrl = StringUtility.isNullOrBlank(metaServerUrl) ? null : metaServerUrl;
         this.password = StringUtility.isNullOrBlank(password) ? null : password;
         this.gameManager = gameManager;
         this.mailer = mailer;
         this.dedicated = dedicated;
+        String message = "";
 
         // initialize server socket
         serverSocket = new ServerSocket(port);
@@ -339,29 +374,24 @@ public class Server implements Runnable {
         motd = createMotd();
 
         // display server start text
-        LogManager.getLogger().info("s: starting a new server...");
+        logger.info("s: starting a new server...");
 
         try {
-            StringBuilder sb = new StringBuilder();
             String host = InetAddress.getLocalHost().getHostName();
-            sb.append("s: hostname = '");
-            sb.append(host);
-            sb.append("' port = ");
-            sb.append(serverSocket.getLocalPort());
-            sb.append('\n');
+            message = String.format("s: hostname = '%s' port = %d", host, serverSocket.getLocalPort());
+            logger.info(message);
+
             InetAddress[] addresses = InetAddress.getAllByName(host);
             for (InetAddress address : addresses) {
-                sb.append("s: hosting on address = ");
-                sb.append(address.getHostAddress());
-                sb.append('\n');
+                message = String.format("s: hosting on address = %s", address.getHostAddress());
+                logger.info(message);
             }
-
-            LogManager.getLogger().info(sb.toString());
         } catch (Exception ignored) {
-
+            logger.error(ignored, "Ignore Exception.");
         }
 
-        LogManager.getLogger().info("s: password = " + this.password);
+        message = String.format("s: password = %s", this.password);
+        logger.info(message);
 
         for (ServerCommand command : gameManager.getCommandList(this)) {
             registerCommand(command);
@@ -382,11 +412,12 @@ public class Server implements Runnable {
                 serverBrowserUpdateTimer = new Timer("Server Browser Register Timer", true);
                 serverBrowserUpdateTimer.schedule(register, 1, 40000);
             } else {
-                LogManager.getLogger().error("Invalid URL for server browser " + this.metaServerUrl);
+                message = String.format("Invalid URL for server browser %s", this.metaServerUrl);
+                logger.error(message);
             }
         }
 
-        // Fully initialised, now accept connections
+        // Fully initialized, now accept connections
         connector = new Thread(this, "Connection Listener");
         connector.start();
 
@@ -419,7 +450,7 @@ public class Server implements Runnable {
      * it was found, the build timestamp
      */
     private String createMotd() {
-        return "Welcome to MegaMek. Server is running version " + MMConstants.VERSION;
+        return "Welcome to MegaMek. Server is running version " + SuiteConstants.VERSION;
     }
 
     /**
@@ -473,7 +504,7 @@ public class Server implements Runnable {
         try {
             serverSocket.close();
         } catch (Exception ignored) {
-
+            logger.error(ignored, "Ignored Exception");
         }
 
         // kill pending connections
@@ -563,6 +594,7 @@ public class Server implements Runnable {
             }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
             gamePlayer.setEmail(player.getEmail());
+            gamePlayer.setGroundObjectsToPlace(new ArrayList<>(player.getGroundObjectsToPlace()));
         }
     }
 
@@ -573,8 +605,7 @@ public class Server implements Runnable {
      * @return the <code>String</code> new player name
      */
     private String correctDupeName(String oldName) {
-        for (Enumeration<Player> i = getGame().getPlayers(); i.hasMoreElements(); ) {
-            Player player = i.nextElement();
+        for (Player player : getGame().getPlayersList()) {
             if (player.getName().equals(oldName)) {
                 // We need to correct it.
                 String newName = oldName;
@@ -597,10 +628,11 @@ public class Server implements Runnable {
 
     private boolean receivePlayerVersion(Packet packet, int connId) {
         final Version version = (Version) packet.getObject(0);
-        if (!MMConstants.VERSION.is(version)) {
+
+        if (!SuiteConstants.VERSION.is(version)) {
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
-                    version, MMConstants.VERSION);
-            LogManager.getLogger().error(message);
+                    version, SuiteConstants.VERSION);
+            logger.error(message);
 
             final Player player = getPlayer(connId);
             sendServerChat(String.format("For %s, Server reports:%s%s",
@@ -611,29 +643,28 @@ public class Server implements Runnable {
 
         final String clientChecksum = (String) packet.getObject(1);
         final String serverChecksum = MegaMek.getMegaMekSHA256();
-        final String message;
+        String message = "";
 
         // print a message indicating client doesn't have jar file
         if (clientChecksum == null) {
             message = "Client Checksum is null. Client may not have a jar file";
-            LogManager.getLogger().info(message);
+            logger.info(message);
             // print message indicating server doesn't have jar file
         } else if (serverChecksum == null) {
             message = "Server Checksum is null. Server may not have a jar file";
-            LogManager.getLogger().info(message);
+            logger.info(message);
             // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
             message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
                     serverChecksum, clientChecksum);
-            LogManager.getLogger().warn(message);
-        } else {
-            message = "";
+            logger.warn(message);
         }
 
         // Now, if we need to, send message!
         if (message.isEmpty()) {
-            LogManager.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum ("
-                    + clientChecksum + ") matched");
+            message = String.format("SUCCESS: Client/Server Version (%s) and Checksum (%s) matched", version,
+                    clientChecksum);
+            logger.info(message);
         } else {
             Player player = getPlayer(connId);
             sendServerChat(String.format("For %s, Server reports:%s%s",
@@ -653,25 +684,23 @@ public class Server implements Runnable {
         String name = (String) packet.getObject(0);
         boolean isBot = (boolean) packet.getObject(1);
         boolean returning = false;
+        String message = "";
 
         // this had better be from a pending connection
         if (conn == null) {
-            LogManager.getLogger().warn("Got a client name from a non-pending connection");
+            logger.warn("Got a client name from a non-pending connection");
             return;
         }
 
         // check if they're connecting with the same name as a ghost player
-        for (Enumeration<Player> i = getGame().getPlayers(); i.hasMoreElements(); ) {
-            Player player = i.nextElement();
-            if (player.getName().equals(name)) {
-                if (player.isGhost()) {
-                    returning = true;
-                    player.setGhost(false);
-                    player.setBot(isBot);
-                    // switch id
-                    connId = player.getId();
-                    conn.setId(connId);
-                }
+        for (Player player : getGame().getPlayersList()) {
+            if (player.getName().equals(name) && player.isGhost()) {
+                returning = true;
+                player.setGhost(false);
+                player.setBot(isBot);
+                // switch id
+                connId = player.getId();
+                conn.setId(connId);
             }
         }
 
@@ -692,8 +721,9 @@ public class Server implements Runnable {
 
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer(connId);
-        if (!getGame().getPhase().isLounge() && (null != player)
-                && (getGame().getEntitiesOwnedBy(player) < 1)) {
+        if (!getGame().getPhase().isLounge() &&
+                (null != player) &&
+                (getGame().getEntitiesOwnedBy(player) < 1)) {
             player.setObserver(true);
         }
 
@@ -714,27 +744,33 @@ public class Server implements Runnable {
         try {
             InetAddress[] addresses = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
             for (InetAddress address : addresses) {
-                LogManager.getLogger().info("s: machine IP " + address.getHostAddress());
+                message = String.format("s: Machine IP %s", address.getHostAddress());
+                logger.info(message);
+
                 if (showIPAddressesInChat) {
-                    sendServerChat(connId, "Machine IP is " + address.getHostAddress());
+                    sendServerChat(connId, message);
                 }
             }
         } catch (Exception ignored) {
-
+            logger.error(ignored, "Ignored Exception");
         }
 
-        LogManager.getLogger().info("s: listening on port " + serverSocket.getLocalPort());
+        message = String.format("s: Listening on port %d", serverSocket.getLocalPort());
+        logger.info(message);
+
         if (showIPAddressesInChat) {
-            // Send the port we're listening on. Only useful for the player
-            // on the server machine to check.
-            sendServerChat(connId, "Listening on port " + serverSocket.getLocalPort());
+            // Send the port we're listening on. Only useful for the player on the server
+            // machine to check.
+            sendServerChat(connId, message);
         }
 
         // Get the player *again*, because they may have disconnected.
         player = getPlayer(connId);
         if (null != player) {
-            String who = player.getName() + " connected from " + getClient(connId).getInetAddress();
-            LogManager.getLogger().info("s: player #" + connId + ", " + who);
+            String who = String.format("%s connected from %s", player.getName(), getClient(connId).getInetAddress());
+            message = String.format("s: player #%d, %s", connId, who);
+            logger.info(message);
+
             if (showIPAddressesInChat) {
                 sendServerChat(who);
             }
@@ -757,7 +793,7 @@ public class Server implements Runnable {
         int team = Player.TEAM_UNASSIGNED;
         if (getGame().getPhase().isLounge()) {
             team = Player.TEAM_NONE;
-            final GameOptions gOpts = getGame().getOptions();
+            final BasicGameOptions gOpts = getGame().getOptions();
             if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
                 for (Player p : getGame().getPlayersList()) {
                     if (p.getTeam() > team) {
@@ -773,15 +809,13 @@ public class Server implements Runnable {
         Player newPlayer = new Player(connId, name);
         newPlayer.setBot(isBot);
         PlayerColour colour = newPlayer.getColour();
-        Enumeration<Player> players = getGame().getPlayers();
         final PlayerColour[] colours = PlayerColour.values();
-        while (players.hasMoreElements()) {
-            final Player p = players.nextElement();
-            if (p.getId() == newPlayer.getId()) {
+        for (Player player : getGame().getPlayersList()) {
+            if (player.getId() == newPlayer.getId()) {
                 continue;
             }
 
-            if ((p.getColour() == colour) && (colours.length > (colour.ordinal() + 1))) {
+            if ((player.getColour() == colour) && (colours.length > (colour.ordinal() + 1))) {
                 colour = colours[colour.ordinal() + 1];
             }
         }
@@ -806,8 +840,7 @@ public class Server implements Runnable {
             final PlayerColour[] playerColours = PlayerColour.values();
             boolean allUsed = true;
             Set<PlayerColour> colourUtilization = new HashSet<>();
-            for (Enumeration<Player> i = getGame().getPlayers(); i.hasMoreElements(); ) {
-                final Player otherPlayer = i.nextElement();
+            for (Player otherPlayer : getGame().getPlayersList()) {
                 if (otherPlayer.getId() != playerId) {
                     colourUtilization.add(otherPlayer.getColour());
                 } else {
@@ -859,7 +892,8 @@ public class Server implements Runnable {
      * load the game
      *
      * @param f The <code>File</code> to load
-     * @return A <code>boolean</code> value whether or not the loading was successful
+     * @return A <code>boolean</code> value whether or not the loading was
+     *         successful
      */
     public boolean loadGame(File f) {
         return loadGame(f, true);
@@ -870,12 +904,15 @@ public class Server implements Runnable {
      *
      * @param f        The <code>File</code> to load
      * @param sendInfo Determines whether the connections should be updated with
-     *                 current info. This may be false if some reconnection remapping
+     *                 current info. This may be false if some reconnection
+     *                 remapping
      *                 needs to be done first.
-     * @return A <code>boolean</code> value whether or not the loading was successful
+     * @return A <code>boolean</code> value whether or not the loading was
+     *         successful
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        LogManager.getLogger().info("s: loading saved game file '" + f.getAbsolutePath() + '\'');
+        String message = String.format("s: Loading saved game file '%s'", f.getAbsolutePath());
+        logger.info(message);
 
         Game newGame;
         try (InputStream is = new FileInputStream(f)) {
@@ -890,7 +927,8 @@ public class Server implements Runnable {
             XStream xstream = SerializationHelper.getLoadSaveGameXStream();
             newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
-            LogManager.getLogger().error("Unable to load file: " + f, e);
+            message = String.format("Unable to load file: %s", f);
+            logger.error(e, message);
             return false;
         }
 
@@ -924,30 +962,35 @@ public class Server implements Runnable {
      * current ids should change to.
      *
      * @param nameToIdMap This maps a player name to the current connection ID
-     * @param idToNameMap This maps a current conn ID to a player name, and is just the
-     *                    inverse mapping from nameToIdMap
+     * @param idToNameMap This maps a current conn ID to a player name, and is just
+     *                    the inverse mapping from nameToIdMap
      */
     public void remapConnIds(Map<String, Integer> nameToIdMap, Map<Integer, String> idToNameMap) {
         // Keeps track of connections without Ids
         List<AbstractConnection> unassignedConns = new ArrayList<>();
+
         // Keep track of which ids are used
         Set<Integer> usedPlayerIds = new HashSet<>();
         Set<String> currentPlayerNames = new HashSet<>();
-        for (Player p : getGame().getPlayersVector()) {
+
+        for (Player p : getGame().getPlayersList()) {
             currentPlayerNames.add(p.getName());
         }
+
         // Map the old connection Id to new value
         Map<Integer, Integer> connIdRemapping = new HashMap<>();
-        for (Player p : getGame().getPlayersVector()) {
+        for (Player p : getGame().getPlayersList()) {
             // Check to see if this player was already connected
             Integer oldId = nameToIdMap.get(p.getName());
             if ((oldId != null) && (oldId != p.getId())) {
                 connIdRemapping.put(oldId, p.getId());
             }
+
             // If the old and new Ids match, make sure we remove ghost status
             if ((oldId != null) && (oldId == p.getId())) {
                 p.setGhost(false);
             }
+
             // Check to see if this player's Id is taken
             String oldName = idToNameMap.get(p.getId());
             if ((oldName != null) && !oldName.equals(p.getName())) {
@@ -965,10 +1008,11 @@ public class Server implements Runnable {
         }
 
         // Remap old connection Ids to new ones
-        for (Integer currConnId : connIdRemapping.keySet()) {
-            Integer newId = connIdRemapping.get(currConnId);
-            AbstractConnection conn = connectionIds.get(currConnId);
+        for (Entry<Integer, Integer> currentConnect : connIdRemapping.entrySet()) {
+            Integer newId = currentConnect.getValue();
+            AbstractConnection conn = connectionIds.get(currentConnect.getKey());
             conn.setId(newId);
+
             // If this Id is used, make sure we reassign that connection
             if (connectionIds.containsKey(newId)) {
                 unassignedConns.add(connectionIds.get(newId));
@@ -983,9 +1027,11 @@ public class Server implements Runnable {
         // It's possible we have players not in the saved game, add 'em
         for (AbstractConnection conn : unassignedConns) {
             int newId = 0;
+
             while (usedPlayerIds.contains(newId)) {
                 newId++;
             }
+
             String name = idToNameMap.get(conn.getId());
             conn.setId(newId);
             Player newPlayer = addNewPlayer(newId, name, false);
@@ -1022,6 +1068,7 @@ public class Server implements Runnable {
 
     /**
      * Executes the process on each active connection.
+     *
      * @param process The process to execute.
      */
     public void forEachConnection(Consumer<AbstractConnection> process) {
@@ -1051,7 +1098,7 @@ public class Server implements Runnable {
      * Sends out all player info to the specified connection
      */
     private void transmitPlayerConnect(AbstractConnection connection) {
-        for (var player : getGame().getPlayersVector()) {
+        for (Player player : getGame().getPlayersList()) {
             var connectionId = connection.getId();
             connection.send(createPlayerConnectPacket(player, player.getId() != connectionId));
         }
@@ -1104,7 +1151,7 @@ public class Server implements Runnable {
      * Sends out the player info updates for all players to all connections
      */
     private void transmitAllPlayerUpdates() {
-        for (var player : getGame().getPlayersVector()) {
+        for (Player player : getGame().getPlayersList()) {
             transmitPlayerUpdate(player);
         }
     }
@@ -1143,6 +1190,9 @@ public class Server implements Runnable {
         sendChat(ORIGIN, message);
     }
 
+    /**
+     * Sends the given packet to all connections (all connected Clients = players).
+     */
     void send(Packet packet) {
         connections.stream()
                 .filter(Objects::nonNull)
@@ -1150,14 +1200,15 @@ public class Server implements Runnable {
     }
 
     /**
-     * Send a packet to a specific connection.
+     * Sends the given packet to the given connection (= player ID) if it is not
+     * null. Does nothing otherwise.
      */
     public void send(int connId, Packet packet) {
-        if (getClient(connId) != null) {
-            getClient(connId).send(packet);
+        AbstractConnection connection = getClient(connId);
+
+        if (connection != null) {
+            connection.send(packet);
         }
-        // What should we do if we've lost this client?
-        // For now, nothing.
     }
 
     /**
@@ -1165,6 +1216,7 @@ public class Server implements Runnable {
      */
     private void sendToPending(int connId, Packet packet) {
         AbstractConnection pendingConn = getPendingConnection(connId);
+
         if (pendingConn != null) {
             pendingConn.send(packet);
         }
@@ -1203,12 +1255,13 @@ public class Server implements Runnable {
         Player player = getGame().getPlayer(connId);
         // Check player. Please note, the connection may be pending.
         if ((null == player) && (null == getPendingConnection(connId))) {
-            LogManager.getLogger().error("Server does not recognize player at connection " + connId);
+            String message = String.format("Server does not recognize player at connection %d", connId);
+            logger.error(message);
             return;
         }
 
         if (packet == null) {
-            LogManager.getLogger().error("Got null packet");
+            logger.error("Got null packet");
             return;
         }
         // act on it
@@ -1218,7 +1271,7 @@ public class Server implements Runnable {
                 if (valid) {
                     sendToPending(connId, new Packet(PacketCommand.SERVER_GREETING));
                 } else {
-                    sendToPending(connId, new Packet(PacketCommand.ILLEGAL_CLIENT_VERSION, MMConstants.VERSION));
+                    sendToPending(connId, new Packet(PacketCommand.ILLEGAL_CLIENT_VERSION, SuiteConstants.VERSION));
                     getPendingConnection(connId).close();
                 }
                 break;
@@ -1270,7 +1323,7 @@ public class Server implements Runnable {
                         sendCurrentInfo(conn.getId());
                     }
                 } catch (Exception e) {
-                    LogManager.getLogger().error("Error loading save game sent from client", e);
+                    logger.error(e, "Error loading save game sent from client");
                 }
                 break;
             default:
@@ -1283,14 +1336,16 @@ public class Server implements Runnable {
      */
     @Override
     public void run() {
+        String message = "";
         Thread currentThread = Thread.currentThread();
-        LogManager.getLogger().info("s: listening for clients...");
+        logger.info("s: listening for clients...");
         while (connector == currentThread) {
             try {
                 Socket s = serverSocket.accept();
                 synchronized (serverLock) {
                     int id = getFreeConnectionId();
-                    LogManager.getLogger().info("s: accepting player connection #" + id + "...");
+                    message = String.format("s: accepting player connection #%d...", id);
+                    logger.info(message);
 
                     AbstractConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
                     c.addConnectionListener(connectionListener);
@@ -1318,7 +1373,7 @@ public class Server implements Runnable {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "Get Host exception");
             return "";
         }
     }
@@ -1331,7 +1386,8 @@ public class Server implements Runnable {
     }
 
     /**
-     * @return the current server instance. This may be null if a server has not been started
+     * @return the current server instance. This may be null if a server has not
+     *         been started
      */
     public static @Nullable Server getServerInstance() {
         return serverInstance;
@@ -1343,41 +1399,44 @@ public class Server implements Runnable {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            try (OutputStream os = conn.getOutputStream();
-                 DataOutputStream dos = new DataOutputStream(os)) {
-                String content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
-                if (register) {
-                    for (AbstractConnection iconn : connections) {
-                        content += "&players[]=" + getPlayer(iconn.getId()).getName();
-                    }
 
-                    if (!getGame().getPhase().isLounge() && !getGame().getPhase().isUnknown()) {
-                        content += "&close=yes";
-                    }
-                    content += "&version=" + MMConstants.VERSION;
-                    if (isPassworded()) {
-                        content += "&pw=yes";
-                    }
-                } else {
-                    content += "&delete=yes";
+            OutputStream os = conn.getOutputStream();
+            DataOutputStream dos = new DataOutputStream(os);
+            String content = "port="
+                    + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
+            if (register) {
+                for (AbstractConnection iconn : connections) {
+                    content += "&players[]=" + getPlayer(iconn.getId()).getName();
                 }
 
-                if (serverAccessKey != null) {
-                    content += "&key=" + serverAccessKey;
+                if (!getGame().getPhase().isLounge() && !getGame().getPhase().isUnknown()) {
+                    content += "&close=yes";
                 }
-                dos.writeBytes(content);
-                dos.flush();
 
-                try (InputStream is = conn.getInputStream();
-                     InputStreamReader isr = new InputStreamReader(is);
-                     BufferedReader br = new BufferedReader(isr)) {
-                    String line;
-                    if (conn.getResponseCode() == 200) {
-                        while ((line = br.readLine()) != null) {
-                            if (serverAccessKey == null) {
-                                serverAccessKey = line;
-                            }
-                        }
+                content += "&version=" + SuiteConstants.VERSION;
+
+                if (isPassworded()) {
+                    content += "&pw=yes";
+                }
+            } else {
+                content += "&delete=yes";
+            }
+
+            if (serverAccessKey != null) {
+                content += "&key=" + serverAccessKey;
+            }
+
+            dos.writeBytes(content);
+            dos.flush();
+
+            InputStream is = conn.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            if (conn.getResponseCode() == 200) {
+                while ((line = br.readLine()) != null) {
+                    if (serverAccessKey == null) {
+                        serverAccessKey = line;
                     }
                 }
             }

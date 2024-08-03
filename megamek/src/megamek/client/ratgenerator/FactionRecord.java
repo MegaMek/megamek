@@ -93,6 +93,11 @@ public class FactionRecord {
     private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
     private ArrayList<String> parentFactions;
 
+    // Constants: IS and Clan "general" keys
+    public static final String IS_GENERAL_KEY = "IS";
+    public static final String CL_GENERAL_KEY = "CLAN";
+    public static final String PER_GENERAL_KEY = "PERIPHERY";
+
     public FactionRecord() {
         this("Periphery", "Periphery");
     }
@@ -523,7 +528,7 @@ public class FactionRecord {
             switch (wn.getNodeName()) {
                 case "pctOmni":
                     if ((wn.getAttributes().getNamedItem("unitType") != null)
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("AeroSpaceFighter")) {
                         setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
                     } else {
                         setPctTech(TechCategory.OMNI, era, wn.getTextContent());
@@ -531,7 +536,7 @@ public class FactionRecord {
                     break;
                 case "pctClan":
                     if ((wn.getAttributes().getNamedItem("unitType") != null)
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("AeroSpaceFighter")) {
                         setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
                     } else if ((wn.getAttributes().getNamedItem("unitType") != null)
                                 && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
@@ -542,7 +547,7 @@ public class FactionRecord {
                     break;
                 case "pctSL":
                     if ((wn.getAttributes().getNamedItem("unitType") != null)
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("AeroSpaceFighter")) {
                         setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
                     } else if ((wn.getAttributes().getNamedItem("unitType") != null)
                                 && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {

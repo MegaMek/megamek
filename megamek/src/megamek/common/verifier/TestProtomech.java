@@ -17,6 +17,7 @@ import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 import java.util.HashMap;
@@ -214,11 +215,6 @@ public class TestProtomech extends TestEntity {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, getEntity().getTechLevel());
-    }
-
-    @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         if (skip()) {
@@ -249,6 +245,9 @@ public class TestProtomech extends TestEntity {
             correct = false;
         }
         correct = correct && correctMovement(buff);
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
+        }
         return correct;
     }
     

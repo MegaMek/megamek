@@ -57,7 +57,6 @@ public class Terrains implements Serializable {
     // LI smoke 4: Heavy LI smoke
     public static final int GEYSER = 21; // 1: dormant 2: active 3: magma vent
     // unimplemented
-    // Black Ice
     // Bug Storm
     // Extreme Depths
     // Hazardous Liquid Pools
@@ -145,6 +144,9 @@ public class Terrains implements Serializable {
 
     public static final int BLACK_ICE = 55;
 
+    // This is for low atmosphere maps to indicate that an empty hex is to be drawn as sky, not grassland
+    public static final int SKY = 56;
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -156,11 +158,11 @@ public class Terrains implements Serializable {
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
-            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice" };
+            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
-            INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM));
+            INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY));
 
     public static final int SIZE = names.length;
 
@@ -473,7 +475,8 @@ public class Terrains implements Serializable {
 
     /**
      * Returns the number of elevations or altitudes above the hex level a given
-     * terrainType rises.
+     * terrainType rises.  Has to be explicit about the *_ELEV values, because _everything else_
+     * that comes through here is a "level", a ranking of "denseness", not an elevation _or_ altitude.
      *
      * @param terrainType this specifies the type of terrain to get the information for
      * @param inAtmosphere

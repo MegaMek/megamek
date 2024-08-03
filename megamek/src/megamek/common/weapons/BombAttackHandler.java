@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.SpecialHexDisplay.Type;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -85,6 +86,10 @@ public class BombAttackHandler extends WeaponHandler {
         int[] payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;
+        Player player = game.getEntity(waa.getEntityId()).getOwner();
+        String bombMsg;
+        Vector<Integer> hitIds = null;
+
         // now go through the payload and drop the bombs one at a time
         for (int type = 0; type < payload.length; type++) {
             // to hit, adjusted for bomb-type specific rules
@@ -198,6 +203,12 @@ public class BombAttackHandler extends WeaponHandler {
                     r.subject = subjectId;
                     r.newlines = 1;
                     vPhaseReport.add(r);
+
+                    bombMsg = "Bomb hit here on round " + game.getRoundCount()
+                            + ", dropped by " + ((player != null) ? player.getName() : "somebody");
+                    game.getBoard().addSpecialHexDisplay(coords,
+                            new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
+                                    player, bombMsg));
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -232,6 +243,12 @@ public class BombAttackHandler extends WeaponHandler {
                         r.add(BombType.getBombName(type));
                         r.add(drop.getBoardNum());
                         vPhaseReport.addElement(r);
+                        bombMsg = "Bomb missed!  Round " + game.getRoundCount()
+                                + ", by " + ((player != null) ? player.getName() : "somebody") + ", drifted to "
+                                + drop.getBoardNum();
+                        game.getBoard().addSpecialHexDisplay(coords,
+                                new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
+                                        player, bombMsg));
                     } else {
                         // misses and scatters off-board
                         r = new Report(6699);
@@ -240,11 +257,17 @@ public class BombAttackHandler extends WeaponHandler {
                         r.newlines = 1;
                         r.add(BombType.getBombName(type));
                         vPhaseReport.addElement(r);
+                        bombMsg = "Bomb missed!  Round " + game.getRoundCount()
+                                + ", by " + ((player != null) ? player.getName() : "somebody")
+                                + ", drifted off the board";
+                        game.getBoard().addSpecialHexDisplay(coords,
+                                new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
+                                        player, bombMsg));
                         continue;
                     }
                 }
                 if (type == BombType.B_INFERNO) {
-                    gameManager.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
+                    hitIds = gameManager.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
                     gameManager.deliverThunderMinefield(drop, ae.getOwner().getId(), 20, ae.getId());
                     List<Coords> hexes = drop.allAdjacent();
@@ -252,10 +275,26 @@ public class BombAttackHandler extends WeaponHandler {
                         gameManager.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
                     }
                 } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
-                    AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
+                    hitIds = AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
-                    gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
+                    hitIds= gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
+
+                // Display drifts that hit nothing separately from drifts that dealt damage
+                if (bMissed) {
+                    if (hitIds == null || hitIds.isEmpty()) {
+                        game.getBoard().addSpecialHexDisplay(drop,
+                                new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
+                                        player, Messages.getString("BombMessage.drifted")
+                                        + " " + coords.getBoardNum()));
+                    } else {
+                        game.getBoard().addSpecialHexDisplay(drop,
+                                new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
+                                        player, Messages.getString("BombMessage.drifted")
+                                        + " " + coords.getBoardNum()));
+                    }
+                }
+
                 // Finally, we need a new attack roll for the next bomb, if any.
                 roll = Compute.rollD6(2);
             }

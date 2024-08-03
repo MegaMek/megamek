@@ -512,8 +512,8 @@ public abstract class BotClient extends Client {
         try {
             if (game.getPhase().isMovement()) {
                 MovePath mp;
-                if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
+                if (game.getTurn() instanceof SpecificEntityTurn) {
+                    SpecificEntityTurn turn = (SpecificEntityTurn) game.getTurn();
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {
@@ -1042,60 +1042,68 @@ public abstract class BotClient extends Client {
         int new_stealth;
 
         for (Entity check_ent : game.getEntitiesVector()) {
-            if ((check_ent.getOwnerId() == localPlayerNumber)
-                && (check_ent instanceof Mech)) {
-                if (check_ent.hasStealth()
-                        && (check_ent.getPosition() != null)) {
+            if ((check_ent.getOwnerId() == localPlayerNumber)) {
+                if (check_ent.hasStealth()) {
                     for (Mounted mEquip : check_ent.getMisc()) {
                         MiscType mtype = (MiscType) mEquip.getType();
                         if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
-                            // If the Mech is in danger of shutting down (14+
-                            // heat), consider shutting
-                            // off the armor
-
-                            trigger_range = 13 + Compute.randomInt(7);
-                            if (check_ent.heat > trigger_range) {
-                                new_stealth = 0;
+                            if (!check_ent.tracksHeat()) {
+                                // Always activate Stealth if the heat doesn't matter!
+                                new_stealth = 1;
                             } else {
+                                // If the Mech is in danger of shutting down (14+
+                                // heat), consider shutting
+                                // off the armor
+                                trigger_range = 13 + Compute.randomInt(7);
 
-                                // Mech is not in danger of shutting down soon;
-                                // if most of the
-                                // enemy is right next to the Mech deactivate
-                                // armor to free up
-                                // heatsinks for weapons fire
+                                if (check_ent.heat > trigger_range) {
+                                    new_stealth = 0;
+                                } else if ((check_ent.getPosition() == null)) {
+                                    // Off-board entities that _do_ track heat should be Stealthing up
+                                    // before they come back on-board.
+                                    new_stealth = 1;
 
-                                total_bv = 0;
-                                known_bv = 0;
-                                known_range = 0;
-                                known_count = 0;
+                                } else {
 
-                                for (Entity test_ent : game.getEntitiesVector()) {
-                                    if (check_ent.isEnemyOf(test_ent)) {
-                                        total_bv += test_ent
-                                                .calculateBattleValue();
-                                        if (test_ent.isVisibleToEnemy()) {
-                                            known_count++;
-                                            known_bv += test_ent
+                                    // Mech is not in danger of shutting down soon;
+                                    // if most of the
+                                    // enemy is right next to the Mech deactivate
+                                    // armor to free up
+                                    // heatsinks for weapons fire
+
+                                    total_bv = 0;
+                                    known_bv = 0;
+                                    known_range = 0;
+                                    known_count = 0;
+
+                                    for (Entity test_ent : game.getEntitiesVector()) {
+                                        if (check_ent.isEnemyOf(test_ent)) {
+                                            total_bv += test_ent
                                                     .calculateBattleValue();
-                                            known_range += Compute
-                                                    .effectiveDistance(game,
-                                                                       check_ent, test_ent);
+                                            if (test_ent.isVisibleToEnemy()) {
+                                                known_count++;
+                                                known_bv += test_ent
+                                                        .calculateBattleValue();
+                                                known_range += Compute
+                                                        .effectiveDistance(game,
+                                                                check_ent, test_ent);
+                                            }
                                         }
                                     }
-                                }
 
-                                // If no or few enemy units are visible, they're
-                                // hiding;
-                                // Default to stealth armor on in this case
+                                    // If no or few enemy units are visible, they're
+                                    // hiding;
+                                    // Default to stealth armor on in this case
 
-                                if ((known_count == 0) || (known_bv < (total_bv / 2))) {
-                                    new_stealth = 1;
-                                } else {
-                                    if ((known_range / known_count) <= (5 + Compute.randomInt(5))) {
-                                        new_stealth = 0;
-                                    } else {
+                                    if ((known_count == 0) || (known_bv < (total_bv / 2))) {
                                         new_stealth = 1;
+                                    } else {
+                                        if ((known_range / known_count) <= (5 + Compute.randomInt(5))) {
+                                            new_stealth = 0;
+                                        } else {
+                                            new_stealth = 1;
+                                        }
                                     }
                                 }
                             }

@@ -52,6 +52,11 @@ megamek/userdata/**
 # MUL Files
 *.mul
 
+#Revision
+/megamek/docs/mm-revision.txt
+/megamek/docs/mml-revision.txt
+/megamek/docs/mhq-revision.txt
+
 #MegaMek/data Folders
 /megamek/data/misc/
 /megamek/data/recordsheets/
@@ -87,3 +92,8 @@ megamek/userdata/**
 /megamek/Entity Issues.txt
 /megamek/apidocs/
 #End MegaMek Other Outputs
+
+/megamek/docs/mm-revision.txt
+/megamek/MegaMek.l4j.ini
+OfficialUnitList.txt
+equipment.txt

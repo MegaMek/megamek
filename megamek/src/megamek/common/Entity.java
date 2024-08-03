@@ -37,6 +37,7 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.DiscordFormat;
 import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -115,7 +116,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
 
-    public static final int NONE = -1;
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;
@@ -135,7 +135,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int DMG_CRIPPLED = 4;
 
     public static final int USE_STRUCTURAL_RATING = -1;
-
+    
     protected transient Game game;
 
     protected int id = Entity.NONE;
@@ -835,7 +835,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Primarily used by Princess to speed up TAG utility calculations.
      */
     protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
+    
+    /** 
+     * Map containing all the objects this entity is carrying as cargo, indexed by location
+     */
+    private Map<Integer, ICarryable> carriedObjects = new HashMap<>();
 
+    /**
+     * Round-long flag indicating that this entity has picked up an object this round.
+     */
+    private boolean endOfTurnCargoInteraction;
+    
     /** The icon for this unit; This is empty unless the unit file has an embedded icon. */
     protected Base64Image icon = new Base64Image();
 
@@ -877,6 +887,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<WeaponAttackAction>();
+        carriedObjects = new HashMap<>();
     }
 
     /**
@@ -2760,6 +2771,141 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean canFlipArms() {
         return false;
     }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return false;
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	return 0.0;
+    }
+    
+    /**
+     * Put a ground object into the given location
+     */
+    public void pickupGroundObject(ICarryable carryable, Integer location) {
+    	if (carriedObjects == null) {
+    		carriedObjects = new HashMap<>();
+    	}
+    	
+    	// "none" means we should just put it wherever it goes by default.
+    	// rules checks are done prior to this, so we just set the data
+    	if (location == null || location == LOC_NONE) {
+    		for (Integer defaultLocation : getDefaultPickupLocations()) {
+    			carriedObjects.put(defaultLocation, carryable);
+    		}
+    	} else {
+    		carriedObjects.put(location, carryable);
+    	}
+    	endOfTurnCargoInteraction = true;
+    }
+    
+    /**
+     * Remove a specific carried object - useful for when you have the object
+     * but not its location, or when an object is being carried in multiple locations.
+     */
+    public void dropGroundObject(ICarryable carryable, boolean isUnload) {
+    	// build list of locations to clear out
+    	List<Integer> locationsToClear = new ArrayList<>();
+    	
+    	for (Integer location : carriedObjects.keySet()) {
+    		if (carriedObjects.get(location).equals(carryable)) {
+    			locationsToClear.add(location);
+    		}
+    	}
+    	
+    	for (Integer location : locationsToClear) {
+    		carriedObjects.remove(location);
+    	}
+    	
+    	// if it's not an "unload", we're going to leave the "end of turn cargo interaction" flag alone
+    	if (isUnload) {
+    		endOfTurnCargoInteraction = true;
+    	}
+    }
+    
+    /** 
+     * Remove a ground object (cargo) from the given location
+     */
+    public void dropGroundObject(int location) {
+    	carriedObjects.remove(location);
+    }
+    
+    /**
+     * Convenience method to drop all cargo.
+     */
+    public void dropGroundObjects() {
+    	carriedObjects.clear();
+    }
+    
+    /**
+     * Get the object carried in the given location. May return null.
+     */
+    public ICarryable getCarriedObject(int location) {
+    	return carriedObjects.get(location);
+    }
+    
+    public Map<Integer, ICarryable> getCarriedObjects() {
+    	return carriedObjects;
+    }
+    
+    public void setCarriedObjects(Map<Integer, ICarryable> value) {
+    	carriedObjects = value;
+    }
+    
+    public List<ICarryable> getDistinctCarriedObjects() {
+    	return carriedObjects.values().stream().distinct().toList();
+    }
+    
+    /**
+     * A list of the "default" cargo pick up locations for when none is specified
+     */
+    protected List<Integer> getDefaultPickupLocations() {
+    	return Arrays.asList(LOC_NONE);
+    }
+    
+    /**
+     * A list of all the locations that the entity can use to pick up cargo following the TacOps 
+     * "one handed" pickup rules
+     */
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	return Arrays.asList(LOC_NONE);
+    }
+    
+    /**
+     * Whether a weapon in a given location can be fired, 
+     * given the entity's currently carried cargo
+     */
+    public boolean canFireWeapon(int location) {
+    	if (getBlockedFiringLocations() == null) {
+    		return true;
+    	}
+    	
+    	// loop through everything we are carrying
+    	// if the weapon location is blocked by the carried object, then we cannot fire the weapon
+    	for (int carriedObjectLocation : getCarriedObjects().keySet()) {
+    		if (getBlockedFiringLocations().containsKey(carriedObjectLocation) &&
+    				getBlockedFiringLocations().get(carriedObjectLocation).contains(location)) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return null;
+    }
 
     /**
      * Returns this entity's original walking movement points
@@ -3790,7 +3936,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             miscList.add((MiscMounted) mounted);
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
-                && !(mounted instanceof WeaponMounted) && !(mounted instanceof InfantryWeaponMounted)) {
+                && !(mounted instanceof WeaponMounted)) {
             LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
         }
     }
@@ -3964,7 +4110,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public List<WeaponMounted> getWeaponList() {
         if (usesWeaponBays()) {
-            return weaponBayList;
+            if (!hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
+                return weaponBayList;
+            }
+            List<WeaponMounted> combinedWeaponList = new ArrayList<WeaponMounted>(weaponBayList);
+            for (Iterator<WeaponMounted> iterator = weaponList.iterator(); iterator.hasNext(); ) {
+                WeaponMounted next = iterator.next();
+                if (next.isGroundBomb() || next.isBombMounted()) {
+                    combinedWeaponList.add(next);
+                }
+            }
+            return combinedWeaponList;
+
         }
         if (isCapitalFighter()) {
             return weaponGroupList;
@@ -4302,14 +4459,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         weaponBayList.removeAll(bombAttacksToRemove);
 
         boolean foundSpaceBomb = false;
-        int numGroundBombs = 0;
+        int addedBombAttacks = 0;
 
         for (BombMounted m : getBombs()) {
             // Add the space bomb attack
             if (!foundSpaceBomb
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
                     && m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
-                    && isFighter()
+                    && isBomber()
                     && game.getBoard().inSpace()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
@@ -4327,7 +4484,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMech)
                             && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
-                if (numGroundBombs < 1) {
+                if (addedBombAttacks < 1) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(diveBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4339,7 +4496,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     }
                 }
 
-                if ((numGroundBombs < 10) && isFighter()) {
+                if ((addedBombAttacks < 10) && isBomber()) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4350,7 +4507,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                     }
                 }
-                numGroundBombs++;
+                addedBombAttacks++;
             }
         }
     }
@@ -4560,6 +4717,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the CriticalSlots in the given location as a list. The returned list can be empty
+     * depending on the unit and the chosen slot but not null. The entries are not filtered in
+     * any way (could be null although that is probably an error in the internal representation
+     * of the unit.)
+     *
+     * @param location The location, e.g. Mech.LOC_HEAD
+     * @return A list of CriticalSlots in that location, possibly empty
+     */
+    public List<CriticalSlot> getCriticalSlots(int location) {
+        List<CriticalSlot> result = new ArrayList<>();
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            result.add(getCritical(location, slot));
+        }
+        return result;
     }
 
     /**
@@ -6510,6 +6684,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         setClimbMode(GUIP.getMoveDefaultClimbMode());
 
+        endOfTurnCargoInteraction = false;
+        
         setTurnInterrupted(false);
     }
 
@@ -8586,6 +8762,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the DockingCollar with the given ID or null
      */
     @Nullable
+    @SuppressWarnings("unused") // Used in MHQ
     public DockingCollar getCollarById(int collarNumber) {
         return getDockingCollars().stream()
                 .filter(dc -> dc.getCollarNumber() == collarNumber)
@@ -8662,47 +8839,50 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @return only entities in that can be unloaded on ground
+     * @return All Entities that can at this point be unloaded from any of the bays of this Entity. This
+     * does not include any units that were loaded this turn or any bays where the door capacity has
+     * been exceeded this turn.
+     * Note that the returned list may be unmodifiable.
+     *
+     * @see #wasLoadedThisTurn()
+     * @see Bay#canUnloadUnits()
      */
-    public Vector<Entity> getUnitsUnloadableFromBays() {
-        Vector<Entity> result = new Vector<>();
-
-        // Walk through this entity's transport components;
-        // add all of their lists to ours.
-
-        // I should only add entities in bays that are functional
-        for (Transporter next : transports) {
-            if ((next instanceof Bay) && (((Bay) next).canUnloadUnits())) {
-                Bay nextbay = (Bay) next;
-                for (Entity e : nextbay.getUnloadableUnits()) {
-                    if (!e.wasLoadedThisTurn()) {
-                        result.addElement(e);
-                    }
-                }
-            }
-        }
-
-        // Return the list.
-        return result;
+    public List<Entity> getUnitsUnloadableFromBays() {
+        return transports.stream()
+                .filter(t -> t instanceof Bay).map(t -> (Bay) t)
+                .filter(Bay::canUnloadUnits)
+                .flatMap(b -> b.getUnloadableUnits().stream())
+                .filter(e -> !e.wasLoadedThisTurn())
+                .toList();
     }
 
-    public Bay getLoadedBay(int bayID) {
+    /**
+     * @return All Entities that can at this point be unloaded from any transports of this Entity which are
+     * no Bays. This does not include any units that were loaded this turn.
+     * Note that the returned list may be unmodifiable.
+     *
+     * @see #wasLoadedThisTurn()
+     */
+    public List<Entity> getUnitsUnloadableFromNonBays() {
+        return transports.stream()
+                .filter(t -> !(t instanceof Bay))
+                .flatMap(b -> b.getLoadedUnits().stream())
+                .filter(e -> !e.wasLoadedThisTurn())
+                .toList();
+    }
 
-        Vector<Bay> bays = getFighterBays();
-        for (int nbay = 0; nbay < bays.size(); nbay++) {
-            Bay currentBay = bays.elementAt(nbay);
-            Vector<Entity> currentFighters = currentBay.getLoadedUnits();
-            for (int nfighter = 0; nfighter < currentFighters.size(); nfighter++) {
-                Entity fighter = currentFighters.elementAt(nfighter);
-                if (fighter.getId() == bayID) {
-                    // then we are in the right bay
-                    return currentBay;
-                }
-            }
-        }
-
-        return null;
-
+    /**
+     * @return All Entities that can at this point be unloaded from any transports of this Entity. This does
+     * not include any units that were loaded this turn nor units from bays where the door capacity has been
+     * exceeded this turn.
+     *
+     * @see #wasLoadedThisTurn()
+     * @see Bay#canUnloadUnits()
+     */
+    public List<Entity> getUnloadableUnits() {
+        List<Entity> loadedUnits = new ArrayList<>(getUnitsUnloadableFromNonBays());
+        loadedUnits.addAll(getUnitsUnloadableFromBays());
+        return loadedUnits;
     }
 
     /**
@@ -8891,13 +9071,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     @Override
+    @SuppressWarnings("unused") // Used in MHQ
     public void resetTransporter() {
         transports.forEach(Transporter::resetTransporter);
     }
 
     @Override
     public String getUnusedString() {
-        return getUnusedString(false);
+        return getUnusedString(ViewFormatting.NONE);
     }
 
     @Override
@@ -8928,8 +9109,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean ishtml) {
-        StringBuffer result = new StringBuffer();
+    public String getUnusedString(ViewFormatting formatting) {
+        StringBuilder result = new StringBuilder();
 
         // Walk through this entity's transport components;
         // add all of their string to ours.
@@ -8942,10 +9123,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((next instanceof DockingCollar) && ((DockingCollar) next).isDamaged()) {
                 continue;
             }
-            if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+            if (formatting == ViewFormatting.HTML && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
                 result.append("<font color='red'>")
                     .append(next.getUnusedString())
                     .append("</font>");
+            } else if (formatting == ViewFormatting.DISCORD && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+                result.append(DiscordFormat.RED)
+                    .append(next.getUnusedString())
+                    .append(DiscordFormat.RESET);
             } else {
                 result.append(next.getUnusedString());
             }
@@ -8959,7 +9144,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                if (ishtml) {
+                if (formatting == ViewFormatting.HTML) {
                     result.append("<br>");
                 } else {
                     result.append("\n");
@@ -9386,7 +9571,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String toString() {
-        return "Entity [" + getDisplayName() + ", " + getId() + "]";
+        return "Entity [" + getDisplayName() + ", ID: " + getId() + "]";
     }
 
     /**
@@ -10010,12 +10195,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
+        if (getPosition() == null) {
+            return false; // not on board?
+        }
+
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
             Hex hex = game.getBoard().getHex(getPosition());
+            if (hex == null) {
+                return false;
+            }
             return hex.containsTerrain(Terrains.BUILDING);
         }
+
         // only mechs and protos have physical attacks (except tank charges)
         if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;
@@ -10054,10 +10247,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (moved == EntityMovementType.MOVE_SPRINT
                 || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             return false;
-        }
-
-        if (getPosition() == null) {
-            return false; // not on board?
         }
 
         // check if we have iNarc pods attached that can be brushed off
@@ -12171,6 +12360,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean turnWasInterrupted() {
         return turnWasInterrupted;
+    }
+    
+    public boolean endOfTurnCargoInteraction() {
+    	return endOfTurnCargoInteraction;
     }
 
     public Vector<Sensor> getSensors() {

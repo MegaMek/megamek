@@ -1,4 +1,4 @@
-3085 Cappellan Confederation Medium Mech F
+3085 Capellan Confederation Medium Mech F
 Assassin ASN-23,1
 Blackjack BJ-3,2
 Wolverine WVR-6R,3

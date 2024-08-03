@@ -17,6 +17,7 @@ package megamek.common.verifier;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -920,11 +921,6 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, getEntity().getTechLevel());
-    }
-
-    @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         if (skip()) {
@@ -1118,6 +1114,9 @@ public class TestSupportVehicle extends TestEntity {
 
         if (!correctCriticals(buff)) {
             correct = false;
+        }
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
         }
         return correct;
     }

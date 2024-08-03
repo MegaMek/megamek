@@ -693,11 +693,6 @@ public class TestAero extends TestEntity {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, aero.getTechLevel());
-    }
-
-    @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
 
@@ -750,7 +745,9 @@ public class TestAero extends TestEntity {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= !hasMismatchedLateralWeapons(buff);
         correct &= correctHeatSinks(buff);
-
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
+        }
         return correct;
     }
 

@@ -68,9 +68,9 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
             unit.setName(node.get(GENERAL_NAME).textValue());
             unit.setSkill(node.has(SKILL) ? node.get("skill").intValue() : 4);
 
-            if (node.has(FORCE)) {
-                unit.setForceString(node.get(FORCE).textValue());
-            }
+//            if (node.has(FORCE)) {
+//                unit.setForceString(node.get(FORCE).textValue());
+//            }
 
             if (node.has(ELEMENTS)) {
                 // When the elements are given, read them and convert

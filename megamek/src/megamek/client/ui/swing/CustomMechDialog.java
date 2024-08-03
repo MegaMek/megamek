@@ -20,18 +20,21 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.*;
-import megamek.common.verifier.*;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
 
@@ -61,7 +64,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
     private JTabbedPane tabAll;
 
-    private final JTextField fldFatigue = new JTextField(3);
     private final JTextField fldInit = new JTextField(3);
     private final JTextField fldCommandInit = new JTextField(3);
     private final JCheckBox chCommander = new JCheckBox();
@@ -102,6 +104,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     private final JLabel labHidden = new JLabel(Messages.getString("CustomMechDialog.labHidden"),
             SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
+
+    private final JLabel labDeployStealth = new JLabel(Messages.getString("CustomMechDialog.labDeployStealth"),
+            SwingConstants.RIGHT);
+    private final JCheckBox chDeployStealth = new JCheckBox();
+
     private final JLabel labOffBoard = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT);
     private final JCheckBox chOffBoard = new JCheckBox();
@@ -512,6 +519,12 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         labHidden.setEnabled(enableHidden);
         chHidden.setEnabled(enableHidden);
         chHidden.addActionListener(this);
+
+        chDeployStealth.removeActionListener(this);
+        boolean enableStealthed = (entity.hasStealth());
+        labDeployStealth.setEnabled(enableStealthed);
+        chDeployStealth.setEnabled(enableStealthed);
+        chDeployStealth.addActionListener(this);
     }
 
     @Override
@@ -630,7 +643,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         }
 
         // get values
-        int fatigue;
         int init;
         int command;
         int velocity = 0;
@@ -640,7 +652,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         int offBoardDistance;
         try {
             init = Integer.parseInt(fldInit.getText());
-            fatigue = Integer.parseInt(fldFatigue.getText());
             command = Integer.parseInt(fldCommandInit.getText());
             if (isAero || isShip) {
                 velocity = Integer.parseInt(fldStartVelocity.getText());
@@ -710,6 +721,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                 int gunneryAeroB;
                 int pilotingAero;
                 int tough;
+                int fatigue;
                 int backup = panCrewMember[i].getBackup();
                 try {
                     gunnery = panCrewMember[i].getGunnery();
@@ -724,6 +736,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                     pilotingAero = panCrewMember[i].getPilotingAero();
                     artillery = panCrewMember[i].getArtillery();
                     tough = panCrewMember[i].getToughness();
+                    fatigue = panCrewMember[i].getCrewFatigue();
                 } catch (NumberFormatException e) {
                     msg = Messages.getString("CustomMechDialog.EnterValidSkills");
                     title = Messages.getString("CustomMechDialog.NumberFormatError");
@@ -789,6 +802,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                 }
                 entity.getCrew().setMissing(missing, i);
                 entity.getCrew().setToughness(tough, i);
+                entity.getCrew().setCrewFatigue(fatigue, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
                 entity.getCrew().setHits(Integer.parseInt(hits), i);
@@ -813,7 +827,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                     client.sendUpdateEntity(other);
                 }
             }
-            entity.getCrew().setFatigue(fatigue);
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);
 
@@ -838,6 +851,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         // Apply multiple-entity settings
         for (Entity entity : entities) {
             entity.setHidden(chHidden.isSelected());
+            setStealth(entity, chDeployStealth.isSelected());
 
             if (chOffBoard.isSelected()) {
                 try {
@@ -1031,6 +1045,18 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 
+    private void setStealth(Entity e, boolean stealthed) {
+        int newStealth = (stealthed) ? 1 : 0;
+        EquipmentMode newMode = (stealthed) ? EquipmentMode.getMode("On") : EquipmentMode.getMode("Off");
+        for (MiscMounted m: e.getMiscEquipment(MiscType.F_STEALTH)) {
+            if (m.curMode() == newMode) {
+                continue;
+            };
+            m.setMode(newStealth);
+            m.newRound(-1);
+        }
+    }
+
     @Override
     protected Container createCenterPane() {
         final Entity entity = entities.get(0);
@@ -1045,6 +1071,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         final boolean isQuadVee = entities.stream().allMatch(e -> e instanceof QuadVee);
         final boolean isLAM = entities.stream().allMatch(e -> e instanceof LandAirMech);
         final boolean isGlider = entities.stream().allMatch(e -> (e instanceof Protomech) && e.getMovementMode().isWiGE());
+        final boolean hasStealth = entities.stream().allMatch(e -> e.hasStealth());
         boolean eligibleForOffBoard = true;
 
         int bh = clientgui.getClient().getMapSettings().getBoardHeight();
@@ -1118,7 +1145,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             tabAll.addTab(Messages.getString("CustomMechDialog.tabEquipment"), scrEquip);
         }
         tabAll.addTab(Messages.getString(
-                editableDeployment ? "CustomMechDialog.tabDeployment" : "CustomMechDialog.tabState" ),
+                        editableDeployment ? "CustomMechDialog.tabDeployment" : "CustomMechDialog.tabState" ),
                 new JScrollPane(panDeploy));
         if (quirksEnabled && !multipleEntities) {
             JScrollPane scrQuirks = new JScrollPane(panQuirks);
@@ -1145,13 +1172,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         }
 
         // **CREW TAB**//
-        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMechDialog.labFatigue"), SwingConstants.RIGHT), GBC.std());
-            panCrew.add(fldFatigue, GBC.eop());
-            fldFatigue.setToolTipText(Messages.getString("CustomMechDialog.labFatigueToolTip"));
-        }
-        fldFatigue.setText(Integer.toString(entity.getCrew().getFatigue()));
-
         if (gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             panCrew.add(new JLabel(Messages.getString("CustomMechDialog.labInit"), SwingConstants.RIGHT), GBC.std());
             panCrew.add(fldInit, GBC.eop());
@@ -1261,6 +1281,12 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             chHidden.setSelected(entity.isHidden());
         }
 
+        if (hasStealth) {
+            panDeploy.add(labDeployStealth, GBC.std());
+            panDeploy.add(chDeployStealth, GBC.std());
+            chDeployStealth.setSelected(entity.isStealthOn());
+        }
+
         if (eligibleForOffBoard) {
             panDeploy.add(labOffBoard, GBC.std());
             panDeploy.add(chOffBoard, GBC.eol());
@@ -1310,7 +1336,6 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         }
 
         if (!editable) {
-            fldFatigue.setEnabled(false);
             fldInit.setEnabled(false);
             fldCommandInit.setEnabled(false);
             chCommander.setEnabled(false);
@@ -1320,6 +1345,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
             chHidden.setEnabled(false);
+            chDeployStealth.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);

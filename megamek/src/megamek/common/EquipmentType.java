@@ -18,15 +18,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -552,9 +544,9 @@ public class EquipmentType implements ITechnology {
             return false;
         }
 
-        // Beware concurrent modification
-        for (EquipmentMode mode : modes) {
-            if (mode.getName().equals(modeType)) {
+        // Avoid Concurrent Modification exception with this one simple trick!
+        for (Iterator<EquipmentMode> iterator = modes.iterator(); iterator.hasNext(); ) {
+            if (iterator.next().getName().equals(modeType)) {
                 return true;
             }
         }

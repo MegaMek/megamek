@@ -147,7 +147,7 @@ public class OptionsConstants {
     public static final String PILOT_CROSS_COUNTRY = "cross_country";
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";
     // public static final String PILOT_DUST_OFF = "dust_off";
-    // public static final String PILOT_HVY_LIFTER = "hvy_lifter";
+    public static final String PILOT_HVY_LIFTER = "hvy_lifter";
     // public static final String PILOT_HOPPER = "hopper";
     public static final String PILOT_HOPPING_JACK = "hopping_jack";
     public static final String PILOT_HOT_DOG = "hot_dog";
@@ -422,7 +422,6 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";
     public static final String ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE = "indirect_always_possible";
     public static final String ADVCOMBAT_INCREASED_AC_DMG = "increased_ac_dmg";
-    public static final String ADVCOMBAT_INCREASED_ISERLL_RANGE = "increased_iserll_range";
     public static final String ADVCOMBAT_UNJAM_UAC = "unjam_uac";
     public static final String ADVCOMBAT_UAC_TWOROLLS = "uac_tworolls";
     public static final String ADVCOMBAT_CLUBS_PUNCH = "clubs_punch";

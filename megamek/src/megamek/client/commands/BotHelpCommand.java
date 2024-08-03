@@ -21,6 +21,7 @@ package megamek.client.commands;
 import megamek.client.Client;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.ui.IClientCommandHandler;
+import megamek.client.ui.swing.ClientGUI;
 
 /**
  * @author dirk
@@ -29,13 +30,12 @@ public class BotHelpCommand extends ClientCommand {
 
     private IClientCommandHandler cmdHandler;
 
-    /** Creates new HelpCommand */
-    public BotHelpCommand(Client client) {
+    public BotHelpCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "botHelp",
                 "Lists all of the bot commands available, or gives help on a specific command.  Usage: #botHelp [command]");
-        cmdHandler = client;
+        cmdHandler = clientGUI;
     }
 
     @Override

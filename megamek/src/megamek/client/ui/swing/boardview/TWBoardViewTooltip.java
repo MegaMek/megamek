@@ -59,7 +59,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         if (!game.getBoard().contains(coords)) {
             return null;
         }
-        Entity selectedEntity = (clientGui != null) ? clientGui.getSelectedUnit() : null;
+        Entity selectedEntity = (clientGui != null) ? clientGui.getDisplayedUnit() : null;
         Player localPlayer = localPlayer();
         Hex mhex = game.getBoard().getHex(coords);
 
@@ -72,7 +72,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             String sTerrain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
-            if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
+            if ((selectedEntity != null) && (selectedEntity.getPosition() != null) && !selectedEntity.isOffBoard()) {
                 int distance = selectedEntity.getPosition().distance(coords);
                 if (distance == 1) {
                     sTerrain += Messages.getString("BoardView1.Tooltip.Distance1");
@@ -333,7 +333,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 // The exception is auto hits.  There will be an icon for auto
                 // hits, so we need to draw a tooltip
                 if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(game.getPhase(), round, localPlayer)
+                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP)
                         || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (Objects.equals(localPlayer, shd.getOwner())) {
@@ -439,9 +439,9 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
      */
     @Nullable
     private Mounted<?> getSelectedArtilleryWeapon() {
-        if ((clientGui != null) && clientGui.hasSelectedWeapon()) {
-            Entity selectedUnit = clientGui.getSelectedUnit();
-            Mounted<?> selectedWeapon = clientGui.getSelectedWeapon();
+        if ((clientGui != null) && clientGui.getDisplayedWeapon().isPresent()) {
+            Entity selectedUnit = clientGui.getDisplayedUnit();
+            Mounted<?> selectedWeapon = clientGui.getDisplayedWeapon().get();
 
             // We don't want to display artillery auto-hit/adjusted fire hexes during
             // the artyautohithexes phase. These could be displayed if the player

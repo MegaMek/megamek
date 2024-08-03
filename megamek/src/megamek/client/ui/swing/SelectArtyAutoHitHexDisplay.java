@@ -92,12 +92,15 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private int startingHexes;
 
+    protected final ClientGUI clientgui;
+
     /**
      * Creates and lays out a new select designated hex phase display for the specified
      * clientgui.getClient().
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         super(clientgui);
+        this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
@@ -353,9 +356,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setEnabled(nbr > 0);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

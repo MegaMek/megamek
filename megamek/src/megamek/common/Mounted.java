@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -25,7 +24,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import org.apache.logging.log4j.LogManager;
@@ -1672,9 +1670,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 + ")";
 
         List<String> state = new ArrayList<>();
-        if (linked != null) state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
-        if (linkedBy != null) state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
-        if (crossLinkedBy != null) state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
+        if (linked != null) {
+            if (linked.getEntity().getId() != entity.getId()) {
+                state.add("Linked: [" + linked.getEntity() + ":" + linked.getEntity().getEquipment().indexOf(linked) + "]");
+            } else {
+                state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
+            }
+        }
+        if (linkedBy != null) {
+            if (linkedBy.getEntity().getId() != entity.getId()) {
+                state.add("LinkedBy: [" + linkedBy.getEntity() + ":" + linkedBy.getEntity().getEquipment().indexOf(linkedBy) + "]");
+            } else {
+                state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
+            }
+        }
+        if (crossLinkedBy != null) {
+            if (crossLinkedBy.getEntity().getId() != entity.getId()) {
+                state.add("CrossLinkedBy: [" + crossLinkedBy.getEntity() + ":" + crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) + "]");
+            } else {
+                state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
+            }
+        }
         if (linkedBayId != -1) state.add("LinkedBay: [" + linkedBayId + "]");
         state.addAll(bayComponentsToString());
         if (type instanceof AmmoType) {
@@ -1691,7 +1707,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (facing != -1) state.add("Facing: " + facing);
         if (!quirks.activeQuirks().isEmpty()) state.add("Quirks: " + quirks.getOptionList("/"));
         if (weaponGroup) state.add("Group");
-        if (nweapons != 1) state.add("#Weapons: " + nweapons);
+        if (nweapons != 1 || weaponGroup) state.add("#Weapons: " + nweapons);
         if (size != 1) state.add("Size: " + size);
         return intro + " { " + String.join(", ", state) + " }";
     }

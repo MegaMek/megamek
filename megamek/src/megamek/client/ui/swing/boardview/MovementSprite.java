@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -19,8 +20,8 @@ import megamek.common.Entity;
  * long diagonal lines.
  *
  * Appears as an arrow pointing to the hex this entity will move to based on
- * current movement vectors. 
- * 
+ * current movement vectors.
+ *
  * TODO: Different color depending upon whether
  * entity has already moved this turn
  */
@@ -79,13 +80,13 @@ class MovementSprite extends Sprite {
         // red if offboard
         if (!this.bv.game.getBoard().contains(end)) {
             int colour = 0xff0000; // red
-            int transparency = GUIP.getAttachArrowTransparency();
+            int transparency = GUIP.getAttackArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
         // dark gray if done
         if (en.isDone()) {
             int colour = 0x696969; // gray
-            int transparency = GUIP.getAttachArrowTransparency();
+            int transparency = GUIP.getAttackArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
 
@@ -118,13 +119,13 @@ class MovementSprite extends Sprite {
         // directly
         // in the centes of hex and hiding mek under.
 
-        a.x = a.x + (int) ((BoardView.HEX_W / 2) * bv.scale)
+        a.x = a.x + (int) ((HexTileset.HEX_W / 2) * bv.scale)
                 + (int) Math.round(Math.cos(an) * (int) (18 * bv.scale));
-        t.x = (t.x + (int) ((BoardView.HEX_W / 2) * bv.scale))
+        t.x = (t.x + (int) ((HexTileset.HEX_W / 2) * bv.scale))
                 - (int) Math.round(Math.cos(an) * (int) (18 * bv.scale));
-        a.y = a.y + (int) ((BoardView.HEX_H / 2) * bv.scale)
+        a.y = a.y + (int) ((HexTileset.HEX_H / 2) * bv.scale)
                 + (int) Math.round(Math.sin(an) * (int) (18 * bv.scale));
-        t.y = (t.y + (int) ((BoardView.HEX_H / 2) * this.bv.scale))
+        t.y = (t.y + (int) ((HexTileset.HEX_H / 2) * this.bv.scale))
                 - (int) Math.round(Math.sin(an) * (int) (18 * bv.scale));
         movePoly = new StraightArrowPolygon(a, t, (int) (4 * bv.scale),
                 (int) (8 * bv.scale), false);

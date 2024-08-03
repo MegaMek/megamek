@@ -46,11 +46,7 @@ public class PushAttackAction extends DisplacementAttackAction {
      */
     protected static String toHitIsImpossible(Game game, Entity ae, Targetable target) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
-        String extendedBladeImpossible = null;
-        if ((ae instanceof Mech) && ((Mech) ae).hasExtendedRetractableBlade()) {
-            extendedBladeImpossible = "Extended retractable blade";
-        }
-
+        
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
@@ -58,23 +54,19 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (ae.getGrappled() != Entity.NONE) {
             return "Unit Grappled";
         }
-
-        if (ae.isEvading()) {
-            return "attacker is evading.";
+        
+        // can't push if carrying any cargo per TW
+        if ((ae instanceof Mech) &&
+        		!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ||
+        		!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ) {
+    		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
+    	}
+        
+        if ((ae instanceof Mech) && ((Mech) ae).hasExtendedRetractableBlade()) {
+            return "Extended retractable blade";
         }
-
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
-            // a friendly unit can never be the target of a direct attack.
-            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
-                return "A friendly unit can never be the target of a direct attack.";
-            }
-        }
-
-        return extendedBladeImpossible;
+        
+        return null;
     }
 
     /**
@@ -248,6 +240,11 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
+        String otherImpossible = toHitIsImpossible(game, ae, target);
+        if (otherImpossible != null) {
+        	return new ToHitData(TargetRoll.IMPOSSIBLE, otherImpossible);
+        }
+        
         // Set the base BTH
         int base = ae.getCrew().getPiloting() - 1;
 

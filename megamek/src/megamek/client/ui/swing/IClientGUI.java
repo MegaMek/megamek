@@ -49,9 +49,15 @@ public interface IClientGUI {
      */
     void die();
 
-    InGameObject getSelectedUnit();
-
     IClient getClient();
 
     JComponent turnTimerComponent();
+
+    default boolean isChatBoxActive() {
+        return false;
+    }
+
+    void setChatBoxActive(boolean active);
+
+    void clearChatBox();
 }

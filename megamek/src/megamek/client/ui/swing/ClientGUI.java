@@ -27,6 +27,7 @@ import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
@@ -41,7 +42,6 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.*;
-import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
@@ -57,6 +57,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
@@ -85,8 +86,6 @@ import java.util.*;
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, IPreferenceChangeListener, MechDisplayListener {
     // region Variable Declarations
-    public static final int WEAPON_NONE = -1;
-
     // region action commands
     // region main menu
     // Note: anything located in menu bars is not located here but in their menu
@@ -104,6 +103,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
+    public static final String FILE_GAME_CONNECT_SBF = "fileGameConnectSbf";
     public static final String FILE_GAME_EDIT_BOTS = "editBots";
     // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
@@ -233,15 +233,16 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
+    private GroundObjectSpriteHandler groundObjectSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
-    private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
+
     private JPanel panTop;
     private JSplitPane splitPaneA;
     private JPanel panA1;
     private JPanel panA2;
 
-    public UnitDisplay unitDisplay;
+    private final UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
 
     public ForceDisplayPanel forceDisplayPanel;
@@ -256,7 +257,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
-    private AbstractUnitSelectorDialog mechSelectorDialog;
+    private MegaMekUnitSelectorDialog mechSelectorDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private PlanetaryConditionsDialog conditionsDialog;
@@ -316,16 +317,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private final Map<String, JComponent> phaseComponents = new HashMap<>();
 
     /**
-     * Current Selected entity
-     */
-    private int selectedEntityNum = Entity.NONE;
-
-    /**
-     * The currently selected weapon on the currently selected entity (if any), WEAPON_NONE otherwise
-     */
-    private int selectedWeapon = WEAPON_NONE;
-
-    /**
      * Flag that indicates whether hotkeys should be ignored or not. This is
      * used for disabling hot keys when various dialogs are displayed.
      */
@@ -341,6 +332,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * Audio system
      */
     private final AudioService audioService = new SoundManager();
+
+    private Coords currentHex;
 
     // endregion Variable Declarations
 
@@ -363,6 +356,28 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
         audioService.loadSoundFiles();
+
+        unitDisplay = new UnitDisplay(this, controller);
+
+        registerCommand(new HelpCommand(this));
+        registerCommand(new MoveCommand(this));
+        registerCommand(new RulerCommand(this));
+        registerCommand(new ShowEntityCommand(this));
+        registerCommand(new FireCommand(this));
+        registerCommand(new DeployCommand(this));
+        registerCommand(new AddBotCommand(this));
+        registerCommand(new AssignNovaNetworkCommand(this));
+        registerCommand(new SitrepCommand(this));
+        registerCommand(new LookCommand(this));
+        registerCommand(new ChatCommand(this));
+        registerCommand(new DoneCommand(this));
+        ShowTileCommand tileCommand = new ShowTileCommand(this);
+        registerCommand(tileCommand);
+        for (String direction : ShowTileCommand.directions) {
+            clientCommands.put(direction.toLowerCase(), tileCommand);
+        }
+        registerCommand(new HelpCommand(this));
+        registerCommand(new BotHelpCommand(this));
     }
 
     public BoardView getBoardView() {
@@ -371,10 +386,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public UnitDisplay getUnitDisplay() {
         return unitDisplay;
-    }
-
-    public void setUnitDisplay(final UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
     }
 
     public UnitDisplayDialog getUnitDisplayDialog() {
@@ -480,12 +491,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
+        groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
                 sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
-                firingSolutionSpriteHandler, firingArcSpriteHandler));
+                groundObjectSpriteHandler, firingSolutionSpriteHandler, firingArcSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -508,8 +520,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             cb2 = new ChatterBox2(this, bv, controller);
             bv.addOverlay(cb2);
             bv.getPanel().addKeyListener(cb2);
-            offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(new UnitOverview(this));
+            offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(offBoardOverlay);
 
             boardViewsContainer.setName(CG_BOARDVIEW);
@@ -533,7 +545,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             panTop.add(splitPaneA, BorderLayout.CENTER);
 
             bv.addBoardViewListener(this);
-            client.setBoardView(bv);
         } catch (Exception ex) {
             LogManager.getLogger().fatal("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -544,17 +555,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         layoutFrame();
         menuBar.addActionListener(this);
 
-        cb2 = new ChatterBox2(this, bv, controller);
-        bv.addOverlay(cb2);
-        bv.getPanel().addKeyListener(cb2);
-        offBoardOverlay = new OffBoardTargetOverlay(this);
-
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        setUnitDisplay(new UnitDisplay(this, controller));
-        getUnitDisplay().addMechDisplayListener(this);
+        unitDisplay.addMechDisplayListener(this);
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
@@ -1045,7 +1050,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
-        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
@@ -1095,7 +1099,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return gameOptionsDialog;
     }
 
-    public AbstractUnitSelectorDialog getMechSelectorDialog() {
+    public MegaMekUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
     }
 
@@ -1175,7 +1179,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             // otherwise, hide the panel
             panSecondary.setVisible(false);
         }
-
+        
         // Set the new panel's listeners
         if (curPanel instanceof BoardViewListener) {
             bv.addBoardViewListener((BoardViewListener) curPanel);
@@ -1216,7 +1220,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 panMain.add(component, main);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
+                component = new StartingScenarioPanel();
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_STARTINGSCENARIO;
                 component.setName(main);
@@ -1884,9 +1888,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
                 dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
                 dlgLoadList.setFileFilter(new FileNameExtensionFilter("MUL files", "mul", "mmu"));
-                // Default to the player's name.
-                dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
             }
+            // Default to the player's name.
+            dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
 
             int returnVal = dlgLoadList.showOpenDialog(frame);
             if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
@@ -1939,7 +1943,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             // If we've added reinforcements, then we need to set the round deployment up again.
             if (addedUnits && reinforce) {
-                client.getGame().setupRoundDeployment();
+                client.getGame().setupDeployment();
                 client.sendResetRoundDeployment();
             }
         } else {
@@ -2109,7 +2113,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
         final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
-        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp);
+        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage);
         bp.setIcon((icon == null) ? null : new ImageIcon(icon));
     }
 
@@ -2542,23 +2546,32 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return menuBar;
     }
 
-    public Map<String, AbstractClient> getLocalBots() {
-        return client.getBots();
+    @Override
+    public void setChatBoxActive(boolean active) {
+        bv.setChatterBoxActive(active);
     }
 
-    /**
-     * @return Returns the selectedEntityNum.
-     */
-    public int getSelectedEntityNum() {
-        return selectedEntityNum;
+    @Override
+    public void clearChatBox() {
+        if (cb2 != null) {
+            cb2.clearMessage();
+            setChatBoxActive(false);
+        }
+    }
+
+    @Override
+    public boolean isChatBoxActive() {
+        return bv.getChatterBoxActive();
+    }
+
+    public Map<String, AbstractClient> getLocalBots() {
+        return client.getBots();
     }
 
     /**
      * @param selectedEntityNum The selectedEntityNum to set.
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
-        this.selectedEntityNum = selectedEntityNum;
-        clearSelectedWeapon();
         bv.selectEntity(client.getGame().getEntity(selectedEntityNum));
     }
 
@@ -2850,11 +2863,18 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
+     * Removes visibility to the Movement Envelope.
+     */
+    public void clearMovementEnvelope() {
+        this.movementEnvelopeHandler.clear();
+    }
+
+    /**
      * Removes all temporary sprites from the board, such as pending actions, movement envelope,
      * collapse warnings etc. Does not remove game-state sprites such as units or flares.
      */
     public void clearTemporarySprites() {
-        movementEnvelopeHandler.clear();
+        clearMovementEnvelope();
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();
@@ -2894,10 +2914,19 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     /**
      * Shows collapse warnings in the given list of Coords in the BoardView
      *
-     * @param warnList The Coords to show the warning on
+     * @param warnList The list of coordinates to show the warning on
      */
     public void showCollapseWarning(List<Coords> warnList) {
         collapseWarningSpriteHandler.setCFWarningSprites(warnList);
+    }
+    
+    /**
+     * Shows ground object icons in the given list of Coords in the BoardView
+     *
+     * @param groundObjectList The list of coordinates to show
+     */
+    public void showGroundObjects(Map<Coords, List<ICarryable>> groundObjectList) {
+    	groundObjectSpriteHandler.setGroundObjectSprites(groundObjectList);
     }
 
     /**
@@ -2909,86 +2938,85 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         firingSolutionSpriteHandler.showFiringSolutions(entity);
     }
 
-    @Override
-    public void weaponSelected(MechDisplayEvent b) {
-        setSelectedEntityNum(b.getEntityId());
-        setSelectedWeapon(b.getWeaponId());
-        firingArcSpriteHandler.updateSelectedWeapon(b.getEntity(), getSelectedWeapon());
-    }
-
-    private void setSelectedWeapon(int equipmentNumber) {
-        selectedWeapon = equipmentNumber;
-    }
-
-    private void clearSelectedWeapon() {
-        selectedWeapon = WEAPON_NONE;
-    }
-
-    public int getSelectedWeaponId() {
-        return selectedWeapon;
-    }
-
-    @Nullable
-    public WeaponMounted getSelectedWeapon() {
-        return hasSelectedWeapon() ? (WeaponMounted) getSelectedUnit().getEquipment(selectedWeapon) : null;
-    }
-
-    @Nullable
-    @Override
-    public Entity getSelectedUnit() {
-        return client.getGame().getEntity(selectedEntityNum);
-    }
-
-    public boolean hasSelectedWeapon() {
-        return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
-    }
-
     public JPanel getMainPanel() {
         return clientGuiPanel;
     }
 
     /**
-     * Updates the position used for showing the field of fire to the end point of the given movepath. This
-     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown).
-     *
-     * @param entity The unit to take the facing from if it is the currently viewed unit
-     * @param movePath A planned movement path to take the end position from
+     * @return The unit currently shown in the Unit Display. Note: This can be a another unit than the one that
+     * is selected to move or fire.
      */
-    public void setFiringArcPosition(Entity entity, MovePath movePath) {
-        // Only update when the selected weapon is on the unit that's moving
-        if (entity.getId() == getSelectedEntityNum()) {
-            firingArcSpriteHandler.updatePosition(movePath);
-        }
+    @Nullable public Entity getDisplayedUnit() {
+        return unitDisplay.getCurrentEntity();
     }
 
     /**
-     * Updates the position used for showing the field of fire to the given position. This
-     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown).
+     * Returns the weapon that is currently selected in the Unit Display. The selection can be void for various
+     * reasons, therefore this returns it as an Optional.
+     * Note: this method does some additional checks to avoid bugs where the weapon of the same ID on the unit
+     * is different from the selected weapon or is not even present on the unit. Also, the displayed unit
+     * is checked to be an active unit (i.e. can be found in game.getEntity()). It will log an error and return
+     * null otherwise. Using the returned weapon should be fairly safe.
      *
-     * @param entity The unit to take the facing from if it is the currently viewed unit
-     * @param coords The position to center the field of fire on
+     * @return The weapon that is currently selected in the Unit Display, if any
      */
-    public void setFiringArcPosition(Entity entity, Coords coords) {
-        // Only update when the selected weapon is on the unit that's changing position
-        if (entity.getId() == getSelectedEntityNum()) {
-            firingArcSpriteHandler.updatePosition(coords);
+    public Optional<WeaponMounted> getDisplayedWeapon() {
+        WeaponMounted weapon = unitDisplay.wPan.getSelectedWeapon();
+        if ((getDisplayedUnit() == null) || (weapon == null)
+                || (client.getGame().getEntity(getDisplayedUnit().getId()) == null)) {
+            return Optional.empty();
+        }
+        Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplay.wPan.getSelectedWeaponNum());
+        if (weaponOnUnit == weapon) {
+            return Optional.of(weapon);
+        } else {
+            LogManager.getLogger().error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",
+                    unitDisplay.wPan.getSelectedWeaponNum(), getDisplayedUnit());
+            return Optional.empty();
         }
     }
 
+    public Optional<AmmoMounted> getDisplayedAmmo() {
+        return Optional.ofNullable(unitDisplay.wPan.getSelectedAmmo());
+    }
+
+    @Override
+    public void weaponSelected(MechDisplayEvent b) {
+        setSelectedEntityNum(b.getEntityId());
+        updateFiringArc(b.getEntity());
+    }
+
     /**
-     * Updates the facing used for showing the field of fire to the basic facing of the given unit. This
-     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown).
+     * Updates the shown firing arc. The given entity should be the one that has taken an action
+     * such as moving or torso twisting or the unit whose selected weapon has changed.
+     * This method will check if the given unit is the one displayed in the unit viewer and/or
+     * the currently acting unit and update or remove the firinc arcs accordingly.
      *
-     * @param entity The unit to take the facing from if it is the currently viewed unit
+     * @param entity The unit that has acted or is otherwise the origin of the update
      */
-    public void setFiringArcFacing(Entity entity) {
-        // Only update when the selected weapon is on the unit that's changing its facing
-        if (entity.getId() == getSelectedEntityNum()) {
-            firingArcSpriteHandler.updateFacing(entity.getFacing());
+    public void updateFiringArc(Entity entity) {
+        if ((entity == null) || (getDisplayedUnit() == null) || getDisplayedWeapon().isEmpty()) {
+            // with no unit given or no unit displayed or no weapon selected, clear the firing arcs
+            clearFieldOfFire();
+            return;
+
+        } else if (!entity.equals(getDisplayedUnit())) {
+            // the update is not for the displayed unit; therefore do not update the firing arc
+            return;
         }
+
+
+        if (curPanel instanceof MovementDisplay) {
+            MovementDisplay md = (MovementDisplay) curPanel;
+            if (entity.getId() == md.currentEntity) {
+                firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), md.getPlannedMovement());
+                return;
+            }
+        }
+
+        // not in an ActionPhase - or - the unit is not the acting unit:
+        // show for viewed entity, no move or actions to be taken into account
+        firingArcSpriteHandler.update(entity, getDisplayedWeapon().get());
     }
 
     /**
@@ -2996,5 +3024,26 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
+    }
+
+    /**
+     * Return the Current Hex, used by client commands for the visually impaired
+     * @return the current Hex
+     */
+    public Coords getCurrentHex() {
+        return currentHex;
+    }
+
+    /**
+     * Set the Current Hex, used by client commands for the visually impaired
+     */
+    public void setCurrentHex(Hex hex) {
+        if (hex != null) {
+            currentHex = hex.getCoords();
+        }
+    }
+
+    public void setCurrentHex(Coords hex) {
+        currentHex = hex;
     }
 }

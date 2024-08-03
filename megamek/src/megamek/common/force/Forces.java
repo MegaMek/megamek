@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package megamek.common.force;
 
 
@@ -36,26 +36,26 @@ import static megamek.common.force.Force.NO_FORCE;
 /**
  * Manages a collection of Forces for a game. The game only needs to hold one Forces object.
  * Like in Campaign.java in MHQ this is mainly a map of id to Force along with many utility functions.
- * Force management and changes are directed through this object. 
- * 
+ * Force management and changes are directed through this object.
+ *
  * @author Simon (Juliez)
  */
 public final class Forces implements Serializable {
 
     private static final long serialVersionUID = -1382468145554363945L;
-    
+
     private final HashMap<Integer, Force> forces = new HashMap<>();
     private transient IGame game;
-    
+
     public Forces(IGame g) {
         game = g;
     }
-    
-    /** 
+
+    /**
      * Adds a top-level force with the provided name and the provided owner. Verifies the name
      * and the force before applying the change.
-     * Returns the id of the newly created Force or Force.NO_FORCE if no force was 
-     * created.  
+     * Returns the id of the newly created Force or Force.NO_FORCE if no force was
+     * created.
      */
     public synchronized int addTopLevelForce(final Force force, final @Nullable Player owner) {
         if (!verifyForceName(force.getName()) || (owner == null)) {
@@ -67,7 +67,7 @@ public final class Forces implements Serializable {
         return newId;
     }
 
-    /** 
+    /**
      * Adds the provided subforce to the provided parent. Verifies the name and the force before
      * applying the change.
      * @return the id of the newly created Force or Force.NO_FORCE if no new subforce was created.
@@ -92,45 +92,45 @@ public final class Forces implements Serializable {
                 .filter(e -> !e.partOfForce())
                 .collect(toList());
     }
-    
+
     /** Returns the number of top-level forces present, i.e. forces with no parent force. */
     public int getTopLevelForceCount() {
         return getTopLevelForces().size();
     }
-    
+
     /** Returns a List of the top-level forces. */
     public List<Force> getTopLevelForces() {
         return forces.values().stream().filter(Force::isTopLevel).collect(toList());
     }
-    
-    /** 
+
+    /**
      * Returns true if the provided force is part of the present forces either
-     * as a top-level or a subforce. 
+     * as a top-level or a subforce.
      */
     public boolean contains(@Nullable Force force) {
         return (force != null) && forces.containsValue(force);
     }
-    
-    /** 
+
+    /**
      * Returns true if the provided forceId is part of the present forces either
-     * as a top-level or a subforce. 
+     * as a top-level or a subforce.
      */
     public boolean contains(int forceId) {
         return forces.containsKey(forceId);
     }
-    
-    /** 
-     * Returns the force with the given force id or null if there is no force with this id. 
+
+    /**
+     * Returns the force with the given force id or null if there is no force with this id.
      */
     public Force getForce(int id) {
         return forces.get(id);
     }
-    
+
     /**
      * Adds the provided Entity to the provided force. Does nothing if the force doesn't exist
      * or if the entity is already in the targeted force. Removes the entity from any former force.
      * Returns a list of all changed forces, i.e. the former force, if any, and the new force.
-     * The list will be empty if no actual change occurred. 
+     * The list will be empty if no actual change occurred.
      */
     public ArrayList<Force> addEntity(ForceAssignable entity, int forceId) {
         ArrayList<Force> result = new ArrayList<>();
@@ -142,7 +142,7 @@ public final class Forces implements Serializable {
         if (formerForce == forceId) {
             return result;
         }
-        
+
         forces.get(forceId).addEntity(entity);
         entity.setForceId(forceId);
         result.add(getForce(forceId));
@@ -153,10 +153,10 @@ public final class Forces implements Serializable {
         return result;
     }
 
-    /** 
+    /**
      * Removes the provided entities from their current forces, if any. Does nothing if an entity
      * is already force-less (forceId == Force.NO_FORCE). Returns a list of all changed forces.
-     * The list will be empty if no actual change occurred. 
+     * The list will be empty if no actual change occurred.
      */
     public synchronized LinkedHashSet<Force> removeEntityFromForces(Collection<? extends ForceAssignable> entities) {
         LinkedHashSet<Force> result = new LinkedHashSet<>();
@@ -166,12 +166,12 @@ public final class Forces implements Serializable {
         return result;
     }
 
-    
-    /** 
+
+    /**
      * Removes the provided Entity from its current force, if any. Does nothing if the entity
-     * is already force-less (forceId == Force.NO_FORCE). 
+     * is already force-less (forceId == Force.NO_FORCE).
      * Returns a list of all changed forces, i.e. the former force, if any.
-     * The list will be empty if no actual change occurred. 
+     * The list will be empty if no actual change occurred.
      */
     public synchronized ArrayList<Force> removeEntityFromForces(ForceAssignable entity) {
         ArrayList<Force> result = new ArrayList<>();
@@ -180,21 +180,26 @@ public final class Forces implements Serializable {
             return result;
         }
         entity.setForceId(NO_FORCE);
-        
+
         if (contains(formerForce)) {
-            result.add(getForce(formerForce));
-            getForce(formerForce).removeEntity(entity);
+            Force former = getForce(formerForce);
+            if (former != null) {
+                result.add(former);
+                former.removeEntity(entity);
+            } else {
+                LogManager.getLogger().warn("Removing entity from Force that has not yet been registered!");
+            }
         } else {
             LogManager.getLogger().warn("Removed entity from non-existent force!");
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Removes the provided entity ID from its current force, if any. Does nothing if the entity
-     * is already force-less (forceId == Force.NO_FORCE). 
+     * is already force-less (forceId == Force.NO_FORCE).
      * Returns a list of all changed forces, i.e. the former force, if any.
-     * The list will be empty if no actual change occurred. 
+     * The list will be empty if no actual change occurred.
      */
     public synchronized ArrayList<Force> removeEntityFromForces(int entityId) {
         ArrayList<Force> result = new ArrayList<>();
@@ -215,8 +220,8 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Renames the Force with forceId to the provided name. The provided values are
      * fully verified before applying the change. A null name or empty name can safely
      * be passed. Duplicate names may be given; forces are identified via id.
@@ -228,8 +233,8 @@ public final class Forces implements Serializable {
         Force force = forces.get(forceId);
         force.setName(name);
     }
-    
-    /** 
+
+    /**
      * Returns true if the provided name can be used as a Force name. It cannot
      * be empty or contain "|" or "\".
      */
@@ -237,49 +242,49 @@ public final class Forces implements Serializable {
         return name != null && !name.isBlank() && !name.contains("|") && !name.contains("\\");
     }
 
-    /** 
+    /**
      * @return the force owner's id
      */
     public int getOwnerId(Force force) {
         return force.getOwnerId();
     }
 
-    /** 
+    /**
      * @return the owner of this force.
      */
     public Player getOwner(Force force) {
         return game.getPlayer(getOwnerId(force));
     }
-    
-    /** 
+
+    /**
      * @return the owner of this force.
      */
     public Player getOwner(int forceId) {
         return getOwner(getForce(forceId));
     }
-    
-    /** 
+
+    /**
      * Returns the Force that the provided entity is a direct part of.
      * E.g., If it is part of a lance in a company, the lance will be returned.
-     * If it is part of no force, returns null. 
+     * If it is part of no force, returns null.
      */
     public @Nullable Force getForce(final ForceAssignable entity) {
         return forces.get(getForceId(entity.getId()));
     }
 
-    /** 
+    /**
      * Returns the id of the force that the provided entity is a direct part of.
      * E.g., If it is part of a lance in a company, the lance id will be returned.
-     * If it is part of no force, returns Force.NO_FORCE. 
+     * If it is part of no force, returns Force.NO_FORCE.
      */
     public int getForceId(ForceAssignable entity) {
         return getForceId(entity.getId());
     }
-    
-    /** 
+
+    /**
      * Returns the id of the force that the provided entity (id) is a direct part of.
      * E.g., If it is part of a lance in a company, the lance id will be returned.
-     * If it is part of no force, returns Force.NO_FORCE. 
+     * If it is part of no force, returns Force.NO_FORCE.
      */
     public int getForceId(int id) {
         for (Force force: forces.values()) {
@@ -291,10 +296,10 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Parses the force string of the provided entity. 
+     * Parses the force string of the provided entity.
      * Returns a List of Force stubs in the order of highest to lowest force.
-     * The Force stubs cannot be added to a Forces object directly! They 
-     * contain only the name and id and have no parent and no owner and 
+     * The Force stubs cannot be added to a Forces object directly! They
+     * contain only the name and id and have no parent and no owner and
      * the passed entity is not added to them!
      */
     public static List<Force> parseForceString(ForceAssignable entity) {
@@ -321,9 +326,9 @@ public final class Forces implements Serializable {
         return forces;
     }
 
-    /** 
+    /**
      * Returns a list of all subforces of the provided force, including
-     * subforces of subforces to any depth. 
+     * subforces of subforces to any depth.
      */
     public ArrayList<Force> getFullSubForces(Force force) {
         ArrayList<Force> result = new ArrayList<>();
@@ -335,9 +340,9 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
-     * For the given player, returns a list of forces that are his own or belong to his team. 
+
+    /**
+     * For the given player, returns a list of forces that are his own or belong to his team.
      */
     public ArrayList<Force> getAvailableForces(Player player) {
         ArrayList<Force> result = new ArrayList<>();
@@ -349,12 +354,12 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
+
     private boolean isAvailable(Force force, Player player) {
         Player owner = game.getPlayer(getOwnerId(force));
         return (owner != null) && !owner.isEnemyOf(player);
     }
-    
+
     public String forceStringFor(final ForceAssignable entity) {
         final StringBuilder result = new StringBuilder();
         for (final Force ancestor : forceChain(entity)) {
@@ -366,10 +371,10 @@ public final class Forces implements Serializable {
         }
         return result.toString();
     }
-    
-    /** 
+
+    /**
      * Returns a ArrayList of Forces that make up the chain of forces to the provided entity.
-     * The list starts with the top-level force containing the entity and ends with 
+     * The list starts with the top-level force containing the entity and ends with
      * the force that the entity is an immediate member of.
      */
     public ArrayList<Force> forceChain(ForceAssignable entity) {
@@ -379,10 +384,10 @@ public final class Forces implements Serializable {
             return new ArrayList<>();
         }
     }
-    
-    /** 
+
+    /**
      * Returns a ArrayList of Forces that make up the chain of forces to the provided force.
-     * The list starts with the top-level force containing the provided force and ends with 
+     * The list starts with the top-level force containing the provided force and ends with
      * (includes!) the provided force itself.
      */
     public ArrayList<Force> forceChain(Force force) {
@@ -393,7 +398,7 @@ public final class Forces implements Serializable {
         result.add(force);
         return result;
     }
-    
+
     /** Return a free Force id. */
     private int newId() {
         int result = 0;
@@ -402,24 +407,24 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Overwrites the previous force mapped to forceId with the provided force
-     * or adds it if no force was present with that forceId. 
-     * Only used when the server sends force updates. 
+     * or adds it if no force was present with that forceId.
+     * Only used when the server sends force updates.
      */
     public void replace(int forceId, Force force) {
         forces.put(forceId, force);
     }
-    
-    /** 
+
+    /**
      * Sets the game reference to the provided Game. Used when transferring
      * the forces between client and server.
      */
-    public void setGame(Game g) {
+    public void setGame(IGame g) {
         game = g;
     }
-    
+
     /** Returns a clone of this Forces object, including clones of all contained forces. */
     @Override
     public Forces clone() {
@@ -430,16 +435,16 @@ public final class Forces implements Serializable {
         return clone;
     }
 
-    /** 
-     * Returns true if this Forces object is valid. 
+    /**
+     * Returns true if this Forces object is valid.
      * @see #isValid(Collection)
      */
 
     public boolean isValid() {
         return isValid(new ArrayList<>());
     }
-    
-    /** 
+
+    /**
      * Returns true if this Forces object is valid. If any updatedEntities are given,
      * the validity check will test these instead of the current game's.
      * @see #isValid()
@@ -452,7 +457,7 @@ public final class Forces implements Serializable {
             if (entry.getKey() != entry.getValue().getId()) {
                 return false;
             }
-            
+
             // Create a copy of the game's entity list and overwrite with the given entities
             LinkedHashMap<Integer, ForceAssignable> allEntities = new LinkedHashMap<>();
             List<ForceAssignable> forceRelevantGameObjects = game.getInGameObjects().stream()
@@ -464,14 +469,14 @@ public final class Forces implements Serializable {
             for (ForceAssignable entity: updatedEntities) {
                 allEntities.put(entity.getId(), entity);
             }
-            
+
             // check if all entities exist/live
             // check if owner exists
             // check if entities match owners/team
             // check if no entity is contained twice
             // check if entity.forceId matches forceId
             for (int entityId: entry.getValue().getEntities()) {
-                if (!allEntities.containsKey(entityId) 
+                if (!allEntities.containsKey(entityId)
                         || game.getPlayer(getOwnerId(entry.getValue())) == null
                         || game.getPlayer(allEntities.get(entityId).getOwnerId()).isEnemyOf(game.getPlayer(getOwnerId(entry.getValue())))
                         || !entIds.add(entityId)
@@ -484,7 +489,7 @@ public final class Forces implements Serializable {
             // check if subforces agree on the parent
             // check if subforces and parents share teams
             for (int subforceId: entry.getValue().getSubForces()) {
-                if (!contains(subforceId) 
+                if (!contains(subforceId)
                         || !subIds.add(subforceId)
                         || entry.getKey() != getForce(subforceId).getParentId()
                         || getOwner(getForce(subforceId)).isEnemyOf(getOwner(entry.getValue()))) {
@@ -492,7 +497,7 @@ public final class Forces implements Serializable {
                 }
             }
         }
-        // check if no circular parents 
+        // check if no circular parents
         Set<Integer> forceIds = new TreeSet<>(forces.keySet());
         for (Force toplevel: getTopLevelForces()) {
             for (Force subforce: getFullSubForces(toplevel)) {
@@ -505,8 +510,8 @@ public final class Forces implements Serializable {
         }
         return true;
     }
-    
-    /** 
+
+    /**
      * Corrects this Forces object as much as possible. Also corrects entities
      * when necessary (wrong forceId).
      * <ul>
@@ -576,8 +581,8 @@ public final class Forces implements Serializable {
             }
         }
     }
-    
-    /** 
+
+    /**
      * Removes the given force from these forces if it is empty. Returns a list
      * of affected forces which contains the parent if the deleted force was a subforce
      * and is empty otherwise.
@@ -595,12 +600,12 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Removes the given forces and all their subforces from these Forces. Returns a list
      * of affected surviving forces. This method does not check if the forces are empty.
      * <P>NOTE: Any entities in the removed forces are NOT updated by this method!
-     * It is necessary to update any entities' forceId unless these are deleted as well. 
+     * It is necessary to update any entities' forceId unless these are deleted as well.
      */
     public ArrayList<Force> deleteForces(Collection<Force> delForces) {
         ArrayList<Force> result = new ArrayList<>();
@@ -625,8 +630,8 @@ public final class Forces implements Serializable {
     public ArrayList<Force> getAllForces() {
         return new ArrayList<>(forces.values());
     }
-    
-    /** 
+
+    /**
      * Attaches a force to a new parent. The new parent force cannot be a subforce
      * of the force and cannot belong to an enemy of its owner.
      * Returns a list of affected forces. This may be empty and may contain up to
@@ -636,7 +641,7 @@ public final class Forces implements Serializable {
         ArrayList<Force> result = new ArrayList<>();
         Player forceOwner = game.getPlayer(getOwnerId(force));
         Player parentOwner = game.getPlayer(getOwnerId(newParent));
-        if (isSubForce(force, newParent) || forceOwner == null 
+        if (isSubForce(force, newParent) || forceOwner == null
                 || forceOwner.isEnemyOf(parentOwner) || force.getParentId() == newParent.getId()) {
             return result;
         }
@@ -653,15 +658,15 @@ public final class Forces implements Serializable {
         result.add(newParent);
         return result;
     }
-    
+
     /** Returns true when possibleSubForce is one of the subforces (in any depth) of the given force. */
     public boolean isSubForce(Force force, Force possibleSubForce) {
         return getFullSubForces(force).contains(possibleSubForce);
     }
-    
-    /** 
-     * Promotes a force to top-level (unattaches it from its parent force if it has one). 
-     * Returns a list of affected forces which may be empty. 
+
+    /**
+     * Promotes a force to top-level (unattaches it from its parent force if it has one).
+     * Returns a list of affected forces which may be empty.
      */
     public ArrayList<Force> promoteForce(Force force) {
         ArrayList<Force> result = new ArrayList<>();
@@ -676,18 +681,18 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Changes the owner of the given force to the given newOwner without affecting
-     * anything else. Will only do something if the new owner is a teammate of the 
-     * present owner. Returns a list of affected forces containing the force if it 
+     * anything else. Will only do something if the new owner is a teammate of the
+     * present owner. Returns a list of affected forces containing the force if it
      * was changed, empty otherwise.
      */
     public ArrayList<Force> assignForceOnly(Force force, Player newOwner) {
         ArrayList<Force> result = new ArrayList<>();
         if (getOwner(force).isEnemyOf(newOwner)) {
             LogManager.getLogger().error("Tried to reassign a force without units to an enemy.");
-            return result; 
+            return result;
         }
         if (getOwnerId(force) != newOwner.getId()) {
             force.setOwnerId(newOwner.getId());
@@ -695,10 +700,10 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-   
-    /** 
-     * Changes the owner of the given force and all subforces to the given newOwner. 
-     * Promotes the force to top-level if the parent force is now an enemy force.  
+
+    /**
+     * Changes the owner of the given force and all subforces to the given newOwner.
+     * Promotes the force to top-level if the parent force is now an enemy force.
      * Returns a list of affected forces.
      */
     public Set<Force> assignFullForces(Force force, Player newOwner) {
@@ -725,17 +730,17 @@ public final class Forces implements Serializable {
                 }
             }
         }
-        return result; 
+        return result;
     }
-    
+
     @Override
     public String toString() {
         List<String> forceStrings = forces.values().stream().map(Force::toString).collect(toList());
         return String.join("\n", forceStrings);
     }
-    
-    /** 
-     * Returns a list of all entities of the given force and all its subforces to any depth. 
+
+    /**
+     * Returns a list of all entities of the given force and all its subforces to any depth.
      */
     public List<ForceAssignable> getFullEntities(final @Nullable Force force) {
         final List<ForceAssignable> result = new ArrayList<>();
@@ -750,10 +755,10 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
+
     /**
      * Moves up the given entity in the list of entities of its force if possible.
-     * Returns true when an actual change occurred. 
+     * Returns true when an actual change occurred.
      */
     public ArrayList<Force> moveUp(ForceAssignable entity) {
         ArrayList<Force> result = new ArrayList<>();
@@ -765,10 +770,10 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Moves down the given entity in the list of entities of its force if possible.
-     * Returns true when an actual change occurred. 
+     * Returns true when an actual change occurred.
      */
     public ArrayList<Force> moveDown(ForceAssignable entity) {
         ArrayList<Force> result = new ArrayList<>();
@@ -780,10 +785,10 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Moves up the given subforce in the list of subforces of its parent if possible.
-     * Returns true when an actual change occurred. 
+     * Returns true when an actual change occurred.
      */
     public ArrayList<Force> moveUp(Force subForce) {
         ArrayList<Force> result = new ArrayList<>();
@@ -795,10 +800,10 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Moves down the given subforce in the list of subforces of its parent if possible.
-     * Returns true when an actual change occurred. 
+     * Returns true when an actual change occurred.
      */
     public ArrayList<Force> moveDown(Force subForce) {
         ArrayList<Force> result = new ArrayList<>();

@@ -18,46 +18,100 @@
  */
 package megamek.server;
 
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
-import org.apache.logging.log4j.LogManager;
+import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
-abstract class AbstractGameManager implements IGameManager {
+public abstract class AbstractGameManager implements IGameManager {
+    private static final MMLogger logger = MMLogger.create(AbstractGameManager.class);
 
     protected final GameManagerPacketHelper packetHelper = new GameManagerPacketHelper(this);
+    protected final GameManagerSaveHelper saveHandler = new GameManagerSaveHelper(this);
+    protected final AutosaveService autoSaveService = new AutosaveService(this);
 
-    protected final void send(Packet p) {
-        Server.getServerInstance().send(p);
+    /**
+     * Sends the given packet to all connections (all connected Clients = players).
+     *
+     * @see Server#send(Packet)
+     */
+    public void send(Packet packet) {
+        Server.getServerInstance().send(packet);
     }
 
-    protected final void send(int connId, Packet p) {
+    /**
+     * Sends the given packet to the given connection (= player ID).
+     *
+     * @see Server#send(int, Packet)
+     */
+    public void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
 
     @Override
     public void handlePacket(int connId, Packet packet) {
-        switch (packet.getCommand()) {
-            case PLAYER_READY:
-                receivePlayerDone(packet, connId);
-                send(packetHelper.createPlayerDonePacket(connId));
-                checkReady();
-                break;
+        if (packet.getCommand() == PacketCommand.PLAYER_READY) {
+            receivePlayerDone(packet, connId);
+            send(packetHelper.createPlayerDonePacket(connId));
+            checkReady();
         }
     }
 
+    /**
+     * Ends this phase and moves on to the next.
+     */
     protected abstract void endCurrentPhase();
 
-    protected abstract void changePhase(GamePhase newPhase);
+    /**
+     * Do anything we need to work through the current phase, such as give a turn to
+     * the first player to play.
+     */
+    protected abstract void executeCurrentPhase();
 
     /**
-     * Called when a player declares that they are "done". By default, this method advances to the next phase, if
-     * <BR>- all non-ghost, non-observer players are done,
-     * <BR>- the present phase does not use turns (e.g. if it's a report phase), and
-     * <BR>- we are not in an empty lobby (= no units at all).
-     * <BR>In other circumstances, ending the current phase is triggered elsewhere. Note that specifically,
-     * ghost players are not checked for their status here so the game can advance through non-turn (report)
-     * phases even with ghost players.
+     * Prepares for the game's current phase. This typically involves resetting the
+     * states of units in the game and making sure the clients have the information
+     * they need for the new phase.
+     */
+    protected abstract void prepareForCurrentPhase();
+
+    /**
+     * Switches to the given new Phase and preforms preparation, checks if it should
+     * be skipped and executes it.
+     */
+    public final void changePhase(GamePhase newPhase) {
+        getGame().setLastPhase(getGame().getPhase());
+        getGame().setPhase(newPhase);
+
+        prepareForCurrentPhase();
+
+        if (getGame().shouldSkipCurrentPhase()) {
+            endCurrentPhase();
+        } else {
+            // tell the players about the new phase
+            send(packetHelper.createPhaseChangePacket());
+            executeCurrentPhase();
+        }
+    }
+
+    /**
+     * Called when a player declares that they are "done". By default, this method
+     * advances to the next phase, if
+     * <BR>
+     * - all non-ghost, non-observer players are done,
+     * <BR>
+     * - the present phase does not use turns (e.g. if it's a report phase), and
+     * <BR>
+     * - we are not in an empty lobby (= no units at all).
+     * <BR>
+     * In other circumstances, ending the current phase is triggered elsewhere. Note
+     * that specifically, ghost players are not checked for their status here so the
+     * game can advance through non-turn (report) phases even with ghost players.
      */
     protected void checkReady() {
         for (Player player : getGame().getPlayersList()) {
@@ -78,14 +132,17 @@ abstract class AbstractGameManager implements IGameManager {
         getGame().getPlayersList().forEach(player -> send(packetHelper.createPlayerDonePacket(player.getId())));
     }
 
-    /** @return True when the game is in the lobby phase and is empty (no units present). */
+    /**
+     * @return True when the game is in the lobby phase and is empty (no units
+     *         present).
+     */
     protected boolean isEmptyLobby() {
         return getGame().getPhase().isLounge() && getGame().getInGameObjects().isEmpty();
     }
 
     /**
-     * Sets a player's ready status as received from the Client. This method does not perform any
-     * follow-up actions.
+     * Sets a player's ready status as received from the Client. This method does
+     * not perform any follow-up actions.
      */
     private void receivePlayerDone(Packet packet, int connIndex) {
         boolean ready = packet.getBooleanValue(0);
@@ -93,7 +150,7 @@ abstract class AbstractGameManager implements IGameManager {
         if (null != player) {
             player.setDone(ready);
         } else {
-            LogManager.getLogger().error("Tried to set done status of non-existent player!");
+            logger.error("Tried to set done status of non-existent player!");
         }
     }
 
@@ -109,12 +166,93 @@ abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Shares all player objects with all players. Private info is redacted before being sent
-     * to other players.
+     * Shares all player objects with all players. Private info is redacted before
+     * being sent to other players.
      *
      * @see #transmitPlayerUpdate(Player)
      */
-    protected void transmitAllPlayerUpdates() {
+    public void transmitAllPlayerUpdates() {
         getGame().getPlayersList().forEach(this::transmitPlayerUpdate);
+    }
+
+    /**
+     * Performs an automatic save (does not check the autosave settings - the
+     * autosave will simply be done). Depending on the settings, the "autosave"
+     * filename is appended with a timestamp and/or a chat message is sent
+     * announcing the autosave.
+     */
+    public void autoSave() {
+        String fileName = "autosave";
+
+        if (PreferenceManager.getClientPreferences().stampFilenames()) {
+            fileName = StringUtil.addDateTimeStamp(fileName);
+        }
+
+        saveGame(fileName, getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
+    }
+
+    @Override
+    public void saveGame(String fileName, boolean sendChat) {
+        saveHandler.saveGame(fileName, sendChat);
+    }
+
+    @Override
+    public void sendSaveGame(int connId, String sFile, String sLocalPath) {
+        saveHandler.sendSaveGame(connId, sFile, sLocalPath);
+    }
+
+    public void sendChat(String origin, String message) {
+        Server.getServerInstance().sendChat(origin, message);
+    }
+
+    public void sendChat(int connId, String origin, String message) {
+        Server.getServerInstance().sendChat(connId, origin, message);
+    }
+
+    public void sendServerChat(String message) {
+        Server.getServerInstance().sendServerChat(message);
+    }
+
+    public void sendServerChat(int connId, String message) {
+        Server.getServerInstance().sendServerChat(connId, message);
+    }
+
+    /**
+     * Sends the current list of player turns as stored in the game's turn list to
+     * the Clients.
+     *
+     * @see IGame#getTurnsList()
+     */
+    public void sendCurrentTurns() {
+        send(packetHelper.createTurnListPacket());
+    }
+
+    /**
+     * Increment's the server's game round and send it to all the clients
+     */
+    public void incrementAndSendGameRound() {
+        getGame().incrementCurrentRound();
+        send(packetHelper.createCurrentRoundNumberPacket());
+    }
+
+    public GameManagerPacketHelper getPacketHelper() {
+        return packetHelper;
+    }
+
+    public AutosaveService getAutoSaveService() {
+        return autoSaveService;
+    }
+
+    /**
+     * Sends out a notification message indicating that a ghost player's turn may be
+     * skipped with the /skip command.
+     *
+     * @param ghost the Player who is ghosted. This value must not be null.
+     */
+    protected void sendGhostSkipMessage(Player ghost) {
+        String message = String.format(
+                "Player '%s' is disconnected. You may skip their current turn with the /skip command.",
+                ghost.getName());
+        sendServerChat(message);
     }
 }

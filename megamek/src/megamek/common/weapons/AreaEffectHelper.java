@@ -125,7 +125,7 @@ public class AreaEffectHelper {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
-        
+
         if (game.getBoard().inSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
@@ -175,9 +175,10 @@ public class AreaEffectHelper {
     /**
      * Helper function that processes damage for fuel-air explosives.
      */
-    public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
+    public static Vector<Integer> processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
                                             Vector<Report> vPhaseReport, GameManager gameManager) {
         Game game = attacker.getGame();
+        Vector<Integer> entitiesToExclude = new Vector<>();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
         if (game.getBoard().inSpace()
@@ -187,7 +188,7 @@ public class AreaEffectHelper {
             r.subject = attacker.getId();
             r.newlines = 1;
             vPhaseReport.addElement(r);
-            return;
+            return entitiesToExclude;
         }
 
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
@@ -200,7 +201,6 @@ public class AreaEffectHelper {
             vPhaseReport.addElement(r);
         }
 
-        Vector<Integer> entitiesToExclude = new Vector<>();
 
         // assemble collection of hexes at ranges 0 to radius
         // for each hex, invoke artilleryDamageHex, with the damage set according to this:
@@ -229,6 +229,7 @@ public class AreaEffectHelper {
                 clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game, gameManager);
             }
         }
+        return entitiesToExclude;
     }
 
     /**

@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
@@ -52,8 +53,8 @@ public class FlightPathIndicatorSprite extends HexSprite {
     private static final Color COLOR_CIRCLE = new Color(255, 255, 255, 128);
     private static final int CIRCLE_RADIUS = 60;
 
-    private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
-    private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
+    private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
+    private static final int HEX_CENTER_Y = HexTileset.HEX_H / 2;
     private static final int TEXT_Y_OFFSET = 17;
 
     private final MoveStep currentStep;

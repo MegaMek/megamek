@@ -75,10 +75,14 @@ class FovHighlightingAndDarkening {
         Coords src;
         boolean hasLoS = true;
         // in movement phase, calc LOS based on selected hex, otherwise use selected Entity
-        if (this.boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
-            src = this.boardView1.selected;
-        } else if (this.boardView1.getSelectedEntity() != null) {
-            src = this.boardView1.getSelectedEntity().getPosition();
+        if (boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
+            src = boardView1.selected;
+        } else if (boardView1.getSelectedEntity() != null) {
+            Entity viewer = boardView1.getSelectedEntity();
+            src = viewer.getPosition();
+            // multi-hex units look from the hex closest to the target to avoid self-blocking
+            src = viewer.getSecondaryPositions().values().stream()
+                    .min(Comparator.comparingInt(co -> co.distance(c))).orElse(src);
         } else {
             src = null;
         }
@@ -325,13 +329,19 @@ class FovHighlightingAndDarkening {
             LogManager.getLogger().error("Cannot process line of sight effects with a null destination hex.");
             return null;
         }
-        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
-        ai.attackPos = src;
-        ai.targetPos = dest;
+
+        // Need to re-write this to work with Low Alt maps
+//        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+        LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
+                this.boardView1.game, this.boardView1.getSelectedEntity(), null, src, dest,
+                guip.getMechInFirst(), guip.getMechInSecond()
+        );
+        //ai.attackPos = src;
+        //ai.targetPos = dest;
         // First, we check for a selected unit and use its height. If
         // there's no selected unit we use the mechInFirst GUIPref.
         if (this.boardView1.getSelectedEntity() != null) {
-            ai.attackHeight = this.boardView1.getSelectedEntity().getHeight();
+            Entity ae = this.boardView1.getSelectedEntity();
             // Elevation of entity above the hex surface
             int elevation;
             if (!boardView1.pathSprites.isEmpty()) {
@@ -339,22 +349,21 @@ class FovHighlightingAndDarkening {
                 int lastStepIdx = this.boardView1.pathSprites.size() - 1;
                 MoveStep lastMS = this.boardView1.pathSprites.get(lastStepIdx)
                         .getStep();
-                elevation = lastMS.getElevation();
+                elevation = (ai.lowAltitude) ? lastMS.getAltitude() : lastMS.getElevation();
             } else {
-                // otherwise we use entity's elevation
-                elevation = this.boardView1.getSelectedEntity().getElevation();
+                // otherwise we use entity's altitude / elevation
+                elevation = (ai.lowAltitude) ? ae.getAltitude() : ae.getElevation();
             }
-            ai.attackAbsHeight = srcHex.getLevel() + elevation
-                    + this.boardView1.getSelectedEntity().getHeight();
+            ai.attackAbsHeight = (ai.lowAltitude) ? elevation : srcHex.getLevel() + elevation + ae.getHeight();
         } else {
-            ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
+            // For hexes, getLevel is functionally the same as getAltitude()
             ai.attackAbsHeight = srcHex.getLevel() + ai.attackHeight;
         }
         // First, we take the tallest unit in the destination hex, if no units are present we use
         // the mechInSecond GUIPref.
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         for (Entity ent : boardView1.game.getEntitiesVector(dest)) {
-            int trAbsheight = dstHex.getLevel() + ent.relHeight();
+            int trAbsheight = (ai.lowAltitude) ? ent.getAltitude() : dstHex.getLevel() + ent.relHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();
                 ai.targetAbsHeight = trAbsheight;
@@ -362,7 +371,8 @@ class FovHighlightingAndDarkening {
         }
         if ((ai.targetHeight == Integer.MIN_VALUE)
                 && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
-            ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
+            // Current hack for more-correct shading on low-alt maps
+            ai.targetHeight = (ai.lowAltitude) ? 1 : (guip.getMechInSecond()) ? 1 : 0;
             ai.targetAbsHeight = dstHex.getLevel() + ai.targetHeight;
         }
         return LosEffects.calculateLos(boardView1.game, ai);

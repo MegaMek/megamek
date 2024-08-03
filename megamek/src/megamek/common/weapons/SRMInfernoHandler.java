@@ -286,7 +286,7 @@ public class SRMInfernoHandler extends SRMHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
                         true,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        getFireTNRoll(), 5,
                         vPhaseReport)) {
             return;
         }

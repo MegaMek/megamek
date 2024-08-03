@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -149,7 +150,7 @@ public class MtfFile implements IMechLoader {
     public static final String ICON = "icon:";
 
     public MtfFile(InputStream is) throws EntityLoadingException {
-        try (InputStreamReader isr = new InputStreamReader(is);
+        try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
              BufferedReader r = new BufferedReader(isr)) {
             critData = new String[9][12];
             readLines(r);

@@ -690,16 +690,31 @@ public class WeaponFireInfo {
         final double ROLL_TWO = 0.028;
         setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
 
+        // now guess how many critical hits will be done
         setKillProbability(0);
-        if (!(getTarget() instanceof Mech)) {
+        Mech targetMech = null;
+        Targetable potentialTarget = getTarget();
+
+        if (potentialTarget instanceof Mech) {
+            targetMech = (Mech) potentialTarget;
+        } else if (potentialTarget instanceof HexTarget || potentialTarget instanceof BuildingTarget) {
+            Coords c = potentialTarget.getPosition();
+            Iterator<Entity> targetEnemies = game.getEnemyEntities(c, this.shooter);
+            while (targetEnemies.hasNext()) {
+                Entity next = targetEnemies.next();
+                if (next instanceof Mech) {
+                    targetMech = (Mech) next;
+                    break;
+                }
+            }
+        }
+        // No target Mech found; nothing to do
+        if (null == targetMech) {
             if (debugging) {
                 LogManager.getLogger().debug(msg.toString());
             }
             return;
         }
-
-        // now guess how many critical hits will be done
-        final Mech targetMech = (Mech) getTarget();
 
         // A mech with a torso-mounted cockpit can survive losing its head.
         double headlessOdds = 0.0;

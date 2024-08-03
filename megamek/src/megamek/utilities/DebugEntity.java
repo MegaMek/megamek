@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,24 +18,29 @@
  */
 package megamek.utilities;
 
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.List;
+
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.Protomech;
+import megamek.common.Transporter;
+import megamek.common.equipment.WeaponMounted;
 
 /**
- * This class is for debugging Entity with respect to the internal state of equipment.
+ * This class is for debugging Entity with respect to the internal state of
+ * equipment.
  */
-@SuppressWarnings("unused")
-public class DebugEntity {
+public final class DebugEntity {
 
     /**
-     * Gets a full listing of the internal representation of the unit's equipment and crit slots with most
-     * of the internal state of each ({@link #getEquipmentState(Entity)}) and copies it to the clipboard.
+     * Gets a full listing of the internal representation of the unit's equipment
+     * and crit slots with most of the internal state of each
+     * ({@link #getEquipmentState(Entity)}) and copies it to the clipboard.
      *
      * @param entity The entity to debug
      */
@@ -51,8 +56,8 @@ public class DebugEntity {
     }
 
     /**
-     * Returns a full listing of the internal representation of the unit's equipment and crit slots with most
-     * of the internal state of each.
+     * Returns a full listing of the internal representation of the unit's equipment
+     * and crit slots with most of the internal state of each.
      *
      * @param entity The entity to debug
      * @return A String describing the internal state of the Entity's equipment
@@ -62,6 +67,7 @@ public class DebugEntity {
         try {
             result.append("Chassis: >").append(entity.getChassis()).append("<\n");
             result.append("Model: >").append(entity.getModel()).append("<\n");
+            result.append("Game ID: ").append(entity.getId()).append("\n");
 
             result.append("Equipment:\n");
             for (int i = 0; i < entity.getEquipment().size(); i++) {
@@ -71,6 +77,33 @@ public class DebugEntity {
                 }
             }
             result.append("\n");
+
+            if (entity.isConventionalInfantry()) {
+                result.append("Weapons:\n");
+                for (WeaponMounted weapon : entity.getTotalWeaponList()) {
+                    result.append(weapon).append("\n");
+                }
+                result.append("\n");
+
+                Infantry infantry = (Infantry) entity;
+                result.append("Infantry weapons:\n");
+                if (infantry.getPrimaryWeapon() != null) {
+                    result.append("Primary: ").append(infantry.getPrimaryWeapon()).append("\n");
+                }
+                if (infantry.getSecondaryWeapon() != null) {
+                    result.append("Secondary: ").append(infantry.getSecondaryWeapon()).append("\n");
+                }
+                result.append("\n");
+            }
+
+            if (!entity.getTransports().isEmpty()) {
+                result.append("Transports:\n");
+                List<Transporter> transports = entity.getTransports();
+                for (int i = 0; i < transports.size(); i++) {
+                    result.append("[" + i + "] ").append(transports.get(i)).append("\n");
+                }
+                result.append("\n");
+            }
 
             result.append("Locations:\n");
             for (int location = 0; location < entity.locations(); location++) {
@@ -93,11 +126,12 @@ public class DebugEntity {
                 }
             }
         } catch (Exception e) {
-            result.append("\nAn exception was encountered here. " + e.getMessage());
+            result.append("\nAn exception was encountered here. ").append(e.getMessage());
         }
 
         return result.toString();
     }
 
-    private DebugEntity() { }
+    private DebugEntity() {
+    }
 }

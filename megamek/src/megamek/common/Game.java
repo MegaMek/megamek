@@ -18,7 +18,6 @@ package megamek.common;
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -82,7 +81,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * The current turn list
      */
     private final Vector<GameTurn> turnVector = new Vector<>();
-    private int turnIndex = 0;
 
     /**
      * The present phase
@@ -138,6 +136,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
+    /**
+     * Piles of carry-able objects, sorted by coordinates
+     */
+    private Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+    
     /**
      * Constructor
      */
@@ -631,21 +634,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Resets the turn index to -1 (awaiting first turn)
-     */
-    public void resetTurnIndex() {
-        turnIndex = -1;
-    }
-
-    /**
-     * Returns true if there is a turn after the current one
-     */
-    @Override
-    public boolean hasMoreTurns() {
-        return turnVector.size() > turnIndex;
-    }
-
-    /**
      * Inserts a turn that will come directly after the current one
      */
     public void insertNextTurn(GameTurn turn) {
@@ -685,13 +673,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns the current turn index
-     */
-    public int getTurnIndex() {
-        return turnIndex;
-    }
-
-    /**
      * Sets the current turn index
      *
      * @param turnIndex The new turn index.
@@ -701,13 +682,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // FIXME: occasionally getTurn() returns null. Handle that case
         // intelligently.
         this.turnIndex = turnIndex;
-        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().getPlayerNum()), prevPlayerId));
+        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().playerId()), prevPlayerId));
     }
 
-    /**
-     * Returns the current turn vector
-     */
-    public List<GameTurn> getTurnVector() {
+    @Override
+    public List<GameTurn> getTurnsList() {
         return Collections.unmodifiableList(turnVector);
     }
 
@@ -1210,7 +1189,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Add this Entity, ensuring that its id is unique
         int id = entity.getId();
-        if (inGameObjects.containsKey(id)) {
+        if (isIdUsed(id)) {
             id = getNextEntityId();
             entity.setId(id);
         }
@@ -1235,6 +1214,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
         }
+    }
+
+    /**
+     * @return true if the given ID is in use among active and dead units
+     */
+    private boolean isIdUsed(int id) {
+        return inGameObjects.containsKey(id) || isOutOfGame(id);
     }
 
     public void setEntity(int id, Entity entity) {
@@ -1272,6 +1258,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         addEntities(filterToEntity(units));
     }
 
+    @Override
+    public List<InGameObject> getGraveyard() {
+        return new ArrayList<>(getOutOfGameEntitiesVector());
+    }
+
     /**
      * @return <code>true</code> if an entity with the specified id number exists in this game.
      */
@@ -1303,7 +1294,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        setupRoundDeployment();
+        setupDeployment();
         processGameEvent(new GameEntityRemoveEvent(this, toRemove));
     }
 
@@ -1319,7 +1310,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public synchronized void reset() {
         uuid = UUID.randomUUID();
 
-        currentRound = 0;
+        currentRound = -1;
 
         inGameObjects.clear();
         entityPosLookup.clear();
@@ -1335,7 +1326,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         resetPSRs();
         resetArtilleryAttacks();
         resetAttacks();
-        // removeMinefields();  Broken and bad!
         clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
@@ -1349,6 +1339,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         lastEntityId = 0;
         planetaryConditions = new PlanetaryConditions();
         forces = new Forces(this);
+        groundObjects = new HashMap<>();
     }
 
     private void removeArtyAutoHitHexes() {
@@ -2038,11 +2029,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized(turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
-                                    && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_INFANTRY)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_INFANTRY)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2061,11 +2052,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
-                                    && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_PROTOMECH)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMECH)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2085,11 +2076,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_TANK)
-                                    && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_TANK)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_TANK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2109,11 +2100,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                            GameTurn.EntityClassTurn ect =
-                                    (GameTurn.EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_MECH)
-                                    && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
+                        if (nextTurn instanceof EntityClassTurn) {
+                            EntityClassTurn ect =
+                                    (EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(EntityClassTurn.CLASS_MECH)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_MECH)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2476,7 +2467,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Increments the round counter
      */
     public void incrementRoundCount() {
-        currentRound++;
+        incrementCurrentRound();
     }
 
     /**
@@ -3287,15 +3278,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     }
 
-    /**
-     * Overwrites the current forces object with the provided object.
-     * Called from server messages when loading a game.
-     */
-    public synchronized void setForces(Forces fs) {
-        forces = fs;
-        forces.setGame(this);
-    }
-
     public Map<String, BehaviorSettings> getBotSettings() {
         return botSettings;
     }
@@ -3303,8 +3285,81 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
     }
+    
+    /**
+     * Place a carryable object on the ground at the given coordinates
+     */
+    public void placeGroundObject(Coords coords, ICarryable carryable) {
+    	if (!getGroundObjects().containsKey(coords)) {
+    		getGroundObjects().put(coords, new ArrayList<>());
+    	}
+    	
+    	getGroundObjects().get(coords).add(carryable);
+    }
+    
+    /**
+     * Remove the given carryable object from the ground at the given coordinates
+     */
+    public void removeGroundObject(Coords coords, ICarryable carryable) {
+    	if (getGroundObjects().containsKey(coords)) {
+    		getGroundObjects().get(coords).remove(carryable);
+    	}
+    }
 
     /**
+     * Get a list of all the objects on the ground at the given coordinates
+     * guaranteed to return non-null, but may return empty list
+     */
+    public List<ICarryable> getGroundObjects(Coords coords) {
+    	return getGroundObjects().containsKey(coords) ? getGroundObjects().get(coords) : new ArrayList<>(); 
+    }
+    
+    /**
+     * Get a list of all objects on the ground at the given coordinates
+     * that can be picked up by the given entity
+     */
+    public List<ICarryable> getGroundObjects(Coords coords, Entity entity) {
+    	if (!getGroundObjects().containsKey(coords)) {
+    		return new ArrayList<>();
+    	}
+    	
+    	// if the entity doesn't have working actuators etc
+    	if (!entity.canPickupGroundObject()) {
+    		return new ArrayList<>();
+    	}
+    	
+    	double maxTonnage = entity.maxGroundObjectTonnage();
+    	ArrayList<ICarryable> result = new ArrayList<>();
+    	
+    	for (ICarryable object : getGroundObjects().get(coords)) {
+    		if (maxTonnage >= object.getTonnage()) {
+    			result.add(object);
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    /**
+	 * @return Collection of objects on the ground. Best to use getGroundObjects(Coords) 
+	 * if looking for objects in specific hex
+	 */
+	public Map<Coords, List<ICarryable>> getGroundObjects() {
+		if (groundObjects == null) {
+			groundObjects = new HashMap<>();
+		}
+		
+		return groundObjects;
+	}
+
+	/**
+	 * @param groundObjects the groundObjects to set
+	 */
+	public void setGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
+		this.groundObjects = groundObjects;
+	}
+
+	/**
      * Cancels a victory
      */
     public void cancelVictory() {

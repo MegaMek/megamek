@@ -132,7 +132,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
             File subDir = new File(userDir, Configuration.scenariosDir().toString());
-            parseScenariosInDirectory(subDir);
+            scenarios.addAll(parseScenariosInDirectory(subDir));
         }
         return scenarios;
     }
@@ -145,7 +145,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
      * @return a List of scenarios
      */
     private static List<Scenario> parseScenariosInDirectory(final File directory) {
-        LogManager.getLogger().info("Parsing scenarios from " + directory);
+        LogManager.getLogger().info("Parsing scenarios from {}", directory);
         List<Scenario> scenarios = new ArrayList<>();
         for (String scenarioFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.SCENARIO_EXT)) {
             try {

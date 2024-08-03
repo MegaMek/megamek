@@ -104,6 +104,10 @@ class LobbyMekPopup {
     static final String LMP_MOVE_UP = "MOVE_UP";
     static final String LMP_PRIO_TARGET = "PRIO_TARGET";
     static final String LMP_ALPHASTRIKE = "ALPHASTRIKE";
+    static final String LMP_AUTOCONFIG = "AUTOCONFIG";
+    static final String LMP_RANDOMCONFIG = "RANDOMCONFIG";
+    static final String LMP_SAVECONFIG = "SAVECONFIG";
+    static final String LMP_APPLYCONFIG = "APPLYCONFIG";
 
     private static final String NOINFO = "|-1";
 
@@ -179,6 +183,7 @@ class LobbyMekPopup {
 
         popup.add(deployMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
         popup.add(randomizeMenu(hasjoinedEntities, listener, seIds));
+        popup.add(munitionsConfigMenu(hasjoinedEntities, listener, joinedEntities));
         popup.add(swapPilotMenu(hasjoinedEntities, joinedEntities, clientGui, listener));
         popup.add(prioTargetMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
 
@@ -496,6 +501,24 @@ class LobbyMekPopup {
         return menu;
     }
 
+    /**
+     * Returns the "Configure Munitions" submenu.
+     */
+    private static JMenu munitionsConfigMenu(boolean enabled, ActionListener listener, Collection<Entity> entityCol) {
+        JMenu menu = new JMenu("Configure Munitions");
+        Entity first = (entityCol.isEmpty()) ? null : entityCol.iterator().next();
+        enabled &= (first != null && !entityCol.stream().anyMatch(e -> e.isEnemyOf(first)));
+        menu.setEnabled(enabled);
+        String eIds = enToken(entityCol);
+
+        menu.add(menuItem("Autoconfig", LMP_AUTOCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_A));
+        menu.add(menuItem("Randomize", LMP_RANDOMCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_R));
+        menu.add(menuItem("Save config", LMP_SAVECONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_S));
+        menu.add(menuItem("Apply config", LMP_APPLYCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_P));
+
+        return menu;
+    }
+
     /** Returns the C3 computer submenu. */
     private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg,
                                 ActionListener listener) {
@@ -792,7 +815,7 @@ class LobbyMekPopup {
 
         // Get the Sprite
         final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
-        final Image sprite = EntityImage.createLobbyIcon(base, camouflage, frame, entity).loadPreviewImage(showDamage);
+        final Image sprite = EntityImage.createLobbyIcon(base, camouflage, entity).loadPreviewImage(showDamage);
 
         // Export to File
         try {

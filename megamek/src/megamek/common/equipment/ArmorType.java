@@ -33,6 +33,7 @@ public class ArmorType extends MiscType {
 
     private static final List<ArmorType> allTypes = new ArrayList<>();
 
+    public static final int STEALTH_ARMOR_HEAT = 10;
     public static ArmorType of(int type, boolean clan) {
         if (armorTypeLookupClan.isEmpty() && armorTypeLookupIS.isEmpty()) {
             initializeTypes();
@@ -235,12 +236,12 @@ public class ArmorType extends MiscType {
 
     @Override
     public int getSupportVeeSlots(Entity entity) {
-        // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
+        // Support vehicle armor takes slots like CV ferro-fibrous at BAR 10/TL E/F
         if (getArmorType() == T_ARMOR_SV_BAR_10) {
             if (entity.getArmorTechRating() == ITechnology.RATING_E) {
-                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).criticals;
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).svslots;
             } else if (entity.getArmorTechRating() == ITechnology.RATING_F) {
-                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).criticals;
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).svslots;
             }
         }
         return svslots;
@@ -371,7 +372,7 @@ public class ArmorType extends MiscType {
         armor.cost = 20000.0;
         armor.criticals = 7;
         armor.tankslots = 1;
-        armor.svslots = 3;
+        armor.svslots = 1;
         armor.patchworkSlotsMechSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
@@ -780,7 +781,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -809,7 +810,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMechSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)

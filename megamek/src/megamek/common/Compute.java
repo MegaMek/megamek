@@ -259,6 +259,7 @@ public class Compute {
      * @param list The list of items to select from
      * @return     An element in the list
      * @param <T>  The list type
+     * @throws IllegalArgumentException when the given list is empty
      */
     public static<T> T randomListElement(List<T> list) {
         if (list.isEmpty()) {
@@ -1999,11 +2000,6 @@ public class Compute {
                 continue; // useless to us...
             }
 
-            // Must have LoS, Compute.canSee considers sensors and visual range
-            if (!LosEffects.calculateLOS(game, friend, target).canSee()) {
-                continue;
-            }
-
             int buddyRange = Compute.effectiveDistance(game, friend, target,
                     false);
 
@@ -2519,41 +2515,36 @@ public class Compute {
             return toHit;
         }
 
+        int dedicatedGunnerMod = ((entity instanceof Mech mek) && (mek.getCockpitType() == Mech.COCKPIT_DUAL)
+                && entity.getCrew().hasDedicatedGunner()) ? 2 : 1;
+
         if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-            toHit.addModifier(3, "attacker used UMUs");
+            toHit.addModifier(3 / dedicatedGunnerMod, "attacker used UMUs");
         } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_WALK) {
-            toHit.addModifier(3, "attacker cruised");
+            toHit.addModifier(3 / dedicatedGunnerMod, "attacker cruised");
         } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_RUN) {
-            toHit.addModifier(4, "attacker flanked");
+            toHit.addModifier(4 / dedicatedGunnerMod, "attacker flanked");
         } else if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
                 || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
-            toHit.addModifier(1, "attacker walked");
+            toHit.addModifier(1 / dedicatedGunnerMod, "attacker walked");
         } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
-            toHit.addModifier(2, "attacker ran");
+            toHit.addModifier(2 / dedicatedGunnerMod, "attacker ran");
         } else if (movement == EntityMovementType.MOVE_SKID) {
-            toHit.addModifier(3, "attacker ran and skidded");
+            toHit.addModifier(3 / dedicatedGunnerMod, "attacker ran and skidded");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
             if (entity.hasAbility(OptionsConstants.PILOT_JUMPING_JACK)) {
-                toHit.addModifier(1, "attacker jumped");
+                toHit.addModifier(1 / dedicatedGunnerMod, "attacker jumped");
             } else if (entity.hasAbility(OptionsConstants.PILOT_HOPPING_JACK)) {
-                toHit.addModifier(2, "attacker jumped");
+                toHit.addModifier(2 / dedicatedGunnerMod, "attacker jumped");
             } else {
-                toHit.addModifier(3, "attacker jumped");
+                toHit.addModifier(3 / dedicatedGunnerMod, "attacker jumped");
             }
         } else if (movement == EntityMovementType.MOVE_SPRINT
                 || movement == EntityMovementType.MOVE_VTOL_SPRINT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
-        //Dual cockpit with both pilot and gunner has lower modifier for attacker movement.
-        if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
-                && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL
-                && entity.getCrew().hasDedicatedGunner()) {
-            for (TargetRollModifier mod : toHit.getModifiers()) {
-                mod.setValue(mod.getValue() / 2);
-            }
-        }
         return toHit;
     }
 
@@ -2690,7 +2681,7 @@ public class Compute {
             if (toHit.getModifiers().isEmpty()) {
                 toHit.addModifier(1, "target moved 1-2 hexes");
             } else {
-                toHit.getModifiers().get(0).setValue(toHit.getModifiers().get(0).getValue() + 1);
+                toHit.addModifier(1, "dedicated pilot");
             }
         }
 
@@ -2844,6 +2835,10 @@ public class Compute {
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
                                && (entityTarget.getElevation() < hex.getLevel());
+        boolean isAboveStructures = (entityTarget != null) &&
+                ((entityTarget.relHeight() > hex.ceiling()) ||
+                        entityTarget.isAirborne());
+
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -2909,7 +2904,7 @@ public class Compute {
             }
         }
 
-        if (hex.containsTerrain(Terrains.INDUSTRIAL)) {
+        if (!isAboveStructures && hex.containsTerrain(Terrains.INDUSTRIAL)) {
             toHit.addModifier(+1, "target in heavy industrial zone");
         }
         // space screens; bonus depends on number (level)
@@ -7077,9 +7072,10 @@ public class Compute {
         AmmoMounted ammo = usesAmmo ? weapon.getLinkedAmmo() : null;
         AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
-        // Leg and swarm attacks can't be aimed.
+        // Leg, swarm, and BA LB-X AC attacks can't be aimed.
         if (wtype.getInternalName().equals(Infantry.LEG_ATTACK)
-                || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
+                || wtype.getInternalName().equals(Infantry.SWARM_MEK)
+                || wtype.getInternalName().equals("Battle Armor LB-X AC")) {
             return false;
         }
 
@@ -7542,9 +7538,9 @@ public class Compute {
 
             // Try to keep the current position within the homing radius, unless they're real fast...
             if (homing) {
-                leadAmount = (mp * (turnsTilHit)) + HOMING_RADIUS;
+                leadAmount = (mp * (turnsTilHit + 1)) + HOMING_RADIUS;
             } else {
-                leadAmount = mp * (turnsTilHit + 1);
+                leadAmount = mp * (turnsTilHit + 2);
             }
 
             // Guess at the target's movement direction

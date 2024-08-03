@@ -88,6 +88,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_TRANSLUCENT_HIDDEN_UNITS = "BoardTranslucentHiddenUnits";
     public static final String BOARD_TMM_PIP_MODE = "BoardTmmPipMode";
 
+    public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
+    public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
+    public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
+    public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
+
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
 
@@ -517,6 +522,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOARD_DARKEN_MAP_AT_NIGHT, true);
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
+
+        store.setDefault(SHOW_ARTILLERY_MISSES, true);
+        store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(SHOW_BOMB_MISSES, true);
+        store.setDefault(SHOW_BOMB_DRIFTS, false);
+
 
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
@@ -2751,11 +2762,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_UNIT_TEXT_COLOR, getColorString(color));
     }
 
-    public int getAttachArrowTransparency() {
+    public int getAttackArrowTransparency() {
         return getInt(BOARD_ATTACK_ARROW_TRANSPARENCY);
     }
 
-    public void setAttachArrowTransparency(int i) {
+    public void setAttackArrowTransparency(int i) {
         store.setValue(BOARD_ATTACK_ARROW_TRANSPARENCY, i);
     }
 
@@ -2782,6 +2793,35 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setTranslucentHiddenUnits(boolean b) {
         store.setValue(BOARD_TRANSLUCENT_HIDDEN_UNITS, b);
     }
+
+    public void setShowArtilleryMisses(boolean b){
+        store.setValue(SHOW_ARTILLERY_MISSES, b);
+    }
+    public boolean getShowArtilleryMisses(){
+        return getBoolean(SHOW_ARTILLERY_MISSES);
+    }
+
+    public void setShowArtilleryDrifts(boolean b) {
+        store.setValue(SHOW_ARTILLERY_DRIFTS, b);
+    }
+    public boolean getShowArtilleryDrifts(){
+        return getBoolean(SHOW_ARTILLERY_DRIFTS);
+    }
+
+    public void setShowBombMisses(boolean b) {
+        store.setValue(SHOW_BOMB_MISSES, b);
+    }
+    public boolean getShowBombMisses(){
+        return getBoolean(SHOW_BOMB_MISSES);
+    }
+
+    public void setShowBombDrifts(boolean b) {
+        store.setValue(SHOW_BOMB_DRIFTS, b);
+    }
+    public boolean getShowBombDrifts(){
+        return getBoolean(SHOW_BOMB_DRIFTS);
+    }
+
 
     public int getTMMPipMode() {
         return getInt(BOARD_TMM_PIP_MODE);
@@ -2830,7 +2870,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getReportInfoColor() {
         return getColor(MINI_REPORT_COLOR_INFO);
     }
-  
+
     public String getReportFontType() {
         return getString(MINI_REPORT_FONT_TYPE);
     }
@@ -2952,7 +2992,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setReportrInfoColo(Color color) {
         store.setValue(MINI_REPORT_COLOR_INFO, getColorString(color));
     }
-      
+
     public void setReportFontType(String font) {
         store.setValue(MINI_REPORT_FONT_TYPE, font);
     }

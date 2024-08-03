@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.equipment.WeaponMounted;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 public class AmmoType extends EquipmentType {
@@ -482,6 +482,24 @@ public class AmmoType extends EquipmentType {
 
     public int getAmmoType() {
         return ammoType;
+    }
+
+    /**
+     * Analog to WeaponType.getFireTNRoll(), but based on munitions.
+     * See TO:AR pg 42
+     * @return
+     */
+    public int getFireTN() {
+        if (munitionType.contains(Munitions.M_INFERNO)) {
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        } else if (EnumSet.of(
+                Munitions.M_INCENDIARY,
+                Munitions.M_INCENDIARY_AC,
+                Munitions.M_INCENDIARY_LRM).containsAll(munitionType)) {
+            return 5;
+        } else {
+            return 9;
+        }
     }
 
     /**

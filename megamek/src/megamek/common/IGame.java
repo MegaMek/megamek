@@ -23,7 +23,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,14 +33,34 @@ import java.util.stream.Collectors;
  */
 public interface IGame {
 
+    //region Player turns
+
     @Nullable
-    GameTurn getTurn();
+    PlayerTurn getTurn();
 
-    boolean hasMoreTurns();
+    /**
+     * @return True when there is at least one more player turn waiting to be played in the current game
+     * phase.
+     * //TODO this code from Game is surprising; the last available turn should be at size()-1, but apparently this works
+     */
+    default boolean hasMoreTurns() {
+        return getTurnsList().size() > getTurnIndex();
+    }
 
-    GameOptions getOptions();
+    /**
+     * Returns the current turn index, i.e. the turn that should next be played by the corresponding player.
+     */
+    int getTurnIndex();
 
-    GamePhase getPhase();
+    /**
+     * @return the current list of turns. If you're not the GameManager, don't even think
+     * about changing any of the turns.
+     */
+    List<? extends PlayerTurn> getTurnsList();
+
+    //endregion
+
+    BasicGameOptions getOptions();
 
     /**
      * @return The current game round, with 0 typically indicating deployment and 1 the first
@@ -57,12 +77,32 @@ public interface IGame {
     void setCurrentRound(int currentRound);
 
     /**
+     * Adds 1 to the current round value. This method is intended for server use only.
+     */
+    void incrementCurrentRound();
+
+    //region Phase Management
+
+    /**
+     * @return The current phase of this game.
+     */
+    GamePhase getPhase();
+
+    /**
      * Sets the current game phase to the given phase. May perform phase-dependent cleanup.
      * This method is intended for the GameManager.
      *
      * @param phase The new phase
      */
     void setPhase(GamePhase phase);
+
+    /**
+     * Sets the previous game phase to the given phase.
+     * This method is intended for the GameManager.
+     *
+     * @param lastPhase The phase to be remembered as the previous phase.
+     */
+    void setLastPhase(GamePhase lastPhase);
 
     /**
      * Sets the current game phase to the given phase. May perform phase-dependent cleanup and fire
@@ -74,6 +114,31 @@ public interface IGame {
     default void receivePhase(GamePhase phase) {
         setPhase(phase);
     }
+
+    /**
+     * Returns true when the current game phase should be played, meaning it is played in the current type
+     * of game and there are possible actions in it in the present game state.
+     * The result may be different in other rounds.
+     *
+     * @return True when the current phase should be skipped entirely in this round
+     * @see #shouldSkipCurrentPhase()
+     */
+    boolean isCurrentPhasePlayable();
+
+    /**
+     * Returns true when the current game phase should be skipped, either because it is not played at
+     * all in the current type of game or because the present game state dictates that there can be no
+     * actions in it. The result may be different in other rounds. This is the opposite of
+     * {@link #isCurrentPhasePlayable()}.
+     *
+     * @return True when the current phase should be skipped entirely in this round
+     * @see #isCurrentPhasePlayable()
+     */
+    default boolean shouldSkipCurrentPhase() {
+        return !isCurrentPhasePlayable();
+    }
+
+    //endregion
 
     /**
      * Fires the given GameEvent, sending the event to all GameListener of this game.
@@ -103,6 +168,13 @@ public interface IGame {
 
     /** @return The Forces present in this game. Can be empty, but not null. */
     Forces getForces();
+
+    /**
+     * Replaces the game's Forces with the given forces.
+     *
+     * @param forces The new Forces object to use
+     */
+    void setForces(Forces forces);
 
     // PLAYERS //////////////
 
@@ -172,7 +244,9 @@ public interface IGame {
 
     // UNITS //////////////
 
-    /** @return The next free id for InGameObjects (units and others). */
+    /**
+     * @return The next free ID for InGameObjects (unit/entity/formation/others).
+     */
     int getNextEntityId();
 
     /**
@@ -205,6 +279,14 @@ public interface IGame {
      * @param units The units to add or use as a replacement for current units.
      */
     void replaceUnits(List<InGameObject> units);
+
+
+
+    /**
+     * @return a list of units that are destroyed or otherwise no longer part of the game. These
+     * should have a reason for their removal set.
+     */
+    List<InGameObject> getGraveyard();
 
     //region Board
 

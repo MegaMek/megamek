@@ -161,9 +161,9 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public boolean requiresFuel() {
-        return !(((hasPropChassisMod() || getMovementMode().isAirship()))
-                && hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
-                || (getEngine().getEngineType() == Engine.SOLAR)));
+        return !((hasPropChassisMod() || getMovementMode().isAirship())
+                && hasEngine()
+                && (getEngine().isFusion() || getEngine().isFission() || getEngine().isSolar()));
     }
 
     private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)

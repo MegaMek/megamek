@@ -19,16 +19,26 @@
 package megamek.client.ui.swing;
 
 import megamek.client.SBFClient;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.common.InGameObject;
+import megamek.client.ui.swing.widget.SBFReportPanel;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.util.Distractable;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
@@ -58,6 +68,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     protected JComponent curPanel;
     private final JPanel panTop = new JPanel(new BorderLayout());
+    private JSplitPane splitPaneA;
+    private JPanel panA1;
+    private JPanel panA2;
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -80,7 +93,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private final JPanel panSecondary = new JPanel();
 
 
-    private ReportDisplay reportDisplay;
+    private SBFReportDisplay reportDisplay;
 
     private StatusBarPhaseDisplay currPhaseDisplay;
 
@@ -94,6 +107,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
      */
     private final Map<String, JComponent> phaseComponents = new HashMap<>();
 
+    private JDialog miniReportDisplayDialog;
+    private SBFReportPanel reportPanel;
+
     /**
      * Map each phase to the name of the card for the main display area.
      */
@@ -101,6 +117,10 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     private final GameListener gameListener = new SBFClientGUIGameListener(this);
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
+    private BoardView bv;
+    private SBFFormationSpriteHandler formationSpriteHandler;
+    private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
+    private MovePathSpriteHandler movePathSpriteHandler;
 
     public SBFClientGUI(SBFClient client, MegaMekController c) {
         super(client);
@@ -108,6 +128,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
         frame.setJMenuBar(menuBar);
+        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
         menuBar.addActionListener(this);
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -118,6 +139,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         clientGuiPanel.addComponentListener(resizeListener);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
+
+        miniReportDisplayDialog = new JDialog(getFrame());
+        reportPanel = new SBFReportPanel(this);
     }
 
     private final ComponentListener resizeListener = new ComponentAdapter() {
@@ -126,6 +150,68 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             boardViewsContainer.getPanel().setPreferredSize(clientGuiPanel.getSize());
         }
     };
+
+    /**
+     * Initializes a number of things about this frame.
+     */
+    @Override
+    protected void initializeFrame() {
+        super.initializeFrame();
+        frame.setJMenuBar(menuBar);
+    }
+
+    protected Game bvGame = new Game();
+
+    @Override
+    public void initialize() {
+        initializeFrame();
+        super.initialize();
+        try {
+            client.getGame().addGameListener(gameListener);
+            bv = new BoardView(bvGame, MegaMekGUI.getKeyDispatcher(), null);
+            bv.setTooltipProvider(new SBFBoardViewTooltip(client.getGame(), bv));
+            boardViews.put(0, bv);
+            bv.addOverlay(new KeyBindingsOverlay(bv));
+            bv.addOverlay(new PlanetaryConditionsOverlay(bv));
+            bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
+            boardViewsContainer.setName(CG_BOARDVIEW);
+            boardViewsContainer.updateMapTabs();
+            initializeSpriteHandlers();
+
+            panA1 = new JPanel();
+            panA1.setVisible(false);
+            panA2 = new JPanel();
+            panA2.setVisible(false);
+            panA2.add(boardViewsContainer.getPanel());
+            panA2.setVisible(true);
+
+            splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
+            splitPaneA.setDividerSize(10);
+            splitPaneA.setResizeWeight(0.5);
+
+            splitPaneA.setLeftComponent(panA1);
+            splitPaneA.setRightComponent(panA2);
+
+            panTop.add(splitPaneA, BorderLayout.CENTER);
+
+        } catch (Exception ex) {
+            LogManager.getLogger().fatal("", ex);
+            die();
+        }
+
+        menuBar.addActionListener(this);
+        client.changePhase(GamePhase.UNKNOWN);
+        frame.setVisible(true);
+    }
+
+    private void initializeSpriteHandlers() {
+        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
+        formationSpriteHandler = new SBFFormationSpriteHandler(bv, client);
+        movePathSpriteHandler = new MovePathSpriteHandler(bv);
+        spriteHandlers.addAll(List.of(formationSpriteHandler, movementEnvelopeHandler, movePathSpriteHandler));
+        spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
+    }
 
     @Override
     public SBFClient getClient() {
@@ -138,10 +224,13 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-        client.getGame().addGameListener(gameListener);
-        frame.setVisible(true);
+    public void setChatBoxActive(boolean active) {
+        //TODO
+    }
+
+    @Override
+    public void clearChatBox() {
+        //TODO
     }
 
     @Override
@@ -152,13 +241,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     @Override
     public void die() {
-        super.die();
         client.getGame().removeGameListener(gameListener);
-    }
-
-    @Override
-    public InGameObject getSelectedUnit() {
-        return null;
+        super.die();
     }
 
     protected void switchPanel(GamePhase phase) {
@@ -198,7 +282,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //        maybeShowMinimap();
 //        maybeShowUnitDisplay();
 //        maybeShowForceDisplay();
-//        maybeShowMiniReport();
+        showReportPanel();
 //        maybeShowPlayerList();
 
         cardsMain.show(panMain, mainNames.get(name));
@@ -229,6 +313,17 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //        if (GUIP.getFocus() && !(client instanceof BotClient)) {
 //            curPanel.requestFocus();
 //        }
+        clientGuiPanel.validate();
+    }
+
+    private void showReportPanel() {
+        if (client.getGame().getPhase().isReport()) {
+
+            miniReportDisplayDialog.add(reportPanel);
+            miniReportDisplayDialog.pack();
+            miniReportDisplayDialog.setVisible(true);
+
+        }
     }
 
     private void initializeSingleComponent(GamePhase phase, JComponent component, String identifier) {
@@ -305,7 +400,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case MOVEMENT:
-//                initializeWithBoardView(phase, new MovementDisplay(this), CG_MOVEMENTDISPLAY);
+                initializeWithBoardView(phase, new SBFMovementDisplay(this), CG_MOVEMENTDISPLAY);
                 break;
             case OFFBOARD:
 //                component = new TargetingPhaseDisplay(this, true);
@@ -346,21 +441,11 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-//                initializeWithBoardView(phase, new JPanel(), CG_PHYSICALDISPLAY);
-                secondary = CG_REPORTDISPLAY;
                 if (reportDisplay == null) {
-//                    reportDisply = new JPanel();
-//                    reportDisply = new ReportDisplay(this);
-//                    reportDisply.setName(secondary);
+                    reportDisplay = new SBFReportDisplay(this);
+                    reportDisplay.setName(CG_REPORTDISPLAY);
                 }
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = reportDisplay;
-                component = reportDisplay;
-//                if (!secondaryNames.containsValue(secondary)) {
-//                    panSecondary.add(reportDisply, secondary);
-//                }
+                initializeWithBoardView(phase, reportDisplay, CG_REPORTDISPLAY);
                 break;
             default:
                 component = new WaitingForServerPanel();
@@ -375,5 +460,33 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+    }
+
+    protected void updateFormationSprites() {
+        formationSpriteHandler.update();
+    }
+
+    public void selectForAction(@Nullable SBFFormation formation) {
+        formationSpriteHandler.setSelectedFormation(formation);
+    }
+
+    /**
+     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is
+     * a map of move end Coords to movement points used.
+     *
+     * @param formation The entity for which the movement envelope is
+     * @param mvEnvData The movement envelope data
+     */
+    public void showMovementEnvelope(SBFFormation formation, Map<Coords, Integer> mvEnvData) {
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, formation.getMovement(),
+                formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
+    }
+
+    public void clearMovementEnvelope() {
+        movementEnvelopeHandler.clear();
+    }
+
+    public void showMovePath(@Nullable SBFMovePath movePath) {
+        movePathSpriteHandler.update(movePath);
     }
 }

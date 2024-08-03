@@ -21,6 +21,7 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -122,10 +123,9 @@ public final class MMUReader {
 
     private Optional<Object> parseNode(JsonNode node, Class<?> objectType) throws IOException {
         if (node.has(INCLUDE)) {
-            node = yamlMapper.readTree(new File(currentDirectory, node.get(INCLUDE).textValue()));
-            if (node.isArray()) {
-                throw new IllegalArgumentException("An included MMU file may only contain a single object, not a list!");
-            }
+            JsonNode node2 = yamlMapper.readTree(new File(currentDirectory, node.get(INCLUDE).textValue()));
+            // add the included nodes to the present node as if they had been written directly in the original file
+            node2.fieldNames().forEachRemaining(n -> ((ObjectNode) node).set(n, node2.get(n)));
         }
 
         if (objectType != null) {
@@ -168,6 +168,29 @@ public final class MMUReader {
         for (String field : fields) {
             if (!node.has(field)) {
                 throw new IllegalArgumentException("Missing field \"" + field + "\" in " + objectType + " definition!");
+            }
+        }
+    }
+
+    /**
+     * Tests the given node if
+     * it has any combination of at least two of the given fields. If that is the case, an IllegalArgumentException
+     * is thrown. The given objectType can be any String, it is only used as part of the error
+     * message. If none of the fields or only a single one of the fields is found, this method does nothing.
+     *
+     * @param objectType The object type such as "ASElement". Only used as part of the exception message
+     * @param node the node containing an object to be deserialized
+     * @param fields The field names, e.g. "chassis" or "size"
+     */
+    public static void disallowCombinedFields(String objectType, JsonNode node, String... fields) {
+        List<String> foundFields = new ArrayList<>();
+        for (String field : fields) {
+            if (node.has(field)) {
+                foundFields.add(field);
+                if (foundFields.size() > 1) {
+                    throw new IllegalArgumentException("Fields " + foundFields.get(0) + " and " + foundFields.get(1)
+                            + "found in " + objectType + " definition!");
+                }
             }
         }
     }

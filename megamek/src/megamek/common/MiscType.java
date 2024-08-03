@@ -6803,6 +6803,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 6;
         misc.spreadable = true;
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -6977,7 +6978,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 120000;
-        misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = false;
         misc.bv = 0;
         misc.rulesRefs = "288, TO";
@@ -7282,6 +7283,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);

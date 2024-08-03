@@ -49,22 +49,18 @@ public class GameReports implements FullGameReport<Report> {
 
     @Override
     public boolean hasReportsforRound(int round) {
-        return round <= reports.size();
+        return round >= 0 && round <= reports.size();
     }
 
     @Override
     public List<Report> get(int round) {
-        if (round == 0) {
-            // Round 0 (deployment) reports are lumped in with round one.
-            round = 1;
-        }
+        // Rounds prior to 1 (initial deployment) are lumped in with round 1
+        round = Math.max(1, round);
         if (hasReportsforRound(round)) {
             return reports.get(round - 1);
+        } else {
+            return new ArrayList<>();
         }
-
-        LogManager.getLogger().error("GameReports.get() was asked for reports of round {} which it does not have",
-                round, new RuntimeException());
-        return null;
     }
 
     /**

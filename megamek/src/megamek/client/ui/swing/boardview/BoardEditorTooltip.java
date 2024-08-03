@@ -77,7 +77,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
         StringBuilder result = new StringBuilder();
         result.append(guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()));
-        result.append("<FONT FACE=" + FontHandler.getNotoFont().getName() + ">");
+        result.append("<FONT FACE=" + FontHandler.notoFont().getName() + ">");
 
         // Coordinates and level
         result.append(colorHTML("Hex: ", GUIP.getToolTipLightFGColor()))

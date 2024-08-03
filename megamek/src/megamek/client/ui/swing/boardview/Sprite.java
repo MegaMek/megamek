@@ -162,4 +162,9 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
+
+    @Override
+    public String toString() {
+        return "[" + getClass().getSimpleName() + "] Prio: " + getSpritePriority() + ((image == null) ? "; no image" : "");
+    }
 }

@@ -1,7 +1,84 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.49.20-SNAPSHOT
-+ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
+0.50.0-SNAPSHOT (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
++ PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)
++ PR #5512: Gradle and Github changes for JRE 17 Min
++ Fix #5648: Diacratics and/or name changes causing issues with Force/RAT Generator
++ Fix #5647: Rasalhague Dominion Force Generator Issues
++ PR #5652: Fix ammo carrier issue that prevents Princess from firing ammo-based weapons
++ PR #5602: Princess - enhanced anti-Mech targeting
++ PR #5592: Cleanup and disentangle (TilesetManager, Client, BoardView)
++ PR #5591: Only consider MM internal dirs when creating the official unit list
++ PR #5570: ScenarioV2 extension, sky map
++ Fix #5665: Adding a Chameleon Light Polarization Shield to an omni is classified as an Omni Repod
++ PR #5660: Startup And Windows CI Fixes
++ PR #5695: Remove serial killer #5695
++ PR #5696: TargetRoll modernization
++ PR #5657: Enable testInvalidCanonUnits but skip known invalid units
++ Fix #5700: Move Modifiers and Move Envelope clear when disabled
++ Fix #5650: Weapon unselect after torso twist
++ PR #5707: Added trailing spaces that were needed for text to display correctly etc
++ PR #5708: Princess - using heat mapping for persistence/history awareness
++ PR #5714: Finish MegaMek munition generator development
++ PR #5717: Disable invalid unit test
++ PR #5693: SBF additions
++ PR #5726: Visual and Range sensor regression fix from #5700
++ PR #5724: Remove LoS requirement for C3 spotters
++ PR #5725: Prevent BA LB-X ACs from making aimed shots
++ PR #5727: Pass Selected Player through to add unit and random force dialogs
++ PR #5731: Fix incorrect onGround usage and make sure ASF bombs are always cleared before refitting
++ PR #5738: Munition autoconfig tweaks
++ PR #5735: Colorize discord export
++ PR #5742: fixing Bär unit name and associated model record entries
++ PR #5743: Lobby: export full chassis to clipboard for meks with clan/is names
++ PR #5702, #5747: Code internals: MMLogger with Sentry Tracking
++ PR #5746: Tweaked FontHandler logging
++ PR #5751: Add "miss" and "drifted"/"hit" markers for Artillery and Bomb attacks, with concomitant client settings
++ Data:: Updated markers for Artillery and Bomb attacks
++ Fix #5287: Infernos do not ignite buildings when using "Ignite" target option
++ Fix #5755: Princess no drop bombs -  no boom boom
++ PR #5759: Added Entity Verifier to gradle build
++ PR #5761: Merged duplicated key 'deployment' in the Mad Cat Bounty Hunter MTF
++ PR #5762: Update artillery and bomb display with new graphics and revised/compacted logic
++ PR #5764: Save File Fix
++ PR #5765: Spelling, typos, etc.
++ Fix #4301: No Help Available: error reading readme.txt
++ FIX #3595: Princess freezes on Movement Phase with Vacumm Atmosphere
++ FIX #5720: FireControl Error "FireControl.entityCanIndirectFireMissile"
++ PR #5770: Use Artillery skill when spotting for artillery
++ PR #5775: Name Validation Utility Fix
++ FIX #5428: Internal Bomb Bay does not fully function on a Dropship
++ PR #5780: Add Word Wrap Function to WrapLayout and Integrated it into TROView
++ PR #5783: Update Ammunition Autoconfig doc for 0.50.0
++ Fix #5794: Fixes Sprite-Swap
++ PR #5792: Update princess Stealth handling
++ PR #5800: Bearings-only launches are no longer being prevented at ranges below 51 hexes
++ PR #5791: Added much-needed whitespace to some menu items of the board right click menu
++ PR #5798: Fix Reflective armor not appearing in MML dropdown
++ Fix #5803: Removes a number of duplicated infantry weapons
++ Fix #5795: Terrain altitude rules and line of sight are now implemented for Low Altitude maps
++ Fix #5790: The combat computer heat report message is now clearer, indicating that the heat bonus has already been applied in the reported values
++ Fix #5740: Lobby copy-paste will now also work for units that have no model name
++ Fix #5789: Prevent errors with showing the firing arcs
++ Fix #5793: Units are no longer able to be unloaded without regard for the bay door limits
++ Fix #5611: Prevent NPE when removing forces from Force that exists but is not registered yet (when quickly closing MM after an MHQ scenario start)
++ Fix #5691: Prevent NPE when cancelling unit loading during carrier deployment (e.g. Space Station and loading ASFs)
++ Fix #5705: Prevent NPE when maneuvering Land-Air Meks as ASFs
++ Fix #5796: Prevent NPE when units are ineligible for Physical Attack phase due to having loaded onto a transport this round
++ Fix #5818: correct issue with minimap autodisplay using wrong function
++ PR #5822: Implement RFE 5361: enhance Princess handling of hazardous terrain
++ Issues #2577, #897, #353: Implement placeable/carryable cargo objects (for mechs and protomechs only at the moment) (Carry Objects #5706)
++ PR #5839: The Heavy Lifter pilot ability is now implemented
++ Fix #5811, #5831: Updates to unit validation (Heavy Gauss Rifles and RISC Hyper Laser vs. engines), allow Illegal Design quirk to validate illegal units
++ Fix #5769:  Possibly fix ID overlap when reinforcing from MUL
++ PR #5835: Allow bot vs bot in ScenarioV2 and test setup
++ Fix #5833: GameReports: remove error message and deal with missing rounds
++ Fix #5833: Precognition: receive updated ground objects
++ Fix #5825: ASF Low Altitude LOS, levels, and ground map terrain blocking
+
+
+0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
++ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301, #5441: Aerospace units now show a much improved flight path indicator when planning their movement; use MM's symbol font for indicator symbols, also for Collapse Warnings
@@ -13,7 +90,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5388, #5410, #5411: The Skin Editor has been given a rework and is now functional again; it now defaults to saving to the user directory when available
 + PR #5387: Prevent errors when ESCaping out of the main menu's Connect... and Connect as Bot dialogs
 + PR #5409: Removed code for using a background image on boards
-+ PR #5406, #5425, #5461: Mounted rework
++ PR #5406, #5425, #5461, #5528: Mounted rework
 + PR #5412: The force display will now have a default size to prevent it from starting totally collapsed
 + PR #5418: More code internals: Princess's Precognition no longer produces unnecessary packet command log messages and processes an additional packet command
 + Fix #5408: Princess has taken part in a week-long battle workshop; she will now be less conservative with ammo (and other tweaks)
@@ -25,7 +102,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5431: Internal Code changes: Methods have been added to generate an average BV value for a unit of a given type and weight for use in generating forces
 + Fix #5439: BA Partial Wing bonus not properly computed outside of games with atmosphere, breaking MML Jump MP display
 + Data: Thank you Derv for the updated Map, but also the restoration of the original NBT (Netbattletech) maps this adds over 400 new maps!
-+ PR #5444: BoardView Sprite separation
++ PR #5444, #5522, #5573: BoardView Sprite separation
 + PR #5442: Add null check for turn timer when stopping
 + PR #5451: Expose map settings methods for use in MekHQ
 + Fix #1502: Ignore armortype slots in other-equipment cost calculation
@@ -33,9 +110,9 @@ MEGAMEK VERSION HISTORY:
 + PR #5470: Allow plain look and feel border for Megamek Button
 + PR #5467: Modernize board validity checking code
 + Fix #5465: Bay ammo correction
-+ PR #5454: Option to not automatically select a unit for whenever a turn for me comes around
++ PR #5454, #5540: Added an experimental option to not automatically select a unit for whenever a turn for me comes around
 + Fix #5452: AS advanced search and rear weapon conversion
-+ PR #5450: ClientGUI adaptations
++ PR #5450, #5501: ClientGUI adaptations
 + PR #5445: Game Systems Refactoring for future support of SBF.
 + PR #5468: Make BombMounted a subclass of AmmoMounted
 + Fix 5483: Make various calls safer from NPE and ensure searchlight target on board
@@ -44,7 +121,49 @@ MEGAMEK VERSION HISTORY:
 + PR #5481: Name Changes Updates
 + PR #5466: Move Field of Fire Sprites out of BoardView
 + PR #5472: Use FlatLaf exclusively
-+ Fix 5476: Update SV armor slots to 2 or 1 for Rating E or F respectively
++ Fix 5489: NPE from BA AP Mount due to weapon linking to AP Mount equipment
++ Fix #5516, #5532: Added CamOps Fatigue Attribute to Crew (required for MekHQ #4101 and #4116)
++ Fix #5495: DropShips can now load other units without becoming invalid (unit crews no longer count as passengers)
++ PR #5510: Add a test for invalid canon units
++ Fix #5503: Add ammo null check to prevent NPEs for firing artillery bays
++ Fix #5502: Add ammo test for CI weapons on SV damage calc to prevent NPEs when firing infantry weapons from SV units
++ Fix #5515: Remove code remnant from internal bomb bay development that added cargo bays for cargo containers
++ PR #5525, #5546: Force generator data updates to basic APCs, recovery vehicles, and some civilian units to make them no longer appear in combat OpFor units
++ PR #5531: Harjel can now be added to support vehicles in accordance with the rules
++ PR #5533, #5544: Units can now be copied to clipboard with discord-formatting applied
++ Data: Fixes for #5514, #5469, #5460, #5223, #5194 (again), #5162
++ Fix #5504: Aeros that do not require fuel should now (finally) be able to move and not show warnings
++ Fix #5523: Fighter Squadrons are able to fire ammo weapons again
++ PR #5553: (Possible) fix to dedicated server loading issues (related to #5539)
++ Fix #5547: Fixing a bug coming from a duplicate artillery overlay added to the game map
++ Fix #5548: Fixing a bug trying to get line of sight issues for the tooltip
++ Fix #5542: Fixing the game not progressing to a round that has reinforcements
++ PR #5550, PR #5562: The default state of Edge usage is now "true" (also in MHQ)
++ PR #5549: ModelRecord unit analysis has been upgraded and expanded
++ Fix #5556: Fixing Nameplates
++ Fix #5394: Fixing a logo file name
++ PR #5560: The setting to show unit sprites in reports now defaults to off, as this has turned out to be resource intensive
++ PR #5567: Princess has learned to be careful on black ice (provided she has seen its presence)
++ PR #5568: Internal changes to FactionRecord to parse AeroSpaceFighter entries correctly
++ PR #5576: Improvements to TacOps coolant failure systems
++ PR #5586: Updated Game Options and Report Log Default Preferences
++ PR #5599: Fixing Rocket Launchers to no longer allow indirect fire
++ PR #5601: Add revision to the game log
++ PR #5589: Re-submitting role exclusions
++ PR #5600: Numerous typo and spelling fixes
++ Fix #5596: Fixing firing arc updates and projections in space, the effects of special ammo on range can now be considered also for enemy units when selected in the Unit Display
++ PR #5615: Use "Equipment Rating" instead of just "Rating" where applicable
++ PR #5608: Lobby Multiunit Customization (including setting the deployment round) will now work on one's own bot units
++ Fix #5084: Princess and using AMS as a manual weapon
++ PR #5618: Branch for typos and spelling
++ Fix #5577: Industrial hexes no longer influence units higher than their roof
++ Fix #5622: Fixes MML #1532: Total Warfare Flamer should be unofficial
++ PR #5623: adjust wind direction order
++ PR #5613: Renewing Unit Display and Keybinds in Physical Phase
++ PR #5629: prevent NPE when OS launcher is being selected in weapons panel
++ PR #5634: cannot load Support Vehicle blk files missing armor_type field
++ Fix #5569: Fix for squadron ammo weapons
++ PR #5641: continue munition loadout generator
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.
@@ -1097,6 +1216,7 @@ MEGAMEK VERSION HISTORY:
 + New Sprites and Issue #2798 Wolfhounds Missing Full-Head Ejection Systems
 + Data: Issue #2774 - Kaji Maps Update.
 + Data: Updated 1st SW RATs, and some general unit data fixes.
+
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

@@ -1,15 +1,14 @@
-#Saved from version 0.49.16-SNAPSHOT on 2023-12-16
-Version:1.1
-Loki Mk II (Hel)
-C
+generator:MegaMek Suite 0.49.20-SNAPSHOT on 2024-06-01
+chassis:Loki Mk II (Hel)
+model:C
+mul id:9571
 
 Config:Biped Omnimech
 techbase:Clan
 era:3130
-rules level:2
-role:Missile_Boat
 source:Rec Guide:ilClan #33
-mul id:9571
+rules level:2
+role:Missile Boat
 
 
 mass:65
@@ -51,8 +50,8 @@ CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
-Clan Ammo ATM-12 (OMNIPOD)
 Clan Ammo ATM-12 HE (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -65,8 +64,8 @@ CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
-Clan Ammo ATM-12 (OMNIPOD)
 Clan Ammo ATM-12 HE (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -79,9 +78,9 @@ CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
 CLATM12 (OMNIPOD)
-Clan Ammo ATM-12 (OMNIPOD)
-Clan Ammo ATM-12 (OMNIPOD)
 Clan Ammo ATM-12 HE (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
@@ -157,9 +156,8 @@ Clan Ferro-Fibrous
 
 overview:Introduced before the Blackout, the Loki Mk II has become prevalent within the Clans, particularly the Jade Falcon and Hell’s Horses toumans. It represents an evolution in Clan warfare, balancing firepower, armor, and versatility.
 capabilities:The Loki Mk II trades some of the original Loki’s speed for an impressive forty tons of pod space and significantly increased armor. This design shift allows for a variety of configurations, each suited to different combat roles. The primary configuration is tailored for long-range engagement, while the A configuration offers a balanced mix of anti-armor and anti-personnel weaponry, suitable for operations away from supply lines. The B configuration provides heavy fire support, though its specialization comes at the cost of reduced defensive capabilities.
-deployment:No information on this variant	
+deployment:No information on this variant
 history:The Loki Mk II's combat history is marked by notable deployments and engagements. In July 3142, the Ninth Falcon Talon Cluster of the Jade Falcons used it in a bombardment campaign on Sargasso. The robustness of the Mk II’s armor was proven when Star Captain Henry’s unit survived a rockslide triggered during combat with the Wolves-in-Exile. Despite losing their Long Toms, the Mk IIs played a crucial role in thwarting the recapture of the world.
-<p>Another significant moment was in a 3144 Trial for Position within Clan Hell’s Horses. Ristar Owen, piloting a Loki Mk II, demonstrated the unit's formidable capabilities by defeating three opponents in succession. His tactical use of alternating arm fire and deception with his Gauss rifles showcased the Mk II’s adaptability in duels.</p>
 manufacturer:Csesztreg, Sudeten
 primaryfactory:Csesztreg Industriplex Alpha , Olivetti Weaponry
 systemmanufacturer:CHASSIS:T-E H65 Omni

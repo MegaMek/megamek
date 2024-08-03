@@ -331,8 +331,20 @@ public class PathEnumerator {
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
                 break;
             case MoveToContact:
-                CardinalEdge oppositeEdge = CardinalEdge.getOppositeEdge(BoardUtilities.determineOppositeEdge(mover));
-                destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
+
+                // If there are no active or sensor contacts, check the heat maps for best location
+                // we've seen for finding targets
+                List<Coords> enemyHotspots = owner.getEnemyHotspots();
+                if (enemyHotspots != null && !enemyHotspots.isEmpty()) {
+                    destinations.addAll(enemyHotspots);
+                } else {
+
+                    // If the heat map doesn't have any useful targets, just go to the other side of
+                    // map and hope to stumble across something on the way
+                    CardinalEdge oppositeEdge = BoardUtilities.determineOppositeEdge(mover);
+                    destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
+                }
+
                 break;
             default:
                 for (Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {

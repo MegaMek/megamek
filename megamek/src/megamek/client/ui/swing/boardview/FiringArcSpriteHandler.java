@@ -20,16 +20,15 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.*;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This BoardViewSpriteHandler handles the sprites for the firing arcs (field of fire) that can be shown for
@@ -58,57 +57,51 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     /**
-     * Updates the facing that is used for aligning the field of fire.
-     * Does not change the assumed unit, position weapon and arc.
+     * Shows the firing arcs for the given weapon on the given unit, centering on the endpoint
+     * of the planned movePath if it is not null.
      *
-     * @param facing The unit's facing
+     * @param entity The unit carrying the weapon
+     * @param weapon the selected weapon
+     * @param movePath planned movement in the movement phase
      */
-    public void updateFacing(int facing) {
-        this.facing = facing;
-        renewSprites();
-    }
-
-    /**
-     * Updates the position that is used for centering the field of fire to the given Coords.
-     * Does not change the assumed unit, weapon and arc, nor the facing.
-     *
-     * @param firingPosition The position to center the field of fire on
-     */
-    public void updatePosition(Coords firingPosition) {
-        this.firingPosition = firingPosition;
-        renewSprites();
-    }
-
-    /**
-     * Updates the position and facing that is used for centering the field of fire to the end
-     * position and facing of the given movement path. Does not change the assumed unit, weapon and arc.
-     *
-     * @param movePath The considered movement path
-     */
-    public void updatePosition(MovePath movePath) {
-        firingPosition = movePath.getFinalCoords();
-        facing = movePath.getFinalFacing();
-        isUnderWater=testUnderWater(movePath);
-        renewSprites();
-    }
-
-    /**
-     * Sets the selected unit and weapon. This will recalculate ranges, the facing including possible
-     * torso/turret twists and the weapon arc. When no firing position is currently stored, the unit's
-     * position will be used. This method does not check if the weapon is valid or, actually, on the unit.
-     *
-     * @param firingEntity the unit carrying the weapon to consider
-     * @param weapon the weapon to consider
-     */
-    public void updateSelectedWeapon(Entity firingEntity, WeaponMounted weapon) {
-        this.firingEntity = firingEntity;
-        arc = firingEntity.getWeaponArc(clientGUI.getSelectedWeaponId());
-        findRanges(weapon);
-        updateFacing(weapon);
-        if (firingPosition == null) {
-            firingPosition = firingEntity.getPosition();
+    public void update(@Nullable Entity entity, @Nullable WeaponMounted weapon, @Nullable MovePath movePath) {
+        firingEntity = entity;
+        if ((entity == null) || (weapon == null)) {
+            clearValues();
+            return;
         }
+        int weaponId = entity.getEquipmentNum(weapon);
+        if (weaponId == -1) {
+            // entities are replaced all the time by server-sent changes, must always guard
+            clearValues();
+            return;
+        }
+        // findRanges must be called before any call to testUnderWater due to usage of 
+        // global-style variables for some reason
+        findRanges(weapon);
+        if (movePath != null) {
+            firingPosition = movePath.getFinalCoords();
+            isUnderWater = testUnderWater(movePath);
+            updateFacing(weapon, movePath.getFinalFacing());
+        } else {
+            firingPosition = entity.getPosition();
+            isUnderWater = testUnderWater();
+            updateFacing(weapon);
+        }
+        firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getPosition();
+        arc = firingEntity.getWeaponArc(weaponId);
+        
         renewSprites();
+    }
+
+    /**
+     * Shows the firing arcs for the given weapon on the given unit.
+     *
+     * @param entity The unit carrying the weapon
+     * @param weapon the selected weapon
+     */
+    public void update(Entity entity, WeaponMounted weapon) {
+        update(entity, weapon, null);
     }
 
     /**
@@ -124,13 +117,25 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     /**
+     * For landed DropShips, the effective range is always one more as they can choose any of their
+     * secondary positions as the effective origin of weapon fire.
+     *
+     * @return 1 for a landed DropShip, 0 otherwise
+     */
+    private int secondaryPositionsRangeBonus() {
+        return ((firingEntity instanceof Dropship) && !firingEntity.isAirborne() &&
+                !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
+                && clientGUI.getDisplayedWeapon().get().getLocation() != Dropship.LOC_NOSE) ? 1 : 0;
+    }
+
+    /**
      * Draw the sprites for the currently stored values for position, unit, arc etc. Does not draw sprites
      * if field of fire is deactivated.
      */
     public void renewSprites() {
         clear();
         if (!GUIP.getShowFieldOfFire() || (firingEntity == null) || (firingPosition == null)
-                || firingEntity.isOffBoard() || !clientGUI.hasSelectedWeapon()) {
+                || firingEntity.isOffBoard() || clientGUI.getDisplayedWeapon().isEmpty()) {
             return;
         }
 
@@ -142,21 +147,37 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
         // create the lists of hexes
         List<Set<Coords>> fieldFire = new ArrayList<>(5);
-        int range = 1;
+        int secondaryPositionRangeBonus = secondaryPositionsRangeBonus();
+
+        // Firing arcs should normally not include the unit's hex(es), therefore start at range 1; 2 for landed DS
+        int range = 1 + secondaryPositionRangeBonus;
+
+        // Special treatment for AFT weapons on landed DS; they can fire only into the DS's hexes:
+        if ((firingEntity instanceof Dropship) && !firingEntity.isAirborne()
+                && !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
+                && (clientGUI.getDisplayedWeapon().get().getLocation() == Dropship.LOC_AFT)) {
+            // AFT weapons on landed DS can only fire into its own 7 hexes
+            range = 0;
+        }
+
         // for all available range brackets Min/S/M/L/E ...
         for (int bracket = 0; bracket < maxrange; bracket++) {
             fieldFire.add(new HashSet<>());
-            // Add all hexes up to the weapon range to separate lists
-            while (range <= ranges[underWaterIndex()][bracket]) {
-                fieldFire.get(bracket).addAll(firingPosition.allAtDistance(range));
-                range++;
-                if (range > 100) {
-                    break; // only to avoid hangs
+            // Don't add any hexes to the min range bracket when the minimum range is 0, i.e. no minimum range
+            if ((bracket != 0) || (ranges[underWaterIndex()][0] > 0)) {
+                // Add all hexes up to the weapon range to separate lists
+                while (range <= ranges[underWaterIndex()][bracket] + secondaryPositionRangeBonus) {
+                    fieldFire.get(bracket).addAll(firingPosition.allAtDistance(range));
+                    range++;
+                    if (range > 100) {
+                        break; // only to avoid hangs
+                    }
                 }
             }
 
             // Remove hexes that are not on the board or not in the arc
-            fieldFire.get(bracket).removeIf(h -> !game.getBoard().contains(h) || !Compute.isInArc(firingPosition, facing, h, arc));
+            fieldFire.get(bracket).removeIf(coords -> !game.getBoard().contains(coords)
+                    || !Compute.isInArc(firingPosition, facing, coords, arc));
         }
 
         // for all available range brackets Min/S/M/L/E ...
@@ -259,6 +280,15 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     private void updateFacing(WeaponMounted weapon) {
+        if (firingEntity != null) {
+            updateFacing(weapon, firingEntity.getFacing());
+        }
+    }
+
+    private void updateFacing(WeaponMounted weapon, int assumedFacing) {
+        if (firingEntity == null) {
+            return;
+        }
         facing = firingEntity.getFacing();
         if (game.getPhase().isFiring()) {
             if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
@@ -273,21 +303,29 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             if ((firingEntity instanceof Tank) && (weapon.getLocation() == ((Tank) firingEntity).getLocTurret2())) {
                 facing = ((Tank) firingEntity).getDualTurretFacing();
             }
-        } else if (game.getPhase().isTargeting()) {
+        } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
             if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
                 facing = firingEntity.getSecondaryFacing();
             }
         }
+        facing = (assumedFacing + facing - firingEntity.getFacing() + 6) % 6;
     }
 
     private void findRanges(WeaponMounted weapon) {
         WeaponType wtype = weapon.getType();
-        ranges[0] = wtype.getRanges(weapon);
 
-        AmmoType atype = null;
-        if ((weapon.getLinked() != null) && (weapon.getLinked().getType() instanceof AmmoType)) {
+        // Use the Weapon Panel's selected ammo to determine ranges, or the current linked ammo if not set
+        AmmoMounted ammoMounted = (clientGUI.getDisplayedAmmo().isPresent())
+                ? clientGUI.getDisplayedAmmo().get() : weapon.getLinkedAmmo();
+
+        // Try to get the ammo type from the selected ammo if possible, or the current linked ammo if not
+        AmmoType atype = (ammoMounted != null) ? ammoMounted.getType() : null;
+        if (atype == null && (weapon.getLinked() != null) && (weapon.getLinked().getType() instanceof AmmoType)) {
             atype = (AmmoType) weapon.getLinked().getType();
         }
+
+        // Ranges set by weapon + ammo combination, but will be updated depending on selected unit
+        ranges[0] = wtype.getRanges(weapon, ammoMounted);
 
         // gather underwater ranges
         ranges[1] = wtype.getWRanges();
@@ -299,9 +337,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                     || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MML)) {
                 if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
-                    ranges[1] = wtype.getRanges(weapon);
+                    ranges[1] = wtype.getRanges(weapon, ammoMounted);
                 } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
-                    ranges[1] = wtype.getRanges(weapon);
+                    ranges[1] = wtype.getRanges(weapon, ammoMounted);
                 }
             }
         }
@@ -322,12 +360,12 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // 6 to 17 in the other phases as it will be
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-            boolean isADA = (weapon.getLinked() != null
-                    && ((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
+            boolean isADA = (ammoMounted != null
+                    && ((AmmoType) ammoMounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (game.getPhase().isTargeting()) {
                 ranges[0] = (!isADA? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
-                ranges[0] = (!isADA? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(weapon));
+                ranges[0] = (!isADA? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(weapon, ammoMounted));
             }
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
@@ -370,9 +408,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             // only works for the current player's units
             if (!weapon.isBreached() && !weapon.isMissing()
                     && !weapon.isDestroyed() && !weapon.isJammed()
-                    && ((weapon.getLinked() == null)
-                    || (weapon.getLinked().getUsableShotsLeft() > 0))) {
-                maxr = wtype.getMaxRange(weapon);
+                    && ((ammoMounted == null)
+                    || (ammoMounted.getUsableShotsLeft() > 0))) {
+                maxr = wtype.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
                 // boolean isCap = wtype.isCapital();
@@ -384,8 +422,18 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
                     if (maxr >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
+                    } else {
+                        ranges[0][rangeIndex] = 0;
                     }
                 }
+            }
+
+        } else {
+            if ((firingEntity instanceof Dropship) && !firingEntity.isAirborne()
+                    && !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
+                    && (clientGUI.getDisplayedWeapon().get().getLocation() == Dropship.LOC_AFT)) {
+                // AFT weapons on landed DS can only fire into its own 7 hexes
+                ranges[0] = new int[] { -1, 0, 0, 0, 0 };
             }
         }
     }
@@ -395,15 +443,40 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * @param movePath The movement path that is considered for the selected unit
      */
     private boolean testUnderWater(MovePath movePath) {
-        if ((firingEntity == null) || (movePath == null) || !clientGUI.hasSelectedWeapon()) {
+        return (movePath != null) && testUnderWater(movePath.getFinalCoords(),
+                !movePath.isJumping(), movePath.getFinalElevation());
+    }
+
+    /**
+     * @return True when, for the present firingEntity and firingPosition, the currently selected weapon
+     * ends up being underwater.
+     */
+    private boolean testUnderWater() {
+        return testUnderWater(firingPosition, true, firingEntity.getElevation());
+    }
+
+    /**
+     * @return True when, at the given position and elevation and when allowSubmerge is true,
+     * the currently selected weapon ends up being underwater
+     */
+    private boolean testUnderWater(Coords position, boolean allowSubmerge, int unitElevation) {
+        if ((firingEntity == null) || clientGUI.getDisplayedWeapon().isEmpty() || (position == null)
+                || (game.getBoard().getHex(position) == null)) {
             return false;
         }
 
-        int location = clientGUI.getSelectedWeapon().getLocation();
-        Hex hex = game.getBoard().getHex(movePath.getFinalCoords());
+        int location = clientGUI.getDisplayedWeapon().get().getLocation();
+        Hex hex = game.getBoard().getHex(position);
         int waterDepth = hex.terrainLevel(Terrains.WATER);
+        
+        // if this is a ship/sub on the surface and we have a weapon that only has water
+        // ranges, consider it an underwater weapon for the purposes of displaying range brackets
+        if (waterDepth > 0 && firingEntity.isSurfaceNaval() &&
+        		ranges[0][1] == 0 && ranges[1][1] > 0) {
+        	return true;
+        }
 
-        if ((waterDepth > 0) && !movePath.isJumping() && (movePath.getFinalElevation() < 0)) {
+        if ((waterDepth > 0) && allowSubmerge && (unitElevation < 0)) {
             if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {
                 return firingEntity.locationIsLeg(location);
             } else {

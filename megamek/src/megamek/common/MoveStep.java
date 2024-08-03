@@ -28,7 +28,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -40,6 +42,17 @@ import java.util.Vector;
  */
 public class MoveStep implements Serializable {
     private static final long serialVersionUID = -6075640793056182285L;
+    /**
+     * When supplying additional int data, use this to key the index of the cargo being picked up
+     */
+    public static final int CARGO_PICKUP_KEY = 0;
+    
+    /**
+     * When supplying additional int data, use this to key the location of the cargo being picked up 
+     * (i.e. mech left arm/right arm, vehicle body, etc)
+     */
+    public static final int CARGO_LOCATION_KEY = 1;
+    
     private MoveStepType type;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;
@@ -156,6 +169,12 @@ public class MoveStep implements Serializable {
     private boolean maneuver = false;
 
     int braceLocation = Entity.LOC_NONE;
+    
+    /**
+     * A map used to hold any additional data that this move step requires.
+     * Preferable to constantly adding new fields for low-usage one-shot data
+     */
+    Map<Integer, Integer> additionalData = new HashMap<>();
 
     private Minefield mf;
 
@@ -255,9 +274,22 @@ public class MoveStep implements Serializable {
 
         if (type == MoveStepType.BRACE) {
             this.braceLocation = additionalIntData;
-        } else {
+        } else if (type == MoveStepType.LAY_MINE) {
             this.mineToLay = additionalIntData;
+        } else if (type == MoveStepType.PICKUP_CARGO) {
+        	this.additionalData.put(CARGO_PICKUP_KEY, additionalIntData);
+        } else if (type == MoveStepType.DROP_CARGO) {
+        	this.additionalData.put(CARGO_LOCATION_KEY, additionalIntData);
         }
+    }
+    
+    /**
+     * Creates a step with an arbitrary int-to-int mapping of additional data.
+     */
+    public MoveStep(MovePath path, MoveStepType type, Map<Integer, Integer> additionalIntData) {
+    	this(path, type);
+    	
+    	additionalData.putAll(additionalIntData);
     }
 
     /**
@@ -402,6 +434,10 @@ public class MoveStep implements Serializable {
                 return "Brace";
             case CHAFF:
                 return "Chaff";
+            case PICKUP_CARGO:
+            	return "Pickup Cargo";
+            case DROP_CARGO:
+            	return "Drop Cargo";
             default:
                 return "???";
         }
@@ -469,6 +505,10 @@ public class MoveStep implements Serializable {
         return targetPos;
     }
 
+    public Integer getAdditionalData(int key) {
+    	return additionalData.containsKey(key) ? additionalData.get(key) : null;
+    }
+    
     public TreeMap<Integer, Vector<Integer>> getLaunched() {
         if (launched == null) {
             launched = new TreeMap<>();
@@ -1106,6 +1146,9 @@ public class MoveStep implements Serializable {
             case BRACE:
                 setMp(entity.getBraceMPCost());
                 break;
+            case DROP_CARGO:
+            	setMp(1);
+            	break;
             case CHAFF:
             default:
                 setMp(0);
@@ -1211,6 +1254,7 @@ public class MoveStep implements Serializable {
         nStraight = prev.nStraight;
         nDown = prev.nDown;
         nMoved = prev.nMoved;
+        additionalData = new HashMap<>(additionalData);
     }
 
     /**
@@ -1921,7 +1965,7 @@ public class MoveStep implements Serializable {
 
             // check the fuel requirements
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)
-                    && entity.hasEngine() && !entity.getEngine().isSolar()) {
+                    && entity.hasEngine() && a.requiresFuel()) {
                 int fuelUsed = mpUsed + Math.max(mpUsed - cachedEntityState.getWalkMP(), 0);
                 if (fuelUsed > a.getCurrentFuel()) {
                     return;
@@ -2815,6 +2859,11 @@ public class MoveStep implements Serializable {
                 danger = true;
             }
         }
+        
+        if (stepType == MoveStepType.PICKUP_CARGO ||
+        		stepType == MoveStepType.DROP_CARGO) {
+        	movementType = EntityMovementType.MOVE_NONE;
+        }
 
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState)
@@ -3370,6 +3419,11 @@ public class MoveStep implements Serializable {
 
         if (type == MoveStepType.MOUNT) {
             return true;
+        }
+        
+        if (type == MoveStepType.PICKUP_CARGO ||
+        		type == MoveStepType.DROP_CARGO) {
+        	return !isProne();
         }
 
         // The entity is trying to load. Check for a valid move.
@@ -4100,7 +4154,21 @@ public class MoveStep implements Serializable {
     public Minefield getMinefield() {
         return mf;
     }
+    
+    /**
+     * For serialization purposes
+     */
+    public Map<Integer, Integer> getAdditionalData() {
+    	return additionalData;
+    }
 
+    /**
+     * Setter for serialization purposes
+     */
+    public void setAdditionalData(Map<Integer, Integer> value) {
+    	additionalData = value;
+    }
+    
     /**
      * Should we treat this movement as if it is occurring for an aerodyne unit
      * flying in atmosphere?

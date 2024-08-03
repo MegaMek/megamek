@@ -30,6 +30,7 @@ import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -2294,8 +2295,8 @@ public class BoardEditor extends JPanel
         }
 
         StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
-                .at(BoardView.HEX_W / 2, BoardView.HEX_H / 2).color(guip.getWarningColor())
-                .outline(Color.WHITE, 1).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
+                .at(HexTileset.HEX_W / 2, HexTileset.HEX_H / 2).color(guip.getWarningColor())
+                .outline(Color.WHITE, 1).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
 
         @Override
         public void paintComponent(Graphics g) {
@@ -2303,7 +2304,7 @@ public class BoardEditor extends JPanel
             if (curHex != null) {
                 // draw the terrain images
                 TilesetManager tm = bv.getTilesetManager();
-                g.drawImage(tm.baseFor(curHex), 0, 0, BoardView.HEX_W, BoardView.HEX_H, this);
+                g.drawImage(tm.baseFor(curHex), 0, 0, HexTileset.HEX_W, HexTileset.HEX_H, this);
                 for (final Image newVar : safeList(tm.supersFor(curHex))) {
                     g.drawImage(newVar, 0, 0, this);
                 }

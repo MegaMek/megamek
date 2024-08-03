@@ -48,7 +48,13 @@ public enum PacketCommand {
 
     ENTITY_PREPHASE,
     ENTITY_GTA_HEX_SELECT,
+
+    /** A packet informing the receiver of an unspecified change to a unit. */
     ENTITY_UPDATE,
+
+    /** A packet instructing the Client to forget the unit of the given id as it is / has become invisible (SBF). */
+    UNIT_INVISIBLE,
+
     ENTITY_MULTIUPDATE,
     ENTITY_WORDER_UPDATE,
     ENTITY_ASSIGN,
@@ -77,6 +83,7 @@ public enum PacketCommand {
     /** A Server to Client packet instructing the Client to change the game's phase. */
     PHASE_CHANGE,
 
+    /** A Server to Client packet instructing the Client to update the current player turn index. */
     TURN,
 
     /** A Server to Client packet instructing the Client to change the game's current round. */
@@ -89,7 +96,10 @@ public enum PacketCommand {
     CLEAR_ILLUM_HEXES,
     SENDING_ENTITIES,
     SENDING_PLAYERS,
+
+    /** A Server to Client packet instructing the Client to update the list of player turns. */
     SENDING_TURNS,
+
     SENDING_REPORTS,
     SENDING_REPORTS_SPECIAL,
     SENDING_REPORTS_TACTICAL_GENIUS,
@@ -108,6 +118,7 @@ public enum PacketCommand {
     REMOVE_MINEFIELD,
     SENDING_MINEFIELDS,
     UPDATE_MINEFIELDS,
+    UPDATE_GROUND_OBJECTS,
     REROLL_INITIATIVE,
     UNLOAD_STRANDED,
     SET_ARTILLERY_AUTOHIT_HEXES,
@@ -139,7 +150,10 @@ public enum PacketCommand {
     CFR_HIDDEN_PBS,
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
-    GAME_VICTORY_EVENT;
+    GAME_VICTORY_EVENT,
+
+    /** A packet containing other packets to be processed in the order they are stored. */
+    MULTI_PACKET;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

@@ -1,4 +1,4 @@
-/*  
+/*
  * MegaMek - Copyright (C) 2021 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -13,16 +13,24 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import megamek.common.Entity;
-import megamek.common.Player;
+import megamek.MMConstants;
+import megamek.client.generator.ReconfigurationParameters;
+import megamek.client.generator.TeamLoadoutGenerator;
+import megamek.client.ratgenerator.FactionRecord;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.common.*;
+import megamek.common.containers.MunitionTree;
 import megamek.common.force.Force;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 
@@ -56,6 +64,10 @@ public class LobbyMekPopupActions implements ActionListener {
 
                 // Multi entity commands
             case LMP_ALPHASTRIKE:
+            case LMP_AUTOCONFIG:
+            case LMP_SAVECONFIG:
+            case LMP_APPLYCONFIG:
+            case LMP_RANDOMCONFIG:
             case LMP_UNLOADALLFROMBAY:
             case LMP_C3CM:
             case LMP_C3LM:
@@ -331,7 +343,134 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_ALPHASTRIKE:
                 lobby.lobbyActions.showAlphaStrikeView(entities);
                 break;
+
+            case LMP_AUTOCONFIG:
+            case LMP_RANDOMCONFIG:
+            case LMP_SAVECONFIG:
+            case LMP_APPLYCONFIG:
+                runMunitionConfigCMD(entities, command);
+                break;
         }
+    }
+
+    /** Run config command for a set of entities
+     *
+     * @param entities
+     * @param command
+     */
+    private void runMunitionConfigCMD(Set<Entity> entities, String command) {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(lobby.game());
+        MunitionTree mt = new MunitionTree();
+        ArrayList<Entity> el = new ArrayList<Entity>(entities);
+        ClientGUI clientgui = lobby.getClientgui();
+        // Team team = lobby.game().getTeamForPlayer(el.get(0).getOwner());
+        Team team = clientgui.getClient().getGame().getTeamForPlayer(el.get(0).getOwner());
+        String faction = (team != null) ? team.getFaction() : FactionRecord.IS_GENERAL_KEY;
+
+        // Parameters are generated _from_ the teams' information, _for_ the selected entities
+        ReconfigurationParameters rp = tlg.generateParameters(el, faction, team);
+        // Extra nuke controls don't apply in the context menu; rely on game option!
+        rp.nukesBannedForMe = lobby.game().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+        // Reduce Pirate ammo somewhat; others get full loadouts
+        rp.isPirate = faction.toUpperCase().equals("PIR");
+        rp.binFillPercent = (rp.isPirate) ? TeamLoadoutGenerator.UNSET_FILL_RATIO : 1.0f;
+
+        boolean reconfigured = false;
+
+        switch (command) {
+            case LMP_AUTOCONFIG:
+                mt = tlg.generateMunitionTree(rp, el, "");
+                resetBombChoices(clientgui, lobby.game(), el);
+                tlg.reconfigureEntities(el, faction, mt, rp);
+                reconfigured = true;
+                break;
+            case LMP_RANDOMCONFIG:
+                mt = TeamLoadoutGenerator.generateRandomizedMT();
+                resetBombChoices(clientgui, lobby.game(), el);
+                tlg.reconfigureEntities(el, faction, mt, rp);
+                reconfigured = true;
+                break;
+            case LMP_SAVECONFIG:
+                mt.loadEntityList(el);
+                saveLoadout(mt);
+                break;
+            case LMP_APPLYCONFIG:
+                mt = loadLoadout();
+                if (null != mt && null != clientgui) {
+                    // Apply to entities
+                    resetBombChoices(clientgui, lobby.game(), el);
+                    tlg.reconfigureEntities(el, faction, mt, rp);
+                    reconfigured = true;
+                }
+                break;
+        }
+        if (reconfigured) {
+            // Have to send reconfig as controlling player
+            clientgui.chatlounge.sendProxyUpdates(el, lobby.game().getPlayer(el.get(0).getOwnerId()));
+        }
+    }
+
+    public static void resetBombChoices(ClientGUI clientgui, Game game, ArrayList<Entity> el) {
+        ArrayList<Entity> resetBombers = new ArrayList();
+        for (Entity entity: el) {
+            if (entity.isBomber() && !entity.isVehicle()) {
+                IBomber bomber = (IBomber) entity;
+                // Clear existing bomb choices!
+                bomber.setIntBombChoices(new int[BombType.B_NUM]);
+                bomber.setExtBombChoices(new int[BombType.B_NUM]);
+                resetBombers.add(entity);
+            }
+        }
+        if (!resetBombers.isEmpty()) {
+            clientgui.chatlounge.sendProxyUpdates(resetBombers, game.getPlayer(el.get(0).getOwnerId()));
+        }
+    }
+
+    private void saveLoadout(MunitionTree source) {
+        //ignoreHotKeys = true;
+        JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
+                "adf files (*.adf)", "adf");
+        fc.addChoosableFileFilter(adfFilter);
+        fc.setFileFilter(adfFilter);
+        fc.setLocation(lobby.getLocation().x + 150, lobby.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("ClientGui.LoadoutSaveDialog.title"));
+
+        int returnVal = fc.showSaveDialog(lobby);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // No file selected?  No loadout!
+            return;
+        }
+        if (fc.getSelectedFile() != null) {
+            String file = fc.getSelectedFile().getAbsolutePath();
+            if (!file.toLowerCase().endsWith(".adf")) {
+                file = file + ".adf";
+            }
+            source.writeToADFFilename(file);
+        }
+    }
+
+    private MunitionTree loadLoadout() {
+        MunitionTree mt = null;
+        JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
+                "adf files (*.adf)", "adf");
+        fc.addChoosableFileFilter(adfFilter);
+        fc.setFileFilter(adfFilter);
+        fc.setLocation(lobby.getLocation().x + 150, lobby.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("ClientGui.LoadoutLoadDialog.title"));
+
+        int returnVal = fc.showOpenDialog(lobby);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // No file selected?  No loadout!
+            return null;
+        }
+
+        if (fc.getSelectedFile() != null) {
+            String file = fc.getSelectedFile().getAbsolutePath();
+            mt = new MunitionTree(file);
+        }
+        return mt;
     }
 
     /** Calls lobby actions for a single entity. */

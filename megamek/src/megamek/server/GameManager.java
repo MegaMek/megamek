@@ -4936,7 +4936,6 @@ public class GameManager extends AbstractGameManager {
             crateredElevation = h.getLevel() - 2;
         }
         if (entity instanceof Dropship) {
-            Dropship ds = (Dropship) entity;
             for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
                 if (!game.getBoard().contains(adjCoords)) {
@@ -5168,7 +5167,8 @@ public class GameManager extends AbstractGameManager {
             }
         }
 
-        if (destroyDropShip) {
+        if (destroyDropShip
+                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE)) {
             // Out-of-control DropShip that crashes is automatically destroyed.
             r = new Report(9708, Report.PUBLIC);
             r.indent();
@@ -18645,7 +18645,6 @@ public class GameManager extends AbstractGameManager {
                 if (entity.getCrew().hasActiveTechOfficer()) {
                     rollValue += 2;
                     String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";
-                    ;
                     r.addDataWithTooltip(rollCalc, diceRoll.getReport());
                 } else {
                     r.add(diceRoll);

@@ -67,7 +67,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5796: Prevent NPE when units are ineligible for Physical Attack phase due to having loaded onto a transport this round
 + Fix #5818: correct issue with minimap autodisplay using wrong function
 + PR #5822: Implement RFE 5361: enhance Princess handling of hazardous terrain
-+ Issues #2577, #897, #353: Implement placeable/carryable cargo objects (for mechs and protomechs only at the moment) (Carry Objects #5706)
++ Issues #2577, #897, #353: Implement placeable/carryable cargo objects (for mechs and protomechs only at the moment) (Carry Objects #5706, #5816)
 + PR #5839: The Heavy Lifter pilot ability is now implemented
 + Fix #5811, #5831: Updates to unit validation (Heavy Gauss Rifles and RISC Hyper Laser vs. engines), allow Illegal Design quirk to validate illegal units
 + Fix #5769:  Possibly fix ID overlap when reinforcing from MUL

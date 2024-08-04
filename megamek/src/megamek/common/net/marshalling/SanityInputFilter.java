@@ -50,6 +50,9 @@ public class SanityInputFilter implements ObjectInputFilter {
             Pattern.compile("java.lang.Object", Pattern.LITERAL),
             Pattern.compile("java.lang.String", Pattern.LITERAL),
 
+            // Java Net
+            Pattern.compile("java.net.URI", Pattern.LITERAL),
+
             // Java Util
             Pattern.compile("java.util.ArrayList", Pattern.LITERAL),
             Pattern.compile("java.util.Collections$SetFromMap", Pattern.LITERAL),
@@ -78,6 +81,9 @@ public class SanityInputFilter implements ObjectInputFilter {
             Pattern.compile("java.util.Map", Pattern.LITERAL),
             Pattern.compile("java.util.TreeSet", Pattern.LITERAL),
             Pattern.compile("java.util.Vector", Pattern.LITERAL),
+
+            // Fonts
+            Pattern.compile("org\\.apache\\.fop\\.fonts\\.*"),
 
             // MegaMek Related
             Pattern.compile("megamek.*"),

@@ -284,6 +284,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_SYMBOLS_DISPLAY_MODE = "MinimapSymbolsDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDisplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDisplayNonReportPhase";
+    public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
+    public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
@@ -667,6 +669,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_ENABLED, true);
         store.setDefault(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, 0);
         store.setDefault(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, 1);
+        store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
+        store.setDefault(FIRE_DISPLAY_TAB_DURING_PHASES, true);
 
         store.setDefault(MMSYMBOL, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -1228,6 +1232,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMinimapAutoDisplayNonReportPhase() {
         return store.getInt(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE);
+    }
+
+    public boolean getFireDisplayTabDuringFiringPhases() {
+        return store.getBoolean(FIRE_DISPLAY_TAB_DURING_PHASES);
+    }
+
+    public boolean getMoveDisplayTabDuringMovePhases() {
+        return store.getBoolean(MOVE_DISPLAY_TAB_DURING_PHASES);
     }
 
     public int getMinimapPosX() {
@@ -2067,6 +2079,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMinimapAutoDisplayNonReportPhase(int i) {
         store.setValue(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, i);
+    }
+
+    public void setFireDisplayTabDuringFiringPhases(boolean b) {
+        store.setValue(FIRE_DISPLAY_TAB_DURING_PHASES, b);
+    }
+
+    public void setMoveDisplayTabDuringMovePhases(boolean b) {
+        store.setValue(MOVE_DISPLAY_TAB_DURING_PHASES, b);
     }
 
     public void setMiniReportEnabled(boolean b) {

@@ -18,6 +18,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -262,7 +263,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             Entity en_Target = clientgui.getUnitDisplay().getCurrentEntity();
             // Avoided using selectEntity(), to avoid centering on active unit
             clientgui.getUnitDisplay().displayEntity(ce());
-            clientgui.getUnitDisplay().showPanel("weapons");
+            if (GUIP.getFireDisplayTabDuringFiringPhases()) {
+                clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+            }
             clientgui.getUnitDisplay().wPan.selectFirstWeapon();
             target(en_Target);
         }
@@ -1454,7 +1457,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
-        clientgui.getUnitDisplay().showPanel("weapons");
+        if (GUIP.getFireDisplayTabDuringFiringPhases()) {
+            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+        }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         if (ce().isMakingVTOLGroundAttack()) {
             updateVTOLGroundTarget();

@@ -506,26 +506,19 @@ public class FighterSquadron extends AeroSpaceFighter {
      * TODO: Make this into a generic "clean up bomb loadout" method
      */
     public void computeSquadronBombLoadout() {
-        // Remove any currently equipped bombs
-        for (Mounted bomb : bombList) {
-            equipmentList.remove(bomb);
-        }
-        bombList.clear();
+        clearBombs();
 
         // Find out what bombs everyone has
-        for (int btype = 0; btype < BombType.B_NUM; btype++) {
-            // This is smallest number of such a bomb
+        for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
+            int finalBombType = bombType;
             int maxBombCount = 0;
             for (Entity fighter : getSubEntities()) {
-                int bombCount = 0;
-                for (Mounted m : fighter.getBombs()) {
-                    if (((BombType) m.getType()).getBombType() == btype) {
-                        bombCount++;
-                    }
-                }
+                int bombCount = (int) fighter.getBombs().stream()
+                        .filter(m -> m.getType().getBombType() == finalBombType)
+                        .count();
                 maxBombCount = Math.max(bombCount, maxBombCount);
             }
-            extBombChoices[btype] = maxBombCount;
+            extBombChoices[bombType] = maxBombCount;
         }
 
         // Now that we know our bomb choices, load 'em

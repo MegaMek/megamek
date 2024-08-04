@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.*;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -196,43 +197,46 @@ public interface IAero {
      * Refresh the capital fighter weapons groups.
      */
     default void updateWeaponGroups() {
-        // first we need to reset all the weapons in our existing mounts to zero
-        // until proven otherwise
-        Set<String> set = getWeaponGroups().keySet();
-        Iterator<String> iter = set.iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(0);
-        }
-        // now collect a hash of all the same weapons in each location by id
-        Map<String, Integer> groups = groupWeaponsByLocation();
-        // now we just need to traverse the hash and either update our existing
-        // equipment or add new ones if there is none
-        Set<String> newSet = groups.keySet();
-        Iterator<String> newIter = newSet.iterator();
-        while (newIter.hasNext()) {
-            String key = newIter.next();
-            if (null != getWeaponGroups().get(key)) {
-                // then this equipment is already loaded, so we just need to
-                // correctly update the number of weapons
-                ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(groups.get(key));
-            } else {
-                // need to add a new weapon
-                String name = key.split(":")[0];
-                int loc = Integer.parseInt(key.split(":")[1]);
-                EquipmentType etype = EquipmentType.get(name);
-                Mounted newmount;
-                if (etype != null) {
-                    try {
-                        newmount = ((Entity) this).addWeaponGroup(etype, loc);
-                        newmount.setNWeapons(groups.get(key));
-                        getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
-                    } catch (LocationFullException ex) {
-                        LogManager.getLogger().error("Unable to compile weapon groups", ex);
-                        return;
+        if ((this instanceof Entity entity) && (entity.game != null)
+                && entity.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
+            // first we need to reset all the weapons in our existing mounts to zero
+            // until proven otherwise
+            Set<String> set = getWeaponGroups().keySet();
+            Iterator<String> iter = set.iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(0);
+            }
+            // now collect a hash of all the same weapons in each location by id
+            Map<String, Integer> groups = groupWeaponsByLocation();
+            // now we just need to traverse the hash and either update our existing
+            // equipment or add new ones if there is none
+            Set<String> newSet = groups.keySet();
+            Iterator<String> newIter = newSet.iterator();
+            while (newIter.hasNext()) {
+                String key = newIter.next();
+                if (null != getWeaponGroups().get(key)) {
+                    // then this equipment is already loaded, so we just need to
+                    // correctly update the number of weapons
+                    ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(groups.get(key));
+                } else {
+                    // need to add a new weapon
+                    String name = key.split(":")[0];
+                    int loc = Integer.parseInt(key.split(":")[1]);
+                    EquipmentType etype = EquipmentType.get(name);
+                    Mounted newmount;
+                    if (etype != null) {
+                        try {
+                            newmount = ((Entity) this).addWeaponGroup(etype, loc);
+                            newmount.setNWeapons(groups.get(key));
+                            getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
+                        } catch (LocationFullException ex) {
+                            LogManager.getLogger().error("Unable to compile weapon groups", ex);
+                            return;
+                        }
+                    } else if (!"0".equals(name)) {
+                        ((Entity) this).addFailedEquipment(name);
                     }
-                } else if (!"0".equals(name)) {
-                    ((Entity) this).addFailedEquipment(name);
                 }
             }
         }

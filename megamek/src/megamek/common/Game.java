@@ -137,11 +137,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
-     * Piles of carry-able objects, sorted by coordinates
-     */
-    private Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
-    
-    /**
      * Constructor
      */
     public Game() {
@@ -612,7 +607,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * turns to play
      */
     public @Nullable GameTurn getTurnForPlayer(int pn) {
-        synchronized (turnVector) {
+        if ((turnIndex >= 0) && (turnIndex < turnVector.size())) {
             for (int i = turnIndex; i < turnVector.size(); i++) {
                 GameTurn gt = turnVector.get(i);
                 if (gt.isValid(pn, this)) {
@@ -1189,7 +1184,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Add this Entity, ensuring that its id is unique
         int id = entity.getId();
-        if (inGameObjects.containsKey(id)) {
+        if (isIdUsed(id)) {
             id = getNextEntityId();
             entity.setId(id);
         }
@@ -1214,6 +1209,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
         }
+    }
+
+    /**
+     * @return true if the given ID is in use among active and dead units
+     */
+    private boolean isIdUsed(int id) {
+        return inGameObjects.containsKey(id) || isOutOfGame(id);
     }
 
     public void setEntity(int id, Entity entity) {
@@ -3278,74 +3280,40 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
     }
-    
-    /**
-     * Place a carryable object on the ground at the given coordinates
-     */
-    public void placeGroundObject(Coords coords, ICarryable carryable) {
-    	if (!groundObjects.containsKey(coords)) {
-    		groundObjects.put(coords, new ArrayList<>());
-    	}
-    	
-    	groundObjects.get(coords).add(carryable);
-    }
-    
-    /**
-     * Remove the given carryable object from the ground at the given coordinates
-     */
-    public void removeGroundObject(Coords coords, ICarryable carryable) {
-    	if (groundObjects.containsKey(coords)) {
-    		groundObjects.get(coords).remove(carryable);
-    	}
-    }
 
-    /**
-     * Get a list of all the objects on the ground at the given coordinates
-     * guaranteed to return non-null, but may return empty list
-     */
-    public List<ICarryable> getGroundObjects(Coords coords) {
-    	return groundObjects.containsKey(coords) ? groundObjects.get(coords) : new ArrayList<>(); 
-    }
-    
     /**
      * Get a list of all objects on the ground at the given coordinates
      * that can be picked up by the given entity
      */
     public List<ICarryable> getGroundObjects(Coords coords, Entity entity) {
-    	if (!groundObjects.containsKey(coords)) {
-    		return new ArrayList<>();
-    	}
-    	
-    	// if the entity doesn't have working actuators etc
-    	if (!entity.canPickupGroundObject()) {
-    		return new ArrayList<>();
-    	}
-    	
-    	double maxTonnage = entity.maxGroundObjectTonnage();
-    	ArrayList<ICarryable> result = new ArrayList<>();
-    	
-    	for (ICarryable object : groundObjects.get(coords)) {
-    		if (maxTonnage >= object.getTonnage()) {
-    			result.add(object);
-    		}
-    	}
-    	
-    	return result;
+        if (!getGroundObjects().containsKey(coords)) {
+            return new ArrayList<>();
+        }
+
+        // if the entity doesn't have working actuators etc
+        if (!entity.canPickupGroundObject()) {
+            return new ArrayList<>();
+        }
+
+        double maxTonnage = entity.maxGroundObjectTonnage();
+        ArrayList<ICarryable> result = new ArrayList<>();
+
+        for (ICarryable object : getGroundObjects().get(coords)) {
+            if (maxTonnage >= object.getTonnage()) {
+                result.add(object);
+            }
+        }
+
+        return result;
     }
     
-    /**
-	 * @return Collection of objects on the ground. Best to use getGroundObjects(Coords) 
-	 * if looking for objects in specific hex
-	 */
 	public Map<Coords, List<ICarryable>> getGroundObjects() {
-		return groundObjects;
-	}
+        // this is a temporary guard to preserve savegame compatibility. Remove after this entire override after .50
+		if (groundObjects == null) {
+			groundObjects = new HashMap<>();
+		}
 
-	/**
-	 * @param groundObjects the groundObjects to set
-	 */
-	public void setGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
-		this.groundObjects = groundObjects;
+		return groundObjects;
 	}
 
 	/**

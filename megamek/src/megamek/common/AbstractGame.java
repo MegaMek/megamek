@@ -81,6 +81,11 @@ public abstract class AbstractGame implements IGame {
 
     protected int turnIndex = AWAITING_FIRST_TURN;
 
+    /**
+     * Piles of carry-able objects, sorted by coordinates
+     */
+    protected Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+
     @Override
     public Forces getForces() {
         return forces;
@@ -350,5 +355,44 @@ public abstract class AbstractGame implements IGame {
 
     public boolean hasBoard(int boardId) {
         return gameBoards.containsKey(boardId);
+    }
+
+    /**
+     * Place a carryable object on the ground at the given coordinates
+     */
+    public void placeGroundObject(Coords coords, ICarryable carryable) {
+        getGroundObjects().computeIfAbsent(coords, k -> new ArrayList<>()).add(carryable);
+    }
+
+    /**
+     * Remove the given carryable object from the ground at the given coordinates
+     */
+    public void removeGroundObject(Coords coords, ICarryable carryable) {
+        if (getGroundObjects().containsKey(coords)) {
+            getGroundObjects().get(coords).remove(carryable);
+        }
+    }
+
+    /**
+     * Get a list of all the objects on the ground at the given coordinates
+     * guaranteed to return non-null, but may return empty list
+     */
+    public List<ICarryable> getGroundObjects(Coords coords) {
+        return getGroundObjects().getOrDefault(coords, new ArrayList<>());
+    }
+
+    /**
+     * @return Collection of objects on the ground. Best to use getGroundObjects(Coords)
+     * if looking for objects in specific hex
+     */
+    public Map<Coords, List<ICarryable>> getGroundObjects() {
+        return groundObjects;
+    }
+
+    /**
+     * @param groundObjects the groundObjects to set
+     */
+    public void setGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
+        this.groundObjects = groundObjects;
     }
 }

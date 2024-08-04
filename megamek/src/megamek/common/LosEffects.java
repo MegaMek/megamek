@@ -346,6 +346,36 @@ public class LosEffects {
                         // + heavySmoke) * 2) < 3;
     }
 
+    public static AttackInfo prepLosAttackInfo(Game game, @Nullable Entity ae, @Nullable Entity te,
+                                               Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
+        AttackInfo ai = new AttackInfo();
+
+        ai.attackPos = c1;
+        ai.targetPos = c2;
+        ai.targetEntity = (te != null);
+        if (game.getBoard().inAtmosphere()) {
+            // Assume LOS is from Alt 1 above c1 to Alt 1 above c2, due to Low Altitude LOS calc differences from ground.
+            ai.attackHeight = (ae == null) ? 1 : ae.getAltitude();
+            ai.targetHeight = (te == null) ? 1 : te.getAltitude();
+            ai.attackerIsMech = false;
+            ai.targetIsMech = false;
+            ai.attLowAlt = true;
+            ai.targetLowAlt = true;
+            ai.lowAltitude = true;
+            ai.attackAbsHeight = (ae == null) ? game.getBoard().getHex(c1).floor() + ai.attackHeight : ai.attackHeight;
+            ai.targetAbsHeight = (te == null) ? game.getBoard().getHex(c2).floor() + ai.targetHeight : ai.targetHeight;
+        } else if (game.getBoard().onGround()) {
+            ai.attackHeight = mechInFirst ? 1 : 0;
+            ai.targetHeight = mechInSecond ? 1 : 0;
+            ai.attackerIsMech = mechInFirst;
+            ai.targetIsMech = mechInSecond;
+            ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
+            ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+        }
+
+        return ai;
+    }
+
     @Deprecated // Deprecated for nullable passing
     public static LosEffects calculateLos(final Game game, final int attackerId,
                                           final @Nullable Targetable target) {
@@ -423,6 +453,12 @@ public class LosEffects {
                                           final @Nullable Coords attackerPosition,
                                           final @Nullable Coords targetPosition,
                                           final boolean spotting) {
+
+        // Handle Low Atmosphere maps separately
+        if (game.getBoard().inAtmosphere()) {
+            return calculateLowAtmoLOS(game, attacker, target, attackerPosition, targetPosition);
+        }
+
         // LOS fails if one of the entities is not deployed.
         if ((attacker == null) || (target == null) || (attackerPosition == null)
                 || (targetPosition == null) || attacker.isOffBoard() || target.isOffBoard()) {
@@ -462,10 +498,10 @@ public class LosEffects {
         // Adjust units' altitudes for low-altitude map LOS caclulations
         // Revisit once we have ground units on low-alt and dual-map functional
         final boolean lowAlt = game.getBoard().inAtmosphere() && !game.getBoard().onGround();
-        if (attacker.isAirborne()) {
+        if (attacker.isAirborne() && lowAlt) {
             ai.attLowAlt = true;
         }
-        if (target.isAirborne()) {
+        if (target.isAirborne() && lowAlt) {
             ai.targetLowAlt = true;
         }
         if (lowAlt) {
@@ -473,7 +509,7 @@ public class LosEffects {
         }
 
         ai.targetInfantry = target instanceof Infantry;
-        ai.attackHeight = attacker.getHeight();
+        ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attacker.getHeight();
         ai.targetHeight = (ai.targetLowAlt) ? target.getAltitude() : target.getHeight() + targetHeightAdjustment;
 
         int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() : attacker.relHeight() + attackerHex.getLevel();
@@ -540,6 +576,86 @@ public class LosEffects {
         if (Compute.isAirToGround(attacker, target) || Compute.isGroundToAir(attacker, target)) {
             ai.attackPos = ai.targetPos;
         }
+
+        final LosEffects finalLoS = calculateLos(game, ai);
+        finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
+        finalLoS.targetLoc = target.getPosition();
+        finalLoS.targetIsOversized = ai.targetEntity
+                && ((Entity) target).hasQuirk(OptionsConstants.QUIRK_NEG_OVERSIZED);
+        return finalLoS;
+    }
+
+    public static LosEffects calculateLowAtmoLOS(final Game game, final @Nullable Entity attacker,
+                                                 final @Nullable Targetable target,
+                                                 final @Nullable Coords attackerPosition,
+                                                 final @Nullable Coords targetPosition) {
+
+        // LOS fails if one of the entities is not deployed.
+        if ((attacker == null) || (target == null) || (attackerPosition == null)
+                || (targetPosition == null) || attacker.isOffBoard() || target.isOffBoard()) {
+            LosEffects los = new LosEffects();
+            los.blocked = true; // TODO: come up with a better "impossible"
+            los.hasLoS = false;
+            los.targetLoc = (target == null) ? targetPosition : target.getPosition();
+            return los;
+        }
+
+        final Hex attackerHex = game.getBoard().getHex(attackerPosition);
+        final Hex targetHex = game.getBoard().getHex(targetPosition);
+        if ((attackerHex == null) || (targetHex == null)) {
+            LosEffects los = new LosEffects();
+            los.blocked = true; // TODO: come up with a better "impossible"
+            los.hasLoS = false;
+            los.targetLoc = target.getPosition();
+            return los;
+        }
+
+        // Should not need to check unit types; only Aeros or acting Aeros can be up here currently.
+        final AttackInfo ai = new AttackInfo();
+        ai.attackerIsMech = false;
+        ai.targetIsMech = false;
+        ai.targetInfantry = false;
+
+        ai.attackPos = attackerPosition;
+        ai.attackerId = attacker.getId();
+        ai.targetPos = targetPosition;
+        ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
+        if (ai.targetEntity) {
+            ai.targetId = ((Entity) target).getId();
+        }
+
+        // Adjust units' altitudes for low-altitude map LOS caclulations
+        // Revisit once we have ground units on low-alt and dual-map functional
+        final boolean lowAlt = game.getBoard().inAtmosphere() && !game.getBoard().onGround();
+        if (attacker.isAirborne() && lowAlt) {
+            ai.attLowAlt = true;
+        }
+        if (target.isAirborne() && lowAlt) {
+            ai.targetLowAlt = true;
+        }
+        if (lowAlt) {
+            ai.lowAltitude = true;
+        }
+
+        // For Low Alt fights, height = Altitude, always (well, for now).
+        ai.attackHeight = attacker.getAltitude();
+        ai.targetHeight = target.getAltitude();
+
+        int attackerElevation = attacker.getAltitude();
+        final int targetElevation = target.getAltitude();
+
+        ai.attackAbsHeight = attackerElevation;
+        ai.targetAbsHeight = targetElevation;
+
+        ai.attOffBoard = false;
+
+        ai.attUnderWater = false;
+        ai.attInWater = false;
+        ai.attOnLand = false;
+        ai.targetUnderWater = false;
+        ai.targetInWater = false;
+        ai.targetOnLand = false;
+        ai.underWaterCombat = false;
 
         final LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
@@ -1053,6 +1169,12 @@ public class LosEffects {
     private static LosEffects losForCoords(Game game, AttackInfo ai,
             Coords coords, Building thruBldg,
             boolean diagramLoS, boolean partialCover) {
+
+        // Handle Low Atmosphere hexes differently
+        if (game.getBoard().inAtmosphere()) {
+            return losForLowAtmoCoords(game, ai, coords, diagramLoS);
+        }
+
         LosEffects los = new LosEffects();
         // ignore hexes not on board
         if (!game.getBoard().contains(coords)) {
@@ -1103,29 +1225,28 @@ public class LosEffects {
         int bldgEl = 0;
         boolean coveredByDropship = false;
         Entity coveringDropship = null;
-        if (!ai.lowAltitude) {
-            if ((null == los.getThruBldg())
-                    && hex.containsTerrain(Terrains.BLDG_ELEV)) {
-                bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
-            }
 
-            if ((null == los.getThruBldg())
-                    && hex.containsTerrain(Terrains.FUEL_TANK_ELEV)
-                    && hex.terrainLevel(Terrains.FUEL_TANK_ELEV) > bldgEl) {
-                bldgEl = hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
-            }
+        if ((null == los.getThruBldg())
+                && hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
 
-            // check for grounded dropships - treat like a building 10 elevations tall
-            if (bldgEl < 10) {
-                for (Entity inHex : game.getEntitiesVector(coords)) {
-                    if (ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
-                        continue;
-                    }
-                    if (inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne()) {
-                        bldgEl = 10;
-                        coveredByDropship = true;
-                        coveringDropship = inHex;
-                    }
+        if ((null == los.getThruBldg())
+                && hex.containsTerrain(Terrains.FUEL_TANK_ELEV)
+                && hex.terrainLevel(Terrains.FUEL_TANK_ELEV) > bldgEl) {
+            bldgEl = hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
+        }
+
+        // check for grounded dropships - treat like a building 10 elevations tall
+        if (bldgEl < 10) {
+            for (Entity inHex : game.getEntitiesVector(coords)) {
+                if (ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
+                    continue;
+                }
+                if (inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne()) {
+                    bldgEl = 10;
+                    coveredByDropship = true;
+                    coveringDropship = inHex;
                 }
             }
         }
@@ -1193,38 +1314,35 @@ public class LosEffects {
                 los.screen++;
             }
 
-            if (!ai.lowAltitude) {
-                //heavy industrial zones can vary in height up to 10 levels, so lets
-                //put all of this into a for loop
-                int industrialLevel = hex.terrainLevel(Terrains.INDUSTRIAL);
-                if (industrialLevel != Terrain.LEVEL_NONE) {
-                    for (int level = 1; level < 11; level++) {
-                        if ((hexEl + level > maxUnitHeight)
-                                || ((hexEl + level > ai.attackAbsHeight) && attackerAdjc)
-                                || ((hexEl + level > ai.targetAbsHeight) && targetAdjc)) {
-                            // check industrial zone
-                            if (industrialLevel == level) {
-                                los.heavyIndustrial++;
-                            }
+            //heavy industrial zones can vary in height up to 10 levels, so lets
+            //put all of this into a for loop
+            int industrialLevel = hex.terrainLevel(Terrains.INDUSTRIAL);
+            if (industrialLevel != Terrain.LEVEL_NONE) {
+                for (int level = 1; level < 11; level++) {
+                    if ((hexEl + level > maxUnitHeight)
+                            || ((hexEl + level > ai.attackAbsHeight) && attackerAdjc)
+                            || ((hexEl + level > ai.targetAbsHeight) && targetAdjc)) {
+                        // check industrial zone
+                        if (industrialLevel == level) {
+                            los.heavyIndustrial++;
                         }
                     }
                 }
-                //planted fields only rise one level above the terrain
-                if (hex.containsTerrain(Terrains.FIELDS)) {
-                    if (((hexEl + 1 > ai.attackAbsHeight) && (hexEl + 2 > ai.targetAbsHeight))
-                            || ((hexEl + 1 > ai.attackAbsHeight) && attackerAdjc)
-                            || ((hexEl + 1 > ai.targetAbsHeight) && targetAdjc)) {
-                        los.plantedFields++;
+            }
+            //planted fields only rise one level above the terrain
+            if (hex.containsTerrain(Terrains.FIELDS)) {
+                if (((hexEl + 1 > ai.attackAbsHeight) && (hexEl + 2 > ai.targetAbsHeight))
+                        || ((hexEl + 1 > ai.attackAbsHeight) && attackerAdjc)
+                        || ((hexEl + 1 > ai.targetAbsHeight) && targetAdjc)) {
+                    los.plantedFields++;
 
-                    }
                 }
             }
-
 
             // Intervening Smoke and Woods
             int woodsLevel = hex.terrainLevel(Terrains.WOODS);
             int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
-            int foliageElev = Terrains.getTerrainElevation(Terrains.FOLIAGE_ELEV, hex.terrainLevel(Terrains.FOLIAGE_ELEV), ai.lowAltitude);
+            int foliageElev = Terrains.getTerrainElevation(Terrains.FOLIAGE_ELEV, hex.terrainLevel(Terrains.FOLIAGE_ELEV), false);
             int smokeLevel = hex.terrainLevel(Terrains.SMOKE);
             boolean hasFoliage = (woodsLevel != Terrain.LEVEL_NONE) || (jungleLevel != Terrain.LEVEL_NONE);
 
@@ -1299,52 +1417,150 @@ public class LosEffects {
             }
         }
 
-        if (!ai.lowAltitude) {
-            // Partial Cover related code
-            boolean potentialCover = false;
-            // check for target partial cover
-            if (targetAdjc && ai.targetIsMech) {
-                if (los.blocked && partialCover) {
-                    los.targetCover = COVER_FULL;
-                    potentialCover = true;
-                } else if ((totalEl == ai.targetAbsHeight)
-                        && (ai.attackAbsHeight <= ai.targetAbsHeight)
-                        && (ai.targetHeight > 0)) {
-                    los.targetCover |= COVER_HORIZONTAL;
-                    potentialCover = true;
-                }
+        // Partial Cover related code
+        boolean potentialCover = false;
+        // check for target partial cover
+        if (targetAdjc && ai.targetIsMech) {
+            if (los.blocked && partialCover) {
+                los.targetCover = COVER_FULL;
+                potentialCover = true;
+            } else if ((totalEl == ai.targetAbsHeight)
+                    && (ai.attackAbsHeight <= ai.targetAbsHeight)
+                    && (ai.targetHeight > 0)) {
+                los.targetCover |= COVER_HORIZONTAL;
+                potentialCover = true;
             }
-            // check for attacker partial (horizontal) cover
-            if (attackerAdjc && ai.attackerIsMech) {
-                if (los.blocked && partialCover) {
-                    los.attackerCover = COVER_FULL;
-                    potentialCover = true;
-                } else if ((totalEl == ai.attackAbsHeight)
-                        && (ai.attackAbsHeight >= ai.targetAbsHeight)
-                        && (ai.attackHeight > 0)) {
-                    los.attackerCover |= COVER_HORIZONTAL;
-                    potentialCover = true;
-                }
-            }
-
-            // If there's a partial cover situation, we may need to keep track of
-            // damageable assets that are providing cover, so we can damage them if
-            // they block a shot.
-            if (potentialCover) {
-                if (coveredByDropship) {
-                    los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_DROPSHIP);
-                    los.coverDropshipPrimary = coveringDropship;
-                } else if (bldg != null) {
-                    los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_BUILDING);
-                    los.coverBuildingPrimary = bldg;
-                } else {
-                    los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_NONE);
-                }
-                los.coverLocPrimary = coords;
+        }
+        // check for attacker partial (horizontal) cover
+        if (attackerAdjc && ai.attackerIsMech) {
+            if (los.blocked && partialCover) {
+                los.attackerCover = COVER_FULL;
+                potentialCover = true;
+            } else if ((totalEl == ai.attackAbsHeight)
+                    && (ai.attackAbsHeight >= ai.targetAbsHeight)
+                    && (ai.attackHeight > 0)) {
+                los.attackerCover |= COVER_HORIZONTAL;
+                potentialCover = true;
             }
         }
 
+        // If there's a partial cover situation, we may need to keep track of
+        // damageable assets that are providing cover, so we can damage them if
+        // they block a shot.
+        if (potentialCover) {
+            if (coveredByDropship) {
+                los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_DROPSHIP);
+                los.coverDropshipPrimary = coveringDropship;
+            } else if (bldg != null) {
+                los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_BUILDING);
+                los.coverBuildingPrimary = bldg;
+            } else {
+                los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_NONE);
+            }
+            los.coverLocPrimary = coords;
+        }
 
+        return los;
+    }
+
+    /**
+     * Returns a LosEffects object representing the LOS effects of anything at
+     * the specified coordinate on a Low Altitude map.
+     */
+    private static LosEffects losForLowAtmoCoords(Game game, AttackInfo ai,
+                                                  Coords coords, boolean diagramLoS) {
+        LosEffects los = new LosEffects();
+        // ignore hexes not on board
+        if (!game.getBoard().contains(coords)) {
+            return los;
+        }
+
+        // Ignore buildings, Dropships, anything that isn't foliage.
+        // ignore hexes the attacker or target are in
+        if (coords.equals(ai.attackPos) || coords.equals(ai.targetPos)) {
+            return los;
+        }
+
+        Hex hex = game.getBoard().getHex(coords);
+        int hexAlt = hex.getLevel();
+
+        // check for block by terrain
+
+        // All unit heights report as 1 less in MM than what they really are
+        // (1 for mechs, 0 for tanks...)
+        // A level 4 hill will not block a mech on a level 3 hill
+        // (height of the mech in here = 3+"1" = "4"), as
+        // hill elevation is not > unit elevation (normal LOS rules)
+        // With diagramming LOS it will block LOS as soon as the sightline
+        // drops by 0.1 to 3.9, even though that means it would be at 4.9 in
+        // "real" height values, so still well above the level 4 hill
+        // Therefore we need to add 1 from the diagramming LOS elevation
+        // to correct the calculation
+        // This is still hacky as Entity should simply report the real heights
+        // and the comparison in here should follow TW/TO "higher or equal" rules.
+
+        // The interpolated elevation for TacOps LOS diagramming
+        double weightedHeight = ai.targetAbsHeight * ai.attackPos.distance(coords)
+                + ai.attackAbsHeight * ai.targetPos.distance(coords);
+        double totalDistance = ai.targetPos.distance(coords) + ai.attackPos.distance(coords);
+        double losAltitude = weightedHeight / totalDistance;
+
+        // The higher of the attacker's height and defender's height
+        int maxUnitHeight = Math.max(ai.attackAbsHeight, ai.targetAbsHeight);
+        boolean attackerAdjc = ai.attackPos.distance(coords) == 1;
+        boolean targetAdjc = ai.targetPos.distance(coords) == 1;
+        boolean affectsLos;
+
+        // Intervening building or hill
+        int totalAlt = hexAlt;
+        if (diagramLoS) {
+            affectsLos = totalAlt >= losAltitude;
+        } else {
+            // Units report their real altitude, so use rules-correct comparisons.
+            affectsLos = (totalAlt >= maxUnitHeight)
+                    || ((totalAlt >= ai.attackAbsHeight) && attackerAdjc)
+                    || ((totalAlt >= ai.targetAbsHeight) && targetAdjc);
+        }
+        if (affectsLos) {
+            los.blocked = true;
+            los.blockedByHill = true;
+        }
+
+        // check for woods or smoke only if not under water
+        if (!ai.underWaterCombat) {
+            if (hex.containsTerrain(Terrains.SCREEN)) {
+                //number of screens doesn't matter. One is enough to block
+                los.screen++;
+            }
+
+            // Intervening Smoke and Woods
+            int woodsLevel = hex.terrainLevel(Terrains.WOODS);
+            int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
+            int foliageElev = Terrains.getTerrainElevation(Terrains.FOLIAGE_ELEV, hex.terrainLevel(Terrains.FOLIAGE_ELEV), ai.lowAltitude);
+            int smokeLevel = hex.terrainLevel(Terrains.SMOKE);
+            boolean hasFoliage = (woodsLevel != Terrain.LEVEL_NONE) || (jungleLevel != Terrain.LEVEL_NONE);
+
+            // Check 1 level high woods and jungle
+            if (hasFoliage && foliageElev >= 1) {
+                int terrainAlt = hexAlt + 1;
+                if (diagramLoS) {
+                    affectsLos = terrainAlt >= losAltitude;
+                } else {
+                    affectsLos = (terrainAlt >= maxUnitHeight)
+                            || ((terrainAlt >= ai.attackAbsHeight) && attackerAdjc)
+                            || ((terrainAlt >= ai.targetAbsHeight) && targetAdjc);
+                }
+                if (affectsLos) {
+                    if ((woodsLevel == 1) || (jungleLevel == 1)) {
+                        los.lightWoods++;
+                    } else if ((woodsLevel == 2) || (jungleLevel == 2)) {
+                        los.heavyWoods++;
+                    } else {
+                        los.ultraWoods++;
+                    }
+                }
+            }
+        }
         return los;
     }
 

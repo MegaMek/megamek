@@ -18,6 +18,7 @@ import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
@@ -596,7 +597,9 @@ public class Protomech extends Entity {
     		percentage += 0.05;
     	}
     	
-    	return getWeight() * percentage;
+    	double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+    	
+    	return getWeight() * percentage * heavyLifterMultiplier;
     }
     
     @Override

@@ -29,8 +29,8 @@ import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.BoardDeserializer;
+import megamek.common.jacksonadapters.CarryableDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
-import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
@@ -48,6 +48,7 @@ public class ScenarioV2 implements Scenario {
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
+    private static final String OBJECTS = "objects";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -187,7 +188,7 @@ public class ScenarioV2 implements Scenario {
 
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
-            MMUReader.requireFields("Player", playerNode, NAME, UNITS);
+            MMUReader.requireFields("Player", playerNode, NAME);
 
             Player player = new Player(playerId, playerNode.get(NAME).textValue());
             result.add(player);
@@ -216,39 +217,58 @@ public class ScenarioV2 implements Scenario {
 
             //TODO minefields
 
-            JsonNode unitsNode = playerNode.get(UNITS);
-            if (game instanceof Game) {
-                List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
-                        .filter(o -> o instanceof Entity)
-                        .map(o -> (Entity) o)
-                        .collect(Collectors.toList());
-                int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
-                for (Entity unit : units) {
-                    unit.setOwner(player);
-                    if (unit.getId() == Entity.NONE) {
-                        unit.setId(entityId);
-                        entityId++;
-                    }
-                    ((Game) game).addEntity(unit);
-                    // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
-                    // they're not on a space map.
-                    if (unit.isLargeCraft() && !unit.isAirborne()) {
-                        unit.setAltitude(0);
+            // Carryables
+            if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
+                JsonNode carryablesNode = playerNode.get(OBJECTS);
+                List<CarryableDeserializer.CarryableInfo> carryables = new MMUReader(scenariofile)
+                        .read(carryablesNode, CarryableDeserializer.CarryableInfo.class).stream()
+                        .filter(o -> o instanceof CarryableDeserializer.CarryableInfo)
+                        .map(o -> (CarryableDeserializer.CarryableInfo) o)
+                        .toList();
+                for (CarryableDeserializer.CarryableInfo carryableInfo : carryables) {
+                    if (carryableInfo.position() == null) {
+                        player.getGroundObjectsToPlace().add(carryableInfo.carryable());
+                    } else {
+                        ((AbstractGame) game).placeGroundObject(carryableInfo.position(), carryableInfo.carryable());
                     }
                 }
-            } else if (game instanceof SBFGame) {
-                List<InGameObject> units = new MMUReader(scenariofile).read(unitsNode).stream()
-                        .filter(o -> o instanceof InGameObject)
-                        .map(o -> (InGameObject) o)
-                        .collect(Collectors.toList());
-                int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
-                for (InGameObject unit : units) {
-                    if (unit.getId() == Entity.NONE) {
-                        unit.setId(entityId);
-                        entityId++;
+            }
+
+            if (playerNode.has(UNITS)) {
+                JsonNode unitsNode = playerNode.get(UNITS);
+                if (game instanceof Game) {
+                    List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
+                            .filter(o -> o instanceof Entity)
+                            .map(o -> (Entity) o)
+                            .collect(Collectors.toList());
+                    int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                    for (Entity unit : units) {
+                        unit.setOwner(player);
+                        if (unit.getId() == Entity.NONE) {
+                            unit.setId(entityId);
+                            entityId++;
+                        }
+                        ((Game) game).addEntity(unit);
+                        // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                        // they're not on a space map.
+                        if (unit.isLargeCraft() && !unit.isAirborne()) {
+                            unit.setAltitude(0);
+                        }
                     }
-                    unit.setOwnerId(player.getId());
-                    ((SBFGame) game).addUnit(unit);
+                } else if (game instanceof SBFGame) {
+                    List<InGameObject> units = new MMUReader(scenariofile).read(unitsNode).stream()
+                            .filter(o -> o instanceof InGameObject)
+                            .map(o -> (InGameObject) o)
+                            .collect(Collectors.toList());
+                    int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                    for (InGameObject unit : units) {
+                        if (unit.getId() == Entity.NONE) {
+                            unit.setId(entityId);
+                            entityId++;
+                        }
+                        unit.setOwnerId(player.getId());
+                        ((SBFGame) game).addUnit(unit);
+                    }
                 }
             }
             // TODO: look at unit individual camo and see if it's a file in the scenario directory; the entity parsers

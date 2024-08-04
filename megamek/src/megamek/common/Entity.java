@@ -14228,13 +14228,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isTrapped() {
         if (getTransportId() != Entity.NONE) {
-            Entity transport = game.getEntity(getTransportId());
-            if (transport == null) {
-                transport = game.getOutOfGameEntity(getTransportId());
-            }
-            if (transport.isDestroyed()) {
-                return true;
-            }
+            Entity transport = game.getEntityFromAllSources(getTransportId());
+            return (transport != null) && transport.isDestroyed();
         }
         return false;
     }

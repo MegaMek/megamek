@@ -380,6 +380,15 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
+        // Gravity check: only applies to ground moves by ground units
+        if (getMpUsed() != 0 && game.getBoard().onGround() && !step.useAeroAtmosphere(game, entity)) {
+            int usedMP = getMpUsed();
+            int runMP = cachedEntityState.getRunMPNoGravity();
+            int jumpMP = cachedEntityState.getJumpMPNoGravity();
+            // Only dangerous if we move too far
+            step.setDanger(step.isDanger() || (usedMP > runMP || (step.isJumping() && usedMP > jumpMP)));
+        }
+
         // if we're an aerospace unit on a ground map and have passed over a hostile unit
         // record this fact - it is useful for debugging thus we leave the commented out code here
         // but for performance reasons, we don't actually do it.

@@ -20451,7 +20451,8 @@ public class GameManager extends AbstractGameManager {
                     // return true;
                 } // else
                 vDesc.add(r);
-            } while (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO)
+            } while ((e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO)
+                    && e.getCrew().isKoThisRound(crewPos))
                     || e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO));
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {

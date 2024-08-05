@@ -4,9 +4,9 @@ name: SBF Single Side Test Scenario
 planet: Braunschweig
 
 description: >
-  This test scenarion is written in V2 YAML. Only one player
+  This test scenario is written in V2 YAML. Only one player
 
-map: AGoAC Maps\16x17 Grassland 2.board
+map: AGoAC Maps/16x17 Grassland 2.board
 
 factions:
 - name: Legion of Vega

@@ -4,9 +4,9 @@ name: SBF Test Scenario
 planet: Braunschweig
 
 description: >
-  This test scenarion is written in V2 YAML
+  This test scenario is written in V2 YAML
 
-map: AGoAC Maps\16x17 Desert 2.board
+map: AGoAC Maps/16x17 Desert 2.board
 
 options:
   #- base_recon

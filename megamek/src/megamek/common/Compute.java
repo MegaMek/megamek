@@ -2443,7 +2443,7 @@ public class Compute {
         if (attacker.getCrew().hasDedicatedGunner()) {
             maxPrimary = attacker.getCrew().getCrewType().getMaxPrimaryTargets();
         }
-        if (game.getOptions().booleanOption("tacops_tank_crews")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS)
             && (attacker instanceof Tank)) {
 
             // If we are a tank, and only have 1 crew then we have some special

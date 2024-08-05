@@ -2045,10 +2045,7 @@ public abstract class Mech extends Entity {
                     case 11:
                         return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        if (shouldUseEdge(OptionsConstants.EDGE)
-                                && getCrew().hasEdgeRemaining()
-                                && getCrew().getOptions().booleanOption(
-                                        OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                     aimedLocation, aimingMode, cover);

@@ -1971,7 +1971,8 @@ public abstract class Mech extends Entity {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                            && (getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
@@ -1997,7 +1998,8 @@ public abstract class Mech extends Entity {
                     case 11:
                         return new HitData(Mech.LOC_LARM);
                     case 12:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2012,7 +2014,8 @@ public abstract class Mech extends Entity {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && (getCrew().hasEdgeRemaining() && getCrew()
                                 .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
@@ -2049,7 +2052,8 @@ public abstract class Mech extends Entity {
                     case 11:
                         return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2064,7 +2068,8 @@ public abstract class Mech extends Entity {
                 // normal right side hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && (getCrew().hasEdgeRemaining() && getCrew()
                                 .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
@@ -2101,7 +2106,8 @@ public abstract class Mech extends Entity {
                     case 11:
                         return new HitData(Mech.LOC_LLEG);
                     case 12:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2119,7 +2125,8 @@ public abstract class Mech extends Entity {
                         && isProne()) {
                     switch (roll) {
                         case 2:
-                            if ((getCrew().hasEdgeRemaining() && getCrew()
+                            if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && (getCrew().hasEdgeRemaining() && getCrew()
                                     .getOptions()
                                     .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                     && !game.getOptions().booleanOption(
@@ -2149,7 +2156,8 @@ public abstract class Mech extends Entity {
                         case 11:
                             return new HitData(Mech.LOC_LARM, true);
                         case 12:
-                            if (getCrew().hasEdgeRemaining()
+                            if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                    && getCrew().hasEdgeRemaining()
                                     && getCrew().getOptions().booleanOption(
                                             OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
@@ -2164,7 +2172,8 @@ public abstract class Mech extends Entity {
                 } else {
                     switch (roll) {
                         case 2:
-                            if ((getCrew().hasEdgeRemaining() && getCrew()
+                            if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                    && (getCrew().hasEdgeRemaining() && getCrew()
                                     .getOptions()
                                     .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                     && !game.getOptions().booleanOption(
@@ -2194,7 +2203,8 @@ public abstract class Mech extends Entity {
                         case 11:
                             return new HitData(Mech.LOC_LARM, true);
                         case 12:
-                            if (getCrew().hasEdgeRemaining()
+                            if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                    && getCrew().hasEdgeRemaining()
                                     && getCrew().getOptions().booleanOption(
                                             OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
@@ -2239,7 +2249,8 @@ public abstract class Mech extends Entity {
                     case 5:
                         return new HitData(Mech.LOC_RARM);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2263,7 +2274,8 @@ public abstract class Mech extends Entity {
                     case 5:
                         return new HitData(Mech.LOC_LARM);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2287,7 +2299,8 @@ public abstract class Mech extends Entity {
                     case 5:
                         return new HitData(Mech.LOC_RARM);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2313,7 +2326,8 @@ public abstract class Mech extends Entity {
                     case 5:
                         return new HitData(Mech.LOC_RARM, true);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
+                        if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                                && getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(
                                         OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
@@ -2392,7 +2406,8 @@ public abstract class Mech extends Entity {
             // Swarm attack locations.
             switch (roll) {
                 case 2:
-                    if (getCrew().hasEdgeRemaining()
+                    if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                            && getCrew().hasEdgeRemaining()
                             && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
@@ -2419,7 +2434,8 @@ public abstract class Mech extends Entity {
                 case 11:
                     return new HitData(Mech.LOC_CT, true, effects);
                 case 12:
-                    if (getCrew().hasEdgeRemaining()
+                    if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                            && getCrew().hasEdgeRemaining()
                             && getCrew().getOptions().booleanOption(
                                     OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
@@ -2460,7 +2476,8 @@ public abstract class Mech extends Entity {
                 case 5:
                     return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
                 case 6:
-                    if (getCrew().hasEdgeRemaining()
+                    if (game.getOptions().booleanOption(OptionsConstants.EDGE)
+                            && getCrew().hasEdgeRemaining()
                             && getCrew().getOptions().booleanOption(
                                     OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();

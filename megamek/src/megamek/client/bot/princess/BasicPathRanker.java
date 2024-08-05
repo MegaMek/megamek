@@ -801,6 +801,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                               Terrains.BUILDING,
                                               Terrains.BRIDGE,
                                               Terrains.BLACK_ICE,
+                                              Terrains.SNOW,
                                               Terrains.SWAMP,
                                               Terrains.MUD,
                                               Terrains.TUNDRA));
@@ -853,6 +854,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
                 case Terrains.BLACK_ICE:
                     hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
+                    break;
+                case Terrains.SNOW:
+                    hazardValue += calcSnowHazard(hex, endHex, movingUnit, logMsg);
                     break;
                 case Terrains.SWAMP:
                     hazardValue += calcSwampHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
@@ -1315,6 +1319,35 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         factor = 1.0 + oddsBogged + (expectedTurns);
 
         return factor;
+    }
+
+    private double calcSnowHazard(Hex hex, boolean endHex, Entity movingUnit, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating Deep Snow hazard:  ");
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above Snow (0).");
+            return 0;
+        }
+
+        if (hex.terrainLevel(Terrains.SNOW) > 1) {
+            // PSR checks _to bog down_ and _escape bogged down_ are at (mod - 1); all others are at a +1 mod
+            int psrMod = 0;
+            // Infantry use 4+ check instead of Pilot / Driving skill
+            int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
+            double hazard;
+
+            // Base hazard is arbitrarily set to 10
+            hazard = 10 * calcBogDownFactor(
+                    "Deep Snow", endHex, false, pilotSkill, psrMod, logMsg);
+
+            logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+            return Math.round(hazard);
+        }
+
+        // Thin snow poses no hazard; MP malus accounted for elsewhere.
+        return 0;
     }
 
     private double calcSwampHazard(Hex hex, boolean endHex, Entity movingUnit,

@@ -23,19 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * In this context, sex relates to the character's capacity to incubate offspring.
- * While this is a very limited view of the broad spectrum of human genders,
- * the needs of programming dictate that we need to take a more binary view of things.
- * To this end, males can't birth children, females can.
- * 'Other' genders are used for characters that fall outside the gender binary,
- * with the sex following 'other' determining their capacity to birth children.
+ * Author's Note: This is for Biological Gender (strictly speaking, the term is Sex) only,
+ * with the two OTHER-? flags being implemented here for MekHQ usage.
  */
 public enum Gender {
     //region Enum Declarations
     MALE(false, "Male"),
     FEMALE(false, "Female"),
-    OTHER_MALE(true, "Other (M)"),
-    OTHER_FEMALE(true, "Other (F)"),
+    OTHER_MALE(true, "Male"),
+    OTHER_FEMALE(true, "Female"),
     RANDOMIZE(true);
     //endregion Enum Declarations
 
@@ -57,14 +53,14 @@ public enum Gender {
 
     //region Boolean Checks
     /**
-     * @return true if the person's biological gender is male, otherwise false
+     * @return true is the person's biological gender is male, otherwise false
      */
     public boolean isMale() {
         return (this == MALE) || (this == OTHER_MALE);
     }
 
     /**
-     * @return true if the person's biological gender is female, otherwise false
+     * @return true is the person's biological gender is female, otherwise false
      */
     public boolean isFemale() {
         return (this == FEMALE) || (this == OTHER_FEMALE);
@@ -127,19 +123,21 @@ public enum Gender {
         }
 
         try {
-            return switch (Integer.parseInt(input)) {
-                case 0 -> MALE;
-                case 1 -> FEMALE;
-                case 2 -> OTHER_MALE;
-                case 3 -> OTHER_FEMALE;
-                default -> RandomGenderGenerator.generate();
-            };
+            switch (Integer.parseInt(input)) {
+                case 0:
+                    return MALE;
+                case 1:
+                    return FEMALE;
+                case -1:
+                default:
+                    return RandomGenderGenerator.generate();
+            }
         } catch (Exception ignored) {
 
         }
 
-        LogManager.getLogger().error("Failed to parse the gender value from input String {}. Returning a newly generated gender.",
-                input);
+        LogManager.getLogger().error("Failed to parse the gender value from input String " + input
+                        + ". Returning a newly generated gender.");
         return RandomGenderGenerator.generate();
     }
 

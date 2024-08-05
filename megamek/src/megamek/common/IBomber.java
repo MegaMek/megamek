@@ -208,7 +208,7 @@ public interface IBomber {
      */
     default void applyBombs() {
         Game game = ((Entity) this).getGame();
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         Integer[] iSorted = new Integer[BombType.B_NUM];
         // Apply the largest bombs first because we need to fit larger bombs into a single location
         // in LAMs.

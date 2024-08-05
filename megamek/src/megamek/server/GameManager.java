@@ -8720,9 +8720,7 @@ public class GameManager extends AbstractGameManager {
         if (entity.checkForMASCFailure(md, vReport, crits)) {
             boolean mascFailure = true;
             // Check to see if the pilot can reroll due to Edge
-            if (entity.getCrew().hasEdgeRemaining()
-                    && entity.getCrew().getOptions()
-                    .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
+            if (entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
                 entity.getCrew().decreaseEdge();
                 // Need to reset the MASCUsed flag
                 entity.setMASCUsed(false);
@@ -8773,9 +8771,7 @@ public class GameManager extends AbstractGameManager {
         if (entity.checkForSuperchargerFailure(md, vReport, crits)) {
             boolean superchargerFailure = true;
             // Check to see if the pilot can reroll due to Edge
-            if (entity.getCrew().hasEdgeRemaining()
-                    && entity.getCrew().getOptions()
-                    .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
+            if (entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
                 entity.getCrew().decreaseEdge();
                 // Need to reset the SuperchargerUsed flag
                 entity.setSuperchargerUsed(false);
@@ -20180,8 +20176,7 @@ public class GameManager extends AbstractGameManager {
                                     if (e.getAltitude() <= 0
                                             // Don't waste the edge if it won't help
                                             && origAltitude > 1
-                                            && e.getCrew().hasEdgeRemaining()
-                                            && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
+                                            && e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
                                         Roll diceRoll3 = Compute.rollD6(1);
                                         int rollValue3 = diceRoll3.getIntValue();
                                         String rollReport3 = diceRoll3.getReport();
@@ -20566,9 +20561,8 @@ public class GameManager extends AbstractGameManager {
                 } else {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
-                    if (e.getCrew().hasEdgeRemaining()
-                            && (e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO)
-                            || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO))) {
+                    if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO)
+                            || e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
@@ -20580,10 +20574,9 @@ public class GameManager extends AbstractGameManager {
                     // return true;
                 } // else
                 vDesc.add(r);
-            } while (e.getCrew().hasEdgeRemaining()
-                    && e.getCrew().isKoThisRound(crewPos)
-                    && (e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO)
-                    || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO)));
+            } while ((e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO)
+                    && e.getCrew().isKoThisRound(crewPos))
+                    || e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO));
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
@@ -24382,9 +24375,7 @@ public class GameManager extends AbstractGameManager {
                 r.subject = aero.getId();
                 if (fuelroll >= boomTarget) {
                     // A chance to reroll the explosion with edge
-                    if (aero.getCrew().hasEdgeRemaining()
-                            && aero.getCrew().getOptions().booleanOption(
-                            OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                    if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
                         // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
                         r = new Report(9123);
                         r.subject = aero.getId();
@@ -24628,8 +24619,7 @@ public class GameManager extends AbstractGameManager {
                                 boomTarget = 10;
                                 r.choose(ammoRoll >= boomTarget);
                                 // A chance to reroll an explosion with edge
-                                if (aero.getCrew().hasEdgeRemaining()
-                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                                if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
                                         && ammoRoll >= boomTarget) {
                                     // Report 9156 doesn't offer the right choices. Replace it.
                                     r = new Report(9158);
@@ -24683,8 +24673,7 @@ public class GameManager extends AbstractGameManager {
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
                                 // A chance to reroll an explosion with edge
-                                if (aero.getCrew().hasEdgeRemaining()
-                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                                if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
                                     aero.getCrew().decreaseEdge();
                                     r = new Report(6530);
                                     r.subject = aero.getId();
@@ -24712,8 +24701,7 @@ public class GameManager extends AbstractGameManager {
                         }
                     }
                     // If the weapon is explosive, use edge to roll up a new one
-                    if (aero.getCrew().hasEdgeRemaining()
-                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                    if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
                             && (equipmentHit.getType().isExplosive(equipmentHit) && !equipmentHit.isHit()
                             && !equipmentHit.isDestroyed())) {
                         aero.getCrew().decreaseEdge();
@@ -24985,8 +24973,7 @@ public class GameManager extends AbstractGameManager {
         int roll = Compute.d6(1);
         // A hit on a bay filled with transported units is devastating
         // allow a reroll with edge
-        if (aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST)
-                && aero.getCrew().hasEdgeRemaining() && roll > 3) {
+        if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST) && roll > 3) {
             aero.getCrew().decreaseEdge();
             r = new Report(9172);
             r.subject = aero.getId();
@@ -26019,7 +26006,7 @@ public class GameManager extends AbstractGameManager {
 
             if (diceRoll.getIntValue() >= capitalMissile) {
                 // Allow a reroll with edge
-                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT)
+                if (a.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT)
                         && a.getCrew().hasEdgeRemaining()) {
                     a.getCrew().decreaseEdge();
                     r = new Report(9148);
@@ -26073,8 +26060,7 @@ public class GameManager extends AbstractGameManager {
         if (hit.rolledBoxCars()) {
             if (hit.isFirstHit()) {
                 // Allow edge use to ignore the critical roll
-                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT)
-                        && a.getCrew().hasEdgeRemaining()) {
+                if (a.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT)) {
                     a.getCrew().decreaseEdge();
                     r = new Report(9103);
                     r.subject = a.getId();
@@ -26440,8 +26426,7 @@ public class GameManager extends AbstractGameManager {
                 }
                 // if explosive use edge
                 if ((en instanceof Mech)
-                        && (en.getCrew().hasEdgeRemaining() && en.getCrew().getOptions()
-                        .booleanOption(OptionsConstants.EDGE_WHEN_EXPLOSION))
+                        && en.shouldUseEdge(OptionsConstants.EDGE_WHEN_EXPLOSION)
                         && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                         && slot.getMount().getType().isExplosive(slot.getMount())) {
                     en.getCrew().decreaseEdge();

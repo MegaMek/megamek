@@ -142,7 +142,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (inputField.getText().isEmpty()) {
+                if (inputField.getText().isBlank()) {
                     inputField.setText(chatPlaceholder);
                 }
             }

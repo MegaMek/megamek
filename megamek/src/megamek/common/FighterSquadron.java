@@ -522,7 +522,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
 
         // Now that we know our bomb choices, load 'em
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < extBombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)

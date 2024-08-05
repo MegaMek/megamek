@@ -20,11 +20,9 @@ package megamek.common;
 
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameNewActionEvent;
+import megamek.common.event.*;
 import megamek.common.force.Forces;
+import megamek.server.scriptedevent.ScriptedEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,6 +78,12 @@ public abstract class AbstractGame implements IGame {
     protected int currentRound = -1;
 
     protected int turnIndex = AWAITING_FIRST_TURN;
+
+    /**
+     * This list contains all scripted events that may happen during the course of the game. This list
+     * should only ever be present on the server. Only the results of events should be sent to clients.
+     */
+    protected final transient List<ScriptedEvent> scriptedEvents = new ArrayList<>();
 
     /**
      * Piles of carry-able objects, sorted by coordinates
@@ -394,5 +398,33 @@ public abstract class AbstractGame implements IGame {
      */
     public void setGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
         this.groundObjects = groundObjects;
+    }
+
+
+    @Override
+    public final List<ScriptedEvent> scriptedEvents() {
+        return Collections.unmodifiableList(scriptedEvents);
+    }
+
+    @Override
+    public final void addScriptedEvent(ScriptedEvent event) {
+        scriptedEvents.add(event);
+    }
+
+    public final void clearScriptedEvents() {
+        scriptedEvents.clear();
+    }
+
+    /**
+     * Resets this game, i.e. prepares it for a return to the lobby.
+     */
+    public void reset() {
+        clearScriptedEvents();
+        clearActions();
+        inGameObjects.clear();
+        turnIndex = AWAITING_FIRST_TURN;
+        groundObjects.clear();
+        currentRound = -1;
+        forces = new Forces(this);
     }
 }

@@ -2309,6 +2309,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
 
         @Override
+        public void gameScriptedEvent(GameScriptedEvent event) {
+            if (event instanceof GameScriptedMessageEvent) {
+                showScriptedMessage((GameScriptedMessageEvent) event);
+            }
+        }
+
+        @Override
         public void gameClientFeedbackRequest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;

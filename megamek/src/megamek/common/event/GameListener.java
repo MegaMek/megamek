@@ -66,6 +66,8 @@ public interface GameListener extends java.util.EventListener {
     
     void gameVictory(GameVictoryEvent e);
 
+    default void gameScriptedEvent(GameScriptedEvent event) { }
+
     /**
      * This event is used in SBF games when a unit (formation) changes.
      * @param event

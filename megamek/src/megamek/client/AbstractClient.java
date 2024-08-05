@@ -24,9 +24,7 @@ import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -426,6 +424,11 @@ public abstract class AbstractClient implements IClient {
                 break;
             case PHASE_CHANGE:
                 changePhase((GamePhase) packet.getObject(0));
+                break;
+            case SCRIPTED_MESSAGE:
+                getGame().fireGameEvent(new GameScriptedMessageEvent(this,
+                        (String) packet.getObject(0),
+                        (String) packet.getObject(1)));
                 break;
             default:
                 return false;

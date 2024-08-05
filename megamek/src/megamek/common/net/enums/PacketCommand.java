@@ -152,6 +152,9 @@ public enum PacketCommand {
     CFR_TAG_TARGET,
     GAME_VICTORY_EVENT,
 
+    /** A Server to Client packet instructing the Client to show a message (e.g. story message) to the player. */
+    SCRIPTED_MESSAGE,
+
     /** A packet containing other packets to be processed in the order they are stored. */
     MULTI_PACKET;
     //endregion Enum Declarations

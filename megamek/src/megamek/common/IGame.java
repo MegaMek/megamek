@@ -24,6 +24,7 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.BasicGameOptions;
+import megamek.server.scriptedevent.ScriptedEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -242,7 +243,7 @@ public interface IGame {
         return null;
     }
 
-    // UNITS //////////////
+    // region Units
 
     /**
      * @return The next free ID for InGameObjects (unit/entity/formation/others).
@@ -280,13 +281,13 @@ public interface IGame {
      */
     void replaceUnits(List<InGameObject> units);
 
-
-
     /**
      * @return a list of units that are destroyed or otherwise no longer part of the game. These
      * should have a reason for their removal set.
      */
     List<InGameObject> getGraveyard();
+
+    //endregion
 
     //region Board
 
@@ -359,4 +360,22 @@ public interface IGame {
      * @return A new report of an appropriate type and message
      */
     ReportEntry getNewReport(int messageId);
+
+    //region Scripted Events
+
+    /**
+     * @return All scripted events present in this game. Note that these will typically only be present on
+     * the Server side and the Clients will only receive the results of those events.
+     */
+    @ServerOnly
+    List<ScriptedEvent> scriptedEvents();
+
+    /**
+     * Add a scripted event to this game's scripted events list.
+     *
+     * @param event The new event to add
+     */
+    void addScriptedEvent(ScriptedEvent event);
+
+    //endregion
 }

@@ -73,7 +73,7 @@ public class SeeAllCommand extends ServerCommand {
                     if ((!player.isSeeAllPermitted()))
                     {
                         server.sendServerChat(connId, player.getName()
-                                + " is not an Observer or Game Master so may be given /seeall");
+                                + " is not an Observer or Game Master so may not be given /seeall");
                         return;
                     }
                     give_take = " has been granted";

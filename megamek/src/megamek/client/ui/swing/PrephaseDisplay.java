@@ -37,6 +37,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -349,7 +350,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
-        clientgui.getUnitDisplay().showPanel("weapons");
+        if (GUIP.getFireDisplayTabDuringFiringPhases()) {
+            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+        }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
     }
 

@@ -16050,4 +16050,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean countForStrengthSum() {
         return !isDestroyed() && !isTrapped() && !isPartOfFighterSquadron();
     }
+
+    /** @return True if the unit should use Edge based on the current options and assigned Edge points */
+    public boolean shouldUseEdge(String option) {
+          return (game.getOptions().booleanOption(OptionsConstants.EDGE)
+              && getCrew() != null
+              && getCrew().hasEdgeRemaining()
+              && getCrew().getOptions().booleanOption(option));
+    }
 }

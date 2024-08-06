@@ -27,12 +27,8 @@ import megamek.common.enums.GamePhase;
  */
 public class GameStartTrigger extends AbstractOneTimeTrigger {
 
-    public GameStartTrigger(IGame game) {
-        super(game);
-    }
-
     @Override
-    protected boolean isTriggeredImpl(TriggerSituation event) {
+    protected boolean isTriggeredImpl(IGame game, TriggerSituation event) {
         return game.getPhase().isDuringOrAfter(GamePhase.INITIATIVE);
     }
 }

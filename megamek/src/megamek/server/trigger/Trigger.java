@@ -18,6 +18,8 @@
  */
 package megamek.server.trigger;
 
+import megamek.common.IGame;
+
 /**
  * This interface is implemented by Triggers that enable events like messages, game end, defeat or victory.
  */
@@ -30,8 +32,9 @@ public interface Trigger {
      * on multiple occasions, the triggered event may happen multiple times.
      * The given TriggerEvent specifies when at what moment of the game this method is called.
      *
+     * @param game The game
      * @param event The type of event that caused the trigger to be called
      * @return True when this Trigger considers itself triggered, false otherwise
      */
-    boolean isTriggered(TriggerSituation event);
+    boolean isTriggered(IGame game, TriggerSituation event);
 }

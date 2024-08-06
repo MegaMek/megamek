@@ -27,13 +27,12 @@ public class SpecificRoundStartTrigger extends AbstractOneTimeTrigger {
 
     private final int gameRound;
 
-    public SpecificRoundStartTrigger(IGame game, int round) {
-        super(game);
+    public SpecificRoundStartTrigger(int round) {
         gameRound = round;
     }
 
     @Override
-    protected boolean isTriggeredImpl(TriggerSituation event) {
+    protected boolean isTriggeredImpl(IGame game, TriggerSituation event) {
         return game.getCurrentRound() == gameRound;
     }
 }

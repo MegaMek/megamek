@@ -27,17 +27,12 @@ import megamek.common.IGame;
 public abstract class AbstractOneTimeTrigger implements Trigger {
 
     private boolean wasTriggered = false;
-    protected final IGame game;
-
-    protected AbstractOneTimeTrigger(IGame game) {
-        this.game = game;
-    }
 
     @Override
-    public final boolean isTriggered(TriggerSituation event) {
+    public final boolean isTriggered(IGame game, TriggerSituation event) {
         if (wasTriggered) {
             return false;
-        } else if (isTriggeredImpl(event)) {
+        } else if (isTriggeredImpl(game, event)) {
             wasTriggered = true;
             return true;
         } else {
@@ -46,13 +41,13 @@ public abstract class AbstractOneTimeTrigger implements Trigger {
     }
 
     /**
-     * Override this to define the trigger conditions as for {@link Trigger#isTriggered(TriggerSituation)}.
+     * Override this to define the trigger conditions as for {@link Trigger#isTriggered(IGame, TriggerSituation)}.
      * Regardless of how these are defined, this trigger will remember if it ever returned true before. If it
      * did, it will not return true a second time and it will not even call this method again.
      *
      * @param event The type of event that caused the trigger to be called
      * @return True when this Trigger considers itself triggered, false otherwise
-     * @see #isTriggered(TriggerSituation)
+     * @see #isTriggered(IGame, TriggerSituation)
      */
-    protected abstract boolean isTriggeredImpl(TriggerSituation event);
+    protected abstract boolean isTriggeredImpl(IGame game, TriggerSituation event);
 }

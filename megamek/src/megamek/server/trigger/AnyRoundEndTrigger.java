@@ -18,10 +18,12 @@
  */
 package megamek.server.trigger;
 
+import megamek.common.IGame;
+
 public class AnyRoundEndTrigger implements Trigger {
 
     @Override
-    public boolean isTriggered(TriggerSituation event) {
+    public boolean isTriggered(IGame game, TriggerSituation event) {
         return event == TriggerSituation.ROUND_END;
     }
 }

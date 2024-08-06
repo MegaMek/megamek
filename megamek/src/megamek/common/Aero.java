@@ -143,8 +143,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * applied before the attack resolves.
      */
     private int altLossThisRound = 0;
-    private int avionicsHitsThisRound = 0;
-    private int controlHitsThisRound = 0;
+    private boolean avionicsHitThisRound = false;
+    private boolean controlHitThisRound = false;
 
     private boolean spheroid = false;
 
@@ -762,21 +762,21 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public int getAvionicsHitsThisRound() {
-        return avionicsHitsThisRound;
+    public boolean isAvionicsHitThisRound() {
+        return avionicsHitThisRound;
     }
 
     @Override
-    public void setAvionicsHitsThisRound(int hits) {
-        avionicsHitsThisRound = hits;
+    public void setAvionicsHitThisRound(boolean hit) {
+      avionicsHitThisRound = hit;
     }
 
-    public int getControlHitsThisRound() {
-        return controlHitsThisRound;
+    public boolean isControlHitThisRound() {
+        return controlHitThisRound;
     }
 
-    public void setControlHitsThisRound(int hits) {
-        controlHitsThisRound = hits;
+    public void setControlHitThisRound(boolean hit) {
+        controlHitThisRound = hit;
     }
 
     public boolean isGearHit() {
@@ -1053,8 +1053,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         setWhoFirst();
 
         resetAltLossThisRound();
-        setAvionicsHitsThisRound(0);
-        setControlHitsThisRound(0);
+        setAvionicsHitThisRound(false);
+        setControlHitThisRound(false);
 
         // Reset usedInternalBombs
         setUsedInternalBombs(0);

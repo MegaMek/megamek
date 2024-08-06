@@ -858,6 +858,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 case Terrains.SNOW:
                     hazardValue += calcSnowHazard(hex, endHex, movingUnit, logMsg);
                     break;
+                case Terrains.RUBBLE:
+                    hazardValue += calcRubbleHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
+                    break;
                 case Terrains.SWAMP:
                     hazardValue += calcSwampHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
                     break;
@@ -1443,6 +1446,42 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return Math.round(hazard);
     }
 
+    private double calcRubbleHazard(Hex hex, boolean endHex, Entity movingUnit,
+                                    boolean jumpLanding, MoveStep step,
+                                    StringBuilder logMsg) {
+
+        logMsg.append("\n\tCalculating Rubble hazard:  ");
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above Rubble (0).");
+            return 0;
+        }
+
+        double hazard = 0;
+
+        boolean caresAboutRubble = (
+                (!jumpLanding || endHex)
+                && (hex.terrainLevel(Terrains.RUBBLE) > 0) && (hex.terrainLevel(Terrains.PAVEMENT) == Terrain.LEVEL_NONE)
+                && movingUnit.canFall()
+        );
+
+        if (caresAboutRubble) {
+            // PSR checks are at +0 for Rubble levels up to 6, Ultra, which is +1
+            int psrMod = (hex.terrainLevel(Terrains.RUBBLE) < 6) ? 0 : 1;
+            if (movingUnit.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                psrMod -= 1;
+            }
+            int pilotSkill = movingUnit.getCrew().getPiloting();
+
+            // The only hazard is the +1 to PSRs, which are difficult to quantify
+            hazard = calcBogDownFactor(
+                    "Rubble", endHex, jumpLanding, pilotSkill, psrMod, false, logMsg);
+        }
+        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+        return Math.round(hazard);
+    }
     /**
      * Simple data structure that holds a separate firing and physical damage number.
      *

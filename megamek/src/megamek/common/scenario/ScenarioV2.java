@@ -34,6 +34,8 @@ import megamek.common.jacksonadapters.MMUReader;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
+import megamek.server.scriptedevent.MessageScriptedEvent;
+import megamek.server.scriptedevent.ScriptedEvent;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -49,6 +51,7 @@ public class ScenarioV2 implements Scenario {
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
+    private static final String MESSAGES = "messages";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -108,14 +111,14 @@ public class ScenarioV2 implements Scenario {
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
         parsePlayers(game);
+        parseMessages(game);
 //        game.setupTeams();
         game.setBoard(0, createBoard());
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
         }
 
-        if (game instanceof Game) {
-            Game twGame = (Game) game;
+        if (game instanceof Game twGame) {
             twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
@@ -133,6 +136,16 @@ public class ScenarioV2 implements Scenario {
             PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANETCOND), PlanetaryConditions.class);
             conditions.determineWind();
             plGame.setPlanetaryConditions(conditions);
+        }
+    }
+
+    private void parseMessages(IGame game) throws IOException {
+        if (node.has(MESSAGES)) {
+            new MMUReader(scenariofile)
+                    .read(node.get(MESSAGES), MessageScriptedEvent.class).stream()
+                    .filter(o -> o instanceof MessageScriptedEvent)
+                    .map(o -> (MessageScriptedEvent) o)
+                    .forEach(game::addScriptedEvent);
         }
     }
 

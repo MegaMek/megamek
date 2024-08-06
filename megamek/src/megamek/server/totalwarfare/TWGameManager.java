@@ -18560,223 +18560,6 @@ public class TWGameManager extends AbstractGameManager {
             // is there damage remaining?
             if (damage > 0) {
 
-                // if this is an Aero then I need to apply internal damage
-                // to the SI after halving it. Return from here to prevent
-                // further processing
-                if (te instanceof Aero a) {
-
-                    // check for large craft ammo explosions here: damage vented through armor,
-                    // excess
-                    // dissipating, much like Tank CASE.
-                    if (ammoExplosion && te.isLargeCraft()) {
-                        te.damageThisPhase += damage;
-                        r = new Report(6128);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        int loc = hit.getLocation();
-                        // Roll for broadside weapons so fore/aft side armor facing takes the damage
-                        if (loc == Warship.LOC_LBS) {
-                            int locRoll = Compute.d6();
-                            if (locRoll < 4) {
-                                loc = Jumpship.LOC_FLS;
-                            } else {
-                                loc = Jumpship.LOC_ALS;
-                            }
-                        }
-                        if (loc == Warship.LOC_RBS) {
-                            int locRoll = Compute.d6();
-                            if (locRoll < 4) {
-                                loc = Jumpship.LOC_FRS;
-                            } else {
-                                loc = Jumpship.LOC_ARS;
-                            }
-                        }
-                        r.add(te.getLocationAbbr(loc));
-                        vDesc.add(r);
-                        if (damage > te.getArmor(loc)) {
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
-                            r = new Report(6090);
-                        } else {
-                            te.setArmor(te.getArmor(loc) - damage, loc);
-                            r = new Report(6085);
-                            r.add(te.getArmor(loc));
-                        }
-                        r.subject = te_n;
-                        r.indent(3);
-                        vDesc.add(r);
-                        damage = 0;
-                    }
-
-                    // check for overpenetration
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
-                        int opRoll = Compute.d6(1);
-                        if (((te instanceof Jumpship) && !(te instanceof Warship) && (opRoll > 3)) ||
-                                  ((te instanceof Dropship) && (opRoll > 4)) ||
-                                  ((te instanceof Warship) && (a.getOSI() <= 30) && (opRoll > 5))) {
-                            // over-penetration happened
-                            r = new Report(9090);
-                            r.subject = te_n;
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                            int new_loc = a.getOppositeLocation(hit.getLocation());
-                            damage = Math.min(damage, te.getArmor(new_loc));
-                            // We don't want to deal negative damage
-                            damage = Math.max(damage, 0);
-                            r = new Report(6065);
-                            r.subject = te_n;
-                            r.indent(2);
-                            r.newlines = 0;
-                            r.addDesc(te);
-                            r.add(damage);
-                            r.add(te.getLocationAbbr(new_loc));
-                            vDesc.addElement(r);
-                            te.setArmor(te.getArmor(new_loc) - damage, new_loc);
-                            if ((te instanceof Warship) || (te instanceof Dropship)) {
-                                damage = 2;
-                            } else {
-                                damage = 0;
-                            }
-                        }
-                    }
-
-                    // divide damage in half
-                    // do not divide by half if it is an ammo explosion
-                    // Minimum SI damage is now 1 (per errata:
-                    // https://bg.battletech.com/forums/index.php?topic=81913.0 )
-                    if (!ammoExplosion &&
-                              !nukeS2S &&
-                              !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-                        damage = (int) Math.round(damage / 2.0);
-                        critSI = true;
-                    }
-
-                    // Now apply damage to the structural integrity
-                    a.setSI(a.getSI() - damage);
-                    te.damageThisPhase += damage;
-                    // send the report
-                    r = new Report(1210);
-                    r.subject = te_n;
-                    r.newlines = 1;
-                    if (!ammoExplosion) {
-                        r.messageId = 9005;
-                    }
-                    // Only for fighters
-                    if (ammoExplosion && !a.isLargeCraft()) {
-                        r.messageId = 9006;
-                    }
-                    r.add(damage);
-                    r.add(Math.max(a.getSI(), 0));
-                    vDesc.addElement(r);
-                    // check to see if this would destroy the ASF
-                    if (a.getSI() <= 0) {
-                        // Lets auto-eject if we can!
-                        if (a.isAutoEject() &&
-                                  (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                         (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                                a.isCondEjectSIDest()))) {
-                            vDesc.addAll(ejectEntity(te, true, false));
-                        } else {
-                            vDesc.addAll(destroyEntity(te,
-                                  "Structural Integrity Collapse",
-                                  damageType != DamageType.CRASH));
-                        }
-                        a.setSI(0);
-                        if (hit.getAttackerId() != Entity.NONE) {
-                            creditKill(a, game.getEntity(hit.getAttackerId()));
-                        }
-                    }
-                    checkAeroCrits(vDesc, a, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-                    return vDesc;
-                }
-
-                // Check for CASE II right away. if so reduce damage to 1
-                // and let it hit the IS.
-                // Also remove as much of the rear armor as allowed by the
-                // damage. If arm/leg/head
-                // Then they lose all their armor if its less then the
-                // explosion damage.
-                if (ammoExplosion && te.hasCASEII(hit.getLocation())) {
-                    // 1 point of damage goes to IS
-                    damage--;
-                    // Remaining damage prevented by CASE II
-                    r = new Report(6126);
-                    r.subject = te_n;
-                    r.add(damage);
-                    r.indent(3);
-                    vDesc.addElement(r);
-                    int loc = hit.getLocation();
-                    if ((te instanceof Mek) &&
-                              ((loc == Mek.LOC_HEAD) || ((Mek) te).isArm(loc) || te.locationIsLeg(loc))) {
-                        int half = (int) Math.ceil(te.getOArmor(loc, false) / 2.0);
-                        if (damage > half) {
-                            damage = half;
-                        }
-                        if (damage >= te.getArmor(loc, false)) {
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
-                        } else {
-                            te.setArmor(te.getArmor(loc, false) - damage, loc, false);
-                        }
-                    } else {
-                        if (damage >= te.getArmor(loc, true)) {
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
-                        } else {
-                            te.setArmor(te.getArmor(loc, true) - damage, loc, true);
-                        }
-                    }
-
-                    if (te.getInternal(hit) > 0) {
-                        // Mek takes 1 point of IS damage
-                        damage = 1;
-                    } else {
-                        damage = 0;
-                    }
-
-                    te.damageThisPhase += damage;
-
-                    Roll diceRoll = Compute.rollD6(2);
-                    r = new Report(6127);
-                    r.subject = te.getId();
-                    r.add(diceRoll);
-                    vDesc.add(r);
-
-                    if (diceRoll.getIntValue() >= 8) {
-                        hit.setEffect(HitData.EFFECT_NO_CRITICALS);
-                    }
-                }
-                // check for tank CASE here: damage to rear armor, excess
-                // dissipating, and a crew stunned crit
-                if (ammoExplosion && (te instanceof Tank) && te.locationHasCase(Tank.LOC_BODY)) {
-                    te.damageThisPhase += damage;
-                    r = new Report(6124);
-                    r.subject = te_n;
-                    r.indent(2);
-                    r.add(damage);
-                    vDesc.add(r);
-                    int loc = (te instanceof SuperHeavyTank) ?
-                                    SuperHeavyTank.LOC_REAR :
-                                    (te instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
-                    if (damage > te.getArmor(loc)) {
-                        te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
-                        r = new Report(6090);
-                    } else {
-                        te.setArmor(te.getArmor(loc) - damage, loc);
-                        r = new Report(6085);
-                        r.add(te.getArmor(loc));
-                    }
-                    r.subject = te_n;
-                    r.indent(3);
-                    vDesc.add(r);
-                    damage = 0;
-                    int critIndex;
-                    if (((Tank) te).isCommanderHit() && ((Tank) te).isDriverHit()) {
-                        critIndex = Tank.CRIT_CREW_KILLED;
-                    } else {
-                        critIndex = Tank.CRIT_CREW_STUNNED;
-                    }
-                    vDesc.addAll(applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
-                }
-
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
 
@@ -19528,6 +19311,8 @@ public class TWGameManager extends AbstractGameManager {
 
             damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
 
+            // Apply CASE II first
+            damage = applyCASEIIDamageReduction(te, hit, damage, ammoExplosion, vDesc);
         }
 
         return vDesc;
@@ -19671,6 +19456,132 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+
+            if (damage > 0) {
+                // if this is an Aero then I need to apply internal damage
+                // to the SI after halving it. Return from here to prevent
+                // further processing
+                Aero a = (Aero) te;
+
+                // check for large craft ammo explosions here: damage vented through armor, excess
+                // dissipating, much like Tank CASE.
+                if (ammoExplosion && te.isLargeCraft()) {
+                    te.damageThisPhase += damage;
+                    r = new Report(6128);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.add(damage);
+                    int loc = hit.getLocation();
+                    //Roll for broadside weapons so fore/aft side armor facing takes the damage
+                    if (loc == Warship.LOC_LBS) {
+                        int locRoll = Compute.d6();
+                        if (locRoll < 4) {
+                            loc = Jumpship.LOC_FLS;
+                        } else {
+                            loc = Jumpship.LOC_ALS;
+                        }
+                    }
+                    if (loc == Warship.LOC_RBS) {
+                        int locRoll = Compute.d6();
+                        if (locRoll < 4) {
+                            loc = Jumpship.LOC_FRS;
+                        } else {
+                            loc = Jumpship.LOC_ARS;
+                        }
+                    }
+                    r.add(te.getLocationAbbr(loc));
+                    vDesc.add(r);
+                    if (damage > te.getArmor(loc)) {
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
+                        r = new Report(6090);
+                    } else {
+                        te.setArmor(te.getArmor(loc) - damage, loc);
+                        r = new Report(6085);
+                        r.add(te.getArmor(loc));
+                    }
+                    r.subject = te_n;
+                    r.indent(3);
+                    vDesc.add(r);
+                    damage = 0;
+                }
+
+                // check for overpenetration
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
+                    int opRoll = Compute.d6(1);
+                    if (((te instanceof Jumpship) && !(te instanceof Warship) && (opRoll > 3))
+                            || ((te instanceof Dropship) && (opRoll > 4))
+                            || ((te instanceof Warship) && (a.get0SI() <= 30) && (opRoll > 5))) {
+                        // over-penetration happened
+                        r = new Report(9090);
+                        r.subject = te_n;
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                        int new_loc = a.getOppositeLocation(hit.getLocation());
+                        damage = Math.min(damage, te.getArmor(new_loc));
+                        // We don't want to deal negative damage
+                        damage = Math.max(damage, 0);
+                        r = new Report(6065);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.newlines = 0;
+                        r.addDesc(te);
+                        r.add(damage);
+                        r.add(te.getLocationAbbr(new_loc));
+                        vDesc.addElement(r);
+                        te.setArmor(te.getArmor(new_loc) - damage, new_loc);
+                        if ((te instanceof Warship) || (te instanceof Dropship)) {
+                            damage = 2;
+                        } else {
+                            damage = 0;
+                        }
+                    }
+                }
+
+                // divide damage in half
+                // do not divide by half if it is an ammo explosion
+                // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
+                if (!ammoExplosion && !nukeS2S
+                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                    damage = (int) Math.round(damage / 2.0);
+                    critSI = true;
+                }
+
+                // Now apply damage to the structural integrity
+                a.setSI(a.getSI() - damage);
+                te.damageThisPhase += damage;
+                // send the report
+                r = new Report(1210);
+                r.subject = te_n;
+                r.newlines = 1;
+                if (!ammoExplosion) {
+                    r.messageId = 9005;
+                }
+                //Only for fighters
+                if (ammoExplosion && !a.isLargeCraft()) {
+                    r.messageId = 9006;
+                }
+                r.add(damage);
+                r.add(Math.max(a.getSI(), 0));
+                vDesc.addElement(r);
+                // check to see if this would destroy the ASF
+                if (a.getSI() <= 0) {
+                    // Lets auto-eject if we can!
+                    if (a.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                            && a.isCondEjectSIDest()))) {
+                        vDesc.addAll(ejectEntity(te, true, false));
+                    } else {
+                        vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse"));
+                    }
+                    a.setSI(0);
+                    if (hit.getAttackerId() != Entity.NONE) {
+                        creditKill(a, game.getEntity(hit.getAttackerId()));
+                    }
+                }
+                checkAeroCrits(vDesc, a, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+                return vDesc;
+            }
         }
         return vDesc;
     }
@@ -19791,6 +19702,8 @@ public class TWGameManager extends AbstractGameManager {
                     || (te instanceof GunEmplacement))) {
                 te.setOverThresh(true);
             }
+            // Apply CASE II first
+            damage = applyCASEIIDamageReduction(te, hit, damage, ammoExplosion, vDesc);
 
 
         }
@@ -20076,6 +19989,108 @@ public class TWGameManager extends AbstractGameManager {
             te.damageThisPhase += damageDiff;
             damage = damageNew;
         }
+        return damage;
+    }
+
+    public int applyTankCASEDamageReduction(Entity te, HitData hit, int damage, boolean ammoExplosion, Vector<Report> vDesc) {
+        // check for tank CASE here: damage to rear armor, excess
+        // dissipating, and a crew stunned crit
+        int te_n = te.getId();
+        Report r;
+
+        if (ammoExplosion && (te instanceof Tank)
+                && te.locationHasCase(Tank.LOC_BODY)) {
+            te.damageThisPhase += damage;
+            r = new Report(6124);
+            r.subject = te_n;
+            r.indent(2);
+            r.add(damage);
+            vDesc.add(r);
+            int loc = (te instanceof SuperHeavyTank) ? SuperHeavyTank.LOC_REAR
+                    : (te instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
+            if (damage > te.getArmor(loc)) {
+                te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
+                r = new Report(6090);
+            } else {
+                te.setArmor(te.getArmor(loc) - damage, loc);
+                r = new Report(6085);
+                r.add(te.getArmor(loc));
+            }
+            r.subject = te_n;
+            r.indent(3);
+            vDesc.add(r);
+            damage = 0;
+            int critIndex;
+            if (((Tank) te).isCommanderHit()
+                    && ((Tank) te).isDriverHit()) {
+                critIndex = Tank.CRIT_CREW_KILLED;
+            } else {
+                critIndex = Tank.CRIT_CREW_STUNNED;
+            }
+            vDesc.addAll(applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
+        }
+        return damage;
+    }
+
+    public int applyCASEIIDamageReduction(Entity te, HitData hit, int damage, boolean ammoExplosion, Vector<Report> vDesc) {
+        // Check for CASE II right away. if so reduce damage to 1
+        // and let it hit the IS.
+        // Also remove as much of the rear armor as allowed by the
+        // damage. If arm/leg/head
+        // Then they lose all their armor if its less then the
+        // explosion damage.
+        int te_n = te.getId();
+        Report r;
+
+        if (ammoExplosion && te.hasCASEII(hit.getLocation())) {
+            // 1 point of damage goes to IS
+            damage--;
+            // Remaining damage prevented by CASE II
+            r = new Report(6126);
+            r.subject = te_n;
+            r.add(damage);
+            r.indent(3);
+            vDesc.addElement(r);
+            int loc = hit.getLocation();
+            if ((te instanceof Mech) && ((loc == Mech.LOC_HEAD) || ((Mech) te).isArm(loc)
+                    || te.locationIsLeg(loc))) {
+                int half = (int) Math.ceil(te.getOArmor(loc, false) / 2.0);
+                if (damage > half) {
+                    damage = half;
+                }
+                if (damage >= te.getArmor(loc, false)) {
+                    te.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+                } else {
+                    te.setArmor(te.getArmor(loc, false) - damage, loc, false);
+                }
+            } else {
+                if (damage >= te.getArmor(loc, true)) {
+                    te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+                } else {
+                    te.setArmor(te.getArmor(loc, true) - damage, loc, true);
+                }
+            }
+
+            if (te.getInternal(hit) > 0) {
+                // Mek takes 1 point of IS damage
+                damage = 1;
+            } else {
+                damage = 0;
+            }
+
+            te.damageThisPhase += damage;
+
+            Roll diceRoll = Compute.rollD6(2);
+            r = new Report(6127);
+            r.subject = te.getId();
+            r.add(diceRoll);
+            vDesc.add(r);
+
+            if (diceRoll.getIntValue() >= 8) {
+                hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+            }
+        }
+
         return damage;
     }
 

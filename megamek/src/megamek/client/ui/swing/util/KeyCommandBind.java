@@ -82,8 +82,8 @@ public enum KeyCommandBind {
     UD_GENERAL("udGeneral", VK_F1),
     UD_PILOT("udPilot", VK_F2),
     UD_ARMOR("udArmor", VK_F3),
-    UD_SYSTEMS("udSystems", VK_F4),
-    UD_WEAPONS("udWeapons", VK_F5),
+    UD_WEAPONS("udWeapons", VK_F4),
+    UD_SYSTEMS("udSystems", VK_F5),
     UD_EXTRAS("udExtras", VK_F6),
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
     TOGGLE_MOVEMODE("toggleJump", VK_J),

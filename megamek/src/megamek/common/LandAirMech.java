@@ -126,7 +126,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int straightMoves = 0;
     private int altLoss = 0;
     private int altLossThisRound = 0;
-    private int avionicsHitsThisRound = 0;
+    private boolean avionicsHitThisRound = false;
 
 
     //Autoejection
@@ -882,7 +882,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             setWhoFirst();
 
             resetAltLossThisRound();
-            setAvionicsHitsThisRound(0);
+            setAvionicsHitThisRound(false);
         }
     }
 
@@ -1335,13 +1335,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
-    public int getAvionicsHitsThisRound() {
-        return avionicsHitsThisRound;
+    public boolean isAvionicsHitThisRound() {
+        return avionicsHitThisRound;
     }
 
     @Override
-    public void setAvionicsHitsThisRound(int hits) {
-        avionicsHitsThisRound = hits;
+    public void setAvionicsHitThisRound(boolean hit) {
+        avionicsHitThisRound = hit;
     }
 
     @Override

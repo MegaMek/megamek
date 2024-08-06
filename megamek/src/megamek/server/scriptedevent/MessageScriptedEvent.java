@@ -25,13 +25,11 @@ import megamek.server.trigger.Trigger;
 
 public class MessageScriptedEvent implements ScriptedEvent {
 
-    private final IGameManager gameManager;
     private final Trigger trigger;
     private final String message;
     private final String header;
 
-    public MessageScriptedEvent(IGameManager gameManager, Trigger trigger, String header, String message) {
-        this.gameManager = gameManager;
+    public MessageScriptedEvent(Trigger trigger, String header, String message) {
         this.trigger = trigger;
         this.message = message;
         this.header = header;
@@ -43,7 +41,7 @@ public class MessageScriptedEvent implements ScriptedEvent {
     }
 
     @Override
-    public void process() {
+    public void process(IGameManager gameManager) {
         gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message));
     }
 }

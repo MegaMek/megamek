@@ -19,7 +19,6 @@
 package megamek.server;
 
 import megamek.common.IGame;
-import megamek.server.scriptedevent.ScriptedEvent;
 import megamek.server.trigger.TriggerSituation;
 
 public final class GameManagerScriptedEventHelper {
@@ -33,7 +32,7 @@ public final class GameManagerScriptedEventHelper {
     void processScriptedEvents(TriggerSituation eventType) {
         IGame game = gameManager.getGame();
         game.scriptedEvents().stream()
-                .filter(e -> e.getTrigger().isTriggered(eventType))
-                .forEach(ScriptedEvent::process);
+                .filter(e -> e.getTrigger().isTriggered(game, eventType))
+                .forEach(e -> e.process(gameManager));
     }
 }

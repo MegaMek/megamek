@@ -22,6 +22,7 @@ import megamek.client.IClient;
 import megamek.client.commands.ClientCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
@@ -189,6 +190,6 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     }
 
     protected void showScriptedMessage(GameScriptedMessageEvent event) {
-        JOptionPane.showMessageDialog(frame, event.message(), event.header(), JOptionPane.PLAIN_MESSAGE);
+        new MMNarrativeStoryDialog(frame, event).setVisible(true);
     }
 }

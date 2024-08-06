@@ -18,6 +18,9 @@
  */
 package megamek.server.scriptedevent;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import megamek.common.jacksonadapters.MessageDeserializer;
+import megamek.server.IGameManager;
 import megamek.server.trigger.AbstractOneTimeTrigger;
 import megamek.server.trigger.Trigger;
 
@@ -27,8 +30,9 @@ import megamek.server.trigger.Trigger;
  * Much like WeaponHandlers, ScriptedEvents are parts of the GameManager's code and must fully work out
  * whatever the event brings, including sending the necessary packets.
  * ScriptedEvents are based on a {@link Trigger} that defines when  (and how often) they happen. When they
- * happen, the {@link #process()} method is called to determine the results.
+ * happen, the {@link #process(IGameManager)} method is called to determine the results.
  */
+@JsonDeserialize(using = MessageDeserializer.class)
 public interface ScriptedEvent {
 
     /**
@@ -44,5 +48,5 @@ public interface ScriptedEvent {
      * fully work out whatever the event brings, including sending the necessary packets. The code of
      * this method is essentially part of the GameManager's code.
      */
-    void process();
+    void process(IGameManager gameManager);
 }

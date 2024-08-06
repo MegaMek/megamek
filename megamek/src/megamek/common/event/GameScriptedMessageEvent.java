@@ -18,7 +18,11 @@
  */
 package megamek.common.event;
 
-public class GameScriptedMessageEvent extends GameScriptedEvent {
+import megamek.server.scriptedevent.NarrativeDisplayProvider;
+
+import java.awt.*;
+
+public class GameScriptedMessageEvent extends GameScriptedEvent implements NarrativeDisplayProvider {
 
     private final String message;
     private final String header;
@@ -33,7 +37,23 @@ public class GameScriptedMessageEvent extends GameScriptedEvent {
         return message;
     }
 
+    @Override
     public String header() {
         return header;
+    }
+
+    @Override
+    public String text() {
+        return message;
+    }
+
+    @Override
+    public Image portrait() {
+        return null;
+    }
+
+    @Override
+    public Image splashImage() {
+        return null;
     }
 }

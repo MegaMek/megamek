@@ -24044,6 +24044,7 @@ public class GameManager extends AbstractGameManager {
                 break;
             case LandAirMech.LAM_AVIONICS:
                 if (en.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
+                    ((LandAirMech)en).setAvionicsHitsThisRound(((LandAirMech)en).getAvionicsHitsThisRound() + 1);
                     if (en.isPartOfFighterSquadron()) {
                         game.addControlRoll(new PilotingRollData(
                                 en.getTransportId(), 1, "avionics hit"));
@@ -24342,6 +24343,7 @@ public class GameManager extends AbstractGameManager {
                 r.subject = aero.getId();
                 reports.add(r);
                 aero.setAvionicsHits(aero.getAvionicsHits() + 1);
+                aero.setAvionicsHitsThisRound(aero.getAvionicsHitsThisRound() + 1);
                 if (aero.isPartOfFighterSquadron()) {
                     game.addControlRoll(new PilotingRollData(
                             aero.getTransportId(), 1, "avionics hit"));
@@ -24358,6 +24360,7 @@ public class GameManager extends AbstractGameManager {
                 r = new Report(9115);
                 r.subject = aero.getId();
                 reports.add(r);
+                aero.setControlHitsThisRound(aero.getControlHitsThisRound() + 1);
                 if (aero.isPartOfFighterSquadron()) {
                     game.addControlRoll(new PilotingRollData(
                             aero.getTransportId(), 1, "critical hit"));

@@ -126,6 +126,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int straightMoves = 0;
     private int altLoss = 0;
     private int altLossThisRound = 0;
+    private int avionicsHitsThisRound = 0;
+
 
     //Autoejection
     private boolean critThresh = false;
@@ -880,6 +882,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             setWhoFirst();
 
             resetAltLossThisRound();
+            setAvionicsHitsThisRound(0);
         }
     }
 
@@ -1329,6 +1332,16 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS, loc);
         }
         return hits;
+    }
+
+    @Override
+    public int getAvionicsHitsThisRound() {
+        return avionicsHitsThisRound;
+    }
+
+    @Override
+    public void setAvionicsHitsThisRound(int hits) {
+        avionicsHitsThisRound = hits;
     }
 
     @Override

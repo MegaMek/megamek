@@ -19336,9 +19336,10 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
             if (entity.isAero() && entity.isAirborne() && !game.getBoard().inSpace()) {
-                // if this aero has any damage, add another roll to the list.
+                // check if aero unit meets conditions for control rolls and add to the list
                 if (entity.damageThisPhase > 0) {
-                    if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
+                    if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)
+                          && !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
                         int damMod = entity.damageThisPhase / 20;
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod,
                                 entity.damageThisPhase + " damage +" + damMod);
@@ -19348,15 +19349,23 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         getGame().addControlRoll(damPRD);
                     } else {
-                        // was the damage threshold exceeded this round?
-                        // Note errata: https://bg.battletech.com/forums/index.php?topic=72983.msg2024516#msg2024516
-                        if ((((IAero) entity).wasCritThresh())
-                                || entity.damageThisRound > ((IAero) entity).getHighestThresh()) {
+                        // was the damage threshold in a single location exceeded this round?
+                        if ((((IAero) entity).wasCritThresh())) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
-                                    "damage threshold exceeded");
+                                "damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
-                                    && (entity.getCrew().getPiloting() > 3)) {
-                                damThresh.addModifier(-1, "easy to pilot");
+                                && (entity.getCrew().getPiloting() > 3)) {
+                              damThresh.addModifier(-1, "easy to pilot");
+                            }
+                            getGame().addControlRoll(damThresh);
+                        } else if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)
+                            && entity.damageThisRound > ((IAero) entity).getHighestThresh()) {
+                            // did the damage exceed the unit's highest threshold?
+                            PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
+                                "highest damage threshold exceeded");
+                            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
+                                && (entity.getCrew().getPiloting() > 3)) {
+                              damThresh.addModifier(-1, "easy to pilot");
                             }
                             getGame().addControlRoll(damThresh);
                         }

@@ -1609,6 +1609,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return 0;
     }
 
+    @Override
     public int getHighestThresh() {
         int max = damThresh[0];
         for (int i = 1; i < damThresh.length; i++) {

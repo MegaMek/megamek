@@ -1693,6 +1693,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public int getHighestThresh() {
+        // TODO: implement for StratOps Atmospheric Control Roll Errata
+        return 0;
+    }
+
+    @Override
     public boolean wasCritThresh() {
         return critThresh;
     }

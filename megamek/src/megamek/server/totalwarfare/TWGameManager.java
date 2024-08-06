@@ -18534,9 +18534,9 @@ public class TWGameManager extends AbstractGameManager {
             crits = 0;
         }
 
-        // this is for special crits, like AP and tandem-charge
-        int specCrits = 0;
-        int critBonus = calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty);
+        // Store information to pass around
+        Map<String, Object> modsMap = createDamageModifierMap(te, hit, damage_orig);
+        modsMap.put("critBonus", calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty));
 
         HitData nextHit = null;
 
@@ -18553,681 +18553,9 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
 
-        // adjust VTOL rotor damage
-        if ((te instanceof VTOL) &&
-                  (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
-                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
-            damage = (damage + 9) / 10;
-        }
-
-        // save EI status, in case sensors crit destroys it
-        final boolean eiStatus = te.hasActiveEiCockpit();
-        // BA using EI implants receive +1 damage from attacks
-        if (!(te instanceof Mek) && !(te instanceof ProtoMek) && eiStatus) {
-            damage += 1;
-        }
-
-        // check for case on Aeros
-        if (te instanceof Aero a) {
-            if (ammoExplosion && a.hasCase()) {
-                // damage should be reduced by a factor of 2 for ammo explosions
-                // according to p. 161, TW
-                damage /= 2;
-                r = new Report(9010);
-                r.subject = te_n;
-                r.add(damage);
-                r.indent(3);
-                vDesc.addElement(r);
-            }
-        }
-
-        // infantry armor can reduce damage
-        if (isPlatoon && (((Infantry) te).calcDamageDivisor() != 1.0)) {
-            r = new Report(6074);
-            r.subject = te_n;
-            r.indent(2);
-            r.add(damage);
-            damage = (int) Math.ceil((damage) / ((Infantry) te).calcDamageDivisor());
-            r.add(damage);
-            vDesc.addElement(r);
-        }
 
         // Allocate the damage
         while (damage > 0) {
-
-            // damage some cargo if we're taking damage
-            // maybe move past "exterior passenger" check
-            if (!ammoExplosion) {
-                int damageLeftToCargo = damage;
-
-                for (ICarryable cargo : te.getDistinctCarriedObjects()) {
-                    if (cargo.isInvulnerable()) {
-                        continue;
-                    }
-
-                    double tonnage = cargo.getTonnage();
-                    boolean cargoDestroyed = cargo.damage(damageLeftToCargo);
-                    damageLeftToCargo -= (int) Math.ceil(tonnage);
-
-                    // if we have destroyed the cargo, remove it, add a report
-                    // and move on to the next piece of cargo
-                    if (cargoDestroyed) {
-                        te.dropGroundObject(cargo, false);
-
-                        r = new Report(6721);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(cargo.generalName());
-                        vDesc.addElement(r);
-                        // we have not destroyed the cargo means there is no damage left
-                        // report and stop destroying cargo
-                    } else {
-                        r = new Report(6720);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(cargo.generalName());
-                        r.add(Double.toString(cargo.getTonnage()));
-                        break;
-                    }
-                }
-            }
-
-            // first check for ammo explosions on aeros separately, because it
-            // must be done before
-            // standard to capital damage conversions
-            if ((te instanceof Aero) && (hit.getLocation() == Aero.LOC_AFT) && !damageIS) {
-                for (Mounted<?> mAmmo : te.getAmmo()) {
-                    if (mAmmo.isDumping() &&
-                              !mAmmo.isDestroyed() &&
-                              !mAmmo.isHit() &&
-                              !(mAmmo.getType() instanceof BombType)) {
-                        // doh. explode it
-                        vDesc.addAll(explodeEquipment(te, mAmmo.getLocation(), mAmmo));
-                        mAmmo.setHit(true);
-                    }
-                }
-            }
-
-            if (te.isAero()) {
-                // chance of a critical if damage greater than threshold
-                IAero a = (IAero) te;
-                if ((threshDamage > a.getThresh(hit.getLocation()))) {
-                    critThresh = true;
-                    a.setCritThresh(true);
-                }
-            }
-
-            // Capital fighters receive damage differently
-            if (te.isCapitalFighter()) {
-                IAero a = (IAero) te;
-                a.setCurrentDamage(a.getCurrentDamage() + damage);
-                a.setCapArmor(a.getCapArmor() - damage);
-                r = new Report(9065);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                r.addDesc(te);
-                r.add(damage);
-                vDesc.addElement(r);
-                r = new Report(6085);
-                r.subject = te_n;
-                r.add(Math.max(a.getCapArmor(), 0));
-                vDesc.addElement(r);
-                // check to see if this destroyed the entity
-                if (a.getCapArmor() <= 0) {
-                    // Lets auto-eject if we can!
-                    if (a instanceof LandAirMek lam) {
-                        // LAMs eject if the CT destroyed switch is on
-                        if (lam.isAutoEject() &&
-                                  (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                         (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                                lam.isCondEjectCTDest()))) {
-                            vDesc.addAll(ejectEntity(te, true, false));
-                        }
-                    } else {
-                        // Aeros eject if the SI Destroyed switch is on
-                        Aero aero = (Aero) a;
-                        if (aero.isAutoEject() &&
-                                  (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                         (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                                aero.isCondEjectSIDest()))) {
-                            vDesc.addAll(ejectEntity(te, true, false));
-                        }
-                    }
-                    vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse"));
-                    a.doDisbandDamage();
-                    a.setCapArmor(0);
-                    if (hit.getAttackerId() != Entity.NONE) {
-                        creditKill(te, game.getEntity(hit.getAttackerId()));
-                    }
-                }
-                // check for aero crits from natural 12 or threshold; LAMs take damage as meks
-                if (te instanceof Aero) {
-                    checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-                }
-                return vDesc;
-            }
-
-            if (!((te instanceof Aero) && ammoExplosion)) {
-                // report something different for Aero ammo explosions
-                r = new Report(6065);
-                r.subject = te_n;
-                r.indent(2);
-                r.addDesc(te);
-                r.add(damage);
-                if (damageIS) {
-                    r.messageId = 6070;
-                }
-                r.add(te.getLocationAbbr(hit));
-                vDesc.addElement(r);
-            }
-
-            // was the section destroyed earlier this phase?
-            if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
-                // cannot transfer a through armor crit if so
-                crits = 0;
-            }
-
-            // here goes the fun :)
-            // Shields take damage first then cowls then armor whee
-            // Shield does not protect from ammo explosions or falls.
-            if (!ammoExplosion &&
-                      !hit.isFallDamage() &&
-                      !damageIS &&
-                      te.hasShield() &&
-                      ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
-                Mek me = (Mek) te;
-                int damageNew = me.shieldAbsorptionDamage(damage, hit.getLocation(), hit.isRear());
-                // if a shield absorbed the damage then lets tell the world
-                // about it.
-                if (damageNew != damage) {
-                    int absorb = damage - damageNew;
-                    te.damageThisPhase += absorb;
-                    damage = damageNew;
-
-                    r = new Report(3530);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(absorb);
-                    vDesc.addElement(r);
-
-                    if (damage <= 0) {
-                        crits = 0;
-                        specCrits = 0;
-                        isHeadHit = false;
-                    }
-                }
-            }
-
-            // Armored Cowl may absorb some damage from hit
-            if ((te instanceof Mek targetMek) &&
-                      targetMek.hasCowl() &&
-                      (hit.getLocation() == Mek.LOC_HEAD) &&
-                      ((targetMek.getPosition() == null) ||
-                             (ae == null) ||
-                             !targetMek.getPosition().isOnHexRow(targetMek.getSecondaryFacing(), ae.getPosition()))) {
-                int excessDamage = targetMek.damageCowl(damage);
-                int blockedByCowl = damage - excessDamage;
-                r = new Report(3520).subject(te_n).indent(3).add(blockedByCowl);
-                vDesc.addElement(r);
-                targetMek.damageThisPhase += blockedByCowl;
-                damage = excessDamage;
-            }
-
-            // So might modular armor, if the location mounts any.
-            if (!ammoExplosion &&
-                      !damageIS &&
-                      ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
-                int damageNew = te.getDamageReductionFromModularArmor(hit, damage, vDesc);
-                int damageDiff = damage - damageNew;
-                te.damageThisPhase += damageDiff;
-                damage = damageNew;
-            }
-
-            // Destroy searchlights on 7+ (torso hits on meks)
-            if (te.hasSearchlight()) {
-                boolean spotlightHittable = true;
-                int loc = hit.getLocation();
-                if (te instanceof Mek) {
-                    if ((loc != Mek.LOC_CT) && (loc != Mek.LOC_LT) && (loc != Mek.LOC_RT)) {
-                        spotlightHittable = false;
-                    }
-                } else if (te instanceof Tank) {
-                    if (te instanceof SuperHeavyTank) {
-                        if ((loc != Tank.LOC_FRONT) &&
-                                  (loc != SuperHeavyTank.LOC_FRONTRIGHT) &&
-                                  (loc != SuperHeavyTank.LOC_FRONTLEFT) &&
-                                  (loc != SuperHeavyTank.LOC_REARRIGHT) &&
-                                  (loc != SuperHeavyTank.LOC_REARLEFT)) {
-                            spotlightHittable = false;
-                        }
-                    } else if (te instanceof LargeSupportTank) {
-                        if ((loc != Tank.LOC_FRONT) &&
-                                  (loc != LargeSupportTank.LOC_FRONTRIGHT) &&
-                                  (loc != LargeSupportTank.LOC_FRONTLEFT) &&
-                                  (loc != LargeSupportTank.LOC_REARRIGHT) &&
-                                  (loc != LargeSupportTank.LOC_REARLEFT)) {
-                            spotlightHittable = false;
-                        }
-                    } else {
-                        if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT) && (loc != Tank.LOC_LEFT)) {
-                            spotlightHittable = false;
-                        }
-                    }
-
-                }
-                if (spotlightHittable) {
-                    Roll diceRoll = Compute.rollD6(2);
-                    r = new Report(6072);
-                    r.indent(2);
-                    r.subject = te_n;
-                    r.add("7+");
-                    r.add("Searchlight");
-                    r.add(diceRoll);
-                    vDesc.addElement(r);
-
-                    if (diceRoll.getIntValue() >= 7) {
-                        r = new Report(6071);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add("Searchlight");
-                        vDesc.addElement(r);
-                        te.destroyOneSearchlight();
-                    }
-                }
-            }
-
-            // Does an exterior passenger absorb some of the damage?
-            if (!damageIS) {
-                int nLoc = hit.getLocation();
-                Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
-                // Does an exterior passenger absorb some of the damage?
-                if (!ammoExplosion &&
-                          (null != passenger) &&
-                          !passenger.isDoomed() &&
-                          (damageType != DamageType.IGNORE_PASSENGER)) {
-                    damage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
-                }
-
-                boolean bTorso = (nLoc == Mek.LOC_CT) || (nLoc == Mek.LOC_RT) || (nLoc == Mek.LOC_LT);
-
-                // Does a swarming unit absorb damage?
-                int swarmer = te.getSwarmAttackerId();
-                if ((!(te instanceof Mek) || bTorso) &&
-                          (swarmer != Entity.NONE) &&
-                          ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 0) &&
-                          (Compute.d6() >= 5) &&
-                          (damageType != DamageType.IGNORE_PASSENGER) &&
-                          !ammoExplosion) {
-                    Entity swarm = game.getEntity(swarmer);
-                    // Yup. Roll up some hit data for that passenger.
-                    r = new Report(6076);
-                    r.subject = swarmer;
-                    r.indent(3);
-                    r.addDesc(swarm);
-                    vDesc.addElement(r);
-
-                    HitData passHit = swarm.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-
-                    // How much damage will the swarm absorb?
-                    int absorb = 0;
-                    HitData nextPassHit = passHit;
-                    do {
-                        if (0 < swarm.getArmor(nextPassHit)) {
-                            absorb += swarm.getArmor(nextPassHit);
-                        }
-                        if (0 < swarm.getInternal(nextPassHit)) {
-                            absorb += swarm.getInternal(nextPassHit);
-                        }
-                        nextPassHit = swarm.getTransferLocation(nextPassHit);
-                    } while ((damage > absorb) && (nextPassHit.getLocation() >= 0));
-
-                    // Damage the swarm.
-                    int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = damageEntity(swarm, passHit, absorbedDamage);
-                    for (Report newReport : newReports) {
-                        newReport.indent(2);
-                    }
-                    vDesc.addAll(newReports);
-
-                    // Did some damage pass on?
-                    if (damage > absorb) {
-                        // Yup. Remove the absorbed damage.
-                        damage -= absorb;
-                        r = new Report(6080);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        r.addDesc(te);
-                        vDesc.addElement(r);
-                    } else {
-                        // Nope. Return our description.
-                        return vDesc;
-                    }
-                }
-
-                // is this a mek/tank dumping ammo being hit in the rear torso?
-                if (((te instanceof Mek) && hit.isRear() && bTorso) ||
-                          ((te instanceof Tank) &&
-                                 (hit.getLocation() ==
-                                        (te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR)))) {
-                    for (Mounted<?> mAmmo : te.getAmmo()) {
-                        if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
-                            // doh. explode it
-                            vDesc.addAll(explodeEquipment(te, mAmmo.getLocation(), mAmmo));
-                            mAmmo.setHit(true);
-                        }
-                    }
-                }
-            }
-            // is there armor in the location hit?
-            if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
-                int tmpDamageHold = -1;
-                int origDamage = damage;
-
-                if (isPlatoon) {
-                    // infantry armour works differently
-                    int armor = te.getArmor(hit);
-                    int men = te.getInternal(hit);
-                    tmpDamageHold = damage % 2;
-                    damage /= 2;
-                    if ((tmpDamageHold == 1) && (armor >= men)) {
-                        // extra 1 point of damage to armor
-                        tmpDamageHold = damage;
-                        damage++;
-                    } else {
-                        // extra 0 or 1 point of damage to men
-                        tmpDamageHold += damage;
-                    }
-                    // If the target has Ferro-Lamellor armor, we need to adjust
-                    // damage. (4/5ths rounded down),
-                    // Also check to eliminate crit chances for damage reduced
-                    // to 0
-                } else if (ferroLamellorArmor &&
-                                 (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                                 (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                                 (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION) &&
-                                 (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
-                    tmpDamageHold = damage;
-                    damage = (int) Math.floor((((double) damage) * 4) / 5);
-                    if (damage <= 0) {
-                        isHeadHit = false;
-                        crits = 0;
-                    }
-                    r = new Report(6073);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (ballisticArmor &&
-                                 ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
-                                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING) ||
-                                        (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC) ||
-                                        (hit.getGeneralDamageType() == HitData.DAMAGE_AX)
-                                        // AX doesn't affect
-                                        // ballistic-reinforced armor,
-                                        // TO:AUE (6th), pg. 179
-                                        ||
-                                        (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
-                    tmpDamageHold = damage;
-                    damage = Math.max(1, damage / 2);
-                    r = new Report(6088);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
-                    tmpDamageHold = damage;
-                    damage -= (int) Math.ceil((double) damage / 3);
-                    damage = Math.max(1, damage);
-                    r = new Report(6089);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (reflectiveArmor &&
-                                 (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) &&
-                                 !isBattleArmor) { // BA reflec does not receive extra physical damage
-                    tmpDamageHold = damage;
-                    int currArmor = te.getArmor(hit);
-                    int dmgToDouble = Math.min(damage, currArmor / 2);
-                    damage += dmgToDouble;
-                    r = new Report(6066);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(currArmor);
-                    r.add(tmpDamageHold);
-                    r.add(dmgToDouble);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
-                    tmpDamageHold = damage; // BA reflec does not receive extra AE damage
-                    int currArmor = te.getArmor(hit);
-                    int dmgToDouble = Math.min(damage, currArmor / 2);
-                    damage += dmgToDouble;
-                    r = new Report(6087);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(currArmor);
-                    r.add(tmpDamageHold);
-                    r.add(dmgToDouble);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
-                    tmpDamageHold = damage;
-                    damage = (int) Math.floor(((double) damage) / 2);
-                    if (tmpDamageHold == 1) {
-                        damage = 1;
-                    }
-                    r = new Report(6067);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (reactiveArmor &&
-                                 ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) ||
-                                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
-                                        areaSatArty)) {
-                    tmpDamageHold = damage;
-                    damage = (int) Math.floor(((double) damage) / 2);
-                    if (tmpDamageHold == 1) {
-                        damage = 1;
-                    }
-                    r = new Report(6068);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                }
-
-                // If we're using optional tank damage thresholds, setup our hit
-                // effects now...
-                if ((te instanceof Tank) &&
-                          game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
-                          !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
-                    int thresh = (int) Math.ceil((game.getOptions()
-                                                        .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
-                                                        te.getArmor(hit) :
-                                                        te.getOArmor(hit)) /
-                                                       (double) game.getOptions()
-                                                                      .intOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
-
-                    // adjust for hardened armor
-                    if (hardenedArmor &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
-                        thresh *= 2;
-                    }
-
-                    if ((damage > thresh) || (te.getArmor(hit) < damage)) {
-                        hit.setEffect(((Tank) te).getPotCrit());
-                        ((Tank) te).setOverThresh(true);
-                        // TACs from the hit location table
-                        crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1 : 0;
-                    } else {
-                        ((Tank) te).setOverThresh(false);
-                        crits = 0;
-                    }
-                }
-
-                // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
-                // any amount of damage (0 is no damage)
-                if ((te instanceof VTOL) &&
-                          (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
-                          (damage > 0)) {
-                    r = new Report(6081);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                    for (Mounted<?> mount : te.getMisc()) {
-                        if (mount.getLocation() == VTOL.LOC_ROTOR) {
-                            mount.setHit(true);
-                        }
-                    }
-                }
-                // Need to account for the possibility of hardened armor here
-                int armorThreshold = te.getArmor(hit);
-                if (hardenedArmor &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
-                    armorThreshold *= 2;
-                    armorThreshold -= (te.isHardenedArmorDamaged(hit)) ? 1 : 0;
-                    vDesc.lastElement().newlines = 0;
-                    r = new Report(6069);
-                    r.subject = te_n;
-                    r.indent(3);
-                    int reportedDamage = damage / 2;
-                    if ((damage % 2) > 0) {
-                        r.add(reportedDamage + ".5");
-                    } else {
-                        r.add(reportedDamage);
-                    }
-
-                    vDesc.addElement(r);
-                }
-                if (armorThreshold >= damage) {
-
-                    // armor absorbs all damage
-                    // Hardened armor deals with damage in its own fashion...
-                    if (hardenedArmor &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
-                        armorThreshold -= damage;
-                        te.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
-                        te.setArmor((armorThreshold / 2) + (armorThreshold % 2), hit);
-                    } else {
-                        te.setArmor(te.getArmor(hit) - damage, hit);
-                    }
-
-                    // set "armor damage" flag for HarJel II/III
-                    // we only care about this if there is armor remaining,
-                    // so don't worry about the case where damage exceeds
-                    // armorThreshold
-                    if ((te instanceof Mek) && (damage > 0)) {
-                        ((Mek) te).setArmorDamagedThisTurn(hit.getLocation(), true);
-                    }
-
-                    // if the armor is hardened, any penetrating crits are
-                    // rolled at -2
-                    if (hardenedArmor) {
-                        critBonus -= 2;
-                    }
-
-                    if (tmpDamageHold >= 0) {
-                        te.damageThisPhase += tmpDamageHold;
-                    } else {
-                        te.damageThisPhase += damage;
-                    }
-                    damage = 0;
-                    if (!te.isHardenedArmorDamaged(hit)) {
-                        r = new Report(6085);
-                    } else {
-                        r = new Report(6086);
-                    }
-
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(te.getArmor(hit));
-                    vDesc.addElement(r);
-
-                    // telemissiles are destroyed if they lose all armor
-                    if ((te instanceof TeleMissile) && (te.getArmor(hit) == damage)) {
-                        vDesc.addAll(destroyEntity(te, "damage", false));
-                    }
-
-                } else {
-                    // damage goes on to internal
-                    int absorbed = Math.max(te.getArmor(hit), 0);
-                    if (hardenedArmor &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                              (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                        absorbed = (absorbed * 2) - ((te.isHardenedArmorDamaged(hit)) ? 1 : 0);
-                    }
-                    if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) && !isBattleArmor) {
-                        absorbed = (int) Math.ceil(absorbed / 2.0);
-                        damage = tmpDamageHold;
-                        tmpDamageHold = 0;
-                    }
-                    te.setArmor(IArmorState.ARMOR_DESTROYED, hit);
-                    if (tmpDamageHold >= 0) {
-                        te.damageThisPhase += 2 * absorbed;
-                    } else {
-                        te.damageThisPhase += absorbed;
-                    }
-                    damage -= absorbed;
-                    r = new Report(6090);
-                    r.subject = te_n;
-                    r.indent(3);
-                    vDesc.addElement(r);
-                    if (te instanceof GunEmplacement) {
-                        // gun emplacements have no internal,
-                        // destroy the section
-                        te.destroyLocation(hit.getLocation());
-                        r = new Report(6115);
-                        r.subject = te_n;
-                        vDesc.addElement(r);
-
-                        if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                            vDesc.addAll(destroyEntity(te, "damage", false));
-                        }
-                    }
-                }
-
-                // targets with BAR armor get crits, depending on damage and BAR
-                // rating
-                if (te.hasBARArmor(hit.getLocation())) {
-                    if (origDamage > te.getBARRating(hit.getLocation())) {
-                        if (te.hasArmoredChassis()) {
-                            // crit roll with -1 mod
-                            vDesc.addAll(criticalEntity(te,
-                                  hit.getLocation(),
-                                  hit.isRear(),
-                                  -1 + critBonus,
-                                  damage_orig));
-                        } else {
-                            vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.isRear(), critBonus, damage_orig));
-                        }
-                    }
-                }
-
-                if ((tmpDamageHold > 0) && isPlatoon) {
-                    damage = tmpDamageHold;
-                }
-            }
-
-            // For optional tank damage thresholds, the overthresh flag won't
-            // be set if IS is damaged, so set it here.
-            if ((te instanceof Tank) &&
-                      ((te.getArmor(hit) < 1) || damageIS) &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
-                      !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
-                ((Tank) te).setOverThresh(true);
-            }
 
             // is there damage remaining?
             if (damage > 0) {
@@ -20008,26 +19336,21 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> damageMech(Vector<Report> vDesc, Mech te, HitData hit, int damage,
                                      boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                      boolean areaSatArty, boolean throughFront, boolean underWater,
-                                     boolean nukeS2S, int critBonus, int crits) {
+                                     boolean nukeS2S, Map<String, Object> modsMap) {
         // This is good for shields if a shield absorps the hit it shouldn't
         // effect the pilot.
         // TC SRM's that hit the head do external and internal damage but its
         // one hit and shouldn't cause
         // 2 hits to the pilot.
-        boolean isHeadHit = (te.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
+        modsMap.put("isHeadHit", ((te.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
                 && (hit.getLocation() == Mech.LOC_HEAD)
-                && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
-
+                && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)));
+        int te_n = te.getId();
+        Report r;
         boolean autoEject = false;
 
-        boolean hardenedArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
-        boolean ferroLamellorArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
-        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE);
-        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE);
-        boolean ballisticArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        boolean impactArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
-        boolean isFerroFibrousTarget = checkFerroFibrous(te, hit);
-        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+        // save EI status, in case sensors crit destroys it
+        final boolean eiStatus = te.hasActiveEiCockpit();
 
         if (ammoExplosion) {
             if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -20040,20 +19363,184 @@ public class TWGameManager extends AbstractGameManager {
 
         HitData nextHit = null;
 
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+
+        // Allocate the damage
+        while (damage > 0) {
+            // damage some cargo if we're taking damage
+            // maybe move past "exterior passenger" check
+            if (!ammoExplosion) {
+                int damageLeftToCargo = damage;
+
+                for (ICarryable cargo : te.getDistinctCarriedObjects()) {
+                    if (cargo.isInvulnerable()) {
+                        continue;
+                    }
+
+                    double tonnage = cargo.getTonnage();
+                    boolean cargoDestroyed = cargo.damage(damageLeftToCargo);
+                    damageLeftToCargo -= Math.ceil(tonnage);
+
+                    // if we have destroyed the cargo, remove it, add a report
+                    // and move on to the next piece of cargo
+                    if (cargoDestroyed) {
+                        te.dropGroundObject(cargo, false);
+
+                        r = new Report(6721);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(cargo.generalName());
+                        vDesc.addElement(r);
+                        // we have not destroyed the cargo means there is no damage left
+                        // report and stop destroying cargo
+                    } else {
+                        r = new Report(6720);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(cargo.generalName());
+                        r.add(Double.toString(cargo.getTonnage()));
+                        break;
+                    }
+                }
+            }
+
+            // Report this either way
+            r = new Report(6065);
+            r.subject = te_n;
+            r.indent(2);
+            r.addDesc(te);
+            r.add(damage);
+            if (damageIS) {
+                r.messageId = 6070;
+            }
+            r.add(te.getLocationAbbr(hit));
+            vDesc.addElement(r);
+
+            if (ammoExplosion) {
+                if (te instanceof LandAirMech) {
+                    // LAMs eject if the CT destroyed switch is on
+                    LandAirMech lam = (LandAirMech) te;
+                    if (lam.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                            && lam.isCondEjectCTDest()))) {
+                        vDesc.addAll(ejectEntity(te, true, false));
+                    }
+                }
+            }
+
+            // was the section destroyed earlier this phase?
+            if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
+                // cannot transfer a through armor crit if so
+                modsMap.put("crits", 0);
+            }
+
+            // here goes the fun :)
+            // Shields take damage first then cowls then armor whee
+            // Shield does not protect from ammo explosions or falls.
+            if (!ammoExplosion && !hit.isFallDamage() && !damageIS && te.hasShield()
+                    && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+                int damageNew = te.shieldAbsorptionDamage(damage, hit.getLocation(), hit.isRear());
+                // if a shield absorbed the damage then lets tell the world
+                // about it.
+                if (damageNew != damage) {
+                    int absorb = damage - damageNew;
+                    te.damageThisPhase += absorb;
+                    damage = damageNew;
+
+                    r = new Report(3530);
+                    r.subject = te_n;
+                    r.indent(3);
+                    r.add(absorb);
+                    vDesc.addElement(r);
+
+                    if (damage <= 0) {
+                        modsMap.put("crits", 0);
+                        modsMap.put("specCrits", 0);
+                        modsMap.put("isHeadHit", false);
+                    }
+                }
+            }
+
+            // Armored Cowl may absorb some damage from hit
+            if (targetMek.hasCowl() && (hit.getLocation() == Mek.LOC_HEAD)
+                && ((targetMek.getPosition() == null) || (ae == null)
+                || !targetMek.getPosition().isOnHexRow(targetMek.getSecondaryFacing(), ae.getPosition()))) {
+                int excessDamage = targetMek.damageCowl(damage);
+                int blockedByCowl = damage - excessDamage;
+                r = new Report(3520).subject(te_n).indent(3).add(blockedByCowl);
+                vDesc.addElement(r);
+                targetMek.damageThisPhase += blockedByCowl;
+                damage = excessDamage;
+            }
+
+            damage = applyModularArmor(te, hit, damage, ammoExplosion, damageIS, vDesc);
+
+            // Destroy searchlights on 7+ (torso hits on mechs)
+            if (te.hasSearchlight()) {
+                boolean spotlightHittable = true;
+                int loc = hit.getLocation();
+                if ((loc != Mech.LOC_CT) && (loc != Mech.LOC_LT) && (loc != Mech.LOC_RT)) {
+                    spotlightHittable = false;
+                }
+
+                if (spotlightHittable) {
+                    Roll diceRoll = Compute.rollD6(2);
+                    r = new Report(6072);
+                    r.indent(2);
+                    r.subject = te_n;
+                    r.add("7+");
+                    r.add("Searchlight");
+                    r.add(diceRoll);
+                    vDesc.addElement(r);
+
+                    if (diceRoll.getIntValue() >= 7) {
+                        r = new Report(6071);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add("Searchlight");
+                        vDesc.addElement(r);
+                        te.destroyOneSearchlight();
+                    }
+                }
+            }
+
+            if (!damageIS) {
+                // Does an exterior passenger absorb some of the damage?
+                damage = handleExternalPassengerDamage(te, hit, damage, ammoExplosion, damageType, vDesc);
+                if (damage == 0) {
+                    // Return our description.
+                    return vDesc;
+                }
+                // is this a mech dumping ammo being hit in the rear torso?
+                if (List.of(Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT).contains(hit.getLocation())) {
+                    for (Mounted<?> mAmmo : te.getAmmo()) {
+                        if (mAmmo.isDumping() && !mAmmo.isDestroyed()
+                                && !mAmmo.isHit()) {
+                            // doh. explode it
+                            vDesc.addAll(explodeEquipment(te,
+                                    mAmmo.getLocation(), mAmmo));
+                            mAmmo.setHit(true);
+                        }
+                    }
+                }
+            }
+
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+
+        }
+
         return vDesc;
     }
 
-    public Vector<Report> damageAeroSpaceFighter(Vector<Report> vDesc, Aero te, HitData hit, int damage,
+    public Vector<Report> damageAeroSpace(Vector<Report> vDesc, Aero te, HitData hit, int damage,
                                                 boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                                 boolean areaSatArty, boolean throughFront, boolean underWater,
-                                                boolean nukeS2S, int critBonus, int crits) {
+                                                boolean nukeS2S, Map<String, Object> modsMap) {
+        int te_n = te.getId();
+        Report r;
         boolean autoEject = false;
-        boolean ferroLamellorArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
-        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE);
-        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE);
-        boolean ballisticArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        boolean isFerroFibrousTarget = checkFerroFibrous(te, hit);
-        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+        final boolean eiStatus = te.hasActiveEiCockpit();
 
         if (ammoExplosion) {
             if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -20094,24 +19581,219 @@ public class TWGameManager extends AbstractGameManager {
         int damage_orig = damage;
         HitData nextHit = null;
 
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
 
+        if (ammoExplosion && te.hasCase()) {
+            // damage should be reduced by a factor of 2 for ammo explosions
+            // according to p. 161, TW
+            damage /= 2;
+            r = new Report(9010);
+            r.subject = te_n;
+            r.add(damage);
+            r.indent(3);
+            vDesc.addElement(r);
+        }
+
+        damage = applyModularArmor(te, hit, damage, ammoExplosion, damageIS, vDesc);
+
+        // Allocate the damage
+        while (damage > 0) {
+            // first check for ammo explosions on aeros separately, because it
+            // must be done before
+            // standard to capital damage conversions
+            if ((hit.getLocation() == Aero.LOC_AFT)
+                    && !damageIS) {
+                for (Mounted<?> mAmmo : te.getAmmo()) {
+                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()
+                            && !(mAmmo.getType() instanceof BombType)) {
+                        // doh. explode it
+                        vDesc.addAll(explodeEquipment(te, mAmmo.getLocation(), mAmmo));
+                        mAmmo.setHit(true);
+                    }
+                }
+            }
+
+            // chance of a critical if damage greater than threshold
+            if ((threshDamage > te.getThresh(hit.getLocation()))) {
+                critThresh = true;
+                te.setCritThresh(true);
+            }
+
+            // Report this either way
+            if (!ammoExplosion) {
+                r = new Report(6065);
+                r.subject = te_n;
+                r.indent(2);
+                r.addDesc(te);
+                r.add(damage);
+                if (damageIS) {
+                    r.messageId = 6070;
+                }
+                r.add(te.getLocationAbbr(hit));
+                vDesc.addElement(r);
+            }
+
+            // Capital fighters receive damage differently
+            if (te.isCapitalFighter()) {
+                te.setCurrentDamage(te.getCurrentDamage() + damage);
+                te.setCapArmor(te.getCapArmor() - damage);
+                r = new Report(9065);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                r.addDesc(te);
+                r.add(damage);
+                vDesc.addElement(r);
+                r = new Report(6085);
+                r.subject = te_n;
+                r.add(Math.max(te.getCapArmor(), 0));
+                vDesc.addElement(r);
+                // check to see if this destroyed the entity
+                if (te.getCapArmor() <= 0) {
+                    // Lets auto-eject if we can!
+                    // Aeros eject if the SI Destroyed switch is on
+                    if (te.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                            && te.isCondEjectSIDest()))) {
+                        vDesc.addAll(ejectEntity(te, true, false));
+                    }
+                    vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse"));
+                    te.doDisbandDamage();
+                    te.setCapArmor(0);
+                    if (hit.getAttackerId() != Entity.NONE) {
+                        creditKill(te, game.getEntity(hit.getAttackerId()));
+                    }
+                }
+                // check for aero crits from natural 12 or threshold; LAMs take damage as mechs
+                checkAeroCrits(vDesc, te, hit, damage_orig, critThresh,
+                        critSI, ammoExplosion, nukeS2S);
+            }
+
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+        }
         return vDesc;
     }
 
     public Vector<Report> damageTank(Vector<Report> vDesc, Tank te, HitData hit, int damage,
                                      boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                      boolean areaSatArty, boolean throughFront, boolean underWater,
-                                     boolean nukeS2S, int critBonus, int crits) {
+                                     boolean nukeS2S, Map<String, Object> modsMap) {
+        int te_n = te.getId();
+        Report r;
 
-        boolean hardenedArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
-        boolean ferroLamellorArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
-        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE);
-        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE);
-        boolean ballisticArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        boolean isFerroFibrousTarget = checkFerroFibrous(te, hit);
-        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+        final boolean eiStatus = te.hasActiveEiCockpit();
         HitData nextHit = null;
 
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+
+        // adjust VTOL rotor damage
+        if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
+                && (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
+            damage = (damage + 9) / 10;
+        }
+
+        // Allocate the damage
+        while (damage > 0) {
+
+            // Report this either way
+            r = new Report(6065);
+            r.subject = te_n;
+            r.indent(2);
+            r.addDesc(te);
+            r.add(damage);
+            if (damageIS) {
+                r.messageId = 6070;
+            }
+            r.add(te.getLocationAbbr(hit));
+            vDesc.addElement(r);
+
+            damage = applyModularArmor(te, hit, damage, ammoExplosion, damageIS, vDesc);
+
+            // Destroy searchlights on 7+ (torso hits on mechs)
+            if (te.hasSearchlight()) {
+                boolean spotlightHittable = true;
+                int loc = hit.getLocation();
+                if (te instanceof SuperHeavyTank) {
+                    if ((loc != Tank.LOC_FRONT)
+                            && (loc != SuperHeavyTank.LOC_FRONTRIGHT)
+                            && (loc != SuperHeavyTank.LOC_FRONTLEFT)
+                            && (loc != SuperHeavyTank.LOC_REARRIGHT)
+                            && (loc != SuperHeavyTank.LOC_REARLEFT)) {
+                        spotlightHittable = false;
+                    }
+                } else if (te instanceof LargeSupportTank) {
+                    if ((loc != Tank.LOC_FRONT)
+                            && (loc != LargeSupportTank.LOC_FRONTRIGHT)
+                            && (loc != LargeSupportTank.LOC_FRONTLEFT)
+                            && (loc != LargeSupportTank.LOC_REARRIGHT)
+                            && (loc != LargeSupportTank.LOC_REARLEFT)) {
+                        spotlightHittable = false;
+                    }
+                } else {
+                    if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT)
+                            && (loc != Tank.LOC_LEFT)) {
+                        spotlightHittable = false;
+                    }
+                }
+
+                if (spotlightHittable) {
+                    Roll diceRoll = Compute.rollD6(2);
+                    r = new Report(6072);
+                    r.indent(2);
+                    r.subject = te_n;
+                    r.add("7+");
+                    r.add("Searchlight");
+                    r.add(diceRoll);
+                    vDesc.addElement(r);
+
+                    if (diceRoll.getIntValue() >= 7) {
+                        r = new Report(6071);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add("Searchlight");
+                        vDesc.addElement(r);
+                        te.destroyOneSearchlight();
+                    }
+                }
+            }
+
+            if (!damageIS) {
+                // Does an exterior passenger absorb some of the damage?
+                damage = handleExternalPassengerDamage(te, hit, damage, ammoExplosion, damageType, vDesc);
+                if (damage == 0) {
+                    // Return our description.
+                    return vDesc;
+                }
+                // is this a mech/tank dumping ammo being hit in the rear torso?
+                if ((te instanceof Tank) &&
+                        (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR))) {
+                    for (Mounted<?> mAmmo : te.getAmmo()) {
+                        if (mAmmo.isDumping() && !mAmmo.isDestroyed()
+                                && !mAmmo.isHit()) {
+                            // doh. explode it
+                            vDesc.addAll(explodeEquipment(te,
+                                    mAmmo.getLocation(), mAmmo));
+                            mAmmo.setHit(true);
+                        }
+                    }
+                }
+            }
+
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+
+            // For optional tank damage thresholds, the overthresh flag won't
+            // be set if IS is damaged, so set it here.
+            if (((te.getArmor(hit) < 1) || damageIS)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+                    && !((te instanceof VTOL)
+                    || (te instanceof GunEmplacement))) {
+                te.setOverThresh(true);
+            }
+
+
+        }
         return vDesc;
     }
 
@@ -20134,6 +19816,7 @@ public class TWGameManager extends AbstractGameManager {
         new_hit.setAttackerId(hit.getAttackerId());
         vDesc.addAll(damageEntity(fighter, new_hit, damage, ammoExplosion, damageType,
                 damageIS, areaSatArty, throughFront, underWater, nukeS2S));
+
         return vDesc;
     }
 
@@ -20153,20 +19836,20 @@ public class TWGameManager extends AbstractGameManager {
                         damageIS, false, throughFront, underWater, nukeS2S));
             }
         }
+
         return vDesc;
     }
 
     public Vector<Report> damageBA(Vector<Report> vDesc, BattleArmor te, HitData hit, int damage,
                                             boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                             boolean areaSatArty, boolean throughFront, boolean underWater,
-                                            boolean nukeS2S, int critBonus, int crits) {
-        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE);
+                                            boolean nukeS2S, Map<String, Object> modsMap) {
+        final boolean eiStatus = te.hasActiveEiCockpit();
         int te_n = te.getId();
         Report r;
 
         // check for critical hit/miss vs. a BA
-        if (crits > 0) {
+        if ((int) modsMap.get("crits") > 0) {
             // possible critical miss if the rerolled location isn't alive
             if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {
                 r = new Report(6037);
@@ -20183,7 +19866,8 @@ public class TWGameManager extends AbstractGameManager {
             r.indent(2);
             vDesc.addElement(r);
 
-            crits = 0;
+            modsMap.put("crits", 0);
+
             damage = Math.max(te.getInternal(hit.getLocation()) + te.getArmor(hit.getLocation()), damage);
         }
 
@@ -20198,13 +19882,34 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.addElement(r);
         }
 
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+
+        // BA using EI implants receive +1 damage from attacks
+        damage += (eiStatus) ? 1 : 0;
+
+        // Allocate the damage
+        while (damage > 0) {
+            // Report this either way
+            r = new Report(6065);
+            r.subject = te_n;
+            r.indent(2);
+            r.addDesc(te);
+            r.add(damage);
+            if (damageIS) {
+                r.messageId = 6070;
+            }
+            r.add(te.getLocationAbbr(hit));
+            vDesc.addElement(r);
+
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+        }
         return vDesc;
     }
 
     public Vector<Report> damageInfantry(Vector<Report> vDesc, Infantry te, HitData hit, int damage,
                                    boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                    boolean areaSatArty, boolean throughFront, boolean underWater,
-                                   boolean nukeS2S, int critBonus, int crits) {
+                                   boolean nukeS2S, Map<String, Object> modsMap){
         int te_n = te.getId();
         Report r;
 
@@ -20251,6 +19956,81 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.addElement(r);
         }
 
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, true, modsMap);
+
+        // infantry armor can reduce damage
+        if (te.calcDamageDivisor() != 1.0) {
+            r = new Report(6074);
+            r.subject = te_n;
+            r.indent(2);
+            r.add(damage);
+            damage = (int) Math.ceil((damage) / te.calcDamageDivisor());
+            r.add(damage);
+            vDesc.addElement(r);
+        }
+
+        // Allocate the damage
+        while (damage > 0) {
+
+            // Report this either way
+            r = new Report(6065);
+            r.subject = te_n;
+            r.indent(2);
+            r.addDesc(te);
+            r.add(damage);
+            if (damageIS) {
+                r.messageId = 6070;
+            }
+            r.add(te.getLocationAbbr(hit));
+            vDesc.addElement(r);
+
+            if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
+
+                int tmpDamageHold = -1;
+                int origDamage = damage;
+
+                // infantry armour works differently
+                int armor = te.getArmor(hit);
+                int men = te.getInternal(hit);
+                tmpDamageHold = damage % 2;
+                damage /= 2;
+                if ((tmpDamageHold == 1) && (armor >= men)) {
+                    // extra 1 point of damage to armor
+                    tmpDamageHold = damage;
+                    damage++;
+                } else {
+                    // extra 0 or 1 point of damage to men
+                    tmpDamageHold += damage;
+                }
+
+                int armorThreshold = te.getArmor(hit);
+                if (armorThreshold >= damage) {
+                    te.setArmor(te.getArmor(hit) - damage, hit);
+
+                    if (tmpDamageHold >= 0) {
+                        te.damageThisPhase += tmpDamageHold;
+                    } else {
+                        te.damageThisPhase += damage;
+                    }
+                    damage = 0;
+                    if (!te.isHardenedArmorDamaged(hit)) {
+                        r = new Report(6085);
+                    } else {
+                        r = new Report(6086);
+                    }
+
+                    r.subject = te_n;
+                    r.indent(3);
+                    r.add(te.getArmor(hit));
+                    vDesc.addElement(r);
+                }
+
+                if ((tmpDamageHold > 0)) {
+                    damage = tmpDamageHold;
+                }
+            }
+
+        }
         return vDesc;
     }
 
@@ -20286,7 +20066,51 @@ public class TWGameManager extends AbstractGameManager {
                 || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO)));
     }
 
-    public int manageDamageTypeReports(Entity te, Vector<Report> vDesc, int damage, DamageType damageType,  HitData hit, boolean isPlatoon) {
+    public int applyModularArmor(Entity te, HitData hit, int damage, boolean ammoExplosion, boolean damageIS, Vector<Report> vDesc) {
+
+        // modular armor might absorb som damage, if the location mounts any.
+        if (!ammoExplosion && !damageIS
+                && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+            int damageNew = te.getDamageReductionFromModularArmor(hit, damage, vDesc);
+            int damageDiff = damage - damageNew;
+            te.damageThisPhase += damageDiff;
+            damage = damageNew;
+        }
+        return damage;
+    }
+
+    public Map<String, Object> createDamageModifierMap(Entity te, HitData hit, int damageOriginal) {
+        // Map that stores various values for passing and mutating.
+        HashMap<String, Object> map = new HashMap<>();
+        boolean isBattleArmor = (te instanceof BattleArmor);
+
+        map.put("critBonus", 0);
+        map.put("crits", 0);
+        map.put("specCrits", 0);
+        map.put("damageOriginal", damageOriginal);
+        map.put("isHeadHit", false);
+        map.put("isFerroFibrousTarget", (checkFerroFibrous(te, hit)));
+        map.put("bar5", (te.getBARRating(hit.getLocation()) <= 5));
+        map.put("ballisticArmor", ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED));
+        map.put("ferroLamellorArmor", ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR));
+        map.put("hardenedArmor", ((te instanceof Mech) || (te instanceof Tank))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED));
+        map.put("impactArmor", (te instanceof Mech)
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT));
+        map.put("reactiveArmor", (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
+                || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE)));
+        map.put("reflectiveArmor", (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
+                || isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
+
+        return map;
+    }
+
+    public int manageDamageTypeReports(Entity te, Vector<Report> vDesc, int damage, DamageType damageType,  HitData hit,
+                                       boolean isPlatoon, Map<String, Object> modsMap) {
         Report r;
         int te_n = te.getId();
 
@@ -20335,8 +20159,13 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case ACID:
-                if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor
-                        || ferroLamellorArmor || bar5) {
+                if (
+                        (boolean) modsMap.get("isFerroFibrousTarget")
+                                || (boolean) modsMap.get("reactiveArmor")
+                                || (boolean) modsMap.get("reflectiveArmor")
+                                || (boolean) modsMap.get("ferroLamellorArmor")
+                                || (boolean) modsMap.get("bar5")
+                ) {
                     if (te.getArmor(hit) <= 0) {
                         break; // hitting IS, not acid-affected armor
                     }
@@ -20379,6 +20208,375 @@ public class TWGameManager extends AbstractGameManager {
                 // We can ignore this.
                 break;
         }
+        return damage;
+    }
+
+    public int handleExternalPassengerDamage(Entity te, HitData hit, int damage, boolean ammoExplosion,
+                                             DamageType damageType, Vector<Report> vDesc) {
+        int te_n = te.getId();
+        Report r;
+        int extantDamage = 0;
+        int nLoc = hit.getLocation();
+        Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
+        // Does an exterior passenger absorb some of the damage?
+        if (!ammoExplosion && (null != passenger) && !passenger.isDoomed()
+                && (damageType != DamageType.IGNORE_PASSENGER)) {
+            extantDamage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
+        }
+
+        boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT) || (nLoc == Mech.LOC_LT);
+
+        // Does a swarming unit absorb damage?
+        int swarmer = te.getSwarmAttackerId();
+        if ((!(te instanceof Mech) || bTorso) && (swarmer != Entity.NONE)
+                && ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 0) && (Compute.d6() >= 5)
+                && (damageType != DamageType.IGNORE_PASSENGER) && !ammoExplosion) {
+            Entity swarm = game.getEntity(swarmer);
+            // Yup. Roll up some hit data for that passenger.
+            r = new Report(6076);
+            r.subject = swarmer;
+            r.indent(3);
+            r.addDesc(swarm);
+            vDesc.addElement(r);
+
+            HitData passHit = swarm.rollHitLocation(
+                    ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+
+            // How much damage will the swarm absorb?
+            int absorb = 0;
+            HitData nextPassHit = passHit;
+            do {
+                if (0 < swarm.getArmor(nextPassHit)) {
+                    absorb += swarm.getArmor(nextPassHit);
+                }
+                if (0 < swarm.getInternal(nextPassHit)) {
+                    absorb += swarm.getInternal(nextPassHit);
+                }
+                nextPassHit = swarm.getTransferLocation(nextPassHit);
+            } while ((extantDamage > absorb)
+                    && (nextPassHit.getLocation() >= 0));
+
+            // Damage the swarm.
+            int absorbedDamage = Math.min(extantDamage, absorb);
+            Vector<Report> newReports = damageEntity(swarm, passHit,
+                    absorbedDamage);
+            for (Report newReport : newReports) {
+                newReport.indent(2);
+            }
+            vDesc.addAll(newReports);
+
+            // Did some damage pass on?
+            if (extantDamage > absorb) {
+                // Yup. Remove the absorbed damage.
+                extantDamage -= absorb;
+                r = new Report(6080);
+                r.subject = te_n;
+                r.indent(2);
+                r.add(extantDamage);
+                r.addDesc(te);
+                vDesc.addElement(r);
+            }
+        }
+        return Math.max(extantDamage, 0);
+    }
+
+    public int applyEntityArmorDamage(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
+                                       boolean damageIS, boolean areaSatArty, Vector<Report> vDesc,
+                                       Map<String, Object> modsMap) {
+        boolean ferroLamellorArmor = (boolean) modsMap.get("ferroLamellorArmor");
+        boolean ballisticArmor = (boolean) modsMap.get("ballisticArmor");
+        boolean hardenedArmor = (boolean) modsMap.get("hardenedArmor");
+        boolean impactArmor = (boolean) modsMap.get("impactArmor");
+        boolean reflectiveArmor = (boolean) modsMap.get("reflectiveArmor");
+        boolean reactiveArmor = (boolean) modsMap.get("reactiveArmor");
+        boolean isBattleArmor = (te instanceof BattleArmor);
+        int damageOriginal = (int) modsMap.get("damageOriginal");
+        int critBonus = (int) modsMap.get("critBonus");
+
+        int te_n = te.getId();
+        Report r;
+
+        // is there armor in the location hit?
+        if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
+            int tmpDamageHold = -1;
+            int origDamage = damage;
+
+            if (ferroLamellorArmor
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
+                tmpDamageHold = damage;
+                damage = (int) Math.floor((((double) damage) * 4) / 5);
+                if (damage <= 0) {
+                    modsMap.put("isHeadHit", false);
+                    modsMap.put("crits", 0);
+                }
+                r = new Report(6073);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(damage);
+                vDesc.addElement(r);
+            } else if (ballisticArmor
+                    && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                    || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
+                    || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
+                    || (hit.getGeneralDamageType() == HitData.DAMAGE_AX) //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
+                    || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
+                tmpDamageHold = damage;
+                damage = Math.max(1, damage / 2);
+                r = new Report(6088);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(damage);
+                vDesc.addElement(r);
+            } else if (impactArmor
+                    && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
+                tmpDamageHold = damage;
+                damage -= (int) Math.ceil((double) damage / 3);
+                damage = Math.max(1, damage);
+                r = new Report(6089);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(damage);
+                vDesc.addElement(r);
+            } else if (reflectiveArmor
+                    && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                    && !isBattleArmor) { // BA reflec does not receive extra physical damage
+                tmpDamageHold = damage;
+                int currArmor = te.getArmor(hit);
+                int dmgToDouble = Math.min(damage, currArmor / 2);
+                damage += dmgToDouble;
+                r = new Report(6066);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(currArmor);
+                r.add(tmpDamageHold);
+                r.add(dmgToDouble);
+                r.add(damage);
+                vDesc.addElement(r);
+            } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
+                tmpDamageHold = damage; // BA reflec does not receive extra AE damage
+                int currArmor = te.getArmor(hit);
+                int dmgToDouble = Math.min(damage, currArmor / 2);
+                damage += dmgToDouble;
+                r = new Report(6087);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(currArmor);
+                r.add(tmpDamageHold);
+                r.add(dmgToDouble);
+                r.add(damage);
+                vDesc.addElement(r);
+            } else if (reflectiveArmor
+                    && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+                tmpDamageHold = damage;
+                damage = (int) Math.floor(((double) damage) / 2);
+                if (tmpDamageHold == 1) {
+                    damage = 1;
+                }
+                r = new Report(6067);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(damage);
+                vDesc.addElement(r);
+            } else if (reactiveArmor
+                    && ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE)
+                    || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
+                    areaSatArty)) {
+                tmpDamageHold = damage;
+                damage = (int) Math.floor(((double) damage) / 2);
+                if (tmpDamageHold == 1) {
+                    damage = 1;
+                }
+                r = new Report(6068);
+                r.subject = te_n;
+                r.indent(3);
+                r.add(damage);
+                vDesc.addElement(r);
+            }
+
+            // If we're using optional tank damage thresholds, setup our hit
+            // effects now...
+            if ((te instanceof Tank)
+                    && game.getOptions()
+                    .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+                    && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
+                int thresh = (int) Math.ceil(
+                        (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE)
+                                ? te.getArmor(hit)
+                                : te.getOArmor(hit))
+                                / (double) game.getOptions().intOption(
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
+
+                // adjust for hardened armor
+                if (hardenedArmor
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                    thresh *= 2;
+                }
+
+                if ((damage > thresh) || (te.getArmor(hit) < damage)) {
+                    hit.setEffect(((Tank) te).getPotCrit());
+                    ((Tank) te).setOverThresh(true);
+                    // TACs from the hit location table
+                    modsMap.put("crits", (
+                            ((hit.getEffect() & HitData.EFFECT_CRITICAL)
+                                    == HitData.EFFECT_CRITICAL) ? 1 : 0)
+                    );
+                } else {
+                    ((Tank) te).setOverThresh(false);
+                    modsMap.put("crits", 0);
+                }
+            }
+
+            // if there's a mast mount in the rotor, it and all other
+            // equipment
+            // on it get destroyed
+            if ((te instanceof VTOL) &&
+                      (hit.getLocation() == VTOL.LOC_ROTOR) &&
+                      te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                      (damage > 0)) {
+                r = new Report(6081);
+                r.subject = te_n;
+                r.indent(2);
+                vDesc.addElement(r);
+                for (Mounted<?> mount : te.getMisc()) {
+                    if (mount.getLocation() == VTOL.LOC_ROTOR) {
+                        mount.setHit(true);
+                    }
+                }
+            }
+            // Need to account for the possibility of hardened armor here
+            int armorThreshold = te.getArmor(hit);
+            if (hardenedArmor
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                    && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                armorThreshold *= 2;
+                armorThreshold -= (te.isHardenedArmorDamaged(hit)) ? 1 : 0;
+                vDesc.lastElement().newlines = 0;
+                r = new Report(6069);
+                r.subject = te_n;
+                r.indent(3);
+                int reportedDamage = damage / 2;
+                if ((damage % 2) > 0) {
+                    r.add(reportedDamage + ".5");
+                } else {
+                    r.add(reportedDamage);
+                }
+
+                vDesc.addElement(r);
+            }
+            if (armorThreshold >= damage) {
+
+                // armor absorbs all damage
+                // Hardened armor deals with damage in its own fashion...
+                if (hardenedArmor
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                    armorThreshold -= damage;
+                    te.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
+                    te.setArmor((armorThreshold / 2) + (armorThreshold % 2), hit);
+                } else {
+                    te.setArmor(te.getArmor(hit) - damage, hit);
+                }
+
+                // set "armor damage" flag for HarJel II/III
+                // we only care about this if there is armor remaining,
+                // so don't worry about the case where damage exceeds
+                // armorThreshold
+                if ((te instanceof Mek) && (damage > 0)) {
+                    ((Mek) te).setArmorDamagedThisTurn(hit.getLocation(), true);
+                }
+
+                // if the armor is hardened, any penetrating crits are
+                // rolled at -2
+                if (hardenedArmor) {
+                    modsMap.put("critBonus", critBonus - 2);
+                }
+
+                if (tmpDamageHold >= 0) {
+                    te.damageThisPhase += tmpDamageHold;
+                } else {
+                    te.damageThisPhase += damage;
+                }
+                damage = 0;
+                if (!te.isHardenedArmorDamaged(hit)) {
+                    r = new Report(6085);
+                } else {
+                    r = new Report(6086);
+                }
+
+                r.subject = te_n;
+                r.indent(3);
+                r.add(te.getArmor(hit));
+                vDesc.addElement(r);
+
+                // telemissiles are destroyed if they lose all armor
+                if ((te instanceof TeleMissile)
+                        && (te.getArmor(hit) == damage)) {
+                    vDesc.addAll(destroyEntity(te, "damage", false));
+                }
+
+            } else {
+                // damage goes on to internal
+                int absorbed = Math.max(te.getArmor(hit), 0);
+                if (hardenedArmor
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    absorbed = (absorbed * 2)
+                            - ((te.isHardenedArmorDamaged(hit)) ? 1 : 0);
+                }
+                if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                        && !isBattleArmor) {
+                    absorbed = (int) Math.ceil(absorbed / 2.0);
+                    damage = tmpDamageHold;
+                    tmpDamageHold = 0;
+                }
+                te.setArmor(IArmorState.ARMOR_DESTROYED, hit);
+                if (tmpDamageHold >= 0) {
+                    te.damageThisPhase += 2 * absorbed;
+                } else {
+                    te.damageThisPhase += absorbed;
+                }
+                damage -= absorbed;
+                r = new Report(6090);
+                r.subject = te_n;
+                r.indent(3);
+                vDesc.addElement(r);
+                if (te instanceof GunEmplacement) {
+                    // gun emplacements have no internal,
+                    // destroy the section
+                    te.destroyLocation(hit.getLocation());
+                    r = new Report(6115);
+                    r.subject = te_n;
+                    vDesc.addElement(r);
+
+                    if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
+                        vDesc.addAll(destroyEntity(te, "damage", false));
+                    }
+                }
+            }
+
+            // targets with BAR armor get crits, depending on damage and BAR
+            // rating
+            if (te.hasBARArmor(hit.getLocation())) {
+                if (origDamage > te.getBARRating(hit.getLocation())) {
+                    if (te.hasArmoredChassis()) {
+                        // crit roll with -1 mod
+                        vDesc.addAll(criticalEntity(te, hit.getLocation(),
+                                hit.isRear(), -1 + critBonus, damageOriginal));
+                    } else {
+                        vDesc.addAll(criticalEntity(te, hit.getLocation(),
+                                hit.isRear(), critBonus, damageOriginal));
+                    }
+                }
+            }
+        }
+        return damage;
     }
 
     /**

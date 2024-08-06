@@ -19349,7 +19349,9 @@ public class TWGameManager extends AbstractGameManager {
                         getGame().addControlRoll(damPRD);
                     } else {
                         // was the damage threshold exceeded this round?
-                        if (((IAero) entity).wasCritThresh()) {
+                        // Note errata: https://bg.battletech.com/forums/index.php?topic=72983.msg2024516#msg2024516
+                        if ((((IAero) entity).wasCritThresh())
+                                || entity.damageThisRound > ((IAero) entity).getHighestThresh()) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
                                     "damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)

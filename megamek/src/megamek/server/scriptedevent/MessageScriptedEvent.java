@@ -18,21 +18,31 @@
  */
 package megamek.server.scriptedevent;
 
+import megamek.client.ui.Base64Image;
+import megamek.common.annotations.Nullable;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.server.IGameManager;
 import megamek.server.trigger.Trigger;
+
+import java.awt.*;
 
 public class MessageScriptedEvent implements ScriptedEvent {
 
     private final Trigger trigger;
     private final String message;
     private final String header;
+    private final Base64Image image;
 
-    public MessageScriptedEvent(Trigger trigger, String header, String message) {
+    public MessageScriptedEvent(Trigger trigger, String header, String message, @Nullable Image image) {
         this.trigger = trigger;
         this.message = message;
         this.header = header;
+        this.image = new Base64Image(image);
+    }
+
+    public MessageScriptedEvent(Trigger trigger, String header, String message) {
+        this(trigger, header, message, null);
     }
 
     @Override
@@ -42,6 +52,6 @@ public class MessageScriptedEvent implements ScriptedEvent {
 
     @Override
     public void process(IGameManager gameManager) {
-        gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message));
+        gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message, image));
     }
 }

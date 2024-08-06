@@ -55,8 +55,13 @@ public class MMNarrativeStoryDialog extends MMStoryDialog {
         txtDesc.setContentType("text/html");
         txtDesc.setText(getStoryPoint().text());
         txtDesc.setCaretPosition(0);
-        txtDesc.setBorder(new EmptyBorder(3, 3, 3, 3));
-        JScrollPane scrollPane = new JScrollPane(txtDesc);
+        txtDesc.setBorder(new EmptyBorder(5, 20, 5, 20));
+        JScrollPane scrollPane = new JScrollPane(txtDesc) {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(400, super.getPreferredSize().height);
+            }
+        };
         scrollPane.setBorder(null);
         mainPanel.add(scrollPane, gbc);
 

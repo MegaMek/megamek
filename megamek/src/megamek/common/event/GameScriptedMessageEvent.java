@@ -18,6 +18,8 @@
  */
 package megamek.common.event;
 
+import megamek.client.ui.Base64Image;
+import megamek.common.annotations.Nullable;
 import megamek.server.scriptedevent.NarrativeDisplayProvider;
 
 import java.awt.*;
@@ -26,11 +28,13 @@ public class GameScriptedMessageEvent extends GameScriptedEvent implements Narra
 
     private final String message;
     private final String header;
+    private final Base64Image image;
 
-    public GameScriptedMessageEvent(Object source, String header, String message) {
+    public GameScriptedMessageEvent(Object source, String header, String message, @Nullable Base64Image image) {
         super(source);
         this.message = message;
         this.header = header;
+        this.image = image;
     }
 
     public String message() {
@@ -49,11 +53,11 @@ public class GameScriptedMessageEvent extends GameScriptedEvent implements Narra
 
     @Override
     public Image portrait() {
-        return null;
+        return image.getImage();
     }
 
     @Override
     public Image splashImage() {
-        return null;
+        return image.getImage();
     }
 }

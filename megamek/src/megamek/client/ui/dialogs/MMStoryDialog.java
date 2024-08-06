@@ -18,32 +18,49 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.server.scriptedevent.NarrativeDisplayProvider;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * This is the base class for dialogs related to the Story Arc, to help create a similar look and feel.
  * Inheriting classes must call initialize() in their constructors and override getMainPanel()
  */
-public abstract class MMStoryDialog extends JDialog implements ActionListener {
+public abstract class MMStoryDialog extends JDialog {
 
-    private JButton doneButton;
-    private int imgWidth;
+    protected static final String CLOSE_ACTION = "closeAction";
+
+    private int imgWidth = 0;
+    private int imgHeight = 450;
     private final NarrativeDisplayProvider storyPoint;
 
     public MMStoryDialog(final JFrame parent, NarrativeDisplayProvider sEvent) {
         super(parent, sEvent.header(), true);
         this.storyPoint = sEvent;
+        // Escape keypress
+        final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSE_ACTION);
+        getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, CLOSE_ACTION);
+        getRootPane().getActionMap().put(CLOSE_ACTION, new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                close();
+            }
+        });
     }
 
     protected void initialize() {
         setLayout(new BorderLayout());
-        add(getButtonPanel(), BorderLayout.SOUTH);
         add(getMainPanel(), BorderLayout.CENTER);
+        add(getButtonPanel(), BorderLayout.SOUTH);
 
         setDialogSize();
         pack();
@@ -52,12 +69,29 @@ public abstract class MMStoryDialog extends JDialog implements ActionListener {
     }
 
     private JPanel getButtonPanel() {
-        JPanel buttonPanel = new JPanel(new BorderLayout());
+        JButton okButton = new DialogButton(Messages.getString("Ok.text"));
+        okButton.addActionListener(e -> close());
 
-        doneButton = new JButton("Done");
-        doneButton.addActionListener(this);
-        buttonPanel.add(doneButton, BorderLayout.LINE_END);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.setBorder(BorderFactory.createCompoundBorder(
+                new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
+                new UIUtil.ScaledEmptyBorder(10, 0, 10, 0)));
 
+        Box verticalBox = Box.createVerticalBox();
+        verticalBox.add(Box.createVerticalGlue());
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel.add(Box.createHorizontalGlue());
+        verticalBox.add(panel);
+        verticalBox.add(Box.createVerticalGlue());
+
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+        rightButtonPanel.add(okButton);
+        getRootPane().setDefaultButton(okButton);
+
+        buttonPanel.add(Box.createHorizontalStrut(20));
+        buttonPanel.add(verticalBox);
+        buttonPanel.add(rightButtonPanel);
         return buttonPanel;
     }
 
@@ -68,17 +102,22 @@ public abstract class MMStoryDialog extends JDialog implements ActionListener {
     }
 
     protected JPanel getImagePanel() {
-        JPanel imagePanel = new JPanel(new BorderLayout());
+        JPanel imagePanel = new JPanel(new BorderLayout()) {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(imgWidth, imgHeight);
+            }
+        };
 
-        imgWidth = 0;
-        Image img = getStoryPoint().splashImage();
-        if (getStoryPoint().portrait() != null) {
-            img = getStoryPoint().portrait();
+        Image img = storyPoint.splashImage();
+        if (storyPoint.portrait() != null) {
+            img = storyPoint.portrait();
         }
 
         if (null != img) {
             ImageIcon icon = new ImageIcon(img);
             imgWidth = icon.getIconWidth();
+            imgHeight = icon.getIconHeight();
             JLabel imgLbl = new JLabel();
             imgLbl.setIcon(icon);
             imagePanel.add(imgLbl, BorderLayout.CENTER);
@@ -94,17 +133,15 @@ public abstract class MMStoryDialog extends JDialog implements ActionListener {
 
     protected void setDialogSize() {
 
-        int width = 400+imgWidth;
-        int height = 400;
-        setMinimumSize(new Dimension(width, height));
-        setPreferredSize(new Dimension(width, height));
-        setMaximumSize(new Dimension(width, height));
+//        int width = 400+imgWidth;
+//        int height = imgHeight;
+//        setMinimumSize(new Dimension(width, height));
+//        setPreferredSize(new Dimension(width, height));
+//        setMaximumSize(new Dimension(width, height));
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (doneButton.equals(e.getSource())) {
-            this.setVisible(false);
-        }
+    protected void close() {
+        setVisible(false);
+        dispose();
     }
 }

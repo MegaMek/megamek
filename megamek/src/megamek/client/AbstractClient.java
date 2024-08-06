@@ -22,6 +22,7 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
+import megamek.client.ui.Base64Image;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
@@ -428,7 +429,8 @@ public abstract class AbstractClient implements IClient {
             case SCRIPTED_MESSAGE:
                 getGame().fireGameEvent(new GameScriptedMessageEvent(this,
                         (String) packet.getObject(0),
-                        (String) packet.getObject(1)));
+                        (String) packet.getObject(1),
+                        (Base64Image) packet.getObject(2)));
                 break;
             default:
                 return false;

@@ -31,6 +31,7 @@ import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.BoardDeserializer;
 import megamek.common.jacksonadapters.CarryableDeserializer;
 import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.jacksonadapters.MessageDeserializer;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
@@ -139,14 +140,14 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
-    private void parseMessages(IGame game) throws IOException {
+    private void parseMessages(IGame game) {
         if (node.has(MESSAGES)) {
-            new MMUReader(scenariofile)
-                    .read(node.get(MESSAGES), MessageScriptedEvent.class).stream()
-                    .filter(o -> o instanceof MessageScriptedEvent)
-                    .map(o -> (MessageScriptedEvent) o)
-                    .forEach(game::addScriptedEvent);
+            node.get(MESSAGES).iterator().forEachRemaining(n -> parseMessage(game, n));
         }
+    }
+
+    private void parseMessage(IGame game, JsonNode node) {
+        game.addScriptedEvent(MessageDeserializer.parse(node, scenarioDirectory()));
     }
 
     private void parsePlayers(IGame game) throws ScenarioLoaderException, IOException {

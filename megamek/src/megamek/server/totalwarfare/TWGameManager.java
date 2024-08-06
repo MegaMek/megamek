@@ -18487,91 +18487,14 @@ public class TWGameManager extends AbstractGameManager {
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
-            List<Entity> fighters = te.getActiveSubEntities();
-
-            if (fighters.isEmpty()) {
-                return vDesc;
-            }
-            Entity fighter = fighters.get(hit.getLocation());
-            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            new_hit.setBoxCars(hit.rolledBoxCars());
-            new_hit.setGeneralDamageType(hit.getGeneralDamageType());
-            new_hit.setCapital(hit.isCapital());
-            new_hit.setCapMisCritMod(hit.getCapMisCritMod());
-            new_hit.setSingleAV(hit.getSingleAV());
-            new_hit.setAttackerId(hit.getAttackerId());
-            return damageEntity(fighter,
-                  new_hit,
-                  damage,
-                  ammoExplosion,
-                  damageType,
-                  damageIS,
-                  areaSatArty,
-                  throughFront,
-                  underWater,
-                  nukeS2S);
+            return damageSquadronFighter(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
+                    areaSatArty, throughFront, underWater, nukeS2S);
         }
 
         // Battle Armor takes full damage to each trooper from area-effect.
         if (areaSatArty && (te instanceof BattleArmor)) {
-            r = new Report(6044);
-            r.subject = te.getId();
-            r.indent(2);
-            vDesc.add(r);
-            for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
-                hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
-                if (te.getInternal(hit) > 0) {
-                    vDesc.addAll(damageEntity(te,
-                          hit,
-                          damage,
-                          ammoExplosion,
-                          damageType,
-                          damageIS,
-                          false,
-                          throughFront,
-                          underWater,
-                          nukeS2S));
-                }
-            }
-            return vDesc;
-        }
-
-        // This is good for shields if a shield absorps the hit it shouldn't
-        // effect the pilot.
-        // TC SRM's that hit the head do external and internal damage but its
-        // one hit and shouldn't cause
-        // 2 hits to the pilot.
-        boolean isHeadHit = (te instanceof Mek) &&
-                                  (((Mek) te).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
-                                  (hit.getLocation() == Mek.LOC_HEAD) &&
-                                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
-
-        // booleans to indicate criticals for AT2
-        boolean critSI = false;
-        boolean critThresh = false;
-
-        // get the relevant damage for damage thresholding
-        int threshDamage = damage;
-        // weapon groups only get the damage of one weapon
-        if ((hit.getSingleAV() > -1) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-            threshDamage = hit.getSingleAV();
-        }
-
-        // is this capital-scale damage
-        boolean isCapital = hit.isCapital();
-
-        // check capital/standard damage
-        if (isCapital &&
-                  (!te.isCapitalScale() ||
-                         game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY))) {
-            damage = 10 * damage;
-            threshDamage = 10 * threshDamage;
-        }
-        if (!isCapital &&
-                  te.isCapitalScale() &&
-                  !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-            damage = (int) Math.round(damage / 10.0);
-            threshDamage = (int) Math.round(threshDamage / 10.0);
+            return damageMultipleBAs(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
+                    areaSatArty, throughFront, underWater, nukeS2S);
         }
 
         int damage_orig = damage;
@@ -18597,52 +18520,11 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.addElement(r);
         } // if
 
-        boolean autoEject = false;
-        if (ammoExplosion) {
-            if (te instanceof Mek mek) {
-                if (mek.isAutoEject() &&
-                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                 (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                        mek.isCondEjectAmmo()))) {
-                    autoEject = true;
-                    vDesc.addAll(ejectEntity(te, true));
-                }
-            } else if (te instanceof Aero aero) {
-                if (aero.isAutoEject() &&
-                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                 (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                        aero.isCondEjectAmmo()))) {
-                    autoEject = true;
-                    vDesc.addAll(ejectEntity(te, true));
-                }
-            }
-        }
         boolean isBattleArmor = te instanceof BattleArmor;
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
-        boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
         Hex te_hex = null;
-
-        boolean hardenedArmor = ((te instanceof Mek) || (te instanceof Tank)) &&
-                                      (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
-        boolean ferroLamellorArmor = ((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero)) &&
-                                           (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
-        boolean reflectiveArmor = (((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero)) &&
-                                         (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) ||
-                                        (isBattleArmor &&
-                                               (te.getArmorType(hit.getLocation()) ==
-                                                      EquipmentType.T_ARMOR_BA_REFLECTIVE));
-        boolean reactiveArmor = (((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero)) &&
-                                       (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) ||
-                                      (isBattleArmor &&
-                                             (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE));
-        boolean ballisticArmor = ((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero)) &&
-                                       (te.getArmorType(hit.getLocation()) ==
-                                              EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        boolean impactArmor = (te instanceof Mek) &&
-                                    (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
-        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
 
         // TACs from the hit location table
         int crits;
@@ -18654,30 +18536,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // this is for special crits, like AP and tandem-charge
         int specCrits = 0;
-
-        // the bonus to the crit roll if using the
-        // "advanced determining critical hits rule"
-        int critBonus = 0;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL) &&
-                  (damage_orig > 0) &&
-                  ((te instanceof Mek) || (te instanceof ProtoMek))) {
-            critBonus = Math.min((damage_orig - 1) / 5, 4);
-        }
-
-        // Find out if Human TRO plays a part it crit bonus
-        Entity ae = game.getEntity(hit.getAttackerId());
-        if ((ae != null) && !areaSatArty) {
-            if ((te instanceof Mek) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
-                critBonus += 1;
-            } else if ((te instanceof Aero) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
-                critBonus += 1;
-            } else if ((te instanceof Tank) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_VEE)) {
-                critBonus += 1;
-            } else if ((te instanceof BattleArmor) &&
-                             ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
-                critBonus += 1;
-            }
-        }
+        int critBonus = calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty);
 
         HitData nextHit = null;
 
@@ -18692,173 +18551,6 @@ public class TWGameManager extends AbstractGameManager {
             }
             vDesc.add(r);
             return vDesc;
-        }
-
-        // check for critical hit/miss vs. a BA
-        if ((crits > 0) && (te instanceof BattleArmor)) {
-            // possible critical miss if the rerolled location isn't alive
-            if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {
-                r = new Report(6037);
-                r.add(hit.getLocation());
-                r.subject = te_n;
-                r.indent(2);
-                vDesc.addElement(r);
-                return vDesc;
-            }
-            // otherwise critical hit
-            r = new Report(6225);
-            r.add(te.getLocationAbbr(hit));
-            r.subject = te_n;
-            r.indent(2);
-            vDesc.addElement(r);
-
-            crits = 0;
-            damage = Math.max(te.getInternal(hit.getLocation()) + te.getArmor(hit.getLocation()), damage);
-        }
-
-        if ((te.getArmor(hit) > 0) &&
-                  ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS) ||
-                         (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO) ||
-                         (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
-            isFerroFibrousTarget = true;
-        }
-
-        // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
-        if (damageType.equals(DamageType.ANTI_TSM) && te.isConventionalInfantry() && te.antiTSMVulnerable()) {
-            Roll diceRoll = Compute.rollD6(2);
-            r = new Report(6434);
-            r.subject = te_n;
-            r.add(diceRoll);
-            r.indent(2);
-            vDesc.addElement(r);
-            damage += diceRoll.getIntValue();
-        }
-
-        // area effect against infantry is double damage
-        if (isPlatoon && areaSatArty) {
-            // PBI. Double damage.
-            damage *= 2;
-            r = new Report(6039);
-            r.subject = te_n;
-            r.indent(2);
-            vDesc.addElement(r);
-        }
-
-        // Is the infantry in the open?
-        if (ServerHelper.infantryInOpen(te,
-              te_hex,
-              game,
-              isPlatoon,
-              ammoExplosion,
-              hit.isIgnoreInfantryDoubleDamage())) {
-            // PBI. Damage is doubled.
-            damage *= 2;
-            r = new Report(6040);
-            r.subject = te_n;
-            r.indent(2);
-            vDesc.addElement(r);
-        }
-
-        // Is the infantry in vacuum?
-        boolean platoonOrBattleArmor = isPlatoon || isBattleArmor;
-        if (platoonOrBattleArmor &&
-                  !te.isDestroyed() &&
-                  !te.isDoomed() &&
-                  game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
-            // PBI. Double damage.
-            damage *= 2;
-            r = new Report(6041);
-            r.subject = te_n;
-            r.indent(2);
-            vDesc.addElement(r);
-        }
-
-        switch (damageType) {
-            case FRAGMENTATION:
-                // Fragmentation missiles deal full damage to conventional
-                // infantry
-                // (only) and no damage to other target types.
-                if (!isPlatoon) {
-                    damage = 0;
-                    r = new Report(6050); // For some reason this report never
-                    // actually shows up...
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                } else {
-                    r = new Report(6045); // ...but this one displays just fine.
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                }
-                break;
-            case NONPENETRATING:
-                if (!isPlatoon) {
-                    damage = 0;
-                    r = new Report(6051);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                }
-                break;
-            case FLECHETTE:
-                // Flechette ammo deals full damage to conventional infantry and
-                // half damage to other targets (including battle armor).
-                if (!isPlatoon) {
-                    damage /= 2;
-                    r = new Report(6060);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                } else {
-                    r = new Report(6055);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                }
-                break;
-            case ACID:
-                if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor || ferroLamellorArmor || bar5) {
-                    if (te.getArmor(hit) <= 0) {
-                        break; // hitting IS, not acid-affected armor
-                    }
-                    damage = Math.min(te.getArmor(hit), 3);
-                    r = new Report(6061);
-                    r.subject = te_n;
-                    r.indent(2);
-                    r.add(damage);
-                    vDesc.addElement(r);
-                } else if (isPlatoon) {
-                    damage = (int) Math.ceil(damage * 1.5);
-                    r = new Report(6062);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                }
-                break;
-            case INCENDIARY:
-                // Incendiary AC ammo does +2 damage to unarmoured infantry
-                if (isPlatoon) {
-                    damage += 2;
-                    r = new Report(6064);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
-                }
-                break;
-            case NAIL_RIVET:
-                // no damage against armor of BAR rating >=5
-                if ((te.getBARRating(hit.getLocation()) >= 5) && (te.getArmor(hit.getLocation()) > 0)) {
-                    damage = 0;
-                    r = new Report(6063);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.add(r);
-                }
-                break;
-            default:
-                // We can ignore this.
-                break;
         }
 
         // adjust VTOL rotor damage
@@ -20311,6 +20003,382 @@ public class TWGameManager extends AbstractGameManager {
             Report.addNewline(vDesc);
         }
         return vDesc;
+    }
+
+    public Vector<Report> damageMech(Vector<Report> vDesc, Mech te, HitData hit, int damage,
+                                     boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                     boolean areaSatArty, boolean throughFront, boolean underWater,
+                                     boolean nukeS2S, int critBonus, int crits) {
+        // This is good for shields if a shield absorps the hit it shouldn't
+        // effect the pilot.
+        // TC SRM's that hit the head do external and internal damage but its
+        // one hit and shouldn't cause
+        // 2 hits to the pilot.
+        boolean isHeadHit = (te.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
+                && (hit.getLocation() == Mech.LOC_HEAD)
+                && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
+
+        boolean autoEject = false;
+
+        boolean hardenedArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+        boolean ferroLamellorArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE);
+        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE);
+        boolean ballisticArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        boolean impactArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
+        boolean isFerroFibrousTarget = checkFerroFibrous(te, hit);
+        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+
+        if (ammoExplosion) {
+            if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && te.isCondEjectAmmo()))) {
+                autoEject = true;
+                vDesc.addAll(ejectEntity(te, true));
+            }
+        }
+
+        HitData nextHit = null;
+
+        return vDesc;
+    }
+
+    public Vector<Report> damageAeroSpaceFighter(Vector<Report> vDesc, Aero te, HitData hit, int damage,
+                                                boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                                boolean areaSatArty, boolean throughFront, boolean underWater,
+                                                boolean nukeS2S, int critBonus, int crits) {
+        boolean autoEject = false;
+        boolean ferroLamellorArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE);
+        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE);
+        boolean ballisticArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        boolean isFerroFibrousTarget = checkFerroFibrous(te, hit);
+        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+
+        if (ammoExplosion) {
+            if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && te.isCondEjectAmmo()))) {
+                autoEject = true;
+                vDesc.addAll(ejectEntity(te, true));
+            }
+        }
+
+        // booleans to indicate criticals for AT2
+        boolean critSI = false;
+        boolean critThresh = false;
+
+        // get the relevant damage for damage thresholding
+        int threshDamage = damage;
+        // weapon groups only get the damage of one weapon
+        if ((hit.getSingleAV() > -1)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            threshDamage = hit.getSingleAV();
+        }
+
+        // is this capital-scale damage
+        boolean isCapital = hit.isCapital();
+
+        // check capital/standard damage
+        if (isCapital
+                && (!te.isCapitalScale() || game.getOptions().booleanOption(
+                OptionsConstants.ADVAERORULES_AERO_SANITY))) {
+            damage = 10 * damage;
+            threshDamage = 10 * threshDamage;
+        }
+        if (!isCapital && te.isCapitalScale()
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            damage = (int) Math.round(damage / 10.0);
+            threshDamage = (int) Math.round(threshDamage / 10.0);
+        }
+        int damage_orig = damage;
+        HitData nextHit = null;
+
+
+        return vDesc;
+    }
+
+    public Vector<Report> damageTank(Vector<Report> vDesc, Tank te, HitData hit, int damage,
+                                     boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                     boolean areaSatArty, boolean throughFront, boolean underWater,
+                                     boolean nukeS2S, int critBonus, int crits) {
+
+        boolean hardenedArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+        boolean ferroLamellorArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE);
+        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE);
+        boolean ballisticArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        boolean isFerroFibrousTarget = checkFerroFibrous(te, hit);
+        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+        HitData nextHit = null;
+
+        return vDesc;
+    }
+
+    public Vector<Report> damageSquadronFighter(Vector<Report> vDesc, Entity te, HitData hit, int damage,
+                                                boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                                boolean areaSatArty, boolean throughFront, boolean underWater,
+                                                boolean nukeS2S) {
+        List<Entity> fighters = te.getActiveSubEntities();
+
+        if (fighters.isEmpty()) {
+            return vDesc;
+        }
+        Entity fighter = fighters.get(hit.getLocation());
+        HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+        new_hit.setBoxCars(hit.rolledBoxCars());
+        new_hit.setGeneralDamageType(hit.getGeneralDamageType());
+        new_hit.setCapital(hit.isCapital());
+        new_hit.setCapMisCritMod(hit.getCapMisCritMod());
+        new_hit.setSingleAV(hit.getSingleAV());
+        new_hit.setAttackerId(hit.getAttackerId());
+        vDesc.addAll(damageEntity(fighter, new_hit, damage, ammoExplosion, damageType,
+                damageIS, areaSatArty, throughFront, underWater, nukeS2S));
+        return vDesc;
+    }
+
+    public Vector<Report> damageMultipleBAs(Vector<Report> vDesc, Entity te, HitData hit, int damage,
+                                              boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                              boolean areaSatArty, boolean throughFront, boolean underWater,
+                                              boolean nukeS2S) {
+        Report r;
+        r = new Report(6044);
+        r.subject = te.getId();
+        r.indent(2);
+        vDesc.add(r);
+        for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
+            hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
+            if (te.getInternal(hit) > 0) {
+                vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, damageType,
+                        damageIS, false, throughFront, underWater, nukeS2S));
+            }
+        }
+        return vDesc;
+    }
+
+    public Vector<Report> damageBA(Vector<Report> vDesc, BattleArmor te, HitData hit, int damage,
+                                            boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                            boolean areaSatArty, boolean throughFront, boolean underWater,
+                                            boolean nukeS2S, int critBonus, int crits) {
+        boolean reflectiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE);
+        boolean reactiveArmor = (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE);
+        int te_n = te.getId();
+        Report r;
+
+        // check for critical hit/miss vs. a BA
+        if (crits > 0) {
+            // possible critical miss if the rerolled location isn't alive
+            if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {
+                r = new Report(6037);
+                r.add(hit.getLocation());
+                r.subject = te_n;
+                r.indent(2);
+                vDesc.addElement(r);
+                return vDesc;
+            }
+            // otherwise critical hit
+            r = new Report(6225);
+            r.add(te.getLocationAbbr(hit));
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
+
+            crits = 0;
+            damage = Math.max(te.getInternal(hit.getLocation()) + te.getArmor(hit.getLocation()), damage);
+        }
+
+        // Is the squad in vacuum?
+        if(!te.isDestroyed() && !te.isDoomed()
+                && game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+            // PBI. Double damage.
+            damage *= 2;
+            r = new Report(6041);
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
+        }
+
+        return vDesc;
+    }
+
+    public Vector<Report> damageInfantry(Vector<Report> vDesc, Infantry te, HitData hit, int damage,
+                                   boolean ammoExplosion, DamageType damageType, boolean damageIS,
+                                   boolean areaSatArty, boolean throughFront, boolean underWater,
+                                   boolean nukeS2S, int critBonus, int crits) {
+        int te_n = te.getId();
+        Report r;
+
+        // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
+        if (damageType.equals(DamageType.ANTI_TSM) && te.isConventionalInfantry() && te.antiTSMVulnerable()) {
+            Roll diceRoll = Compute.rollD6(2);
+            r = new Report(6434);
+            r.subject = te_n;
+            r.add(diceRoll);
+            r.indent(2);
+            vDesc.addElement(r);
+            damage += diceRoll.getIntValue();
+        }
+
+        // area effect against infantry is double damage
+        if (areaSatArty) {
+            // PBI. Double damage.
+            damage *= 2;
+            r = new Report(6039);
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
+        }
+
+        // Is the infantry in the open?
+        if (ServerHelper.infantryInOpen(te, te_hex, game, isPlatoon, ammoExplosion,
+            hit.isIgnoreInfantryDoubleDamage())) {
+            // PBI. Damage is doubled.
+            damage *= 2;
+            r = new Report(6040);
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
+        }
+
+        // Is the infantry in vacuum?
+        if(!te.isDestroyed() && !te.isDoomed()
+                && game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+            // PBI. Double damage.
+            damage *= 2;
+            r = new Report(6041);
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
+        }
+
+        return vDesc;
+    }
+
+    public int calcCritBonus(Entity ae, Entity te, int damageOriginal, boolean areaSatArty) {
+        // the bonus to the crit roll if using the
+        // "advanced determining critical hits rule"
+        int critBonus = 0;
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL)
+                && (damageOriginal > 0)
+                && ((te instanceof Mech) || (te instanceof Protomech))) {
+            critBonus = Math.min((damageOriginal - 1) / 5, 4);
+        }
+
+        // Find out if Human TRO plays a part it crit bonus
+        if ((ae != null) && !areaSatArty) {
+            if ((te instanceof Mech) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MECH)) {
+                critBonus += 1;
+            } else if ((te instanceof Aero) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
+                critBonus += 1;
+            } else if ((te instanceof Tank) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_VEE)) {
+                critBonus += 1;
+            } else if ((te instanceof BattleArmor) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
+                critBonus += 1;
+            }
+        }
+        return critBonus;
+    }
+
+    public boolean checkFerroFibrous(Entity te, HitData hit) {
+        return ((te.getArmor(hit) > 0)
+                && ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS)
+                || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO)
+                || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO)));
+    }
+
+    public int manageDamageTypeReports(Entity te, Vector<Report> vDesc, int damage, DamageType damageType,  HitData hit, boolean isPlatoon) {
+        Report r;
+        int te_n = te.getId();
+
+        switch (damageType) {
+            case FRAGMENTATION:
+                // Fragmentation missiles deal full damage to conventional
+                // infantry
+                // (only) and no damage to other target types.
+                if (!isPlatoon) {
+                    damage = 0;
+                    r = new Report(6050); // For some reason this report never
+                    // actually shows up...
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                } else {
+                    r = new Report(6045); // ...but this one displays just fine.
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                }
+                break;
+            case NONPENETRATING:
+                if (!isPlatoon) {
+                    damage = 0;
+                    r = new Report(6051);
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                }
+                break;
+            case FLECHETTE:
+                // Flechette ammo deals full damage to conventional infantry and
+                // half damage to other targets (including battle armor).
+                if (!isPlatoon) {
+                    damage /= 2;
+                    r = new Report(6060);
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                } else {
+                    r = new Report(6055);
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                }
+                break;
+            case ACID:
+                if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor
+                        || ferroLamellorArmor || bar5) {
+                    if (te.getArmor(hit) <= 0) {
+                        break; // hitting IS, not acid-affected armor
+                    }
+                    damage = Math.min(te.getArmor(hit), 3);
+                    r = new Report(6061);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.add(damage);
+                    vDesc.addElement(r);
+                } else if (isPlatoon) {
+                    damage = (int) Math.ceil(damage * 1.5);
+                    r = new Report(6062);
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                }
+                break;
+            case INCENDIARY:
+                // Incendiary AC ammo does +2 damage to unarmoured infantry
+                if (isPlatoon) {
+                    damage += 2;
+                    r = new Report(6064);
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.addElement(r);
+                }
+                break;
+            case NAIL_RIVET:
+                // no damage against armor of BAR rating >=5
+                if ((te.getBARRating(hit.getLocation()) >= 5)
+                        && (te.getArmor(hit.getLocation()) > 0)) {
+                    damage = 0;
+                    r = new Report(6063);
+                    r.subject = te_n;
+                    r.indent(2);
+                    vDesc.add(r);
+                }
+                break;
+            default:
+                // We can ignore this.
+                break;
+        }
     }
 
     /**

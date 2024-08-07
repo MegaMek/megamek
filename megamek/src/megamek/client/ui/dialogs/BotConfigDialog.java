@@ -37,7 +37,9 @@ import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -439,7 +441,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private JPanel buildSlider(JSlider thisSlider, String minMsgProperty,
             String maxMsgProperty, String toolTip, String title) {
+        TitledBorder border = BorderFactory.createTitledBorder(title);
+        border.setTitlePosition(TitledBorder.TOP);
+        border.setTitleJustification(TitledBorder.CENTER);
         var result = new TipPanel();
+        result.setBorder(border);
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
         result.setToolTipText(toolTip);
         thisSlider.setToolTipText(toolTip);
@@ -455,6 +461,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         result.add(panLabels);
         result.add(thisSlider);
+        result.revalidate();
         return result;
     }
 

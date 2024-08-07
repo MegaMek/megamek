@@ -125,7 +125,11 @@ public class MovePath implements Cloneable, Serializable {
         this.setGame(game);
         // Do we care about gravity when adding steps?
         gravity = game.getPlanetaryConditions().getGravity();
-        gravityConcern = (gravity != 1.0F && game.getBoard().onGround() && !entity.isAirborne());
+        gravityConcern = (
+                (gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0
+                    || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
+                && game.getBoard().onGround() && !entity.isAirborne()
+        );
     }
 
     public Entity getEntity() {

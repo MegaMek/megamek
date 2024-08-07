@@ -19359,9 +19359,10 @@ public class TWGameManager extends AbstractGameManager {
                               damThresh.addModifier(-1, "easy to pilot");
                             }
                             getGame().addControlRoll(damThresh);
-                        } else if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)
-                            && entity.damageThisRound > ((IAero) entity).getHighestThresh()) {
-                            // did the damage exceed the unit's highest threshold?
+                        }
+                        if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)
+                            && entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
+                            // did the total damage this round exceed the unit's highest threshold?
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
                                 "highest damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
@@ -20297,7 +20298,7 @@ public class TWGameManager extends AbstractGameManager {
             if (modifier.getEntityId() != e.getId()) {
                 continue;
             }
-            if (Stream.of("threshold exceeded", "avionics hit", "critical hit").anyMatch(s -> modifier.getDesc().contains(s))) {
+            if (Stream.of("threshold", "avionics hit", "critical hit").anyMatch(s -> modifier.getDesc().contains(s))) {
                 if (atmosphericControlRoll == null) {
                     atmosphericControlRoll = modifier;
                 } else {

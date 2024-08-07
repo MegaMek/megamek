@@ -107,10 +107,6 @@ public interface IAero {
 
     int getAvionicsHits();
 
-    boolean isAvionicsHitThisRound();
-
-    void setAvionicsHitThisRound(boolean hit);
-
     int getSensorHits();
 
     int getFCSHits();

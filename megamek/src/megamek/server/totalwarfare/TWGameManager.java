@@ -58,6 +58,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Manages the Game and processes player actions.
@@ -20103,18 +20104,22 @@ public class TWGameManager extends AbstractGameManager {
             if (e.isUsingManAce()) {
                 target.addModifier(-1, "maneuvering ace");
             }
-            for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
-                final PilotingRollData modifier = j.nextElement();
-                if (modifier.getEntityId() != e.getId()) {
-                    continue;
-                }
-                // found a roll, add it
-                rolls.addElement(modifier);
-                if (reasons.length() > 0) {
-                    reasons.append("; ");
-                }
-                reasons.append(modifier.getCumulativePlainDesc());
-                target.append(modifier);
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
+                resolveControlWithAdvAtmospheric(e, target, rolls, reasons);
+            } else {
+                for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
+                    final PilotingRollData modifier = j.nextElement();
+                    if (modifier.getEntityId() != e.getId()) {
+                        continue;
+                    }
+                    // found a roll, add it
+                    rolls.addElement(modifier);
+                    if (!reasons.isEmpty()) {
+                        reasons.append("; ");
+                    }
+                    reasons.append(modifier.getCumulativePlainDesc());
+                    target.append(modifier);
+                  }
             }
             // any rolls needed?
             if (!rolls.isEmpty()) {
@@ -20278,6 +20283,44 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         return vReport;
+    }
+
+    void resolveControlWithAdvAtmospheric(Entity e, PilotingRollData target, Vector<PilotingRollData> rolls, StringBuilder reasons) {
+        // The August 2024 errata changed this rule to only trigger one control roll per
+        // round regardless of how many crits or thresholds occurred. As a result, the rolls
+        // need to be combined here at the end phase because not all the information is known
+        // when the individual rolls are first added throughout the round and previously added
+        // rolls can't easily be modified.
+        PilotingRollData atmosphericControlRoll = null;
+        for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
+            final PilotingRollData modifier = j.nextElement();
+            if (modifier.getEntityId() != e.getId()) {
+                continue;
+            }
+            if (Stream.of("threshold exceeded", "avionics hit", "critical hit").anyMatch(s -> modifier.getDesc().contains(s))) {
+                if (atmosphericControlRoll == null) {
+                    atmosphericControlRoll = modifier;
+                } else {
+                    // Modify the description of the pending atmospheric control roll instead of adding another one
+                    atmosphericControlRoll.addModifier(0, modifier.getDesc(), true);
+                }
+            } else {
+                // Not an atmospheric control roll under the new rules, so treat normally
+                rolls.addElement(modifier);
+                if (!reasons.isEmpty()) {
+                    reasons.append("; ");
+                }
+                reasons.append(modifier.getCumulativePlainDesc());
+                target.append(modifier);
+              }
+        }
+        if (atmosphericControlRoll != null) {
+            rolls.addElement(atmosphericControlRoll);
+            if (!reasons.isEmpty()) {
+                reasons.append("; ");
+            }
+            reasons.append(atmosphericControlRoll.getCumulativePlainDesc());
+        }
     }
 
     /**
@@ -24045,7 +24088,6 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case LandAirMech.LAM_AVIONICS:
                 if (en.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
-                    ((LandAirMech)en).setAvionicsHitThisRound(true);
                     if (en.isPartOfFighterSquadron()) {
                         game.addControlRoll(new PilotingRollData(
                                 en.getTransportId(), 1, "avionics hit"));
@@ -24344,7 +24386,6 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = aero.getId();
                 reports.add(r);
                 aero.setAvionicsHits(aero.getAvionicsHits() + 1);
-                aero.setAvionicsHitThisRound(true);
                 if (aero.isPartOfFighterSquadron()) {
                     game.addControlRoll(new PilotingRollData(
                             aero.getTransportId(), 1, "avionics hit"));
@@ -24361,7 +24402,6 @@ public class TWGameManager extends AbstractGameManager {
                 r = new Report(9115);
                 r.subject = aero.getId();
                 reports.add(r);
-                aero.setControlHitThisRound(true);
                 if (aero.isPartOfFighterSquadron()) {
                     game.addControlRoll(new PilotingRollData(
                             aero.getTransportId(), 1, "critical hit"));

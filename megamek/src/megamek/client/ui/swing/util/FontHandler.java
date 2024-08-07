@@ -150,7 +150,7 @@ public final class FontHandler {
                 errors.add("    Failed to read font " + fontFile);
             }
         }
-        logger.warn("Could not register some fonts\n{}", String.join("\n", errors));
+        logger.debug("Could not register some fonts\n{}", String.join("\n", errors));
     }
 
     private static void ensureInitialization() {

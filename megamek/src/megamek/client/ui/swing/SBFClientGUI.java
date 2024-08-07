@@ -21,6 +21,7 @@ package megamek.client.ui.swing;
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.sbf.SBFFiringDisplay;
 import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
@@ -116,7 +117,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private final Map<String, String> mainNames = new HashMap<>();
 
     private final GameListener gameListener = new SBFClientGUIGameListener(this);
-    private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
+    protected final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForGame();
     private BoardView bv;
     private SBFFormationSpriteHandler formationSpriteHandler;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
@@ -157,7 +158,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     @Override
     protected void initializeFrame() {
         super.initializeFrame();
-        frame.setJMenuBar(menuBar);
     }
 
     protected Game bvGame = new Game();
@@ -168,6 +168,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         super.initialize();
         try {
             client.getGame().addGameListener(gameListener);
+            bvGame.setBoard(bvGame.getBoard(0));
+
             bv = new BoardView(bvGame, MegaMekGUI.getKeyDispatcher(), null);
             bv.setTooltipProvider(new SBFBoardViewTooltip(client.getGame(), bv));
             boardViews.put(0, bv);
@@ -425,7 +427,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case FIRING:
-//                initializeWithBoardView(phase, new FiringDisplay(this), CG_FIRINGDISPLAY);
+                initializeWithBoardView(phase, new SBFFiringDisplay(this), CG_FIRINGDISPLAY);
                 break;
             case POINTBLANK_SHOT:
 //                initializeWithBoardView(phase, new PointblankShotDisplay(this), CG_POINTBLANKSHOTDISPLAY);
@@ -468,6 +470,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     public void selectForAction(@Nullable SBFFormation formation) {
         formationSpriteHandler.setSelectedFormation(formation);
+        if (GUIP.getAutoCenter() && (formation != null) && (formation.getPosition() != null)) {
+            bv.centerOnHex(formation.getPosition().coords());
+        }
     }
 
     /**

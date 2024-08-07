@@ -29,7 +29,6 @@ import megamek.common.strategicBattleSystems.SBFMoveStep;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 public class SBFStepSprite extends Sprite {
 
@@ -58,7 +57,7 @@ public class SBFStepSprite extends Sprite {
         isIllegal = step.isIllegal() || movePath.isIllegal();
 
         // step is the size of the hex that this step is in
-        bounds = new Rectangle(this.bv.getHexLocation(step.getDestination().getCoords()), this.bv.hex_size);
+        bounds = new Rectangle(this.bv.getHexLocation(step.getDestination().coords()), this.bv.hex_size);
         image = null;
         baseScaleImage = null;
     }
@@ -127,7 +126,7 @@ public class SBFStepSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         bounds = new Rectangle(0, 0, bv.hex_size.width, bv.hex_size.height);
-        Point ePos = bv.getHexLocation(step.getDestination().getCoords());
+        Point ePos = bv.getHexLocation(step.getDestination().coords());
         bounds.setLocation(ePos.x, ePos.y);
         return bounds;
     }

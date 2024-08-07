@@ -280,4 +280,13 @@ public class TargetRoll implements Serializable {
         modifiers.add(modifier);
         recalculate();
     }
+
+    /**
+     * @return True when this roll cannot succeed regardless of numbers, i.e. is impossible or automatically fails.
+     * Returns false otherwise, i.e. when the roll does not contain these finalizing conditions,
+     * even if the total roll modifier is above 12.
+     */
+    public boolean cannotSucceed() {
+        return (getValue() == IMPOSSIBLE) || (getValue() == AUTOMATIC_FAIL);
+    }
 }

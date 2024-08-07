@@ -20,6 +20,8 @@ package megamek.common.planetaryconditions;
 
 import megamek.common.Messages;
 
+import java.util.Arrays;
+
 public enum Weather {
     CLEAR("WEATHER_CLEAR", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
     LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.LightRain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
@@ -266,6 +268,18 @@ public enum Weather {
                 || isSnowFlurries()
                 || isHeavySnow()
                 || isSleet();
+    }
+
+    public boolean isAnyRain() {
+        return isAnyOf(LIGHT_RAIN, MOD_RAIN, HEAVY_RAIN, DOWNPOUR, GUSTING_RAIN);
+    }
+
+    public boolean isAnySnowfall() {
+        return isAnyOf(LIGHT_SNOW, MOD_SNOW, HEAVY_SNOW, SNOW_FLURRIES);
+    }
+
+    public boolean isAnyOf(Weather weather, Weather... moreWeathers) {
+        return this == weather || Arrays.stream(moreWeathers).anyMatch(w -> w == weather);
     }
 
     public static Weather getWeather(int i) {

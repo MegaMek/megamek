@@ -25,7 +25,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
-import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -43,7 +42,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     private boolean ignoreNoActionNag = false;
 
     /** The currently selected unit for taking action. Not necessarily equal to the unit shown in the unit viewer. */
-    protected int currentUnit = Entity.NONE;
+    protected int currentFormation = Entity.NONE;
 
     protected MegamekButton butSkipTurn;
     protected final SBFClientGUI clientgui;
@@ -175,9 +174,8 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         }
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
-        // point blank shots don't have the "isMyTurn()" characteristic
-        if ((currentUnit == Entity.NONE)
-                || getClientgui().getClient().getGame().getInGameObject(currentUnit).isEmpty()) {
+        if ((currentFormation == SBFFormation.NONE)
+                || getClientgui().getClient().getGame().getInGameObject(currentFormation).isEmpty()) {
             butDone.setEnabled(false);
             butSkipTurn.setEnabled(false);
         } else if (isDoingAction || ignoreNoActionNag) {
@@ -208,7 +206,6 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @return The currently acting formation, if any
      */
     protected final Optional<SBFFormation> actingFormation() {
-        return clientgui.getClient().getGame().getFormation(currentUnit);
+        return clientgui.getClient().getGame().getFormation(currentFormation);
     }
-    
 }

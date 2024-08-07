@@ -72,11 +72,11 @@ public class EmailService {
                 subjectReport = new Report(991);
                 subjectReport.add(round, false);
             }
-            setSubject(subjectReport.getText());
+            setSubject(subjectReport.text());
 
             var body = new StringBuilder("<div style=\"white-space: pre\">");
             for (var report: reports) {
-                body.append(report.getText());
+                body.append(report.text());
             }
             body.append("</div>");
             setText(body.toString(), "UTF-8", "html");

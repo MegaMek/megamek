@@ -78,6 +78,13 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int deployRound = 0;
     private BoardLocation position;
     private boolean isDone = false;
+    private int jumpUsedThisTurn = 0;
+
+    public enum MoraleStatus {
+        NORMAL, SHAKEN, BROKEN, ROUTED
+    }
+
+    private MoraleStatus moraleStatus = MoraleStatus.NORMAL;
 
     public String getName() {
         return name;
@@ -471,5 +478,29 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public boolean isDone() {
         return isDone;
+    }
+
+    public int getJumpUsedThisTurn() {
+        return jumpUsedThisTurn;
+    }
+
+    public void setJumpUsedThisTurn(int jumpUsedThisTurn) {
+        this.jumpUsedThisTurn = jumpUsedThisTurn;
+    }
+
+    public boolean isShaken() {
+        return moraleStatus == MoraleStatus.SHAKEN;
+    }
+
+    public boolean isBroken() {
+        return moraleStatus == MoraleStatus.BROKEN;
+    }
+
+    public boolean isRouted() {
+        return moraleStatus == MoraleStatus.ROUTED;
+    }
+
+    public MoraleStatus moraleStatus() {
+        return moraleStatus;
     }
 }

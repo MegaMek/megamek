@@ -33,6 +33,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.preference.*;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
@@ -353,5 +354,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 setStatusBarText(game.getPhase().toString());
             }
         }
+    }
+
+    protected String playerNameOrUnknown(@Nullable Player player) {
+        return (player == null) ? "Unknown" : player.getName();
     }
 }

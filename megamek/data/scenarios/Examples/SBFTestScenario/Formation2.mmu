@@ -19,6 +19,7 @@ generalname: A Company
 units:
   - type: SBFUnit
     generalname: A Lance
+    status: [com, lead]
     elements:
     - type: ASElement
       fullname: Skanda Light Tank

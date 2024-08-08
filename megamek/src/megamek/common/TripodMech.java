@@ -134,6 +134,68 @@ public class TripodMech extends Mech {
 
         return canFlip;
     }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) ||
+    			hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null);
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	double percentage = 0.0;
+    	
+    	if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null)) {
+    		percentage += 0.05;
+    	}
+    	if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null)) {
+    		percentage += 0.05;
+    	}
+    	
+    	double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+    	
+    	return getWeight() * percentage * heavyLifterMultiplier;
+    }
+    
+    @Override
+    public List<Integer> getDefaultPickupLocations() {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) &&
+    			!isLocationBad(Mech.LOC_LARM)) {
+    		result.add(Mech.LOC_LARM);
+    	}
+    	if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null) &&
+    			!isLocationBad(Mech.LOC_RARM)) {
+    		result.add(Mech.LOC_RARM);
+    	}
+    	
+    	return result;
+    }
+    
+    @Override
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	// if we can pick the object up according to "one handed pick up rules" in TacOps
+    	if (cargo.getTonnage() <= (getWeight() / 20)) {
+    		if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && (getCarriedObject(Mech.LOC_LARM) == null) &&
+        			!isLocationBad(Mech.LOC_LARM)) {
+    			result.add(Mech.LOC_LARM);
+    		}
+    		
+    		if (hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && (getCarriedObject(Mech.LOC_RARM) == null) &&
+        			!isLocationBad(Mech.LOC_RARM)) {
+    			result.add(Mech.LOC_RARM);
+    		}
+    	}
+    	
+    	return result;
+    }
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
@@ -1029,8 +1091,7 @@ public class TripodMech extends Mech {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                             && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -1063,9 +1124,7 @@ public class TripodMech extends Mech {
                     case 11:
                         return new HitData(Mech.LOC_LARM);
                     case 12:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1078,8 +1137,7 @@ public class TripodMech extends Mech {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                             && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -1120,9 +1178,7 @@ public class TripodMech extends Mech {
                     case 10:
                         return new HitData(Mech.LOC_RARM);
                     case 12:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1135,8 +1191,7 @@ public class TripodMech extends Mech {
                 // normal right side hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                             && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -1177,9 +1232,7 @@ public class TripodMech extends Mech {
                     case 10:
                         return new HitData(Mech.LOC_LARM);
                     case 12:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1195,9 +1248,7 @@ public class TripodMech extends Mech {
                     && isProne()) {
                     switch (roll) {
                         case 2:
-                            if ((getCrew().hasEdgeRemaining() && getCrew()
-                                    .getOptions()
-                                    .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                                 && !game.getOptions().booleanOption(
                                     OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
@@ -1231,9 +1282,7 @@ public class TripodMech extends Mech {
                         case 11:
                             return new HitData(Mech.LOC_LARM, true);
                         case 12:
-                            if (getCrew().hasEdgeRemaining()
-                                && getCrew().getOptions().booleanOption(
-                                    "edge_when_headhit")) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
                                                                  aimedLocation, aimingMode, cover);
@@ -1246,9 +1295,7 @@ public class TripodMech extends Mech {
                 } else {
                     switch (roll) {
                         case 2:
-                            if ((getCrew().hasEdgeRemaining() && getCrew()
-                                    .getOptions()
-                                    .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                                 && !game.getOptions().booleanOption(
                                     OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
@@ -1282,9 +1329,7 @@ public class TripodMech extends Mech {
                         case 11:
                             return new HitData(Mech.LOC_LARM, true);
                         case 12:
-                            if (getCrew().hasEdgeRemaining()
-                                && getCrew().getOptions().booleanOption(
-                                    "edge_when_headhit")) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
                                                                  aimedLocation, aimingMode, cover);
@@ -1327,9 +1372,7 @@ public class TripodMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_RARM);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1351,9 +1394,7 @@ public class TripodMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_LARM);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1375,9 +1416,7 @@ public class TripodMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_RARM);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1401,9 +1440,7 @@ public class TripodMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_RARM, true);
                     case 6:
-                        if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                "edge_when_headhit")) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1491,9 +1528,7 @@ public class TripodMech extends Mech {
             // Swarm attack locations.
             switch (roll) {
                 case 2:
-                    if (getCrew().hasEdgeRemaining()
-                        && getCrew().getOptions().booleanOption(
-                            "edge_when_headhit")) {
+                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side,
                                                          aimedLocation, aimingMode, cover);
@@ -1521,9 +1556,7 @@ public class TripodMech extends Mech {
                 case 11:
                     return new HitData(Mech.LOC_CT, true, effects);
                 case 12:
-                    if (getCrew().hasEdgeRemaining()
-                        && getCrew().getOptions().booleanOption(
-                            "edge_when_headhit")) {
+                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side,
                                                          aimedLocation, aimingMode, cover);
@@ -1562,9 +1595,7 @@ public class TripodMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
                 case 6:
-                    if (getCrew().hasEdgeRemaining()
-                        && getCrew().getOptions().booleanOption(
-                            "edge_when_headhit")) {
+                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side,
                                                          aimedLocation, aimingMode, cover);

@@ -150,6 +150,7 @@ class TWPhaseEndManager {
                     gameManager.getGame().addReports(gameManager.getvPhaseReport());
                     gameManager.changePhase(GamePhase.PHYSICAL);
                 }
+                gameManager.sendGroundObjectUpdate();
                 // For bomb markers
                 gameManager.sendSpecialHexDisplayPackets();
                 break;
@@ -177,6 +178,7 @@ class TWPhaseEndManager {
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.END);
                 }
+                gameManager.sendGroundObjectUpdate();
                 break;
             case PHYSICAL_REPORT:
                 gameManager.changePhase(GamePhase.END);

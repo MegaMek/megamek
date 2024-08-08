@@ -285,6 +285,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if (!(ae instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't club");
         }
+        
+        // if somehow carrying cargo while holding a club
+        if (!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ||
+        		!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ) {
+    		return new ToHitData(TargetRoll.IMPOSSIBLE, 
+    				Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo"));
+    	}     
 
         // Quads can't club...
         // except for torso mounted industrial tools of course!

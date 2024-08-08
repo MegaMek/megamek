@@ -3165,28 +3165,6 @@
 			<availability>WOB:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
-		<availability>LA:2</availability>
-		<model name=''>
-			<roles>support,engineer</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
-		<model name=''>
-			<roles>support,engineer</roles>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Cargo)'>
-			<roles>support,engineer</roles>
-			<availability>General:4</availability>
-		</model>
-		<model name='(Reverse)'>
-			<roles>support,engineer</roles>
-			<availability>General:2</availability>
-		</model>
-	</chassis>
 	<chassis name='Bulldog Medium Tank' unitType='Tank'>
 		<availability>MOC:3-,CC:4-,HL:3-,FRR:3-,IS:3-,Periphery.Deep:7,FS:3-,CIR:4-,MERC:3-,TC:3-,Periphery:4-,LA:2-,FWL:1-,DC:3-</availability>
 		<model name=''>
@@ -3252,6 +3230,28 @@
 			<availability>LA:4,General:2,MERC:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
+		<availability>LA:2</availability>
+		<model name=''>
+			<roles>support,engineer</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
+		<availability>CC:2,LA:3,FWL:2,FS:2,MERC:2,CIR:2,DC:2</availability>
+		<model name=''>
+			<roles>support,engineer</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='(Cargo)'>
+			<roles>support,engineer</roles>
+			<availability>General:4</availability>
+		</model>
+		<model name='(Reverse)'>
+			<roles>support,engineer</roles>
+			<availability>General:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Caesar' unitType='Mek'>
 		<availability>CS:4,FVC:6,LA:4,FS:6,MERC:4</availability>
 		<model name='CES-3R'>
@@ -3309,6 +3309,13 @@
 		<model name='(2882)'>
 			<roles>asf_carrier</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
+		<availability>IS:5</availability>
+		<model name=''>
+			<roles>support</roles>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Cataphract' unitType='Mek'>
@@ -12475,14 +12482,20 @@
 			<roles>recon</roles>
 			<availability>FRR:1-,DC:2-</availability>
 		</model>
-		<model name='PXH-1b (Special)'>
+		<model name='PXH-1b &apos;Special&apos;'>
+			<availability>CLAN:5,FWL:4,WOB:4,BAN:1</availability>
+		</model>
+		<model name='PXH-1b &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:5,FWL:4,WOB:4,BAN:1</availability>
 		</model>
 		<model name='PXH-1bC'>
 			<availability>CS:1,WOB:1</availability>
 		</model>
-		<model name='PXH-1c (Special)'>
+		<model name='PXH-1c &apos;Special&apos;'>
+			<availability>CLAN:3,FWL:3,WOB:4,RCM:3,CGS:5</availability>
+		</model>
+		<model name='PXH-1c &apos;Special&apos;'>
 			<roles>recon</roles>
 			<availability>CLAN:3,FWL:3,WOB:4,RCM:3,CGS:5</availability>
 		</model>
@@ -12590,13 +12603,6 @@
 		</model>
 		<model name='(WoB)'>
 			<availability>WOB:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Cascatelle Firefighting VTOL' unitType='VTOL'>
-		<availability>IS:5</availability>
-		<model name=''>
-			<roles>support</roles>
-			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Piranha' unitType='Mek'>
@@ -13608,19 +13614,13 @@
 		</model>
 	</chassis>
 	<chassis name='SM Tank Destroyer' unitType='Tank'>
-		<availability>CNC:6,DC:4</availability>
+		<availability>CNC:2,DC:2</availability>
 		<model name='SM1'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
-	<chassis name='SM Tank Destroyer' unitType='Tank'>
-		<availability>CNC:4,DC:3</availability>
 		<model name='SM1A'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
-	<chassis name='SM Tank Destroyer' unitType='Tank'>
-		<availability>CNC:2,DC:2</availability>
 		<model name='SM3'>
 			<availability>General:8</availability>
 		</model>

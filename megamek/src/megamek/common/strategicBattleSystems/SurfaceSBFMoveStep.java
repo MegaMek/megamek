@@ -66,9 +66,9 @@ public class SurfaceSBFMoveStep extends SBFMoveStep {
         boolean isMek = formation.isType(SBFElementType.BM);
         boolean isVehicle = formation.isType(SBFElementType.V);
 
-        mpUsed = startingPoint.getCoords().distance(destination.getCoords());
-        Hex startingHex = game.getBoard(startingPoint.getBoardId()).getHex(startingPoint.getCoords());
-        Hex destinationHex = game.getBoard(destination.getBoardId()).getHex(destination.getCoords());
+        mpUsed = startingPoint.coords().distance(destination.coords());
+        Hex startingHex = game.getBoard(startingPoint.boardId()).getHex(startingPoint.coords());
+        Hex destinationHex = game.getBoard(destination.boardId()).getHex(destination.coords());
         int levelDifference = Math.abs(destinationHex.getLevel() - startingHex.getLevel());
 
         if (destinationHex.containsAnyTerrainOf(Terrains.WOODS)) {
@@ -123,11 +123,11 @@ public class SurfaceSBFMoveStep extends SBFMoveStep {
 
     @Override
     public String toString() {
-        return ClientCommand.getDirection(startingPoint.getCoords().direction(destination.getCoords()));
+        return ClientCommand.getDirection(startingPoint.coords().direction(destination.coords()));
     }
 
     @Override
     public int getMovementDirection() {
-        return startingPoint.getCoords().direction(destination.getCoords());
+        return startingPoint.coords().direction(destination.coords());
     }
 }

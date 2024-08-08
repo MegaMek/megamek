@@ -27,7 +27,7 @@ public interface ReportEntry extends Serializable {
      *
      * @return a HTML String with the final report
      */
-    String getText();
+    String text();
 
     /**
      * Adds the result of the given roll to this ReportEntry. Returns this  ReportEntry to allow chaining calls.

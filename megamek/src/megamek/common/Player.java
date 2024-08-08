@@ -23,6 +23,8 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
@@ -94,6 +96,8 @@ public final class Player extends TurnOrdered {
     private Vector<Minefield> visibleMinefields = new Vector<>();
 
     private boolean admitsDefeat = false;
+    
+    private List<ICarryable> groundObjectsToPlace = new ArrayList<>();
 
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
@@ -138,7 +142,8 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0);
+        return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0) 
+        		|| getGroundObjectsToPlace().size() > 0;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -456,7 +461,21 @@ public final class Player extends TurnOrdered {
         return admitsDefeat;
     }
 
-    public void setVotedToAllowTeamChange(boolean allowChange) {
+    /**
+	 * Collection of carryable objects that this player will be placing during the game.
+	 */
+	public List<ICarryable> getGroundObjectsToPlace() {
+		return groundObjectsToPlace;
+	}
+
+	/**
+	 * Present for serialization purposes only
+	 */
+	public void setGroundObjectsToPlace(List<ICarryable> groundObjectsToPlace) {
+		this.groundObjectsToPlace = groundObjectsToPlace;
+	}
+
+	public void setVotedToAllowTeamChange(boolean allowChange) {
         votedToAllowTeamChange = allowChange;
     }
 

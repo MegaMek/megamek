@@ -18,6 +18,8 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.Quirks;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -681,11 +683,6 @@ public class TestMech extends TestEntity {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, getEntity().getTechLevel());
-    }
-
-    @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         if (skip()) {
@@ -732,6 +729,9 @@ public class TestMech extends TestEntity {
             correct = correct && checkMiscSpreadAllocation(mech, misc, buff);
         }
         correct = correct && correctMovement(buff);
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
+        }
         return correct;
     }
 
@@ -1047,23 +1047,6 @@ public class TestMech extends TestEntity {
         }
 
         if (mech.isSuperHeavy()) {
-            switch (mech.hasEngine() ? mech.getEngine().getEngineType() : Engine.NONE) {
-                case Engine.NORMAL_ENGINE:
-                case Engine.LARGE_ENGINE:
-                    break;
-                case Engine.XL_ENGINE:
-                case Engine.XXL_ENGINE:
-                case Engine.COMPACT_ENGINE:
-                case Engine.LIGHT_ENGINE:
-                    if (mech.isIndustrial()) {
-                        buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
-                        illegal = true;
-                    }
-                    break;
-                default:
-                    buff.append("Superheavy Mechs must use some type of fusion engine\n");
-                    illegal = true;
-            }
             if (mech.getGyroType() != Mech.GYRO_SUPERHEAVY) {
                 buff.append("Superheavy Mechs must use a superheavy gyro.\n");
                 illegal = true;
@@ -1098,6 +1081,26 @@ public class TestMech extends TestEntity {
             if ((mech.getGyroType() != Mech.GYRO_STANDARD) && (mech.getGyroType() != Mech.GYRO_SUPERHEAVY)) {
                 buff.append("industrial mechs can only mount standard gyros\n");
                 illegal = true;
+            }
+            if (hasDoubleHeatSinks()) {
+                buff.append("Industrial Meks cannot mount double heat sinks\n");
+                illegal = true;
+            }
+            switch (mech.hasEngine() ? engine.getEngineType() : Engine.NONE) {
+                case Engine.NORMAL_ENGINE:
+                    break;
+                case Engine.COMBUSTION_ENGINE:
+                case Engine.FUEL_CELL:
+                case Engine.FISSION:
+                    if (mech.isSuperHeavy()) {
+                        buff.append("Superheavy Industrial Meks can only use standard or large fusion engines\n");
+                        illegal = true;
+                    }
+                    break;
+                default:
+                    buff.append("Industrial Meks can only use standard and large fusion engines, ICEs, fuel cells or fission\n");
+                    illegal = true;
+                    break;
             }
         }
 
@@ -1411,17 +1414,11 @@ public class TestMech extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((m.getType().hasFlag(WeaponType.F_TASER)
-                    || m.getType().hasFlag(WeaponType.F_HYPER))
+            if ((m.getType().hasFlag(WeaponType.F_TASER))
                     && !(mech.hasEngine() && mech.getEngine().isFusion())) {
                 buff.append(m.getType().getName()).append(" needs fusion engine\n");
                 illegal = true;
             }
-        }
-
-        if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-            buff.append("RISC Hyper Laser needs fusion engine\n");
-            illegal = true;
         }
 
         if (mech.hasFullHeadEject()) {

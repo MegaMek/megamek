@@ -14,13 +14,13 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +32,18 @@ import java.util.List;
  * @param <T> Any object type
  */
 public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
-    private static boolean showDetails = false;
-    final private String message;
-    final List<T> targets;
-    final private List<T> chosen = new ArrayList<T>();
-    final private boolean isMultiSelect;
+
+    private static final int BASE_BUTTON_GAP = 5;
+
+    private final String message;
+    private final List<T> targets;
+    private final List<T> chosen = new ArrayList<>();
+    private final boolean isMultiSelect;
+    private JToggleButton detailsCheckBox;
+    private boolean showDetails = false;
     private JPanel choicesPanel;
     private JToggleButton[] buttons;
+    private int columns = 2;
 
     /**
      * This creates a modal AbstractChoiceDialog using the default resource bundle as a Modal dialog.
@@ -51,7 +56,8 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
      * @param isMultiSelect if true, allows user to select multiple items. if false first,
      *                      item chosen will close the window
      */
-    protected AbstractChoiceDialog(JFrame frame, String title, String message, @Nullable List<T> targets, boolean isMultiSelect) {
+    protected AbstractChoiceDialog(JFrame frame, String title, String message,
+                                   @Nullable List<T> targets, boolean isMultiSelect) {
         super(frame, true, title, title);
         this.message = message;
         this.targets = targets;
@@ -59,27 +65,48 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
         // in concrete class, initialize() must be called after all member variables set
     }
 
+    public void setUseDetailed(boolean useDetailed) {
+        if (!useDetailed) {
+            showDetails = false;
+        }
+        detailsCheckBox.setVisible(useDetailed);
+    }
+
+    public void setColumns(int columns) {
+        if (columns < 1) {
+            throw new IllegalArgumentException("Cannot use less than one column.");
+        } else {
+            this.columns = columns;
+        }
+    }
+
     @Override
     protected Container createCenterPane() {
         JPanel result = new JPanel();
         result.setLayout(new BorderLayout());
 
+        int buttonGap = UIUtil.scaleForGUI(BASE_BUTTON_GAP);
+        int padding = 5 * buttonGap;
+
         JPanel ops = new JPanel();
         ops.setLayout(new FlowLayout());
         result.add(ops, BorderLayout.PAGE_START);
         var msgLabel = new JLabel(message, JLabel.CENTER);
+        msgLabel.setBorder(new EmptyBorder(0, padding, 0, padding));
         ops.add(msgLabel);
 
-        JToggleButton detailsCheckBox = new JToggleButton("Show details", showDetails);
+        detailsCheckBox = new JToggleButton("Show details", showDetails);
         detailsCheckBox.addActionListener(e -> toggleDetails());
         ops.add(detailsCheckBox);
 
         choicesPanel = new JPanel();
         JScrollPane listScroller = new JScrollPane(choicesPanel);
+        listScroller.setBorder(null);
         result.add(listScroller, BorderLayout.CENTER);
 
         // button per-option
-        choicesPanel.setLayout(new GridLayout(0, 2));
+        choicesPanel.setLayout(new GridLayout(0, columns, buttonGap, buttonGap));
+        choicesPanel.setBorder(new EmptyBorder(buttonGap, padding, padding, padding));
         buttons = new JToggleButton[targets.size()];
         for (int i = 0; i < buttons.length; i++) {
             buttons[i] = new JToggleButton();
@@ -119,13 +146,13 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
     }
 
     /**
-     * @Override to set button text and/or icon with details about this choice. Usually this is
+     * Override to set button text and/or icon with details about this choice. Usually this is
      * This is called then the show details button is depressed
      */
     abstract protected void detailLabel(JToggleButton button, T target);
 
     /**
-     * @Override to set button text and/or icon with summary info about this choice.
+     * Override to set button text and/or icon with summary info about this choice.
      * This is called then the show details button is not depressed
      */
     abstract protected void summaryLabel(JToggleButton button, T target);
@@ -149,10 +176,10 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
     }
 
     /**
-     * @return first chosen item, or @null if nothing chosen
+     * @return first chosen item, or null if nothing chosen
      */
     public @Nullable T getFirstChoice() {
-        return (chosen.size() == 0) ? null : chosen.get(0);
+        return (chosen.isEmpty()) ? null : chosen.get(0);
     }
 
     /**

@@ -373,6 +373,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JComboBox playerListAutoDisplayNonReportCombo;
     private JComboBox forceDisplayAutoDisplayReportCombo;
     private JComboBox forceDisplayAutoDisplayNonReportCombo;
+    private JCheckBox displayMoveDisplayDuringMovePhases;
+    private JCheckBox displayFireDisplayDuringFirePhases;
 
     // Report
     private JTextPane reportKeywordsTextPane;
@@ -2031,6 +2033,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         playerListAutoDisplayNonReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayNonReportPhase());
         forceDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayReportPhase());
         forceDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayNonReportPhase());
+        displayMoveDisplayDuringMovePhases.setSelected(GUIP.getMoveDisplayTabDuringMovePhases());
+        displayFireDisplayDuringFirePhases.setSelected(GUIP.getFireDisplayTabDuringFiringPhases());
 
         csbUnitDisplayHeatLevel1.setColour(GUIP.getUnitDisplayHeatLevel1());
         csbUnitDisplayHeatLevel2.setColour(GUIP.getUnitDisplayHeatLevel2());
@@ -2460,6 +2464,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setPlayerListAutoDisplayNonReportPhase(playerListAutoDisplayNonReportCombo.getSelectedIndex());
         GUIP.setForceDisplayAutoDisplayReportPhase(forceDisplayAutoDisplayReportCombo.getSelectedIndex());
         GUIP.setForceDisplayAutoDisplayNonReportPhase(forceDisplayAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setMoveDisplayTabDuringMovePhases(displayMoveDisplayDuringMovePhases.isSelected());
+        GUIP.setFireDisplayTabDuringFiringPhases(displayFireDisplayDuringFirePhases.isSelected());
 
         GUIP.setUnitDisplayHeatColorLevel1(csbUnitDisplayHeatLevel1.getColour());
         GUIP.setUnitDisplayHeatColorLevel2(csbUnitDisplayHeatLevel2.getColour());
@@ -2840,6 +2846,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return cb;
     }
 
+    private JCheckBox createOnOffCheckBox(boolean b) {
+        JCheckBox chkb = new JCheckBox();
+        chkb.setEnabled(true);
+        chkb.setSelected(b);
+
+        return chkb;
+    }
+
     private JPanel getPhasePanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
@@ -2876,7 +2890,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row = new ArrayList<>();
         phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
         row.add(phaseLabel);
-        miniMapAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getMiniReportAutoDisplayNonReportPhase());
+        miniMapAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getMinimapAutoDisplayNonReportPhase());
         row.add(miniMapAutoDisplayNonReportCombo);
         comps.add(row);
 
@@ -2935,6 +2949,26 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(phaseLabel);
         forceDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayNonReportPhase());
         row.add(forceDisplayAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        // Firing/Movement Display changes
+        row = new ArrayList<>();
+        JLabel tabsDisplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewFiringMovingTabs"));
+        row.add(tabsDisplayLabel);
+        comps.add(row);
+        row = new ArrayList<>();
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.tabsMove") + ": ");
+        row.add(phaseLabel);
+        displayMoveDisplayDuringMovePhases = createOnOffCheckBox(GUIP.getMoveDisplayTabDuringMovePhases());
+        row.add(displayMoveDisplayDuringMovePhases);
+        comps.add(row);
+        row = new ArrayList<>();
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.tabsFire") + ": ");
+        row.add(phaseLabel);
+        displayFireDisplayDuringFirePhases = createOnOffCheckBox(GUIP.getFireDisplayTabDuringFiringPhases());
+        row.add(displayFireDisplayDuringFirePhases);
         comps.add(row);
 
         return createSettingsPanel(comps);

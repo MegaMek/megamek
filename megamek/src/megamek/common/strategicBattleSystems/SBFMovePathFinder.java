@@ -21,8 +21,6 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.pathfinder.AbstractPathFinder;
-import megamek.common.pathfinder.MovePathFinder;
-import megamek.common.pathfinder.ShortestPathFinder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -75,7 +73,7 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
     public static SBFMovePathFinder aStarFinder(BoardLocation destination, SBFGame game) {
         SBFMovePathFinder spf = new SBFMovePathFinder(game, SBFMovePath::getLastPosition, new MovePathRelaxer(),
                 new GroundMovementAdjacency(game),
-                new MovePathAStarComparator(destination, game.getBoard(destination.getBoardId())));
+                new MovePathAStarComparator(destination, game.getBoard(destination.boardId())));
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathLegalityFilter());
         return spf;

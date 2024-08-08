@@ -5,7 +5,7 @@ plugins {
     id 'edu.sc.seis.launch4j' version '3.0.6'
     id 'jacoco'
     id 'java'
-    id "io.sentry.jvm.gradle" version '4.9.0'
+    id "io.sentry.jvm.gradle" version '4.10.0'
     id 'com.palantir.git-version' version '3.1.0'
 }
 
@@ -34,15 +34,15 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.1'
-    implementation 'com.formdev:flatlaf:3.4.1'
-    implementation 'com.formdev:flatlaf-extras:3.4.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2'
+    implementation 'com.formdev:flatlaf:3.5'
+    implementation 'com.formdev:flatlaf-extras:3.5'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.20'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
     implementation 'org.apache.commons:commons-collections4:4.5.0-M2'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.apache.commons:commons-lang3:3.15.0'
     implementation 'org.apache.commons:commons-text:1.12.0'
     implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
@@ -50,7 +50,7 @@ dependencies {
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
     testImplementation 'org.mockito:mockito-core:5.12.0'
@@ -77,12 +77,8 @@ ext {
     log = "logs"
     mmconf = "mmconf"
     userdata = 'userdata'
-    distributionDir = "${buildDir}/distributions"
     fileStagingDir = "${buildDir}/files"
-    mmRepoDir = "${buildDir}/repo"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-    scriptsDir = "${projectDir}/scripts"
-    scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
 }
 
 run {
@@ -129,6 +125,7 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
 
 task copyFiles(type: Copy) {
     description = 'Stages files that are to be copied into the distribution.'
+    group = 'build'
 
     dependsOn officialUnitList
     dependsOn equipmentList
@@ -141,7 +138,7 @@ task copyFiles(type: Copy) {
     include "SubmitBug.html"
     include "license.txt"
     include "sentry.properties"
-    include "MegaMek.l4j.ini"
+    include "*.ini"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
@@ -149,12 +146,6 @@ task copyFiles(type: Copy) {
     include "${userdata}/"
 
     into fileStagingDir
-
-    inputs.dir "${data}"
-    inputs.dir "${docs}"
-    inputs.dir "${mmconf}"
-    inputs.files 'license.txt', 'SubmitBug.html', 'sentry.properties', 'MegaMek.l4j.ini'
-    outputs.dir fileStagingDir
 }
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
@@ -213,24 +204,11 @@ task stageFiles {
 
 task createStartScripts (type: CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
-    applicationName = 'mm'
+    applicationName = 'MegaMek'
     mainClass = application.mainClass
     outputDir = startScripts.outputDir
-    classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
-            .filter { it.name.endsWith(".jar") }
+    classpath = jar.outputs.files
     defaultJvmOpts = project.ext.mmJvmOptions
-    // The default template assumes the start script is in a subdirectory and always
-    // sets APP_HOME to the parent directory of the one containing the script.
-    // So we provide a modified template.
-    unixStartScriptGenerator.template = resources.text.fromFile(scriptTemplate)
-    doLast {
-        // The start script assumes all the files on the classpath will be in the lib directory.
-        unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
-        windowsScript.text = windowsScript.text.replace('lib/MegaMek', 'MegaMek')
-        // The Windows script just has a single line that needs to be changed to put the script in the root,
-        // so we'll do a simple replace
-        windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')
-    }
 }
 
 distributions {
@@ -239,13 +217,13 @@ distributions {
         contents {
             from ("${buildDir}/launch4j") {
                 include '*.exe'
-                include '*.ini'
             }
             from(jar) {
                 into "${lib}"
             }
-            from(createStartScripts.outputs.files) {
-                include "mm*"
+            from("${projectDir}/scripts") {
+                include "shell.sh"
+                rename "shell.sh", "MegaMek.sh"
             }
             from(jar)
             from fileStagingDir

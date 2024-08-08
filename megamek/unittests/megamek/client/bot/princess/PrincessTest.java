@@ -25,6 +25,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -258,6 +259,9 @@ public class PrincessTest {
         when(mockGame.getTurn()).thenReturn(mockTurn);
         when(mockTurn.isValidEntity(any(Entity.class), any(Game.class))).thenCallRealMethod();
         when(mockTurn.isValidEntity(any(Entity.class), any(Game.class), anyBoolean())).thenCallRealMethod();
+        PlanetaryConditions mockPC = new PlanetaryConditions();
+        mockPC.setGravity(1.0f);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         when(mockPrincess.getGame()).thenReturn(mockGame);
 
         List<Entity> testEntityList = new ArrayList<>();
@@ -450,6 +454,9 @@ public class PrincessTest {
         when(mockPrincess.getHex(any(Coords.class))).thenReturn(mockHex);
 
         Game mockGame = mock(Game.class);
+        PlanetaryConditions mockPC = new PlanetaryConditions();
+        mockPC.setGravity(1.0f);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         doReturn(mockGame).when(mockPrincess).getGame();
 
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);

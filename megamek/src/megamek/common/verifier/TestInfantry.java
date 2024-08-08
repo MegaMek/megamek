@@ -131,11 +131,6 @@ public class TestInfantry extends TestEntity {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, getEntity().getTechLevel());
-    }
-
-    @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         Infantry inf = (Infantry) getEntity();
         boolean correct = true;
@@ -198,7 +193,9 @@ public class TestInfantry extends TestEntity {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
-
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+            correct = true;
+        }
         return correct;
     }
     

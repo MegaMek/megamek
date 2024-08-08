@@ -15,16 +15,9 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
-import org.apache.logging.log4j.LogManager;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.Serializable;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -187,10 +180,10 @@ public class Hex implements Serializable {
             }
 
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
-            
+
             // Water gets a special treatment: Water at the board edge
-            // (hex == null) should usually look like ocean and 
-            // therefore always gets connection to outside the board 
+            // (hex == null) should usually look like ocean and
+            // therefore always gets connection to outside the board
             if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
                 cTerr.setExit(direction, true);
             }
@@ -601,12 +594,12 @@ public class Hex implements Serializable {
             terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
-    
-    /** 
+
+    /**
      * True if this hex has a clifftop towards otherHex. This hex
      * must have the terrain CLIFF_TOP, it must have exits
      * specified (exits set to active) for the CLIFF_TOP terrain,
-     * and must have an exit in the direction of otherHex.  
+     * and must have an exit in the direction of otherHex.
      */
     public boolean hasCliffTopTowards(Hex otherHex) {
         return containsTerrain(Terrains.CLIFF_TOP)
@@ -619,10 +612,10 @@ public class Hex implements Serializable {
         return coords;
     }
 
-    /** 
+    /**
      * Sets the coords of this hex. DO NOT USE outside board.java!
-     * WILL NOT MOVE THE HEX. Only the position of the hex in the 
-     * board's data[] determines the actual location of the hex. 
+     * WILL NOT MOVE THE HEX. Only the position of the hex in the
+     * board's data[] determines the actual location of the hex.
      */
     public void setCoords(Coords c) {
         coords = c;
@@ -685,10 +678,10 @@ public class Hex implements Serializable {
             int wl = terrainLevel(Terrains.WOODS);
             int jl = terrainLevel(Terrains.JUNGLE);
             int el = terrainLevel(Terrains.FOLIAGE_ELEV);
-            
+
             boolean isLightOrHeavy = wl == 1 || jl == 1 || wl == 2 || jl == 2;
             boolean isUltra = wl == 3 || jl == 3;
-            
+
             if (! ((el == 1) || (isLightOrHeavy && el == 2) || (isUltra && el == 3))) {
                 newErrors.add("Foliage elevation is wrong, must be 1 or 2 for Light/Heavy and 1 or 3 for Ultra Woods/Jungle.");
             }
@@ -697,9 +690,9 @@ public class Hex implements Serializable {
                 && containsTerrain(Terrains.FOLIAGE_ELEV)) {
             newErrors.add("Woods and Jungle Elevation terrain present without Woods or Jungle.");
         }
-        
+
         // Buildings must have at least BUILDING, BLDG_ELEV and BLDG_CF
-        if (containsAnyTerrainOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF, Terrains.BLDG_FLUFF, 
+        if (containsAnyTerrainOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF, Terrains.BLDG_FLUFF,
                 Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE)
                 && !containsAllTerrainsOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF)) {
             newErrors.add("Incomplete Building! A hex with any building terrain must at least contain "
@@ -714,14 +707,14 @@ public class Hex implements Serializable {
         }
 
         // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
-        if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, 
+        if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
                 Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
-                && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, 
+                && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
                         Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
             newErrors.add("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
                     + "the fuel tank type, elevation, CF and the fuel tank magnitude.");
         }
-        
+
         if (containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.BUILDING)) {
             newErrors.add("A hex cannot have both a Building and a Fuel Tank.");
         }

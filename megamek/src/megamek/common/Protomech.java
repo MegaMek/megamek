@@ -18,14 +18,16 @@ import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -89,6 +91,22 @@ public class Protomech extends Entity {
     public static final int[] POSSIBLE_PILOT_DAMAGE = { 0, 1, 3, 1, 1, 1, 0 };
 
     public static final String[] systemNames = { "Arm", "Leg", "Head", "Torso" };
+    
+    /**
+     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
+     */
+    public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
+    
+    static {
+    	BLOCKED_FIRING_LOCATIONS = new HashMap<>();
+    	BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_TORSO);
+    	
+    	BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
+    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_TORSO);
+    }
 
     // For grapple attacks
     private int grappled_id = Entity.NONE;
@@ -556,6 +574,64 @@ public class Protomech extends Entity {
     @Override
     public boolean hasRearArmor(int loc) {
         return false;
+    }
+    
+    /**
+     * Returns true if the entity can pick up ground objects
+     */
+    public boolean canPickupGroundObject() {
+    	return !isLocationBad(Protomech.LOC_LARM) && (getCarriedObject(Protomech.LOC_LARM) == null) ||
+    			!isLocationBad(Protomech.LOC_RARM) && (getCarriedObject(Protomech.LOC_RARM) == null);
+    }
+    
+    /**
+     * The maximum tonnage of ground objects that can be picked up by this unit
+     */
+    public double maxGroundObjectTonnage() {
+    	double percentage = 0.0;
+    	
+    	if (!isLocationBad(Protomech.LOC_LARM) && (getCarriedObject(Protomech.LOC_LARM) == null)) {
+    		percentage += 0.05;
+    	}
+    	if (!isLocationBad(Protomech.LOC_RARM) && (getCarriedObject(Protomech.LOC_RARM) == null)) {
+    		percentage += 0.05;
+    	}
+    	
+    	double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+    	
+    	return getWeight() * percentage * heavyLifterMultiplier;
+    }
+    
+    @Override
+    public List<Integer> getDefaultPickupLocations() {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	if ((getCarriedObject(Protomech.LOC_LARM) == null) && !isLocationBad(Protomech.LOC_LARM)) {
+    		result.add(Protomech.LOC_LARM);
+    	}
+    	if ((getCarriedObject(Protomech.LOC_RARM) == null) && !isLocationBad(Protomech.LOC_RARM)) {
+    		result.add(Protomech.LOC_RARM);
+    	}
+    	
+    	return result;
+    }
+    
+    @Override
+    public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
+    	List<Integer> result = new ArrayList<>();
+    	
+    	// if we can pick the object up according to "one handed pick up rules" in TacOps
+    	if (cargo.getTonnage() <= (getWeight() / 20)) {
+    		if ((getCarriedObject(Protomech.LOC_LARM) == null) && !isLocationBad(Protomech.LOC_LARM)) {
+    			result.add(Protomech.LOC_LARM);
+    		}
+    		
+    		if ((getCarriedObject(Protomech.LOC_RARM) == null) && !isLocationBad(Protomech.LOC_RARM)) {
+    			result.add(Protomech.LOC_RARM);
+    		}
+    	}
+    	
+    	return result;
     }
 
     @Override
@@ -1526,6 +1602,13 @@ public class Protomech extends Entity {
             }
         }
         return null;
-
+    }
+    
+    /**
+     * Method that returns the mapping between locations which, if cargo is carried,
+     * block other locations from firing.
+     */
+    protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
+    	return BLOCKED_FIRING_LOCATIONS;
     }
 }

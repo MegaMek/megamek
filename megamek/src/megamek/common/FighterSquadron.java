@@ -506,30 +506,23 @@ public class FighterSquadron extends AeroSpaceFighter {
      * TODO: Make this into a generic "clean up bomb loadout" method
      */
     public void computeSquadronBombLoadout() {
-        // Remove any currently equipped bombs
-        for (Mounted bomb : bombList) {
-            equipmentList.remove(bomb);
-        }
-        bombList.clear();
+        clearBombs();
 
         // Find out what bombs everyone has
-        for (int btype = 0; btype < BombType.B_NUM; btype++) {
-            // This is smallest number of such a bomb
+        for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
+            int finalBombType = bombType;
             int maxBombCount = 0;
             for (Entity fighter : getSubEntities()) {
-                int bombCount = 0;
-                for (Mounted m : fighter.getBombs()) {
-                    if (((BombType) m.getType()).getBombType() == btype) {
-                        bombCount++;
-                    }
-                }
+                int bombCount = (int) fighter.getBombs().stream()
+                        .filter(m -> m.getType().getBombType() == finalBombType)
+                        .count();
                 maxBombCount = Math.max(bombCount, maxBombCount);
             }
-            extBombChoices[btype] = maxBombCount;
+            extBombChoices[bombType] = maxBombCount;
         }
 
         // Now that we know our bomb choices, load 'em
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < extBombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)

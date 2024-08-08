@@ -205,6 +205,14 @@ class StepSprite extends Sprite {
                 String load = Messages.getString("BoardView1.Load");
                 drawAnnouncement(g2D, load, step, col);
                 break;
+            case PICKUP_CARGO:
+            	String pickup = Messages.getString("MovementDisplay.movePickupCargo");
+            	drawAnnouncement(g2D, pickup, step, col);
+            	break;
+            case DROP_CARGO:
+            	String dropCargo = Messages.getString("MovementDisplay.moveDropCargo");
+            	drawAnnouncement(g2D, dropCargo, step, col);
+            	break;
             case TOW:
                 String tow = Messages.getString("BoardView1.Tow");
                 drawAnnouncement(g2D, tow, step, col);

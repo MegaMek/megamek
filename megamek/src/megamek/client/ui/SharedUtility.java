@@ -310,6 +310,9 @@ public class SharedUtility {
 
             // check for magma
             int level = curHex.terrainLevel(Terrains.MAGMA);
+            boolean jumpedIntoMagma = (curPos.equals(lastPos)
+                    && (curHex.terrainLevel(Terrains.MAGMA) == 2)
+                    && (moveType == EntityMovementType.MOVE_JUMP));
             if ((level == 1) && (step.getElevation() == 0)
                     && (entity.getMovementMode() != EntityMovementMode.HOVER)
                     && (moveType != EntityMovementType.MOVE_JUMP)
@@ -336,10 +339,12 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // check if we've moved into swamp
-            rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
-                    lastPos, curPos, lastElevation, isPavementStep);
-            checkNag(rollTarget, nagReport, psrList);
+            // check if we've moved into swamp; skip Liquid Magma bog-down check if not jumping into the last hex
+            if (level != 2 || jumpedIntoMagma) {
+                rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
+                        lastPos, curPos, lastElevation, isPavementStep);
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             // Check if used more MPs than Mech/Vehicle would have w/o gravity
             if (!i.hasMoreElements() && !firstStep) {

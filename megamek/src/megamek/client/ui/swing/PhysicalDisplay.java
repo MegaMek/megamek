@@ -18,6 +18,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -240,7 +241,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getBoardView().cursor(null);
 
         clientgui.getUnitDisplay().displayEntity(entity);
-        clientgui.getUnitDisplay().showPanel("movement");
+        if (GUIP.getMoveDisplayTabDuringMovePhases()) {
+            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
+        }
 
         clientgui.getBoardView().centerOnHex(entity.getPosition());
 

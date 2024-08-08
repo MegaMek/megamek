@@ -23,7 +23,7 @@ public class RangeType {
     public static final int RANGE_EXTREME = 4;
     public static final int RANGE_LOS = 5;
     public static final int RANGE_OUT = Integer.MAX_VALUE;
-    public static final int RANGE_BEARINGS_ONLY_MINIMUM = 51;
+    public static final int RANGE_BEARINGS_ONLY_MINIMUM = 1;
     public static final int RANGE_BEARINGS_ONLY_OUT = 5000;
 
     public int r_min;

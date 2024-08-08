@@ -64,9 +64,18 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * @param weapon the selected weapon
      * @param movePath planned movement in the movement phase
      */
-    public void update(Entity entity, WeaponMounted weapon, @Nullable MovePath movePath) {
+    public void update(@Nullable Entity entity, @Nullable WeaponMounted weapon, @Nullable MovePath movePath) {
         firingEntity = entity;
+        if ((entity == null) || (weapon == null)) {
+            clearValues();
+            return;
+        }
         int weaponId = entity.getEquipmentNum(weapon);
+        if (weaponId == -1) {
+            // entities are replaced all the time by server-sent changes, must always guard
+            clearValues();
+            return;
+        }
         // findRanges must be called before any call to testUnderWater due to usage of 
         // global-style variables for some reason
         findRanges(weapon);

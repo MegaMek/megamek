@@ -486,6 +486,19 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Burke Defense Tank' unitType='Tank'>
+		<availability>SL:8</availability>
+		<model name=''>
+			<availability>General:8,SL.R:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Bus' unitType='Small Craft'>
+		<availability>SL:6,IS:4,MERC:4,Periphery:4</availability>
+		<model name='S-7A'>
+			<roles>cargo,civilian</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 		<availability>CC:2,LA:4,SL:2,FWL:2,RWR:2,FS:2,MERC:2,DC:2</availability>
 		<model name=''>
@@ -499,19 +512,6 @@
 		<model name='(Reverse)'>
 			<roles>support,engineer</roles>
 			<availability>General:2</availability>
-		</model>
-	</chassis>
-	<chassis name='Burke Defense Tank' unitType='Tank'>
-		<availability>SL:8</availability>
-		<model name=''>
-			<availability>General:8,SL.R:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Bus' unitType='Small Craft'>
-		<availability>SL:6,IS:4,MERC:4,Periphery:4</availability>
-		<model name='S-7A'>
-			<roles>cargo,civilian</roles>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Caravan Heavy Transport' unitType='Conventional Fighter'>

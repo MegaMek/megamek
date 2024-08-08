@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -764,7 +765,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
-        clientgui.getUnitDisplay().showPanel("weapons");
+        if (GUIP.getFireDisplayTabDuringFiringPhases()) {
+            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+        }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         updateTarget();
         clientgui.updateFiringArc(ce());

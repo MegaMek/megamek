@@ -330,6 +330,7 @@ public abstract class AbstractClient implements IClient {
         }
         try {
             if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
+                //TODO gather any fired events and fire them only at the end of the packets, possibly only for SBF
                 @SuppressWarnings("unchecked")
                 var includedPackets = (List<Packet>) packet.getObject(0);
                 for (Packet includedPacket : includedPackets) {
@@ -462,6 +463,7 @@ public abstract class AbstractClient implements IClient {
                 MechSummaryCache.dispose();
                 break;
             case LOUNGE:
+                iconCache.clear();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
                 if (MechSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();

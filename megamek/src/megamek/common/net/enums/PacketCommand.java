@@ -118,6 +118,7 @@ public enum PacketCommand {
     REMOVE_MINEFIELD,
     SENDING_MINEFIELDS,
     UPDATE_MINEFIELDS,
+    UPDATE_GROUND_OBJECTS,
     REROLL_INITIATIVE,
     UNLOAD_STRANDED,
     SET_ARTILLERY_AUTOHIT_HEXES,
@@ -150,6 +151,9 @@ public enum PacketCommand {
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
     GAME_VICTORY_EVENT,
+
+    /** An SBF packet instructing the Client to replace the pending actions with the sent actions (possibly none). */
+    ACTIONS,
 
     /** A packet containing other packets to be processed in the order they are stored. */
     MULTI_PACKET;

@@ -28,7 +28,10 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ChatterBox2;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.EntityChoiceDialog;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
@@ -69,7 +72,8 @@ import java.util.Queue;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.client.ui.swing.tileset.HexTileset.*;
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_H;
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -378,7 +382,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // to specialized lists when created
     private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
     private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
-    private final TreeSet<HexSprite> hexSprites = new TreeSet<>();
 
     /**
      * Construct a new board view for the specified game
@@ -905,9 +908,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, vtolAttackSprites);
             drawSprites(g, flyOverSprites);
         }
-
-        // draw onscreen entities
-        drawSprites(g, entitySprites);
 
         // draw moving onscreen entities
         drawSprites(g, movingEntitySprites);
@@ -1626,9 +1626,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 drawSprites(boardGraph, flyOverSprites);
             }
 
-            // draw onscreen entities
-            drawSprites(boardGraph, entitySprites);
-
             // draw moving onscreen entities
             drawSprites(boardGraph, movingEntitySprites);
 
@@ -1723,7 +1720,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                             if (GUIP.getShowWrecks()) {
                                 drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
                             }
-                            drawIsometricSpritesForHex(c, g, isometricSprites);
                         }
                     }
                 }
@@ -2622,6 +2618,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Remove sprite for Entity, so it's not displayed while moving
         if (sprite != null) {
+            removeSprite(sprite);
             newSprites = new PriorityQueue<>(entitySprites);
             newSpriteIds = new HashMap<>(entitySpriteIds);
 
@@ -2633,6 +2630,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
         // Remove iso sprite for Entity, so it's not displayed while moving
         if (isoSprite != null) {
+            removeSprite(isoSprite);
             isoSprites = new PriorityQueue<>(isometricSprites);
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
@@ -2814,10 +2812,16 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Update Sprite state with new collections
+        removeSprites(entitySprites);
+        removeSprites(isometricSprites);
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
         isometricSprites = isoSprites;
         isometricSpriteIds = newIsoSpriteIds;
+        addSprites(entitySprites);
+        if (drawIsometric) {
+            addSprites(isometricSprites);
+        }
 
         // Remove C3 sprites
         for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext(); ) {
@@ -2944,11 +2948,20 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
         }
 
+        removeSprites(entitySprites);
+        removeSprites(isometricSprites);
+
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
         isometricSprites = newIsometricSprites;
         isometricSpriteIds = newIsoSpriteIds;
+
+        addSprites(entitySprites);
+        if (drawIsometric) {
+            addSprites(isometricSprites);
+        }
+
 
         wreckSprites = newWrecks;
         isometricWreckSprites = newIsometricWrecks;
@@ -3578,15 +3591,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if ((ae == null) || (te == null)) {
                 boolean mechInFirst = GUIP.getMechInFirst();
                 boolean mechInSecond = GUIP.getMechInSecond();
-                LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
-                ai.attackPos = c1;
-                ai.targetPos = c2;
-                ai.attackHeight = mechInFirst ? 1 : 0;
-                ai.targetHeight = mechInSecond ? 1 : 0;
-                ai.targetIsMech = mechInSecond;
-                ai.attackerIsMech = mechInFirst;
-                ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
-                ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+
+                LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
+                        game, ae, te, c1, c2, mechInFirst, mechInSecond);
+
                 le = LosEffects.calculateLos(game, ai);
                 message.append(Messages.getString("BoardView1.Attacker",
                         mechInFirst ? Messages.getString("BoardView1.Mech")
@@ -4297,7 +4305,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         overTerrainSprites.clear();
         behindTerrainHexSprites.clear();
-        hexSprites.clear();
 
         super.clearSprites();
     }
@@ -4869,7 +4876,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
         allSprites.forEach(Sprite::prepare);
-        hexSprites.forEach(HexSprite::updateBounds);
 
         clearHexImageCache();
         updateBoard();
@@ -4883,6 +4889,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         for (EntitySprite eS : entitySprites) {
+            eS.prepare();
+        }
+
+        for (IsometricSprite eS : isometricSprites) {
             eS.prepare();
         }
         boardPanel.repaint();
@@ -5097,10 +5107,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 .map(s -> (HexSprite) s)
                 .filter(HexSprite::isBehindTerrain)
                 .forEach(behindTerrainHexSprites::add);
-        sprites.stream()
-                .filter(s -> s instanceof HexSprite)
-                .map(s -> (HexSprite) s)
-                .forEach(hexSprites::add);
     }
 
     @Override
@@ -5108,6 +5114,5 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         super.removeSprites(sprites);
         overTerrainSprites.removeAll(sprites);
         behindTerrainHexSprites.removeAll(sprites);
-        hexSprites.removeAll(sprites);
     }
 }

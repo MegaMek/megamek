@@ -607,7 +607,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * turns to play
      */
     public @Nullable GameTurn getTurnForPlayer(int pn) {
-        synchronized (turnVector) {
+        if ((turnIndex >= 0) && (turnIndex < turnVector.size())) {
             for (int i = turnIndex; i < turnVector.size(); i++) {
                 GameTurn gt = turnVector.get(i);
                 if (gt.isValid(pn, this)) {
@@ -1184,7 +1184,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Add this Entity, ensuring that its id is unique
         int id = entity.getId();
-        if (inGameObjects.containsKey(id)) {
+        if (isIdUsed(id)) {
             id = getNextEntityId();
             entity.setId(id);
         }
@@ -1209,6 +1209,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
         }
+    }
+
+    /**
+     * @return true if the given ID is in use among active and dead units
+     */
+    private boolean isIdUsed(int id) {
+        return inGameObjects.containsKey(id) || isOutOfGame(id);
     }
 
     public void setEntity(int id, Entity entity) {
@@ -1314,7 +1321,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         resetPSRs();
         resetArtilleryAttacks();
         resetAttacks();
-        // removeMinefields();  Broken and bad!
         clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
@@ -1328,6 +1334,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         lastEntityId = 0;
         planetaryConditions = new PlanetaryConditions();
         forces = new Forces(this);
+        groundObjects = new HashMap<>();
     }
 
     private void removeArtyAutoHitHexes() {
@@ -3275,6 +3282,41 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Get a list of all objects on the ground at the given coordinates
+     * that can be picked up by the given entity
+     */
+    public List<ICarryable> getGroundObjects(Coords coords, Entity entity) {
+        if (!getGroundObjects().containsKey(coords)) {
+            return new ArrayList<>();
+        }
+
+        // if the entity doesn't have working actuators etc
+        if (!entity.canPickupGroundObject()) {
+            return new ArrayList<>();
+        }
+
+        double maxTonnage = entity.maxGroundObjectTonnage();
+        ArrayList<ICarryable> result = new ArrayList<>();
+
+        for (ICarryable object : getGroundObjects().get(coords)) {
+            if (maxTonnage >= object.getTonnage()) {
+                result.add(object);
+            }
+        }
+
+        return result;
+    }
+    
+	public Map<Coords, List<ICarryable>> getGroundObjects() {
+        // this is a temporary guard to preserve savegame compatibility. Remove after this entire override after .50
+		if (groundObjects == null) {
+			groundObjects = new HashMap<>();
+		}
+
+		return groundObjects;
+	}
+
+	/**
      * Cancels a victory
      */
     public void cancelVictory() {

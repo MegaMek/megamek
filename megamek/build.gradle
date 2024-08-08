@@ -207,7 +207,8 @@ task createStartScripts (type: CreateStartScripts) {
     applicationName = 'MegaMek'
     mainClass = application.mainClass
     outputDir = startScripts.outputDir
-    classpath = jar.outputs.files
+    classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
+            .filter { it.name.endsWith(".jar") }
     defaultJvmOpts = project.ext.mmJvmOptions
 }
 

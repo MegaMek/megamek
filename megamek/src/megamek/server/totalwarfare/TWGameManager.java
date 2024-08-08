@@ -20106,7 +20106,7 @@ public class TWGameManager extends AbstractGameManager {
                 target.addModifier(-1, "maneuvering ace");
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
-                resolveControlWithAdvAtmospheric(e, target, rolls, reasons);
+                addControlWithAdvAtmospheric(e, target, rolls, reasons);
             } else {
                 for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
                     final PilotingRollData modifier = j.nextElement();
@@ -20286,7 +20286,16 @@ public class TWGameManager extends AbstractGameManager {
         return vReport;
     }
 
-    void resolveControlWithAdvAtmospheric(Entity e, PilotingRollData target, Vector<PilotingRollData> rolls, StringBuilder reasons) {
+    /**
+     * Processes pending control roll events, merging triggers that would be multiple rolls in standard
+     * rules but are combined into a single roll under the Advanced Atmospheric Control Rolls rule.
+     *
+     * @param e         The entity whose pending rolls are being processed
+     * @param target    Target number for the roll
+     * @param rolls     List of rolls to be added to
+     * @param reasons   Text representing the reason for the rolls
+     */
+    void addControlWithAdvAtmospheric(Entity e, PilotingRollData target, Vector<PilotingRollData> rolls, StringBuilder reasons) {
         // The August 2024 errata changed this rule to only trigger one control roll per
         // round regardless of how many crits or thresholds occurred. As a result, the rolls
         // need to be combined here at the end phase because not all the information is known

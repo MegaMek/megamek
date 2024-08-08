@@ -749,7 +749,7 @@ public class BasicPathRanker extends PathRanker {
         return minimum;
     }
 
-    double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
+    public double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
         StringBuilder logMsg = new StringBuilder("Checking Path (")
                 .append(path.toString()).append(") for hazards.");
 

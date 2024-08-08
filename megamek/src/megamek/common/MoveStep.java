@@ -1714,6 +1714,10 @@ public class MoveStep implements Serializable {
         return position;
     }
 
+    public void setPosition(Coords c) {
+        position = c;
+    }
+
     public boolean isPrevStepOnPavement() {
         return prevStepOnPavement;
     }

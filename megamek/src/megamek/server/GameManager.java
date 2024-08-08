@@ -20105,7 +20105,7 @@ public class GameManager extends AbstractGameManager {
                 target.addModifier(-1, "maneuvering ace");
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
-                addControlWithAdvAtmospheric(e, target, rolls, reasons);
+                addControlWithAdvAtmospheric(e, rolls, reasons);
             } else {
                 for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
                     final PilotingRollData modifier = j.nextElement();
@@ -20290,11 +20290,10 @@ public class GameManager extends AbstractGameManager {
      * rules but are combined into a single roll under the Advanced Atmospheric Control Rolls rule.
      *
      * @param e         The entity whose pending rolls are being processed
-     * @param target    Target number for the roll
      * @param rolls     List of rolls to be added to
      * @param reasons   Text representing the reason for the rolls
      */
-    void addControlWithAdvAtmospheric(Entity e, PilotingRollData target, Vector<PilotingRollData> rolls, StringBuilder reasons) {
+    void addControlWithAdvAtmospheric(Entity e, Vector<PilotingRollData> rolls, StringBuilder reasons) {
         // The August 2024 errata changed this rule to only trigger one control roll per
         // round regardless of how many crits or thresholds occurred. As a result, the rolls
         // need to be combined here at the end phase because not all the information is known
@@ -20311,7 +20310,10 @@ public class GameManager extends AbstractGameManager {
                     atmosphericControlRoll = modifier;
                 } else {
                     // Modify the description of the pending atmospheric control roll instead of adding another one
-                    atmosphericControlRoll.addModifier(0, modifier.getDesc(), true);
+                    if (!reasons.isEmpty()) {
+                        reasons.append("; ");
+                    }
+                    reasons.append(modifier.getPlainDesc());
                 }
             } else {
                 // Not an atmospheric control roll under the new rules, so treat normally
@@ -20319,8 +20321,7 @@ public class GameManager extends AbstractGameManager {
                 if (!reasons.isEmpty()) {
                     reasons.append("; ");
                 }
-                reasons.append(modifier.getCumulativePlainDesc());
-                target.append(modifier);
+                reasons.append(modifier.getPlainDesc());
               }
         }
         if (atmosphericControlRoll != null) {
@@ -20328,7 +20329,7 @@ public class GameManager extends AbstractGameManager {
             if (!reasons.isEmpty()) {
                 reasons.append("; ");
             }
-            reasons.append(atmosphericControlRoll.getCumulativePlainDesc());
+            reasons.append(atmosphericControlRoll.getPlainDesc());
         }
     }
 

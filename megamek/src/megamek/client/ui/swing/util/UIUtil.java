@@ -137,6 +137,19 @@ public final class UIUtil {
     }
 
     /**
+     * Returns a div of the given CSS class with opening and closing tag and the content in between.
+     * The class should be defined in the header styles block, e.g. as <code>.mydiv { ... }</code>,
+     * then it can be given as "mydiv" here.
+     *
+     * @param cssClass the class as defined in CSS styles
+     * @param content the text to go in the div
+     * @return the complete div block
+     */
+    public static String divCSS(String cssClass, String content) {
+        return "<div class=\"" + cssClass + "\">" + content + "</div>";
+    }
+
+    /**
      * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between.
      * The class should be defined in the header styles block, e.g. as <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
@@ -1415,6 +1428,17 @@ public final class UIUtil {
         y = Math.max(0, y - ((vh - th)/2));
         y = Math.min(y, h - vh);
         return y;
+    }
+
+    /**
+     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red. Includes the #.
+     * Does not include any alpha components.
+     *
+     * @param color The color to convert
+     * @return The color as a string value for use in tags or styles
+     */
+    public static String hexColor(Color color) {
+        return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
     }
 
     private UIUtil() { }

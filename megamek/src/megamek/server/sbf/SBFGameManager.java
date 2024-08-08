@@ -19,6 +19,7 @@
 package megamek.server.sbf;
 
 import megamek.common.*;
+import megamek.common.actions.EntityAction;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -38,7 +39,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
     private SBFGame game;
 
-    private final List<Report> pendingReports = new ArrayList<>();
+    private final List<SBFReportEntry> pendingReports = new ArrayList<>();
 
     record PendingPacket(int recipient, Packet packet) { }
     private final List<PendingPacket> pendingPackets = new ArrayList<>();
@@ -46,6 +47,8 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
     final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
     final SBFMovementProcessor movementProcessor = new SBFMovementProcessor(this);
+    final SBFAttackProcessor attackProcessor = new SBFAttackProcessor(this);
+    final SBFActionsProcessor actionsProcessor = new SBFActionsProcessor(this);
     final SBFInitiativeHelper initiativeHelper = new SBFInitiativeHelper(this);
     final SBFUnitUpdateHelper unitUpdateHelper = new SBFUnitUpdateHelper(this);
     final SBFDetectionHelper detectionHelper = new SBFDetectionHelper(this);
@@ -57,6 +60,9 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         switch (packet.getCommand()) {
             case ENTITY_MOVE:
                 receiveMovement(packet, connId);
+                break;
+            case ENTITY_ATTACK:
+                receiveAttack(packet, connId);
                 break;
         }
 
@@ -73,6 +79,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // each player must receive the packets directed at them as well as any undirected packets
         // in the order they were stored in pendingPackets
         if (!pendingPackets.isEmpty()) {
+            reducePendingPackets();
             // Send each player what they should receive ...
             for (int playerId : game.getPlayersList().stream().map(Player::getId).toList()) {
                 List<Packet> packets = pendingPackets.stream()
@@ -85,6 +92,10 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             }
             pendingPackets.clear();
         }
+    }
+
+    private void reducePendingPackets() {
+        //TODO remove redundant packets, maybe consolidate packets
     }
 
     void addPendingPacket(int recipient, Packet packet) {
@@ -133,7 +144,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
     @Override
     public void addReport(ReportEntry r) {
-        pendingReports.add((Report) r);
+        pendingReports.add((SBFReportEntry) r);
     }
 
     @Override
@@ -243,7 +254,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 break;
             case MOVEMENT:
                 // write Movement Phase header to report
-                addReport(new Report(2000, Report.PUBLIC));
+                addReport(new SBFReportEntry(2000)); //, Report.PUBLIC));
                 // intentional fall through
             case PREMOVEMENT:
             case SET_ARTILLERY_AUTOHIT_HEXES:
@@ -327,7 +338,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         pendingReports.clear();
     }
 
-    protected List<Report> getPendingReports() {
+    List<SBFReportEntry> getPendingReports() {
         return pendingReports;
     }
 
@@ -488,5 +499,64 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         for (Player player : game.getPlayersList()) {
             send(player.getId(), createGameStartUnitPacket(player));
         }
+    }
+
+    private void repeatTurn(int connId) {
+        send(connId, packetHelper.createTurnListPacket());
+        SBFTurn turn = game.getTurn();
+        send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
+    }
+
+    @SuppressWarnings("unchecked")
+    void receiveAttack(Packet packet, int connId) {
+        var attacks = (List<EntityAction>) packet.getObject(1);
+        int formationId = (int) packet.getObject(0);
+        Optional<SBFFormation> formationInfo = game.getFormation(formationId);
+
+        if (formationInfo.isEmpty() || !attacks.stream().map(EntityAction::getEntityId).allMatch(id -> id == formationId)) {
+            LogManager.getLogger().error("Invalid formation ID or diverging attacker IDs");
+            repeatTurn(connId); //TODO: This is untested; questionable if this can save a game after an error
+            return;
+        }
+
+        for (EntityAction action : attacks) {
+            if (!validateEntityAction(action, connId)) {
+                repeatTurn(connId);
+                return;
+            }
+        }
+
+        // is this the right phase?
+        if (!getGame().getPhase().isFiring() && !getGame().getPhase().isPhysical()
+                && !getGame().getPhase().isTargeting() && !getGame().getPhase().isOffboard()) {
+            LogManager.getLogger().error("Server got attack packet in wrong phase");
+            return;
+        }
+
+        // looks like mostly everything's okay
+        attackProcessor.processAttacks(attacks, formationInfo.get());
+    }
+
+    private boolean validateEntityAction(EntityAction action, int connId) {
+        //TODO unify firing/movement validity
+        Optional<SBFFormation> formationInfo = game.getFormation(action.getEntityId());
+        if (formationInfo.isEmpty()) {
+            LogManager.getLogger().error("Incorrect formation ID {}", action.getEntityId());
+            return false;
+        }
+        SBFTurn turn = game.getTurn();
+        if ((turn == null) || !turn.isValid(connId, formationInfo.get(), game)) {
+            LogManager.getLogger().error("It is not player {}'s turn! ", connId);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Sends the game's pending actions to all Clients for them to replace any previous actions
+     */
+    void sendPendingActions() {
+        send(new Packet(PacketCommand.ACTIONS, new ArrayList<>(game.getActionsVector())));
     }
 }

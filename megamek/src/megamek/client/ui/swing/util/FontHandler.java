@@ -91,6 +91,15 @@ public final class FontHandler {
     }
 
     /**
+     * @return The Noto Symbols 2 font. This font has icons that mesh well in inline text with the
+     * Noto Sans font.
+     */
+    public static Font notoSymbol2Font() {
+        ensureInitialization();
+        return new Font("Noto Sans Symbols 2", Font.PLAIN, 12);
+    }
+
+    /**
      * @return The Noto Sans font which is included with the distribution and can be safely used everywhere.
      * It is advertised to have a wide language support.
      *
@@ -150,7 +159,7 @@ public final class FontHandler {
                 errors.add("    Failed to read font " + fontFile);
             }
         }
-        logger.warn("Could not register some fonts\n{}", String.join("\n", errors));
+        logger.debug("Could not register some fonts\n{}", String.join("\n", errors));
     }
 
     private static void ensureInitialization() {

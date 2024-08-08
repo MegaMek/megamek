@@ -30,6 +30,7 @@ record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManage
         }
 
         formation.setPosition(movePath.getLastPosition());
+        formation.setJumpUsedThisTurn(movePath.getJumpUsed());
         formation.setDone(true);
         gameManager.sendUnitUpdate(formation);
         gameManager.endCurrentTurn(formation);

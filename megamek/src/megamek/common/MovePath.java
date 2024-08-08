@@ -114,6 +114,8 @@ public class MovePath implements Cloneable, Serializable {
 
     // is this move path being done using careful movement?
     private boolean careful = true;
+    private boolean gravityConcern = false;
+    private final float gravity;
 
     /**
      * Generates a new, empty, movement path object.
@@ -121,6 +123,13 @@ public class MovePath implements Cloneable, Serializable {
     public MovePath(final Game game, final Entity entity) {
         this.setEntity(entity);
         this.setGame(game);
+        // Do we care about gravity when adding steps?
+        gravity = game.getPlanetaryConditions().getGravity();
+        gravityConcern = (
+                (gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0
+                    || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
+                && game.getBoard().onGround() && !entity.isAirborne()
+        );
     }
 
     public Entity getEntity() {
@@ -377,6 +386,20 @@ public class MovePath implements Cloneable, Serializable {
                         s.getElevation(), s));
                 s.setPastDanger(s.isPastDanger() || s.isDanger());
                 prevStep = s;
+            }
+        }
+
+        // Gravity check: only applies to ground moves by ground units
+        if (gravityConcern && getMpUsed() != 0) {
+            int usedMP = getMpUsed();
+            int runMP = cachedEntityState.getRunMPNoGravity();
+            int jumpMP = cachedEntityState.getJumpMPNoGravity();
+            if (gravity < 1.0) {
+                // Only dangerous if we move too far
+                step.setDanger(step.isDanger() || (usedMP > runMP || (step.isJumping() && usedMP > jumpMP)));
+            } else {
+                // Dangerous if we jump _at all_
+                step.setDanger(step.isDanger() || (step.isJumping()));
             }
         }
 

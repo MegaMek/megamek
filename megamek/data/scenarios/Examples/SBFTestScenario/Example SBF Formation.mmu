@@ -43,6 +43,7 @@ units:
     fullname: Javelin JVN-11A 'Fire Javelin'
 - type: SBFUnit
   generalname: Tank Lance
+  status: lead
   elements:
   - type: ASElement
     fullname: Alacorn Heavy Tank Mk III

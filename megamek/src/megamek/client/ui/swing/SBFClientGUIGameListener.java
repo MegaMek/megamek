@@ -45,7 +45,7 @@ public class SBFClientGUIGameListener extends GameListenerAdapter {
 //
         // Swap to this phase's panel.
         clientGUI.switchPanel(e.getNewPhase());
-//        clientGUI.menuBar.setPhase(phase);
+        clientGUI.menuBar.setPhase(e.getNewPhase());
 //        clientGUI.cb.moveToEnd();
     }
 

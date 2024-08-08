@@ -566,7 +566,12 @@ public class Compute {
             Coords src, Coords dest, EntityMovementType movementType,
             boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
             int destElevation, MoveStep moveStep) {
+        // It's possible to get a real ID for an entity we've forgotten (Double Blind, for instance).
         final Entity entity = game.getEntity(entityId);
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity invalid. ID " + entityId);
+        }
+
         final Hex srcHex = game.getBoard().getHex(src);
         final Hex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
@@ -574,9 +579,6 @@ public class Compute {
                         - (srcElevation + srcHex.getLevel());
 
         // arguments valid?
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity invalid. ID " + entityId);
-        }
         if (src.distance(dest) > 1) {
             throw new IllegalArgumentException("Coordinates must be adjacent.");
         }

@@ -152,6 +152,9 @@ public enum PacketCommand {
     CFR_TAG_TARGET,
     GAME_VICTORY_EVENT,
 
+    /** An SBF packet instructing the Client to replace the pending actions with the sent actions (possibly none). */
+    ACTIONS,
+
     /** A packet containing other packets to be processed in the order they are stored. */
     MULTI_PACKET;
     //endregion Enum Declarations

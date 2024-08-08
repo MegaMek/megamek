@@ -34,6 +34,7 @@ public class SBFMovePath implements EntityAction, Serializable {
     private final List<SBFMoveStep> steps = new ArrayList<>();
     private final BoardLocation startLocation;
     private boolean isIllegal;
+    private int jumpUsed = 0;
 
     // The game is used mainly durinng creation of the movepath and shouldn't be sent in packets
     private transient SBFGame game;
@@ -146,7 +147,7 @@ public class SBFMovePath implements EntityAction, Serializable {
      * Returns the number of hexes moved
      */
     public int getHexesMoved() {
-        return startLocation.getCoords().distance(getLastPosition().getCoords());
+        return startLocation.coords().distance(getLastPosition().coords());
     }
 
     @Override
@@ -184,5 +185,13 @@ public class SBFMovePath implements EntityAction, Serializable {
         }
         LogManager.getLogger().error("Tried to find the mp used with a step that is not part of this move path!");
         return -1;
+    }
+
+    public void setJumpUsed(int jumpUsed) {
+        this.jumpUsed = jumpUsed;
+    }
+
+    public int getJumpUsed() {
+        return jumpUsed;
     }
 }

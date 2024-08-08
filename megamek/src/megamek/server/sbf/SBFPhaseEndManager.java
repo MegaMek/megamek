@@ -19,16 +19,12 @@
 package megamek.server.sbf;
 
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.enums.GamePhase;
+import megamek.common.strategicBattleSystems.SBFReportEntry;
 
-public class SBFPhaseEndManager {
-    
-    private final SBFGameManager gameManager;
+public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
-    public SBFPhaseEndManager(SBFGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-    
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
@@ -95,29 +91,11 @@ public class SBFPhaseEndManager {
 //                ServerHelper.detectMinefields(game, vPhaseReport, this);
 //                updateSpacecraftDetection();
 //                detectSpacecraft();
-//                resolveWhatPlayersCanSeeWhatUnits();
-//                doAllAssaultDrops();
-//                addMovementHeat();
 //                applyBuildingDamage();
-//                checkForPSRFromDamage();
-//                addReport(resolvePilotingRolls()); // Skids cause damage in
-//                // movement phase
 //                checkForFlamingDamage();
 //                checkForTeleMissileAttacks();
-//                cleanupDestroyedNarcPods();
-//                checkForFlawedCooling();
 //                resolveCallSupport();
-//                // check phase report
-//                if (vPhaseReport.size() > 1) {
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    gameManager.changePhase(GamePhase.MOVEMENT_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    sendReport();
-//                    gameManager.changePhase(GamePhase.OFFBOARD);
-//                }
+                goToDependingOnReport(GamePhase.MOVEMENT_REPORT, GamePhase.OFFBOARD);
                 break;
             case MOVEMENT_REPORT:
                 gameManager.changePhase(GamePhase.OFFBOARD);
@@ -126,60 +104,21 @@ public class SBFPhaseEndManager {
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-//                // write Weapon Attack Phase header
-//                addReport(new Report(3000, Report.PUBLIC));
-//                resolveWhatPlayersCanSeeWhatUnits();
+                addReport(new SBFReportEntry(3000));
+//                addReport(Report.publicReport(3000));
 //                resolveAllButWeaponAttacks();
 //                resolveSelfDestructions();
 //                reportGhostTargetRolls();
 //                reportLargeCraftECCMRolls();
 //                resolveOnlyWeaponAttacks();
 //                assignAMS();
-//                handleAttacks();
+                gameManager.actionsProcessor.handleActions();
 //                resolveScheduledNukes();
 //                applyBuildingDamage();
-//                checkForPSRFromDamage();
 //                cleanupDestroyedNarcPods();
-//                addReport(resolvePilotingRolls());
-//                checkForFlawedCooling();
-//                // check phase report
-//                if (vPhaseReport.size() > 1) {
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    gameManager.changePhase(GamePhase.FIRING_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    sendReport();
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    gameManager.changePhase(GamePhase.PHYSICAL);
-//                }
+                goToDependingOnReport(GamePhase.FIRING_REPORT, GamePhase.END);
                 break;
             case FIRING_REPORT:
-                gameManager.changePhase(GamePhase.PHYSICAL);
-                break;
-            case PHYSICAL:
-//                resolveWhatPlayersCanSeeWhatUnits();
-//                resolvePhysicalAttacks();
-//                applyBuildingDamage();
-//                checkForPSRFromDamage();
-//                addReport(resolvePilotingRolls());
-//                resolveSinkVees();
-//                cleanupDestroyedNarcPods();
-//                checkForFlawedCooling();
-//                checkForChainWhipGrappleChecks();
-//                // check phase report
-//                if (vPhaseReport.size() > 1) {
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    gameManager.changePhase(GamePhase.PHYSICAL_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    sendReport();
-//                    gameManager.changePhase(GamePhase.END);
-//                }
-                break;
-            case PHYSICAL_REPORT:
                 gameManager.changePhase(GamePhase.END);
                 break;
             case TARGETING:
@@ -187,17 +126,7 @@ public class SBFPhaseEndManager {
 //                resolveAllButWeaponAttacks();
 //                resolveOnlyWeaponAttacks();
 //                handleAttacks();
-//                // check reports
-//                if (vPhaseReport.size() > 1) {
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    gameManager.changePhase(GamePhase.TARGETING_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    sendReport();
-//                    gameManager.changePhase(GamePhase.PREMOVEMENT);
-//                }
+                goToDependingOnReport(GamePhase.TARGETING_REPORT, GamePhase.PREMOVEMENT);
 //
 //                sendSpecialHexDisplayPackets();
 //                for (Enumeration<Player> i = gameManager.getGame().getPlayers(); i.hasMoreElements(); ) {
@@ -230,17 +159,18 @@ public class SBFPhaseEndManager {
 //                sendSpecialHexDisplayPackets();
 //                sendTagInfoUpdates();
 //
-//                // check reports
-//                if (vPhaseReport.size() > 1) {
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    gameManager.changePhase(GamePhase.OFFBOARD_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    gameManager.getGame().addReports(vPhaseReport);
-//                    sendReport();
-//                    gameManager.changePhase(GamePhase.PREFIRING);
-//                }
+                // check reports
+                if (gameManager.getPendingReports().size() > 1) {
+                    gameManager.getGame().addReports(gameManager.getPendingReports());
+                    gameManager.changePhase(GamePhase.OFFBOARD_REPORT);
+                } else {
+                    // just the header, so we'll add the <nothing> label
+                    gameManager.addReport(new SBFReportEntry(1205));
+//                    gameManager.addReport(new Report(1205, Report.PUBLIC));
+                    gameManager.getGame().addReports(gameManager.getPendingReports());
+                    gameManager.sendReport();
+                    gameManager.changePhase(GamePhase.PREFIRING);
+                }
                 break;
             case OFFBOARD_REPORT:
 //                sendSpecialHexDisplayPackets();
@@ -269,7 +199,8 @@ public class SBFPhaseEndManager {
 //                    if (victory) {
 //                        gameManager.changePhase(GamePhase.VICTORY);
 //                    } else {
-//                        gameManager.changePhase(GamePhase.INITIATIVE);
+                //TODO: remove this and test that after firing, no more selection in firingdisplay, no more firing
+                gameManager.changePhase(GamePhase.INITIATIVE);
 //                    }
 //                }
 //                // Decrement the ASEWAffected counter
@@ -303,5 +234,19 @@ public class SBFPhaseEndManager {
 //                ent.setHiddenActivationPhase(GamePhase.UNKNOWN);
 //            }
 //        }
+    }
+
+    private void goToDependingOnReport(GamePhase reportPhase, GamePhase afterReportPhase) {
+        if (gameManager.getPendingReports().size() > 1) {
+            gameManager.getGame().addReports(gameManager.getPendingReports());
+            gameManager.changePhase(reportPhase);
+        } else {
+            // just the header, so we'll add the <nothing> label
+            gameManager.addReport(new SBFReportEntry(1205));
+//            gameManager.addReport(new Report(1205, Report.PUBLIC));
+            gameManager.getGame().addReports(gameManager.getPendingReports());
+            gameManager.sendReport();
+            gameManager.changePhase(afterReportPhase);
+        }
     }
 }

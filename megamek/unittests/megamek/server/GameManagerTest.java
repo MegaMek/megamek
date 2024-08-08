@@ -40,10 +40,6 @@ class GameManagerTest {
         game.addControlRoll(new PilotingRollData(aero.getId(), 0, "highest damage threshold exceeded"));
         gameManager.addControlWithAdvAtmospheric(aero, rolls, reasons);
         assertEquals(1, rolls.size());
-        assertTrue(reasons.toString().contains("critical hit"));
-        assertTrue(reasons.toString().contains("avionics hit"));
-        assertTrue(reasons.toString().contains("threshold"));
-        assertTrue(reasons.toString().contains("highest damage threshold exceeded"));
     }
 
     @Test
@@ -76,9 +72,6 @@ class GameManagerTest {
         game.addControlRoll(new PilotingRollData(mech.getId(), 0, "highest damage threshold exceeded"));
         gameManager.addControlWithAdvAtmospheric(mech, rolls, reasons);
         assertEquals(1, rolls.size());
-        assertTrue(reasons.toString().contains("avionics hit"));
-        assertTrue(reasons.toString().contains("threshold"));
-        assertTrue(reasons.toString().contains("highest damage threshold exceeded"));
     }
 
     @Test

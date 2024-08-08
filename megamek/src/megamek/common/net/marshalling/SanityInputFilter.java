@@ -114,9 +114,9 @@ public class SanityInputFilter implements ObjectInputFilter {
             }
         }
 
-        logger.info("Class is Undecided: {}", className);
+        logger.info("Class is Rejected: {}", className);
 
-        return Status.UNDECIDED;
+        return Status.REJECTED;
     }
 
     public static Pattern[] getFilterList() {

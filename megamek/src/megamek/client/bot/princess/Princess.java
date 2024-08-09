@@ -657,11 +657,11 @@ public class Princess extends BotClient {
         }
 
         if (sb != null) {
-            sb.append("\tAll computed ")
+            sb.append("\n\tAll computed ")
                     .append(radius)
                     .append("-length paths: ")
                     .append(pf.getAllComputedPaths().size());
-            sb.append("\tFinal rank (including hazards): ").append(rank);
+            sb.append("\n\tFinal rank (including hazards): ").append(rank);
             logger.debug(sb.toString());
         }
 
@@ -720,7 +720,7 @@ public class Princess extends BotClient {
                     longest = Math.max(size, longest);
 
                     if (sb != null) {
-                        sb.append("\tFound valid coordinates (").append(dest.toString())
+                        sb.append("\n\tFound valid coordinates (").append(dest.toString())
                                 .append(") with initial hazard of: ")
                                 .append(hazard);
                     }
@@ -750,7 +750,7 @@ public class Princess extends BotClient {
                 }
                 if (bestCandidate != null) {
                     if (sb != null) {
-                        sb.append("\tFound best candidate (").append(bestCandidate.toString())
+                        sb.append("\n\tFound best candidate (").append(bestCandidate.toString())
                                 .append(") out of ")
                                 .append(candidates.size())
                                 .append(" with a score of ")
@@ -762,12 +762,12 @@ public class Princess extends BotClient {
             }
         } else {
             if (sb != null) {
-                sb.append("\tAerospace units don't worry about ground level hazards;");
+                sb.append("\n\tAerospace units don't worry about ground level hazards;");
             }
         }
 
         if (sb != null) {
-            sb.append("\tFalling back to default getFirstValidCoords method!");
+            sb.append("\n\tFalling back to default getFirstValidCoords method!");
             logger.debug(sb.toString());
         }
         // Fall back on old method

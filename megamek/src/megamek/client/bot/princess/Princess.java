@@ -639,8 +639,8 @@ public class Princess extends BotClient {
         pf = ShortestPathFinder.newInstanceOfOneToAll(radius, MoveStepType.FORWARDS, game);
         pf.run(start);
 
-        // Lower rank is better
-        rank = kernel.size() - pf.getAllComputedPaths().size();
+        // Lower rank is better; 0.0 is minimum at this point.
+        rank = Math.max(kernel.size() - pf.getAllComputedPaths().size(), 0.0);
         for (MovePath mp: pf.getAllComputedPaths().values()) {
             rank += ranker.checkPathForHazards(mp, deployedUnit, game);
         }

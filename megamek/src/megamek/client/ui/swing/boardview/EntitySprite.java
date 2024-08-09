@@ -248,7 +248,7 @@ class EntitySprite extends Sprite {
         Coords position = entity.getPosition();
         
         if (position != null) {			
-        	if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
+            if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
         	    labelRect.setLocation((int) (bv.hex_size.width * 0.55), (int) (0.75 * bv.hex_size.height));
         	    labelPos = Positioning.RIGHT;
         	} else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {

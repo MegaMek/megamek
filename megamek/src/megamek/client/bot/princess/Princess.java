@@ -630,22 +630,20 @@ public class Princess extends BotClient {
         return (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
     }
 
-    protected double rankKernelAroundCoords(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
-        double NULL_COST = 20.0d;
-        double rank = 0.0d;
-        ArrayList<Coords> kernel = start.getFinalCoords().allAtDistance(radius);
+    protected double rankKernelAroundCoordsReverse(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
+        double rank;
+        // allAtDistance uses a concept of radius that is 1 smaller.
+        // ArrayList<Coords> kernel = start.getFinalCoords().allAtDistanceOrLess(radius+1);
+        ArrayList<Coords> kernel = start.getFinalCoords().allAtDistance(radius+1);
         ShortestPathFinder pf;
-        MovePath mp = null;
+        // Get all paths that meet criteria.
+        pf = ShortestPathFinder.newInstanceOfOneToAll(radius, MoveStepType.FORWARDS, game);
+        pf.run(start);
 
-        for (Coords c: kernel) {
-            if (!getBoard().contains(c)) {
-                continue;
-            }
-            pf = ShortestPathFinder.newInstanceOfAStar(c, MoveStepType.FORWARDS, game);
-            pf.run(start);
-            mp = pf.getComputedPath(c);
-            rank += (mp == null) ? NULL_COST : mp.getMpUsed();
-            rank += (mp == null) ? NULL_COST : ranker.checkPathForHazards(mp, deployedUnit, game);
+        // Lower rank is better
+        rank = kernel.size() - pf.getAllComputedPaths().size();
+        for (MovePath mp: pf.getAllComputedPaths().values()) {
+            rank += ranker.checkPathForHazards(mp, deployedUnit, game);
         }
 
         return rank;
@@ -665,8 +663,10 @@ public class Princess extends BotClient {
      * @return
      */
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
+        int LIMIT = 20;
+        int RADIUS = 2;
 
-        int LIMIT = 10;
         // Shallow copy of refs list
         ArrayList<Coords> localCopy = new ArrayList(possibleDeployCoords);
         // Shuffle
@@ -695,7 +695,7 @@ public class Princess extends BotClient {
                     longest = Math.max(size, longest);
                 }
 
-                // Only get 10
+                // Only get some subset
                 if (longest > LIMIT || rankedCoords.size() > LIMIT) {
                     break;
                 }
@@ -710,7 +710,8 @@ public class Princess extends BotClient {
                     mp.clear();
                     mp.addStep(MoveStepType.NONE);
                     mp.getLastStep().setPosition(c);
-                    current = bestRank - rankKernelAroundCoords(mp, deployedUnit, 1, (BasicPathRanker) ranker);
+                    current = bestRank - rankKernelAroundCoordsReverse(
+                            mp, deployedUnit, RADIUS, (BasicPathRanker) ranker);
                     if (current > scoreToBeat) {
                         scoreToBeat = current;
                         bestCandidate = c;

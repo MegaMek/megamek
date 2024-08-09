@@ -301,6 +301,9 @@ public class PathEnumerator {
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
+        } catch (IllegalArgumentException ex) {
+            LogManager.getLogger().debug("Lost sight of a unit while plotting predicted paths", ex);
+            return false;
         } catch (Exception e) {
             LogManager.getLogger().error("", e);
             return false;

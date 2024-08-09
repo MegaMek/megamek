@@ -630,10 +630,9 @@ public class Princess extends BotClient {
         return (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
     }
 
-    protected double rankKernelAroundCoordsReverse(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
+    protected double rankKernelAroundCoords(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
         double rank;
         // allAtDistance uses a concept of radius that is 1 smaller.
-        // ArrayList<Coords> kernel = start.getFinalCoords().allAtDistanceOrLess(radius+1);
         ArrayList<Coords> kernel = start.getFinalCoords().allAtDistance(radius+1);
         ShortestPathFinder pf;
         // Get all paths that meet criteria.
@@ -665,7 +664,7 @@ public class Princess extends BotClient {
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
-        int RADIUS = 2;
+        int RADIUS = 3;
 
         // Shallow copy of refs list
         ArrayList<Coords> localCopy = new ArrayList(possibleDeployCoords);
@@ -708,9 +707,9 @@ public class Princess extends BotClient {
                 ArrayList<Coords> candidates = rankedCoords.get(bestRank);
                 for (Coords c: candidates) {
                     mp.clear();
-                    mp.addStep(MoveStepType.NONE);
+                    mp.addStep((deployedUnit.getJumpMP() == 0) ? MoveStepType.NONE: MoveStepType.START_JUMP);
                     mp.getLastStep().setPosition(c);
-                    current = bestRank - rankKernelAroundCoordsReverse(
+                    current = bestRank - rankKernelAroundCoords(
                             mp, deployedUnit, RADIUS, (BasicPathRanker) ranker);
                     if (current > scoreToBeat) {
                         scoreToBeat = current;
@@ -718,7 +717,7 @@ public class Princess extends BotClient {
                     }
                 }
                 if (bestCandidate != null) {
-                    return candidates.get(new Random().nextInt(candidates.size()));
+                    return bestCandidate;
                 }
             }
         }

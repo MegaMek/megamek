@@ -38,6 +38,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
+import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -551,7 +552,7 @@ public class Princess extends BotClient {
         } else if (getGame().useVectorMove()) {
             return calculateAdvancedAerospaceDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else {
-            return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
+            return rankDeploymentCoords(deployedUnit, possibleDeployCoords);
         }
     }
 
@@ -627,6 +628,105 @@ public class Princess extends BotClient {
         final int turretCount = 1 + game.getGunEmplacements(coords).size();
 
         return (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
+    }
+
+    protected double rankKernelAroundCoords(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
+        double rank;
+        // allAtDistance uses a concept of radius that is 1 smaller.
+        ArrayList<Coords> kernel = start.getFinalCoords().allAtDistance(radius+1);
+
+        // Get all paths from the start point to the outer hexes that use "radius" MP
+        // Worse starting hexes have fewer, and shorter, paths
+        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(
+                                        radius, MoveStepType.FORWARDS, game);
+        pf.run(start);
+
+        // Lower rank is better; 0.0 is minimum at this point.
+        rank = Math.max(kernel.size() - pf.getAllComputedPaths().size(), 0.0);
+        for (MovePath mp: pf.getAllComputedPaths().values()) {
+            rank -= mp.getHexesMoved();
+            rank += ranker.checkPathForHazards(mp, deployedUnit, game);
+        }
+
+        return rank;
+    }
+
+    /**
+     * Rank possible deployment coordinates by hazard, path freedom, concealment
+     * 1. Randomly select N coords from list
+     * 2. For selected coords:
+     *      1. Check if hex is invalid
+     *      2. Create a MovePath containing the starting coordinate
+     *      3. Get the hazard value
+     *      4. Save Coords to HashMap with hazard as key
+     *
+     * @param deployedUnit
+     * @param possibleDeployCoords
+     * @return
+     */
+    protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
+        int LIMIT = 20;
+        int RADIUS = 3;
+
+        // Shallow copy of refs list
+        ArrayList<Coords> localCopy = new ArrayList(possibleDeployCoords);
+        // Shuffle
+        Collections.shuffle(localCopy);
+
+        // Hacky, but really, "DEPLOY" should be a path step...
+        MovePath mp = new MovePath(game, deployedUnit);
+        mp.addStep(MoveStepType.NONE);
+        MoveStep deployStep = mp.getLastStep();
+        IPathRanker ranker = getPathRanker(deployedUnit);
+        HashMap<Double, ArrayList<Coords>> rankedCoords = new HashMap<>();
+
+        if (!deployedUnit.isAero()) {
+            double hazard;
+            int longest = 0;
+            int size = 0;
+            for (Coords dest : localCopy) {
+                deployStep.setPosition(dest);
+                if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
+                    hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
+                    if (!rankedCoords.containsKey(hazard)) {
+                        rankedCoords.put(hazard, new ArrayList<>());
+                    }
+                    rankedCoords.get(hazard).add(dest);
+                    size = rankedCoords.get(hazard).size();
+                    longest = Math.max(size, longest);
+                }
+
+                // Only get some subset
+                if (longest > LIMIT || rankedCoords.size() > LIMIT) {
+                    break;
+                }
+            }
+            if (!rankedCoords.isEmpty()) {
+                double bestRank = rankedCoords.keySet().stream().mapToDouble(d -> d).max().getAsDouble();
+                Coords bestCandidate = null;
+                double scoreToBeat = -Double.MAX_VALUE;
+                double current;
+                ArrayList<Coords> candidates = rankedCoords.get(bestRank);
+                for (Coords c: candidates) {
+                    mp.clear();
+                    mp.addStep((deployedUnit.getJumpMP() == 0) ? MoveStepType.NONE: MoveStepType.START_JUMP);
+                    mp.getLastStep().setPosition(c);
+                    current = bestRank - rankKernelAroundCoords(
+                            mp, deployedUnit, RADIUS, (BasicPathRanker) ranker);
+                    if (current > scoreToBeat) {
+                        scoreToBeat = current;
+                        bestCandidate = c;
+                    }
+                }
+                if (bestCandidate != null) {
+                    return bestCandidate;
+                }
+            }
+        }
+
+        // Fall back on old method
+        return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
     }
 
     @Override

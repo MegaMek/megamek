@@ -634,14 +634,17 @@ public class Princess extends BotClient {
         double rank;
         // allAtDistance uses a concept of radius that is 1 smaller.
         ArrayList<Coords> kernel = start.getFinalCoords().allAtDistance(radius+1);
-        ShortestPathFinder pf;
-        // Get all paths that meet criteria.
-        pf = ShortestPathFinder.newInstanceOfOneToAll(radius, MoveStepType.FORWARDS, game);
+
+        // Get all paths from the start point to the outer hexes that use "radius" MP
+        // Worse starting hexes have fewer, and shorter, paths
+        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(
+                                        radius, MoveStepType.FORWARDS, game);
         pf.run(start);
 
         // Lower rank is better; 0.0 is minimum at this point.
         rank = Math.max(kernel.size() - pf.getAllComputedPaths().size(), 0.0);
         for (MovePath mp: pf.getAllComputedPaths().values()) {
+            rank -= mp.getHexesMoved();
             rank += ranker.checkPathForHazards(mp, deployedUnit, game);
         }
 

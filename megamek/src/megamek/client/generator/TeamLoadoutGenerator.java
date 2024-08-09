@@ -113,7 +113,7 @@ public class TeamLoadoutGenerator {
             "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
             "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno",
             "AAAMissile Ammo", "ASMissile Ammo", "ASWEMissile Ammo", "ArrowIVMissile Ammo",
-            "AlamoMissile Ammo"
+            "AlamoMissile Ammo", "Precision", "Armor-Piercing"
     ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
@@ -652,15 +652,62 @@ public class TeamLoadoutGenerator {
 
     // region Imperative mutators
     private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        setAC5Imperatives(e, mt, rp);
+        setAC10Imperatives(e, mt, rp);
         setAC20Imperatives(e, mt, rp);
+    }
+
+    private static int getACWeaponCount(Entity e, String size) {
+        return (int) e.getWeaponList().stream()
+                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains(size)).count();
+    }
+
+    private static int getACAmmoCount(Entity e, String size) {
+        return (int) e.getAmmo().stream()
+                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains(size)).count();
+    }
+
+    // Set low-ammo-count AC5 carriers to use Caseless if ammo is <= 1/2 ton per tube
+    private static boolean setAC5Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        int ac5Count = getACWeaponCount(e, "5");
+
+        // TODO: remove this block when implementing new anti-ground Aero errata
+        // Ignore Aeros, which can't use most alt munitions, and those without AC5s.
+        if (e.isAero() || ac5Count == 0) {
+            return false;
+        }
+
+        // Always use Caseless if AC/5 ammo tons <= count of tubes
+        int ac5Ammo = getACAmmoCount(e, "5");
+        if (ac5Ammo <= ac5Count/2.0) {
+            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/5", "Caseless");
+            return true;
+        }
+        return false;
+    }
+
+    // Set low-ammo-count AC10 carriers to use Caseless if ammo is <= 1 ton per tube
+    private static boolean setAC10Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        int ac10Count = getACWeaponCount(e, "10");
+
+        // TODO: remove this block when implementing new anti-ground Aero errata
+        // Ignore Aeros, which can't use most alt munitions, and those without AC10s.
+        if (e.isAero() || ac10Count == 0) {
+            return false;
+        }
+
+        // Always use Caseless if AC/10 ammo tons <= count of tubes
+        int ac10Ammo = getACAmmoCount(e, "10");
+        if (ac10Ammo <= ac10Count) {
+            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/10", "Caseless");
+            return true;
+        }
+        return false;
     }
 
     // Set low-ammo-count AC20 carriers to use Caseless exclusively.
     private static boolean setAC20Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        int ac20Count = 0;
-        int ac20Ammo = 0;
-        ac20Count = (int) e.getWeaponList().stream()
-                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains("20")).count();
+        int ac20Count = getACWeaponCount(e, "20");
 
         // TODO: remove this block when implementing new anti-ground Aero errata
         // Ignore Aeros, which can't use most alt munitions, and those without AC20s.
@@ -669,8 +716,7 @@ public class TeamLoadoutGenerator {
         }
 
         // Always use Caseless if AC/20 ammo tons <= count of tubes
-        ac20Ammo = (int) e.getAmmo().stream()
-                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains("20")).count();
+        int ac20Ammo = getACAmmoCount(e, "20");
         if (ac20Ammo <= ac20Count) {
             mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Caseless");
             return true;
@@ -2022,6 +2068,16 @@ class MunitionWeightCollection {
         weightMap.entrySet().stream()
                 .sorted((E1, E2) -> E2.getValue().compareTo(E1.getValue()))
                 .forEach(k -> orderedTypes.add(String.valueOf(k)));
+        // Make Standard the first entry if tied with other highest-weight munitions
+        for (String munitionString: orderedTypes) {
+            if (munitionString.contains("Standard") && !orderedTypes.get(0).contains("Standard")) {
+                int idx = orderedTypes.indexOf(munitionString);
+                if (weightMap.get("Standard") == Double.parseDouble(orderedTypes.get(0).split("=")[1])) {
+                    Collections.swap(orderedTypes, idx, 0);
+                    break;
+                }
+            }
+        }
         return orderedTypes;
     }
 

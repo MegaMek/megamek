@@ -16,24 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.server.trigger;
 
 import megamek.common.IGame;
+import megamek.common.enums.GamePhase;
 
-/**
- * This Trigger reacts at the start of the specified game round.
- * Note that this Trigger can react multiple times!
- */
-public class SpecificRoundStartTrigger implements Trigger {
+public class PhaseStartTrigger implements Trigger {
 
-    private final int gameRound;
+    private final GamePhase phase;
 
-    public SpecificRoundStartTrigger(int round) {
-        gameRound = round;
+    public PhaseStartTrigger(GamePhase phase) {
+        this.phase = phase;
     }
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
-        return game.getCurrentRound() == gameRound;
+        return (game.getPhase() == phase) && (event == TriggerSituation.PHASE_START);
     }
 }

@@ -22,7 +22,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.force.Forces;
-import megamek.server.scriptedevent.ScriptedEvent;
+import megamek.server.scriptedevent.TriggeredEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,7 +83,7 @@ public abstract class AbstractGame implements IGame {
      * This list contains all scripted events that may happen during the course of the game. This list
      * should only ever be present on the server. Only the results of events should be sent to clients.
      */
-    protected final List<ScriptedEvent> scriptedEvents = new ArrayList<>();
+    protected final List<TriggeredEvent> scriptedEvents = new ArrayList<>();
 
     /**
      * Piles of carry-able objects, sorted by coordinates
@@ -402,12 +402,12 @@ public abstract class AbstractGame implements IGame {
 
 
     @Override
-    public final List<ScriptedEvent> scriptedEvents() {
+    public final List<TriggeredEvent> scriptedEvents() {
         return Collections.unmodifiableList(scriptedEvents);
     }
 
     @Override
-    public final void addScriptedEvent(ScriptedEvent event) {
+    public final void addScriptedEvent(TriggeredEvent event) {
         scriptedEvents.add(event);
     }
 

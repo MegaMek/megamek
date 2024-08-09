@@ -21,19 +21,19 @@ package megamek.server.trigger;
 import megamek.common.IGame;
 
 /**
- * This Trigger reacts at the start of the specified game round.
- * Note that this Trigger can react multiple times!
+ * This "Trigger" is used to invert another Trigger. It reacts (returns true) when the given subtrigger
+ * returns false.
  */
-public class SpecificRoundStartTrigger implements Trigger {
+public class NotTrigger implements Trigger {
 
-    private final int gameRound;
+    private final Trigger trigger;
 
-    public SpecificRoundStartTrigger(int round) {
-        gameRound = round;
+    public NotTrigger(Trigger trigger) {
+        this.trigger = trigger;
     }
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
-        return game.getCurrentRound() == gameRound;
+        return !trigger.isTriggered(game, event);
     }
 }

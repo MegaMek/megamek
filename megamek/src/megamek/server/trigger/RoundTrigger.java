@@ -21,14 +21,14 @@ package megamek.server.trigger;
 import megamek.common.IGame;
 
 /**
- * This Trigger reacts at the start of the specified game round.
- * Note that this Trigger can react multiple times!
+ * This Trigger is satisfied at any point during its given game round. It is intended to be used as a component
+ * in a combined Trigger using {@link AndTrigger} or {@link OrTrigger}.
  */
-public class SpecificRoundStartTrigger implements Trigger {
+public class RoundTrigger implements Trigger {
 
     private final int gameRound;
 
-    public SpecificRoundStartTrigger(int round) {
+    public RoundTrigger(int round) {
         gameRound = round;
     }
 

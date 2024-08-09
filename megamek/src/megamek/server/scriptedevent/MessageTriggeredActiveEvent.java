@@ -27,26 +27,26 @@ import megamek.server.trigger.Trigger;
 
 import java.awt.*;
 
-public class MessageScriptedEvent implements ScriptedEvent {
+public class MessageTriggeredActiveEvent implements TriggeredActiveEvent {
 
     private final Trigger trigger;
     private final String message;
     private final String header;
     private final Base64Image image;
 
-    public MessageScriptedEvent(Trigger trigger, String header, String message, @Nullable Image image) {
+    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message, @Nullable Image image) {
         this.trigger = trigger;
         this.message = message;
         this.header = header;
         this.image = new Base64Image(image);
     }
 
-    public MessageScriptedEvent(Trigger trigger, String header, String message) {
+    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message) {
         this(trigger, header, message, null);
     }
 
     @Override
-    public Trigger getTrigger() {
+    public Trigger trigger() {
         return trigger;
     }
 

@@ -159,8 +159,16 @@ planetaryconditions:                        # default: standard conditions
 factions:
   - name: Player A
     team: 1                                   # default: each player goes into their own team
-    home: W                                   # default: Any; other values: N, NE, SE, S, SW, NW
+#    home: W                                   # default: Any; other values: N, NE, SE, S, SW, NW
     deploy: N                                 # default: same as the home edge
+    # or:
+    deploy:
+      edge: S
+      # offset is 0 by default
+      offset: 0
+      # width is 3 by default
+      width: 1
+
     minefields:                               # optional, availability depending on game type
     - conventional: 2
     - command: 0
@@ -265,3 +273,19 @@ triggers:
       alone: yes                            # no opposition left on the map
       description: The battlefield is yours! No opposition remains. Well done!
 
+end:
+  - trigger:
+      type: activeunits
+      # modifiers are
+      #   once: make this trigger only ever fire once
+      #   not: invert this trigger
+      #   with [not, once] the trigger will be inverted and fire only once; the order of the modifiers is irrelevant
+      modify: once
+      units: [ 101, 102, 103, 104, 105, 106 ]
+      count: 0
+
+  - trigger:
+      type: activeunits
+      modify: once
+      units: [ 201, 202, 203, 204, 205, 206, 207 ]
+      count: 0

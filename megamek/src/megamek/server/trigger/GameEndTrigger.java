@@ -20,20 +20,10 @@ package megamek.server.trigger;
 
 import megamek.common.IGame;
 
-/**
- * This Trigger reacts at the start of the specified game round.
- * Note that this Trigger can react multiple times!
- */
-public class SpecificRoundStartTrigger implements Trigger {
-
-    private final int gameRound;
-
-    public SpecificRoundStartTrigger(int round) {
-        gameRound = round;
-    }
+public class GameEndTrigger implements Trigger {
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
-        return game.getCurrentRound() == gameRound;
+        return event == TriggerSituation.GAME_END;
     }
 }

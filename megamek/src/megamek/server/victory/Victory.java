@@ -19,9 +19,15 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.scriptedevent.GameEndTriggeredEvent;
+import megamek.server.scriptedevent.TriggeredActiveEvent;
+import megamek.server.scriptedevent.TriggeredEvent;
+import megamek.server.scriptedevent.VictoryTriggeredEvent;
+import megamek.server.trigger.TriggerSituation;
 
 public class Victory implements Serializable {
     private static final long serialVersionUID = -8633873540471130320L;
@@ -31,7 +37,7 @@ public class Victory implements Serializable {
 
     private IVictoryConditions force = new ForceVictory();
     private IVictoryConditions lastMan = new LastManStandingVictory();
-    private IVictoryConditions[] VCs = null;
+    private List<IVictoryConditions> VCs;
 
     public Victory(GameOptions options) {
         checkForVictory = options.booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
@@ -41,7 +47,7 @@ public class Victory implements Serializable {
         }
     }
 
-    private IVictoryConditions[] buildVClist(GameOptions options) {
+    private List<IVictoryConditions> buildVClist(GameOptions options) {
         neededVictoryConditions = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
         List<IVictoryConditions> victories = new ArrayList<>();
         // BV related victory conditions
@@ -61,7 +67,9 @@ public class Victory implements Serializable {
         if (options.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             victories.add(new EnemyCmdrDestroyedVictory());
         }
-        return victories.toArray(new IVictoryConditions[0]);
+
+
+        return victories;
     }
 
     public VictoryResult checkForVictory(Game game, Map<String, Object> context) {
@@ -85,6 +93,27 @@ public class Victory implements Serializable {
             if (reVal.victory()) {
                 return reVal;
             }
+        }
+
+        boolean gameEnds = false;
+        for (TriggeredEvent event : game.scriptedEvents()) {
+            gameEnds |= ((event instanceof GameEndTriggeredEvent endEvent)
+                    && endEvent.trigger().isTriggered(game, TriggerSituation.ROUND_END))
+                    || ((event instanceof VictoryTriggeredEvent victoryEvent)
+                    && victoryEvent.isGameEnding()
+                    && victoryEvent.trigger().isTriggered(game, TriggerSituation.ROUND_END));
+        }
+
+        if (gameEnds) {
+            // Test all victory events, if any are met; if not, return a draw
+            for (TriggeredEvent event : game.scriptedEvents()) {
+                if ((event instanceof VictoryTriggeredEvent victoryEvent)
+                        && victoryEvent.isGameEnding()
+                        && victoryEvent.trigger().isTriggered(game, TriggerSituation.ROUND_END)) {
+                    return new VictoryResult(true);
+                }
+            }
+            return VictoryResult.drawResult();
         }
 
         // Check for LastManStandingVictory
@@ -120,14 +149,14 @@ public class Victory implements Serializable {
         double highScore = 0.0;
         for (int pl : vr.getPlayers()) {
             double sc = vr.getPlayerScore(pl);
-            vr.addPlayerScore(pl, sc / VCs.length);
+            vr.addPlayerScore(pl, sc / VCs.size());
             if (sc > highScore) {
                 highScore = sc;
             }
         }
         for (int pl : vr.getTeams()) {
             double sc = vr.getTeamScore(pl);
-            vr.addTeamScore(pl, sc / VCs.length);
+            vr.addTeamScore(pl, sc / VCs.size());
             if (sc > highScore) {
                 highScore = sc;
             }

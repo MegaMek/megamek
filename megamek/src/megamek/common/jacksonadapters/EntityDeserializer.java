@@ -36,6 +36,7 @@ import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
+    private static final String ID = "id";
     private static final String AT = "at";
     private static final String X = "x";
     private static final String Y = "y";
@@ -49,6 +50,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String ELEVATION = "elevation";
     private static final String ALTITUDE = "altitude";
     private static final String VELOCITY = "velocity";
+    private static final String REMAINING = "remaining";
+    private static final String ARMOR = "armor";
+    private static final String INTERNAL = "internal";
 
     public EntityDeserializer() {
         this(null);
@@ -73,8 +77,16 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignElevation(entity, node);
         assignAltitude(entity, node);
         assignVelocity(entity, node);
+        assignID(entity, node);
         CrewDeserializer.parseCrew(node, entity);
+        assignRemaining(entity, node);
         return entity;
+    }
+
+    private void assignID(Entity entity, JsonNode node) {
+        if (node.has(ID)) {
+            entity.setId(node.get(ID).intValue());
+        }
     }
 
     private Entity loadEntity(JsonNode node) {
@@ -135,6 +147,30 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 statusNode.iterator().forEachRemaining(n -> parseStatus(entity, n.textValue()));
             } else if (statusNode.isTextual()) {
                 parseStatus(entity, statusNode.asText());
+            }
+        }
+    }
+
+    private void assignRemaining(Entity entity, JsonNode node) {
+        if (node.has(REMAINING)) {
+            JsonNode remainingNode = node.get(REMAINING);
+            if (remainingNode.has(ARMOR)) {
+                JsonNode armorNode = remainingNode.get(ARMOR);
+                for (int location = 0; location < entity.locations(); location++) {
+                    String locationAbbr = entity.getLocationAbbr(location);
+                    if (armorNode.has(locationAbbr)) {
+                        entity.setArmor(armorNode.get(locationAbbr).intValue(), location);
+                    }
+                }
+            }
+            if (remainingNode.has(INTERNAL)) {
+                JsonNode internalNode = remainingNode.get(INTERNAL);
+                for (int location = 0; location < entity.locations(); location++) {
+                    String locationAbbr = entity.getLocationAbbr(location);
+                    if (internalNode.has(locationAbbr)) {
+                        entity.setInternal(internalNode.get(locationAbbr).intValue(), location);
+                    }
+                }
             }
         }
     }

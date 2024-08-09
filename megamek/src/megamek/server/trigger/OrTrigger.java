@@ -20,20 +20,27 @@ package megamek.server.trigger;
 
 import megamek.common.IGame;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * This Trigger reacts at the start of the specified game round.
- * Note that this Trigger can react multiple times!
+ * This Trigger implements a logic OR for all its subtriggers, i.e. it triggers at any moment when
+ * at least one of its subtriggers is satisfied.
  */
-public class SpecificRoundStartTrigger implements Trigger {
+public class OrTrigger implements Trigger {
 
-    private final int gameRound;
+    private final List<Trigger> triggers;
 
-    public SpecificRoundStartTrigger(int round) {
-        gameRound = round;
+    public OrTrigger(List<Trigger> triggers) {
+        this.triggers = triggers;
+    }
+
+    public OrTrigger(Trigger... triggers) {
+        this(Arrays.asList(triggers));
     }
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
-        return game.getCurrentRound() == gameRound;
+        return triggers.stream().anyMatch(trigger -> trigger.isTriggered(game, event));
     }
 }

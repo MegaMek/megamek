@@ -24,8 +24,9 @@ import megamek.common.IGame;
  * This Trigger reacts at the end of the specified game round. This is more or less the same as a RoundStartTrigger
  * of the following round, but this can be used to trigger something without actually entering the following
  * round just yet (e.g. ending the game at the end of round 10 instead of at the beginning of round 11).
+ * Note that this Trigger can react multiple times!
  */
-public class SpecificRoundEndTrigger extends AbstractOneTimeTrigger {
+public final class SpecificRoundEndTrigger implements Trigger {
 
     private final int gameRound;
 
@@ -34,7 +35,7 @@ public class SpecificRoundEndTrigger extends AbstractOneTimeTrigger {
     }
 
     @Override
-    protected boolean isTriggeredImpl(IGame game, TriggerSituation event) {
+    public boolean isTriggered(IGame game, TriggerSituation event) {
         return (event == TriggerSituation.ROUND_END) && (game.getCurrentRound() == gameRound);
     }
 }

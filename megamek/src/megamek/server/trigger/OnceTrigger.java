@@ -21,19 +21,29 @@ package megamek.server.trigger;
 import megamek.common.IGame;
 
 /**
- * This Trigger reacts at the start of the specified game round.
- * Note that this Trigger can react multiple times!
+ * This Trigger can be used to turn a given sub-trigger into a one-time-only trigger. This is useful for
+ * scenarios or creating triggers programmatically (e.g. in MHQ). Regardless of how often the given sub-trigger
+ * would react, this trigger will remember if it ever returned true before. If it
+ * did, it will not return true a second time and it will not even call its sub-trigger again.
  */
-public class SpecificRoundStartTrigger implements Trigger {
+public final class OnceTrigger implements Trigger {
 
-    private final int gameRound;
+    private final Trigger trigger;
+    private boolean wasTriggered = false;
 
-    public SpecificRoundStartTrigger(int round) {
-        gameRound = round;
+    public OnceTrigger(Trigger trigger) {
+        this.trigger = trigger;
     }
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
-        return game.getCurrentRound() == gameRound;
+        if (wasTriggered) {
+            return false;
+        } else if (trigger.isTriggered(game, event)) {
+            wasTriggered = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 }

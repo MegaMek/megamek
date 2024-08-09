@@ -21,27 +21,18 @@ package megamek.server.scriptedevent;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.common.jacksonadapters.MessageDeserializer;
 import megamek.server.IGameManager;
-import megamek.server.trigger.AbstractOneTimeTrigger;
 import megamek.server.trigger.Trigger;
 
 /**
  * This interface is implemented by pre-determined events that may happen over the course of a game, such as
- * story messages, board changes, game end, victory etc.
- * Much like WeaponHandlers, ScriptedEvents are parts of the GameManager's code and must fully work out
- * whatever the event brings, including sending the necessary packets.
+ * story messages or board changes. Much like WeaponHandlers, ScriptedGameManagerEvents are part of the
+ * GameManager's code and must fully work out whatever the event brings, including sending the necessary packets.
  * ScriptedEvents are based on a {@link Trigger} that defines when  (and how often) they happen. When they
  * happen, the {@link #process(IGameManager)} method is called to determine the results.
+ * (Note: This has nothing to do with an event listener system.)
  */
 @JsonDeserialize(using = MessageDeserializer.class)
-public interface ScriptedEvent {
-
-    /**
-     * @return The Trigger that controls when this event happens. Note that it is up to the Trigger
-     * to control if this event may happen multiple times. A subclass of
-     * {@link AbstractOneTimeTrigger} can be used to define a trigger that will
-     * never happen more than once.
-     */
-    Trigger getTrigger();
+public interface TriggeredActiveEvent extends TriggeredEvent {
 
     /**
      * This method is called when the Trigger of this event is satisfied (returns true). This method must

@@ -90,6 +90,9 @@ public abstract class AbstractGameManager implements IGameManager {
         if (getGame().getPhase().isExchange() || getGame().getPhase().isStartingScenario()) {
             scriptedEventHelper.processScriptedEvents(TriggerSituation.GAME_START);
         }
+        if (getGame().getPhase().isVictory()) {
+            scriptedEventHelper.processScriptedEvents(TriggerSituation.GAME_END);
+        }
         if (newPhase.isInitiative()) {
             scriptedEventHelper.processScriptedEvents(TriggerSituation.ROUND_START);
         }

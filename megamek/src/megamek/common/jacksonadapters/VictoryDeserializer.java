@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.client.ui.MMMarkdownRenderer;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
-import megamek.server.scriptedevent.MessageTriggeredActiveEvent;
+import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.Trigger;
 import org.apache.logging.log4j.LogManager;
 
@@ -33,26 +33,29 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
-public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveEvent> {
+public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> {
 
     private static final String TEXT = "text";
     private static final String HEADER = "header";
     private static final String TRIGGER = "trigger";
     private static final String IMAGE = "image";
+    private static final String MODIFY = "modify";
+    private static final String ONLY_AT_END = "onlyatend";
 
-    public MessageDeserializer() {
+    public VictoryDeserializer() {
         this(null);
     }
 
-    public MessageDeserializer(Class<?> vc) {
+    public VictoryDeserializer(Class<?> vc) {
         super(vc);
     }
 
     @Override
-    public MessageTriggeredActiveEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public VictoryTriggeredEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         return parse(jp.getCodec().readTree(jp), new File(""));
     }
 
@@ -61,41 +64,23 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
      * ideally never be empty, an exception being thrown instead). Board files are tried first
      * in the given basePath; if not found there, MM's data/boards/ is tried instead.
 
-     * @param messageNode a map: or maps: node from a YAML definition file
+     * @param victoryNode a map: or maps: node from a YAML definition file
      * @param basePath a path to search board files in (e.g. scenario path)
      * @return a list of parsed boards
      * @throws IllegalArgumentException for illegal node combinations and other errors
      */
-    public static MessageTriggeredActiveEvent parse(JsonNode messageNode, File basePath) {
-        requireFields("MessageScriptedEvent", messageNode, TEXT, HEADER, TRIGGER);
+    public static VictoryTriggeredEvent parse(JsonNode victoryNode, File basePath) {
+        requireFields("MessageScriptedEvent", victoryNode, TRIGGER);
 
-        String header = messageNode.get(HEADER).textValue();
-        String text = messageNode.get(TEXT).textValue();
-        // By default, expect this to be markdown and render to HTML; this preserves line breaks and paragraphs
-        text = MMMarkdownRenderer.getRenderedHtml(text);
-        Trigger trigger = TriggerDeserializer.parseNode(messageNode.get(TRIGGER));
+        Trigger trigger = TriggerDeserializer.parseNode(victoryNode.get(TRIGGER));
 
-        Image image = null;
-        if (messageNode.has(IMAGE)) {
-            try {
-                image = loadImage(messageNode.get(IMAGE).asText(), basePath);
-            } catch (IOException ex) {
-                LogManager.getLogger().warn(ex.getMessage());
+        boolean isGameEnding = true;
+        if (victoryNode.has(MODIFY)) {
+            List<String> modifiers = TriggerDeserializer.parseArrayOrSingleNode(victoryNode.get(MODIFY), ONLY_AT_END);
+            if (modifiers.contains(ONLY_AT_END)) {
+                isGameEnding = false;
             }
         }
-
-        return new MessageTriggeredActiveEvent(trigger, header, text, image);
-    }
-
-    @Nullable
-    private static Image loadImage(String fileName, File basePath) throws IOException {
-        File imageFile = new File(basePath, fileName);
-        if (!imageFile.exists()) {
-            imageFile = new File(Configuration.imagesDir(), fileName);
-            if (!imageFile.exists()) {
-                throw new IllegalArgumentException("Image file does not exist: " + imageFile + " in " + basePath);
-            }
-        }
-        return ImageIO.read(imageFile);
+        return new VictoryTriggeredEvent(trigger, isGameEnding);
     }
 }

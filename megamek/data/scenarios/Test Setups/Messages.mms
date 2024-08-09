@@ -16,9 +16,9 @@ factions:
     elevation: -1
 
 end:
-  trigger:
-    type: roundend
-    round: 4
+  - trigger:
+      type: roundend
+      round: 4
 
 messages:
   - header: Scenario Messages
@@ -26,8 +26,6 @@ messages:
       In this test setup scenario, several messages are shown at various points of the game.
       
       This is supposed to be a test for the message system and the trigger system.
-    # portrait:
-    # splash:
     trigger:
       type: gamestart
 
@@ -36,12 +34,14 @@ messages:
     trigger:
       type: roundstart
       round: 2
+      modify: once
 
   - header: Round 3 end!
     text: This is a test message for the end of round 3
     trigger:
       type: roundend
       round: 3
+      modify: once
 
 
 

@@ -28,15 +28,11 @@ import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
-import megamek.common.jacksonadapters.BoardDeserializer;
-import megamek.common.jacksonadapters.CarryableDeserializer;
-import megamek.common.jacksonadapters.MMUReader;
-import megamek.common.jacksonadapters.MessageDeserializer;
+import megamek.common.jacksonadapters.*;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
-import megamek.server.scriptedevent.MessageScriptedEvent;
-import megamek.server.scriptedevent.ScriptedEvent;
+import megamek.server.scriptedevent.GameEndTriggeredEvent;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -47,12 +43,18 @@ import java.util.stream.Collectors;
 public class ScenarioV2 implements Scenario {
 
     private static final String DEPLOY = "deploy";
+    private static final String DEPLOY_EDGE = "edge";
+    private static final String DEPLOY_OFFSET = "offset";
+    private static final String DEPLOY_WIDTH = "width";
     private static final String MAP = "map";
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
     private static final String MESSAGES = "messages";
+    private static final String END = "end";
+    private static final String TRIGGER = "trigger";
+    private static final String VICTORY = "victory";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -113,6 +115,8 @@ public class ScenarioV2 implements Scenario {
         parseOptions(game);
         parsePlayers(game);
         parseMessages(game);
+        parseGameEndEvents(game);
+
 //        game.setupTeams();
         game.setBoard(0, createBoard());
         if ((game instanceof PlanetaryConditionsUsing)) {
@@ -138,6 +142,17 @@ public class ScenarioV2 implements Scenario {
             conditions.determineWind();
             plGame.setPlanetaryConditions(conditions);
         }
+    }
+
+    private void parseGameEndEvents(IGame game) {
+        if (node.has(END)) {
+            node.get(END).iterator().forEachRemaining(n -> parseGameEndEvent(game, n));
+        }
+    }
+
+    private void parseGameEndEvent(IGame game, JsonNode node) {
+        game.addScriptedEvent(new GameEndTriggeredEvent(TriggerDeserializer.parseNode(node.get(TRIGGER))));
+
     }
 
     private void parseMessages(IGame game) {
@@ -175,15 +190,34 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
-    private IGame selectGameType() {
-        switch (getGameType()) {
-            case AS:
-                return new ASGame();
-            case SBF:
-                return new SBFGame();
-            default:
-                return new Game();
+    private void parseDeployment(IGame game, JsonNode playerNode, Player player) {
+        String edge = "Any";
+        if (playerNode.has(DEPLOY)) {
+            if (!playerNode.get(DEPLOY).isContainerNode()) {
+                edge = playerNode.get(DEPLOY).textValue();
+            } else {
+                JsonNode deployNode = playerNode.get(DEPLOY);
+                if (deployNode.has(DEPLOY_EDGE)) {
+                    edge = deployNode.get(DEPLOY_EDGE).textValue();
+                }
+                if (deployNode.has(DEPLOY_OFFSET)) {
+                    player.setStartOffset(deployNode.get(DEPLOY_OFFSET).intValue());
+                }
+                if (deployNode.has(DEPLOY_WIDTH)) {
+                    player.setStartWidth(deployNode.get(DEPLOY_WIDTH).intValue());
+                }
+            }
         }
+        int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, edge), 0);
+        player.setStartingPos(dir);
+    }
+
+    private IGame selectGameType() {
+        return switch (getGameType()) {
+            case AS -> new ASGame();
+            case SBF -> new SBFGame();
+            default -> new Game();
+        };
     }
 
     @Override
@@ -212,9 +246,8 @@ public class ScenarioV2 implements Scenario {
             // scenario players start out as ghosts to be logged into
             player.setGhost(true);
 
-            String loc = playerNode.has(DEPLOY) ? playerNode.get(DEPLOY).textValue() : "Any";
-            int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
-            player.setStartingPos(dir);
+            parseDeployment(game, playerNode, player);
+            parseVictories(game, playerNode, player);
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();
@@ -290,6 +323,16 @@ public class ScenarioV2 implements Scenario {
         }
 
         return result;
+    }
+
+    private void parseVictories(IGame game, JsonNode playerNode, Player player) {
+        if (playerNode.has(VICTORY)) {
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n));
+        }
+    }
+
+    private void parseVictory(IGame game, JsonNode node) {
+        game.addScriptedEvent(VictoryDeserializer.parse(node, scenarioDirectory()));
     }
 
     private int smallestFreeUnitID(List<? extends InGameObject> units) {

@@ -167,10 +167,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void error(String message, String title) {
         error(message);
         try {
-        	JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         }
         catch (Exception ignored) {
-        	// if the message dialog crashes, we don't really care
+            // if the message dialog crashes, we don't really care
         }
     }
 

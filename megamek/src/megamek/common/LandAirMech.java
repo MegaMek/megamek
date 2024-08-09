@@ -127,6 +127,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int altLoss = 0;
     private int altLossThisRound = 0;
 
+
     //Autoejection
     private boolean critThresh = false;
 
@@ -1690,6 +1691,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public int getThresh(int loc) {
         return getInternal(loc);
+    }
+
+    /**
+     * @return the highest damage threshold for the LAM unit
+     */
+    @Override
+    public int getHighestThresh() {
+        int max = getThresh(0);
+        for (int i = 1; i < locations(); i++) {
+            if (getThresh(i) > max) {
+                max = getThresh(i);
+            }
+        }
+        return max;
     }
 
     @Override

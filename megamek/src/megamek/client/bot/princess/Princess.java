@@ -694,8 +694,6 @@ public class Princess extends BotClient {
 
         // Shallow copy of refs list
         ArrayList<Coords> localCopy = new ArrayList(possibleDeployCoords);
-        // Shuffle
-        Collections.shuffle(localCopy);
 
         // Hacky, but really, "DEPLOY" should be a path step...
         MovePath mp = new MovePath(game, deployedUnit);
@@ -704,7 +702,11 @@ public class Princess extends BotClient {
         IPathRanker ranker = getPathRanker(deployedUnit);
         HashMap<Double, ArrayList<Coords>> rankedCoords = new HashMap<>();
 
-        if (!deployedUnit.isAero()) {
+        // Units that deploy airborne don't need to worry about all this
+        if (!(deployedUnit.isAero()
+                || ((deployedUnit.getMovementMode().isVTOL() || deployedUnit.getMovementMode().isWiGE())
+                    && deployedUnit.getElevation() > 0)
+        )) {
             double hazard;
             int longest = 0;
             int size = 0;
@@ -762,7 +764,7 @@ public class Princess extends BotClient {
             }
         } else {
             if (sb != null) {
-                sb.append("\n\tAerospace units don't worry about ground level hazards;");
+                sb.append("\n\tAerospace / flying ground units don't worry about ground level hazards;");
             }
         }
 

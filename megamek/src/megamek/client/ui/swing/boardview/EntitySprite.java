@@ -219,7 +219,7 @@ class EntitySprite extends Sprite {
         }
         
         if (ePos != null) {
-        	bounds.setLocation(hexOrigin.x + ePos.x, hexOrigin.y + ePos.y);
+            bounds.setLocation(hexOrigin.x + ePos.x, hexOrigin.y + ePos.y);
         }
 
         entityRect = new Rectangle(bounds.x + (int) (20 * bv.scale), bounds.y

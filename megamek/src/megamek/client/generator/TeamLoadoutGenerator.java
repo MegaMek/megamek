@@ -652,85 +652,73 @@ public class TeamLoadoutGenerator {
 
     // region Imperative mutators
     private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        setAC5Imperatives(e, mt, rp);
-        setAC10Imperatives(e, mt, rp);
-        setAC20Imperatives(e, mt, rp);
+        applyACCaselessImperative(e, mt, rp);
     }
 
     private static int getACWeaponCount(Entity e, String size) {
+        // Only applies to non-LB-X AC weapons
         return (int) e.getWeaponList().stream()
-                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains(size)).count();
+                .filter(
+                        w -> w.getName().toLowerCase()
+                                .contains("ac")
+                            && !w.getName().toLowerCase()
+                                .contains("lb")
+                            && w.getName()
+                                .contains(size)
+                ).count();
     }
 
     private static int getACAmmoCount(Entity e, String size) {
+        // Only applies to non-LB-X AC weapons
         return (int) e.getAmmo().stream()
-                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains(size)).count();
+                .filter(
+                        w -> w.getName().toLowerCase()
+                                .contains("ac")
+                            && !w.getName().toLowerCase()
+                                .contains("lb")
+                            && w.getName()
+                                .contains(size)
+                ).count();
     }
 
-    // Set low-ammo-count AC5 carriers to use Caseless if ammo is <= 1/2 ton per tube
-    private static boolean setAC5Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        int ac5Count = getACWeaponCount(e, "5");
-
+    private static boolean applyACCaselessImperative(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
         // TODO: remove this block when implementing new anti-ground Aero errata
-        // Ignore Aeros, which can't use most alt munitions, and those without AC5s.
-        if (e.isAero() || ac5Count == 0) {
+        // Ignore Aeros, which can't use most alt munitions.
+        if (e.isAero()) {
             return false;
         }
 
-        // Always use Caseless if AC/5 ammo tons <= count of tubes
-        int ac5Ammo = getACAmmoCount(e, "5");
-        if (ac5Ammo <= ac5Count/2.0) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/5", "Caseless");
-            return true;
-        }
-        return false;
-    }
+        boolean swapped = false;
+        Map<String, Double> caliburToRatioMap = Map.of(
+                "2", 0.25,      // if 1 ton or less per 4 AC/2 barrels,
+                "5", 0.5,       // if 1 ton or less per 2 AC/5 barrels,
+                "10", 1.0,      // if 1 ton or less per AC/10 or AC/20 barrel
+                "20", 1.0       // Replace existing imperatives with Caseless only.
+        );
 
-    // Set low-ammo-count AC10 carriers to use Caseless if ammo is <= 1 ton per tube
-    private static boolean setAC10Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        int ac10Count = getACWeaponCount(e, "10");
+        // Iterate over any possible Autocannons and update their ammo imperatives if count of bins/barrel
+        // is at or below the relevant ratio.
+        for (String calibur: caliburToRatioMap.keySet()) {
+            int barrelCount = getACWeaponCount(e, calibur);
+            int binCount = getACAmmoCount(e, calibur);
 
-        // TODO: remove this block when implementing new anti-ground Aero errata
-        // Ignore Aeros, which can't use most alt munitions, and those without AC10s.
-        if (e.isAero() || ac10Count == 0) {
-            return false;
-        }
-
-        // Always use Caseless if AC/10 ammo tons <= count of tubes
-        int ac10Ammo = getACAmmoCount(e, "10");
-        if (ac10Ammo <= ac10Count) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/10", "Caseless");
-            return true;
-        }
-        return false;
-    }
-
-    // Set low-ammo-count AC20 carriers to use Caseless exclusively.
-    private static boolean setAC20Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        int ac20Count = getACWeaponCount(e, "20");
-
-        // TODO: remove this block when implementing new anti-ground Aero errata
-        // Ignore Aeros, which can't use most alt munitions, and those without AC20s.
-        if (e.isAero() || ac20Count == 0) {
-            return false;
+            if (barrelCount == 0) {
+                // Nothing to do
+                continue;
+            } else if (((double) binCount) / barrelCount <= caliburToRatioMap.get(calibur)) {
+                // Replace any existing imperatives with Caseless as default
+                mt.insertImperative(
+                        e.getFullChassis(),
+                        e.getModel(),
+                        "any",
+                        "AC/" + calibur,
+                        "Caseless"
+                );
+                swapped = true;
+            }
         }
 
-        // Always use Caseless if AC/20 ammo tons <= count of tubes
-        int ac20Ammo = getACAmmoCount(e, "20");
-        if (ac20Ammo <= ac20Count) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Caseless");
-            return true;
-        }
-
-        // Add one "Standard" to the start of the existing imperatives operating on this
-        // unit.
-        String[] imperatives = mt.getEffectiveImperative(e.getFullChassis(), e.getModel(), "any", "AC/20").split(":");
-        if (!imperatives[0].contains("Standard")) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20",
-                    "Standard:" + String.join(":", imperatives));
-        }
-
-        return false;
+        return swapped;
     }
 
     // Set Artemis LRM carriers to use Artemis LRMs

@@ -155,6 +155,13 @@ public class MMLogger extends ExtendedLoggerWrapper {
      */
     public void error(Throwable exception, String message, String title) {
         error(exception, message);
+        
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        }
+        catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
     }
 
     /**
@@ -166,6 +173,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      */
     public void error(String message, String title) {
         error(message);
+        
         try {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         }

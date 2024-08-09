@@ -249,25 +249,25 @@ class EntitySprite extends Sprite {
         
         if (position != null) {			
             if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
-        	    labelRect.setLocation((int) (bv.hex_size.width * 0.55), (int) (0.75 * bv.hex_size.height));
-        	    labelPos = Positioning.RIGHT;
-        	} else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
-        	    labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
-        	            (int) (0.25 * bv.hex_size.height) - labelRect.height);
-        	    labelPos = Positioning.LEFT;
-        	} else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
-        	    labelRect.setLocation((int) (bv.hex_size.width * 0.55),
-        	            (int) (0.25 * bv.hex_size.height) - labelRect.height);
-        	    labelPos = Positioning.RIGHT;
-        	} else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
-        	    labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
-        	            (int) (0.75 * bv.hex_size.height));
-        	    labelPos = Positioning.LEFT;
-        	} else {
-        	    labelRect.setLocation(bv.hex_size.width / 2 - labelRect.width / 2,
-        	            (int) (0.75 * bv.hex_size.height));
-        	    labelPos = Positioning.RIGHT;
-        	}
+                labelRect.setLocation((int) (bv.hex_size.width * 0.55), (int) (0.75 * bv.hex_size.height));
+                labelPos = Positioning.RIGHT;
+            } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
+                labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
+                        (int) (0.25 * bv.hex_size.height) - labelRect.height);
+                labelPos = Positioning.LEFT;
+            } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
+                labelRect.setLocation((int) (bv.hex_size.width * 0.55),
+                        (int) (0.25 * bv.hex_size.height) - labelRect.height);
+                labelPos = Positioning.RIGHT;
+            } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
+                labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
+                        (int) (0.75 * bv.hex_size.height));
+                labelPos = Positioning.LEFT;
+            } else {
+                labelRect.setLocation(bv.hex_size.width / 2 - labelRect.width / 2,
+                        (int) (0.75 * bv.hex_size.height));
+                labelPos = Positioning.RIGHT;
+            }
         }
 
         // If multiple units are present in a hex, fan out the labels

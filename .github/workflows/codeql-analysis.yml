@@ -25,10 +25,8 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: java-kotlin
+          build-mode: none
           queries: security-and-quality
-          config: |
-            paths:
-              - megamek/src
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

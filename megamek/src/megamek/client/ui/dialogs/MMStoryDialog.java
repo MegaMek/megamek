@@ -58,11 +58,11 @@ public abstract class MMStoryDialog extends JDialog {
     }
 
     protected void initialize() {
+        setAlwaysOnTop(true);
         setLayout(new BorderLayout());
         add(getMainPanel(), BorderLayout.CENTER);
         add(getButtonPanel(), BorderLayout.SOUTH);
 
-        setDialogSize();
         pack();
         setLocationRelativeTo(getParent());
         setResizable(false);
@@ -121,23 +121,10 @@ public abstract class MMStoryDialog extends JDialog {
             JLabel imgLbl = new JLabel();
             imgLbl.setIcon(icon);
             imagePanel.add(imgLbl, BorderLayout.CENTER);
-//            if(null != p) {
-//                //add a caption
-//                imagePanel.add(new JLabel(p.getTitle(), SwingConstants.CENTER), BorderLayout.PAGE_END);
-//            }
         }
 
         //we can grab and put here in an image panel
         return imagePanel;
-    }
-
-    protected void setDialogSize() {
-
-//        int width = 400+imgWidth;
-//        int height = imgHeight;
-//        setMinimumSize(new Dimension(width, height));
-//        setPreferredSize(new Dimension(width, height));
-//        setMaximumSize(new Dimension(width, height));
     }
 
     protected void close() {

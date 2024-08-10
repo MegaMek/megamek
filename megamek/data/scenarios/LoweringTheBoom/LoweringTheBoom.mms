@@ -11,6 +11,17 @@ map:
     - file: Map Set 2/16x17 BattleTech.board
     - file: Map Set 2/16x17 Lake Area.board
       modify: rotate
+  postprocess:
+    - type: convertterrainlevel
+      from:
+        terrain: woods
+      to:
+        level: 2
+    - type: convertterrainlevel
+      from:
+        terrain: water
+      to:
+        level: 3
 
 factions:
 - name: Thirtieth Marik Militia
@@ -50,6 +61,7 @@ factions:
         LT: 10
     crew:
       name: Maj. Abraham Morrison
+      portrait: Male/MechWarrior/MW_M_13.png
       piloting: 4
       gunnery: 4
 
@@ -185,16 +197,21 @@ messages:
       ## Defender's Task
       
       In this scenario, it is your task to save Col. Oliver Nage and his elements of 1st Company, 1st Battalion 
-      from the attacking Kell Hounds. Try to reach safety by retreating off the north edge of the map with 
-      as many units as possible.
+      from the attacking Kell Hounds. Try to escape by retreating off the north edge of the map with 
+      as many Meks as possible.
       
-      Take care! Some of your Meks have already sustained damage.
+      Be careful! Some of your Meks have already sustained damage.
       
-      [ Technical note: you can currently retreat off any edge of the battlefield and it will count. If you do 
-      this, Princess will be sad. ]
+      *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory. 
+      If you do this, Princess will be sad.*
+    image: loweringboom_map.png
     trigger:
       type: and
-      triggers: [ { type: phasestart, phase: movement }, { type: round, round: 1 } ]
+      triggers:
+        - type: phasestart
+          phase: movement
+        - type: round
+          round: 1
 
   - header: One Unit Safe
     text: Congratulations, one of your Meks has safely left the battlefield!
@@ -220,18 +237,37 @@ messages:
       units: [ 101, 102, 103, 104, 105, 106 ]
       count: 4
 
-  - header: Decisive Kell Hounds Victory
-    text: Not more than one Marik Mek managed to evade the Kell Hounds forces. The Kell Hounds
+  - header: Decisive Defeat
+    text: |
+      ## Decisive Defeat
+      
+      Not more than one Marik Mek managed to evade the Kell Hounds forces. The Kell Hounds
       have won a decivise victory.
+      
+      Colonel Nage saw the battle lost and broke away with his command company, intending to reach the atomic 
+      weapons and use them on the mercenaries. Colonel Kell sent Salome War and her Relentless Wolves after him.  
+      Ward's company caught Nage just before he reached the depot. She attacked as the Second Battalion's LAMs bombed 
+      the depot. Ward's Wolves took a toll of the Marik Meks. Seeing smoke rising from the depot and his 'Mechs taking 
+      heavy damage, Nage fled, with the Relentless Wolves in pursuit.
+    image: loweringboom_splash.png
     trigger:
       modify: atend
       type: fledunits
       units: [ 101, 102, 103, 104, 105, 106 ]
       atmost: 1
 
-  - header: Marginal Kell Hounds Victory
-    text: Two Marik Meks managed to evade the Kell Hounds forces. The Kell Hounds
-      have won a marginal victory.
+  - header: Marginal Defeat
+    text: |
+      ## Marginal Defeat
+      
+      Only two Marik Meks managed to evade the Kell Hounds forces.
+      
+      Colonel Nage saw the battle lost and broke away with his command company, intending to reach the atomic 
+      weapons and use them on the mercenaries. Colonel Kell sent Salome War and her Relentless Wolves after him.  
+      Ward's company caught Nage just before he reached the depot. She attacked as the Second Battalion's LAMs bombed 
+      the depot. Ward's Wolves took a toll of the Marik Meks. Seeing smoke rising from the depot and his 'Mechs taking 
+      heavy damage, Nage fled, with the Relentless Wolves in pursuit.
+    image: loweringboom_splash.png
     trigger:
       type: fledunits
       modify: atend
@@ -241,15 +277,27 @@ messages:
   - header: Decisive Marik Victory
     text: Five Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a decivise victory.
+    image: loweringboom_splash.png
     trigger:
       type: fledunits
       modify: atend
       units: [ 101, 102, 103, 104, 105, 106 ]
       atleast: 5
 
+  - header: A Draw!
+    text: Three Marik Meks managed to evade the Kell Hounds forces. This result is considered
+      a draw.
+    image: loweringboom_splash.png
+    trigger:
+      type: fledunits
+      modify: atend
+      units: [ 101, 102, 103, 104, 105, 106 ]
+      count: 3
+
   - header: Marginal Marik Victory
     text: Four Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a marginal victory.
+    image: loweringboom_splash.png
     trigger:
       type: fledunits
       modify: atend
@@ -266,3 +314,4 @@ end:
       type: activeunits
       units: [ 201, 202, 203, 204, 205, 206, 207 ]
       count: 0
+

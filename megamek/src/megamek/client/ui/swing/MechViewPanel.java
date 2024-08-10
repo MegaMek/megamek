@@ -190,10 +190,21 @@ public class MechViewPanel extends JPanel {
         }
         if ((fluffImageIndex >= 0) && (fluffImageIndex < fluffImageList.size())) {
             setFluffImage(fluffImageList.get(fluffImageIndex).image());
-            imageInfoLabel.setText(fluffImageList.get(fluffImageIndex).fileName());
+            imageInfoLabel.setText(prepareLabelText(fluffImageList.get(fluffImageIndex).fileName()));
         } else {
             setFluffImage((Image) null);
             imageInfoLabel.setText("");
         }
+    }
+
+    private String prepareLabelText(String labelInfo) {
+        String labelText = "";
+        if (labelInfo.contains("__")) {
+            labelText = labelInfo.substring(labelInfo.lastIndexOf("__") + 2);
+        }
+        if (labelText.contains(".")) {
+            labelText = labelText.substring(0, labelText.lastIndexOf("."));
+        }
+        return labelText;
     }
 }

@@ -56,8 +56,8 @@ public final class FluffImageHelper {
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG",
-            ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
+    public static final List<String> EXTENSIONS_FLUFF_IMAGE_FORMATS = List.of(".PNG", ".png", ".JPG",
+            ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif");
 
     /**
      * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
@@ -306,6 +306,7 @@ public final class FluffImageHelper {
         List<File> result = new ArrayList<>();
         try (Stream<Path> entries = Files.walk(dir.toPath())) {
             result.addAll(entries.map(Objects::toString).map(File::new).toList());
+            result.removeIf(FluffImageHelper::isNoImageFile);
         } catch (IOException e) {
             LogManager.getLogger().warn("Error while reading files from " + dir, e);
         }
@@ -372,5 +373,23 @@ public final class FluffImageHelper {
         public static FluffImageRecord toRecord(String fileName) {
             return new FluffImageRecord(new ImageIcon(fileName).getImage(), fileName);
         }
+    }
+
+    private static boolean isNoImageFile(File file) {
+        Optional<String> extension = getExtension(file.toString());
+        return extension.isEmpty() || !EXTENSIONS_FLUFF_IMAGE_FORMATS.contains(extension.get());
+    }
+
+    /**
+     * Returns the file extension of a given filename.
+     * source: baeldung.com/java-file-extension
+     *
+     * @param filename The filename, potentially with directories
+     * @return The extension, including the dot
+     */
+    public static Optional<String> getExtension(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".")));
     }
 }

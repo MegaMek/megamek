@@ -1,5 +1,8 @@
-# 
-#  A MegaMek Scenario file
+# This document explains how to write a scenario V2 file.
+# ScenarioV2 uses YAML formatting which relies heavily on indentation
+
+# Note that this file itself is not a well-formed scenario as it shows multiple examples of
+# tags that may only be used once.
 #
 
 MMSVersion: 2                               # Required to be recognized as a Scenario file of this format
@@ -255,37 +258,176 @@ factions:
           piloting: 4
           gunnery: 3
 
-triggers:
-  - message:
-      round: 0
-      phase: before
-      description: >
-        The campaign on Bellatrix against Ajax's Avengers brought McCormack's Fusiliers instant fame.
-        Arriving to find themselves outnumbered three-to-one, the Fusiliers quickly used their superior grasp of
-        tactics and their ferocity to smash the defending unit.  The retreating Avengers tried deperately to shake the
-        Highlanders as they fled east across the southern continent of Bellatrix, but to no avail. Exhausted and bogged
-        down by bad weather, the Avengers had no choice but to stand and fight.
-  - message:
-      round: 2
-      phase: before
-      description: Reinforcements have arrived!
-  - victory:
-      alone: yes                            # no opposition left on the map
-      description: The battlefield is yours! No opposition remains. Well done!
 
+
+# ###############################################
+# Game End, Victory and Victory/Defeat/Other Messages
+# are three separate things.
+
+# The game ends when any of the game end trigger conditions is met *at the end of a round*. Note that end
+# triggers *must not* use the "once" nor the "atend" modifier, but they can use the "not" modifier.
+# When the game ends, all victory conditions are checked to see which team wins. If no conditions are met, the
+# game is a draw.
+# In addition to the end triggers, the game can also end when a victory condition is met at the end of a round
+# and that victory condition does not have the onlyatend modifier, see the victory: tag below.
+
+# end: is always followed by an array of triggers, i.e. dashes must be used: - trigger:
 end:
   - trigger:
-      type: activeunits
-      # modifiers are
-      #   once: make this trigger only ever fire once
-      #   not: invert this trigger
-      #   with [not, once] the trigger will be inverted and fire only once; the order of the modifiers is irrelevant
-      modify: once
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      count: 0
+      # in most scenarios, this makes sense...
+      type: battlefieldcontrol
 
   - trigger:
-      type: activeunits
-      modify: once
-      units: [ 201, 202, 203, 204, 205, 206, 207 ]
-      count: 0
+      type: killedunits
+      units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+      atleast: 7
+
+  - trigger:
+      type: killedunit
+      unit: 201
+
+  - trigger:
+      type: roundend
+      round: 12
+
+# ###############################################
+# Messages
+# are always an array (use dashes)
+messages:
+    # Messages require a header (shown as the title of the message dialog window)
+  - header: Victory
+    # The text is shown in the message dialog. It uses markdown formatting. Use the pipe | as shown in the
+    # example to preserve paragraphs
+    text: |
+      ## Victory
+      
+      The Second Sword of Light successfully broke through the line of the Davion defenses. They will not
+      recover their Prince's body. This will be a heavy blow to their morale.
+      
+      Yorinaga Kurita commends your performance by not being displeased.
+    # Optional: the image is shown to the left of the text. The size is not fixed, but ~ 350 x 350 tends
+    # to look good.
+    image: tosaveaprince_splash.png
+    # The trigger controls when to show the message
+    # Most messages should appear only once, so using the "once" modifier usually makes sense.
+    # Victory/defeat messages should use the atend modifier to be shown only when the game has ended.
+    # Note that the message itself does not end the game or control victory, it is just displayed.
+    trigger:
+      type: fledunits
+      modify: [ atend, once ]
+      units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+      atleast: 6
+
+# ###############################################
+# Triggers
+# are used to end the game, decide victory and show messages
+# The following examples show all available triggers. Note that triggers by themselves (as given below)
+# are not valid, they must always be attached to something else (message, end, victory) as shown above.
+
+trigger:
+  # The battlefieldcontrol condition is met when only live units of a single team remain on the battlefield,
+  # disregarding MechWarriors, TeleMissiles, GunEmplacements, offboard and undeployed units.
+  type: battlefieldcontrol
+
+trigger:
+  # The killedunits condition is met when the given number(s) of units have been destroyed (not fled)
+  type: killedunits
+  # Optional: limit the test to the player's units
+  player: Player A
+  # Optional: a list of units to limit the check to. This makes sense most of time to avoid finding MechWarriors
+  # or other spawns; when giving unit IDs, the player limitation is redundant
+  units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+  # At least the given number of units must have been killed, can be combined with atmost
+  atleast: 7
+  # At most the given number of units must have been killed
+  atmost: 10
+  # OR: the exact number of units must have been killed; this cannot be combined with atmost/atleast
+  count: 2
+
+trigger:
+  # The killedunit condition is met when the unit has been destroyed (not fled)
+  type: killedunit
+  # The unit ID to be checked
+  unit: 201
+
+trigger:
+  # The activeunits condition is met when the given number(s) of units are live and well (their deployment
+  # is not checked; fled units are not active)
+  # see the killedunits trigger for additional data to be given
+  type: activeunits
+  units: [ 201, 202, 203, 204, 205, 206, 207 ]
+  count: 3
+
+trigger:
+  # The fledunits condition is met when the given number(s) of units have fled the battlefield
+  # see the killedunits trigger for additional data to be given
+  type: fledunits
+  units: [ 201, 202, 203, 204, 205, 206, 207 ]
+  count: 1
+
+trigger:
+  # the gamestart trigger activates right at the start of the game, before deployment
+  type: gamestart
+
+trigger:
+  # the phasestart trigger activates at the start of the given phase
+  type: phasestart
+  # the exact phase names are the enum constants of GamePhase.java in lowercase, e.g. deployment or pointblank_shot
+  phase: movement
+
+trigger:
+  # This trigger is met at the end of one round or any round
+  type: roundend
+  # Optional: when the round number is given, only the end of that round meets the condition
+  round: 12
+
+trigger:
+  # This trigger is met at the start of one round or any round
+  type: roundstart
+  # Optional: when the round number is given, only the start of that round meets the condition
+  round: 12
+
+
+# Trigger modifiers:
+trigger:
+  type: activeunits
+  count: 1
+  # Modifiers are
+  #   once: make this trigger only ever fire once (useful e.g. for messages)
+  #   not: invert this trigger, making it activate if and only if its conditions are not met
+  #     with [not, once] the trigger will be inverted and fire only once; the order of these modifiers is irrelevant
+  #   atend: this trigger will only fire when the game has ended (useful for victory/defeat messages)
+  # The modifiers can be given as a single value or an array
+  modify: once
+  # or:
+  modify: [ once, atend ]
+  # or:
+  modify:
+    - not
+    - once
+
+# Technical "triggers"; these can be nested
+trigger:
+  # The AND trigger combines all (two or more) given sub-triggers so that all of them must be active for the
+  # AND trigger itself to fire. Note that sub-triggers should not use the modifier "once" or it is possible
+  # that one of the sub-triggers activates and is "used up", preventing the AND trigger from ever firing.
+  type: and
+  triggers:
+    # here, the unit 201 must be killed AND it must be the start of the movement phase for this AND trigger
+    # to activate
+    - type: killedunit
+      units: 201
+    - type: phasestart
+      phase: movement
+
+trigger:
+  # The OR trigger combines all (two or more) given sub-triggers so that at least one of them must be active
+  # for the OR trigger itself to fire.
+  type: or
+  triggers:
+    # here, the unit 201 must be killed OR it must be the start of the movement phase for this OR trigger
+    # to activate
+    - type: killedunit
+      units: 201
+    - type: phasestart
+      phase: movement

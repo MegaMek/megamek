@@ -45,6 +45,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String TYPE_FLEDUNITS = "fledunits";
     private static final String TYPE_ACTIVEUNITS = "activeunits";
     private static final String TYPE_KILLEDUNITS = "killedunits";
+    private static final String TYPE_KILLEDUNIT = "killedunit";
     private static final String TYPE_BATTLEFIELD_CONTROL = "battlefieldcontrol";
     private static final String PLAYER = "player";
     private static final String COUNT = "count";
@@ -53,6 +54,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String ROUND = "round";
     private static final String PHASE = "phase";
     private static final String UNITS = "units";
+    private static final String UNIT = "unit";
     private static final String MODIFY = "modify";
     private static final String ONCE = "once";
     private static final String NOT = "not";
@@ -86,6 +88,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             case TYPE_FLEDUNITS -> parseFledUnitsTrigger(node);
             case TYPE_ACTIVEUNITS -> parseActiveUnitsTrigger(node);
             case TYPE_KILLEDUNITS -> parseKilledUnitsTrigger(node);
+            case TYPE_KILLEDUNIT -> parseKilledUnitTrigger(node);
             case TYPE_BATTLEFIELD_CONTROL -> new BattlefieldControlTrigger();
             case NOT -> parseNotTrigger(node);
             case ROUND -> new RoundTrigger(node.get(ROUND).asInt());
@@ -211,6 +214,10 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             triggerNode.get(UNITS).iterator().forEachRemaining(id -> unitIds.add(id.asInt()));
         }
         return new KilledUnitsTrigger(player, unitIds, minCount, maxCount);
+    }
+
+    private static Trigger parseKilledUnitTrigger(JsonNode triggerNode) {
+        return new KilledUnitsTrigger(triggerNode.get(UNIT).asInt());
     }
 
     private static Trigger parsePhaseStartTrigger(JsonNode triggerNode) {

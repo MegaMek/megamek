@@ -33,6 +33,7 @@ factions:
   units:
   - fullname: BattleMaster BLR-1G
     id: 101
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
     crew:
       name: Tai-i Tendoru Zakahashi
       piloting: 3
@@ -40,6 +41,7 @@ factions:
 
   - fullname: Marauder MAD-3R
     id: 102
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
     crew:
       name: Anson McMurphy
       piloting: 4
@@ -47,6 +49,7 @@ factions:
 
   - fullname: Grasshopper GHR-5H
     id: 103
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
     crew:
       name: Franco Jones
       callsign: Frito
@@ -55,6 +58,7 @@ factions:
 
   - fullname: Ostsol OTL-4D
     id: 104
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
     crew:
       name: Art Shrett
       piloting: 3
@@ -62,6 +66,7 @@ factions:
 
   - fullname: Orion ON1-K
     id: 105
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
     crew:
       name: Chu-i Susie Elgin
       piloting: 3
@@ -69,6 +74,7 @@ factions:
 
   - fullname: Rifleman RFL-3N
     id: 106
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
     remaining:
       RTR: 0
     crew:
@@ -78,6 +84,7 @@ factions:
 
   - fullname: Dervish DV-6M
     id: 107
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
     remaining:
       CT: 10
     crew:
@@ -88,6 +95,7 @@ factions:
 
   - fullname: Enforcer ENF-4R
     id: 108
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
     crew:
       name: Charlie Adams
       piloting: 4
@@ -96,6 +104,7 @@ factions:
   # Light Lance
   - fullname: Javelin JVN-10N
     id: 109
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
     crew:
       name: Chu-i Bob Crenshaw
       callsign: Texas
@@ -104,6 +113,7 @@ factions:
 
   - fullname: Stinger STG-3R
     id: 110
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
     crew:
       name: John Parthan
       callsign: Wrinkles
@@ -112,6 +122,7 @@ factions:
 
   - fullname: Locust LCT-1V
     id: 111
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
     crew:
       name: Chuck Stork
       callsign: Bossman
@@ -120,6 +131,7 @@ factions:
 
   - fullname: Locust LCT-1V
     id: 112
+    force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
     crew:
       name: Jack Brockman
       callsign: Hun Killer
@@ -142,6 +154,7 @@ factions:
   units:
     - fullname: Crusader CRD-3R
       id: 201
+      force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
       deploymentround: 2
       crew:
         name: Cpt. Carrol O'Caithan
@@ -150,6 +163,7 @@ factions:
 
     - fullname: Warhammer WHM-6R
       id: 202
+      force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
       deploymentround: 2
       crew:
         name: Michael Kiltartan
@@ -158,6 +172,7 @@ factions:
 
     - fullname: JagerMech JM6-S
       id: 203
+      force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
       deploymentround: 2
       crew:
         name: Rich O'Hare
@@ -166,6 +181,7 @@ factions:
 
     - fullname: Catapult CPLT-C1
       id: 204
+      force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
       deploymentround: 2
       crew:
         name: Hypatia Donahue
@@ -175,6 +191,7 @@ factions:
 # Fire Lance
     - fullname: Clint CLNT-2-3T
       id: 205
+      force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
       deploymentround: 2
       crew:
         name: Lt. Jane Near
@@ -183,6 +200,7 @@ factions:
 
     - fullname: Vulcan VL-2T
       id: 206
+      force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
       deploymentround: 2
       crew:
         name: Julian Goodrich
@@ -191,6 +209,7 @@ factions:
 
     - fullname: Enforcer ENF-4R
       id: 207
+      force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
       deploymentround: 2
       crew:
         name: Robert Cross
@@ -199,6 +218,7 @@ factions:
 
     - fullname: Dervish DV-6M
       id: 208
+      force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
       deploymentround: 2
       crew:
         name: Robin Buckley
@@ -208,6 +228,7 @@ factions:
     # Recon Lance
     - fullname: Jenner JR7-D
       id: 209
+      force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
       crew:
         name: Lt. Jim Morrel
         piloting: 4
@@ -215,6 +236,7 @@ factions:
 
     - fullname: Valkyrie VLK-QA
       id: 210
+      force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
       crew:
         name: Kevin Connor
         piloting: 5
@@ -222,6 +244,7 @@ factions:
 
     - fullname: UrbanMech UM-R60
       id: 211
+      force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
       crew:
         name: Estyn Burns
         piloting: 5
@@ -229,6 +252,7 @@ factions:
 
     - fullname: Javelin JVN-10N
       id: 212
+      force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
       crew:
         name: Erin Finney
         piloting: 4

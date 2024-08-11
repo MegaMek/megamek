@@ -26,6 +26,8 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.*;
@@ -283,23 +285,47 @@ public class ScenarioV2 implements Scenario {
 
             if (playerNode.has(UNITS)) {
                 JsonNode unitsNode = playerNode.get(UNITS);
-                if (game instanceof Game) {
+                if (game instanceof Game twGame) {
                     List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
                             .filter(o -> o instanceof Entity)
                             .map(o -> (Entity) o)
                             .collect(Collectors.toList());
                     int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                    Map<Integer, Integer> forceMapping = new HashMap<>();
                     for (Entity unit : units) {
                         unit.setOwner(player);
                         if (unit.getId() == Entity.NONE) {
                             unit.setId(entityId);
                             entityId++;
                         }
-                        ((Game) game).addEntity(unit);
+                        twGame.addEntity(unit);
                         // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
                         // they're not on a space map.
                         if (unit.isLargeCraft() && !unit.isAirborne()) {
                             unit.setAltitude(0);
+                        }
+                        // Map parsed force strings to real Forces
+                        if (!unit.getForceString().isBlank()) {
+                            List<Force> forceList = Forces.parseForceString(unit);
+                            int realId = Force.NO_FORCE;
+                            boolean topLevel = true;
+
+                            for (Force force: forceList) {
+                                if (!forceMapping.containsKey(force.getId())) {
+                                    if (topLevel) {
+                                        realId = game.getForces().addTopLevelForce(force, unit.getOwner());
+                                    } else {
+                                        Force parent = game.getForces().getForce(realId);
+                                        realId = game.getForces().addSubForce(force, parent);
+                                    }
+                                    forceMapping.put(force.getId(), realId);
+                                } else {
+                                    realId = forceMapping.get(force.getId());
+                                }
+                                topLevel = false;
+                            }
+                            unit.setForceString("");
+                            game.getForces().addEntity(unit, realId);
                         }
                     }
                 } else if (game instanceof SBFGame) {

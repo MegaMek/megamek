@@ -53,6 +53,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String REMAINING = "remaining";
     private static final String ARMOR = "armor";
     private static final String INTERNAL = "internal";
+    private static final String FORCE = "force";
 
     public EntityDeserializer() {
         this(null);
@@ -78,6 +79,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignAltitude(entity, node);
         assignVelocity(entity, node);
         assignID(entity, node);
+        assignForce(entity, node);
         CrewDeserializer.parseCrew(node, entity);
         assignRemaining(entity, node);
         return entity;
@@ -204,6 +206,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void assignElevation(Entity entity, JsonNode node) {
         if (node.has(ELEVATION)) {
             entity.setElevation(node.get(ELEVATION).asInt());
+        }
+    }
+
+    private void assignForce(Entity entity, JsonNode node) {
+        if (node.has(FORCE)) {
+            entity.setForceString(node.get(FORCE).asText());
         }
     }
 

@@ -356,7 +356,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
 
-            setTwistEnabled(phase.isOffboard() && ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
+            setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms() && ce().getCrew().isActive());
             updateSearchlight();
 

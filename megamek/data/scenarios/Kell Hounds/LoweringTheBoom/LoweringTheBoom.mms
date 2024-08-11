@@ -242,8 +242,8 @@ messages:
       heavy damage, Nage fled, with the Relentless Wolves in pursuit.
     image: loweringboom_splash.png
     trigger:
-      modify: atend
       type: fledunits
+      modify: atend
       units: [ 101, 102, 103, 104, 105, 106 ]
       atmost: 1
 
@@ -297,5 +297,5 @@ messages:
 
 end:
   - trigger:
-    type: battlefieldcontrol
+      type: battlefieldcontrol
 

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.board.postprocess.BoardProcessor;
+import megamek.common.board.postprocess.ChangeThemeBoardProcessor;
 import megamek.common.board.postprocess.TerrainLevelConverter;
 
 import java.util.ArrayList;
@@ -31,10 +32,12 @@ public class BoardProcessorDeserializer {
 
     private static final String TYPE = "type";
     private static final String TYPE_TERRAIN_LEVEL = "convertterrainlevel";
+    private static final String TYPE_THEME = "settheme";
     private static final String TERRAIN = "terrain";
     private static final String FROM = "from";
     private static final String TO = "to";
     private static final String LEVEL = "level";
+    private static final String THEME = "theme";
 
     public static List<BoardProcessor> parseNode(JsonNode processNode) {
         List<BoardProcessor> processors = new ArrayList<>();
@@ -46,6 +49,7 @@ public class BoardProcessorDeserializer {
         String type = node.get(TYPE).asText();
         return switch (type) {
             case TYPE_TERRAIN_LEVEL -> parseConvertTerrainLevel(node);
+            case TYPE_THEME -> parseChangeTheme(node);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
@@ -63,6 +67,10 @@ public class BoardProcessorDeserializer {
         }
         int toLevel = to.get(LEVEL).intValue();
         return new TerrainLevelConverter(terrainType, fromLevel, toLevel);
+    }
+
+    private static BoardProcessor parseChangeTheme(JsonNode triggerNode) {
+        return new ChangeThemeBoardProcessor(triggerNode.get(THEME).asText());
     }
 
     private BoardProcessorDeserializer() { }

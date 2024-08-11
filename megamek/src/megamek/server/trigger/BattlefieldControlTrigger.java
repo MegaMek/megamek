@@ -16,37 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server.scriptedevent;
+package megamek.server.trigger;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IGame;
-import megamek.server.trigger.Trigger;
-import megamek.server.trigger.TriggerSituation;
+import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
 
 /**
- * This trigger reacts after the given unit (currently only Entity) is destroyed (note that it will react any
- * number of times).
- *
- * @see Entity#isDestroyed()
- * @see Entity#isCarcass()
+ * This trigger reacts when only units of a single team remain alive and on board (this trigger
+ * disregards undeployed units, offboard units, TeleMissiles, GunEmplacements and MechWarriors!).
  */
-public class UnitKilledTrigger implements Trigger {
-
-    private final int unitId;
-
-    public UnitKilledTrigger(int unitId) {
-        this.unitId = unitId;
-    }
+public class BattlefieldControlTrigger implements Trigger {
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
         if (game instanceof Game twGame) {
-            Entity unit = twGame.getEntityFromAllSources(unitId);
-            return (unit != null) && (unit.isDestroyed() || unit.isCarcass());
+            return twGame.getEntitiesVector().stream()
+                    .filter(e -> !e.isOffBoard())
+                    .filter(e -> e.getPosition() != null)
+                    .filter(e -> !(e instanceof MechWarrior))
+                    .filter(e -> !(e instanceof TeleMissile))
+                    .filter(e -> !(e instanceof GunEmplacement))
+                    .map(unit -> game.getPlayer(unit.getOwnerId()).getTeam())
+                    .distinct()
+                    .count() == 1;
         } else {
-            LogManager.getLogger().warn("UnitKilledTrigger is currently only available for TW games.");
+            LogManager.getLogger().warn("BattlefieldControlTrigger is currently only available for TW games.");
             return false;
         }
     }

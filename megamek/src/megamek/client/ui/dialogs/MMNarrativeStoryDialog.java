@@ -63,6 +63,7 @@ public class MMNarrativeStoryDialog extends MMStoryDialog {
             }
         };
         scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainPanel.add(scrollPane, gbc);
 
         return mainPanel;

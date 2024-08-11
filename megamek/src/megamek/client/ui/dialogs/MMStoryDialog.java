@@ -30,7 +30,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 /**
- * This is the base class for dialogs related to the Story Arc, to help create a similar look and feel.
+ * This is the base class for MM dialogs that have a similar look to Story Arc dialogs. Instead of the
+ * StoryArc object they use the generalized NarrativeDisplayProvider interface. StoryArc objects could
+ * eventually be adapted to use the same interface.
  * Inheriting classes must call initialize() in their constructors and override getMainPanel()
  */
 public abstract class MMStoryDialog extends JDialog {
@@ -41,7 +43,7 @@ public abstract class MMStoryDialog extends JDialog {
     private int imgHeight = 450;
     private final NarrativeDisplayProvider storyPoint;
 
-    public MMStoryDialog(final JFrame parent, NarrativeDisplayProvider sEvent) {
+    public MMStoryDialog(JFrame parent, NarrativeDisplayProvider sEvent) {
         super(parent, sEvent.header(), true);
         this.storyPoint = sEvent;
         // Escape keypress

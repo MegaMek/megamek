@@ -108,7 +108,6 @@ factions:
   camo: MERC - 1st Kell Hounds.gif
   deploy:
     edge: S
-    width: 1
 
   victory:
     - modify: onlyatend
@@ -227,15 +226,7 @@ messages:
       type: fledunits
       modify: once
       units: [ 101, 102, 103, 104, 105, 106 ]
-      count: 3
-
-  - header: Another Unit Safe
-    text: Four of your Meks have safely left the battlefield!
-    trigger:
-      type: fledunits
-      modify: once
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      count: 4
+      atleast: 3
 
   - header: Decisive Defeat
     text: |
@@ -275,7 +266,7 @@ messages:
       count: 2
 
   - header: Decisive Marik Victory
-    text: Five Marik Meks managed to evade the Kell Hounds forces. The FWL
+    text: At least five Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a decivise victory.
     image: loweringboom_splash.png
     trigger:
@@ -306,12 +297,5 @@ messages:
 
 end:
   - trigger:
-      type: activeunits
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      count: 0
-
-  - trigger:
-      type: activeunits
-      units: [ 201, 202, 203, 204, 205, 206, 207 ]
-      count: 0
+    type: battlefieldcontrol
 

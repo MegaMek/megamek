@@ -44,6 +44,8 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String TYPE_PHASESTART = "phasestart";
     private static final String TYPE_FLEDUNITS = "fledunits";
     private static final String TYPE_ACTIVEUNITS = "activeunits";
+    private static final String TYPE_KILLEDUNITS = "killedunits";
+    private static final String TYPE_BATTLEFIELD_CONTROL = "battlefieldcontrol";
     private static final String PLAYER = "player";
     private static final String COUNT = "count";
     private static final String AT_MOST = "atmost";
@@ -83,6 +85,8 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             case TYPE_PHASESTART -> parsePhaseStartTrigger(node);
             case TYPE_FLEDUNITS -> parseFledUnitsTrigger(node);
             case TYPE_ACTIVEUNITS -> parseActiveUnitsTrigger(node);
+            case TYPE_KILLEDUNITS -> parseKilledUnitsTrigger(node);
+            case TYPE_BATTLEFIELD_CONTROL -> new BattlefieldControlTrigger();
             case NOT -> parseNotTrigger(node);
             case ROUND -> new RoundTrigger(node.get(ROUND).asInt());
             default -> throw new IllegalStateException("Unexpected value: " + type);
@@ -183,6 +187,30 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             triggerNode.get(UNITS).iterator().forEachRemaining(id -> unitIds.add(id.asInt()));
         }
         return new ActiveUnitsTrigger(player, unitIds, minCount, maxCount);
+    }
+
+    private static Trigger parseKilledUnitsTrigger(JsonNode triggerNode) {
+        int minCount = Integer.MIN_VALUE;
+        int maxCount = Integer.MAX_VALUE;
+        if (triggerNode.has(AT_MOST)) {
+            maxCount = triggerNode.get(AT_MOST).asInt();
+        }
+        if (triggerNode.has(AT_LEAST)) {
+            minCount = triggerNode.get(AT_LEAST).asInt();
+        }
+        if (triggerNode.has(COUNT)) {
+            minCount = triggerNode.get(COUNT).asInt();
+            maxCount = triggerNode.get(COUNT).asInt();
+        }
+        String player = "";
+        List<Integer> unitIds = new ArrayList<>();
+        if (triggerNode.has(PLAYER)) {
+            player = triggerNode.get(PLAYER).asText();
+        }
+        if (triggerNode.has(UNITS)) {
+            triggerNode.get(UNITS).iterator().forEachRemaining(id -> unitIds.add(id.asInt()));
+        }
+        return new KilledUnitsTrigger(player, unitIds, minCount, maxCount);
     }
 
     private static Trigger parsePhaseStartTrigger(JsonNode triggerNode) {

@@ -111,7 +111,7 @@ public abstract class ACWeapon extends AmmoWeapon {
 
         if (Server.getServerInstance() != null) {
             IOption increasedAc = Server.getServerInstance().getGame()
-                    .getOptions().getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
+                    .getOptions().getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG);
             if ((increasedAc != null) && increasedAc.booleanValue()) {
                 dmg++;
             }

@@ -1900,7 +1900,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (getAlreadyTwisted()) {
                 return;
             }
-            if (phase.isOffboard() || phase.isFiring()) {
+            if (phase.isTargeting() || phase.isOffboard() || phase.isFiring()) {
                 // Only Offboard and Firing phases could conceivably have later phases with twisting
                 setAlreadyTwisted(true);
             }
@@ -2683,8 +2683,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (getAlreadyTwisted()) {
                     return;
                 }
-                if (phase.isOffboard() || phase.isFiring()) {
-                    // Only Offboard and Firing phases could conceivably have later phases with twisting
+                if (phase.isTargeting() || phase.isOffboard() || phase.isFiring()) {
                     setAlreadyTwisted(true);
                 }
             }

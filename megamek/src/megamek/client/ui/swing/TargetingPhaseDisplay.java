@@ -965,6 +965,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
+            clientgui.updateFiringArc(ce());
             refreshAll();
         }
     }
@@ -1020,8 +1021,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (phase.isOffboard() && (shiftheld || twisting)) {
-                if (ce() != null) {
+            if (shiftheld || twisting) {
+                if ((ce() != null) && !ce().getAlreadyTwisted()) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
                 }
@@ -1046,7 +1047,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         if (client.isMyTurn() && (b.getCoords() != null)
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
-            if (shiftheld && phase.isOffboard()) {
+            if (shiftheld && !ce().getAlreadyTwisted()) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase.isTargeting()) {

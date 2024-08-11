@@ -101,7 +101,6 @@ factions:
       piloting: 4
       gunnery: 4
 
-  # Light Lance
   - fullname: Javelin JVN-10N
     id: 109
     force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
@@ -188,7 +187,6 @@ factions:
         piloting: 4
         gunnery: 3
 
-# Fire Lance
     - fullname: Clint CLNT-2-3T
       id: 205
       force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
@@ -225,7 +223,6 @@ factions:
         piloting: 5
         gunnery: 4
 
-    # Recon Lance
     - fullname: Jenner JR7-D
       id: 209
       force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
@@ -291,7 +288,7 @@ messages:
       ## Attacker's Task
       
       In this scenario, it is your task to break through the Kell Hounds defense line and exit at least half your 
-      Meks off the southern map edge.
+      Meks off the southern map edge by the end of round 15. 
       
       The temperature in this desert area is at 70°C, adding heat to all Meks. 
       

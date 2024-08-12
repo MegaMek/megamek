@@ -297,7 +297,10 @@ messages:
       his battered Atlas to confront the Warhammer of Yorinaga Kurita, commander of the Second Sword. 
       
       In a desperate last stand Prince Ian Davion bought his regiment precious time to retreat, but did not
-      survive the fight. Right before other Kurita forces could seize his body, the long-awaited Kell Hounds arrived. 
+      survive the fight. Right before other Kurita forces could seize his body, the long-awaited Kell Hounds arrived.
+      
+      *This scenario is based on Battlecorps Scenario 3013, "To Save a Prince", originally published in 
+      the "Kell Hounds" sourcebook, FASA 01652.*
     image: tosaveaprince_splash.png
     trigger:
       type: gamestart

@@ -202,6 +202,9 @@ messages:
       unit to the test in battle. With Lyran intelligence uncovering a cache of illegal atomic weapons on
       Castor, Katrina Steiner sanctioned the raid. The operation aimed to eliminate the weapons, secure the
       eggs for Snord, and provide combat experience for the Kell Hounds.
+      
+      *This scenario is based on Battlecorps Scenario 3011, "Lowering the Boom", originally published in 
+      the "Kell Hounds" sourcebook, FASA 01652.*
     image: loweringboom_splash.png
     trigger:
       type: gamestart

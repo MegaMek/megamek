@@ -113,7 +113,7 @@ public class TeamLoadoutGenerator {
             "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
             "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno",
             "AAAMissile Ammo", "ASMissile Ammo", "ASWEMissile Ammo", "ArrowIVMissile Ammo",
-            "AlamoMissile Ammo"
+            "AlamoMissile Ammo", "Precision", "Armor-Piercing"
     ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
@@ -652,39 +652,73 @@ public class TeamLoadoutGenerator {
 
     // region Imperative mutators
     private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        setAC20Imperatives(e, mt, rp);
+        applyACCaselessImperative(e, mt, rp);
     }
 
-    // Set low-ammo-count AC20 carriers to use Caseless exclusively.
-    private static boolean setAC20Imperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        int ac20Count = 0;
-        int ac20Ammo = 0;
-        ac20Count = (int) e.getWeaponList().stream()
-                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains("20")).count();
+    private static int getACWeaponCount(Entity e, String size) {
+        // Only applies to non-LB-X AC weapons
+        return (int) e.getWeaponList().stream()
+                .filter(
+                        w -> w.getName().toLowerCase()
+                                .contains("ac")
+                            && !w.getName().toLowerCase()
+                                .contains("lb")
+                            && w.getName()
+                                .contains(size)
+                ).count();
+    }
 
+    private static int getACAmmoCount(Entity e, String size) {
+        // Only applies to non-LB-X AC weapons
+        return (int) e.getAmmo().stream()
+                .filter(
+                        w -> w.getName().toLowerCase()
+                                .contains("ac")
+                            && !w.getName().toLowerCase()
+                                .contains("lb")
+                            && w.getName()
+                                .contains(size)
+                ).count();
+    }
+
+    private static boolean applyACCaselessImperative(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
         // TODO: remove this block when implementing new anti-ground Aero errata
-        // Ignore Aeros, which can't use most alt munitions, and those without AC20s.
-        if (e.isAero() || ac20Count == 0) {
+        // Ignore Aeros, which can't use most alt munitions.
+        if (e.isAero()) {
             return false;
         }
 
-        // Always use Caseless if AC/20 ammo tons <= count of tubes
-        ac20Ammo = (int) e.getAmmo().stream()
-                .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains("20")).count();
-        if (ac20Ammo <= ac20Count) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Caseless");
-            return true;
+        boolean swapped = false;
+        Map<String, Double> caliburToRatioMap = Map.of(
+                "2", 0.25,      // if 1 ton or less per 4 AC/2 barrels,
+                "5", 0.5,       // if 1 ton or less per 2 AC/5 barrels,
+                "10", 1.0,      // if 1 ton or less per AC/10 or AC/20 barrel
+                "20", 1.0       // Replace existing imperatives with Caseless only.
+        );
+
+        // Iterate over any possible Autocannons and update their ammo imperatives if count of bins/barrel
+        // is at or below the relevant ratio.
+        for (String calibur: caliburToRatioMap.keySet()) {
+            int barrelCount = getACWeaponCount(e, calibur);
+            int binCount = getACAmmoCount(e, calibur);
+
+            if (barrelCount == 0) {
+                // Nothing to do
+                continue;
+            } else if (((double) binCount) / barrelCount <= caliburToRatioMap.get(calibur)) {
+                // Replace any existing imperatives with Caseless as default
+                mt.insertImperative(
+                        e.getFullChassis(),
+                        e.getModel(),
+                        "any",
+                        "AC/" + calibur,
+                        "Caseless"
+                );
+                swapped = true;
+            }
         }
 
-        // Add one "Standard" to the start of the existing imperatives operating on this
-        // unit.
-        String[] imperatives = mt.getEffectiveImperative(e.getFullChassis(), e.getModel(), "any", "AC/20").split(":");
-        if (!imperatives[0].contains("Standard")) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20",
-                    "Standard:" + String.join(":", imperatives));
-        }
-
-        return false;
+        return swapped;
     }
 
     // Set Artemis LRM carriers to use Artemis LRMs
@@ -2022,6 +2056,16 @@ class MunitionWeightCollection {
         weightMap.entrySet().stream()
                 .sorted((E1, E2) -> E2.getValue().compareTo(E1.getValue()))
                 .forEach(k -> orderedTypes.add(String.valueOf(k)));
+        // Make Standard the first entry if tied with other highest-weight munitions
+        for (String munitionString: orderedTypes) {
+            if (munitionString.contains("Standard") && !orderedTypes.get(0).contains("Standard")) {
+                int idx = orderedTypes.indexOf(munitionString);
+                if (weightMap.get("Standard") == Double.parseDouble(orderedTypes.get(0).split("=")[1])) {
+                    Collections.swap(orderedTypes, idx, 0);
+                    break;
+                }
+            }
+        }
         return orderedTypes;
     }
 

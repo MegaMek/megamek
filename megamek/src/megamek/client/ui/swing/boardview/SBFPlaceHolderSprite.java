@@ -21,15 +21,12 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
-import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFSomethingOutThereUnitPlaceHolder;
 import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
 
 import java.awt.*;
-import java.util.List;
 import java.util.Objects;
 
 public class SBFPlaceHolderSprite extends Sprite {
@@ -61,7 +58,7 @@ public class SBFPlaceHolderSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         bounds = new Rectangle(0, 0, bv.hex_size.width, bv.hex_size.height);
-        Point ePos = bv.getHexLocation(placeHolder.getPosition().getCoords());
+        Point ePos = bv.getHexLocation(placeHolder.getPosition().coords());
         bounds.setLocation(ePos.x, ePos.y);
 
         hitBox = new Rectangle(bounds.x + INSET, bounds.y + INSET,

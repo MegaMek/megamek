@@ -119,7 +119,7 @@ public class Report implements ReportEntry {
     /**
      * Number of spaces to use per indentation level.
      */
-    private static final int DEFAULT_INDENTATION = 4;
+    public static final int DEFAULT_INDENTATION = 4;
 
     /**
      * Prefix for entity hyperlinks
@@ -575,7 +575,7 @@ public class Report implements ReportEntry {
      *
      * @return a String with the final report
      */
-    public String getText() {
+    public String text() {
         // The raw text of the message, with tags.
         String raw = ReportMessages.getString(String.valueOf(messageId));
 

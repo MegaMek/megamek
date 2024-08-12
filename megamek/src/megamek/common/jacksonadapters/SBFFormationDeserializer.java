@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.BoardLocation;
 import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
@@ -72,6 +72,8 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
                 .map(o -> (SBFUnit) o)
                 .forEach(formation::addUnit);
         SBFFormationConverter.calculateStatsFromUnits(formation);
+        validateCOM(formation);
+        validateLEAD(formation);
 
         if (node.has(ID)) {
             formation.setId(node.get(ID).intValue());
@@ -106,6 +108,24 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     private void assignDeploymentRound(SBFFormation formation, JsonNode node) {
         if (node.has(DEPLOYMENTROUND)) {
             formation.setDeployRound(node.get(DEPLOYMENTROUND).asInt());
+        }
+    }
+
+    private void validateCOM(SBFFormation formation) {
+        long comCount = formation.getUnits().stream().filter(u -> u.hasSUA(BattleForceSUA.COM)).count();
+        if (comCount > 1) {
+            throw new IllegalArgumentException("Only one Unit of a Formation may have COM");
+        } else if (comCount == 1) {
+            formation.getSpecialAbilities().setSUA(BattleForceSUA.COM);
+        }
+    }
+
+    private void validateLEAD(SBFFormation formation) {
+        long leadCount = formation.getUnits().stream().filter(u -> u.hasSUA(BattleForceSUA.LEAD)).count();
+        if (leadCount > 1) {
+            throw new IllegalArgumentException("Only one Unit of a Formation may have LEAD");
+        } else if ((leadCount == 0) && (formation.getUnits().size() > 1)) {
+            formation.getUnits().get(0).getSpecialAbilities().setSUA(BattleForceSUA.LEAD);
         }
     }
 }

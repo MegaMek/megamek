@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -355,7 +356,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
 
-            setTwistEnabled(phase.isOffboard() && ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
+            setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms() && ce().getCrew().isActive());
             updateSearchlight();
 
@@ -764,7 +765,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
-        clientgui.getUnitDisplay().showPanel("weapons");
+        if (GUIP.getFireDisplayTabDuringFiringPhases()) {
+            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+        }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         updateTarget();
         clientgui.updateFiringArc(ce());
@@ -962,6 +965,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
+            clientgui.updateFiringArc(ce());
             refreshAll();
         }
     }
@@ -1017,8 +1021,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (phase.isOffboard() && (shiftheld || twisting)) {
-                if (ce() != null) {
+            if (shiftheld || twisting) {
+                if ((ce() != null) && !ce().getAlreadyTwisted()) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
                 }
@@ -1043,7 +1047,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         if (client.isMyTurn() && (b.getCoords() != null)
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
-            if (shiftheld && phase.isOffboard()) {
+            if (shiftheld && !ce().getAlreadyTwisted()) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase.isTargeting()) {

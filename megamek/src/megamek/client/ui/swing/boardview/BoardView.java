@@ -2501,7 +2501,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     Point getHexLocation(Coords c) {
-        return getHexLocation(c.getX(), c.getY(), false);
+        return c == null ? null : getHexLocation(c.getX(), c.getY(), false);
     }
 
     /**

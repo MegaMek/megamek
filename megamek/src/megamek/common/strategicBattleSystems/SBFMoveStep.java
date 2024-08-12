@@ -43,8 +43,8 @@ public abstract class SBFMoveStep implements Serializable {
      */
     protected void compile(SBFGame game) {
         if (!game.hasBoardLocation(startingPoint) || !game.hasBoardLocation(destination)
-                || (startingPoint.getBoardId() != destination.getBoardId())
-                || (startingPoint.getCoords().distance(destination.getCoords()) > 1)) {
+                || (startingPoint.boardId() != destination.boardId())
+                || (startingPoint.coords().distance(destination.coords()) > 1)) {
             isIllegal = true;
         }
     }

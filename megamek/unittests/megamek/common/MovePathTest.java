@@ -19,14 +19,13 @@
  */
 package megamek.common;
 
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -37,6 +36,10 @@ public class MovePathTest {
     @Test
     public void testGetLastStep() {
         Game mockGame = mock(Game.class);
+        PlanetaryConditions mockPC = new PlanetaryConditions();
+        mockPC.setGravity(1.0f);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
+
         Entity mockMech = mock(BipedMech.class);
 
         Vector<MoveStep> stepVector = new Vector<>();

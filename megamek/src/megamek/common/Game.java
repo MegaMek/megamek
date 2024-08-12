@@ -607,7 +607,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * turns to play
      */
     public @Nullable GameTurn getTurnForPlayer(int pn) {
-        synchronized (turnVector) {
+        if ((turnIndex >= 0) && (turnIndex < turnVector.size())) {
             for (int i = turnIndex; i < turnVector.size(); i++) {
                 GameTurn gt = turnVector.get(i);
                 if (gt.isValid(pn, this)) {

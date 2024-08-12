@@ -192,13 +192,23 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
+     * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length of 100.
+     *
+     * @param input The input string to be wrapped.
+     * @return The string with line breaks inserted.
+     */
+    public static String wordWrap(String input) {
+        return wordWrap(input, 100);
+    }
+
+    /**
      * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length.
      *
      * @param input The input string to be wrapped.
-     * @param maxLineLength The maximum length of each line.
+     * @param maximumCharacters The maximum number of characters (including whitespaces) on each line.
      * @return The string with line breaks inserted.
      */
-    public static String wordWrap(String input, int maxLineLength) {
+    public static String wordWrap(String input, int maximumCharacters) {
         StringTokenizer token = new StringTokenizer(input, " ");
         StringBuilder output = new StringBuilder(input.length());
 
@@ -207,7 +217,7 @@ public class WrapLayout extends FlowLayout {
         while (token.hasMoreTokens()) {
             String word = token.nextToken();
 
-            if (lineLen + word.length() > maxLineLength) {
+            if (lineLen + word.length() > maximumCharacters) {
                 output.append('\n');
                 lineLen = 0;
             }

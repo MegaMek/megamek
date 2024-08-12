@@ -49,6 +49,7 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
     private int tmm = 0;
     private int movement = 0;
     private SBFMovementMode movementMode = SBFMovementMode.UNKNOWN;
+    //TODO make JUMP a special?
     private int jumpMove = 0;
     private int trspMovement = 0;
     private SBFMovementMode trspMovementMode = SBFMovementMode.UNKNOWN;
@@ -60,6 +61,12 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
     @JsonIgnore
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private List<AlphaStrikeElement> elements = new ArrayList<>();
+
+    // ingame values
+    private int currentArmor;
+    private int damageCrits = 0;
+    private int targetingCrits = 0;
+    private int mpCrits = 0;
 
     public String getName() {
         return name;
@@ -161,12 +168,29 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
         return armor;
     }
 
+    /**
+     * Sets the full (undamaged) armor of this SBF Unit. Also sets the current armor to the same value.
+     *
+     * @param armor The full undamaged armor of this Unit
+     */
     public void setArmor(int armor) {
         this.armor = armor;
+        currentArmor = armor;
+    }
+
+    /**
+     * @return The current armor of this Unit, which is any value between the full (undamaged) armor and 0.
+     */
+    public int getCurrentArmor() {
+        return currentArmor;
     }
 
     public ASDamageVector getDamage() {
         return damage;
+    }
+
+    public ASDamageVector getCurrentDamage() {
+        return damage.reducedBy(damageCrits);
     }
 
     public void setDamage(ASDamageVector damage) {
@@ -209,7 +233,6 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
     /**
      * Returns true if this SBF Unit represents a ground Unit.
      */
-
     public boolean isGround() {
         return !type.isAerospace();
     }
@@ -277,5 +300,44 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
                 + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
                 + "; A" + armor + "; " + damage + "; " + pointValue + "@" + skill + "; " + elements.size() + " elements"
                 + "; " + specialAbilities.getSpecialsDisplayString(this);
+    }
+
+    public void addTargetingCrit() {
+        targetingCrits++;
+    }
+
+    public void addDamageCrit() {
+        damageCrits++;
+    }
+
+    public void addMovementCrit() {
+        mpCrits++;
+    }
+
+    public int getDamageCrits() {
+        return damageCrits;
+    }
+
+    public int getTargetingCrits() {
+        return targetingCrits;
+    }
+
+    public int getMpCrits() {
+        return mpCrits;
+    }
+
+    /**
+     * @return The base roll value for firing on targets. Equals the skill, modified by targeting crits.
+     */
+    public int getBaseGunnery() {
+        return skill + targetingCrits;
+    }
+
+    public void setCurrentArmor(int currentArmor) {
+        this.currentArmor = currentArmor;
+    }
+
+    public boolean hasArmorDamage() {
+        return currentArmor != armor;
     }
 }

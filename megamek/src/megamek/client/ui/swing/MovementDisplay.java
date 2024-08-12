@@ -25,6 +25,7 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.UnloadStrandedTurn;
@@ -696,7 +697,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             @Override
             public void run() {
                 clientgui.getUnitDisplay().displayEntity(ce);
-                clientgui.getUnitDisplay().showPanel("movement");
+                if (GUIP.getMoveDisplayTabDuringMovePhases()) {
+                    clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
+                }
             }
         });
     }
@@ -946,7 +949,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.addStep(moveStep, recover, mineToLay);
         updateMove();
     }
-    
+
     private void addStepToMovePath(MoveStepType moveStep, Map<Integer, Integer> additionalIntData) {
     	cmd.addStep(moveStep, additionalIntData);
     	updateMove();
@@ -992,7 +995,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	if (!getClientgui().getClient().getGame().getPhase().isMovement()) {
     		return;
     	}
-    	
+
         if (cmd == null || cmd.length() == 0) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             return;
@@ -1130,7 +1133,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().clearMovementData();
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
-        cmd = null; 
+        cmd = null;
     }
 
     /**
@@ -2819,15 +2822,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	// there has to be an entity, objects are on the ground,
     	// the entity can pick them up
     	if ((ce == null) || (game().getGroundObjects(finalPosition(), ce).size() <= 0) ||
-    			((cmd.getLastStep() != null) && 
+    			((cmd.getLastStep() != null) &&
     					(cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
     		setPickupCargoEnabled(false);
     		return;
     	}
-    	
+
     	setPickupCargoEnabled(true);
     }
-    
+
     /** Updates the status of the "drop cargo" button */
     private void updateDropCargoButton() {
     	final Entity ce = ce();
@@ -2837,10 +2840,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     		setDropCargoEnabled(false);
     		return;
     	}
-    	
+
     	setDropCargoEnabled(true);
     }
-    
+
     /** Updates the status of the Load button. */
     private void updateLoadButton() {
         final Entity ce = ce();
@@ -4919,7 +4922,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         	processPickupCargoCommand();
         } else if (actionCmd.equals(MoveCommand.MOVE_DROP_CARGO.getCmd())) {
         	var options = ce().getDistinctCarriedObjects();
-        	
+
         	if (options.size() == 1) {
         		addStepToMovePath(MoveStepType.DROP_CARGO);
         		updateDonePanel();
@@ -4927,11 +4930,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         		// reverse lookup: location name to location ID - we're going to wind up with a name chosen
         		// but need to send the ID in the move path.
         		Map<String, Integer> locationMap = new HashMap<>();
-        		
+
         		for (int location : ce().getCarriedObjects().keySet()) {
         			locationMap.put(ce().getLocationName(location), location);
         		}
-        		
+
         		// Dialog for choosing which object to pick up
                 String title = "Choose Cargo to Drop";
                 String body = "Choose the cargo to drop:";
@@ -5313,19 +5316,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void processPickupCargoCommand() {
     	var options = game().getGroundObjects(finalPosition());
     	var displayedOptions = game().getGroundObjects(finalPosition(), ce());
-    	
+
     	// if there's only one thing to pick up, just pick it up.
-    	// regardless of how many objects we are picking up, 
+    	// regardless of how many objects we are picking up,
     	// we may have to choose the location with which to pick it up
-        if (displayedOptions.size() == 1) { 
+        if (displayedOptions.size() == 1) {
         	Integer pickupLocation = getPickupLocation(displayedOptions.get(0));
-        	
-        	if (pickupLocation != null) {   
+
+        	if (pickupLocation != null) {
 	        	Map<Integer, Integer> data = new HashMap<>();
 	        	// we pick the only eligible object out of all the objects on the ground
 	        	data.put(MoveStep.CARGO_PICKUP_KEY, options.indexOf(displayedOptions.get(0)));
 	        	data.put(MoveStep.CARGO_LOCATION_KEY, pickupLocation);
-	        	
+
 	        	addStepToMovePath(MoveStepType.PICKUP_CARGO, data);
 	            updateDonePanel();
         	}
@@ -5339,44 +5342,44 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             if (option != null) {
             	Integer pickupLocation = getPickupLocation(option);
-            	
-            	if (pickupLocation != null) {            	
+
+            	if (pickupLocation != null) {
 	            	int cargoIndex = options.indexOf(option);
 	            	Map<Integer, Integer> data = new HashMap<>();
 	            	data.put(MoveStep.CARGO_PICKUP_KEY, cargoIndex);
 	            	data.put(MoveStep.CARGO_LOCATION_KEY, pickupLocation);
-	            	
+
 	                addStepToMovePath(MoveStepType.PICKUP_CARGO, data);
 	                updateDonePanel();
             	}
             }
         }
     }
-    
+
     /**
      * Worker function to chose a limb (or whatever) with which to pick up cargo
      */
     private Integer getPickupLocation(ICarryable cargo) {
     	var validPickupLocations = ce().getValidHalfWeightPickupLocations(cargo);
     	int pickupLocation = Entity.LOC_NONE;
-    	
+
     	// if we need to choose a pickup location, then do so
     	if (validPickupLocations.size() > 1) {
         	// reverse lookup: location name to location ID - we're going to wind up with a name chosen
     		// but need to send the ID in the move path.
     		Map<String, Integer> locationMap = new HashMap<>();
-    		
+
     		for (int location : ce().getValidHalfWeightPickupLocations(cargo)) {
     			locationMap.put(ce().getLocationName(location), location);
     		}
-    		
+
     		// Dialog for choosing which object to pick up
             String title = "Choose Pickup Location";
             String body = "Choose the location with which to pick up cargo:";
             String locationChoice = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     body, title, JOptionPane.QUESTION_MESSAGE, null,
                     locationMap.keySet().toArray(), locationMap.keySet().toArray()[0]);
-            
+
             if (locationChoice != null) {
             	pickupLocation = locationMap.get(locationChoice);
             } else {
@@ -5385,10 +5388,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     	} else if (validPickupLocations.size() == 1) {
     		pickupLocation = validPickupLocations.get(0);
     	}
-    	
+
     	return pickupLocation;
     }
-    
+
     /**
      * Add enough <code>MoveStepType.CONVERT_MODE</code> steps to get to the requested mode, or
      * clear the path if the unit is in the requested mode at the beginning of the turn.
@@ -5834,12 +5837,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         getBtn(MoveCommand.MOVE_BOMB).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
     }
-    
+
     private void setPickupCargoEnabled(boolean enabled) {
     	getBtn(MoveCommand.MOVE_PICKUP_CARGO).setEnabled(enabled);
     	clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_PICKUP_CARGO.getCmd(), enabled);
     }
-    
+
     private void setDropCargoEnabled(boolean enabled) {
     	getBtn(MoveCommand.MOVE_DROP_CARGO).setEnabled(enabled);
     	clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DROP_CARGO.getCmd(), enabled);

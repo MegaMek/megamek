@@ -5,46 +5,28 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  schedule:
-    - cron: "24 16 * * 4"
+    paths-ignore:
+      - "**/*.mtf"
+      - "**/*.blk"
+      - "**/*.pdf"
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: ${{ matrix.os }}
-
     strategy:
-      matrix:
-        os: [ubuntu-latest]
-        language: ["java"]
-        java-distribution: [temurin]
-        java-version: [17]
       fail-fast: false
+    runs-on: [ubuntu-latest]
 
     steps:
       - name: "Check out MegaMek"
         uses: actions/checkout@v4
-        with:
-          path: megamek
-
-      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: ${{ matrix.java-distribution }}
-          java-version: ${{ matrix.java-version }}
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: ${{ matrix.language }}
-          queries: +security-and-quality
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Build with Gradle
-        working-directory: megamek
-        run: ./gradlew jar
+          languages: java-kotlin
+          build-mode: none
+          queries: security-and-quality
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

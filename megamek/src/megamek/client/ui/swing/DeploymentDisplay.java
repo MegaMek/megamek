@@ -23,6 +23,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -225,10 +226,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             setRemoveEnabled(true);
 
             clientgui.getUnitDisplay().displayEntity(ce());
-            clientgui.getUnitDisplay().showPanel("movement");
+            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
             clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
-            computeCFWarningHexes(ce());            
+            computeCFWarningHexes(ce());
         } else {
             disableButtons();
             setNextEnabled(true);

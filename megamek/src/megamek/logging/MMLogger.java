@@ -32,10 +32,20 @@ import io.sentry.Sentry;
 /**
  * MMLogger
  *
- * Utility class to handle logging functions as well as reporting
- * exceptions to Sentry. To deal with general recommendations of confirming
- * log level before logging, additional checks are added to ensure
- * we're only ever logging data based upon the currently active log level.
+ * Utility class to handle logging functions as well as reporting exceptions to
+ * Sentry. To deal with general recommendations of confirming log level before
+ * logging, additional checks are added to ensure we're only ever logging data
+ * based upon the currently active log level.
+ *
+ * To utilize this class properly, it must be initialized within each class that
+ * will use it. For example for use with the megamek.MegaMek class,
+ *
+ * private static final MMLogger logger = MMLogger.create(MegaMek.class);
+ *
+ * And then for use, use logger.info(message) and pass a string to it. Currently
+ * supported levels include info, warn, debug, error, and fatal. Error and Fatal
+ * can take any Throwable for sending to Sentry and has an overload for a title
+ * to allow for displaying of a dialog box
  */
 public class MMLogger extends ExtendedLoggerWrapper {
     private final ExtendedLoggerWrapper exLoggerWrapper;
@@ -78,9 +88,12 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Info Level Logging.
      *
      * @param message Message to be sent to the log file.
+     * @param args    Variable list of arguments for message to be passed to
+     *                String.format()
      */
     @Override
-    public void info(String message) {
+    public void info(String message, Object... args) {
+        message = String.format(message, args);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.INFO, null, message);
     }
 
@@ -88,10 +101,27 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Warning Level Logging
      *
      * @param message Message to be written to the log file.
+     * @param args    Variable list of arguments for message to be
+     *                passed to String.format()
+     *
      */
     @Override
-    public void warn(String message) {
+    public void warn(String message, Object... args) {
+        message = String.format(message, args);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message);
+    }
+
+    /**
+     * Debug Level Logging
+     *
+     * @param message Message to be written to the log file.
+     * @param args    Variable list of arguments for message to be passed to
+     *                String.format()
+     */
+    @Override
+    public void debug(String message, Object... args) {
+        message = String.format(message, args);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.DEBUG, null, message);
     }
 
     /**
@@ -125,7 +155,13 @@ public class MMLogger extends ExtendedLoggerWrapper {
      */
     public void error(Throwable exception, String message, String title) {
         error(exception, message);
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        }
+        catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
     }
 
     /**
@@ -137,7 +173,13 @@ public class MMLogger extends ExtendedLoggerWrapper {
      */
     public void error(String message, String title) {
         error(message);
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        }
+        catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
     }
 
     /**

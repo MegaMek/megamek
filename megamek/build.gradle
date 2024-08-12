@@ -80,8 +80,6 @@ ext {
     userdata = 'userdata'
     fileStagingDir = "${buildDir}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-    scriptsDir = "${projectDir}/scripts"
-    scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
 }
 
 run {
@@ -207,24 +205,12 @@ task stageFiles {
 
 task createStartScripts (type: CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
-    applicationName = 'megamek'
+    applicationName = 'MegaMek'
     mainClass = application.mainClass
     outputDir = startScripts.outputDir
     classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
             .filter { it.name.endsWith(".jar") }
     defaultJvmOpts = project.ext.mmJvmOptions
-    // The default template assumes the start script is in a subdirectory and always
-    // sets APP_HOME to the parent directory of the one containing the script.
-    // So we provide a modified template.
-    unixStartScriptGenerator.template = resources.text.fromFile(scriptTemplate)
-    doLast {
-        // The start script assumes all the files on the classpath will be in the lib directory.
-        unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
-        windowsScript.text = windowsScript.text.replace('lib/MegaMek', 'MegaMek')
-        // The Windows script just has a single line that needs to be changed to put the script in the root,
-        // so we'll do a simple replace
-        windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')
-    }
 }
 
 distributions {
@@ -237,8 +223,9 @@ distributions {
             from(jar) {
                 into "${lib}"
             }
-            from(createStartScripts.outputs.files) {
-                include "megamek*"
+            from("${projectDir}/scripts") {
+                include "shell.sh"
+                rename "shell.sh", "MegaMek.sh"
             }
             from(jar)
             from fileStagingDir

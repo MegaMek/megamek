@@ -346,7 +346,7 @@ public abstract class AbstractGame implements IGame {
 
 
     public boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
-        return hasBoardLocation(boardLocation.getCoords(), boardLocation.getBoardId());
+        return hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
     }
 
     public boolean hasBoardLocation(Coords coords, int boardId) {
@@ -354,7 +354,7 @@ public abstract class AbstractGame implements IGame {
     }
 
     public boolean hasBoard(@Nullable BoardLocation boardLocation) {
-        return (boardLocation != null) && hasBoard(boardLocation.getBoardId());
+        return (boardLocation != null) && hasBoard(boardLocation.boardId());
     }
 
     public boolean hasBoard(int boardId) {

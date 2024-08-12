@@ -25,6 +25,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -119,7 +120,8 @@ public class ScenarioV2 implements Scenario {
         parseMessages(game);
         parseGameEndEvents(game);
 
-//        game.setupTeams();
+        game.setupTeams();
+
         game.setBoard(0, createBoard());
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
@@ -132,6 +134,8 @@ public class ScenarioV2 implements Scenario {
             }
             twGame.setVictoryContext(new HashMap<>());
             twGame.createVictoryConditions();
+        } else if (game instanceof SBFGame) {
+            validateSBFGame((SBFGame) game);
         }
 
         // TODO: check the game for inconsistencies such as units outside board coordinates
@@ -380,5 +384,17 @@ public class ScenarioV2 implements Scenario {
 
     private File scenarioDirectory() {
         return scenariofile.getParentFile();
+    }
+
+    private void validateSBFGame(SBFGame game) {
+        // Exactly one COM formation per team
+        Map<Integer, Long> comCountsByTeam = game.getActiveFormations().stream()
+                .filter(f -> f.hasSUA(BattleForceSUA.COM))
+                .collect(Collectors.groupingBy(f -> game.getPlayer(f.getOwnerId()).getTeam(), Collectors.counting()));
+        for (Team team : game.getTeams()) {
+            if (!comCountsByTeam.containsKey(team.getId()) || comCountsByTeam.get(team.getId()) != 1) {
+                throw new IllegalArgumentException("Each team must have one formation with the COM ability");
+            }
+        }
     }
 }

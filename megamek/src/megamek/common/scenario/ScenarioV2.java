@@ -196,7 +196,7 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
-    private void parseDeployment(IGame game, JsonNode playerNode, Player player) {
+    private void parseDeployment(JsonNode playerNode, Player player) {
         String edge = "Any";
         if (playerNode.has(DEPLOY)) {
             if (!playerNode.get(DEPLOY).isContainerNode()) {
@@ -252,8 +252,8 @@ public class ScenarioV2 implements Scenario {
             // scenario players start out as ghosts to be logged into
             player.setGhost(true);
 
-            parseDeployment(game, playerNode, player);
-            parseVictories(game, playerNode, player);
+            parseDeployment(playerNode, player);
+            parseVictories(game, playerNode);
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();
@@ -355,14 +355,14 @@ public class ScenarioV2 implements Scenario {
         return result;
     }
 
-    private void parseVictories(IGame game, JsonNode playerNode, Player player) {
+    private void parseVictories(IGame game, JsonNode playerNode) {
         if (playerNode.has(VICTORY)) {
             playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n));
         }
     }
 
     private void parseVictory(IGame game, JsonNode node) {
-        game.addScriptedEvent(VictoryDeserializer.parse(node, scenarioDirectory()));
+        game.addScriptedEvent(VictoryDeserializer.parse(node));
     }
 
     private int smallestFreeUnitID(List<? extends InGameObject> units) {

@@ -22,16 +22,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.client.ui.MMMarkdownRenderer;
-import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.Trigger;
-import org.apache.logging.log4j.LogManager;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -56,7 +49,7 @@ public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> 
 
     @Override
     public VictoryTriggeredEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return parse(jp.getCodec().readTree(jp), new File(""));
+        return parse(jp.getCodec().readTree(jp));
     }
 
     /**
@@ -65,11 +58,10 @@ public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> 
      * in the given basePath; if not found there, MM's data/boards/ is tried instead.
 
      * @param victoryNode a map: or maps: node from a YAML definition file
-     * @param basePath a path to search board files in (e.g. scenario path)
      * @return a list of parsed boards
      * @throws IllegalArgumentException for illegal node combinations and other errors
      */
-    public static VictoryTriggeredEvent parse(JsonNode victoryNode, File basePath) {
+    public static VictoryTriggeredEvent parse(JsonNode victoryNode) {
         requireFields("MessageScriptedEvent", victoryNode, TRIGGER);
 
         Trigger trigger = TriggerDeserializer.parseNode(victoryNode.get(TRIGGER));

@@ -21,9 +21,7 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.databind.JsonNode;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
-import megamek.common.board.postprocess.BoardProcessor;
-import megamek.common.board.postprocess.ChangeThemeBoardProcessor;
-import megamek.common.board.postprocess.TerrainLevelConverter;
+import megamek.common.board.postprocess.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +29,13 @@ import java.util.List;
 public class BoardProcessorDeserializer {
 
     private static final String TYPE = "type";
-    private static final String TYPE_TERRAIN_LEVEL = "convertterrainlevel";
+    private static final String TYPE_TERRAIN_REMOVE = "removeterrain";
+    private static final String TYPE_TERRAIN_CONVERT = "convertterrain";
     private static final String TYPE_THEME = "settheme";
     private static final String TERRAIN = "terrain";
-    private static final String FROM = "from";
-    private static final String TO = "to";
+    private static final String NEW_TERRAIN = "newterrain";
     private static final String LEVEL = "level";
+    private static final String NEW_LEVEL = "newlevel";
     private static final String THEME = "theme";
 
     public static List<BoardProcessor> parseNode(JsonNode processNode) {
@@ -48,25 +47,44 @@ public class BoardProcessorDeserializer {
     private static BoardProcessor parseSingleBoardProcessor(JsonNode node) {
         String type = node.get(TYPE).asText();
         return switch (type) {
-            case TYPE_TERRAIN_LEVEL -> parseConvertTerrainLevel(node);
+            case TYPE_TERRAIN_CONVERT -> parseConvertTerrain(node);
+            case TYPE_TERRAIN_REMOVE -> parseRemoveTerrain(node);
             case TYPE_THEME -> parseChangeTheme(node);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 
-    private static BoardProcessor parseConvertTerrainLevel(JsonNode triggerNode) {
-        JsonNode from = triggerNode.get(FROM);
-        JsonNode to = triggerNode.get(TO);
-        int fromLevel = Terrain.WILDCARD;
-        int terrainType = Terrains.getType(from.get(TERRAIN).asText());
+    private static BoardProcessor parseConvertTerrain(JsonNode node) {
+        int fromTerrainType = Terrains.getType(node.get(TERRAIN).asText());
+        if (fromTerrainType == 0) {
+            throw new IllegalArgumentException("Invalid terrain type: " + node.get(TERRAIN).asText());
+        }
+        int fromLevel = node.has(LEVEL) ? node.get(LEVEL).intValue() : Terrain.WILDCARD;
+
+
+        int toTerrainType = node.has(NEW_TERRAIN) ? Terrains.getType(node.get(NEW_TERRAIN).asText()) : fromTerrainType;
+        if (toTerrainType == 0) {
+            throw new IllegalArgumentException("Invalid terrain type: " + node.get(NEW_TERRAIN).asText());
+        }
+        int toLevel = node.has(NEW_LEVEL) ? node.get(NEW_LEVEL).intValue() : Terrain.WILDCARD;
+
+        if (toTerrainType == fromTerrainType) {
+            return new TerrainLevelBoardProcessor(fromTerrainType, fromLevel, toLevel);
+        } else {
+            return new TerrainTypeBoardProcessor(fromTerrainType, fromLevel, toTerrainType, toLevel);
+        }
+    }
+
+    private static BoardProcessor parseRemoveTerrain(JsonNode node) {
+        int level = Terrain.WILDCARD;
+        int terrainType = Terrains.getType(node.get(TERRAIN).asText());
         if (terrainType == 0) {
-            throw new IllegalArgumentException("Invalid terrain type: " + from.get(TERRAIN).asText());
+            throw new IllegalArgumentException("Invalid terrain type: " + node.get(TERRAIN).asText());
         }
-        if (from.has(LEVEL)) {
-            fromLevel = from.get(LEVEL).intValue();
+        if (node.has(LEVEL)) {
+            level = node.get(LEVEL).intValue();
         }
-        int toLevel = to.get(LEVEL).intValue();
-        return new TerrainLevelConverter(terrainType, fromLevel, toLevel);
+        return new TerrainRemoveBoardProcessor(terrainType, level);
     }
 
     private static BoardProcessor parseChangeTheme(JsonNode triggerNode) {

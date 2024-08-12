@@ -21,7 +21,7 @@ package megamek.common.board.postprocess;
 import megamek.common.Hex;
 import megamek.common.Terrain;
 
-public class TerrainLevelConverter extends AbstractSimpleBoardProcessor {
+public class TerrainLevelBoardProcessor extends AbstractSimpleBoardProcessor {
 
     private final int terrainType;
     private final int fromLevel;
@@ -36,7 +36,7 @@ public class TerrainLevelConverter extends AbstractSimpleBoardProcessor {
      * @param fromLevel the level that is to be converted; may be Terrain.WILDCARD to affect any terrain level
      * @param toLevel the level that replaces the fromLevel
      */
-    public TerrainLevelConverter(int terrainType, int fromLevel, int toLevel) {
+    public TerrainLevelBoardProcessor(int terrainType, int fromLevel, int toLevel) {
         this.terrainType = terrainType;
         this.fromLevel = fromLevel;
         this.toLevel = toLevel;

@@ -101,35 +101,46 @@ maps:                                        # map and maps are 100% synonymous
     width: 20
     height: 20
 
+# Post Processing:
+map:
+  file: AGoAC Maps/16x17 Grassland 2.board
+  # post processing changes the resulting board in various ways (to be expanded in the future)
+  # postprocess is always followed by a list of post processors (use dashes)
+  postprocess:
+    # settheme changes the theme of every hex
+    - type: settheme
+      theme: desert
 
-# old comments:
-## Directories to choose random boards from
-## RandomDirs=Map Set 2,Map Set 3,Map Set 4,Map Set 5,Map Set 6,Map Set 7
-## Maps can be specified by name.  The order is left-to-right, top-to-bottom
-## Any unspecified boards will be set to RANDOM
-## Maps=RANDOM,RANDOM
+    # removeterrain deletes the given terrain from all hexes
+    - type: removeterrain
+      # the terrain type as in the board files
+      terrain: water
+      # optional: the level; when given, only removes when the level is matched, otherwise all terrain of the type
+      level: 0
 
+    # convertterrain converts a terrain by changing the terrain type and/or level
+    - type: convertterrain
+      # required: the terrain type to change, as used in board files
+      terrain: woods
+      # optional: the terrain level to convert from
+      # when omitted, any terrain level is converted (but only if the terrain is present)
+      level: 1
+      # optional: the new terrain type; if already present, it will be overwritten
+      # when not given, the terrain type remains unchanged
+      newterrain: rough
+      # optional: the terrain level to convert to
+      # when omitted, the terrain level is left unchanged
+      newlevel: 2
+      # obviously, at least one of newterrain and newlevel must be given
 
-# Game Options -------------------------------------------------------------------------------------------
+# Optional: game options
+# when not given, user-set options are used
 options:                                    # default: MM's default options
   #from: Example_options.xml
   #fixed: no                                 # default: yes; in this case, the Game Options Dialog is
                                             # not shown before the scenario starts
-  # Activate options by listing them; the values must be those from SBFRuleOptions, listed below
-  - base_recon
-  # base_team_vision
-  # base_hidden
-  # base_formation_change
-  # form_allow_detach
-  # form_allow_split
-  # form_allow_adhoc
-  # move_evasive
-  # move_hulldown
-  # move_sprint
-  - init_modifiers
-  # init_battlefield_int
-  # init_banking
-  # init_forcing
+  # Activate options by listing them; the values must be those from OptionsConstants, as used for the game type
+  - double_blind
 
 
 # Planetary Conditions -----------------------------------------------------------------------------------
@@ -162,7 +173,6 @@ planetaryconditions:                        # default: standard conditions
 factions:
   - name: Player A
     team: 1                                   # default: each player goes into their own team
-#    home: W                                   # default: Any; other values: N, NE, SE, S, SW, NW
     deploy: N                                 # default: same as the home edge
     # or:
     deploy:
@@ -188,30 +198,27 @@ factions:
   #      y: 4                                    # must have both x and y or neither
         # NOT pre-deployed:
         deploymentround: 2                    # default: deploy at start; here: reinforce at the start of round 2
-        # ---
+
 #        elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
 #        altitude: 8                             # default: 5 for aero
         status: prone, hidden                   # default: none; values: shutdown, hulldown, prone, hidden
+
+        # Optional: the force is given as it is written to MUL files; from upper (regiment) to lower (lance) level
+        # each level is <name>|<force id>; separate levels by a double pipe ||
+        # the force ids are used to distinguish different forces with the same name (e.g. multiple "Assault Lance")
+        force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
+
         offboard: N                             # default: not offboard; values: N, E, S, W
         crew:                                   # default: unnamed 4/5 pilot
           name: Cpt. Frederic Nguyen
           piloting: 4
           gunnery: 3
-      - type: ASElement                         # default: TW standard unit
-        fullname: Atlas AS7-D
-        x: 5
-        y: 3
-                                                # cannot be combined with a position
-        crew:
-          name: Cpt. Rhonda Snord
-          piloting: 4
-          gunnery: 3
 
     # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present
-    # player will deploy them. When pre-deployed (they have a position), the owner is irrelevant.
+    # player will deploy them. When pre-deployed (at: [ x, y ]), the owner is currently irrelevant.
     objects:
 
-      # All objects require a name and weight. Currently the type is automatically Briefcase, later new
+      # All objects require a name and weight. Currently the type is automatically Briefcase.java, later new
       # types may be incoming; currently no ID, might make sense
       - name: Black Briefcase With Codes
         # weight in tons, need not be integer
@@ -233,7 +240,6 @@ factions:
   - name: "Player B"
     home: "E"
     units:
-      #    - include: Annihilator ANH-13.mmu
       - fullname: Schrek PPC Carrier
         type: TW_UNIT
         at: [7, 4]                            # alternative way to indicate position
@@ -334,12 +340,13 @@ trigger:
   type: killedunits
   # Optional: limit the test to the player's units
   player: Player A
-  # Optional: a list of units to limit the check to. This makes sense most of time to avoid finding MechWarriors
+  # Optional: a list of units to limit the check to. This makes sense most of time to avoid counting MechWarriors
   # or other spawns; when giving unit IDs, the player limitation is redundant
+  # It also makes sense to set fixed IDs for all units to make sure this works correctly
   units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
-  # At least the given number of units must have been killed, can be combined with atmost
+  # At least the given number of units must have been killed, can be alone or combined with atmost
   atleast: 7
-  # At most the given number of units must have been killed
+  # At most the given number of units must have been killed, can be alone or combined with atleast
   atmost: 10
   # OR: the exact number of units must have been killed; this cannot be combined with atmost/atleast
   count: 2
@@ -410,7 +417,7 @@ trigger:
 trigger:
   # The AND trigger combines all (two or more) given sub-triggers so that all of them must be active for the
   # AND trigger itself to fire. Note that sub-triggers should not use the modifier "once" or it is possible
-  # that one of the sub-triggers activates and is "used up", preventing the AND trigger from ever firing.
+  # that one of the sub-triggers activates alone and is "used up", preventing the AND trigger from ever firing.
   type: and
   triggers:
     # here, the unit 201 must be killed AND it must be the start of the movement phase for this AND trigger

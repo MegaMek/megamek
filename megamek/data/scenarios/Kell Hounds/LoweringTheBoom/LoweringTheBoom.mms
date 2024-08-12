@@ -12,16 +12,12 @@ map:
     - file: Map Set 2/16x17 Lake Area.board
       modify: rotate
   postprocess:
-    - type: convertterrainlevel
-      from:
-        terrain: woods
-      to:
-        level: 2
-    - type: convertterrainlevel
-      from:
-        terrain: water
-      to:
-        level: 3
+    - type: convertterrain
+      terrain: woods
+      newlevel: 2
+    - type: convertterrain
+      terrain: water
+      newlevel: 3
 
 factions:
 - name: Thirtieth Marik Militia

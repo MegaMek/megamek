@@ -19,11 +19,13 @@
 package megamek.common.board.postprocess;
 
 import megamek.common.Hex;
+import megamek.common.Terrain;
 import megamek.common.Terrains;
 
 public class TerrainRemoveBoardProcessor extends AbstractSimpleBoardProcessor {
 
     private final int terrainType;
+    private final int terrainLevel;
 
     /**
      * Creates a Board Processor that removes the given terrain type from all hexes of the board regardless of
@@ -33,11 +35,25 @@ public class TerrainRemoveBoardProcessor extends AbstractSimpleBoardProcessor {
      * @see Terrains
      */
     public TerrainRemoveBoardProcessor(int terrainType) {
+        this(terrainType, Terrain.WILDCARD);
+    }
+
+    /**
+     * Creates a Board Processor that removes the given terrain type from all hexes of the board where it has
+     * the given terrain level.
+     *
+     * @param terrainType The terrain type to remove
+     * @see Terrains
+     */
+    public TerrainRemoveBoardProcessor(int terrainType, int terrainLevel) {
         this.terrainType = terrainType;
+        this.terrainLevel = terrainLevel;
     }
 
     @Override
     public void processHex(Hex hex) {
-        hex.removeTerrain(terrainType);
+        if ((terrainLevel == Terrain.WILDCARD) || (hex.terrainLevel(terrainType) == terrainLevel)) {
+            hex.removeTerrain(terrainType);
+        }
     }
 }

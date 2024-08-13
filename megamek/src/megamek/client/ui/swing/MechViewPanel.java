@@ -26,6 +26,8 @@ import megamek.common.MechView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -155,6 +157,7 @@ public class MechViewPanel extends JPanel {
             fluffImageLabel.setIcon(new ImageIcon(image));
         } else {
             fluffImageLabel.setIcon(null);
+            fluffImageLabel.setToolTipText(null);
         }
     }
 
@@ -164,7 +167,7 @@ public class MechViewPanel extends JPanel {
         setFluffImage((Entity) null);
     }
 
-    /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */ 
+    /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */
     private final MouseWheelListener wheelForwarder = e -> {
         MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MechViewPanel.this, e, scrMek);
         for (MouseWheelListener listener : scrMek.getMouseWheelListeners()) {
@@ -189,16 +192,24 @@ public class MechViewPanel extends JPanel {
             fluffImageIndex = fluffImageList.size() - 1;
         }
         if ((fluffImageIndex >= 0) && (fluffImageIndex < fluffImageList.size())) {
-            setFluffImage(fluffImageList.get(fluffImageIndex).image());
-            imageInfoLabel.setText(prepareLabelText(fluffImageList.get(fluffImageIndex).fileName()));
+            try {
+                FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
+                setFluffImage(record.getImage());
+                imageInfoLabel.setText(prepareLabelText(record.file()));
+                fluffImageLabel.setToolTipText(FluffImageTooltip.getTooltip(record));
+            } catch (IOException ex) {
+                setFluffImage((Image) null);
+                imageInfoLabel.setText("Error loading fluff image");
+            }
         } else {
             setFluffImage((Image) null);
             imageInfoLabel.setText("");
         }
     }
 
-    private String prepareLabelText(String labelInfo) {
+    private String prepareLabelText(File file) {
         String labelText = "";
+        String labelInfo = file.toString();
         if (labelInfo.contains("__")) {
             labelText = labelInfo.substring(labelInfo.lastIndexOf("__") + 2);
         }

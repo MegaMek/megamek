@@ -27,6 +27,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -163,7 +164,7 @@ public final class FluffImageHelper {
      * list may be empty, but not null.
      *
      * @param unit The unit
-     * @param recordSheet True if this image search is meant for a record sheet
+     * @param recordSheet True if this image search is meant for a record sheet (used in MML)
      * @return Available fluff images or the embedded fluff image
      */
     private static List<FluffImageRecord> getFluffImageRecords(@Nullable BTObject unit, boolean recordSheet) {
@@ -172,7 +173,7 @@ public final class FluffImageHelper {
         }
         Image embeddedFluffImage = unit.getFluffImage();
         if (embeddedFluffImage != null) {
-            return List.of(new FluffImageRecord(embeddedFluffImage, ""));
+            return List.of(new FluffImageRecord(embeddedFluffImage, null));
         } else {
             return findFluffFiles(unit, recordSheet).stream().map(FluffImageRecord::toRecord).toList();
         }
@@ -364,14 +365,18 @@ public final class FluffImageHelper {
         }
     }
 
-    public record FluffImageRecord(Image image, String fileName) {
+    public record FluffImageRecord(Image image, File file) {
 
         public static FluffImageRecord toRecord(File file) {
-            return toRecord(file.toString());
+            return new FluffImageRecord(null, file);
         }
 
-        public static FluffImageRecord toRecord(String fileName) {
-            return new FluffImageRecord(new ImageIcon(fileName).getImage(), fileName);
+        public Image getImage() throws IOException {
+            if (image != null) {
+                return image;
+            } else {
+                return ImageIO.read(file);
+            }
         }
     }
 

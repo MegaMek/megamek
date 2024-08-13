@@ -203,6 +203,11 @@ messages:
       Castor, Katrina Steiner sanctioned the raid. The operation aimed to eliminate the weapons, secure the
       eggs for Snord, and provide combat experience for the Kell Hounds.
       
+      Colonel Nage recognized the battle was lost and retreated with his command company, aiming to reach the 
+      atomic weapons and unleash them on the mercenaries. Colonel Kell dispatched Salome Ward and her 
+      Relentless Wolves to intercept him. Ward's company caught up with Nage just as he was nearing the depot. 
+      She launched an attack as the Second Battalion's LAMs bombed the depot. 
+      
       *This scenario is based on Battlecorps Scenario 3011, "Lowering the Boom", originally published in 
       the "Kell Hounds" sourcebook, FASA 01652.*
     image: loweringboom_splash.png
@@ -253,11 +258,10 @@ messages:
       Not more than one Marik Mek managed to evade the Kell Hounds forces. The Kell Hounds
       have won a decivise victory.
       
-      Colonel Nage saw the battle lost and broke away with his command company, intending to reach the atomic 
-      weapons and use them on the mercenaries. Colonel Kell sent Salome War and her Relentless Wolves after him.  
-      Ward's company caught Nage just before he reached the depot. She attacked as the Second Battalion's LAMs bombed 
-      the depot. Ward's Wolves took a toll of the Marik Meks. Seeing smoke rising from the depot and his 'Mechs taking 
-      heavy damage, Nage fled, with the Relentless Wolves in pursuit.
+      Ward's Wolves inflicted significant losses on the Marik Meks. Witnessing the smoke rising 
+      from the depot and his units sustaining severe damage, Nage decided to flee, with the relentless 
+      pursuit of the Wolves close behind.
+      
     image: loweringboom_splash.png
     trigger:
       type: fledunits
@@ -271,11 +275,9 @@ messages:
       
       Only two Marik Meks managed to evade the Kell Hounds forces.
       
-      Colonel Nage saw the battle lost and broke away with his command company, intending to reach the atomic 
-      weapons and use them on the mercenaries. Colonel Kell sent Salome War and her Relentless Wolves after him.  
-      Ward's company caught Nage just before he reached the depot. She attacked as the Second Battalion's LAMs bombed 
-      the depot. Ward's Wolves took a toll of the Marik Meks. Seeing smoke rising from the depot and his 'Mechs taking 
-      heavy damage, Nage fled, with the Relentless Wolves in pursuit.
+      Ward's Wolves inflicted significant losses on the Marik Meks. Witnessing the smoke rising 
+      from the depot and his units sustaining severe damage, Nage decided to flee, with the relentless 
+      pursuit of the Wolves close behind.
     image: loweringboom_splash.png
     trigger:
       type: fledunits
@@ -286,6 +288,9 @@ messages:
   - header: Decisive Marik Victory
     text: At least five Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a decivise victory.
+    
+      Ward's Wolves failed to inflict significant losses on the Marik Meks. With the atomic weapons supply
+      depot bombarded, Nage decided to withdraw.
     image: loweringboom_splash.png
     trigger:
       type: fledunits
@@ -296,6 +301,9 @@ messages:
   - header: A Draw!
     text: Three Marik Meks managed to evade the Kell Hounds forces. This result is considered
       a draw.
+    
+      Both sides suffered significant losses. With the atomic weapons supply
+      depot bombarded, Col. Nage decided to withdraw.
     image: loweringboom_splash.png
     trigger:
       type: fledunits
@@ -306,6 +314,9 @@ messages:
   - header: Marginal Marik Victory
     text: Four Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a marginal victory.
+    
+      Ward's Wolves failed to inflict significant losses on the Marik Meks. With the atomic weapons supply
+      depot bombarded, Col. Nage decided to withdraw.
     image: loweringboom_splash.png
     trigger:
       type: fledunits

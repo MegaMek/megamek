@@ -71,10 +71,8 @@ public class TWPhasePreparationManager {
                 // commander initiative bonus. Now that initiative is rolled, clear the flag.
                 gameManager.getGame().getEntitiesVector().forEach(e -> e.getCrew().resetActedFlag());
 
-                if (!gameManager.getGame().shouldDeployThisRound()) {
-                    gameManager.incrementAndSendGameRound();
-                    gameManager.autoSaveService.performRollingAutosave();
-                }
+                gameManager.incrementAndSendGameRound();
+                gameManager.autoSaveService.performRollingAutosave();
 
                 // setIneligible(phase);
                 gameManager.determineTurnOrder(phase);

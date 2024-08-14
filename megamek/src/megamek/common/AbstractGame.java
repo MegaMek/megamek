@@ -83,7 +83,7 @@ public abstract class AbstractGame implements IGame {
      * This list contains all scripted events that may happen during the course of the game. This list
      * should only ever be present on the server. Only the results of events should be sent to clients.
      */
-    protected final List<TriggeredEvent> scriptedEvents = new ArrayList<>();
+    protected final List<TriggeredEvent> scriptedEvents = new CopyOnWriteArrayList<>();
 
     /**
      * Piles of carry-able objects, sorted by coordinates

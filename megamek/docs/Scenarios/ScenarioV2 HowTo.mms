@@ -345,50 +345,6 @@ messages:
       atleast: 6
 
 # ###############################################
-# Respawns
-# can be used to create capture-the-flag or grinding scenarios
-
-# need options:
-# no pilot spawning
-# no flee
-# flee only from home edge
-
-# types: single unit repeated self respawn (capture the flag): possible, but hacky
-# single unit repeated, but upgraded (grinder game): how?
-# multi unit lance respawn (as in MWO, first lance dead, bring in second lance): works
-
-# is it possible to add Trigger.getTriggerInformation(TriggerInformation info)
-# TriggerInformation being only a marker. Receiver must check which type and if useful
-# killedunit can return the killed units
-# roundend can return the round
-
-respawns:
-  - type: spawn
-    trigger:
-      type: activeunits
-      units: [ 101, 102, 103, 104 ]
-      count: 0
-    units:
-      - fullname: Atlas AS7-D
-        id: 105
-      - fullname: Atlas AS7-D
-        id: 106
-      # ...
-      # set deployround to Integer.MAX. when the trigger is met, set deployround to the next round
-
-  - type: renew
-    # trigger unitkilled, once. when processed, add replacement unit and add new scriptedevent unitkilled
-
-  - type: replace
-    # upgrade each dead unit according to table?
-    # how is this different from spawn
-
-    # limit respawning? Or: use end events. But: no respawns left doesnt mean the game ends immediately
-
-
-
-
-# ###############################################
 # Triggers
 # are used to end the game, decide victory and show messages
 # The following examples show all available triggers. Note that triggers by themselves (as given below)

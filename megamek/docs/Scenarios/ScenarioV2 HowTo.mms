@@ -188,11 +188,13 @@ factions:
     - vibra: 2
     camo: clans/wolf/Alpha Galaxy.jpg         # image file, relative to the scenario file, or in data/camos otherwise
                                               # use slashes
+
+    # Units are always an array (use dashes)
     units:
 #    - include: Annihilator ANH-13.mmu
       - fullname: Atlas AS7-D
-        # type: TW_UNIT                         # default: TW_UNIT other: ASElement
         # pre-deployed:
+        offboard: N                             # default: not offboard; values: N, E, S, W
         at: [7, 4]                            # position 0704 (pre-deployed)
   #      x: 7                                 # alternative way to give position
   #      y: 4                                    # must have both x and y or neither
@@ -208,11 +210,29 @@ factions:
         # the force ids are used to distinguish different forces with the same name (e.g. multiple "Assault Lance")
         force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
 
-        offboard: N                             # default: not offboard; values: N, E, S, W
-        crew:                                   # default: unnamed 4/5 pilot
+        # pre-applied damage may assign remaining armor and internal structure values. Values
+        # higher than the undamaged values of the unit are ignored
+        remaining:
+          armor:
+            # remaining armor values, use the usual location names
+            LT: 2
+            CTR: 0
+          internal:
+            # remaining internal structure is independent of armor and does not create any crits
+            LA: 2
+
+        # Optional: give details of the crew/pilot - currently only for single pilots
+        # by default, the pilot is an unnamed 4/5 pilot
+        # all fields in crew: are optional
+        crew:
           name: Cpt. Frederic Nguyen
+          callsign: MAGIC
           piloting: 4
           gunnery: 3
+          # Optional: pilot hits, 0 to 6
+          hits: 3
+          # Optional: a portrait, relative to data/images/portraits
+          portrait: Male/MechWarrior/MW_M_13.png
 
     # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present
     # player will deploy them. When pre-deployed (at: [ x, y ]), the owner is currently irrelevant.
@@ -323,6 +343,50 @@ messages:
       modify: [ atend, once ]
       units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
       atleast: 6
+
+# ###############################################
+# Respawns
+# can be used to create capture-the-flag or grinding scenarios
+
+# need options:
+# no pilot spawning
+# no flee
+# flee only from home edge
+
+# types: single unit repeated self respawn (capture the flag): possible, but hacky
+# single unit repeated, but upgraded (grinder game): how?
+# multi unit lance respawn (as in MWO, first lance dead, bring in second lance): works
+
+# is it possible to add Trigger.getTriggerInformation(TriggerInformation info)
+# TriggerInformation being only a marker. Receiver must check which type and if useful
+# killedunit can return the killed units
+# roundend can return the round
+
+respawns:
+  - type: spawn
+    trigger:
+      type: activeunits
+      units: [ 101, 102, 103, 104 ]
+      count: 0
+    units:
+      - fullname: Atlas AS7-D
+        id: 105
+      - fullname: Atlas AS7-D
+        id: 106
+      # ...
+      # set deployround to Integer.MAX. when the trigger is met, set deployround to the next round
+
+  - type: renew
+    # trigger unitkilled, once. when processed, add replacement unit and add new scriptedevent unitkilled
+
+  - type: replace
+    # upgrade each dead unit according to table?
+    # how is this different from spawn
+
+    # limit respawning? Or: use end events. But: no respawns left doesnt mean the game ends immediately
+
+
+
 
 # ###############################################
 # Triggers
@@ -438,3 +502,4 @@ trigger:
       units: 201
     - type: phasestart
       phase: movement
+

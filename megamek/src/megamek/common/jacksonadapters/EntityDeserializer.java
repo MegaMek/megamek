@@ -161,7 +161,17 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 for (int location = 0; location < entity.locations(); location++) {
                     String locationAbbr = entity.getLocationAbbr(location);
                     if (armorNode.has(locationAbbr)) {
-                        entity.setArmor(armorNode.get(locationAbbr).intValue(), location);
+                        // don't allow more than the maximum armor
+                        int newArmor = Math.min(armorNode.get(locationAbbr).intValue(), entity.getArmor(location));
+                        entity.setArmor(newArmor, location);
+                    }
+                    if (entity.hasRearArmor(location)) {
+                        String rearLocationAbbr = entity.getLocationAbbr(location) + "R";
+                        if (armorNode.has(rearLocationAbbr)) {
+                            int newArmor = Math.min(armorNode.get(rearLocationAbbr).intValue(),
+                                    entity.getArmor(location, true));
+                            entity.setArmor(newArmor, location, true);
+                        }
                     }
                 }
             }
@@ -170,7 +180,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 for (int location = 0; location < entity.locations(); location++) {
                     String locationAbbr = entity.getLocationAbbr(location);
                     if (internalNode.has(locationAbbr)) {
-                        entity.setInternal(internalNode.get(locationAbbr).intValue(), location);
+                        int newIS = Math.min(internalNode.get(locationAbbr).intValue(),
+                                entity.getInternal(location));
+                        entity.setInternal(newIS, location);
                     }
                 }
             }

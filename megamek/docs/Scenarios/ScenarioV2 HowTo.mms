@@ -28,8 +28,9 @@ singleplayer: yes                           # default: yes; the first player is 
 
 # Game Map -------------------------------------------------------------------------------------------
 map:
-  boardcolumns: 2                           # a 2x1 map, default: 1
-#  boardrows: 1                              # default: 1
+  # Optional: the columns to arrange boards in. Default: 1
+  # The number of rows follows from the number of boards given and the columns
+  cols: 2                           # a 2x1 map, default: 1
   boards:
     - board1.board                            # all files are first searched relative to the scenario file, and
     - board2.board                            # if not found there, then relative to the appropriate data/... directory
@@ -171,6 +172,12 @@ planetaryconditions:                        # default: standard conditions
 # Forces -------------------------------------------------------------------------------------------
 
 factions:
+  # The first player is assumed to be the human player, while the rest get bots assigned by default.
+  # To have the bots play all factions, insert a player without any units as the first player
+  # Only this line is required:
+  # - name: Human Observer
+
+
   - name: Player A
     team: 1                                   # default: each player goes into their own team
     deploy: N                                 # default: same as the home edge
@@ -195,6 +202,8 @@ factions:
       - fullname: Atlas AS7-D
         # pre-deployed:
         offboard: N                             # default: not offboard; values: N, E, S, W
+        # Optional: when pre-deployed, set the facing. 5 = NW
+        facing: 5
         at: [7, 4]                            # position 0704 (pre-deployed)
   #      x: 7                                 # alternative way to give position
   #      y: 4                                    # must have both x and y or neither

@@ -60,7 +60,6 @@ public abstract class MMStoryDialog extends JDialog {
     }
 
     protected void initialize() {
-        setAlwaysOnTop(true);
         setLayout(new BorderLayout());
         add(getMainPanel(), BorderLayout.CENTER);
         add(getButtonPanel(), BorderLayout.SOUTH);

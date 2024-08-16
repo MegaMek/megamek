@@ -59,6 +59,12 @@ factions:
       armor:
         LT: 2
         CT: 15
+    ammo:
+      CT:
+        - slot: 11
+          shots: 5
+        - slot: 12
+          shots: 5
     crew:
       name: Col. Oliver Nage
       portrait: Male/MechWarrior/MW_M_15.png
@@ -74,6 +80,8 @@ factions:
         CT: 15
       internal:
         LT: 10
+    crits:
+      RT: 3
     crew:
       name: Maj. Abraham Morrison
       portrait: Male/MechWarrior/MW_M_13.png
@@ -87,6 +95,12 @@ factions:
       armor:
         HD: 5
         RL: 10
+    ammo:
+      LT:
+        - slot: 1
+          shots: 3
+        - slot: 2
+          shots: 3
     crew:
       name: Lt. Alicia Devon
       piloting: 4
@@ -98,6 +112,12 @@ factions:
     remaining:
       armor:
         CT: 12
+    ammo:
+      LT:
+        - slot: 4
+          shots: 4
+        - slot: 5
+          shots: 4
     crew:
       name: Sgt. Jonathan Taylor
       piloting: 4
@@ -151,6 +171,13 @@ factions:
     - fullname: Dervish DV-6M
       id: 203
       deploymentround: 2
+      ammo:
+        LT:
+          - slot: 3
+            shots: 4
+        RT:
+          - slot: 3
+            shots: 4
       crew:
         name: Brian Martell
         piloting: 4

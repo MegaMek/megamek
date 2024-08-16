@@ -33,7 +33,7 @@ map:
       modify: rotate
 
 factions:
-- name: Obser
+#- name: Obser
 
 
 - name: Mek Company, Kell Hounds
@@ -165,6 +165,8 @@ factions:
       remaining:
         armor:
           LA: 15
+      crits:
+        LA: 4
       crew:
         name: Gorman Toth
         gunnery: 4
@@ -177,7 +179,7 @@ factions:
       force: Leader Lance|11
       remaining:
         armor:
-          H: 5
+          HD: 5
       crew:
         name: Maj. Adolf Rillan
         gunnery: 4
@@ -220,6 +222,11 @@ factions:
       at: [ 30, 11 ]
       facing: 4
       force: Attack Lance|12
+      remaining:
+        armor:
+          CT: 12
+      crits:
+        RA: 3
       crew:
         name: Sandra Fitzsimmons
         gunnery: 5
@@ -271,6 +278,9 @@ factions:
       at: [ 20, 9 ]
       facing: 4
       force: Probe Lance|13
+      crits:
+        LA: 5
+        RA: 6
       crew:
         name: Dorothy Gail
         gunnery: 5

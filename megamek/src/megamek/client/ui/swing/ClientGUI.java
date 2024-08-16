@@ -571,6 +571,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         setMiniReportDisplay(new MiniReportDisplay(this));
         setMiniReportDisplayDialog(new MiniReportDisplayDialog(getFrame(), this));
         getMiniReportDisplayDialog().setVisible(false);
+        setMiniReportVisible(GUIP.getMiniReportEnabled());
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
 

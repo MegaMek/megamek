@@ -201,7 +201,7 @@ factions:
 #    - include: Annihilator ANH-13.mmu
       - fullname: Atlas AS7-D
         # pre-deployed:
-        offboard: N                             # default: not offboard; values: N, E, S, W
+        offboard: N                             # default: not offboard; values: N, E, S, W (TODO)
         # Optional: when pre-deployed, set the facing. 5 = NW
         facing: 5
         at: [7, 4]                            # position 0704 (pre-deployed)
@@ -220,7 +220,7 @@ factions:
         force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
 
         # pre-applied damage may assign remaining armor and internal structure values. Values
-        # higher than the undamaged values of the unit are ignored
+        # higher than the undamaged values of the unit are ignored. Negative values set to 0 (TODO)
         remaining:
           armor:
             # remaining armor values, use the usual location names
@@ -228,11 +228,34 @@ factions:
             CTR: 0
           internal:
             # remaining internal structure is independent of armor and does not create any crits
+            # TODO: have 0 internal destroy the location
             LA: 2
 
-        # Optional: give details of the crew/pilot - currently only for single pilots
+        # location crits
+        # this usually requires looking up the unit file
+        crits:
+          # the usual location names. Give the slots as an array ([ 4, 8 ] or using dashes on separate lines)
+          # slots are 1-based, i.e. CT has slots 1 to 12 (not 0)
+          # location crits will mark the equipment as damaged, but never have any secondary effects
+          # like explosions or pilot hits. Crits that destroy a unit are invalid (e.g. 3 engine hits)
+          LA: 4
+          RT: [ 1, 3 ]
+          CT: 1
+          # non-location crits (TODO)
+          # motive: 1
+          # firecontrol: 1
+
+        # ammo types and reduced amount
+        # this usually requires looking up the unit file and possibly AmmoType.java for the type designations
+        ammo:
+          LA:
+            slot: 5
+            shots: 2
+            # type: xyz (TODO)
+
+        # Optional: give details of the crew/pilot - currently only for single pilots (TODO)
         # by default, the pilot is an unnamed 4/5 pilot
-        # all fields in crew: are optional
+        # all fields in crew are optional
         crew:
           name: Cpt. Frederic Nguyen
           callsign: MAGIC

@@ -150,7 +150,7 @@ hits, one hip hit, all weapons destroyed or no ammo left for active
 weapons.
 Any unit that withdraws is welcome to make a fighting withdrawal, but must
 be moving towards its home edge by walking backwards or diagonally, i.e.,
-it must be able to attack units directl behind it or choosing targets that
+it must be able to attack units directly behind it or choosing targets that
 block its path to its home edge. Neither side can voluntarily retreat
 off of the map for a full 10 turns unless the particular unit is facing a forced
 withdrawal.
@@ -190,7 +190,7 @@ Objective by moving less than 4 'Mechs off the
 Renegade.s home edge.
 Pyrrhic Victory . . . . . . . .Achieve only the Primary or Secondary
 Objective.
-Marginal Defeat . . . . . . . .Achieved neither the Primary or Secondary
+Marginal Defeat . . . . . . . .Achieved neither the Primary nor Secondary
 Objectives.
 Total Defeat . . . . . . . . . . .All 8 Lone Star 'Mechs were lost.
 Redfield.s Renegades:
@@ -202,7 +202,7 @@ Objective by moving less than 4 'Mechs off the
 Lone Star.s home edge
 Pyrrhic Victory . . . . . . . .Achieve only the Primary or Secondary
 Objective.
-Marginal Defeat . . . . . . . .Achieved neither the Primary or Secondary
+Marginal Defeat . . . . . . . .Achieved neither the Primary nor Secondary
 Objectives.
 Total Defeat . . . . . . . . . . .All 8 Renegade 'Mechs were lost.
 

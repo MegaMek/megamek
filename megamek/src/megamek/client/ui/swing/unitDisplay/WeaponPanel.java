@@ -1349,6 +1349,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public int getNextWeaponListIdx() {
+        if (weaponList.getModel().getSize() == 0) {
+            return -1;
+        }
+
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
         if (selected == -1) {
@@ -1379,6 +1383,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public int getPrevWeaponListIdx() {
+        if (weaponList.getModel().getSize() == 0) {
+            return -1;
+        }
+
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
         if (selected == -1) {

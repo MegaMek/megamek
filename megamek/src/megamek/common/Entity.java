@@ -45,7 +45,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import org.apache.commons.text.StringEscapeUtils;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
@@ -15679,7 +15679,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public void setForceString(String f) {
-        forceString = StringEscapeUtils.escapeXml11(f);
+        forceString = MMXMLUtility.escape(f);
     }
 
     @Override

@@ -1403,27 +1403,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // limit large craft to zero net heat and to heat by arc
         final int heatCapacity = ae.getHeatCapacity();
-        if (ae.usesWeaponBays() && (weapon != null) && !weapon.getBayWeapons().isEmpty()) {
+        if (ae.usesWeaponBays() && (weapon != null)) {
             int totalHeat = 0;
 
             // first check to see if there are any usable weapons
-            boolean usable = false;
-            for (WeaponMounted m : weapon.getBayWeapons()) {
-                WeaponType bayWType = m.getType();
-                boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
-                if (m.canFire()) {
-                    if (bayWUsesAmmo) {
-                        if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
-                            usable = true;
-                            break;
-                        }
-                    } else {
-                        usable = true;
-                        break;
-                    }
-                }
-            }
-            if (!usable) {
+            if (!weapon.streamBayWeapons()
+                .filter(WeaponMounted::canFire)
+                .anyMatch(m ->
+                    m.getType().getAmmoType() == AmmoType.T_NA
+                    || Optional.ofNullable(m.getLinked()).map(a -> a.getUsableShotsLeft() > 0).orElse(false)
+                )
+            ) {
                 return Messages.getString("WeaponAttackAction.BayNotReady");
             }
 

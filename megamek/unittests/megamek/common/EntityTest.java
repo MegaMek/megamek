@@ -105,6 +105,23 @@ public class EntityTest {
         }
     }
 
+    @Test
+    public void testCanon() {
+        File f;
+        MechFileParser mfp;
+        Entity e;
+
+        // Test 1/1
+        try {
+            f = new File("data/mechfiles/mechs/3050U/Exterminator EXT-4A.mtf");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertEquals(e.isCanon(), true);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
     /**
      * Verify new Tank method .isImmobilizedForJump() returns correct values in
      * various states.  Note: vehicles cannot lose individual Jump Jets via crits,

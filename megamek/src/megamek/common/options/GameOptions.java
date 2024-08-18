@@ -66,7 +66,6 @@ public class GameOptions extends BasicGameOptions {
 
         IBasicOptionGroup victory = addGroup("victory");
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false);
-        addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true);
         addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1);
         addOption(victory, OptionsConstants.VICTORY_USE_BV_DESTROYED, false);
         addOption(victory, OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100);

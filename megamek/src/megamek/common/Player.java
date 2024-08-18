@@ -291,6 +291,15 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @return true if this Player is not considered an observer.
+     *
+     * @see #isObserver()
+     */
+    public boolean isNoObserver() {
+        return !isObserver();
+    }
+
+    /**
      *  sets {@link #seeAll}. This will only enable seeAll if other conditions allow it.
      *  see {@link #canIgnoreDoubleBlind()}
      */
@@ -459,6 +468,10 @@ public final class Player extends TurnOrdered {
 
     public boolean admitsDefeat() {
         return admitsDefeat;
+    }
+
+    public boolean doesNotAdmitDefeat() {
+        return !admitsDefeat();
     }
 
     /**

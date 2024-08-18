@@ -33,7 +33,7 @@ import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
-import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
 
@@ -124,7 +124,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private int externalGameId = 0;
 
     // victory condition related stuff
-    private Victory victory = null;
+    private VictoryHelper victoryHelper = null;
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
@@ -3006,16 +3006,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * anything unless the VictoryCondition Config Options have changed.
      */
     public void createVictoryConditions() {
-        victory = new Victory(getOptions());
+        victoryHelper = new VictoryHelper(getOptions());
     }
 
     @Deprecated
-    public Victory getVictory() {
-        return victory;
+    public VictoryHelper getVictory() {
+        return victoryHelper;
     }
 
     public VictoryResult getVictoryResult() {
-        return victory.checkForVictory(this, getVictoryContext());
+        return victoryHelper.checkForVictory(this, getVictoryContext());
     }
 
     // a shortcut function for determining whether vectored movement is

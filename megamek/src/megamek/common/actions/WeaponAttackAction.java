@@ -3835,15 +3835,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.usesWeaponBays() && wtype != null && weapon != null) {
 
                 // any heavy lasers
-                if (wtype.getAtClass() == WeaponType.CLASS_LASER) {
-                    for (WeaponMounted bweap : weapon.getBayWeapons()) {
-                        WeaponType bwtype = bweap.getType();
-                        if ((bwtype.getInternalName().contains("Heavy"))
-                                && (bwtype.getInternalName().contains("Laser"))) {
-                            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
-                            break;
-                        }
-                    }
+                if (wtype.getAtClass() == WeaponType.CLASS_LASER &&
+                        weapon.getBayWeapons().stream()
+                        .map(WeaponMounted::getType)
+                        .map(WeaponType::getInternalName)
+                        .anyMatch(i -> i.startsWith("CLHeavyLaser"))) {
+                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
                 }
                 // barracuda missiles
                 else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {

@@ -1274,7 +1274,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean networkFiringSolution = false;
             //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
             if (ae.hasNavalC3() && te != null
-                && game.getC3NetworkMembers(ae).stream().anyMatch(en -> en.hasFiringSolutionFor(te.getId())) {
+                && game.getC3NetworkMembers(ae).stream().anyMatch(en -> en.hasFiringSolutionFor(te.getId()))) {
                 networkFiringSolution = true;
             }
             if (!networkFiringSolution) {
@@ -1297,15 +1297,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         && (te != null) && te.hasSeenEntity(ae.getOwner()))
                 && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
+            if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()
+                && game.getEntitiesVector().stream().anyMatch(en ->
+                    !en.isEnemyOf(ae)
+                    && en.onSameC3NetworkAs(ae)
+                    && Compute.canSee(game, en, target))) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
-                for (Entity en : game.getEntitiesVector()) {
-                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.canSee(game, en, target)) {
-                        networkSee = true;
-                        break;
-                    }
-                }
+                networkSee = true;
             }
             if (!networkSee) {
                 if (!Compute.inSensorRange(game, ae, target, null)) {

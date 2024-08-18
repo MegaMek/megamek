@@ -21,6 +21,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.MechView;
 import megamek.common.Report;
@@ -29,6 +30,7 @@ import megamek.common.templates.TROView;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
@@ -40,6 +42,9 @@ import java.util.ArrayList;
  * @author Jay Lawson
  */
 public class MechViewPanel extends JPanel {
+
+    private static final String PLACEHOLDER_IMAGE_NAME = Configuration.fluffImagesDir() + "/fluff_placeholder.png";
+    private static final Image PLACEHOLDER_IMAGE = readPlaceHolderImage();
 
     private final JTextPane txtMek = new JTextPane();
     private JScrollPane scrMek;
@@ -145,7 +150,11 @@ public class MechViewPanel extends JPanel {
         fluffImageIndex = 0;
         nextImageButton.setEnabled(fluffImageList.size() > 1);
         prevImageButton.setEnabled(fluffImageList.size() > 1);
-        showNextFluffImage();
+        if (entity != null) {
+            showNextFluffImage();
+        } else {
+            setFluffImage((Image) null);
+        }
     }
 
     private void setFluffImage(Image image) {
@@ -202,7 +211,7 @@ public class MechViewPanel extends JPanel {
                 imageInfoLabel.setText("Error loading fluff image");
             }
         } else {
-            setFluffImage((Image) null);
+            setFluffImage(PLACEHOLDER_IMAGE);
             imageInfoLabel.setText("");
         }
     }
@@ -217,5 +226,13 @@ public class MechViewPanel extends JPanel {
             labelText = labelText.substring(0, labelText.lastIndexOf("."));
         }
         return labelText;
+    }
+
+    private static Image readPlaceHolderImage() {
+        try {
+            return ImageIO.read(new File(PLACEHOLDER_IMAGE_NAME));
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

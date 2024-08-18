@@ -955,11 +955,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData();
         }
 
-        Entity te = null;
-        if (ttype == Targetable.TYPE_ENTITY) {
-            //Some weapons only target valid entities
-            te = (Entity) target;
-        }
+        //Some weapons only target valid entities
+        final Entity te = ttype == Targetable.TYPE_ENTITY ? (Entity) target : null;
 
         // If the attacker and target are in the same building & hex, they can
         // always attack each other, TW pg 175.
@@ -1276,13 +1273,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ae.isSpaceborne()) {
             boolean networkFiringSolution = false;
             //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
-            if (ae.hasNavalC3()) {
-                for (Entity en : game.getC3NetworkMembers(ae)) {
-                    if (te != null && en.hasFiringSolutionFor(te.getId())) {
-                        networkFiringSolution = true;
-                        break;
-                    }
-                }
+            if (ae.hasNavalC3() && te != null
+                && game.getC3NetworkMembers(ae).stream().anyMatch(en -> en.hasFiringSolutionFor(te.getId())) {
+                networkFiringSolution = true;
             }
             if (!networkFiringSolution) {
                 //If we don't check for target type here, we can't fire screens and missiles at hexes...

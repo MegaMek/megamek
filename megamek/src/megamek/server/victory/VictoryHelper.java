@@ -28,6 +28,12 @@ import megamek.common.Game;
 import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 
+/**
+ * This class manages the victory conditions of a game. As victory conditions could potentially have some
+ * state they need to save in savegames, this class is actually part of the Game rather than just
+ * a GameManager helper. TODO: This should be resolved by storing victory conditions in Game but manage
+ * them from GameManager.
+ */
 public class VictoryHelper implements Serializable {
 
     private final boolean checkForVictory;

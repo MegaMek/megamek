@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WeaponMounted extends Mounted<WeaponType> {
 
@@ -207,12 +208,19 @@ public class WeaponMounted extends Mounted<WeaponType> {
     }
 
     /**
+     * @return A stream containing the weapon mounts in the bay.
+     */
+    public Stream<WeaponMounted> streamBayWeapons() {
+        return bayWeapons.stream()
+                .map(i -> getEntity().getWeapon(i))
+                .filter(Objects::nonNull);
+    }
+
+    /**
      * @return All the weapon mounts in the bay.
      */
     public List<WeaponMounted> getBayWeapons() {
-        return bayWeapons.stream()
-                .map(i -> getEntity().getWeapon(i))
-                .filter(Objects::nonNull)
+        return streamBayWeapons()
                 .collect(Collectors.toList());
     }
 

@@ -555,11 +555,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || (atype.getAmmoType() == AmmoType.T_NLRM)
                             || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
-                for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getId() == ti.target.getId()) {
-                        spotter = game.getEntity(ti.attackerId);
-                    }
-                }
+                final Targetable currentTarget = target; // Required for concurrency reasons
+                spotter = game.getTagInfo().stream()
+                    .filter(ti -> currentTarget.getId() == ti.target.getId())
+                    .findAny()
+                    .map(ti -> game.getEntity(ti.attackerId))
+                    .orElse(null);
             }
         }
 

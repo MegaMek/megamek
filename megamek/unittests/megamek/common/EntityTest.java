@@ -94,7 +94,7 @@ public class EntityTest {
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/mechs/3050U/Exterminator EXT-4A.mtf");
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;
@@ -113,7 +113,7 @@ public class EntityTest {
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/mechs/3050U/Exterminator EXT-4A.mtf");
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             assertEquals(e.isCanon(), true);
@@ -135,7 +135,7 @@ public class EntityTest {
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/vehicles/3050U/Kanga Medium Hovertank.blk");
+            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             Tank t = (Tank) e;

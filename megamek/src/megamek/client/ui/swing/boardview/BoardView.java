@@ -2011,7 +2011,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
         }
         
-        if (hex.containsTerrain(Terrains.DEPLOYMENT_ZONE) && (game == null)) {
+        if (hex.containsTerrain(Terrains.DEPLOYMENT_ZONE) && (game.getPhase().isUnknown())) {
             drawHexBorder(g, Color.yellow, 5, 5);
             drawCenteredString("DZ " + Board.exitsAsIntList(hex.getTerrain(Terrains.DEPLOYMENT_ZONE).getExits()),
                     0, (int) (50 * scale), font_note, g);

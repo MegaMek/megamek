@@ -23,6 +23,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Board;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
 import megamek.common.options.GameOptions;
@@ -224,9 +225,8 @@ class PlayerTable extends JTable {
                     result.append(", " + so);
                     result.append(", " + sw);
                 }
-            } else {
-                String msg_none = Messages.getString("ChatLounge.None");
-                result.append(msg_start + ": " + msg_none);
+            } else if (player.getStartingPos() > IStartingPositions.START_LOCATION_NAMES.length) {
+                result.append(msg_start + ": " + "Zone " + Board.decodeCustomDeploymentZoneID(player.getStartingPos()));
             }
             result.append("</FONT>");
 

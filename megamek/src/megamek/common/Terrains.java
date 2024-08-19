@@ -392,7 +392,7 @@ public class Terrains implements Serializable {
                     return "Extremely high metal content";
                 }
             case DEPLOYMENT_ZONE:
-                return "Deployment Zone " + level;
+                return "Deployment Zone";
             default:
                 return null;
         }

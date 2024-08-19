@@ -2010,6 +2010,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 }
             }
         }
+        
+        if (hex.containsTerrain(Terrains.DEPLOYMENT_ZONE) && (game == null)) {
+            drawHexBorder(g, Color.yellow, 5, 5);
+            drawCenteredString("DZ " + Board.exitsAsIntList(hex.getTerrain(Terrains.DEPLOYMENT_ZONE).getExits()),
+                    0, (int) (50 * scale), font_note, g);
+        }
 
         // Set the text color according to Preferences or Light Gray in space
         g.setColor(GUIP.getBoardTextColor());

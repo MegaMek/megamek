@@ -482,8 +482,18 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployW"));
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployEdge"));
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployCenter"));
+        
+        for (int zoneID : clientgui.chatlounge.getPossibleGameBoard(true).getCustomDeploymentZones()) {
+            choDeploymentZone.addItem("Zone " + zoneID);
+        }
 
-        choDeploymentZone.setSelectedIndex(entity.getStartingPos(false) + 1);
+        int startingPos = entity.getStartingPos(false);
+        
+        if (entity.getStartingPos(false) < Board.NUM_ZONES) {
+            choDeploymentZone.setSelectedIndex(startingPos + 1);
+        } else {
+            choDeploymentZone.setSelectedItem("Zone " + startingPos);
+        }
 
         choDeploymentZone.addItemListener(this);
 
@@ -503,7 +513,8 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
         spinStartingAnySEy.setValue(y);
 
-        boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
+        boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0)
+                && (choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES);
         txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
         txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
 
@@ -913,7 +924,14 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             }
 
             // Set the entity's deployment position and round.
-            entity.setStartingPos(choDeploymentZone.getSelectedIndex() - 1);
+            // parse the non-standard deployment zones
+            int zoneID = choDeploymentZone.getSelectedIndex() - 1;
+            if (zoneID >= Board.NUM_ZONES) {
+                zoneID = Integer.parseInt(choDeploymentZone.getSelectedItem().toString().substring(5));
+                zoneID = Board.encodeCustomDeploymentZoneID(zoneID);
+            }
+            
+            entity.setStartingPos(zoneID);
             entity.setDeployRound(choDeploymentRound.getSelectedIndex());
             entity.setStartingOffset(Integer.parseInt(txtDeploymentOffset.getText()));
             entity.setStartingWidth(Integer.parseInt(txtDeploymentWidth.getText()));
@@ -975,7 +993,8 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         }
 
         if (itemEvent.getSource().equals(choDeploymentZone)) {
-            boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
+            boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0) &&
+                    choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES;
             txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
             txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
         }

@@ -1245,8 +1245,35 @@ public class BoardEditor extends JPanel
                     Messages.getString("BoardEditor.invalidTerrainTitle"),
                     JOptionPane.ERROR_MESSAGE);
             return;
+        } 
+        
+        if (toAdd.getType() == Terrains.DEPLOYMENT_ZONE) {
+            // integers can only pack 32 bits, so we can't have more than that number
+            // of deployment zones in a single hex. 
+            if (toAdd.getExits() > 31) {
+                JOptionPane.showMessageDialog(frame,
+                        Messages.getString("BoardEditor.InvalidDeploymentZoneIndex"),
+                        Messages.getString("BoardEditor.InvalidDeploymentZoneTitle"),
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // hack: the "exits" property here is going to be the index of the bit that is set in the
+            // resulting hex's exits property;
+            // so, if the user specifies a deployment zone with an "exit" of 1, the "exits" variable
+            // will be 10 in binary
+            if (curHex.containsTerrain(Terrains.DEPLOYMENT_ZONE)) {
+                Terrain deploymentZone = curHex.getTerrain(Terrains.DEPLOYMENT_ZONE);
+                int currentZoneNumber = deploymentZone.getExits();
+                deploymentZone.setExits(currentZoneNumber | (1 << toAdd.getExits()));
+            } else {
+                toAdd.setExits(1 << toAdd.getExits());
+                curHex.addTerrain(toAdd);
+            }
+        } else {
+            curHex.addTerrain(toAdd);
         }
-        curHex.addTerrain(toAdd);
+        
         noTextFieldUpdate = true;
         refreshTerrainList();
         repaintWorkingHex();

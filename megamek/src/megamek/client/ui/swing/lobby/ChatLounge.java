@@ -264,8 +264,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String CL_ACTIONCOMMAND_CONFIGURE = "CONFIGURE";
     private static final String CL_ACTIONCOMMAND_CAMO = "camo";
 
-    private static final String MSG_MAPSETUPXMLFILES = Messages.getString("ChatLounge.map.SetupXMLfiles");
-
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private ClientGUI clientgui;
@@ -2180,7 +2178,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         final GameOptions gOpts = game.getOptions();
 
         // enforce exclusive deployment zones in double blind
-        for (Player player: client.getGame().getPlayersVector()) {
+        for (Player player: client.getGame().getPlayersList()) {
             if (!isValidStartPos(game, player)) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"),
                         Messages.getString("ChatLounge.OverlapDeploy.msg"));
@@ -2463,7 +2461,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
             ScalingPopup popup = PlayerTablePopup.playerTablePopup(clientgui,
-                    playerTableActionListener, getselectedPlayers());
+                    playerTableActionListener, getselectedPlayers(), getPossibleGameBoard(true));
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }

@@ -150,6 +150,35 @@ public class EntityTest {
             fail(ex.getMessage());
         }
     }
+
+
+    /**
+     * Verify that if a unit's name does appear in the _file_ listing canon unit names, it is canon
+     */
+    @Test
+    public void testCanonUnitInCanonUnitListFile() {
+        File f;
+        MechFileParser mfp;
+        Entity e;
+        File oulDir = new File("testresources/megamek/common/units/");
+        MechFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
+
+        try {
+            // MTF file check
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+            // BLK file check
+            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
     /**
      * Verify new Tank method .isImmobilizedForJump() returns correct values in
      * various states.  Note: vehicles cannot lose individual Jump Jets via crits,

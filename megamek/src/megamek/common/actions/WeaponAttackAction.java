@@ -1461,21 +1461,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         } else if (ae instanceof Dropship) {
-            int totalheat = 0;
+            int totalHeat = game.getActionsVector().stream()
+                .filter(WeaponAttackAction.class::isInstance)
+                .map(WeaponAttackAction.class::cast)
+                .map(WeaponAttackAction::getWeaponId)
+                .filter(id -> id != weaponId)
+                .mapToInt(id -> ((WeaponMounted) ae.getEquipment(id)).getCurrentHeat())
+                .sum();
 
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    totalheat += prevWeapon.getCurrentHeat();
-                }
-            }
-
-            if (weapon != null && ((totalheat + weapon.getCurrentHeat()) > heatCapacity)) {
+            if (Optional.ofNullable(weapon).map(currentWeapon -> totalHeat + currentWeapon.getCurrentHeat() > heatCapacity).orElse(false)) {
                 return Messages.getString("WeaponAttackAction.HeatOverCap");
             }
         }

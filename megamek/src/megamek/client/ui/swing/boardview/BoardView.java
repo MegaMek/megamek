@@ -1126,7 +1126,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             Coords cp = sprite.getPosition();
             // This can potentially be an expensive operation
             Rectangle spriteBounds = sprite.getBounds();
-            if (cp.equals(c) && view.intersects(spriteBounds) && !sprite.isHidden()) {
+            if (cp != null && cp.equals(c) && view.intersects(spriteBounds) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }

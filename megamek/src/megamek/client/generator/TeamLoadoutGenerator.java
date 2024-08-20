@@ -728,7 +728,8 @@ public class TeamLoadoutGenerator {
         if (artemis) {
             for (AmmoMounted bin : e.getAmmo()) {
                 if (bin.getName().toUpperCase().contains(ammoClass)) {
-                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", ammoClass,
+                    String binType = bin.getType().getBaseName();
+                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", binType,
                             "Artemis-capable");
                 }
             }

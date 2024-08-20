@@ -721,21 +721,33 @@ public class TeamLoadoutGenerator {
         return swapped;
     }
 
-    // Set Artemis LRM carriers to use Artemis LRMs
-    private static boolean setLRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+    private static boolean insertArtemisImperatives(Entity e, MunitionTree mt, String ammoClass) {
         boolean artemis = !(e.getMiscEquipment(MiscType.F_ARTEMIS).isEmpty()
                 && e.getMiscEquipment(MiscType.F_ARTEMIS_V).isEmpty());
 
         if (artemis) {
-            for (Mounted wpn : e.getWeaponList()) {
-                if (wpn.getName().toLowerCase().contains("lrm")) {
-                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", wpn.getType().getShortName(),
+            for (AmmoMounted bin : e.getAmmo()) {
+                if (bin.getName().toUpperCase().contains(ammoClass)) {
+                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", ammoClass,
                             "Artemis-capable");
                 }
             }
             return true;
         }
         return false;
+    }
+
+    // Set Artemis LRM carriers to use Artemis LRMs
+    private static boolean setLRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        return insertArtemisImperatives(e, mt, "LRM");
+    }
+
+    private static boolean setSRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        return insertArtemisImperatives(e, mt, "SRM");
+    }
+
+    private static boolean setMMLImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        return insertArtemisImperatives(e, mt, "MML");
     }
     // region Imperative mutators
 
@@ -945,6 +957,8 @@ public class TeamLoadoutGenerator {
             // utility
             setACImperatives(e, mt, rp);
             setLRMImperatives(e, mt, rp);
+            setSRMImperatives(e, mt, rp);
+            setMMLImperatives(e, mt, rp);
         }
 
         return mt;

@@ -44,7 +44,9 @@ public class FlamerHandler extends WeaponHandler {
         if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             
-            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (bmmFlamerDamage && entityTarget.tracksHeat() &&
+                    !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                            Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {

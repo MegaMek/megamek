@@ -58,9 +58,11 @@ public class ScenarioV2 implements Scenario {
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
     private static final String VICTORY = "victory";
+    private static final String BOT = "bot";
 
     private final JsonNode node;
     private final File scenariofile;
+    private final Map<String, BotParser.BotInfo> botInfo = new HashMap<>();
 
     private static final ObjectMapper yamlMapper =
             new ObjectMapper(new YAMLFactory());
@@ -108,6 +110,11 @@ public class ScenarioV2 implements Scenario {
     @Override
     public boolean hasFixedPlanetaryConditions() {
         return !node.has(PARAM_PLANETCOND_FIXED) || node.get(PARAM_PLANETCOND_FIXED).booleanValue();
+    }
+
+    @Override
+    public BotParser.BotInfo getBotInfo(String playerName) {
+        return botInfo.get(playerName);
     }
 
     @Override
@@ -267,6 +274,11 @@ public class ScenarioV2 implements Scenario {
 
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
+
+            // Bot type
+            if (playerNode.has(BOT)) {
+                botInfo.put(player.getName(), BotParser.parse(playerNode.get(BOT)));
+            }
 
             //TODO minefields
 

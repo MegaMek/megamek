@@ -291,6 +291,36 @@ factions:
 
   - name: "Player B"
     home: "E"
+
+    # Bots can be given specific settings
+    bot:
+      # Optional: currently the only type is princess
+      type: princess
+      # Princess settings always are 0...10, see BehaviorSettings.java
+      # Optional: how worried about enemy damage am I?
+      selfpreservation: 5
+      # Optional: how much do I want to avoid failed Piloting Rolls?
+      fallshame: 5
+      # Optional: how close to I want to get to my enemies?
+      hyperaggression: 5
+      # Optional: how close do I want to stick to my teammates?
+      herdmentality: 5
+      # Optional: how quickly will I try to escape once damaged?
+      bravery: 5
+      # Optional: which edge am I trying to reach? This is used for the "flee" status
+      destination: none
+      # Optional: to which edge will my units flee when crippled?
+      retreat: nearest
+
+      # Optional: flee = will try to reach the destinationEdge even when not crippled
+      # forcedwithdrawal = follow the Forced Withdrawal rules
+      status: [ flee, forcedwithdrawal ]
+
+      #      private boolean goHome = false; // Should I immediately proceed to my home board edge?
+      #      private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to blow up?
+      #      private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
+
+
     units:
       - fullname: Schrek PPC Carrier
         type: TW_UNIT
@@ -315,6 +345,11 @@ factions:
           name: Cpt. Rhonda Snord
           piloting: 4
           gunnery: 3
+
+events:
+  - type: princesssettings
+    destination: south
+    status: flee
 
 
 

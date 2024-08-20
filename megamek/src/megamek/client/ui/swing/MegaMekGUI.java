@@ -24,6 +24,7 @@ import megamek.client.Client;
 import megamek.client.IClient;
 import megamek.client.SBFClient;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
@@ -46,6 +47,7 @@ import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.jacksonadapters.BotParser;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -53,6 +55,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
+import megamek.common.util.AddBotUtil;
 import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
@@ -855,8 +858,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (scenario.getGameType() == GameType.TW) {
             for (int x = 0; x < pa.length; x++) {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
-                    LogManager.getLogger().info("Adding bot " + pa[x].getName() + " as Princess");
-                    BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
+                    LogManager.getLogger().info("Adding bot {} as Princess", pa[x].getName());
+                    Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
+                    if (scenario.hasBotInfo(pa[x].getName())
+                            && scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
+                        c.setBehaviorSettings(princessRecord.behaviorSettings());
+                    }
                     c.getGame().addGameListener(new BotGUI(frame, c));
                     c.connect();
                 }

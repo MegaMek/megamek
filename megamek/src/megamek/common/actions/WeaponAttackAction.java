@@ -1271,13 +1271,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && ae.isSpaceborne()) {
-            boolean networkFiringSolution = false;
             //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
-            if (ae.hasNavalC3() && te != null
-                && game.getC3NetworkMembers(ae).stream().anyMatch(en -> en.hasFiringSolutionFor(te.getId()))) {
-                networkFiringSolution = true;
-            }
-            if (!networkFiringSolution) {
+            if (!ae.hasNavalC3() || te == null
+                || game.getC3NetworkMembers(ae).stream().noneMatch(en -> en.hasFiringSolutionFor(te.getId()))) {
                 //If we don't check for target type here, we can't fire screens and missiles at hexes...
                 if (target.getTargetType() == Targetable.TYPE_ENTITY && (te != null && !ae.hasFiringSolutionFor(te.getId())))  {
                     return Messages.getString("WeaponAttackAction.NoFiringSolution");

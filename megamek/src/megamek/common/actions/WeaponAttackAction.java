@@ -1681,19 +1681,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
 
                 // can only make a strike attack against a single target
-                if (!isStrafing) {
-                    for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                        EntityAction ea = i.nextElement();
-                        if (!(ea instanceof WeaponAttackAction)) {
-                            continue;
-                        }
-
-                        WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
-                        if ((prevAttk.getEntityId() == ae.getId()) && (prevAttk.getTargetId() != target.getId())
-                                && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                            return Messages.getString("WeaponAttackAction.CantSplitFire");
-                        }
-                    }
+                if (!isStrafing
+                    && !wtype.hasFlag(WeaponType.F_ALT_BOMB)
+                    && game.getActionsVector().stream()
+                        .filter(WeaponAttackAction.class::isInstance)
+                        .map(WeaponAttackAction.class::cast)
+                        .anyMatch(prevAttk -> prevAttk.getEntityId() == ae.getId() && prevAttk.getTargetId() != target.getId())) {
+                    return Messages.getString("WeaponAttackAction.CantSplitFire");
                 }
             // VTOL Strafing
             } else if ((ae instanceof VTOL) && isStrafing) {

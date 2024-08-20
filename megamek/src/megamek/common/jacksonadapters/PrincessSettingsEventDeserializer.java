@@ -22,78 +22,58 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.MMMarkdownRenderer;
-import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
-import megamek.server.scriptedevent.MessageTriggeredActiveEvent;
+import megamek.server.scriptedevent.PrincessSettingsEvent;
 import megamek.server.trigger.Trigger;
 import org.apache.logging.log4j.LogManager;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
-public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveEvent> {
+public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessSettingsEvent> {
 
     private static final String TEXT = "text";
     private static final String HEADER = "header";
     private static final String TRIGGER = "trigger";
     private static final String IMAGE = "image";
 
-    public MessageDeserializer() {
+    public PrincessSettingsEventDeserializer() {
         this(null);
     }
 
-    public MessageDeserializer(Class<?> vc) {
+    public PrincessSettingsEventDeserializer(Class<?> vc) {
         super(vc);
     }
 
     @Override
-    public MessageTriggeredActiveEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return parse(jp.getCodec().readTree(jp), new File(""));
+    public PrincessSettingsEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+        return parse(jp.getCodec().readTree(jp));
     }
 
     /**
      * Parses the given messages: node to return a list of one or more message events.
 
-     * @param messageNode a messages: node
-     * @param basePath a path to search image files in (e.g. scenario path)
+     * @param eventNode a messages: node
      * @return a list of parsed message events
      * @throws IllegalArgumentException for illegal node combinations and other errors
      */
-    public static MessageTriggeredActiveEvent parse(JsonNode messageNode, File basePath) {
-        requireFields("MessageScriptedEvent", messageNode, TEXT, HEADER, TRIGGER);
+    public static PrincessSettingsEvent parse(JsonNode eventNode) {
+        // TODO: how to give incomplete settings to change only one setting
+        // TODO: unify parsing with BotParser
+        // TODO: update Lowering the Boom reverse messages
+        requireFields("MessageScriptedEvent", eventNode, TEXT, HEADER, TRIGGER);
 
-        String header = messageNode.get(HEADER).textValue();
-        String text = messageNode.get(TEXT).textValue();
+        String header = eventNode.get(HEADER).textValue();
+        String text = eventNode.get(TEXT).textValue();
         // By default, expect this to be markdown and render to HTML; this preserves line breaks and paragraphs
         text = MMMarkdownRenderer.getRenderedHtml(text);
-        Trigger trigger = TriggerDeserializer.parseNode(messageNode.get(TRIGGER));
+        Trigger trigger = TriggerDeserializer.parseNode(eventNode.get(TRIGGER));
 
-        Image image = null;
-        if (messageNode.has(IMAGE)) {
-            try {
-                image = loadImage(messageNode.get(IMAGE).asText(), basePath);
-            } catch (IOException ex) {
-                LogManager.getLogger().warn(ex.getMessage());
-            }
-        }
 
-        return new MessageTriggeredActiveEvent(trigger, header, text, image);
-    }
-
-    @Nullable
-    private static Image loadImage(String fileName, File basePath) throws IOException {
-        File imageFile = new File(basePath, fileName);
-        if (!imageFile.exists()) {
-            imageFile = new File(Configuration.imagesDir(), fileName);
-            if (!imageFile.exists()) {
-                throw new IllegalArgumentException("Image file does not exist: " + imageFile + " in " + basePath);
-            }
-        }
-        return ImageIO.read(imageFile);
+        return new PrincessSettingsEvent(trigger, header, new BehaviorSettings());
     }
 }

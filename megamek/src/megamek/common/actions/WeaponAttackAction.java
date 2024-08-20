@@ -40,6 +40,8 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * Represents intention to fire a weapon at the target.
@@ -1400,8 +1402,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // limit large craft to zero net heat and to heat by arc
         final int heatCapacity = ae.getHeatCapacity();
         if (ae.usesWeaponBays() && (weapon != null)) {
-            int totalHeat = 0;
-
             // first check to see if there are any usable weapons
             if (!weapon.streamBayWeapons()
                 .filter(WeaponMounted::canFire)
@@ -1413,85 +1413,49 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.BayNotReady");
             }
 
-            // create an array of booleans of locations
-            boolean[] usedFrontArc = new boolean[ae.locations()];
-            boolean[] usedRearArc = new boolean[ae.locations()];
-            for (int i = 0; i < ae.locations(); i++) {
-                usedFrontArc[i] = false;
-                usedRearArc[i] = false;
-            }
-
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                // Strafing attacks only count heat for first shot
-                if (prevAttack.isStrafing() && !prevAttack.isStrafingFirstShot()) {
-                    continue;
-                }
-                if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
-                    WeaponMounted prevWeapon = (WeaponMounted) ae.getEquipment(prevAttack.getWeaponId());
-                    if (prevWeapon != null) {
-                        int loc = prevWeapon.getLocation();
-                        boolean rearMount = prevWeapon.isRearMounted();
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                            for (WeaponMounted bWeapon : prevWeapon.getBayWeapons()) {
-                                totalHeat += bWeapon.getCurrentHeat();
-                            }
-                        } else {
-                            if (!rearMount) {
-                                if (!usedFrontArc[loc]) {
-                                    totalHeat += ae.getHeatInArc(loc, rearMount);
-                                    usedFrontArc[loc] = true;
-                                }
-                            } else {
-                                if (!usedRearArc[loc]) {
-                                    totalHeat += ae.getHeatInArc(loc, rearMount);
-                                    usedRearArc[loc] = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // now check the current heat
-            int loc = weapon.getLocation();
-            boolean rearMount = weapon.isRearMounted();
-            int currentHeat = ae.getHeatInArc(loc, rearMount);
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                currentHeat = 0;
-                for (WeaponMounted bWeapon : weapon.getBayWeapons()) {
-                    currentHeat += bWeapon.getCurrentHeat();
-                }
-            }
-            // check to see if this is currently the only arc being fired
-            boolean onlyArc = true;
-            for (int nLoc = 0; nLoc < ae.locations(); nLoc++) {
-                if (nLoc == loc) {
-                    continue;
-                }
-                if (usedFrontArc[nLoc] || usedRearArc[nLoc]) {
-                    onlyArc = false;
-                    break;
-                }
-            }
+            // A lazy stream that evaluates to the weapon bays that have already been fired.
+            Stream<WeaponMounted> firedWeaponBays = game.getActionsVector().stream()
+                .filter(WeaponAttackAction.class::isInstance)
+                .map(WeaponAttackAction.class::cast)
+                .filter(prevAttack ->
+                    // Strafing attacks only count heat for first shot
+                    (!prevAttack.isStrafing() || prevAttack.isStrafingFirstShot())
+                    && prevAttack.getEntityId() == attackerId
+                )
+                .map(WeaponAttackAction::getWeaponId)
+                .filter(id -> id != weaponId)
+                .flatMap(id -> Stream.ofNullable((WeaponMounted) ae.getEquipment(id)));
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                if ((totalHeat + currentHeat) > heatCapacity) {
-                    // FIXME: This is causing weird problems (try firing all the
-                    // Suffen's nose weapons)
+                // Total heat of fired weapon bays and current weapon bay
+                int totalHeat = Stream.concat(firedWeaponBays, Stream.of(weapon))
+                    .flatMap(WeaponMounted::streamBayWeapons)
+                    .collect(Collectors.summingInt(WeaponMounted::getCurrentHeat));
+
+                if (totalHeat > heatCapacity) {
                     return Messages.getString("WeaponAttackAction.HeatOverCap");
                 }
             } else {
-                if (!rearMount) {
-                    if (!usedFrontArc[loc] && ((totalHeat + currentHeat) > heatCapacity) && !onlyArc) {
-                        return Messages.getString("WeaponAttackAction.HeatOverCap");
-                    }
-                } else {
-                    if (!usedRearArc[loc] && ((totalHeat + currentHeat) > heatCapacity) && !onlyArc) {
+                // A map of arcs that have already been fired, keyed by location and whether an arc is rear-mounted.
+                Map<Integer, Set<Boolean>> firedArcs = firedWeaponBays.collect(
+                    Collectors.groupingBy(WeaponMounted::getLocation,
+                        Collectors.mapping(WeaponMounted::isRearMounted, Collectors.toSet())
+                    )
+                );
+
+                // If a weapon in the same arc has already been fired, no additional heat generation will be incurred
+                if (!firedArcs.get(weapon.getLocation()).contains(weapon.isRearMounted())) {
+                    // Add up heat from each firing arc
+                    int totalHeat = firedArcs.entrySet().stream()
+                        .flatMapToInt(a -> a.getValue().stream().mapToInt(direction -> ae.getHeatInArc(a.getKey(), direction)))
+                        .sum();
+
+                    int currentHeat = ae.getHeatInArc(weapon.getLocation(), weapon.isRearMounted());
+
+                    // If no other arcs have been fired, an arc may be fired even if it exceeds the heat capacity of the unit.
+
+                    // TODO: Add Control Roll for firing single overheating arc as per page 161 of the tenth printing of Total Warfare
+                    if (totalHeat + currentHeat > heatCapacity && firedArcs.values().stream().anyMatch(l -> l.contains(true))) {
                         return Messages.getString("WeaponAttackAction.HeatOverCap");
                     }
                 }

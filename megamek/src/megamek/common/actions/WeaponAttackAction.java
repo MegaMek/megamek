@@ -1881,20 +1881,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // BA compact narc: we have one weapon for each trooper, but you
             // can fire only at one target at a time
             if (wtype.getName().equals("Compact Narc")) {
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if (prevAttack.getEntityId() == attackerId) {
-                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                        if (prevWeapon.getType().getName().equals("Compact Narc")) {
-                            if (prevAttack.getTargetId() != target.getId()) {
-                                return Messages.getString("WeaponAttackAction.OneTargetForCNarc");
-                            }
-                        }
-                    }
+                if (game.getActionsVector().stream()
+                    .filter(WeaponAttackAction.class::isInstance)
+                    .map(WeaponAttackAction.class::cast)
+                    .anyMatch(prevAttack -> prevAttack.getEntityId() == attackerId
+                        && ae.getEquipment(prevAttack.getWeaponId())
+                            .getType().getName().equals("Compact Narc")
+                        && prevAttack.getTargetId() != target.getId()
+                    )
+                ) {
+                    return Messages.getString("WeaponAttackAction.OneTargetForCNarc");
                 }
             }
 

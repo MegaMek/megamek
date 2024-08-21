@@ -21455,21 +21455,15 @@ public class GameManager extends AbstractGameManager {
             }
 
             // Armored Cowl may absorb some damage from hit
-            if (te instanceof Mech) {
-                Mech me = (Mech) te;
-                if (me.hasCowl() && (hit.getLocation() == Mech.LOC_HEAD)
-                        && !throughFront) {
-                    int damageNew = me.damageCowl(damage);
-                    int damageDiff = damage - damageNew;
-                    me.damageThisPhase += damageDiff;
-                    damage = damageNew;
-
-                    r = new Report(3520);
-                    r.subject = te_n;
-                    r.indent(3);
-                    r.add(damageDiff);
-                    vDesc.addElement(r);
-                }
+            if ((te instanceof Mech targetMek) && targetMek.hasCowl() && (hit.getLocation() == Mech.LOC_HEAD)
+                    && ((targetMek.getPosition() == null)
+                    || !targetMek.getPosition().isOnHexRow(targetMek.getSecondaryFacing(), ae.getPosition()))) {
+                int excessDamage = targetMek.damageCowl(damage);
+                int blockedByCowl = damage - excessDamage;
+                r = new Report(3520).subject(te_n).indent(3).add(blockedByCowl);
+                vDesc.addElement(r);
+                targetMek.damageThisPhase += blockedByCowl;
+                damage = excessDamage;
             }
 
             // So might modular armor, if the location mounts any.

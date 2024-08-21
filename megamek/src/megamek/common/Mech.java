@@ -256,7 +256,7 @@ public abstract class Mech extends Entity {
 
     protected int cockpitType = COCKPIT_STANDARD;
 
-    private int cowlArmor = 3;
+    private int cowlArmor = 0;
 
     private int hasLaserHeatSinks = HAS_UNKNOWN;
 
@@ -389,34 +389,32 @@ public abstract class Mech extends Entity {
      */
     public abstract boolean cannotStandUpFromHullDown();
 
-    public int getCowlArmor() {
-        if (hasCowl()) {
-            return cowlArmor;
-        }
-        return 0;
-    }
-
+    /**
+     * @return True if this Mek has the Cowl Quirk.
+     */
     public boolean hasCowl() {
         return hasQuirk(OptionsConstants.QUIRK_POS_COWL);
     }
 
     /**
-     * Damage the cowl. Returns amount of excess damage
+     * Sets the cowl armor to its initial value (0 or 3) depending on whether the Mek has the Cowl quirk and
+     * quirks are used.
+     */
+    public void initializeCowlArmor() {
+        cowlArmor = hasCowl() ? 3 : 0;
+    }
+
+    /**
+     * Damages the remaining cowl armor, if any, by the given amount. Returns the amount of excess damage
+     * that is left after deducting cowl armor.
      *
-     * @param amount
-     * @return
+     * @param amount The incoming damage
+     * @return The damage left after deducting the cowl's remaining armor, if any
      */
     public int damageCowl(int amount) {
-        if (hasCowl()) {
-            if (amount < cowlArmor) {
-                cowlArmor -= amount;
-                return 0;
-            }
-            amount -= cowlArmor;
-            cowlArmor = 0;
-            return amount;
-        }
-        return amount; // No cowl - return full damage
+        int excessDamage = Math.max(amount - cowlArmor, 0);
+        cowlArmor = Math.max(cowlArmor - amount, 0);
+        return excessDamage;
     }
 
     /**

@@ -21456,7 +21456,7 @@ public class GameManager extends AbstractGameManager {
 
             // Armored Cowl may absorb some damage from hit
             if ((te instanceof Mech targetMek) && targetMek.hasCowl() && (hit.getLocation() == Mech.LOC_HEAD)
-                    && ((targetMek.getPosition() == null)
+                    && ((targetMek.getPosition() == null) || (ae == null)
                     || !targetMek.getPosition().isOnHexRow(targetMek.getSecondaryFacing(), ae.getPosition()))) {
                 int excessDamage = targetMek.damageCowl(damage);
                 int blockedByCowl = damage - excessDamage;

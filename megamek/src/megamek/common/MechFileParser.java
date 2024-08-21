@@ -782,9 +782,6 @@ public class MechFileParser {
         }
         ent.initMilitary();
         linkDumpers(ent);
-        if (ent instanceof Mech mek) {
-            mek.initializeCowlArmor();
-        }
     }
 
     /**

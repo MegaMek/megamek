@@ -1733,13 +1733,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         // and finally, can only use Arrow IV artillery
                         if (ae.usesWeaponBays()) {
                             //For Dropships
-                            for (WeaponMounted bayW : weapon.getBayWeapons()) {
+                            if (weapon.streamBayWeapons()
                                 // check the loaded ammo for the Arrow IV flag
-                                AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-                                AmmoType bAType = bayWAmmo.getType();
-                                if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
-                                    return Messages.getString("WeaponAttackAction.OnlyArrowArty");
-                                }
+                                .map(WeaponMounted::getLinkedAmmo)
+                                .map(AmmoMounted::getType)
+                                .map(AmmoType::getAmmoType)
+                                .anyMatch(bAType -> bAType != AmmoType.T_ARROW_IV)
+                            ) {
+                                return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                             }
                         } else if ((wtype.getAmmoType() != AmmoType.T_ARROW_IV) &&
                                 (wtype.getAmmoType() != AmmoType.T_ARROW_IV_BOMB)) {

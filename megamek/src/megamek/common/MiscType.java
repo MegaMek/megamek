@@ -1537,7 +1537,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCombine());
         EquipmentType.addType(MiscType.createBackhoe());
         EquipmentType.addType(MiscType.createPileDriver());
-        EquipmentType.addType(MiscType.createArmoredCowl());
         EquipmentType.addType(MiscType.createNullSignatureSystem());
         EquipmentType.addType(MiscType.createVoidSignatureSystem());
         EquipmentType.addType(MiscType.createChameleonLightPolarizationShield());
@@ -8638,27 +8637,6 @@ public class MiscType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    // Battle Armor Tech
-
-    public static MiscType createArmoredCowl() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Armored Cowl";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.cost = 10000;
-        misc.flags = misc.flags.or(F_COWL).or(F_MECH_EQUIPMENT);
-        misc.bv = 10;
-        // Making this up based on the Strat Ops Quirk
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2439);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_E, RATING_X });
         return misc;
     }
 

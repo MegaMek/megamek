@@ -1866,20 +1866,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((ae instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 final int weapId = ae.getEquipmentNum(weapon);
                 // See if this unit has made a previous AP attack
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                    Object o = i.nextElement();
-                    if (!(o instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                if (game.getActionsVector().stream()
+                    .filter(WeaponAttackAction.class::isInstance)
+                    .map(WeaponAttackAction.class::cast)
                     // Is this an attack from this entity
-                    if (prevAttack.getEntityId() == ae.getId()) {
-                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                        WeaponType prevWtype = (WeaponType) prevWeapon.getType();
-                        if (prevWtype.hasFlag(WeaponType.F_INFANTRY) && (prevAttack.getWeaponId() != weapId)) {
-                            return Messages.getString("WeaponAttackAction.OnlyOneBAAPAttack");
-                        }
-                    }
+                    .filter(prevAttack -> prevAttack.getEntityId() == ae.getId())
+                    .map(WeaponAttackAction::getWeaponId)
+                    .anyMatch(prevAttackId -> prevAttackId != weapId && ae.getEquipment(prevAttackId).getType().hasFlag(WeaponType.F_INFANTRY))
+                ) {
+                    return Messages.getString("WeaponAttackAction.OnlyOneBAAPAttack");
                 }
             }
 

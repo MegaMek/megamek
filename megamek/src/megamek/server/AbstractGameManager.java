@@ -27,6 +27,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
+import megamek.server.trigger.TriggerSituation;
 
 public abstract class AbstractGameManager implements IGameManager {
     private static final MMLogger logger = MMLogger.create(AbstractGameManager.class);
@@ -34,6 +35,7 @@ public abstract class AbstractGameManager implements IGameManager {
     protected final GameManagerPacketHelper packetHelper = new GameManagerPacketHelper(this);
     protected final GameManagerSaveHelper saveHandler = new GameManagerSaveHelper(this);
     protected final AutosaveService autoSaveService = new AutosaveService(this);
+    protected final GameManagerScriptedEventHelper scriptedEventHelper = new GameManagerScriptedEventHelper(this);
 
     /**
      * Sends the given packet to all connections (all connected Clients = players).
@@ -85,9 +87,25 @@ public abstract class AbstractGameManager implements IGameManager {
      * be skipped and executes it.
      */
     public final void changePhase(GamePhase newPhase) {
+        if (getGame().getPhase().isExchange() || getGame().getPhase().isStartingScenario()) {
+            scriptedEventHelper.processScriptedEvents(TriggerSituation.GAME_START);
+        }
+        if (newPhase.isInitiative()) {
+            scriptedEventHelper.processScriptedEvents(TriggerSituation.ROUND_START);
+        }
+        if (getGame().getPhase().isEnd()) {
+            // the endreport phase cannot be used here as it may be skipped
+            scriptedEventHelper.processScriptedEvents(TriggerSituation.ROUND_END);
+        }
+        scriptedEventHelper.processScriptedEvents(TriggerSituation.PHASE_END);
+
         getGame().setLastPhase(getGame().getPhase());
         getGame().setPhase(newPhase);
 
+        scriptedEventHelper.processScriptedEvents(TriggerSituation.PHASE_START);
+        if (getGame().getPhase().isVictory()) {
+            scriptedEventHelper.processScriptedEvents(TriggerSituation.GAME_END);
+        }
         prepareForCurrentPhase();
 
         if (getGame().shouldSkipCurrentPhase()) {

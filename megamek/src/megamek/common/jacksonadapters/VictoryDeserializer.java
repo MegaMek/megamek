@@ -32,12 +32,10 @@ import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> {
 
-    private static final String TEXT = "text";
-    private static final String HEADER = "header";
     private static final String TRIGGER = "trigger";
-    private static final String IMAGE = "image";
     private static final String MODIFY = "modify";
     private static final String ONLY_AT_END = "onlyatend";
+    private static final String PLAYER = "player";
 
     public VictoryDeserializer() {
         this(null);
@@ -62,6 +60,20 @@ public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> 
      * @throws IllegalArgumentException for illegal node combinations and other errors
      */
     public static VictoryTriggeredEvent parse(JsonNode victoryNode) {
+        return parse(victoryNode, victoryNode.get(PLAYER).asText());
+    }
+
+    /**
+     * Parses the given map: or maps: node to return a list of one or more boards (the list should
+     * ideally never be empty, an exception being thrown instead). Board files are tried first
+     * in the given basePath; if not found there, MM's data/boards/ is tried instead.
+
+     * @param victoryNode a map: or maps: node from a YAML definition file
+     * @param playerName The name of the player (and thus, team) to which this victory applies
+     * @return a list of parsed boards
+     * @throws IllegalArgumentException for illegal node combinations and other errors
+     */
+    public static VictoryTriggeredEvent parse(JsonNode victoryNode, String playerName) {
         requireFields("MessageScriptedEvent", victoryNode, TRIGGER);
 
         Trigger trigger = TriggerDeserializer.parseNode(victoryNode.get(TRIGGER));
@@ -73,6 +85,6 @@ public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> 
                 isGameEnding = false;
             }
         }
-        return new VictoryTriggeredEvent(trigger, isGameEnding);
+        return new VictoryTriggeredEvent(trigger, isGameEnding, playerName);
     }
 }

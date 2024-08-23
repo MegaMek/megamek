@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -46,13 +47,13 @@ public class VictoryHelper implements Serializable {
      * Constructs the VictoryHelper. Note that this should be called after the lobby phase so that the final
      * victory game settings for this game are used.
      *
-     * @param options The GameOptions of the game
+     * @param game The game
      */
-    public VictoryHelper(BasicGameOptions options) {
-        checkForVictory = options.booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
+    public VictoryHelper(IGame game) {
+        checkForVictory = game.getOptions().booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
 
         if (checkForVictory) {
-            buildVClist(options);
+            buildVClist(game);
         }
     }
 
@@ -77,13 +78,13 @@ public class VictoryHelper implements Serializable {
         VictoryResult result = VictoryResult.noResult();
 
         if (checkForVictory) {
-            // Check optional Victory conditions;  These can have reports
             result = checkOptionalVictoryConditions(game, context);
             if (result.isVictory()) {
                 return result;
             }
 
             // Check for battlefield control; this is currently an automatic victory when VCs are checked at all
+            // TODO: this could be made optional to allow the game to continue once alone if there's a use case
             VictoryResult battlefieldControlVR = battlefieldControlVC.checkVictory(game, context);
             if (battlefieldControlVR.isVictory()) {
                 return battlefieldControlVR;
@@ -129,7 +130,13 @@ public class VictoryHelper implements Serializable {
         }
     }
 
-    private void buildVClist(BasicGameOptions options) {
+    /**
+     * Returns a list of victory conditions that are checked if victory conditions are checked at all
+     * as per this game's options. The conditions include those set in the game options as well as those
+     * added by code (e.g. through a scenario).
+     */
+    private void buildVClist(IGame game) {
+        BasicGameOptions options = game.getOptions();
         neededVictoryConditionCount = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
             victoryConditions.add(new BVDestroyedVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));
@@ -143,5 +150,10 @@ public class VictoryHelper implements Serializable {
         if (options.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             victoryConditions.add(new EnemyCmdrDestroyedVictory());
         }
+        List<VictoryCondition> triggeredEventConditions = game.scriptedEvents().stream()
+                .filter(e -> e instanceof VictoryCondition)
+                .map(e -> (VictoryCondition) e)
+                .toList();
+        victoryConditions.addAll(triggeredEventConditions);
     }
 }

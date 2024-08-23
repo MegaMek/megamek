@@ -18,7 +18,15 @@
  */
 package megamek.server.scriptedevent;
 
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.logging.MMLogger;
 import megamek.server.trigger.Trigger;
+import megamek.server.trigger.TriggerSituation;
+import megamek.server.victory.VictoryCondition;
+import megamek.server.victory.VictoryResult;
+
+import java.util.Map;
 
 /**
  * This class represents victory events that can be added programmatically or from MM scenarios to check
@@ -34,6 +42,26 @@ import megamek.server.trigger.Trigger;
  * @param isGameEnding When true, ends the game when it happens, when false, is only checked when the game has ended
  * @see GameEndTriggeredEvent
  */
-public record VictoryTriggeredEvent(Trigger trigger, boolean isGameEnding) implements TriggeredEvent {
+public record VictoryTriggeredEvent(Trigger trigger, boolean isGameEnding, String playerName)
+        implements TriggeredEvent, VictoryCondition {
 
+    @Override
+    public VictoryResult checkVictory(Game game, Map<String, Object> context) {
+        if (isGameEnding && trigger.isTriggered(game, TriggerSituation.ROUND_END)) {
+            VictoryResult victoryResult = new VictoryResult(true);
+            int winningTeam = game.playerForPlayername(playerName).map(Player::getTeam).orElse(Player.TEAM_NONE);
+            if (winningTeam == Player.TEAM_NONE) {
+                int winningPlayer = game.idForPlayername(playerName).orElse(Player.PLAYER_NONE);
+                if (winningPlayer == Player.PLAYER_NONE) {
+                    MMLogger.create().error("Could not find winning player or team");
+                    return VictoryResult.noResult();
+                }
+                victoryResult.setPlayerScore(winningPlayer, 1);
+            } else {
+                victoryResult.setTeamScore(winningTeam, 1);
+            }
+            return victoryResult;
+        }
+        return VictoryResult.noResult();
+    }
 }

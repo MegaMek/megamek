@@ -2997,7 +2997,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * anything unless the VictoryCondition Config Options have changed.
      */
     public void createVictoryConditions() {
-        victoryHelper = new VictoryHelper(getOptions());
+        victoryHelper = new VictoryHelper(this);
     }
 
     @Deprecated
@@ -3339,5 +3339,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     @Override
     public ReportEntry getNewReport(int messageId) {
         return new Report(messageId);
+    }
+
+    /**
+     * @return The ID of the Player with the given name, if there is such a Player.
+     */
+    public Optional<Integer> idForPlayername(String playerName) {
+        return playerForPlayername(playerName).map(Player::getId);
+    }
+
+    /**
+     * @return The ID of the Player with the given name, if there is such a Player.
+     */
+    public Optional<Player> playerForPlayername(String playerName) {
+        return getPlayersList().stream().filter(p -> p.getName().equals(playerName)).findFirst();
     }
 }

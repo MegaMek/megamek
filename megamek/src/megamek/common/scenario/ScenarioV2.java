@@ -45,6 +45,9 @@ import java.util.stream.Collectors;
 
 public class ScenarioV2 implements Scenario {
 
+    private static final String OPTIONS_FILE = "file";
+    private static final String OPTIONS_ON = "on";
+    private static final String OPTIONS_OFF = "off";
     private static final String DEPLOY = "deploy";
     private static final String DEPLOY_EDGE = "edge";
     private static final String DEPLOY_OFFSET = "offset";
@@ -180,18 +183,22 @@ public class ScenarioV2 implements Scenario {
 
     private void parseOptions(IGame game) {
         game.getOptions().initialize();
-        if (node.has(PARAM_GAME_OPTIONS_FILE)) {
-            File optionsFile = new File(scenariofile.getParentFile(), node.get(PARAM_GAME_OPTIONS_FILE).textValue());
-            game.getOptions().loadOptions(optionsFile, true);
-        } else {
-            game.getOptions().loadOptions();
-        }
         if (node.has(OPTIONS)) {
             JsonNode optionsNode = node.get(OPTIONS);
-            if (optionsNode.isArray()) {
-                optionsNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
-            } else if (optionsNode.isTextual()) {
-                game.getOptions().getOption(optionsNode.textValue()).setValue(true);
+            if (optionsNode.has(OPTIONS_FILE)) {
+                File optionsFile = new File(scenariofile.getParentFile(), optionsNode.get(OPTIONS_FILE).textValue());
+                game.getOptions().loadOptions(optionsFile, true);
+            } else {
+                game.getOptions().loadOptions();
+            }
+
+            if (optionsNode.has(OPTIONS_ON)) {
+                JsonNode onNode = optionsNode.get(OPTIONS_ON);
+                onNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+            }
+            if (optionsNode.has(OPTIONS_OFF)) {
+                JsonNode offNode = optionsNode.get(OPTIONS_OFF);
+                offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
             }
         }
     }
@@ -253,7 +260,7 @@ public class ScenarioV2 implements Scenario {
             player.setGhost(true);
 
             parseDeployment(playerNode, player);
-            parseVictories(game, playerNode);
+            parseVictories(game, playerNode, player.getName());
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();
@@ -355,14 +362,14 @@ public class ScenarioV2 implements Scenario {
         return result;
     }
 
-    private void parseVictories(IGame game, JsonNode playerNode) {
+    private void parseVictories(IGame game, JsonNode playerNode, String playerName) {
         if (playerNode.has(VICTORY)) {
-            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n));
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n, playerName));
         }
     }
 
-    private void parseVictory(IGame game, JsonNode node) {
-        game.addScriptedEvent(VictoryDeserializer.parse(node));
+    private void parseVictory(IGame game, JsonNode node, String playerName) {
+        game.addScriptedEvent(VictoryDeserializer.parse(node, playerName));
     }
 
     private int smallestFreeUnitID(List<? extends InGameObject> units) {

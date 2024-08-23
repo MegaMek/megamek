@@ -38,6 +38,11 @@ map:
       terrain: water
       newlevel: 3
 
+options:
+  file: options_3025_basic.xml
+  on:
+    - check_victory
+
 factions:
 - name: Thirtieth Marik Militia
   camo: Free Worlds League/Marik Militia/Marik Militia.jpg
@@ -92,32 +97,32 @@ factions:
       piloting: 4
       gunnery: 4
 
-  - fullname: Centurion CN9-A
-    id: 104
-    at: [ 14, 31 ]
-    remaining:
-      armor:
-        CT: 12
-    crew:
-      name: Sgt. Jonathan Taylor
-      piloting: 4
-      gunnery: 4
-
-  - fullname: Hermes II HER-2S
-    id: 105
-    at: [ 5, 30 ]
-    crew:
-      name: Samantha Blaustein
-      piloting: 4
-      gunnery: 4
-
-  - fullname: Javelin JVN-10N
-    id: 106
-    at: [ 2, 29 ]
-    crew:
-      name: Deborah Ryan
-      piloting: 4
-      gunnery: 4
+#  - fullname: Centurion CN9-A
+#    id: 104
+#    at: [ 14, 31 ]
+#    remaining:
+#      armor:
+#        CT: 12
+#    crew:
+#      name: Sgt. Jonathan Taylor
+#      piloting: 4
+#      gunnery: 4
+#
+#  - fullname: Hermes II HER-2S
+#    id: 105
+#    at: [ 5, 30 ]
+#    crew:
+#      name: Samantha Blaustein
+#      piloting: 4
+#      gunnery: 4
+#
+#  - fullname: Javelin JVN-10N
+#    id: 106
+#    at: [ 2, 29 ]
+#    crew:
+#      name: Deborah Ryan
+#      piloting: 4
+#      gunnery: 4
 
 - name: Kell Hounds, First Battalion
   camo: MERC - 1st Kell Hounds.gif
@@ -133,36 +138,36 @@ factions:
         atmost: 2
 
   units:
-    - fullname: Wolverine WVR-6R
-      id: 201
-      deploymentround: 2
-      crew:
-        name: Maj. Salome Ward
-        piloting: 4
-        gunnery: 3
-
-    - fullname: Shadow Hawk SHD-2H
-      id: 202
-      crew:
-        name: Lee Kennedy
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Dervish DV-6M
-      id: 203
-      deploymentround: 2
-      crew:
-        name: Brian Martell
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Trebuchet TBT-5N
-      id: 204
-      deploymentround: 2
-      crew:
-        name: Judith Nesmith
-        piloting: 4
-        gunnery: 4
+#    - fullname: Wolverine WVR-6R
+#      id: 201
+#      deploymentround: 2
+#      crew:
+#        name: Maj. Salome Ward
+#        piloting: 4
+#        gunnery: 3
+#
+#    - fullname: Shadow Hawk SHD-2H
+#      id: 202
+#      crew:
+#        name: Lee Kennedy
+#        piloting: 4
+#        gunnery: 4
+#
+#    - fullname: Dervish DV-6M
+#      id: 203
+#      deploymentround: 2
+#      crew:
+#        name: Brian Martell
+#        piloting: 4
+#        gunnery: 4
+#
+#    - fullname: Trebuchet TBT-5N
+#      id: 204
+#      deploymentround: 2
+#      crew:
+#        name: Judith Nesmith
+#        piloting: 4
+#        gunnery: 4
 
     - fullname: Phoenix Hawk PXH-1
       id: 205

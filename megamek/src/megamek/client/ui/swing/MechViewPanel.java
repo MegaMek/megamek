@@ -100,6 +100,7 @@ public class MechViewPanel extends JPanel {
         fluffPanel.setAlignmentY(0);
         fluffPanel.add(imageControlsPanel);
         fluffPanel.add(fluffImageLabel);
+        fluffPanel.add(Box.createVerticalStrut(10));
         fluffPanel.add(imageInfoLabel);
 
         Box p = Box.createHorizontalBox();
@@ -206,6 +207,7 @@ public class MechViewPanel extends JPanel {
                 setFluffImage(record.getImage());
                 imageInfoLabel.setText(prepareLabelText(record.file()));
                 fluffImageLabel.setToolTipText(FluffImageTooltip.getTooltip(record));
+                imageInfoLabel.setText(FluffImageTooltip.getTooltip(record));
             } catch (IOException ex) {
                 setFluffImage((Image) null);
                 imageInfoLabel.setText("Error loading fluff image");

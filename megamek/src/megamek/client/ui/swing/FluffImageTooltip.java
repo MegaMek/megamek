@@ -70,7 +70,7 @@ public class FluffImageTooltip {
             JsonNode node = yamlMapper.readTree(yamlFile);
 
             StringBuilder result = new StringBuilder("<HTML><HEAD><STYLE>" + styles() + "</STYLE></HEAD><BODY>");
-            int width = UIUtil.scaleForGUI(400);
+            int width = UIUtil.scaleForGUI(360);
             result.append("<div width=").append(width).append(">");
 
             if (node.has("title")) {

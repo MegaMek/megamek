@@ -2426,19 +2426,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // Handle solo attack weapons.
-            if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
-                for (EntityAction ea : game.getActionsVector()) {
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if (prevAttack.getEntityId() == attackerId) {
-                        // If the attacker fires another weapon, this attack fails.
-                        if (weaponId != prevAttack.getWeaponId()) {
-                            return Messages.getString("WeaponAttackAction.CantMixAttacks");
-                        }
-                    }
-                }
+            if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK) && game.getActionsVector().stream()
+                .filter(prevAttack -> prevAttack.getEntityId() == attackerId)
+                .filter(WeaponAttackAction.class::isInstance)
+                .map(WeaponAttackAction.class::cast)
+                // If the attacker fires another weapon, this attack fails.
+                .anyMatch(prevAttack -> prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() != weaponId)
+            ) {
+                return Messages.getString("WeaponAttackAction.CantMixAttacks");
             }
 
             // Protomechs cannot fire arm weapons and main gun in the same turn

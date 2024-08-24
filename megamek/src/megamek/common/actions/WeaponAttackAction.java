@@ -4424,26 +4424,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
                     || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE));
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
-                boolean bapInRange = Compute.bapInRange(game, ae, te);
-                boolean c3BAP = false;
-                if (!bapInRange) {
-                    for (Entity en : game.getC3NetworkMembers(ae)) {
-                        if (ae.equals(en)) {
-                            continue;
-                        }
-                        bapInRange = Compute.bapInRange(game, en, te);
-                        if (bapInRange) {
-                            c3BAP = true;
-                            break;
-                        }
-                    }
-                }
-                if (bapInRange) {
-                    if (c3BAP) {
-                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoodsC3"));
-                    } else {
-                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
-                    }
+                // Necessary for concurrency reasons
+                final Entity targetEntity = te;
+                if (Compute.bapInRange(game, ae, targetEntity)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
+                } else if (game.getC3NetworkMembers(ae).stream()
+                    .anyMatch(en -> !ae.equals(en) && Compute.bapInRange(game, en, targetEntity))
+                ) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoodsC3"));
                 }
             }
         }

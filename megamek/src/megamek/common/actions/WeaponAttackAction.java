@@ -3676,18 +3676,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             // units making air to ground attacks are easier to hit by air-to-air
             // attacks
-            if (Compute.isAirToAir(ae, target)) {
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if ((te != null && prevAttack.getEntityId() == te.getId()) && prevAttack.isAirToGround(game)) {
-                        toHit.addModifier(-3, Messages.getString("WeaponAttackAction.TeGroundAttack"));
-                        break;
-                    }
-                }
+
+            // The ID of the entity being targeted.
+            final Optional<Integer> targetEntityId = Optional.ofNullable(te).map(Entity::getId);
+
+            if (Compute.isAirToAir(ae, target) && targetEntityId.isPresent() && game.getActionsVector().stream()
+                .filter(WeaponAttackAction.class::isInstance)
+                .map(WeaponAttackAction.class::cast)
+                .anyMatch(prevAttack -> prevAttack.getEntityId() == targetEntityId.orElseThrow() && prevAttack.isAirToGround(game))
+            ) {
+                toHit.addModifier(-3, Messages.getString("WeaponAttackAction.TeGroundAttack"));
             }
             // grounded aero
             if (!ae.isAirborne() && !ae.isSpaceborne()) {

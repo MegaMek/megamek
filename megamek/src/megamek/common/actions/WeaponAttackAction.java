@@ -2408,26 +2408,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Some weapons can only be fired by themselves
 
             // Check to see if another solo weapon was fired
-            boolean hasSoloAttack = false;
-            String soloWeaponName = "";
-            for (EntityAction ea : game.getActionsVector()) {
-                if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
-                    WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
-                    final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
 
-                    if (!(otherWeapon.getType() instanceof WeaponType)) {
-                        continue;
-                    }
-                    final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
-                    hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) && otherWAA.getWeaponId() != weaponId);
-                    if (hasSoloAttack) {
-                        soloWeaponName = otherWeapon.getName();
-                        break;
-                    }
-                }
-            }
-            if (hasSoloAttack) {
-                return String.format(Messages.getString("WeaponAttackAction.CantFireWithOtherWeapons"), soloWeaponName);
+            // The name of a solo weapon that has already been fired, if one exists.
+            Optional<String> soloWeaponName = game.getActionsVector().stream()
+                .filter(prevAttack -> prevAttack.getEntityId() == attackerId)
+                .filter(WeaponAttackAction.class::isInstance)
+                .map(WeaponAttackAction.class::cast)
+                .map(WeaponAttackAction::getWeaponId)
+                .filter(otherWAAId -> otherWAAId != weaponId)
+                .map(otherWAAId -> ae.getEquipment(otherWAAId))
+                .filter(otherWeapon -> otherWeapon.getType().hasFlag(WeaponType.F_SOLO_ATTACK))
+                .map(Mounted::getName)
+                .findAny();
+
+            if (soloWeaponName.isPresent()) {
+                return String.format(Messages.getString("WeaponAttackAction.CantFireWithOtherWeapons"), soloWeaponName.orElseThrow());
             }
 
             // Handle solo attack weapons.

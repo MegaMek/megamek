@@ -41,6 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 
 /**
@@ -2437,21 +2438,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // Protomechs cannot fire arm weapons and main gun in the same turn
-            if ((ae instanceof Protomech)
-                    && ((weapon.getLocation() == Protomech.LOC_MAINGUN)
-                    || (weapon.getLocation() == Protomech.LOC_RARM)
-                    || (weapon.getLocation() == Protomech.LOC_LARM))) {
-                final boolean firingMainGun = weapon.getLocation() == Protomech.LOC_MAINGUN;
-                for (EntityAction ea : game.getActionsVector()) {
-                    if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
-                        WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
-                        final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
-                        if ((firingMainGun && ((otherWeapon.getLocation() == Protomech.LOC_RARM)
-                                || (otherWeapon.getLocation() == Protomech.LOC_LARM)))
-                                || !firingMainGun && (otherWeapon.getLocation() == Protomech.LOC_MAINGUN)) {
+            if (ae instanceof Protomech) {
+                // A lazy stream that evaluates to the locations of weapons already fired by the attacker.
+                IntStream firedWeaponLocations = game.getActionsVector().stream()
+                    .filter(ea -> ea.getEntityId() == attackerId)
+                    .filter(WeaponAttackAction.class::isInstance)
+                    .map(WeaponAttackAction.class::cast)
+                    .map(otherWAA -> ae.getEquipment(otherWAA.getWeaponId()))
+                    .mapToInt(Mounted::getLocation);
+
+                switch (weapon.getLocation()) {
+                    case Protomech.LOC_MAINGUN:
+                        if (firedWeaponLocations.anyMatch(otherWeaponLocation ->
+                            otherWeaponLocation == Protomech.LOC_LARM || otherWeaponLocation == Protomech.LOC_RARM
+                        )) {
                             return Messages.getString("WeaponAttackAction.CantFireArmsAndMainGun");
                         }
-                    }
+                        break;
+                    case Protomech.LOC_LARM:
+                    case Protomech.LOC_RARM:
+                        if (firedWeaponLocations.anyMatch(otherWeaponLocation -> otherWeaponLocation == Protomech.LOC_MAINGUN)) {
+                            return Messages.getString("WeaponAttackAction.CantFireArmsAndMainGun");
+                        }
                 }
             }
 

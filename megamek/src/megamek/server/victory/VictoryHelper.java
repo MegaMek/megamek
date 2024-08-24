@@ -28,6 +28,10 @@ import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.scriptedevent.GameEndTriggeredEvent;
+import megamek.server.scriptedevent.TriggeredEvent;
+import megamek.server.scriptedevent.VictoryTriggeredEvent;
+import megamek.server.trigger.TriggerSituation;
 
 /**
  * This class manages the victory conditions of a game. As victory conditions could potentially have some
@@ -83,6 +87,11 @@ public class VictoryHelper implements Serializable {
                 return result;
             }
 
+            VictoryResult gameEndingResult = checkGameEndEvents(game, context);
+            if (gameEndingResult.isVictory()) {
+                return gameEndingResult;
+            }
+
             // Check for battlefield control; this is currently an automatic victory when VCs are checked at all
             // TODO: this could be made optional to allow the game to continue once alone if there's a use case
             VictoryResult battlefieldControlVR = battlefieldControlVC.checkVictory(game, context);
@@ -92,6 +101,33 @@ public class VictoryHelper implements Serializable {
         }
 
         return result;
+    }
+
+    /**
+     * Tests all game-ending scripted events if the game should actually end. If no conditions are met and
+     * the game should continue, returns VictoryResult.noResult(). If the game should end, also checks
+     * all victory events that are set to only test at end of game. If any of those is met,
+     * returns the respective VictoryResult. If not, returns a VictoryResult.drawResult().
+     */
+    private VictoryResult checkGameEndEvents(Game game, Map<String, Object> context) {
+        boolean gameEnds = game.scriptedEvents().stream()
+                .filter(e -> e instanceof GameEndTriggeredEvent)
+                .anyMatch(e -> e.trigger().isTriggered(game, TriggerSituation.ROUND_END));
+
+        if (gameEnds) {
+            // Test all only-at-end victory events; if not, return a draw
+            // Draw events need not be tested as it is automatically a draw when no winner is found
+            for (TriggeredEvent event : game.scriptedEvents()) {
+                if ((event instanceof VictoryTriggeredEvent victoryEvent)
+                        && !victoryEvent.isGameEnding()
+                        && victoryEvent.trigger().isTriggered(game, TriggerSituation.GAME_END)) {
+                    return victoryEvent.checkVictory(game, context);
+                }
+            }
+            return VictoryResult.drawResult();
+        } else {
+            return VictoryResult.noResult();
+        }
     }
 
     private VictoryResult checkOptionalVictoryConditions(Game game, Map<String, Object> context) {
@@ -150,6 +186,8 @@ public class VictoryHelper implements Serializable {
         if (options.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             victoryConditions.add(new EnemyCmdrDestroyedVictory());
         }
+
+        // Add the scripted events that are VictoryConditions (victory and draw events)
         List<VictoryCondition> triggeredEventConditions = game.scriptedEvents().stream()
                 .filter(e -> e instanceof VictoryCondition)
                 .map(e -> (VictoryCondition) e)

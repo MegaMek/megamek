@@ -19,8 +19,6 @@
 package megamek.server.scriptedevent;
 
 import megamek.common.Game;
-import megamek.common.Player;
-import megamek.logging.MMLogger;
 import megamek.server.trigger.Trigger;
 import megamek.server.trigger.TriggerSituation;
 import megamek.server.victory.VictoryCondition;
@@ -29,40 +27,29 @@ import megamek.server.victory.VictoryResult;
 import java.util.Map;
 
 /**
- * This class represents victory events that can be added programmatically or from MM scenarios to check
- * for victory of a team. There are two ways these victory events can be used, depending on the
- * isGameEnding parameter: When isGameEnding is true, this victory condition is checked at the end of
- * game rounds and if it is met, the game ends. When isGameEnding is false, this victory condition is
+ * This class represents "victory" events that are a draw that can be added programmatically or
+ * from MM scenarios to check for a draw result. There are two ways these draw events can be used,
+ * depending on the isGameEnding parameter: When isGameEnding is true, this victory condition is checked
+ * at the end of game rounds and if it is met, the game ends. When isGameEnding is false, this victory condition is
  * only checked after the game has already ended through another condition (round limit or other event).
  *
  * Note: Victory Triggers must *not* be one-time triggers. Victory is checked multiple times, even when
  * victory is achieved and triggers must be able to react multiple times.
  *
- * @param trigger The trigger that decides if victory has occurred
+ * @param trigger The trigger that decides if a draw has occurred
  * @param isGameEnding When true, ends the game when it happens, when false, is only checked when the game has ended
  * @see GameEndTriggeredEvent
- * @see DrawTriggeredEvent
+ * @see VictoryTriggeredEvent
  */
-public record VictoryTriggeredEvent(Trigger trigger, boolean isGameEnding, String playerName)
+public record DrawTriggeredEvent(Trigger trigger, boolean isGameEnding)
         implements TriggeredEvent, VictoryCondition {
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
         if (isGameEnding && trigger.isTriggered(game, TriggerSituation.ROUND_END)) {
-            VictoryResult victoryResult = new VictoryResult(true);
-            int winningTeam = game.playerForPlayername(playerName).map(Player::getTeam).orElse(Player.TEAM_NONE);
-            if (winningTeam == Player.TEAM_NONE) {
-                int winningPlayer = game.idForPlayername(playerName).orElse(Player.PLAYER_NONE);
-                if (winningPlayer == Player.PLAYER_NONE) {
-                    MMLogger.create().error("Could not find winning player or team");
-                    return VictoryResult.noResult();
-                }
-                victoryResult.setPlayerScore(winningPlayer, 1);
-            } else {
-                victoryResult.setTeamScore(winningTeam, 1);
-            }
-            return victoryResult;
+            return VictoryResult.drawResult();
+        } else {
+            return VictoryResult.noResult();
         }
-        return VictoryResult.noResult();
     }
 }

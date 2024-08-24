@@ -48,14 +48,6 @@ factions:
   camo: Free Worlds League/Marik Militia/Marik Militia.jpg
   deploy: N
 
-  victory:
-    - trigger:
-        type: fledunits
-        modify: atend
-        units: [ 101, 102, 103, 104, 105, 106 ]
-        atleast: 4
-      modify: onlyatend
-
   units:
   - fullname: Thunderbolt TDR-5S
     id: 101
@@ -97,77 +89,69 @@ factions:
       piloting: 4
       gunnery: 4
 
-#  - fullname: Centurion CN9-A
-#    id: 104
-#    at: [ 14, 31 ]
-#    remaining:
-#      armor:
-#        CT: 12
-#    crew:
-#      name: Sgt. Jonathan Taylor
-#      piloting: 4
-#      gunnery: 4
-#
-#  - fullname: Hermes II HER-2S
-#    id: 105
-#    at: [ 5, 30 ]
-#    crew:
-#      name: Samantha Blaustein
-#      piloting: 4
-#      gunnery: 4
-#
-#  - fullname: Javelin JVN-10N
-#    id: 106
-#    at: [ 2, 29 ]
-#    crew:
-#      name: Deborah Ryan
-#      piloting: 4
-#      gunnery: 4
+  - fullname: Centurion CN9-A
+    id: 104
+    at: [ 14, 31 ]
+    remaining:
+      armor:
+        CT: 12
+    crew:
+      name: Sgt. Jonathan Taylor
+      piloting: 4
+      gunnery: 4
+
+  - fullname: Hermes II HER-2S
+    id: 105
+    at: [ 5, 30 ]
+    crew:
+      name: Samantha Blaustein
+      piloting: 4
+      gunnery: 4
+
+  - fullname: Javelin JVN-10N
+    id: 106
+    at: [ 2, 29 ]
+    crew:
+      name: Deborah Ryan
+      piloting: 4
+      gunnery: 4
 
 - name: Kell Hounds, First Battalion
   camo: MERC - 1st Kell Hounds.gif
   deploy:
     edge: S
 
-  victory:
-    - modify: onlyatend
-      trigger:
-        type: fledunits
-        modify: atend
-        units: [ 101, 102, 103, 104, 105, 106 ]
-        atmost: 2
-
   units:
-#    - fullname: Wolverine WVR-6R
-#      id: 201
-#      deploymentround: 2
-#      crew:
-#        name: Maj. Salome Ward
-#        piloting: 4
-#        gunnery: 3
-#
-#    - fullname: Shadow Hawk SHD-2H
-#      id: 202
-#      crew:
-#        name: Lee Kennedy
-#        piloting: 4
-#        gunnery: 4
-#
-#    - fullname: Dervish DV-6M
-#      id: 203
-#      deploymentround: 2
-#      crew:
-#        name: Brian Martell
-#        piloting: 4
-#        gunnery: 4
-#
-#    - fullname: Trebuchet TBT-5N
-#      id: 204
-#      deploymentround: 2
-#      crew:
-#        name: Judith Nesmith
-#        piloting: 4
-#        gunnery: 4
+    - fullname: Wolverine WVR-6R
+      id: 201
+      deploymentround: 2
+      crew:
+        name: Maj. Salome Ward
+        piloting: 4
+        gunnery: 3
+
+    - fullname: Shadow Hawk SHD-2H
+      id: 202
+      crew:
+        name: Lee Kennedy
+        piloting: 4
+        gunnery: 4
+
+    - fullname: Dervish DV-6M
+      id: 203
+      deploymentround: 2
+      crew:
+        name: Brian Martell
+        piloting: 4
+        gunnery: 4
+
+    - fullname: Trebuchet TBT-5N
+      id: 204
+      deploymentround: 2
+      crew:
+        name: Judith Nesmith
+        piloting: 4
+        gunnery: 4
 
     - fullname: Phoenix Hawk PXH-1
       id: 205
@@ -196,7 +180,7 @@ messages:
       # Situation
       ## Castor
       ## Free Worlds League
-      ## 7 June 3011
+      ## 15 June 3012
 
       The idea for a Steiner raid on the Marik world of Castor originated with Cranston Snord, a well-known
       eccentric and one of Katrina Steiner's long-serving mercenary commanders. Snord's sources had informed
@@ -228,6 +212,8 @@ messages:
       as many Meks as possible.
       
       Be careful! Some of your Meks have already sustained damage.
+      
+      This scenario uses standard rules.
       
       *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory. 
       If you do this, Princess will be sad.*
@@ -333,3 +319,19 @@ end:
   - trigger:
       type: battlefieldcontrol
 
+victory:
+  - player: Kell Hounds, First Battalion
+    modify: onlyatend
+    trigger:
+      type: fledunits
+      modify: atend
+      units: [ 101, 102, 103, 104, 105, 106 ]
+      atleast: 4
+
+  - player: Thirtieth Marik Militia
+    modify: onlyatend
+    trigger:
+      type: fledunits
+      modify: atend
+      units: [ 101, 102, 103, 104, 105, 106 ]
+      atmost: 2

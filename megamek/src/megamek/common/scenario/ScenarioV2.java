@@ -122,6 +122,7 @@ public class ScenarioV2 implements Scenario {
         parsePlayers(game);
         parseMessages(game);
         parseGameEndEvents(game);
+        parseGameVictories(game, node);
 
         game.setupTeams();
 
@@ -260,7 +261,7 @@ public class ScenarioV2 implements Scenario {
             player.setGhost(true);
 
             parseDeployment(playerNode, player);
-            parseVictories(game, playerNode, player.getName());
+            parsePlayerVictories(game, playerNode, player.getName());
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();
@@ -362,13 +363,24 @@ public class ScenarioV2 implements Scenario {
         return result;
     }
 
-    private void parseVictories(IGame game, JsonNode playerNode, String playerName) {
+    private void parseGameVictories(IGame game, JsonNode playerNode) {
         if (playerNode.has(VICTORY)) {
-            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n, playerName));
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseGameVictory(game, n));
         }
     }
 
-    private void parseVictory(IGame game, JsonNode node, String playerName) {
+    private void parseGameVictory(IGame game, JsonNode node) {
+        game.addScriptedEvent(VictoryDeserializer.parse(node));
+    }
+
+
+    private void parsePlayerVictories(IGame game, JsonNode playerNode, String playerName) {
+        if (playerNode.has(VICTORY)) {
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parsePlayerVictory(game, n, playerName));
+        }
+    }
+
+    private void parsePlayerVictory(IGame game, JsonNode node, String playerName) {
         game.addScriptedEvent(VictoryDeserializer.parse(node, playerName));
     }
 

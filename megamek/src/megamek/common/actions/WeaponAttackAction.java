@@ -2168,21 +2168,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.CantMoveAndFieldGun");
                 }
                 // check for mixing infantry and field gun attacks
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if (prevAttack.getEntityId() == attackerId) {
-                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                        if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                                && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS))
-                                || (weapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                                        && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
-                            return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
-                        }
-                    }
+                if (game.getActionsVector().stream()
+                    .filter(WeaponAttackAction.class::isInstance)
+                    .map(WeaponAttackAction.class::cast)
+                    .filter(prevAttack -> prevAttack.getEntityId() == attackerId)
+                    .map(prevAttack -> ae.getEquipment(prevAttack.getWeaponId()))
+                    .anyMatch(prevWeapon ->
+                        (
+                            prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
+                                && weapon.getLocation() == Infantry.LOC_FIELD_GUNS
+                        )
+                        || (
+                            prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS
+                                && weapon.getType().hasFlag(WeaponType.F_INFANTRY)
+                        )
+                    )
+                ) {
+                    return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
                 }
             }
 

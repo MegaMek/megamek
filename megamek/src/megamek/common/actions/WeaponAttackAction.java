@@ -4210,7 +4210,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Aerospace target modifiers
         if (te != null && te.isAero() && te.isAirborne()) {
-            IAero a = (IAero) te;
+            // Finalized for concurrency reasons
+            final Entity targetEntity = te;
+            IAero a = (IAero) targetEntity;
 
             // is the target at zero velocity
             if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
@@ -4234,19 +4236,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Target hidden in the sensor shadow of a larger spacecraft
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
-                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft()
-                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
-                        break;
-                    }
+                if (Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game).stream()
+                    .anyMatch(en ->
+                        !en.isEnemyOf(targetEntity)
+                            && en.isLargeCraft()
+                            && en.getWeight() - targetEntity.getWeight() >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF
+                    )
+                ) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
                 }
-                for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
-                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
-                        break;
-                    }
+                if (game.getEntitiesVector(target.getPosition()).stream()
+                    .anyMatch(en ->
+                        !en.isEnemyOf(targetEntity)
+                            && en.isLargeCraft()
+                            && !en.equals(targetEntity)
+                            && en.getWeight() - targetEntity.getWeight() >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF
+                    )
+                ) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
                 }
             }
         }

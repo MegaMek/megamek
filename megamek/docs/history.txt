@@ -107,6 +107,9 @@ MEGAMEK VERSION HISTORY:
 + Fix #5895: Mono/bicycles may now correctly enter light woods
 + Fix #5669: Prevent an error with artillery weapons on DropShips
 + Fix #5219: Structure Collapse Warning icon appearing beneath bridges and buildings
++ FIX #5915: Show the Jump button for Protomeks
++ FIX #5930: Fix selected unit label and fov lagging behind
++ PR #5939: Edited Display Name for Transported Personnel Edge Use Option
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

@@ -100,7 +100,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_NEXT("moveNext", CMD_NONE),
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO),
         MOVE_WALK("moveWalk", CMD_GROUND),
-        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF),
+        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF | CMD_PROTOMECH),
         MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL),
         MOVE_GET_UP("moveGetUp", CMD_MECH),
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL),

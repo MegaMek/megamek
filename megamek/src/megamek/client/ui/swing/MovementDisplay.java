@@ -643,7 +643,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         currentEntity = en;
-        clientgui.setSelectedEntityNum(en);
+
         gear = MovementDisplay.GEAR_LAND;
 
         clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
@@ -697,6 +697,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             @Override
             public void run() {
                 clientgui.getUnitDisplay().displayEntity(ce);
+                clientgui.getBoardView().redrawEntity(ce);
+                clientgui.setSelectedEntityNum(ce.getId());
                 if (GUIP.getMoveDisplayTabDuringMovePhases()) {
                     clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
                 }

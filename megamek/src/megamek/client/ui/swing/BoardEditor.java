@@ -1871,7 +1871,7 @@ public class BoardEditor extends JPanel
         } else if (ae.getSource().equals(butTerrExits)) {
             int exitsVal = 0;
             
-            if (ae.getActionCommand() == CMD_EDIT_DEPLOYMENT_ZONES) {
+            if (ae.getActionCommand().equals(CMD_EDIT_DEPLOYMENT_ZONES)) {
                 var dlg = new MultiIntSelectorDialog(frame, "BoardEditor.deploymentZoneSelectorName", 
                         "BoardEditor.deploymentZoneSelectorTitle", "BoardEditor.deploymentZoneSelectorDescription", 
                         Board.MAX_DEPLOYMENT_ZONE_NUMBER, Board.exitsAsIntList(texTerrExits.getNumber()));

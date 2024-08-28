@@ -1943,11 +1943,7 @@ public class Board implements Serializable {
                 
                 if (deploymentZone != null) {
                     for (int zoneID : Board.exitsAsIntList(deploymentZone.getExits())) {
-                        if (!deploymentZones.containsKey(zoneID)) {
-                            deploymentZones.put(zoneID, new HashSet<>());
-                        }
-                        
-                        deploymentZones.get(zoneID).add(new Coords(x, y));
+                        deploymentZones.computeIfAbsent(zoneID, k->new HashSet<>()).add(new Coords(x, y));
                     }
                 }
             }

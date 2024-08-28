@@ -42,6 +42,7 @@ import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.ServerBoardHelper;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -718,7 +719,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butStartPos.get(i).setActionCommand(((Integer) i).toString());
         }
         
-        var currentBoard = clientgui.chatlounge.getPossibleGameBoard(true);
+        var currentBoard = ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true);
         var deploymentZones = currentBoard.getCustomDeploymentZones();
         int extraRowCount = (int) Math.ceil((double) deploymentZones.size() / 3.0);
         

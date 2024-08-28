@@ -62,6 +62,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.ServerBoardHelper;
 import megamek.utilities.BoardsTagger;
 import org.apache.logging.log4j.LogManager;
 
@@ -249,7 +250,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
-    private static final String CL_KEY_FILEEXTENTION_BOARD = ".board";
     private static final String CL_KEY_FILEEXTENTION_XML = ".xml";
     private static final String CL_KEY_FILEPATH_MAPASSEMBLYHELP = "docs/Boards Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAPSETUP = "/mapsetup";
@@ -1000,7 +1000,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void refreshBoardTags() {
         boardTags.clear();
         for (String boardName : mapSettings.getBoardsAvailableVector()) {
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + CL_KEY_FILEEXTENTION_BOARD).getFile();
+            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile();
             Set<String> tags = Board.getTags(boardFile);
             boardTags.put(boardName, String.join("||", tags).toLowerCase());
         }
@@ -1096,11 +1096,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                             boardForImage = boardForImage.replace(Board.BOARD_REQUEST_ROTATION, "");
                         }
 
-                        File boardFile = new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile();
+                        File boardFile = new MegaMekFile(Configuration.boardsDir(), boardForImage + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile();
                         if (boardFile.exists()) {
                             buttonBoard = new Board(16, 17);
-                            buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile());
-                            try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile())) {
+                            buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile());
+                            try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile())) {
                                 buttonBoard.load(is, null, true);
                                 BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
@@ -1171,7 +1171,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     public void previewGameBoard() {
-        Board newBoard = getPossibleGameBoard(false);
+        Board newBoard = ServerBoardHelper.getPossibleGameBoard(mapSettings, false);
         boardPreviewGame.setBoard(newBoard);
         previewBV.setLocalPlayer(client().getLocalPlayer());
         final GameOptions gOpts = game().getOptions();
@@ -1187,50 +1187,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boardPreviewW.setVisible(true);
     }
 
-    /**
-     * Returns the game map as it is currently set in the map settings tab.
-     * When onlyFixedBoards is true, all Generated and Surprise boards are
-     * replaced by empty boards, otherwise they are filled with a generated or
-     * a choice of the surprise maps.
-     */
-    public Board getPossibleGameBoard(boolean onlyFixedBoards) {
-        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
-        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
-            sheetBoards[i] = new Board();
 
-            String name = mapSettings.getBoardsSelectedVector().get(i);
-            if ((name.startsWith(MapSettings.BOARD_GENERATED) || name.startsWith(MapSettings.BOARD_SURPRISE))
-                    && onlyFixedBoards) {
-                sheetBoards[i] = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
-            } else if (name.startsWith(MapSettings.BOARD_GENERATED)
-                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
-                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
-            } else {
-                boolean flipBoard = false;
-
-                if (name.startsWith(MapSettings.BOARD_SURPRISE)) {
-                    List<String> boardList = extractSurpriseMaps(name);
-                    int rnd = (int) (Math.random() * boardList.size());
-                    name = boardList.get(rnd);
-                } else if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
-                    // only rotate boards with an even width
-                    if ((mapSettings.getBoardWidth() % 2) == 0) {
-                        flipBoard = true;
-                    }
-                    name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
-                }
-
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + CL_KEY_FILEEXTENTION_BOARD).getFile());
-                BoardUtilities.flip(sheetBoards[i], flipBoard, flipBoard);
-            }
-        }
-
-        return BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
-                mapSettings.getMedium());
-    }
 
     /**
      * Refreshes the game settings with new info from the client
@@ -2125,8 +2082,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshBoardsAvailable();
         updateSearch(fldSearch.getText());
         refreshLabels();
-    }
-
+    }    
 
     /**OK Refreshes the Map Summary, Tech Level and Game Year labels. */
     private void refreshLabels() {
@@ -2461,7 +2417,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
             ScalingPopup popup = PlayerTablePopup.playerTablePopup(clientgui,
-                    playerTableActionListener, getselectedPlayers(), getPossibleGameBoard(true));
+                    playerTableActionListener, getselectedPlayers(), ServerBoardHelper.getPossibleGameBoard(mapSettings, true));
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -3285,7 +3241,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
 
         private Image prepareImage(String boardName) {
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + CL_KEY_FILEEXTENTION_BOARD).getFile();
+            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile();
             Board board;
             List<String> errors = new ArrayList<>();
             if (boardFile.exists()) {

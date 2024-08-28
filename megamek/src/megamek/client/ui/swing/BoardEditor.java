@@ -29,6 +29,7 @@ import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.client.ui.swing.dialog.MultiIntSelectorDialog;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
@@ -204,6 +205,7 @@ public class BoardEditor extends JPanel
 
     private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
     private static final int BASE_ARROWBUTTON_ICON_WIDTH = 25;
+    private static final String CMD_EDIT_DEPLOYMENT_ZONES = "CMD_EDIT_DEPLOYMENT_ZONES";
 
     // Components
     private final JFrame frame = new JFrame();
@@ -903,6 +905,27 @@ public class BoardEditor extends JPanel
         choTerrainType.addActionListener(e -> {
             if (!terrListBlocker) {
                 lisTerrain.clearSelection();
+                
+                // if we've selected DEPLOYMENT ZONE, disable the "exits" buttons
+                // and make the "exits" popup point to a multi-select list that lets
+                // the user choose which deployment zones will be flagged here
+                
+                // otherwise, re-enable all the buttons and reset the "exits" popup to its normal behavior
+                if (((TerrainHelper) choTerrainType.getSelectedItem()).getTerrainType() == Terrains.DEPLOYMENT_ZONE) {
+                    butExitUp.setEnabled(false);
+                    butExitDown.setEnabled(false);
+                    texTerrExits.setEnabled(false);
+                    cheTerrExitSpecified.setEnabled(false);
+                    cheTerrExitSpecified.setText("Zones");//Messages.getString("BoardEditor.deploymentZoneIDs"));
+                    butTerrExits.setActionCommand(CMD_EDIT_DEPLOYMENT_ZONES);
+                } else {
+                    butExitUp.setEnabled(true);
+                    butExitDown.setEnabled(true);
+                    texTerrExits.setEnabled(true);
+                    cheTerrExitSpecified.setEnabled(true);
+                    cheTerrExitSpecified.setText(Messages.getString("BoardEditor.cheTerrExitSpecified"));
+                    butTerrExits.setActionCommand("");
+                }
             }
         });
         choTerrainType.setFont(fontComboTerr);
@@ -1247,32 +1270,7 @@ public class BoardEditor extends JPanel
             return;
         } 
         
-        if (toAdd.getType() == Terrains.DEPLOYMENT_ZONE) {
-            // integers can only pack 32 bits, so we can't have more than that number
-            // of deployment zones in a single hex. 
-            if (toAdd.getExits() > 31) {
-                JOptionPane.showMessageDialog(frame,
-                        Messages.getString("BoardEditor.InvalidDeploymentZoneIndex"),
-                        Messages.getString("BoardEditor.InvalidDeploymentZoneTitle"),
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // hack: the "exits" property here is going to be the index of the bit that is set in the
-            // resulting hex's exits property;
-            // so, if the user specifies a deployment zone with an "exit" of 1, the "exits" variable
-            // will be 10 in binary
-            if (curHex.containsTerrain(Terrains.DEPLOYMENT_ZONE)) {
-                Terrain deploymentZone = curHex.getTerrain(Terrains.DEPLOYMENT_ZONE);
-                int currentZoneNumber = deploymentZone.getExits();
-                deploymentZone.setExits(currentZoneNumber | (1 << toAdd.getExits()));
-            } else {
-                toAdd.setExits(1 << toAdd.getExits());
-                curHex.addTerrain(toAdd);
-            }
-        } else {
-            curHex.addTerrain(toAdd);
-        }
+        curHex.addTerrain(toAdd);
         
         noTextFieldUpdate = true;
         refreshTerrainList();
@@ -1871,12 +1869,23 @@ public class BoardEditor extends JPanel
             }
             updateWhenSelected();
         } else if (ae.getSource().equals(butTerrExits)) {
-            ExitsDialog ed = new ExitsDialog(frame);
-            int exitsVal = texTerrExits.getNumber();
-            ed.setExits(exitsVal);
-            ed.setVisible(true);
-            exitsVal = ed.getExits();
-            texTerrExits.setNumber(exitsVal);
+            int exitsVal = 0;
+            
+            if (ae.getActionCommand() == CMD_EDIT_DEPLOYMENT_ZONES) {
+                var dlg = new MultiIntSelectorDialog(frame, "BoardEditor.deploymentZoneSelectorName", 
+                        "BoardEditor.deploymentZoneSelectorTitle", "BoardEditor.deploymentZoneSelectorDescription", 
+                        Board.MAX_DEPLOYMENT_ZONE_NUMBER, Board.exitsAsIntList(texTerrExits.getNumber()));
+                dlg.setVisible(true);
+                exitsVal = Board.IntListAsExits(dlg.getSelectedItems());
+                texTerrExits.setNumber(exitsVal);
+            } else {            
+                ExitsDialog ed = new ExitsDialog(frame);
+                exitsVal = texTerrExits.getNumber();
+                ed.setExits(exitsVal);
+                ed.setVisible(true);
+                exitsVal = ed.getExits();
+                texTerrExits.setNumber(exitsVal);
+            }
             setExitsState(exitsVal != 0);
             updateWhenSelected();
         } else if (ae.getSource().equals(cheTerrExitSpecified)) {

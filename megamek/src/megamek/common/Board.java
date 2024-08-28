@@ -67,6 +67,8 @@ public class Board implements Serializable {
     public static final int T_GROUND = 0;
     public static final int T_ATMOSPHERE = 1;
     public static final int T_SPACE = 2;
+    
+    public static final int MAX_DEPLOYMENT_ZONE_NUMBER = 31;
 
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
 
@@ -1904,14 +1906,28 @@ public class Board implements Serializable {
      */
     public static List<Integer> exitsAsIntList(int exits) {
         List<Integer> results = new ArrayList<>();
+        int exitIndex = 1;
         
-        for (int bitToCheck = 1, exitIndex = 1; bitToCheck <= 16536; bitToCheck *= 2, exitIndex++) {
+        for (long bitToCheck = 1; bitToCheck <= Integer.MAX_VALUE; bitToCheck *= 2, exitIndex++) {
             if ((exits & bitToCheck) != 0) {
                 results.add(exitIndex);
             }
         }
         
         return results;
+    }
+    
+    /**
+     * Given a list of integers, returns them in a bit-packed form. 
+     */
+    public static int IntListAsExits(List<Integer> list) {
+        int result = 0;
+        
+        for (int listItem : list) {
+            result |= 1 << (listItem - 1);
+        }
+        
+        return result;
     }
     
     /**

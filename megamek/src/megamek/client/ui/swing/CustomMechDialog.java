@@ -26,6 +26,7 @@ import megamek.common.options.*;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.server.ServerBoardHelper;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
@@ -483,7 +484,8 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployEdge"));
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployCenter"));
         
-        for (int zoneID : clientgui.chatlounge.getPossibleGameBoard(true).getCustomDeploymentZones()) {
+        for (int zoneID : ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true)
+                .getCustomDeploymentZones()) {
             choDeploymentZone.addItem("Zone " + zoneID);
         }
 

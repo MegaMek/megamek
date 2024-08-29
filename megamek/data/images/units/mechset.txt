@@ -7574,12 +7574,16 @@ chassis "Büffel Engineering Support Vehicle VII" "vehicles/Buffel.png"
 exact "Büffel Engineering Support Vehicle VII (Cargo)" "vehicles/Buffel_Cargo.png"
 exact "Büffel Engineering Support Vehicle VII (Reverse)" "vehicles/Buffel_RB.png"
 chassis "Büffel Engineering Support Vehicle VIII" "vehicles/Buffel_Cargo.png"
+#BulldogTank
 chassis "Bulldog Medium Tank" "vehicles/Bulldog.png"
 exact "Bulldog Medium Tank (AC2)" "vehicles/Bulldog_AC2.png"
 exact "Bulldog Medium Tank (LRM)" "vehicles/Bulldog_LRM.png"
 exact "Bulldog Medium Tank (Cell)" "vehicles/Bulldog_Cell.png"
 exact "Bulldog Medium Tank (LB-X)" "vehicles/Bulldog_AC2.png"
 exact "Bulldog Medium Tank (Plasma)" "vehicles/Bulldog_Cell.png"
+#BulldogTruck
+chassis "Bulldog Medium Truck" "vehicles/BullDogTruck.png"
+#BulldogII_Tank
 chassis "Bulldog II (C)" "vehicles/Bulldog.png"
 chassis "Bulwark Assault Vehicle" "vehicles/Bulwark.png"
 chassis "Burke Defense Tank" "vehicles/Burke.png"

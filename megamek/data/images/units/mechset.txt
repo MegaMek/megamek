@@ -6943,6 +6943,7 @@ exact "Watchdog ECM Bunker" "GunEmplacements/Bunker.png"
 
 #Infantry Platoons
 exact "Autocannon/10 Field Gun Infantry" "Infantry/fieldgunac10.png"
+exact "Field Gun Infantry Platoon (AC/10)" "Infantry/FieldGunInfantryPlatoon.png"
 chassis "Bridge-builder Engineers" "Infantry/laser_mecha_t.png"
 chassis "CCAF Foot Platoon" "defaults/default_infantry_platoon.png"
 chassis "CCAF Jump Platoon" "Infantry/jump_infantry_platoon.png"

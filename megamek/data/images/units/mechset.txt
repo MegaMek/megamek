@@ -462,7 +462,7 @@ exact "Djinn Battle Armor (Reflective) 'Terrorizer' [Laser] (Sqd5)" "battle armo
 chassis "Dragoon Battle Armor" "battle armor/DragoonBA_4.png"
 exact "Dragoon Battle Armor (Sqd5)" "battle armor/DragoonBA_5.png"
 exact "Dragoon Battle Armor (Sqd6)" "battle armor/DragoonBA_6.png"
-exact "Dragoon Battle Armor (Advanced)(Sqd5)" "battle armor/DragoonBA_4.png"
+exact "Dragoon Battle Armor (Advanced)(Sqd4)" "battle armor/DragoonBA_4.png"
 exact "Dragoon Battle Armor (Advanced)(Sqd5)" "battle armor/DragoonBA_5.png"
 exact "Dragoon Battle Armor (Advanced)(Sqd6)" "battle armor/DragoonBA_6.png"
 #Elemental

@@ -320,7 +320,7 @@ The Strikers must survive long enough to discover that Andrew is not present on 
 
 SPECIAL RULES
 This scenario has three groups: the Strikers, Malthus's Star, and Redmond's Star.
-The Strikers are trying to locate Adam's brother.  They will eventually discover that he isn't on the planet, but they must stay on the battle field until they do.  During the End Phase of each turn, the Strikers' player should use the /roll command.  If the result is equal to or less than the current turn number, the Strikers may begin to retreat.  No Striker unit may retreat until then.  They will have to exit the map from the side furthest from their slowest mobile unit.  If two sides are equal distance, roll randomly to determine the side off which the Strikers must retreat.
+The Strikers are trying to locate Adam's brother.  They will eventually discover that he isn't on the planet, but they must stay on the battlefield until they do.  During the End Phase of each turn, the Strikers' player should use the /roll command.  If the result is equal to or less than the current turn number, the Strikers may begin to retreat.  No Striker unit may retreat until then.  They will have to exit the map from the side furthest from their slowest mobile unit.  If two sides are equal distance, roll randomly to determine the side off which the Strikers must retreat.
 Redmond's Star may only attack Malthus's Star at the beginning of the scenario.  She and her troops are not concerned with the Strikers.  Eventually, Redmond agrees to join Malthus in hunting down the Strikers.  To determine when this happens, the two Clan players should use the /roll command at the End Phase of each turn, beginning with the first turn in which Redmond's Mad Dog has a line of sight to Malthus's Summoner.  If the results of these die rolls are equal, the two Stars join forces against the Strikers.
 
 MEGAMEK ADJUSTMENTS
@@ -377,7 +377,7 @@ The rebels win a decisive victory if Franklin's Hatamoto-Chi exits the west edge
 
 SPECIAL RULES
 This should be played by three players: the Strikers, the ISF, and the rebels.
-The Banshee Strafes the rebel mechs just before the beginning of Turn 1.  The Strikes player should choose any one rebel mech and attack it with both medium lasers, hitting on a 8 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly east of the target.  After her first strafing run, Kylie may choose to attack either a rebel mech or an ISF mech.
+The Banshee Strafes the rebel mechs just before the beginning of Turn 1.  The Strikes player should choose any one rebel mech and attack it with both medium lasers, hitting on an 8 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly east of the target.  After her first strafing run, Kylie may choose to attack either a rebel mech or an ISF mech.
 
 MEGAMEK ADJUSTMENTS
 Recommend playing this scenario with Double-Blind option set to true (unless using bot as a player).

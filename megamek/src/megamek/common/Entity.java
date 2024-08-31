@@ -45,6 +45,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
@@ -2158,20 +2159,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the elevation of this entity, relative to the current Hex's
-     * surface
+     * @return The elevation of this Entity, relative to the current Hex's surface. When the unit is
+     * transported, returns the elevation of the carrier.
      */
     @Override
     public int getElevation() {
-        if (Entity.NONE != getTransportId()) {
-            return game.getEntity(getTransportId()).getElevation();
+        if (game != null) {
+            Entity carrier = game.getEntity(getTransportId());
+            if (carrier != null) {
+                return carrier.getElevation();
+            }
         }
 
-        if (isOffBoard()) {
-            return 0;
-        }
-
-        return elevation;
+        return isOffBoard() ? 0 : elevation;
     }
 
     public boolean canGoDown() {
@@ -15678,7 +15678,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public void setForceString(String f) {
-        forceString = f;
+        forceString = MMXMLUtility.escape(f);
     }
 
     @Override

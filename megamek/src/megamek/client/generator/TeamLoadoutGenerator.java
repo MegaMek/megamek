@@ -589,8 +589,8 @@ public class TeamLoadoutGenerator {
     ) {
         ReconfigurationParameters rp = new ReconfigurationParameters();
 
-        // Set own faction and quality rating
-        rp.friendlyFaction = (friendlyFaction == null) ? "" : friendlyFaction;
+        // Set own faction and quality rating (default to generic IS if faction is not provided)
+        rp.friendlyFaction = (friendlyFaction == null) ? "IS" : friendlyFaction;
         rp.friendlyQuality = rating;
 
         // Fill desired bin fill ratio / percentage (as float)

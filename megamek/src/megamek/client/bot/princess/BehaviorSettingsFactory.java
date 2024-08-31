@@ -420,7 +420,7 @@ public class BehaviorSettingsFactory {
             return defaultBehavior;
         } catch (Exception e) {
             logger.error(e, "Default Behavior Exception");
-            return null;
+            return new BehaviorSettings();
         }
     }
 }

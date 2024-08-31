@@ -7,6 +7,12 @@ factions:
 - name: Observer
 
 - name: Legion of Vega
+
+  bot:
+    herdmentality: 10
+    selfpreservation: 10
+    retreat: SOUTH
+
   units:
   - fullname: Atlas AS7-D
   - fullname: Locust LCT-1M

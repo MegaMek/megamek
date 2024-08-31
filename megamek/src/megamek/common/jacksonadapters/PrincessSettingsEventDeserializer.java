@@ -74,6 +74,6 @@ public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessS
         Trigger trigger = TriggerDeserializer.parseNode(eventNode.get(TRIGGER));
 
 
-        return new PrincessSettingsEvent(trigger, header, new BehaviorSettings());
+        return new PrincessSettingsEvent(trigger, header, new PrincessSettingsBuilder());
     }
 }

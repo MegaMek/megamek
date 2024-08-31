@@ -20,6 +20,7 @@ package megamek.server.scriptedevent;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Player;
+import megamek.common.jacksonadapters.PrincessSettingsBuilder;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.server.GameManager;
@@ -31,7 +32,7 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
 
     private final Trigger trigger;
     private final String playerName;
-    private final BehaviorSettings settings;
+    private final PrincessSettingsBuilder settingsBuilder;
 
     /**
      * Creates a scripted even that changes the Princess settings for the bot player with the given name to
@@ -39,12 +40,12 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
      *
      * @param trigger The trigger that activates this event
      * @param playerName The Princess player to change
-     * @param settings The new settings for Princess to use
+     * @param settingsBuilder The new settings for Princess to use
      */
-    public PrincessSettingsEvent(Trigger trigger, String playerName, BehaviorSettings settings) {
+    public PrincessSettingsEvent(Trigger trigger, String playerName, PrincessSettingsBuilder settingsBuilder) {
         this.trigger = trigger;
         this.playerName = playerName;
-        this.settings = settings;
+        this.settingsBuilder = settingsBuilder;
     }
 
     @Override
@@ -52,7 +53,8 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
         if (gameManager instanceof GameManager gm) {
             for (Player player : gm.getGame().getPlayersList()) {
                 if (player.getName().equals(playerName) && player.isBot()) {
-                    gm.send(player.getId(), new Packet(PacketCommand.PRINCESS_SETTINGS, settings));
+//                    gm.getGame().getBotSettings()
+//                    gm.send(player.getId(), new Packet(PacketCommand.PRINCESS_SETTINGS, settings));
                     return;
                 }
             }

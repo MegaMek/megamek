@@ -8692,6 +8692,7 @@ exact "Zhen Niao" "dropships/Zhen Niao.png"
 
 
 #Space Station
+chassis "Alliance Space Station" "Space Stations/AllianceSpaceStation.png"
 exact "Bastion System Defense Station" "Space Stations/Bastion System Defense Station.png"
 exact "Olympus Recharge Station" "Space Stations/Olympus.png"
 chassis "Large Habitat" "Space Stations/Large Habitat.png"

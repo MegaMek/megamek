@@ -1,6 +1,6 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.0-SNAPSHOT (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
+0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)
 + PR #5512: Gradle and Github changes for JRE 17 Min
 + Fix #5648: Diacratics and/or name changes causing issues with Force/RAT Generator

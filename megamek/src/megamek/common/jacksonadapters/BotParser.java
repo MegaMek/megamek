@@ -23,11 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ScenarioDialog;
-
-import java.util.List;
 
 public final class BotParser {
 
@@ -45,66 +41,9 @@ public final class BotParser {
         }
     }
 
-    private static final String TYPE = "type";
-    private static final String BOT_PRINCESS = "princess";
-    private static final String PRINCESS_SELF_PRESERVATION = "selfpreservation";
-    private static final String PRINCESS_FALL_SHAME = "fallshame";
-    private static final String PRINCESS_AGGRESSION = "hyperaggression";
-    private static final String PRINCESS_HERDING = "herdmentality";
-    private static final String PRINCESS_BRAVERY = "bravery";
-    private static final String PRINCESS_DESTINATION = "destination";
-    private static final String PRINCESS_RETREAT = "retreat";
-    private static final String PRINCESS_FLEE = "flee";
-    private static final String PRINCESS_FORCED_WITHDRAW = "forcedwithdraw";
-    private static final String STATUS = "status";
-
-    public static BotInfo parse(JsonNode node) {
-        try {
-            PrincessSettingsBuilder builder = YAML_MAPPER.treeToValue(node, PrincessSettingsBuilder.class);
-            return new PrincessRecord(builder.build());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-//        if (!node.has(TYPE) || node.get(TYPE).asText().equals(BOT_PRINCESS)) {
-//            BehaviorSettings behavior = BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR;
-//            assert behavior != null;
-//            if (node.has(PRINCESS_SELF_PRESERVATION)) {
-//                behavior.setSelfPreservationIndex(node.get(PRINCESS_SELF_PRESERVATION).asInt(5));
-//            }
-//            if (node.has(PRINCESS_FALL_SHAME)) {
-//                behavior.setFallShameIndex(node.get(PRINCESS_FALL_SHAME).asInt(5));
-//            }
-//            if (node.has(PRINCESS_AGGRESSION)) {
-//                behavior.setHyperAggressionIndex(node.get(PRINCESS_AGGRESSION).asInt(5));
-//            }
-//            if (node.has(PRINCESS_HERDING)) {
-//                behavior.setHerdMentalityIndex(node.get(PRINCESS_HERDING).asInt(5));
-//            }
-//            if (node.has(PRINCESS_BRAVERY)) {
-//                behavior.setBraveryIndex(node.get(PRINCESS_BRAVERY).asInt(5));
-//            }
-//            if (node.has(PRINCESS_DESTINATION)) {
-//                CardinalEdge edge = CardinalEdge.parseFromString(
-//                        node.get(PRINCESS_DESTINATION).asText("NONE").toUpperCase());
-//                behavior.setDestinationEdge(edge);
-//            }
-//            if (node.has(PRINCESS_RETREAT)) {
-//                CardinalEdge edge = CardinalEdge.parseFromString(
-//                        node.get(PRINCESS_RETREAT).asText("NONE").toUpperCase());
-//                behavior.setRetreatEdge(edge);
-//            }
-//            List<String> statusStrings = TriggerDeserializer.parseArrayOrSingleNode(node.get(STATUS),
-//                    PRINCESS_FLEE, PRINCESS_FORCED_WITHDRAW);
-//            if (statusStrings.contains(PRINCESS_FLEE)) {
-//                behavior.setAutoFlee(true);
-//            }
-//            if (statusStrings.contains(PRINCESS_FORCED_WITHDRAW)) {
-//                behavior.setForcedWithdrawal(true);
-//            }
-//            return new PrincessRecord(behavior);
-//        } else {
-//            throw new IllegalArgumentException("Invalid bot type");
-//        }
+    public static BotInfo parse(JsonNode node) throws JsonProcessingException {
+        PrincessSettingsBuilder builder = YAML_MAPPER.treeToValue(node, PrincessSettingsBuilder.class);
+        return new PrincessRecord(builder.build());
     }
 
     private BotParser() { }

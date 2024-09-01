@@ -20,6 +20,7 @@ package megamek.common.jacksonadapters;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
@@ -75,7 +76,6 @@ public class PrincessSettingsBuilder {
 
     private String description = null;
 
-
     public PrincessSettingsBuilder selfPreservation(int selfPreservation) {
         this.selfPreservation = selfPreservation;
         return this;
@@ -101,12 +101,14 @@ public class PrincessSettingsBuilder {
         return this;
     }
 
+    @JsonSetter("doFlee")
     public PrincessSettingsBuilder flee(boolean flee) {
         doFlee = flee;
         hasFleeValue = true;
         return this;
     }
 
+    @JsonSetter("useForcedWithdraw")
     public PrincessSettingsBuilder useWithdraw(boolean useWithdraw) {
         useForcedWithdraw = useWithdraw;
         hasForcedWithdrawValue = true;
@@ -120,7 +122,6 @@ public class PrincessSettingsBuilder {
         this.description = description;
         return this;
     }
-
 
     /**
      * Returns new BehaviorSettings based on the given settings. Settings that are present in this builder
@@ -157,15 +158,23 @@ public class PrincessSettingsBuilder {
         if (hasFleeValue) {
             settings.setAutoFlee(doFlee);
         }
+        if (fleeDestinationEdge != null) {
+            settings.setDestinationEdge(fleeDestinationEdge);
+        }
         if (hasForcedWithdrawValue) {
             settings.setForcedWithdrawal(useForcedWithdraw);
         }
-        if ((description != null) && !description.isBlank()) {
-            try {
-                settings.setDescription(description);
-            } catch (PrincessException ex) {
-                // ignore, description has been made sure to not be empty
-            }
+        if (withdrawEdge != null) {
+            settings.setRetreatEdge(withdrawEdge);
+        }
+
+        if ((description == null) || description.isBlank()) {
+            description = "(No description)";
+        }
+        try {
+            settings.setDescription(description);
+        } catch (PrincessException ex) {
+            // ignore, description has been made sure to not be empty
         }
 
         return settings;

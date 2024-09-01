@@ -11,11 +11,12 @@ factions:
   bot:
     herdmentality: 10
     selfpreservation: 10
-    retreat: SOUTH
+    flee: true
+    destination: SOUTH
 
   units:
-  - fullname: Atlas AS7-D
-  - fullname: Locust LCT-1M
+    - fullname: Atlas AS7-D
+    - fullname: Locust LCT-1M
 
 - name: 2nd Air Cavalry, Federated Suns
   units:

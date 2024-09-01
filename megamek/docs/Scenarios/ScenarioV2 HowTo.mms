@@ -307,14 +307,14 @@ factions:
       herdmentality: 5
       # Optional: how quickly will I try to escape once damaged?
       bravery: 5
-      # Optional: which edge am I trying to reach? This is used for the "flee" status
-      destination: none
-      # Optional: to which edge will my units flee when crippled?
+      # Optional: use forced Withdrawal, this is true by default
+      forcedwithdrawal: true
+      # Optional: the edge to retreat to, nearest by default; use south, north, west, east, nearest
       retreat: nearest
-
-      # Optional: flee = will try to reach the destinationEdge even when not crippled
-      # forcedwithdrawal = follow the Forced Withdrawal rules
-      status: [ flee, forcedwithdrawal ]
+      # Optional: flee = true will try to reach the destination edge even when not crippled
+      flee: true
+      # Optional: the edge to flee to; use south, north, west, east, nearest
+      destination: none
 
       #      private boolean goHome = false; // Should I immediately proceed to my home board edge?
       #      private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to blow up?
@@ -349,7 +349,7 @@ factions:
 events:
   - type: princesssettings
     destination: south
-    status: flee
+    flee: true
 
 
 

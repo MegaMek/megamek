@@ -9,10 +9,8 @@ factions:
 - name: Legion of Vega
 
   bot:
-    herdmentality: 10
-    selfpreservation: 10
     flee: true
-    destination: SOUTH
+    destination: south
 
   units:
     - fullname: Atlas AS7-D

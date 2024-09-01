@@ -115,6 +115,18 @@ public class PrincessSettingsBuilder {
         return this;
     }
 
+    @JsonSetter("fleeDestinationEdge")
+    public PrincessSettingsBuilder setFleeEdge(String edge) {
+        fleeDestinationEdge = CardinalEdge.valueOf(edge.toUpperCase());
+        return this;
+    }
+
+    @JsonSetter("withdrawEdge")
+    public PrincessSettingsBuilder withdrawEdge(String edge) {
+        withdrawEdge = CardinalEdge.valueOf(edge.toUpperCase());
+        return this;
+    }
+
     public PrincessSettingsBuilder description(String description) {
         if ((description == null) || description.isBlank()) {
             throw new IllegalArgumentException("Description cannot be null or empty");

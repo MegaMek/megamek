@@ -31,7 +31,15 @@ public enum PacketCommand {
     PLAYER_REMOVE,
     PLAYER_UPDATE,
     PLAYER_TEAM_CHANGE,
+
+    /**
+     * A packet replacing a Client's knowledge of all bot settings (S -> C) or updating the Server on a single
+     * bot's settings (C -> S). Does not invoke any actual changes to bots.
+     */
     PRINCESS_SETTINGS,
+
+    /** A Server to Client packet instructing a Princess Client to replace its settings. */
+    CHANGE_PRINCESS_SETTINGS,
 
     /** A packet setting a Client's ready status (S -> C) or updating the Server on the Client's status (C -> S). */
     PLAYER_READY,

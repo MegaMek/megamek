@@ -348,6 +348,9 @@ factions:
 
 events:
   - type: princesssettings
+    trigger:
+      - type: unitkilled
+        unit: 103
     destination: south
     flee: true
 
@@ -510,7 +513,7 @@ trigger:
     # here, the unit 201 must be killed AND it must be the start of the movement phase for this AND trigger
     # to activate
     - type: killedunit
-      units: 201
+      unit: 201
     - type: phasestart
       phase: movement
 
@@ -522,7 +525,7 @@ trigger:
     # here, the unit 201 must be killed OR it must be the start of the movement phase for this OR trigger
     # to activate
     - type: killedunit
-      units: 201
+      unit: 201
     - type: phasestart
       phase: movement
 

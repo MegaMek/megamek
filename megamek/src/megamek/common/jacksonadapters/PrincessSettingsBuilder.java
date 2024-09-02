@@ -18,9 +18,7 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
@@ -31,6 +29,7 @@ import megamek.logging.MMLogger;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.*;
 
 @JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, setterVisibility = NONE)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PrincessSettingsBuilder {
 
     private static final MMLogger LOGGER = MMLogger.create(PrincessSettingsBuilder.class);

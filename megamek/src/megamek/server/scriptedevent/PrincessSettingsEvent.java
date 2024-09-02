@@ -18,6 +18,8 @@
  */
 package megamek.server.scriptedevent;
 
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.common.Player;
 import megamek.common.jacksonadapters.PrincessSettingsBuilder;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -51,17 +53,38 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
 
     @Override
     public void process(IGameManager gameManager) {
-        if (gameManager instanceof GameManager gm) {
-            if (gm.getGame().getBotSettings().containsKey(playerName)) {
-                // apply this only if there is already a Princess with settings registered for the player name
-                gm.getGame().getBotSettings().compute(playerName, (k, oldSettings) -> settingsBuilder.build(oldSettings));
-//TODO                gm.send(player.getId(), new Packet(PacketCommand.PRINCESS_SETTINGS, settings));
-            } else {
-                LogManager.getLogger().warn("PrincessSettingsEvent found no bot player with the right name");
-            }
-        } else {
-            LogManager.getLogger().error("PrincessSettingsEvent is only available in TW games");
+        if (!validateData(gameManager)) {
+            return;
         }
+
+        GameManager gm = (GameManager) gameManager;
+        int id = findPlayerId(playerName, gm);
+        BehaviorSettings newSettings = settingsBuilder.build(gm.getGame().getBotSettings().get(playerName));
+        gm.getGame().getBotSettings().put(playerName, newSettings);
+        gm.send(id, new Packet(PacketCommand.CHANGE_PRINCESS_SETTINGS, newSettings));
+    }
+
+    private boolean validateData(IGameManager gameManager) {
+        if (!(gameManager instanceof GameManager gm)) {
+            LogManager.getLogger().error("PrincessSettingsEvent is only available in TW games");
+            return false;
+        } else if (findPlayerId(playerName, gameManager) == Player.PLAYER_NONE) {
+            LogManager.getLogger().warn("No player ID for the player name {}", playerName);
+            return false;
+        } else if (!gm.getGame().getBotSettings().containsKey(playerName)) {
+            LogManager.getLogger().warn("No bot settings known for the player name {}", playerName);
+            return false;
+        }
+        return true;
+    }
+
+    private int findPlayerId(String playerName, IGameManager gameManager) {
+        for (Player player : gameManager.getGame().getPlayersList()) {
+            if (playerName.equals(player.getName())) {
+                return player.getId();
+            }
+        }
+        return Player.PLAYER_NONE;
     }
 
     @Override

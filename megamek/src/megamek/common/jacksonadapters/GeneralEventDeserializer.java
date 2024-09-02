@@ -20,31 +20,27 @@ package megamek.common.jacksonadapters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.ui.swing.ScenarioDialog;
+import megamek.server.scriptedevent.TriggeredActiveEvent;
 
-public final class BotParser {
+import java.io.File;
 
-    static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
+public class GeneralEventDeserializer {
 
-    public interface BotInfo {
-        int type();
+    private static final String TYPE = "type";
+    private static final String EVENT = "event";
+    private static final String PRINCESS_SETTINGS = "princesssettings";
+    private static final String MESSAGE = "message";
+
+
+    public static TriggeredActiveEvent parse(JsonNode node, File basePath) throws JsonProcessingException {
+        String type = node.get(TYPE).asText();
+        JsonNode eventNode = node.get(EVENT);
+        return switch (type) {
+            case PRINCESS_SETTINGS -> PrincessSettingsEventDeserializer.parse(eventNode);
+            case MESSAGE -> MessageDeserializer.parse(eventNode, basePath);
+            default -> throw new IllegalArgumentException("Unknown event type: " + type);
+        };
     }
 
-    public record PrincessRecord(BehaviorSettings behaviorSettings) implements BotInfo {
-
-        @Override
-        public int type() {
-            return ScenarioDialog.T_BOT;
-        }
-    }
-
-    public static BotInfo parse(JsonNode node) throws JsonProcessingException {
-        PrincessSettingsBuilder builder = YAML_MAPPER.treeToValue(node, PrincessSettingsBuilder.class);
-        return new PrincessRecord(builder.build());
-    }
-
-    private BotParser() { }
+    private GeneralEventDeserializer() { }
 }

@@ -19,27 +19,21 @@
 package megamek.common.jacksonadapters;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.ui.MMMarkdownRenderer;
 import megamek.server.scriptedevent.PrincessSettingsEvent;
 import megamek.server.trigger.Trigger;
-import org.apache.logging.log4j.LogManager;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
+import static megamek.common.jacksonadapters.BotParser.YAML_MAPPER;
 
 public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessSettingsEvent> {
 
-    private static final String TEXT = "text";
-    private static final String HEADER = "header";
+    private static final String PLAYER_NAME = "player";
     private static final String TRIGGER = "trigger";
-    private static final String IMAGE = "image";
 
     public PrincessSettingsEventDeserializer() {
         this(null);
@@ -61,19 +55,10 @@ public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessS
      * @return a list of parsed message events
      * @throws IllegalArgumentException for illegal node combinations and other errors
      */
-    public static PrincessSettingsEvent parse(JsonNode eventNode) {
-        // TODO: how to give incomplete settings to change only one setting
-        // TODO: unify parsing with BotParser
-        // TODO: update Lowering the Boom reverse messages
-        requireFields("MessageScriptedEvent", eventNode, TEXT, HEADER, TRIGGER);
-
-        String header = eventNode.get(HEADER).textValue();
-        String text = eventNode.get(TEXT).textValue();
-        // By default, expect this to be markdown and render to HTML; this preserves line breaks and paragraphs
-        text = MMMarkdownRenderer.getRenderedHtml(text);
+    public static PrincessSettingsEvent parse(JsonNode eventNode) throws JsonProcessingException {
         Trigger trigger = TriggerDeserializer.parseNode(eventNode.get(TRIGGER));
-
-
-        return new PrincessSettingsEvent(trigger, header, new PrincessSettingsBuilder());
+        String playerName = eventNode.get(PLAYER_NAME).asText();
+        PrincessSettingsBuilder builder = YAML_MAPPER.treeToValue(eventNode, PrincessSettingsBuilder.class);
+        return new PrincessSettingsEvent(trigger, playerName, builder);
     }
 }

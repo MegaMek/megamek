@@ -59,6 +59,7 @@ public class ScenarioV2 implements Scenario {
     private static final String TRIGGER = "trigger";
     private static final String VICTORY = "victory";
     private static final String BOT = "bot";
+    private static final String EVENTS = "events";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -126,6 +127,7 @@ public class ScenarioV2 implements Scenario {
         parsePlayers(game);
         parseMessages(game);
         parseGameEndEvents(game);
+        parseGeneralEvents(game);
 
         game.setupTeams();
 
@@ -157,6 +159,23 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
+    private void parseGeneralEvents(IGame game) {
+        if (node.has(EVENTS)) {
+            node.get(EVENTS).iterator().forEachRemaining(n -> {
+                try {
+                    parseGeneralEvent(game, n);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
+    private void parseGeneralEvent(IGame game, JsonNode node) throws JsonProcessingException {
+        game.addScriptedEvent(GeneralEventDeserializer.parse(node, scenarioDirectory()));
+    }
+
+
     private void parseGameEndEvents(IGame game) {
         if (node.has(END)) {
             node.get(END).iterator().forEachRemaining(n -> parseGameEndEvent(game, n));
@@ -165,7 +184,6 @@ public class ScenarioV2 implements Scenario {
 
     private void parseGameEndEvent(IGame game, JsonNode node) {
         game.addScriptedEvent(new GameEndTriggeredEvent(TriggerDeserializer.parseNode(node.get(TRIGGER))));
-
     }
 
     private void parseMessages(IGame game) {

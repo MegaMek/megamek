@@ -24,8 +24,7 @@ import megamek.common.IBomber;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Jay Lawson

@@ -21,7 +21,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;

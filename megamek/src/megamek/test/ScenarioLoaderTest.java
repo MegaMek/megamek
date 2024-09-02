@@ -10,10 +10,9 @@ import java.util.Locale;
 
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
-import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoaderException;
 import megamek.common.scenario.ScenarioV1;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 

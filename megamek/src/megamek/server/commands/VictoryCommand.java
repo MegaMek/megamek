@@ -14,8 +14,8 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * Causes automatic victory at the end of the current turn.

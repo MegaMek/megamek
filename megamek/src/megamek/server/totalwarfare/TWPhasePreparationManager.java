@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.server.totalwarfare;
 
 import megamek.MegaMek;
 import megamek.common.*;
@@ -24,10 +24,11 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.EmailService;
+import megamek.server.DynamicTerrainProcessor;
+import megamek.server.Server;
+import megamek.server.ServerBoardHelper;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,7 @@ public class TWPhasePreparationManager {
                 gameManager.getGame().getEntitiesVector().forEach(e -> e.getCrew().resetActedFlag());
 
                 gameManager.incrementAndSendGameRound();
-                gameManager.autoSaveService.performRollingAutosave();
+                gameManager.getAutoSaveService().performRollingAutosave();
 
                 // setIneligible(phase);
                 gameManager.determineTurnOrder(phase);
@@ -180,7 +181,7 @@ public class TWPhasePreparationManager {
                 gameManager.resolveEmergencyCoolantSystem();
                 gameManager.checkForSuffocation();
                 gameManager.getGame().getPlanetaryConditions().determineWind();
-                gameManager.send(gameManager.packetHelper.createPlanetaryConditionsPacket());
+                gameManager.send(gameManager.getPacketHelper().createPlanetaryConditionsPacket());
 
                 gameManager.applyBuildingDamage();
                 gameManager.addReport(gameManager.getGame().ageFlares());

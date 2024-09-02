@@ -25,7 +25,6 @@ import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -36,8 +35,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Jay Lawson

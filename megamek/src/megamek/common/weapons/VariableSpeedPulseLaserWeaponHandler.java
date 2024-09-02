@@ -26,8 +26,7 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -5701939682138221449L;

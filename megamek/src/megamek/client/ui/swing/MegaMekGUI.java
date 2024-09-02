@@ -57,7 +57,7 @@ import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import megamek.server.IGameManager;
 import megamek.server.Server;
 import megamek.utilities.xml.MMXMLUtility;

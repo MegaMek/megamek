@@ -22,8 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MGAWeaponHandler;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Sebastian Brocks

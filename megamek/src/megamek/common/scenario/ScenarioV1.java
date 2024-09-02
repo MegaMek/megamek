@@ -32,7 +32,7 @@ import megamek.common.planetaryconditions.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import megamek.server.IGameManager;
 import org.apache.logging.log4j.LogManager;
 

@@ -24,8 +24,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Andrew Hunter

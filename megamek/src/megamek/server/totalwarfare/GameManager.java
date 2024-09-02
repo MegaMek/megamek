@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.server.totalwarfare;
 
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -46,6 +46,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
@@ -18828,7 +18829,7 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    void checkRandomAeroMovement(Entity entity, int hotDogMod) {
+    public void checkRandomAeroMovement(Entity entity, int hotDogMod) {
         if (!entity.isAero()) {
             return;
         }
@@ -27326,7 +27327,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Makes one slot of ammo, determined by certain rules, explode on a mech.
      */
-    Vector<Report> explodeAmmoFromHeat(Entity entity) {
+    public Vector<Report> explodeAmmoFromHeat(Entity entity) {
         int damage = 0;
         int rack = 0;
         int boomloc = -1;
@@ -29826,7 +29827,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Creates a packet containing all current and out-of-game entities
      */
-    Packet createFullEntitiesPacket() {
+    public Packet createFullEntitiesPacket() {
         return new Packet(PacketCommand.SENDING_ENTITIES, getGame().getEntitiesVector(),
                 getGame().getOutOfGameEntitiesVector(), getGame().getForces());
     }
@@ -33503,7 +33504,7 @@ public class GameManager extends AbstractGameManager {
      * @param eruption <code>boolean</code> indicating whether or not this is because
      *                 of an eruption
      */
-    void doMagmaDamage(Entity en, boolean eruption) {
+    public void doMagmaDamage(Entity en, boolean eruption) {
         if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
                 || (en.getMovementMode() == EntityMovementMode.HOVER)
                 || ((en.getMovementMode() == EntityMovementMode.WIGE)

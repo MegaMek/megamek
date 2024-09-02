@@ -2,7 +2,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import megamek.server.Server;
 
 /**

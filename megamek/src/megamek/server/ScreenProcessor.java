@@ -17,6 +17,7 @@ package megamek.server;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.totalwarfare.GameManager;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 
@@ -28,7 +29,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveScreen();

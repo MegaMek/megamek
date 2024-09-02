@@ -21,12 +21,11 @@ package megamek.common.weapons.other;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.NarcExplosiveHandler;
 import megamek.common.weapons.NarcHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Sebastian Brocks

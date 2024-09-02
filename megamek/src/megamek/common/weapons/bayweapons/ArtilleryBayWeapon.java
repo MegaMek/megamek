@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.*;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Jay Lawson

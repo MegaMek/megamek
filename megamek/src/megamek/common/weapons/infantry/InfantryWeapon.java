@@ -17,12 +17,11 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Sebastian Brocks

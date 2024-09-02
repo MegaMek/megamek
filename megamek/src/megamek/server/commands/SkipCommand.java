@@ -13,9 +13,8 @@
  */
 package megamek.server.commands;
 
-import megamek.common.Game;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * Skips the current player's turn, if possible.

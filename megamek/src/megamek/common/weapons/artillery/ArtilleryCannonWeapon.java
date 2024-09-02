@@ -21,7 +21,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryCannonWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Sebastian Brocks

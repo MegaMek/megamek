@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.HVACWeaponHandler;
 import megamek.common.weapons.RapidfireHVACWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Jason Tighe

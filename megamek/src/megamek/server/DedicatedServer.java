@@ -18,6 +18,7 @@ import megamek.common.commandline.ClientServerCommandLineParser;
 import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
+import megamek.server.totalwarfare.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;

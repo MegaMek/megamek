@@ -20,7 +20,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 import java.util.Enumeration;
 import java.util.List;

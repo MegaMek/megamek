@@ -15,8 +15,8 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * Allows an observer to see all units

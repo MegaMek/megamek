@@ -15,8 +15,8 @@ package megamek.server.commands;
 
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * @author Coelocanth

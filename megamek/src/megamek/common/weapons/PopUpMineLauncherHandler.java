@@ -27,8 +27,7 @@ import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {

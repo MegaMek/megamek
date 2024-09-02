@@ -23,8 +23,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.WeaponHandler;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.GameManager;
 
 public class BALBXHandler extends WeaponHandler {
     private static final long serialVersionUID = -6378056043285522609L;

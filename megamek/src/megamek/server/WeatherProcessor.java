@@ -19,6 +19,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * Cycle through hexes on a map and make any necessary adjustments based on weather
@@ -47,7 +48,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveWeather();

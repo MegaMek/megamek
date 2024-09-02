@@ -19,7 +19,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.AmmoBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 
 /**
  * This is my attempt to get weapon bays treated as normal weapons rather than the current hack in

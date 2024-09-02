@@ -15,10 +15,9 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;

@@ -4,7 +4,7 @@
 package megamek.server.commands;
 
 import megamek.common.util.AddBotUtil;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import megamek.server.Server;
 
 /**

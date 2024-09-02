@@ -4,7 +4,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.verifier.TestEntity;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.GameManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

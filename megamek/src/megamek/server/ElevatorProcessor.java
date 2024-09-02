@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * This is for simulating the vertically moving walls in the Solaris 7
@@ -30,7 +30,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
 
     private ElevatorInfo[] elevators = null;
 
-    public ElevatorProcessor(GameManager gameManager) {
+    public ElevatorProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 

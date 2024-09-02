@@ -33,7 +33,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.SRMHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -58,7 +58,7 @@ public abstract class SRTWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new SRMHandler(toHit, waa, game, manager);
     }
     

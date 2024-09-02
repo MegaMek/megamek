@@ -35,7 +35,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -67,7 +67,7 @@ public abstract class LRTWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MissileWeaponHandler(toHit, waa, game, manager);
     }
 

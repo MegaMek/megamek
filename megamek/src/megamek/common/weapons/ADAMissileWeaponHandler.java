@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -38,7 +38,7 @@ public class ADAMissileWeaponHandler extends MissileWeaponHandler {
      * @param m
      */
     public ADAMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-                                   GameManager m) {
+                                   TWGameManager m) {
         super(t, w, g, m);
     }
 

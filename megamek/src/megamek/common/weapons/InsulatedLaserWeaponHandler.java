@@ -26,7 +26,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -7951442134048385366L;
@@ -37,7 +37,7 @@ public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public InsulatedLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, GameManager m) {
+            Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

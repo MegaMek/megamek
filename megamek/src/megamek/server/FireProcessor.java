@@ -21,7 +21,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -32,7 +32,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     private Game game;
     Vector<Report> vPhaseReport;
 
-    public FireProcessor(GameManager gameManager) {
+    public FireProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 

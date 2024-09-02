@@ -20,7 +20,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         super();
     }
 
-    public ArtilleryBayWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ArtilleryBayWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

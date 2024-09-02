@@ -17,12 +17,12 @@ package megamek.server;
 import java.util.Vector;
 
 import megamek.common.Report;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public abstract class DynamicTerrainProcessor {
-    protected GameManager gameManager;
+    protected TWGameManager gameManager;
 
-    DynamicTerrainProcessor(GameManager gameManager) {
+    DynamicTerrainProcessor(TWGameManager gameManager) {
         this.gameManager = gameManager;
     }
 

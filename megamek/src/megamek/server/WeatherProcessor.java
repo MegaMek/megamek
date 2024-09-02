@@ -19,7 +19,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * Cycle through hexes on a map and make any necessary adjustments based on weather
@@ -43,7 +43,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     int sleetTurn = 0;
     int iceTurn = 0;
 
-    public WeatherProcessor(GameManager gameManager) {
+    public WeatherProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 

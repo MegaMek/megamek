@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeCLUltraWeaponHandler;
 import megamek.common.weapons.autocannons.UACWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -38,7 +38,7 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
             return new PrototypeCLUltraWeaponHandler(toHit, waa, game, manager);

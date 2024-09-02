@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeaponHandler;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class BATaserHandler extends AmmoWeaponHandler {
 
@@ -33,7 +33,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public BATaserHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public BATaserHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

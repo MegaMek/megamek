@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
 /**
  * Manages the Game and processes player actions.
  */
-public class GameManager extends AbstractGameManager {
+public class TWGameManager extends AbstractGameManager {
 
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -121,7 +121,7 @@ public class GameManager extends AbstractGameManager {
      */
     private final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
-    public GameManager() {
+    public TWGameManager() {
         EquipmentType.initializeTypes();
         game.getOptions().initialize();
         game.getOptions().loadOptions();

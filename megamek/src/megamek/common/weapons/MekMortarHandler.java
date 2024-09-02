@@ -23,7 +23,7 @@ import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -38,7 +38,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      * @param g
      * @param m
      */
-    public MekMortarHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MekMortarHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
     }

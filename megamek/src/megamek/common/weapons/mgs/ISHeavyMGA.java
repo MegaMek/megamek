@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MGAWeaponHandler;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -80,7 +80,7 @@ public class ISHeavyMGA extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new MGAWeaponHandler(toHit, waa, game, manager);
     }
 

@@ -21,7 +21,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.SmokeCloud;
 
 import java.util.Vector;
@@ -38,7 +38,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      * @param g
      * @param m
      */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

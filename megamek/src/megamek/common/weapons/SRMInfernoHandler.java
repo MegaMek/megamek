@@ -28,7 +28,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -42,7 +42,7 @@ public class SRMInfernoHandler extends SRMHandler {
      * @param g
      * @param m
      */
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         damageType = DamageType.INFERNO;
         sSalvoType = " inferno missile(s) ";

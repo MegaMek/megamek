@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -30,7 +30,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

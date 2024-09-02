@@ -31,7 +31,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class HyperLaserHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 1;
@@ -42,7 +42,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
      * @param g
      */
     public HyperLaserHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game g, GameManager m) {
+            WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

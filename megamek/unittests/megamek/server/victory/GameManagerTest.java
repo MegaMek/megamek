@@ -5,7 +5,7 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class GameManagerTest {
 
     @Test
     public void testVictory() {
-        GameManager gameManager = new GameManager();
+        TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
@@ -58,7 +58,7 @@ public class GameManagerTest {
 
     @Test
     public void testVictoryDrawReport() {
-        GameManager gameManager = new GameManager();
+        TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
         Game testGame = createMockedGame();
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
@@ -71,7 +71,7 @@ public class GameManagerTest {
 
     @Test
     public void testVictoryFalseReport() {
-        GameManager gameManager = new GameManager();
+        TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
@@ -83,7 +83,7 @@ public class GameManagerTest {
 
     @Test
     public void testCancelVictory() {
-        GameManager gameManager = new GameManager();
+        TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
@@ -96,7 +96,7 @@ public class GameManagerTest {
 
     @Test
     public void testVictoryWinReports() {
-        GameManager gameManager = new GameManager();
+        TWGameManager gameManager = new TWGameManager();
 
         int winner = 1;
 
@@ -125,7 +125,7 @@ public class GameManagerTest {
 
         // Second test server tests with both a team != TEAM_NONE and a player != PLAYER_NONE
         // Two reports should be generated
-        GameManager gameManager2 = new GameManager();
+        TWGameManager gameManager2 = new TWGameManager();
 
         when(victoryResult.getWinningTeam()).thenReturn(10);
         when(victoryResult.getReports()).thenReturn(new ArrayList<>());

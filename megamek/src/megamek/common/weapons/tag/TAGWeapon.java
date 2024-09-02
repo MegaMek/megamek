@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -36,7 +36,7 @@ public abstract class TAGWeapon extends Weapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new TAGHandler(toHit, waa, game, manager);
     }
 }

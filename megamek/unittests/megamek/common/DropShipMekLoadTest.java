@@ -4,7 +4,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.verifier.TestEntity;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +26,7 @@ public class DropShipMekLoadTest {
         game.addEntity(atlas);
         game.addEntity(leopard);
 
-        GameManager gm = mock(GameManager.class);
+        TWGameManager gm = mock(TWGameManager.class);
         doNothing().when(gm).entityUpdate(anyInt());
         when(gm.getGame()).thenReturn(game);
         doCallRealMethod().when(gm).setGame(any(Game.class));

@@ -22,14 +22,14 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -6816799343788643259L;
 
-    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

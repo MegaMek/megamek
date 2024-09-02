@@ -19,7 +19,7 @@ import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -112,7 +112,7 @@ public class SharedUtility {
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT
                     && (entity.isFighter())) {
-                rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
+                rollTarget = TWGameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
         }
@@ -475,7 +475,7 @@ public class SharedUtility {
 
             // Check for Ejecting
             if ((step.getType() == MoveStepType.EJECT) && (entity instanceof Mech)) {
-                rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
+                rollTarget = TWGameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -487,7 +487,7 @@ public class SharedUtility {
                         && (targ instanceof Infantry)
                         && (((Entity) targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
-                    rollTarget = GameManager.getEjectModifiers(game, (Entity) targ, 0,
+                    rollTarget = TWGameManager.getEjectModifiers(game, (Entity) targ, 0,
                             false, entity.getPosition(), "zip lining");
                     // Factor in Elevation
                     if (entity.getElevation() > 0) {

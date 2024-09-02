@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -34,7 +34,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // deserialization only
     }
 
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }

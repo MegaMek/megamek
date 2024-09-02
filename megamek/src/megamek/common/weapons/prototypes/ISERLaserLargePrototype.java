@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeLaserHandler;
 import megamek.common.weapons.lasers.LaserWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -78,7 +78,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new PrototypeLaserHandler(toHit, waa, game, manager);
     }
 

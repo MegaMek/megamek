@@ -27,7 +27,7 @@ import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
@@ -39,7 +39,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      * @param g
      */
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, GameManager m) {
+            Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         sSalvoType = " mine(s) ";
     }

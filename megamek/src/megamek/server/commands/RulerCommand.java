@@ -5,7 +5,7 @@ import megamek.common.LosEffects;
 import megamek.common.LosEffects.AttackInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -14,9 +14,9 @@ import megamek.server.Server;
  */
 public class RulerCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public RulerCommand(Server server, GameManager gameManager) {
+    public RulerCommand(Server server, TWGameManager gameManager) {
         super(server, "ruler",
                 "Show Line of Sight (LOS) information between two points of the map. Usage: /ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing mechs. Prone mechs and most other units are at elevation 0.");
         this.gameManager = gameManager;

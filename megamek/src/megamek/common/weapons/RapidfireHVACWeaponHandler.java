@@ -26,13 +26,13 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.SmokeCloud;
 
 public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
     private static final long serialVersionUID = 7326881584091651519L;
 
-    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

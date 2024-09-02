@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -32,7 +32,7 @@ public class HGRHandler extends GRHandler {
      * @param g
      * @param m
      */
-    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

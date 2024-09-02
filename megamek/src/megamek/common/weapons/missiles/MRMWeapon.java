@@ -28,7 +28,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MRMHandler;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -46,7 +46,7 @@ public abstract class MRMWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MRMHandler(toHit, waa, game, manager);
     }
     

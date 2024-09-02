@@ -22,7 +22,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -36,7 +36,7 @@ public abstract class EnergyWeapon extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new EnergyWeaponHandler(toHit, waa, game, manager);
     }
     

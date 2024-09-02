@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -32,7 +32,7 @@ public class CLIATMHandler extends ATMHandler {
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
 
-    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
     }

@@ -20,7 +20,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Enumeration;
 import java.util.List;
@@ -35,7 +35,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean advancedPD = false;
     boolean multiAMS = false;
 
-    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
         advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);

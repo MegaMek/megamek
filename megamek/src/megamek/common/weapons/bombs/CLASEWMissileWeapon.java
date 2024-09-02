@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ASEWMissileWeaponHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -72,7 +72,7 @@ public class CLASEWMissileWeapon extends ThunderBoltWeapon {
     
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ASEWMissileWeaponHandler(toHit, waa, game, manager);
     }
 }

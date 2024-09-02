@@ -19,7 +19,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -40,7 +40,7 @@ public abstract class AmmoWeapon extends Weapon {
      * , megamek.common.Game)
      */
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, GameManager manager) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
@@ -69,7 +69,7 @@ public abstract class AmmoWeapon extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new AmmoWeaponHandler(toHit, waa, game, manager);
     }
 }

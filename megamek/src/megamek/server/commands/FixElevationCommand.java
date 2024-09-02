@@ -16,7 +16,7 @@ package megamek.server.commands;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.server.Server;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Coelocanth
@@ -24,10 +24,10 @@ import megamek.server.totalwarfare.GameManager;
  */
 public class FixElevationCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
     /** Creates new FixElevationCommand */
-    public FixElevationCommand(Server server, GameManager gameManager) {
+    public FixElevationCommand(Server server, TWGameManager gameManager) {
         super(server, "fixelevation",
                 "Fix elevation of any units that are messed up");
         this.gameManager = gameManager;

@@ -12,7 +12,7 @@ import megamek.common.Game;
 import megamek.common.MechSummaryCache;
 import megamek.common.scenario.ScenarioLoaderException;
 import megamek.common.scenario.ScenarioV1;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 
@@ -86,7 +86,7 @@ public class ScenarioLoaderTest {
             ScenarioV1 scenario = (ScenarioV1) loader.load();
             try {
                 Game game = (Game) scenario.createGame();
-                GameManager gameManager = new GameManager();
+                TWGameManager gameManager = new TWGameManager();
                 Server server = new Server("test", port + 1, gameManager);
                 server.setGame(game);
                 scenario.applyDamage(gameManager);

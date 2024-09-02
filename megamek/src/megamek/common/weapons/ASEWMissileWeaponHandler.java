@@ -21,7 +21,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -39,7 +39,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
      * @param g - The current game
      * @param m - The current GameManager instance
      */
-    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
     

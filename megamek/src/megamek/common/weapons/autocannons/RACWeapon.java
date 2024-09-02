@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RACHandler;
 import megamek.common.weapons.UltraWeaponHandler;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -50,7 +50,7 @@ public abstract class RACWeapon extends UACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
         if (weapon.curMode().equals(MODE_RAC_SIX_SHOT)

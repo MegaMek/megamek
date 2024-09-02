@@ -27,7 +27,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -46,7 +46,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                 && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)

@@ -35,7 +35,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -49,11 +49,11 @@ public class LRMHandler extends MissileWeaponHandler {
      * @param g
      * @param m
      */
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         this(t, w, g, m, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m,
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m,
             int salvoMod) {
         super(t, w, g, m);
         nSalvoBonus = salvoMod;

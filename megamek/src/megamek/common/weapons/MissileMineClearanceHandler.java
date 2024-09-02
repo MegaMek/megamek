@@ -17,7 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.weapons.lrms.LRMWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.Vector;
 public class MissileMineClearanceHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2753652169368638804L;
 
-    public MissileMineClearanceHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MissileMineClearanceHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

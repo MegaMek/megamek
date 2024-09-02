@@ -27,9 +27,9 @@ import megamek.server.ServerHelper;
 
 class TWPhaseEndManager {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public TWPhaseEndManager(GameManager gameManager) {
+    public TWPhaseEndManager(TWGameManager gameManager) {
         this.gameManager = gameManager;
     }
 

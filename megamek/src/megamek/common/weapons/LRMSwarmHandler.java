@@ -31,7 +31,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -47,7 +47,7 @@ public class LRMSwarmHandler extends LRMHandler {
      * @param g
      * @param m
      */
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " swarm missile(s) ";
     }

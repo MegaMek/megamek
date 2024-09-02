@@ -19,7 +19,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -29,9 +29,9 @@ import megamek.server.Server;
  */
 public class AllowGameMasterCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public AllowGameMasterCommand(Server server, GameManager gameManager) {
+    public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
         super(server, "allowGM", "Allows a player become Game Master "
                 + "Usage: /allowGameMaster used in respond to another " +
                 "Player's request to become Game Master.  All players assigned to" +
@@ -72,7 +72,7 @@ public class AllowGameMasterCommand extends ServerCommand {
             }
         }
 
-        GameManager gameManager = (GameManager) server.getGameManager();
+        TWGameManager gameManager = (TWGameManager) server.getGameManager();
 
         // Inform all players about the vote
         server.sendServerChat(player.getName() + " has voted to allow "

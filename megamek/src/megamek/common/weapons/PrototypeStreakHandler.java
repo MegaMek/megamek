@@ -22,7 +22,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,7 @@ import megamek.server.totalwarfare.GameManager;
 public class PrototypeStreakHandler extends SRMHandler {
     private static final long serialVersionUID = -6640810158443025266L;
 
-    public PrototypeStreakHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public PrototypeStreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         nSalvoBonus = 4;
     }

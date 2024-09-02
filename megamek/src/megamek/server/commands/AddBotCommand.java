@@ -4,7 +4,7 @@
 package megamek.server.commands;
 
 import megamek.common.util.AddBotUtil;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -12,12 +12,12 @@ import megamek.server.Server;
  */
 public class AddBotCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
     /**
      * @param server the megamek.server.Server.
      */
-    public AddBotCommand(Server server, GameManager gameManager) {
+    public AddBotCommand(Server server, TWGameManager gameManager) {
         super(server, AddBotUtil.COMMAND, AddBotUtil.USAGE);
         this.gameManager = gameManager;
     }

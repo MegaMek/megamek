@@ -2,7 +2,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -12,9 +12,9 @@ import megamek.server.Server;
  */
 public class ShowEntityCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public ShowEntityCommand(Server server, GameManager gameManager) {
+    public ShowEntityCommand(Server server, TWGameManager gameManager) {
         super(server, "entity",
                 "Print the information about a entity into the chat window. Usage: /entity # which would show the details for the entity numbered #.");
         // to be extended by adding /entity unit# loc# to list details on locations.

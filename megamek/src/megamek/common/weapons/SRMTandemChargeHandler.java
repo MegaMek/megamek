@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -32,7 +32,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @param m
      */
     public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " tandem charge missile(s) ";
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;

@@ -25,7 +25,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
@@ -53,7 +53,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean isJammed = false;
 
     protected Game game;
-    protected transient GameManager gameManager; // must not save the server
+    protected transient TWGameManager gameManager; // must not save the server
     protected boolean bMissed;
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
@@ -434,7 +434,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        gameManager = (GameManager) Server.getServerInstance().getGameManager();
+        gameManager = (TWGameManager) Server.getServerInstance().getGameManager();
     }
 
     protected TargetRoll getFireTNRoll() {
@@ -1759,7 +1759,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     // Among other things, basically a refactored Server#preTreatWeaponAttack
-    public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         damageType = DamageType.NONE;
         toHit = t;
         waa = w;

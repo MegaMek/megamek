@@ -29,7 +29,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
     private static final long serialVersionUID = -7243477723032010917L;
@@ -43,7 +43,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      * @param g
      */
     public ArtilleryBayWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, Game g, GameManager m) {
+            WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);

@@ -22,7 +22,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.WeaponMounted;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -37,7 +37,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param m
      */
-    public ACBayHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ACBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

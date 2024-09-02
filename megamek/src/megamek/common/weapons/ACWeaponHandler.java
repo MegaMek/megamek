@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -30,7 +30,7 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
      * @param g
      * @param m
      */
-    public ACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

@@ -36,7 +36,7 @@ import megamek.common.weapons.SRMInfernoHandler;
 import megamek.common.weapons.SRMSmokeWarheadHandler;
 import megamek.common.weapons.SRMTandemChargeHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -62,7 +62,7 @@ public abstract class SRMWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {

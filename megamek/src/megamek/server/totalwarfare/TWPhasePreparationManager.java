@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
 
 public class TWPhasePreparationManager {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public TWPhasePreparationManager(GameManager gameManager) {
+    public TWPhasePreparationManager(TWGameManager gameManager) {
         this.gameManager = gameManager;
     }
 
@@ -47,7 +47,7 @@ public class TWPhasePreparationManager {
                 gameManager.clearReports();
                 MapSettings mapSettings = gameManager.getGame().getMapSettings();
                 mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
-                mapSettings.setNullBoards(GameManager.DEFAULT_BOARD);
+                mapSettings.setNullBoards(TWGameManager.DEFAULT_BOARD);
                 gameManager.send(gameManager.createMapSettingsPacket());
                 gameManager.send(gameManager.createMapSizesPacket());
                 gameManager.checkForObservers();

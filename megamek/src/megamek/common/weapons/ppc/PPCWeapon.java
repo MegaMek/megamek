@@ -24,7 +24,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -49,7 +49,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new PPCHandler(toHit, waa, game, manager);
     }
 

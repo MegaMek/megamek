@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.server.totalwarfare.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -62,7 +62,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());

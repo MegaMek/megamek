@@ -17,18 +17,19 @@ package megamek.server;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 
     private Game game;
     Vector<Report> vPhaseReport;
 
-    public QuicksandProcessor(GameManager gameManager) {
+    public QuicksandProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveQuicksand();

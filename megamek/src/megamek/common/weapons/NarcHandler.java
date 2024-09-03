@@ -24,7 +24,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -32,7 +32,7 @@ import megamek.server.GameManager;
 public class NarcHandler extends MissileWeaponHandler {
     private static final long serialVersionUID = 3195613885543781820L;
 
-    public NarcHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public NarcHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

@@ -16,19 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.server.totalwarfare;
 
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
+import megamek.server.ServerHelper;
 
 class TWPhaseEndManager {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public TWPhaseEndManager(GameManager gameManager) {
+    public TWPhaseEndManager(TWGameManager gameManager) {
         this.gameManager = gameManager;
     }
 

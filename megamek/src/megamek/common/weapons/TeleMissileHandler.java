@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -36,7 +36,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      * @param m
      */
     public TeleMissileHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
     }
     

@@ -27,12 +27,12 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -5701939682138221449L;
 
-    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

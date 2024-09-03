@@ -16,7 +16,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -32,7 +32,7 @@ public class LRMFragHandler extends LRMHandler {
      * @param g
      * @param m
      */
-    public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;

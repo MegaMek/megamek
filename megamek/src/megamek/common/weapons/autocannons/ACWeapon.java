@@ -33,7 +33,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RapidfireACWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -65,7 +65,7 @@ public abstract class ACWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager gameManager) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
 
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());

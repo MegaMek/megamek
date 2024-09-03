@@ -5,6 +5,10 @@ import megamek.common.Report;
 
 import java.util.Vector;
 
+/**
+ * Classes working closely with TWGameManager can extend this class for less verbose access to report methods and
+ * the Game instance.
+ */
 abstract class AbstractTWRuleHandler  {
 
     final TWGameManager gameManager;

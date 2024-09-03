@@ -2872,7 +2872,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param loader - the <code>Entity</code> that is loading the unit.
      * @param unit   - the <code>Entity</code> being loaded.
      */
-    void loadUnit(Entity loader, Entity unit, int bayNumber) {
+    public void loadUnit(Entity loader, Entity unit, int bayNumber) {
         // ProtoMechs share a single turn for a Point. When loading one we don't remove its turn
         // unless it's the last unit in the Point to act.
         int remainingProtos = 0;

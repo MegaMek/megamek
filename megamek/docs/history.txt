@@ -2,6 +2,7 @@ MEGAMEK VERSION HISTORY:
 ----------------
 0.50.01-SNAPSHOT
 + PR #5962: Internal code changes (GameManager)
++ Fix #5960: BA Flamers flagged as illegal on Battle Armor
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

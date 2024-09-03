@@ -1,4 +1,4 @@
-package megamek.server;
+package megamek.server.totalwarfare;
 
 import megamek.common.*;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,9 +9,9 @@ import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameManagerTest {
+class TWGameManagerTest {
     private Player player;
-    private GameManager gameManager;
+    private TWGameManager gameManager;
     private Game game;
 
     @BeforeAll
@@ -22,7 +22,7 @@ class GameManagerTest {
     @BeforeEach
     void setUp() {
         player = new Player(0, "Test");
-        gameManager = new GameManager();
+        gameManager = new TWGameManager();
         game = gameManager.getGame();
         game.addPlayer(0, player);
     }

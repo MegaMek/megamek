@@ -126,7 +126,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int straightMoves = 0;
     private int altLoss = 0;
     private int altLossThisRound = 0;
-    
+
     //Autoejection
     private boolean critThresh = false;
 

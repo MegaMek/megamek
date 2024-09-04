@@ -20,6 +20,7 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.battlearmor.BAFlamerWeapon;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -1486,7 +1487,8 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("Heavy Gauss Rifles require a fusion or fission engine\n");
                     illegal = true;
                 } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
-                        && (m.getType().getAmmoType() == AmmoType.T_NA)) {
+                        && (m.getType().getAmmoType() == AmmoType.T_NA)
+                        && !(m.getType() instanceof BAFlamerWeapon)) {
                     buff.append("Standard flamers require a fusion or fission engine\n");
                     illegal = true;
                 } else if (m.getType().hasFlag(WeaponType.F_HYPER)) {

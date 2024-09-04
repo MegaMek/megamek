@@ -6,14 +6,14 @@ import megamek.common.Entity;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 public class ShowValidTargetsCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public ShowValidTargetsCommand(Server server, GameManager gameManager) {
+    public ShowValidTargetsCommand(Server server, TWGameManager gameManager) {
         super(server, "validTargets",
                 "Shows a list of entity id's that are valid targets for the current entity. Usage: /validTargets # where # is the id number of the entity you are shooting from.");
         this.gameManager = gameManager;

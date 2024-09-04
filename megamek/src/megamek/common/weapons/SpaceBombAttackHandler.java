@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
         // payload = waa.getBombPayload();

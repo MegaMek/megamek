@@ -37,7 +37,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -51,7 +51,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * @param g
      * @param m
      */
-    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

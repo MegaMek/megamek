@@ -25,7 +25,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +34,7 @@ import megamek.server.GameManager;
 public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
 
-    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }

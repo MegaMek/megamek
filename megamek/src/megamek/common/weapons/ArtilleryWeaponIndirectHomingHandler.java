@@ -24,7 +24,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      * @param g
      */
     public ArtilleryWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, Game g, GameManager m) {
+            WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);

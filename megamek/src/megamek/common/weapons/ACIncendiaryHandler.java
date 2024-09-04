@@ -16,8 +16,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -31,7 +30,7 @@ public class ACIncendiaryHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public ACIncendiaryHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ACIncendiaryHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         damageType = DamageType.INCENDIARY;
     }

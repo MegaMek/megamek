@@ -5,7 +5,7 @@ plugins {
     id 'edu.sc.seis.launch4j' version '3.0.6'
     id 'jacoco'
     id 'java'
-    id "io.sentry.jvm.gradle" version '4.10.0'
+    id "io.sentry.jvm.gradle" version '4.11.0'
     id 'com.palantir.git-version' version '3.1.0'
 }
 
@@ -245,15 +245,15 @@ launch4j {
     jarTask = project.tasks.jar
     windowTitle = 'MegaMek'
     internalName = 'MegaMek'
-    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
+    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     supportUrl = 'https://megamek.org'
     copyright = '2024 MegaMek Development Team.'
     trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
     jreMinVersion = '17'
     dontWrapJar = true
-    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
-    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
+    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
 }
 
 tasks.register("packagePrepWork") {

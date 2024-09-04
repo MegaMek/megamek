@@ -32,7 +32,7 @@ import megamek.common.planetaryconditions.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.IGameManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -344,7 +344,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
      */
     @Override
     public void applyDamage(IGameManager iGameManager) {
-        GameManager m = (GameManager) iGameManager;
+        TWGameManager m = (TWGameManager) iGameManager;
         for (DamagePlan damagePlan : damagePlans) {
             LogManager.getLogger().debug(String.format("Applying damage to %s", damagePlan.entity.getShortName()));
             for (int y = 0; y < damagePlan.nBlocks; ++ y) {

@@ -31,6 +31,7 @@ public class DropShipMekLoadTest {
         when(gm.getGame()).thenReturn(game);
         doCallRealMethod().when(gm).setGame(any(Game.class));
         doCallRealMethod().when(gm).handlePacket(anyInt(), any(Packet.class));
+        doCallRealMethod().when(gm).loadUnit(any(Entity.class), any(Entity.class), anyInt());
         gm.setGame(game);
 
         Packet packet = new Packet(PacketCommand.ENTITY_LOAD, atlas.getId(), leopard.getId(), -1);

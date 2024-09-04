@@ -22,6 +22,7 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -474,121 +475,239 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void hexMoused(BoardViewEvent b) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
-            return;
-        }
-
-        // ignore buttons other than 1
-        if (!clientgui.getClient().isMyTurn() || (ce() == null) || ((b.getButton() != MouseEvent.BUTTON1))) {
-            return;
-        }
-
-        // control pressed means a line of sight check.
-        // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+        Coords coords = b.getCoords();
+        Entity entity = ce();
+        if (isIgnoringEvents()
+                || (coords == null)
+                || (entity == null)
+                || !clientgui.getClient().isMyTurn()
+                || (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED)
+                || (b.getButton() != MouseEvent.BUTTON1)
+                || ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
                 || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
-        // check for shifty goodness
         boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+        Board board = clientgui.getClient().getGame().getBoard();
+//        final Hex deployhex = board.getHex(coords);
+//        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK)
+//                && !ce().hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
+//                && !ce().isNaval()
+//                && deployhex.containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE_ELEV);
 
-        // check for a deployment
-        Coords moveto = b.getCoords();
-        final Board board = clientgui.getClient().getGame().getBoard();
-        final Game game = clientgui.getClient().getGame();
-        final Hex deployhex = board.getHex(moveto);
-        final Building bldg = board.getBuildingAt(moveto);
-        boolean isAero = ce().isAero();
-        boolean isVTOL = ce() instanceof VTOL;
-        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
-        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK)
-                && !ce().hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
-                && !ce().isNaval()
-                && deployhex.containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE_ELEV);
-        String title, msg;
-        if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
-            ce().setFacing(ce().getPosition().direction(moveto));
-            ce().setSecondaryFacing(ce().getFacing());
-            clientgui.getBoardView().redrawEntity(ce());
-            clientgui.updateFiringArc(ce());
-            clientgui.showSensorRanges(ce());
-            turnMode = false;
-        } else if (ce().isBoardProhibited(board.getType())) {
-            // check if this type of unit can be on the given type of map
-            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(), Board.getTypeName(board.getType()));
-            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.WARNING_MESSAGE);
+        // When the unit is not already on the board, ignore turn mode and place the unit instead
+        if ((entity.getPosition() != null) && (shiftheld || turnMode)) {
+            processTurn(entity, coords);
             return;
-        } else if (!(board.isLegalDeployment(moveto, ce()) || assaultDropPreference)
-                || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
-            msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), moveto.getBoardNum());
-            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+        } else if (entity.isBoardProhibited(board.getType())) {
+            showWrongBoardTypeMessage();
             return;
-        } else if (isAero && board.inAtmosphere() && (ce().getElevation() <= board.getHex(moveto).ceiling(true))) {
-            // Ensure aeros don't end up at lower elevation than the current hex
-            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            msg = Messages.getString("DeploymentDisplay.elevationTooLow", ce().getShortName(), moveto.getBoardNum());
-            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+        } else if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
+            showCannotDeployHereMessage(coords);
             return;
-        } else if ((Compute.stackingViolation(game, ce().getId(), moveto, ce().climbMode()) != null) && (bldg == null)) {
-            // check if deployed unit violates stacking
+        }
+
+        int finalElevation;
+        List<ElevationOption> elevationOptions = findAllowedElevations(entity, coords);
+        if (elevationOptions.isEmpty()) {
+            showCannotDeployHereMessage(coords);
             return;
-        } else {
-            // check for buildings and if found ask what level they want to deploy at
-            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
-                if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    boolean success = processBuildingDeploy(moveto);
-                    if (!success) {
-                        return;
-                    }
-                } else if (deployhex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-                    boolean success = processBridgeDeploy(moveto);
-                    if (!success) {
-                        return;
-                    }
-                }
-            } else if (!isAero && !isWiGE) {
-                // hovers and naval units go on the surface
-                if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
-                        || (ce().getMovementMode() == EntityMovementMode.HYDROFOIL)
-                        || (ce().getMovementMode() == EntityMovementMode.HOVER)) {
-                    ce().setElevation(0);
-                } else if (ce().getMovementMode().isSubmarine()) {
-                    // submarines have one level above the surface
-                    ce().setElevation(-ce().height());
-                } else if (isVTOL) {
-                    // VTOLs go to elevation 1... unless set in the Lounge.
-                    // or if mechanized BA, since VTOL movement is then illegal
-                    if ((ce().getElevation() < 1) && (ce().getExternalUnits().size() <= 0)) {
-                        ce().setElevation(1);
-                    }
-                } else {
-                    // everything else goes to elevation 0, or on the floor of a
-                    // water hex, except non-mechanized SCUBA infantry, which have a max depth of 2.
-                    if (deployhex.containsTerrain(Terrains.WATER) && (ce() instanceof Infantry) && ((Infantry) ce()).isNonMechSCUBA()) {
-                        ce().setElevation(Math.max(deployhex.floor() - deployhex.getLevel(), -2));
-                    } else {
-                        ce().setElevation(deployhex.floor() - deployhex.getLevel());
-                    }
-                }
+        } else if (elevationOptions.size() > 1) {
+            var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
+            DialogResult result = dlg.showDialog();
+            if (result == DialogResult.CONFIRMED && dlg.getFirstChoice() != null) {
+                finalElevation = dlg.getFirstChoice().elevation();
+            } else {
+                return;
             }
-            ce().setPosition(moveto);
+        } else {
+            finalElevation = elevationOptions.get(0).elevation();
+        }
 
-            clientgui.getBoardView().redrawEntity(ce());
-            clientgui.updateFiringArc(ce());
-            clientgui.showSensorRanges(ce());
-            clientgui.getBoardView().getPanel().repaint();
-            butDone.setEnabled(true);
+        if (entity.isAero()) {
+            entity.setAltitude(finalElevation);
+        } else {
+            entity.setElevation(finalElevation);
         }
+        entity.setPosition(coords);
+        clientgui.getBoardView().redrawEntity(entity);
+        clientgui.updateFiringArc(entity);
+        clientgui.showSensorRanges(entity);
+        clientgui.getBoardView().getPanel().repaint();
+        butDone.setEnabled(true);
+
+
+
+
+
+//        final Game game = clientgui.getClient().getGame();
+//
+//        final Building bldg = board.getBuildingAt(coords);
+//        boolean isAero = ce().isAero();
+//        boolean isVTOL = ce() instanceof VTOL;
+//        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
+//
+//        String title, msg;
+//        if (isAero && board.inAtmosphere() && (ce().getElevation() <= board.getHex(coords).ceiling(true))) {
+//            // Ensure aeros don't end up at lower elevation than the current hex
+//            title = Messages.getString("DeploymentDisplay.alertDialog.title");
+//            msg = Messages.getString("DeploymentDisplay.elevationTooLow", ce().getShortName(), coords.getBoardNum());
+//            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+//            return;
+//        } else if ((Compute.stackingViolation(game, ce().getId(), coords, ce().climbMode()) != null) && (bldg == null)) {
+//            // check if deployed unit violates stacking
+//            return;
+//        } else {
+//            // check for buildings and if found ask what level they want to deploy at
+//            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
+//                if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
+//                    boolean success = processBuildingDeploy(coords);
+//                    if (!success) {
+//                        return;
+//                    }
+//                } else if (deployhex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+//                    boolean success = processBridgeDeploy(coords);
+//                    if (!success) {
+//                        return;
+//                    }
+//                }
+//            } else if (!isAero && !isWiGE) {
+//                // hovers and naval units go on the surface
+//                if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
+//                        || (ce().getMovementMode() == EntityMovementMode.HYDROFOIL)
+//                        || (ce().getMovementMode() == EntityMovementMode.HOVER)) {
+//                    ce().setElevation(0);
+//                } else if (ce().getMovementMode().isSubmarine()) {
+//                    // submarines have one level above the surface
+//                    ce().setElevation(-ce().height());
+//                } else if (isVTOL) {
+//                    // VTOLs go to elevation 1... unless set in the Lounge.
+//                    // or if mechanized BA, since VTOL movement is then illegal
+//                    if ((ce().getElevation() < 1) && (ce().getExternalUnits().size() <= 0)) {
+//                        ce().setElevation(1);
+//                    }
+//                } else {
+//                    // everything else goes to elevation 0, or on the floor of a
+//                    // water hex, except non-mechanized SCUBA infantry, which have a max depth of 2.
+//                    if (deployhex.containsTerrain(Terrains.WATER) && (ce() instanceof Infantry) && ((Infantry) ce()).isNonMechSCUBA()) {
+//                        ce().setElevation(Math.max(deployhex.floor() - deployhex.getLevel(), -2));
+//                    } else {
+//                        ce().setElevation(deployhex.floor() - deployhex.getLevel());
+//                    }
+//                }
+//            }
+//            ce().setPosition(coords);
+//
+//            clientgui.getBoardView().redrawEntity(ce());
+//            clientgui.updateFiringArc(ce());
+//            clientgui.showSensorRanges(ce());
+//            clientgui.getBoardView().getPanel().repaint();
+//            butDone.setEnabled(true);
+//        }
         if (!shiftheld) {
-            clientgui.getBoardView().select(moveto);
+            clientgui.getBoardView().select(coords);
         }
+    }
+
+    /**
+     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords. This
+     * can be anything from the seafloor, swimming, ice, water surface, ground, up to elevations and
+     * altitudes. For VTOLs, elevations up to 10 are always included individually if available. Above that
+     * and above all terrain features of the hex, only a single elevation is reported using the
+     * ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available.
+     * Altitudes are always reported individually (1 to 10).
+     *
+     * @param entity The unit to check
+     * @param coords The hex coords
+     * @return All legal deployment elevations/altitudes
+     */
+    private List<ElevationOption> findAllowedElevations(Entity entity, Coords coords) {
+        Board board = clientgui.getClient().getGame().getBoard();
+        if (board.inSpace()) {
+            throw new IllegalStateException("Cannot find allowed deployment elevations in space!");
+        } else if (ce().isLocationProhibited(coords)) {
+            return Collections.emptyList();
+        }
+
+        List<ElevationOption> result = new ArrayList<>();
+        if (entity.isAero()) {
+            result.addAll(findAllowedAeroAltitudes(coords));
+        } else {
+            result.addAll(findAllowedGroundElevations(coords));
+        }
+        return result;
+    }
+
+    private List<ElevationOption> findAllowedAeroAltitudes(Coords coords) {
+        List<ElevationOption> result = new ArrayList<>();
+        Board board = clientgui.getClient().getGame().getBoard();
+        for (int altitude = board.getHex(coords).ceiling(board.inAtmosphere()) + 1; altitude <= 10; altitude++) {
+            result.add(new ElevationOption(altitude, DeploymentHeightType.ALTITUDE));
+        }
+        // TODO: allow landing here?
+        // TODO: report negative altitudes?
+        return result;
+    }
+
+    private List<ElevationOption> findAllowedGroundElevations(Coords coords) {
+        Board board = clientgui.getClient().getGame().getBoard();
+        final Hex deployhex = board.getHex(coords);
+        if (deployhex.terrainLevel(Terrains.WATER) != Terrain.LEVEL_NONE) {
+            return findAllowedElevationsWithWater(coords);
+        } else if (board.getBuildingAt(coords) != null) {
+            return findAllowedElevationsWithBuildings(coords);
+        } else {
+            return findAllowedElevationsPlainHex(coords);
+        }
+    }
+
+    private List<ElevationOption> findAllowedElevationsWithWater(Coords coords) {
+        List<ElevationOption> result = new ArrayList<>();
+        Board board = clientgui.getClient().getGame().getBoard();
+        return result;
+    }
+
+    private List<ElevationOption> findAllowedElevationsPlainHex(Coords coords) {
+        List<ElevationOption> result = new ArrayList<>();
+        Board board = clientgui.getClient().getGame().getBoard();
+        return result;
+    }
+
+    private List<ElevationOption> findAllowedElevationsWithBuildings(Coords coords) {
+        List<ElevationOption> result = new ArrayList<>();
+        Board board = clientgui.getClient().getGame().getBoard();
+        return result;
+    }
+
+    public record ElevationOption(int elevation, DeploymentHeightType type) { }
+
+    enum DeploymentHeightType {
+        ON_GROUND, ON_ICE, ON_SEAFLOOR, UMU, BUILDING_FLOOR, BUILDING_TOP, ELEVATION, ALTITUDE, BRIDGE,
+        TERRAIN_CEILING, ELEVATIONS_ABOVE
+    }
+
+    private void showWrongBoardTypeMessage() {
+        Board board = clientgui.getClient().getGame().getBoard();
+        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+        String msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(),
+                Board.getTypeName(board.getType()));
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.WARNING_MESSAGE);
+    }
+
+    private void showCannotDeployHereMessage(Coords coords) {
+        String msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), coords.getBoardNum());
+        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void processTurn(Entity entity, Coords coords) {
+        entity.setFacing(entity.getPosition().direction(coords));
+        entity.setSecondaryFacing(entity.getFacing());
+        clientgui.getBoardView().redrawEntity(entity);
+        clientgui.updateFiringArc(entity);
+        clientgui.showSensorRanges(entity);
+        turnMode = false;
     }
 
     private boolean processBuildingDeploy(Coords moveto) {

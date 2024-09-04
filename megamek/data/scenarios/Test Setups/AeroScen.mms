@@ -13,10 +13,10 @@ factions:
 
     units:
       - fullname: Cheetah F-11
-        at: [2, 12]
-        facing: 1
-        altitude: 6
-        velocity: 3
+#        at: [2, 12]
+#        facing: 1
+#        altitude: 6
+#        velocity: 3
         crew:
           name: Marianne O'Brien
           gunnery: 4
@@ -24,9 +24,9 @@ factions:
           portrait: Female/Aerospace Pilot/ASF_F_2.png
 
       - fullname: Cheetah F-11
-        at: [3, 17]
-        facing: 1
-        velocity: 2
+#        at: [3, 17]
+#        facing: 1
+#        velocity: 2
         crew:
           name: Giulia DeMarco
           gunnery: 3

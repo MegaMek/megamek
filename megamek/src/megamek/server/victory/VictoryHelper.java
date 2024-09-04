@@ -77,7 +77,7 @@ public class VictoryHelper implements Serializable {
         VictoryResult result = VictoryResult.noResult();
 
         if (checkForVictory) {
-            // Check optional Victory conditions;  These can have reports
+            // Check optional Victory conditions; these can have reports
             result = checkOptionalVictoryConditions(game, context);
             if (result.isVictory()) {
                 return result;
@@ -111,8 +111,8 @@ public class VictoryHelper implements Serializable {
             double score = combinedResult.getPlayerScore(playerId);
             highScore = Math.max(highScore, score);
         }
-        for (int playerId : combinedResult.getScoringTeams()) {
-            double score = combinedResult.getTeamScore(playerId);
+        for (int teamId : combinedResult.getScoringTeams()) {
+            double score = combinedResult.getTeamScore(teamId);
             highScore = Math.max(highScore, score);
         }
         if (highScore < neededVictoryConditionCount) {

@@ -295,7 +295,7 @@ public final class Player extends TurnOrdered {
      *
      * @see #isObserver()
      */
-    public boolean isNoObserver() {
+    public boolean isNotObserver() {
         return !isObserver();
     }
 

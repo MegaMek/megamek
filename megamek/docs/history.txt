@@ -3,7 +3,8 @@ MEGAMEK VERSION HISTORY:
 0.50.01-SNAPSHOT
 + PR #5962: Internal code changes (GameManager)
 + Fix #5960: BA Flamers flagged as illegal on Battle Armor
-
++ PR #5948: Implemented StratCon specific Skill Generator - megamek support
++ PR #5964: Internal code changes (extract processMovement)
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

@@ -256,6 +256,9 @@ public abstract class Mech extends Entity {
 
     protected int cockpitType = COCKPIT_STANDARD;
 
+    /**
+     * Head armor provided by the Cowl quirk. Ignored when the unit doesn't have Cowl or quirks aren't used.
+     */
     private int cowlArmor = 3;
 
     private int hasLaserHeatSinks = HAS_UNKNOWN;
@@ -389,34 +392,29 @@ public abstract class Mech extends Entity {
      */
     public abstract boolean cannotStandUpFromHullDown();
 
-    public int getCowlArmor() {
-        if (hasCowl()) {
-            return cowlArmor;
-        }
-        return 0;
-    }
-
+    /**
+     * @return True if this Mek has the Cowl quirk and quirks are used in the present game.
+     */
     public boolean hasCowl() {
         return hasQuirk(OptionsConstants.QUIRK_POS_COWL);
     }
 
     /**
-     * Damage the cowl. Returns amount of excess damage
+     * Damages the remaining cowl armor, if any, by the given amount. Returns the amount of excess damage
+     * that is left after deducting cowl armor. This method tests if the unit has Cowl and quirks are
+     * being used.
      *
-     * @param amount
-     * @return
+     * @param amount The incoming damage
+     * @return The damage left after deducting the cowl's remaining armor, if any
      */
     public int damageCowl(int amount) {
         if (hasCowl()) {
-            if (amount < cowlArmor) {
-                cowlArmor -= amount;
-                return 0;
-            }
-            amount -= cowlArmor;
-            cowlArmor = 0;
+            int excessDamage = Math.max(amount - cowlArmor, 0);
+            cowlArmor = Math.max(cowlArmor - amount, 0);
+            return excessDamage;
+        } else {
             return amount;
         }
-        return amount; // No cowl - return full damage
     }
 
     /**

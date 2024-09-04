@@ -218,6 +218,7 @@ public class OptionsConstants {
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter";
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek";
     public static final String UNOFF_SMALL_PILOT = "small_pilot";
+    public static final String UNOFF_ADV_ATMOSPHERIC_CONTROL = "unoff_adv_atmospheric_control";
 
     // EDGE
     public static final String EDGE = "edge";

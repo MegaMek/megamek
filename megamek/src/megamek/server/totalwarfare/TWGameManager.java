@@ -58,6 +58,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Manages the Game and processes player actions.
@@ -16057,9 +16058,10 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
             if (entity.isAero() && entity.isAirborne() && !game.getBoard().inSpace()) {
-                // if this aero has any damage, add another roll to the list.
+                // check if aero unit meets conditions for control rolls and add to the list
                 if (entity.damageThisPhase > 0) {
-                    if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
+                    if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)
+                          && !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
                         int damMod = entity.damageThisPhase / 20;
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod,
                                 entity.damageThisPhase + " damage +" + damMod);
@@ -16069,13 +16071,24 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         getGame().addControlRoll(damPRD);
                     } else {
-                        // was the damage threshold exceeded this round?
-                        if (((IAero) entity).wasCritThresh()) {
+                        // was the damage threshold in a single location exceeded this round?
+                        if ((((IAero) entity).wasCritThresh())) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
-                                    "damage threshold exceeded");
+                                "damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
-                                    && (entity.getCrew().getPiloting() > 3)) {
-                                damThresh.addModifier(-1, "easy to pilot");
+                                && (entity.getCrew().getPiloting() > 3)) {
+                              damThresh.addModifier(-1, "easy to pilot");
+                            }
+                            getGame().addControlRoll(damThresh);
+                        }
+                        if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)
+                            && entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
+                            // did the total damage this round exceed the unit's highest threshold?
+                            PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
+                                "highest damage threshold exceeded");
+                            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
+                                && (entity.getCrew().getPiloting() > 3)) {
+                              damThresh.addModifier(-1, "easy to pilot");
                             }
                             getGame().addControlRoll(damThresh);
                         }
@@ -16813,18 +16826,22 @@ public class TWGameManager extends AbstractGameManager {
             if (e.isUsingManAce()) {
                 target.addModifier(-1, "maneuvering ace");
             }
-            for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
-                final PilotingRollData modifier = j.nextElement();
-                if (modifier.getEntityId() != e.getId()) {
-                    continue;
-                }
-                // found a roll, add it
-                rolls.addElement(modifier);
-                if (reasons.length() > 0) {
-                    reasons.append("; ");
-                }
-                reasons.append(modifier.getCumulativePlainDesc());
-                target.append(modifier);
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
+                addControlWithAdvAtmospheric(e, rolls, reasons);
+            } else {
+                for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
+                    final PilotingRollData modifier = j.nextElement();
+                    if (modifier.getEntityId() != e.getId()) {
+                        continue;
+                    }
+                    // found a roll, add it
+                    rolls.addElement(modifier);
+                    if (!reasons.isEmpty()) {
+                        reasons.append("; ");
+                    }
+                    reasons.append(modifier.getCumulativePlainDesc());
+                    target.append(modifier);
+                  }
             }
             // any rolls needed?
             if (!rolls.isEmpty()) {
@@ -16988,6 +17005,54 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         return vReport;
+    }
+
+    /**
+     * Processes pending control roll events, merging triggers that would be multiple rolls in standard
+     * rules but are combined into a single roll under the Advanced Atmospheric Control Rolls rule.
+     *
+     * @param e         The entity whose pending rolls are being processed
+     * @param rolls     List of rolls to be added to
+     * @param reasons   Text representing the reason for the rolls
+     */
+    void addControlWithAdvAtmospheric(Entity e, Vector<PilotingRollData> rolls, StringBuilder reasons) {
+        // The August 2024 errata changed this rule to only trigger one control roll per
+        // round regardless of how many crits or thresholds occurred. As a result, the rolls
+        // need to be combined here at the end phase because not all the information is known
+        // when the individual rolls are first added throughout the round and previously added
+        // rolls can't easily be modified.
+        PilotingRollData atmosphericControlRoll = null;
+        for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
+            final PilotingRollData modifier = j.nextElement();
+            if (modifier.getEntityId() != e.getId()) {
+                continue;
+            }
+            if (Stream.of("threshold", "avionics hit", "critical hit").anyMatch(s -> modifier.getDesc().contains(s))) {
+                if (atmosphericControlRoll == null) {
+                    atmosphericControlRoll = modifier;
+                } else {
+                    // Modify the description of the pending atmospheric control roll instead of adding another one
+                    if (!reasons.isEmpty()) {
+                        reasons.append("; ");
+                    }
+                    reasons.append(modifier.getPlainDesc());
+                }
+            } else {
+                // Not an atmospheric control roll under the new rules, so treat normally
+                rolls.addElement(modifier);
+                if (!reasons.isEmpty()) {
+                    reasons.append("; ");
+                }
+                reasons.append(modifier.getPlainDesc());
+              }
+        }
+        if (atmosphericControlRoll != null) {
+            rolls.addElement(atmosphericControlRoll);
+            if (!reasons.isEmpty()) {
+                reasons.append("; ");
+            }
+            reasons.append(atmosphericControlRoll.getPlainDesc());
+        }
     }
 
     /**

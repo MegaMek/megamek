@@ -1692,6 +1692,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return getInternal(loc);
     }
 
+    /**
+     * @return the highest damage threshold for the LAM unit
+     */
+    @Override
+    public int getHighestThresh() {
+        int max = getThresh(0);
+        for (int i = 1; i < locations(); i++) {
+            if (getThresh(i) > max) {
+                max = getThresh(i);
+            }
+        }
+        return max;
+    }
+
     @Override
     public boolean wasCritThresh() {
         return critThresh;

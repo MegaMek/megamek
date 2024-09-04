@@ -25,13 +25,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
 import megamek.server.ServerHelper;
 
-class TWPhaseEndManager {
-
-    private final TWGameManager gameManager;
-
-    public TWPhaseEndManager(TWGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+record TWPhaseEndManager(TWGameManager gameManager) {
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {

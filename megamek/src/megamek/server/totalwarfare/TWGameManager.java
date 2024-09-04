@@ -25028,6 +25028,9 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, boolean updateVisibility,
                              Map<UnitTargetPair, LosEffects> losCache) {
+        if (losCache == null) {
+            losCache = new HashMap<>();
+        }
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {

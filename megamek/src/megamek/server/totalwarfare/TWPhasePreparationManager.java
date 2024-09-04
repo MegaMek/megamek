@@ -32,13 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-public class TWPhasePreparationManager {
-
-    private final TWGameManager gameManager;
-
-    public TWPhasePreparationManager(TWGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record TWPhasePreparationManager(TWGameManager gameManager) {
 
     void managePhase() {
         GamePhase phase = gameManager.getGame().getPhase();

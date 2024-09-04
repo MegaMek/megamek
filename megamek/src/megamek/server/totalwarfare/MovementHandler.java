@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.server.totalwarfare;
 
 import megamek.MMConstants;
@@ -12,30 +30,20 @@ import org.apache.logging.log4j.LogManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class MovementHandler extends AbstractTWRuleHandler {
-    
-    private final Entity entity;
-    private final MovePath md;
-    private final Map<UnitTargetPair, LosEffects> losCache;
+/**
+ * Steps through an entity movement packet, executing it.
+ *
+ * @param gameManager The server's GameManager
+ * @param entity   The Entity that is moving
+ * @param md       The MovePath that defines how the Entity moves
+ * @param losCache A cache that stores Los between various Entities and
+ *                 targets.  In double blind games, we may need to compute a
+ *                 lot of LosEffects, so caching them can really speed
+ *                 things up.
+ */
+record MovementHandler(TWGameManager gameManager, Entity entity, MovePath md, Map<UnitTargetPair, LosEffects> losCache)
+        implements TWRuleHandler {
 
-    /**
-     * Steps through an entity movement packet, executing it.
-     *
-     * @param gameManager The server's GameManager
-     * @param entity   The Entity that is moving
-     * @param md       The MovePath that defines how the Entity moves
-     * @param losCache A cache that stores Los between various Entities and
-     *                 targets.  In double blind games, we may need to compute a
-     *                 lot of LosEffects, so caching them can really speed
-     *                 things up.
-     */
-    MovementHandler(TWGameManager gameManager, Entity entity, MovePath md, Map<UnitTargetPair, LosEffects> losCache) {
-        super(gameManager);
-        this.entity = entity;
-        this.md = md;
-        this.losCache = (losCache == null) ? new HashMap<>() : losCache;
-    }
-    
     void processMovement() {
         Report r;
         boolean sideslipped = false; // for VTOL side slipping
@@ -545,9 +553,8 @@ class MovementHandler extends AbstractTWRuleHandler {
                             // check for destruction
                             if (a.getSI() == 0) {
                                 // Lets auto-eject if we can!
-                                if (a instanceof LandAirMech) {
+                                if (a instanceof LandAirMech lam) {
                                     // LAMs eject if the CT destroyed switch is on
-                                    LandAirMech lam = (LandAirMech) a;
                                     if (lam.isAutoEject()
                                             && (!getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                             || (getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -1179,8 +1186,7 @@ class MovementHandler extends AbstractTWRuleHandler {
             }
 
             // check for dig in or fortify
-            if (entity instanceof Infantry) {
-                Infantry inf = (Infantry) entity;
+            if (entity instanceof Infantry inf) {
                 if (step.getType() == MovePath.MoveStepType.DIG_IN) {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
@@ -1211,8 +1217,7 @@ class MovementHandler extends AbstractTWRuleHandler {
             }
 
             // check for tank fortify
-            if (entity instanceof Tank) {
-                Tank tnk = (Tank) entity;
+            if (entity instanceof Tank tnk) {
                 if (step.getType() == MovePath.MoveStepType.FORTIFY) {
                     if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         gameManager.sendServerChat(entity.getDisplayName()
@@ -1563,9 +1568,9 @@ class MovementHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MovePath.MoveStepType.CHAFF) {
                 List<Mounted> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
-                        .stream().filter(dispenser -> dispenser.isReady())
+                        .stream().filter(Mounted::isReady)
                         .collect(Collectors.toList());
-                if (chaffDispensers.size() > 0) {
+                if (!chaffDispensers.isEmpty()) {
                     chaffDispensers.get(0).setFired(true);
                     gameManager.createSmoke(curPos, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard().getHex(curPos);
@@ -1953,8 +1958,7 @@ class MovementHandler extends AbstractTWRuleHandler {
             // Handle mounting units to small craft/DropShip
             if (step.getType() == MovePath.MoveStepType.MOUNT) {
                 Targetable mountee = step.getTarget(getGame());
-                if (mountee instanceof Entity) {
-                    Entity dropShip = (Entity) mountee;
+                if (mountee instanceof Entity dropShip) {
                     if (!dropShip.canLoad(entity)) {
                         // Something is fishy in Denmark.
                         LogManager.getLogger().error(dropShip.getShortName() + " can not load " + entity.getShortName());
@@ -1992,7 +1996,7 @@ class MovementHandler extends AbstractTWRuleHandler {
                 Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
 
                 // there have to be objects on the ground and we have to be trying to pick up one of them
-                if ((groundObjects.size() > 0) &&
+                if ((!groundObjects.isEmpty()) &&
                         (cargoPickupIndex != null) && (cargoPickupIndex >= 0) && (cargoPickupIndex < groundObjects.size())) {
 
                     ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
@@ -2318,7 +2322,7 @@ class MovementHandler extends AbstractTWRuleHandler {
             boolean vehicleAffectedByCliff = entity instanceof Tank
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
-                    && ((QuadVee) entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+                    && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
             boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
@@ -2566,8 +2570,7 @@ class MovementHandler extends AbstractTWRuleHandler {
 
             // JumpShips and space stations need to reduce accumulated thrust if
             // they spend some
-            if (entity instanceof Jumpship) {
-                Jumpship js = (Jumpship) entity;
+            if (entity instanceof Jumpship js) {
                 double penalty = 0.0;
                 // JumpShips do not accumulate thrust when they make a turn or
                 // change velocity

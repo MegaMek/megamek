@@ -14,7 +14,7 @@
 package megamek.server.commands;
 
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -22,10 +22,10 @@ import megamek.server.Server;
  */
 public class NukeCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
     /** Creates new NukeCommand */
-    public NukeCommand(Server server, GameManager gameManager) {
+    public NukeCommand(Server server, TWGameManager gameManager) {
         super(server, "nuke", "Drops a nuke onto the board, to be exploded at" +
                 "the end of the next weapons attack phase." +
                 "Allowed formats:"+

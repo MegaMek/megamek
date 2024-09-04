@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -121,7 +121,7 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker,
-                                            Vector<Report> vPhaseReport, GameManager gameManager) {
+                                            Vector<Report> vPhaseReport, TWGameManager gameManager) {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
@@ -176,7 +176,7 @@ public class AreaEffectHelper {
      * Helper function that processes damage for fuel-air explosives.
      */
     public static Vector<Integer> processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
-                                            Vector<Report> vPhaseReport, GameManager gameManager) {
+                                            Vector<Report> vPhaseReport, TWGameManager gameManager) {
         Game game = attacker.getGame();
         Vector<Integer> entitiesToExclude = new Vector<>();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -237,7 +237,7 @@ public class AreaEffectHelper {
      * Checks all units at given coords.
      */
     public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, Game game, GameManager gameManager) {
+            Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
         for (Entity entity : game.getEntitiesVector(coords)) {
             checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, gameManager);
         }
@@ -248,7 +248,7 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, Game game, GameManager gameManager) {
+            Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
         int rollTarget = -1;
         if (entity instanceof BattleArmor) {
             rollTarget = 7;
@@ -284,7 +284,7 @@ public class AreaEffectHelper {
      * Worker function that clears minefields.
      */
     public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport,
-                                       Game game, GameManager gameManager) {
+                                       Game game, TWGameManager gameManager) {
         Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
         ArrayList<Minefield> mfRemoved = new ArrayList<>();
         while (minefields.hasMoreElements()) {
@@ -323,7 +323,7 @@ public class AreaEffectHelper {
     public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs,
             boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
             Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
-            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, GameManager gameManager) {
+            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, TWGameManager gameManager) {
         Report r;
 
         int hits = damage;
@@ -687,7 +687,7 @@ public class AreaEffectHelper {
      * Abbreviated nuclear explosion logic when the weapon is targeted at a single off-board entity.
      */
     public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport,
-                                          GameManager gameManager) {
+                                          TWGameManager gameManager) {
         NukeStats nukeStats = getNukeStats(nukeType);
 
         if (nukeStats == null) {
@@ -740,7 +740,7 @@ public class AreaEffectHelper {
      */
     public static void applyExplosionClusterDamageToEntity(Entity entity, int damage, int clusterAmt,
                                                            Coords position, Vector<Report> vDesc,
-                                                           GameManager gameManager) {
+                                                           TWGameManager gameManager) {
         Report r = new Report(6175);
         r.subject = entity.getId();
         r.indent(2);

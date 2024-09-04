@@ -33,8 +33,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -43,7 +42,7 @@ import megamek.server.Server;
 public class LegAttackHandler extends WeaponHandler {
     private static final long serialVersionUID = 4429993211361286138L;
 
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

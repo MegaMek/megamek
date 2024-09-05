@@ -545,7 +545,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private Vector<Transporter> omniPodTransports = new Vector<>();
 
     /**
-     * The ids of the MechWarriors this entity has picked up
+     * The ids of the MekWarriors this entity has picked up
      */
     private Vector<Integer> pickedUpMechWarriors = new Vector<>();
 

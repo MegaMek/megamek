@@ -1,15 +1,15 @@
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 class AimedShotHandler implements ActionListener, ItemListener {
     private final FiringDisplay firingDisplay;
@@ -85,7 +85,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
             } else if (this.firingDisplay.target instanceof BattleArmor) {
                 aimingAt = BattleArmor.LOC_TROOPER_1;
             } else {
-                // no aiming allowed for MechWarrior or BattleArmor
+                // no aiming allowed for MekWarrior or BattleArmor
                 return;
             }
 

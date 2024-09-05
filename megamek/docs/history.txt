@@ -1799,7 +1799,7 @@ v0.46.0-rc.1 (2019-07-23 0300 UTC)
 + MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
 + Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
 + Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
-+ Issue #1400: Fleeing while carrying a non-existent MechWarrior no longer causes a soft-lock
++ Issue #1400: Fleeing while carrying a non-existent MekWarrior no longer causes a soft-lock
 + Data: Corsair fighter once again shows proper sprite
 + Issue #1407: Attacks on transported battle armor no longer cause soft lock
 + PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
@@ -1923,7 +1923,7 @@ v0.45.0 (2018-08-02 0200 UTC)
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: DropShip infantry bay fixes.
-+ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) MechWarrior.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) MekWarrior.
 + Data: New Sprites
 + Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
 + PR #1003: Fix validation failures from configuring ammo.
@@ -2046,7 +2046,7 @@ v0.43.7-RC1 (2018-01-21 22:00 UTC)
 + Issue #862: Fighter Squadron BV
 + Data: New Sprites and adding MWO Canon Mechs(Sun Spider and Roughneck)
 + Issue #859: Game Options Tooltip Exception
-+ Princess will no longer waste firepower targeting solitary MechWarriors in buildings.
++ Princess will no longer waste firepower targeting solitary MekWarriors in buildings.
 + PR#851 Change Default KeyBinds (adds ctrl to overlay and unit label toggles).
 
 v0.43.6 (2017-12-22 10:00 UTC)
@@ -2334,7 +2334,7 @@ v0.41.27 (2016-12-07 03:00 UTC)
 + Issue #411: MM allows illegal terrain combinations in boards
 + Added tooltip entry for spotting; spotters now display who they're spotting
 + Issue #422: Firing solutions now indicates units that are spotted
-+ Issue #395: New MechWarrior minimap icons: circle, or infantry icon w/ dot
++ Issue #395: New MekWarrior minimap icons: circle, or infantry icon w/ dot
 + Issue #423: Squadron Armor tab is empty
 + Issue #367: Building Fires Not Shown On Minimap
 + Bug: Jumping can never be considered "along a road"; fixes some missed PSRs
@@ -2789,7 +2789,7 @@ v0.41.9 (2015-09-14 01:25 UTC)
 + Bug: ejected crews are having isEjected set to false on the turn after ejection
 + additional conditions for Entity.canEscape to handle immobilized units and legged/hipped mechs
 + Bug: some costs reported as -1 when using alternateCost option in MechView
-+ Added MechWarrior pick up external ID to MUL input/output
++ Added MekWarrior pick up external ID to MUL input/output
 + Data: New Sprites
 + Bug: null entities still attempt to be parsed in MULParser
 + Bug: Ghost targets option doesn't work without ECCM
@@ -3983,12 +3983,12 @@ v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [4119]: FireControl.getTargetableEnemyEntities(2) now only returns targets
     that are within LoS
 + Bug: Tripod 'Meks unable to pick up clubs.
-+ Bug: Ejected vehicle crews and MechWarriors treated as purposefully deployed
++ Bug: Ejected vehicle crews and MekWarriors treated as purposefully deployed
     TacOps infantry squads despite originally deploying in their respective
     vehicles.
-+ Bug: Squad and MechWarrior to-hit modifiers not applied to all attacks
++ Bug: Squad and MekWarrior to-hit modifiers not applied to all attacks
     (notably not physical ones).
-+ Refactoring: MechWarrior has new superclass EjectedCrew (derived in turn from
++ Refactoring: MekWarrior has new superclass EjectedCrew (derived in turn from
     Infantry) in order to better distinguish between them all.
 + Added a number of null checks to WeaponAttackAction (recent changes caused at
     least one NPE).
@@ -5119,7 +5119,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: [#3956] Bot hangs on Divide By Zero error 0.37-dev
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
-+ Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game
++ Bug [#3892]: Ejected MekWarrior Takes Sprite of a 'mech from previous game
 + Bug: Adjusted Server.saveGame so that the whole XML isn't stored in memory
     and is instead streamed to a file.
 + Change default max heap size to 1024m
@@ -5846,7 +5846,7 @@ v0.35.35 (2013-03-14, 22:49 UTC+1)
 + Bug 2948: Physical Attacks against VTOLs
 + Bug: +4 for head destruction of torso-mounted cockpit added twice
 + Cleanup resolveMechWarriorPickUp()
-+ Bug: Enemy units ignored elevation when picking up MechWarriors.
++ Bug: Enemy units ignored elevation when picking up MekWarriors.
 + Bug 3575: Mud Takes Priority in Minimap
 + Bug: Next Unit button skipping units
 + Bug 3674: Null armor panel on loading save game
@@ -5876,7 +5876,7 @@ v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug 3611: Minimap does not show fuel tanks
 + armorTonnage double in entity for tracking total armor tonnage in MML
 + fix NPE when determining physical phase eligibility
-+ fix Princess to-hit guess against ejected MechWarriors
++ fix Princess to-hit guess against ejected MekWarriors
 + re-organized static JUMP_* ints in Mech.java for MML purposes
 + ignore .DS_Store when loading units
 + use MML fluff image if one is provided
@@ -6383,7 +6383,7 @@ v0.35.28 (2012-22-02, 23:07 UTC+1)
 + pass frame rather than clientgui to AdvancedSearchDialog so other programs can
     use
 + Bug: Princess bot NPE with aeros that fly off the map
-+ Bug 3474185: Princess bot NPE with ejected MechWarriors
++ Bug 3474185: Princess bot NPE with ejected MekWarriors
 + Bug 3474591: NPE in deployment
 + changed external ids to strings to allow for UUIDs, but kept integer get and
     set methods for compatability
@@ -9517,7 +9517,7 @@ v0.33.9 (2007-09-02, 17:47 GMT+2)
 + Added several new server commands, most are intended to enable megamek to be
     useable by visually impaired people, but some of them (ruler forinstance)
     should be useful to normal users too.
-+ ejected MechWarriors don't need to make consciousness rolls now
++ ejected MekWarriors don't need to make consciousness rolls now
 + Bug 1771542: MASC bug
 + Fixed a null pointer server crash releated to the camo image in swing. Note
    that the camo image is still behaving very odd.

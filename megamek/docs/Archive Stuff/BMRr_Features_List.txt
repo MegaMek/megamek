@@ -247,7 +247,7 @@ Special Case Rules (Miscellaneous)
 - Ejecting			Yes		Currently, MegaMek chooses which units will pick up
 						an ejected pilot, giving preference to the units that
 						are controlled by the player that is controlling the
-						ejected MechWarrior.
+						ejected MekWarrior.
 - Improved Positions		No		Waiting on Hidden Units rule.
 - LRM Indirect Fire		Yes		To activate change LRM firing mode after designating a spotter.
 - Reversing Arms		Yes		None

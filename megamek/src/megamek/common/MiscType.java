@@ -4292,7 +4292,7 @@ public class MiscType extends EquipmentType {
 
     // TODO - Damage Interupt Circuit - IO pg 39
     // Maybe the helmets should be quirks?
-    // TODO - SLDF Advanced Neurohelmet (MechWarrior) - IO pg 40
+    // TODO - SLDF Advanced Neurohelmet (MekWarrior) - IO pg 40
     // TODO - SLDF Advanced Neurohelmet (Fighter Pilot) - IO pg 40
     // TODO - Virtual Reality Piloting Pod - IO pg 70
 

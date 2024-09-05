@@ -5292,7 +5292,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // Handle any picked up MechWarriors
+        // Handle any picked up MekWarriors
         for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
             Entity mw = game.getEntity(mechWarriorId);
 
@@ -5300,7 +5300,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // Is the MechWarrior an enemy?
+            // Is the MekWarrior an enemy?
             int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
             r = new Report(2010);
             if (mw.isCaptured()) {
@@ -17403,7 +17403,7 @@ public class TWGameManager extends AbstractGameManager {
             final Entity e = i.next();
 
             // only unconscious pilots of mechs and protos, ASF and Small Craft
-            // and MechWarriors can roll to wake up
+            // and MekWarriors can roll to wake up
             if (e.isTargetable()
                     && ((e instanceof Mech) || (e instanceof Protomech)
                     || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
@@ -19915,7 +19915,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if ((entity instanceof MechWarrior) && !((MechWarrior) entity).hasLanded()) {
-                // MechWarrior is still up in the air ejecting hence safe
+                // MekWarrior is still up in the air ejecting hence safe
                 // from this explosion.
                 continue;
             }
@@ -23640,7 +23640,7 @@ public class TWGameManager extends AbstractGameManager {
 
             entity.setDoomed(true);
 
-            // Kill any picked up MechWarriors
+            // Kill any picked up MekWarriors
             Enumeration<Integer> iter = entity.getPickedUpMechWarriors().elements();
             while (iter.hasMoreElements()) {
                 int mechWarriorId = iter.nextElement();
@@ -28895,7 +28895,7 @@ public class TWGameManager extends AbstractGameManager {
                         // Pilots take damage based on ejection roll MoF
                         int damage = (rollTarget.getValue() - diceRoll.getIntValue());
                         if (entity instanceof Mech) {
-                            // MechWarriors only take 1 damage per 2 points of MoF
+                            // MekWarriors only take 1 damage per 2 points of MoF
                             damage /= 2;
                         }
                         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
@@ -28915,7 +28915,7 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addElement(r);
                 }
             }
-            // create the MechWarrior in any case, for campaign tracking
+            // create the MekWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setDeployed(true);
             pilot.setId(game.getNextEntityId());
@@ -28930,7 +28930,7 @@ public class TWGameManager extends AbstractGameManager {
             } else if (entity.isAirborne()) {
                 pilot.setAltitude(entity.getAltitude());
             }
-            //Pilot flight suits are vacuum-rated. MechWarriors wear shorts...
+            //Pilot flight suits are vacuum-rated. MekWarriors wear shorts...
             pilot.setSpaceSuit(entity.isAero());
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
@@ -29518,12 +29518,12 @@ public class TWGameManager extends AbstractGameManager {
                 return vDesc;
             }
 
-            // create the MechWarrior in any case, for campaign tracking
+            // create the MekWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(game.getNextEntityId());
-            //Pilot flight suits are vacuum-rated. MechWarriors wear shorts...
+            //Pilot flight suits are vacuum-rated. MekWarriors wear shorts...
             pilot.setSpaceSuit(entity.isAero());
             if (entity.isSpaceborne()) {
                 //In space, ejected pilots retain the heading and velocity of the unit they eject from
@@ -29589,7 +29589,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Checks if ejected MechWarriors are eligible to be picked up, and if so,
+     * Checks if ejected MekWarriors are eligible to be picked up, and if so,
      * captures them or picks them up
      */
     void resolveMechWarriorPickUp() {

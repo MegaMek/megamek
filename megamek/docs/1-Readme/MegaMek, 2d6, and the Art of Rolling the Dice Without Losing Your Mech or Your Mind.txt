@@ -19,7 +19,7 @@ Ever wonder how MegaMek decides whether your Gauss Rifle turns the opponent into
 Perception of RNG as Biased: The Cockpit Diaries
 
 Recency Bias
-Example: "My Atlas just rolled three snake eyes in a row; this RNG is rigged!" Well, statistically, those rolls are as rare as finding a Star League cache, but they can happen. And no, the RNG isn't plotting against your MechWarrior career.
+Example: "My Atlas just rolled three snake eyes in a row; this RNG is rigged!" Well, statistically, those rolls are as rare as finding a Star League cache, but they can happen. And no, the RNG isn't plotting against your MekWarrior career.
 
 Confirmation Bias
 Example: "Every time I play MegaMek, my LRMs might as well be shooting confetti." You’re convinced the RNG hates your missile racks. So every time you miss, it’s another log on the "MegaMek hates me" bonfire—even if the overall statistics are far less vindictive.
@@ -31,7 +31,7 @@ Human Perception and Bias Impact
 Let's face it: Between Clan tech superiority and the politics of the Inner Sphere, you already have enough to be paranoid about. But your Mech isn’t doomed by malicious code; it's often just your brain misinterpreting the whims of probability.
 
 Small Sample Sizes and Statistical Fluctuations
-Ah, the small sample size—the MechWarrior’s Achilles' heel. Here’s the rundown:
+Ah, the small sample size—the MekWarrior’s Achilles' heel. Here’s the rundown:
 
 100 Rolls: At this level, you're just a rookie. Don't be shocked if you leg your own Mech a few times.
 
@@ -41,4 +41,4 @@ Ah, the small sample size—the MechWarrior’s Achilles' heel. Here’s the run
 10,000 Rolls: By now, you're a legend like Natasha Kerensky. Expect most of your rolls to align pretty closely with the stats. If not, well, you can always blame it on ComStar interference.
 
 Conclusion
-In the galaxy of MegaMek, 2d6 rolls are as vital as fusion engines and as unpredictable as a Capellan assassination attempt. Whether you're a MechWarrior who thinks the dice are as rigged as Solaris VII matches, or a strategist seeking to optimize every PPC shot, understanding RNG and human bias can keep your cockpit a Zen space—even when the LRMs are flying.
+In the galaxy of MegaMek, 2d6 rolls are as vital as fusion engines and as unpredictable as a Capellan assassination attempt. Whether you're a MekWarrior who thinks the dice are as rigged as Solaris VII matches, or a strategist seeking to optimize every PPC shot, understanding RNG and human bias can keep your cockpit a Zen space—even when the LRMs are flying.

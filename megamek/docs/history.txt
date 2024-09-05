@@ -1,7 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.50.01-SNAPSHOT
-+ PR #5962, #5964, #5966, #5974: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter)
++ PR #5962, #5964, #5966, #5974, #5931: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory)
 + Fix #5960: BA Flamers flagged as illegal on Battle Armor
 + PR #5948: Implemented StratCon specific Skill Generator - megamek support
 + PR #5937: The Cowl quirk armor is now now correctly ignored only when an attack comes from the precise hex row the Mek is looking down

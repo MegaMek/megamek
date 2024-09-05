@@ -1369,7 +1369,7 @@ public class TestMech extends TestEntity {
 
         if (hasHarjelII || hasHarjelIII) {
             if (mech.isIndustrial()) {
-                buff.append("Cannot mount HarJel repair system on IndustrialMech\n");
+                buff.append("Cannot mount HarJel repair system on IndustrialMek\n");
                 illegal = true;
             }
             for (int loc = 0; loc < mech.locations(); ++loc) {

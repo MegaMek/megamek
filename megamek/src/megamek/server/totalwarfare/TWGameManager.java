@@ -18,6 +18,16 @@
  */
 package megamek.server.totalwarfare;
 
+import java.awt.Color;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.GUIPreferences;
@@ -27,8 +37,14 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.enums.*;
-import megamek.common.equipment.*;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -41,24 +57,24 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.*;
+import megamek.common.util.BoardUtilities;
+import megamek.common.util.C3Util;
+import megamek.common.util.EmailService;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
-import megamek.common.weapons.*;
+import megamek.common.verifier.TestEntity;
+import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
+import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
+import megamek.common.weapons.DamageType;
+import megamek.common.weapons.TAGHandler;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.io.*;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Manages the Game and processes player actions.
@@ -16248,7 +16264,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * checks if IndustrialMechs should die because they moved into to-deep
+     * checks if IndustrialMeks should die because they moved into to-deep
      * water last round
      */
     private void checkForIndustrialWaterDeath() {

@@ -5633,7 +5633,7 @@ v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug: misc building basement bugfixes
 + Bug: damage from building collapse using wrong table
 + Bug: Units crippled from weapon loss not always recognized as such.
-+ Bug: PSRs resulting from IndustrialMech end-of-turn crits delayed until next turn.
++ Bug: PSRs resulting from IndustrialMek end-of-turn crits delayed until next turn.
 + Data: Clean up of Aerospace Duplicate units and more unit fixes.
 + Bug 3715: Plasma weapon damage vs. buildings
 + Bug 3716: Jumping over buildings causes collapse and fall
@@ -6180,12 +6180,12 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
     events.
 + Bug: PSR modifier for blown-off leg applied twice the phase it happens (once
     for the event, once as pre-existing damage).
-+ Bug: Stall check for ICE-powered IndustrialMechs affected by preexisting
++ Bug: Stall check for ICE-powered IndustrialMeks affected by preexisting
     damage.
-+ Bug: Unstall check for ICE-powered IndustrialMechs possibly successful even if
++ Bug: Unstall check for ICE-powered IndustrialMeks possibly successful even if
     pilot dead/unconscious.
 + Bug: Stall/unstall checks failing on roll = target number (should be success).
-+ IndustrialMech End Phase checks (including unstalling) moved to after checking
++ IndustrialMek End Phase checks (including unstalling) moved to after checking
     for pilot wakeup.
 + Bug 3423819: c3 units boarding dropships (fixed both Bot NPEs relating to
     this, however I'm not sure if those were the only NPEs. I didn't get more.)
@@ -8280,7 +8280,7 @@ v0.33.38 (2009-01-15, 19:51 UTC+1)
 + Bug: sorting of weapons wrong in BV calculation when BV difference is < 1
 + Bug: BAR armor not working quite right
 + Bug: non-mechs can't shoot
-+ IndustrialMechs get +2 on the determining critical hits roll and 4 crits on a
++ IndustrialMeks get +2 on the determining critical hits roll and 4 crits on a
     result of 14
 + MOUNTWIDTHMIN and MOUNTWIDTHMAX not correctly loading from XML files
 + RFE: Defensive Equipment BV printed out in list for BV Calculations

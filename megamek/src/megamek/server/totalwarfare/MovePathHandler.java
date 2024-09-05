@@ -1810,7 +1810,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             rollTarget = entity.checkGetUp(step, overallMoveType);
 
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                // Unless we're an ICE- or fuel cell-powered IndustrialMech,
+                // Unless we're an ICE- or fuel cell-powered IndustrialMek,
                 // standing up builds heat.
                 if ((entity instanceof Mech) && entity.hasEngine() && !(((Mech) entity).isIndustrial()
                         && ((entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)

@@ -14,7 +14,18 @@
  */
 package megamek.common;
 
+import java.awt.Image;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.apache.logging.log4j.LogManager;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -23,22 +34,48 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.*;
+import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.DisplacementAttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.TeleMissileAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
-import megamek.common.enums.*;
-import megamek.common.equipment.*;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
+import megamek.common.enums.MPBoosters;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
-import megamek.common.options.*;
+import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PartialRepairs;
+import megamek.common.options.Quirks;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DiscordFormat;
-import megamek.common.weapons.*;
+import megamek.common.weapons.AlamoMissileWeapon;
+import megamek.common.weapons.AltitudeBombAttack;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
+import megamek.common.weapons.DiveBombAttack;
+import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -46,16 +83,6 @@ import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -13021,7 +13048,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * does this <code>Entity</code> have Environmental sealing? (only Support
-     * Vehicles or IndustrialMechs should mount this)
+     * Vehicles or IndustrialMeks should mount this)
      *
      * @return
      */

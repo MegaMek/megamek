@@ -1,7 +1,7 @@
 Lines marked with a 'x' have been addressed in megamek
 
 COMPONENTS
-1) In addition to the units described in the BMRr, IndustrialMechs, Mechanized Infantry (as described in the Conventional Infantry Construction rules from Combat Operations) Conventional Fighters, Aerospace Fighters, Small Craft, Dropships, & numerous Support Vehicle types are described.
+1) In addition to the units described in the BMRr, IndustrialMeks, Mechanized Infantry (as described in the Conventional Infantry Construction rules from Combat Operations) Conventional Fighters, Aerospace Fighters, Small Craft, Dropships, & numerous Support Vehicle types are described.
 
 x2) Wing in Ground Effect (WiGE) Vehicles are introduced, which are like a cross between a Hovercraft and a VTOL, with a maximum tonnage of 80 tons.  WiGEs move like Hovercraft, but hover one level above the underlying terrain.  In order to remain in flight, WiGEs must move at least 5 hexes a turn.
 

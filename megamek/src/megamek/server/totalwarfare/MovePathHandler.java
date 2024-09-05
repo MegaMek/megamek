@@ -12,7 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class MovementHandler extends AbstractTWRuleHandler {
+/**
+ * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
+ */
+class MovePathHandler extends AbstractTWRuleHandler {
     
     private final Entity entity;
     private final MovePath md;
@@ -86,7 +89,7 @@ class MovementHandler extends AbstractTWRuleHandler {
      *                 lot of LosEffects, so caching them can really speed
      *                 things up.
      */
-    MovementHandler(TWGameManager gameManager, Entity entity, MovePath md, Map<UnitTargetPair, LosEffects> losCache) {
+    MovePathHandler(TWGameManager gameManager, Entity entity, MovePath md, Map<UnitTargetPair, LosEffects> losCache) {
         super(gameManager);
         this.entity = entity;
         this.md = md;

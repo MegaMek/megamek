@@ -303,7 +303,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         toHit.setSideTable(Compute.targetSideTable(ae, target));
 
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
-        // randomly if the BattleMech is attacking from the same hex."
+        // randomly if the BattleMek is attacking from the same hex."
         if ((0 == range) && (target instanceof Tank)) {
             toHit.setSideTable(ToHitData.SIDE_RANDOM);
         }

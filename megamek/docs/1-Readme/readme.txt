@@ -8,7 +8,7 @@ Operations are constantly in the works, and many of those rules and weapons are 
 implemented.
 
 Players can create their own units, maps, and scenarios for use with MegaMek. MegaMek supports
-all unit types, from infantry, BattleMechs, and vehicles, to Aerospace fighters, DropShips,
+all unit types, from infantry, BattleMek, and vehicles, to Aerospace fighters, DropShips,
 and warships. Ground battles as well as space battles can be played.
 
 If you would like information about how to play the game, see the "PLAYING THE GAME" section,

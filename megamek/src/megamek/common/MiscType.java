@@ -3484,7 +3484,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // BattleMech Melee Weapons
+    // BattleMek Melee Weapons
     public static MiscType createChainWhip() {
         MiscType misc = new MiscType();
 

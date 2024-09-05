@@ -64,7 +64,7 @@ The following special rules apply during this scenario:
     The Forced Withdrawal rule is in effect for the Lyran Forces. Lyran forces must retreat off their home map edges if they take Crippling Damage. Withdrawing units may not make physical attacks against enemy units. Withdrawing units may fire at enemy units if the enemy unit lies in their front arc and are between the withdrawing unit and the withdrawing unit's home map edge. Davion and ComStar units may not withdraw.
 
 ·Crippling Damage
-    A BattleMech is considered crippled when: A side torso location is destroyed, the 'Mek takes 2 engine critical hits, it takes 4 or more pilot hits, or all of its weapons are destroyed. Any ammunition fed weapon is considered destroyed when its ammunition is depleted. If a 'Mek's weapons are destroyed and it can no longer move, it is considered destroyed.
+    A BattleMek is considered crippled when: A side torso location is destroyed, the 'Mek takes 2 engine critical hits, it takes 4 or more pilot hits, or all of its weapons are destroyed. Any ammunition fed weapon is considered destroyed when its ammunition is depleted. If a 'Mek's weapons are destroyed and it can no longer move, it is considered destroyed.
 
 
 VICTORY POINT TABLE

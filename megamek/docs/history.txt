@@ -2099,7 +2099,7 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + Data - New Sprites and unit file fixes.
 + Issue #697: Over verbose princess
 + Issue #548: View > Round Report Does Not Allow Copy & Paste of Text
-+ Issue #519: Fuel cells producing heat in BattleMechs
++ Issue #519: Fuel cells producing heat in BattleMeks
 + Issue #727: Sniper and Range Master SPAs now work with Line of Sight range
 + Issue #460: Field of Fire/firing arc sprites not cleared when unit finishes movement
 + Issue #758: Princess doesn't check for ownership when deploying units
@@ -3165,9 +3165,9 @@ v0.41.4 (2015-05-31 16:45 UTC)
     TacOps vehicle effectiveness in effect
 + Bug: Minefields always triggered upon entering regardless of roll outside
     double blind
-+ Bug: No heat buildup for ICE- and fuel cell-powered BattleMechs getting up
++ Bug: No heat buildup for ICE- and fuel cell-powered BattleMeks getting up
     (only Industrials get heat-free ground movement)
-+ Ruling: Engine stalls for ICE 'Meks are for Industrials and BattleMechs both
++ Ruling: Engine stalls for ICE 'Meks are for Industrials and BattleMeks both
 + Bug: MechView armored cockpit/engine identification not working as intended
 + Bug [#4563]: Mouse-over info no longer shows the unit��s remaining armor and
     structure points
@@ -8213,7 +8213,7 @@ v0.33.39 (2009-01-28, UTC+1)
 + Fix ConcurrentModificationException on Server closing
 + Bug: Mech Magshot Gauss had wrong tech level
 + Removed Mech Clan Magshot Gauss, it does not exist
-+ Primitive BattleMech construction
++ Primitive BattleMek construction
 + Added Dervish DV-1S from Jihad Secrets: Blake Documents
 + Added Fluid Guns. Only construction data, no rules
 + fixed verifier tonnage rounding

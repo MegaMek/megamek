@@ -4,7 +4,7 @@ September 9, 2023
 
 
 Probability of Rolling Specific Numbers with 2d6
-Ah, the humble 2d6, where the fate of your BattleMech hangs in the balance. Rolling two six-sided dice, you can end up with sums from 2 to 12, which in the world of BattleTech might mean the difference between a pinpoint laser shot to the cockpit or a miserable miss that scorches nothing but air. 
+Ah, the humble 2d6, where the fate of your BattleMek hangs in the balance. Rolling two six-sided dice, you can end up with sums from 2 to 12, which in the world of BattleTech might mean the difference between a pinpoint laser shot to the cockpit or a miserable miss that scorches nothing but air.
 
 2, 12: 1 way to roll (Think of this as the Hail Mary of laser shots. You either nail it or you don’t.)
 3, 11: 2 ways (These are your sniper shots—precious, but rare.)

@@ -16,7 +16,7 @@ PLAYING THE GAME
 
 3) The Default Skill Level Table is greatly expanded to include a larger variety of crew types.
 
-x4) An additional skill, The Anti-'Mek Skill, has been added for infantry, which all infantry possess.  Conventional Infantry have a typical value of 8 (as opposed to 5 for Anti-BattleMech Infantry/Battle Armor) and all infantry are now capable of performing Anti-Mech attacks.
+x4) An additional skill, The Anti-'Mek Skill, has been added for infantry, which all infantry possess.  Conventional Infantry have a typical value of 8 (as opposed to 5 for Anti-BattleMek Infantry/Battle Armor) and all infantry are now capable of performing Anti-Mech attacks.
 
 5) The section about damaging a Mechwarrior is expanded to cover the crew of all the different types of units.
 
@@ -63,7 +63,7 @@ AEROSPACE MOVEMENT
 
 COMBAT
 
-x1) Quad BattleMechs have a different Hit Location Table than Bipeds
+x1) Quad BattleMeks have a different Hit Location Table than Bipeds
 
 x2) Partial Cover now +1 to hit/hits against the leg locations instead strike the intervening terrain and are ignored.
 
@@ -238,15 +238,15 @@ x13) Area Effect Attacks inflict their full damage to each individual trooper in
 
 x14) ALL Infantry units now have an Anti-Mech skill, which is used like other skills to resolve Anti-Mech attacks.  Base is 8, typical Anti-Mech forces are 5.  The chance of success is still modified by number of surviving troopers
 
-x15) Mechanized Infantry may not make Anti-BattleMech attacks (this most likely was also true in the Combat Operations rules)
+x15) Mechanized Infantry may not make Anti-BattleMek attacks (this most likely was also true in the Combat Operations rules)
 
 x16) ProtoMechs cannot be swarmed (probably a clarification?)
 
-x17) Anti-BattleMech Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
+x17) Anti-BattleMek Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
 
 x18) BA with Magnetic Claws are -1 to hit when performing Swarm Attacks.  The Vibroclaw bonus to Leg Attack damage applies to Swarm attacks as well.
 
-x19) Friendly Mechanized Battle Armor may now defend a Mech from swarm attacks, and may even board a BattleMech already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMech cause Infantry attempting to Swarm that 'Mek to suffer a penalty to their to-hit roll to swarm.
+x19) Friendly Mechanized Battle Armor may now defend a Mech from swarm attacks, and may even board a BattleMek already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMek cause Infantry attempting to Swarm that 'Mek to suffer a penalty to their to-hit roll to swarm.
 
 x20) Vehicles may be swarmed, and are -2 to hit.
 
@@ -256,7 +256,7 @@ x22) Vehicles may attempt to use Erratic Maneuvers to shake off a Swarming Infan
 
 x23) Shots fired at units which are being swarmed may strike the swarming infantry
 
-24) The Swarming unit and the defending Battle Armor unit may make standard attacks against each other, so you can literally have an Infantry vs. Infantry Battle raging on the outside of a BattleMech (!)
+24) The Swarming unit and the defending Battle Armor unit may make standard attacks against each other, so you can literally have an Infantry vs. Infantry Battle raging on the outside of a BattleMek (!)
 
 x25) Infantry now have a chance of surviving the destruction of the carrying unit.  Infantry carrying ECM equipment or other passive effect equipment have that equipment remain in effect while riding in a carrier.  Infantry riding inside a carrier may take damage from the vehicle's skid, sideslip, fall, collision or critical hit, however.
 
@@ -274,7 +274,7 @@ x29) Mechs carrying Battle Armor on their backs cannot dump ammunition
 
 x32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the Mech they are riding on.
 
-x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but its actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mek Leg Attack only targeting a 'Mek's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
+x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but its actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mek Leg Attack only targeting a 'Mek's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMek Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
 
 x34) Mimetic Armour adds to movement modifiers instead of replacing them (p228)
 

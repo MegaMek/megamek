@@ -18,6 +18,63 @@ class MovementHandler extends AbstractTWRuleHandler {
     private final MovePath md;
     private final Map<UnitTargetPair, LosEffects> losCache;
 
+    private boolean sideslipped = false;
+    private Coords lastPos;
+    private Coords curPos;
+    private Hex firstHex; // Used to check for start/end magma damage
+    private int curFacing;
+    private int curVTOLElevation;
+    private int curElevation;
+    private int lastElevation;
+    private int curAltitude;
+    private boolean curClimbMode;
+    // if the entity already used some MPs,
+    // it previously tried to get up and fell,
+    // and then got another turn. set moveType
+    // and overallMoveType accordingly
+    // (these are all cleared by Entity.newRound)
+    private int distance;
+    private int mpUsed;
+    private EntityMovementType moveType;
+    private EntityMovementType overallMoveType;
+    private EntityMovementType lastStepMoveType;
+    private boolean firstStep;
+    private MoveStep prevStep = null;
+    private boolean wasProne;
+    private boolean fellDuringMovement;
+    private boolean crashedDuringMovement;
+    private boolean dropshipStillUnloading;
+    private boolean detectedHiddenHazard;
+    private boolean turnOver;
+    private int prevFacing;
+    private Hex prevHex;
+    private boolean isInfantry;
+    private AttackAction charge;
+    private RamAttackAction ram;
+    // cache this here, otherwise changing MP in the turn causes
+    // erroneous gravity PSRs
+    private int cachedGravityLimit = -1;
+    private int thrustUsed = 0;
+    private int j = 0;
+    private boolean didMove;
+    private boolean recovered = false;
+    private Entity loader = null;
+    private boolean continueTurnFromPBS = false;
+    private boolean continueTurnFromFishtail = false;
+    private boolean continueTurnFromLevelDrop = false;
+    private boolean continueTurnFromCliffAscent = false;
+
+    // get a list of coordinates that the unit passed through this turn
+    // so that I can later recover potential bombing targets
+    // it may already have some values
+    private final Vector<Coords> passedThrough = new Vector<>();
+    private final List<Integer> passedThroughFacing = new ArrayList<>();
+    private final List<Entity> hiddenEnemies = new ArrayList<>();
+    private final Vector<UnitLocation> movePath = new Vector<>();
+
+    private Report r;
+    private PilotingRollData rollTarget;
+
     /**
      * Steps through an entity movement packet, executing it.
      *
@@ -37,10 +94,6 @@ class MovementHandler extends AbstractTWRuleHandler {
     }
     
     void processMovement() {
-        Report r;
-        boolean sideslipped = false; // for VTOL side slipping
-        PilotingRollData rollTarget;
-
         // check for fleeing
         if (md.contains(MovePath.MoveStepType.FLEE)) {
             addReport(gameManager.processLeaveMap(md, false, -1));
@@ -161,55 +214,39 @@ class MovementHandler extends AbstractTWRuleHandler {
         }
 
         // okay, proceed with movement calculations
-        Coords lastPos = entity.getPosition();
-        Coords curPos = entity.getPosition();
-        Hex firstHex = getGame().getBoard().getHex(curPos); // Used to check for start/end magma damage
-        int curFacing = entity.getFacing();
-        int curVTOLElevation = entity.getElevation();
-        int curElevation;
-        int lastElevation = entity.getElevation();
-        int curAltitude = entity.getAltitude();
-        boolean curClimbMode = entity.climbMode();
+        lastPos = entity.getPosition();
+        curPos = entity.getPosition();
+        firstHex = getGame().getBoard().getHex(curPos); // Used to check for start/end magma damage
+        curFacing = entity.getFacing();
+        curVTOLElevation = entity.getElevation();
+        lastElevation = entity.getElevation();
+        curAltitude = entity.getAltitude();
+        curClimbMode = entity.climbMode();
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
         // and overallMoveType accordingly
         // (these are all cleared by Entity.newRound)
-        int distance = entity.delta_distance;
-        int mpUsed = entity.mpUsed;
-        EntityMovementType moveType = entity.moved;
-        EntityMovementType overallMoveType;
-        boolean firstStep;
-        boolean wasProne = entity.isProne();
-        boolean fellDuringMovement = false;
-        boolean crashedDuringMovement = false;
-        boolean dropshipStillUnloading = false;
-        boolean detectedHiddenHazard = false;
-        boolean turnOver;
-        int prevFacing = curFacing;
-        Hex prevHex = getGame().getBoard().getHex(curPos);
-        final boolean isInfantry = entity instanceof Infantry;
-        AttackAction charge = null;
-        RamAttackAction ram = null;
+        distance = entity.delta_distance;
+        mpUsed = entity.mpUsed;
+        moveType = entity.moved;
+        wasProne = entity.isProne();
+        fellDuringMovement = false;
+        crashedDuringMovement = false;
+        dropshipStillUnloading = false;
+        detectedHiddenHazard = false;
+        prevFacing = curFacing;
+        prevHex = getGame().getBoard().getHex(curPos);
+        isInfantry = entity instanceof Infantry;
         // cache this here, otherwise changing MP in the turn causes
         // erroneous gravity PSRs
-        int cachedGravityLimit = -1;
-        int thrustUsed = 0;
-        int j = 0;
-        boolean didMove;
-        boolean recovered = false;
-        Entity loader = null;
-        boolean continueTurnFromPBS = false;
-        boolean continueTurnFromFishtail = false;
-        boolean continueTurnFromLevelDrop = false;
-        boolean continueTurnFromCliffAscent = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
         // it may already have some values
-        Vector<Coords> passedThrough = entity.getPassedThrough();
+        passedThrough.addAll(entity.getPassedThrough());
         passedThrough.add(curPos);
-        List<Integer> passedThroughFacing = entity.getPassedThroughFacing();
+        passedThroughFacing.addAll(entity.getPassedThroughFacing());
         passedThroughFacing.add(curFacing);
 
         // Compile the move - don't clip
@@ -269,10 +306,7 @@ class MovementHandler extends AbstractTWRuleHandler {
         // iterate through steps
         firstStep = true;
         turnOver = false;
-        /* Bug 754610: Revert fix for bug 702735. */
-        MoveStep prevStep = null;
 
-        List<Entity> hiddenEnemies = new ArrayList<>();
         if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             for (Entity e : getGame().getEntitiesVector()) {
                 if (e.isHidden() && e.isEnemyOf(entity) && (e.getPosition() != null)) {
@@ -281,8 +315,851 @@ class MovementHandler extends AbstractTWRuleHandler {
             }
         }
 
-        Vector<UnitLocation> movePath = new Vector<>();
-        EntityMovementType lastStepMoveType = md.getLastStepMovementType();
+        lastStepMoveType = md.getLastStepMovementType();
+
+        processSteps();
+
+        // set entity parameters
+        entity.setPosition(curPos);
+        entity.setFacing(curFacing);
+        entity.setSecondaryFacing(curFacing);
+        entity.delta_distance = distance;
+        entity.moved = moveType;
+        entity.mpUsed = mpUsed;
+        if (md.isAllUnderwater(getGame())) {
+            entity.underwaterRounds++;
+            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+                    && entity.getMovementMode().isSubmarine()
+                    && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
+                r = new Report(2412);
+                r.addDesc(entity);
+                addReport(r);
+                gameManager.destroyEntity(entity, "mount drowned");
+            }
+        } else {
+            entity.underwaterRounds = 0;
+        }
+        entity.setClimbMode(curClimbMode);
+        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
+                && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
+            entity.setElevation(curVTOLElevation);
+        }
+        entity.setAltitude(curAltitude);
+        entity.setClimbMode(curClimbMode);
+
+        // add a list of places passed through
+        entity.setPassedThrough(passedThrough);
+        entity.setPassedThroughFacing(passedThroughFacing);
+
+        // if we ran with destroyed hip or gyro, we need a psr
+        rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        }
+
+        // if we sprinted with MASC or a supercharger, then we need a PSR
+        rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType,
+                entity.mpUsed);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        }
+
+        // if we used ProtoMech myomer booster, roll 2d6
+        // pilot damage on a 2
+        if ((entity instanceof Protomech) && ((Protomech) entity).hasMyomerBooster()
+                && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER))) {
+            r = new Report(2373);
+            r.addDesc(entity);
+            r.subject = entity.getId();
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() > 2) {
+                r.choose(true);
+                addReport(r);
+            } else {
+                r.choose(false);
+                addReport(r);
+                addReport(gameManager.damageCrew(entity, 1));
+            }
+        }
+
+        rollTarget = entity.checkSprintingWithMASCAndSupercharger(overallMoveType, entity.mpUsed);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        }
+        if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
+                && (md.hasActiveMASC() || md.hasActiveSupercharger()) && entity.canFall()) {
+            gameManager.doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
+        }
+
+        if (entity.isAirborne() && entity.isAero()) {
+
+            IAero a = (IAero) entity;
+            int thrust = md.getMpUsed();
+
+            // consume fuel
+            if (((entity.isAero())
+                    && getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
+                    || (entity instanceof TeleMissile)) {
+                int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
+
+                // if we're a gas hog, aerospace fighter and going faster than walking, then use 2x fuel
+                if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
+                        (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
+                        (overallMoveType == EntityMovementType.MOVE_OVER_THRUST)) &&
+                        entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
+                    fuelUsed *= 2;
+                }
+
+                a.useFuel(fuelUsed);
+            }
+
+            // JumpShips and space stations need to reduce accumulated thrust if
+            // they spend some
+            if (entity instanceof Jumpship) {
+                Jumpship js = (Jumpship) entity;
+                double penalty = 0.0;
+                // JumpShips do not accumulate thrust when they make a turn or
+                // change velocity
+                if (md.contains(MovePath.MoveStepType.TURN_LEFT) || md.contains(MovePath.MoveStepType.TURN_RIGHT)) {
+                    // I need to subtract the station keeping thrust from their
+                    // accumulated thrust
+                    // because they did not actually use it
+                    penalty = js.getStationKeepingThrust();
+                }
+                if (thrust > 0) {
+                    penalty = thrust;
+                }
+                if (penalty > 0.0) {
+                    js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
+                }
+            }
+
+            // check to see if thrust exceeded SI
+
+            rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
+                        "Thrust spent during turn exceeds SI"));
+            }
+
+            if (!getGame().getBoard().inSpace()) {
+                rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
+                        overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
+                            "Velocity greater than 2x safe thrust"));
+                }
+
+                rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    getGame().addControlRoll(
+                            new PilotingRollData(entity.getId(), md.getFinalNDown(),
+                                    "descended more than two altitudes"));
+                }
+
+                // check for hovering
+                rollTarget = a.checkHover(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    getGame().addControlRoll(
+                            new PilotingRollData(entity.getId(), 0, "hovering"));
+                }
+
+                // check for aero stall
+                rollTarget = a.checkStall(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    r = new Report(9391);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    addReport(r);
+                    getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
+                            "stalled out"));
+                    entity.setAltitude(entity.getAltitude() - 1);
+                    // check for crash
+                    if (gameManager.checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                        addReport(gameManager.processCrash(entity, 0, entity.getPosition()));
+                    }
+                }
+
+                // check to see if spheroids should lose one altitude
+                if (a.isSpheroid() && !a.isSpaceborne()
+                        && a.isAirborne() && (md.getFinalNDown() == 0) && (md.getMpUsed() == 0)) {
+                    r = new Report(9392);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    addReport(r);
+                    entity.setAltitude(entity.getAltitude() - 1);
+                    // check for crash
+                    if (gameManager.checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                        addReport(gameManager.processCrash(entity, 0, entity.getPosition()));
+                    }
+                } else if (entity instanceof EscapePods && entity.isAirborne() && md.getFinalVelocity() < 2) {
+                    //Atmospheric Escape Pods that drop below velocity 2 lose altitude as dropping units
+                    entity.setAltitude(entity.getAltitude()
+                            - getGame().getPlanetaryConditions().getDropRate());
+                    r = new Report(6676);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(getGame().getPlanetaryConditions().getDropRate());
+                    addReport(r);
+                }
+            }
+        }
+
+        // We need to check for the removal of hull-down for tanks.
+        // Tanks can just drive out of hull-down: if the tank was hull-down
+        // and doesn't end hull-down we can remove the hull-down status
+        if (entity.isHullDown() && !md.getFinalHullDown()
+                && (entity instanceof Tank
+                || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            entity.setHullDown(false);
+        }
+
+        // If the entity is being swarmed, erratic movement may dislodge the
+        // fleas.
+        final int swarmerId = entity.getSwarmAttackerId();
+        if ((Entity.NONE != swarmerId) && md.contains(MovePath.MoveStepType.SHAKE_OFF_SWARMERS)) {
+            final Entity swarmer = getGame().getEntity(swarmerId);
+            rollTarget = entity.getBasePilotingRoll(overallMoveType);
+
+            entity.addPilotingModifierForTerrain(rollTarget);
+
+            // Add a +4 modifier.
+            if (md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN) {
+                rollTarget.addModifier(2,
+                        "dislodge swarming infantry with VTOL movement");
+            } else {
+                rollTarget.addModifier(4, "dislodge swarming infantry");
+            }
+
+            // If the swarmer has Assault claws, give a 1 modifier.
+            // We can stop looking when we find our first match.
+            for (Mounted mount : swarmer.getMisc()) {
+                EquipmentType equip = mount.getType();
+                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                    rollTarget.addModifier(1, "swarmer has magnetic claws");
+                    break;
+                }
+            }
+
+            // okay, print the info
+            r = new Report(2125);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            addReport(r);
+
+            // roll
+            final Roll diceRoll = Compute.rollD6(2);
+            r = new Report(2130);
+            r.subject = entity.getId();
+            r.add(rollTarget.getValueAsString());
+            r.add(rollTarget.getDesc());
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() < rollTarget.getValue()) {
+                r.choose(false);
+                addReport(r);
+            } else {
+                // Dislodged swarmers don't get turns.
+                getGame().removeTurnFor(swarmer);
+                gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
+
+                // Update the report and the swarmer's status.
+                r.choose(true);
+                addReport(r);
+                entity.setSwarmAttackerId(Entity.NONE);
+                swarmer.setSwarmTargetId(Entity.NONE);
+
+                Hex curHex = getGame().getBoard().getHex(curPos);
+
+                // Did the infantry fall into water?
+                if (curHex.terrainLevel(Terrains.WATER) > 0) {
+                    // Swarming infantry die.
+                    swarmer.setPosition(curPos);
+                    r = new Report(2135);
+                    r.subject = entity.getId();
+                    r.indent();
+                    r.addDesc(swarmer);
+                    addReport(r);
+                    addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
+                } else {
+                    // Swarming infantry take a 3d6 point hit.
+                    // ASSUMPTION : damage should not be doubled.
+                    r = new Report(2140);
+                    r.subject = entity.getId();
+                    r.indent();
+                    r.addDesc(swarmer);
+                    r.add("3d6");
+                    addReport(r);
+                    addReport(gameManager.damageEntity(swarmer,
+                            swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                            Compute.d6(3)));
+                    addNewLines();
+                    swarmer.setPosition(curPos);
+                }
+                gameManager.entityUpdate(swarmerId);
+            } // End successful-PSR
+
+        } // End try-to-dislodge-swarmers
+
+        // but the danger isn't over yet! landing from a jump can be risky!
+        if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
+            final Hex curHex = getGame().getBoard().getHex(curPos);
+
+            // check for damaged criticals
+            rollTarget = entity.checkLandingWithDamage(overallMoveType);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                gameManager.doSkillCheckInPlace(entity, rollTarget);
+            }
+
+            // check for prototype JJs
+            rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                gameManager.doSkillCheckInPlace(entity, rollTarget);
+            }
+
+            // check for jumping into heavy woods
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
+                rollTarget = entity.checkLandingInHeavyWoods(overallMoveType, curHex);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    gameManager.doSkillCheckInPlace(entity, rollTarget);
+                }
+            }
+
+            // Mechanical jump boosters fall damage
+            if (md.shouldMechanicalJumpCauseFallDamage()) {
+                gameManager.getvPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
+                        entity.getElevation(), md.getJumpPathHighestPoint(),
+                        curPos, entity.getBasePilotingRoll(overallMoveType),
+                        false, entity.getJumpMP()));
+            }
+
+            // jumped into water?
+            int waterLevel = curHex.terrainLevel(Terrains.WATER);
+            if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
+                if (!(entity instanceof Infantry)) {
+                    // check for breaking ice
+                    Roll diceRoll = Compute.rollD6(1);
+                    r = new Report(2122);
+                    r.add(entity.getDisplayName(), true);
+                    r.add(diceRoll);
+                    r.subject = entity.getId();
+                    addReport(r);
+
+                    if (diceRoll.getIntValue() >= 4) {
+                        // oops!
+                        entity.setPosition(curPos);
+                        addReport(gameManager.resolveIceBroken(curPos));
+                        curPos = entity.getPosition();
+                    } else {
+                        // TacOps: immediate PSR with +4 for terrain. If you
+                        // fall then may break the ice after all
+                        rollTarget = entity.checkLandingOnIce(overallMoveType, curHex);
+                        if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
+                            // apply damage now, or it will show up as a
+                            // possible breach, if ice is broken
+                            entity.applyDamage();
+                            Roll diceRoll2 = Compute.rollD6(1);
+                            r = new Report(2118);
+                            r.addDesc(entity);
+                            r.add(diceRoll2);
+                            r.subject = entity.getId();
+                            addReport(r);
+
+                            if (diceRoll2.getIntValue() == 6) {
+                                entity.setPosition(curPos);
+                                addReport(gameManager.resolveIceBroken(curPos));
+                                curPos = entity.getPosition();
+                            }
+                        }
+                    }
+                }
+            } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE))
+                    && !(entity.getMovementMode().isHoverOrWiGE())) {
+                rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    // For falling elevation, Entity must not on hex surface
+                    int currElevation = entity.getElevation();
+                    entity.setElevation(0);
+                    boolean success = gameManager.doSkillCheckInPlace(entity, rollTarget);
+                    if (success) {
+                        entity.setElevation(currElevation);
+                    }
+                }
+                if (waterLevel > 1) {
+                    // Any swarming infantry will be destroyed.
+                    gameManager.drownSwarmer(entity, curPos);
+                }
+            }
+
+            // check for black ice
+            boolean useBlackIce = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
+            boolean goodTemp = getGame().getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
+            boolean goodWeather = getGame().getPlanetaryConditions().getWeather().isIceStorm();
+            if ((useBlackIce && goodTemp) || goodWeather) {
+                if (ServerHelper.checkEnteringBlackIce(gameManager, curPos, curHex, useBlackIce, goodTemp, goodWeather)) {
+                    rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
+                    if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
+                        entity.applyDamage();
+                    }
+                }
+            }
+
+            // check for building collapse
+            Building bldg = getGame().getBoard().getBuildingAt(curPos);
+            if (bldg != null) {
+                gameManager.checkForCollapse(bldg, getGame().getPositionMap(), curPos, true,
+                        gameManager.getvPhaseReport());
+            }
+
+            // Don't interact with terrain when jumping onto a building or a bridge
+            if (entity.getElevation() == 0) {
+                ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true,
+                        gameManager.getvPhaseReport(), gameManager);
+                ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
+
+                // jumped into swamp? maybe stuck!
+                if (curHex.getBogDownModifier(entity.getMovementMode(),
+                        entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
+                    if (entity instanceof Mech) {
+                        entity.setStuck(true);
+                        r = new Report(2121);
+                        r.add(entity.getDisplayName(), true);
+                        r.subject = entity.getId();
+                        addReport(r);
+                        // check for quicksand
+                        addReport(gameManager.checkQuickSand(curPos));
+                    } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+                        rollTarget = new PilotingRollData(entity.getId(),
+                                5, "entering boggy terrain");
+                        rollTarget.append(new PilotingRollData(entity.getId(),
+                                curHex.getBogDownModifier(entity.getMovementMode(),
+                                        entity instanceof LargeSupportTank),
+                                "avoid bogging down"));
+                        if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, curPos,
+                                rollTarget, false)) {
+                            entity.setStuck(true);
+                            r = new Report(2081);
+                            r.add(entity.getDisplayName());
+                            r.subject = entity.getId();
+                            addReport(r);
+                            // check for quicksand
+                            addReport(gameManager.checkQuickSand(curPos));
+                        }
+                    }
+                }
+            }
+
+            // If the entity is being swarmed, jumping may dislodge the fleas.
+            if (Entity.NONE != swarmerId) {
+                final Entity swarmer = getGame().getEntity(swarmerId);
+                rollTarget = entity.getBasePilotingRoll(overallMoveType);
+
+                entity.addPilotingModifierForTerrain(rollTarget);
+
+                // Add a +4 modifier.
+                rollTarget.addModifier(4, "dislodge swarming infantry");
+
+                // If the swarmer has Assault claws, give a 1 modifier.
+                // We can stop looking when we find our first match.
+                if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
+                    rollTarget.addModifier(1, "swarmer has magnetic claws");
+                }
+
+                // okay, print the info
+                r = new Report(2125);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+
+                // roll
+                final Roll diceRoll = Compute.rollD6(2);
+                r = new Report(2130);
+                r.subject = entity.getId();
+                r.add(rollTarget.getValueAsString());
+                r.add(rollTarget.getDesc());
+                r.add(diceRoll);
+
+                if (diceRoll.getIntValue() < rollTarget.getValue()) {
+                    r.choose(false);
+                    addReport(r);
+                } else {
+                    // Dislodged swarmers don't get turns.
+                    getGame().removeTurnFor(swarmer);
+                    gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
+
+                    // Update the report and the swarmer's status.
+                    r.choose(true);
+                    addReport(r);
+                    entity.setSwarmAttackerId(Entity.NONE);
+                    swarmer.setSwarmTargetId(Entity.NONE);
+
+                    // Did the infantry fall into water?
+                    if (curHex.terrainLevel(Terrains.WATER) > 0) {
+                        // Swarming infantry die.
+                        swarmer.setPosition(curPos);
+                        r = new Report(2135);
+                        r.subject = entity.getId();
+                        r.indent();
+                        r.addDesc(swarmer);
+                        addReport(r);
+                        addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
+                    } else {
+                        // Swarming infantry take a 3d6 point hit.
+                        // ASSUMPTION : damage should not be doubled.
+                        r = new Report(2140);
+                        r.subject = entity.getId();
+                        r.indent();
+                        r.addDesc(swarmer);
+                        r.add("3d6");
+                        addReport(r);
+                        addReport(gameManager.damageEntity(swarmer,
+                                swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                                Compute.d6(3)));
+                        addNewLines();
+                        swarmer.setPosition(curPos);
+                    }
+                    gameManager.entityUpdate(swarmerId);
+                } // End successful-PSR
+
+            } // End try-to-dislodge-swarmers
+
+            // one more check for inferno wash-off
+            gameManager.checkForWashedInfernos(entity, curPos);
+
+            // a jumping tank needs to roll for movement damage
+            if (entity instanceof Tank) {
+                int modifier = 0;
+                if (curHex.containsTerrain(Terrains.ROUGH)
+                        || curHex.containsTerrain(Terrains.WOODS)
+                        || curHex.containsTerrain(Terrains.JUNGLE)) {
+                    modifier = 1;
+                }
+                r = new Report(2126);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                gameManager.getvPhaseReport().add(r);
+                gameManager.getvPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
+                        false, -1, true));
+                Report.addNewline(gameManager.getvPhaseReport());
+            }
+
+        } // End entity-is-jumping
+
+        //If converting to another mode, set the final movement mode and report it
+        if (entity.isConvertingNow()) {
+            r = new Report(1210);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            if (entity instanceof QuadVee && entity.isProne()
+                    && entity.getConversionMode() == QuadVee.CONV_MODE_MECH) {
+                //Fall while converting to vehicle mode cancels conversion.
+                entity.setConvertingNow(false);
+                r.messageId = 2454;
+            } else {
+                // LAMs converting from fighter mode need to have the elevation set properly.
+                if (entity.isAero()) {
+                    if (md.getFinalConversionMode() == EntityMovementMode.WIGE
+                            && entity.getAltitude() > 0 && entity.getAltitude() <= 3) {
+                        entity.setElevation(entity.getAltitude() * 10);
+                        entity.setAltitude(0);
+                    } else {
+                        Hex hex = getGame().getBoard().getHex(entity.getPosition());
+                        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                            entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+                        } else {
+                            entity.setElevation(0);
+                        }
+                    }
+                }
+                entity.setMovementMode(md.getFinalConversionMode());
+                if (entity instanceof Mech && ((Mech) entity).hasTracks()) {
+                    r.messageId = 2455;
+                    r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
+                } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
+                        || entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                    r.messageId = 2451;
+                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    r.messageId = 2452;
+                } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                    r.messageId = 2453;
+                } else {
+                    r.messageId = 2450;
+                }
+                if (entity.isAero()) {
+                    int altitude = entity.getAltitude();
+                    if (altitude == 0 && md.getFinalElevation() >= 8) {
+                        altitude = 1;
+                    }
+                    if (altitude == 0) {
+                        ((IAero) entity).land();
+                    } else {
+                        ((IAero) entity).liftOff(altitude);
+                    }
+                }
+            }
+            addReport(r);
+        }
+
+        // update entity's locations' exposure
+        gameManager.addReport(gameManager.doSetLocationsExposure(entity,
+                getGame().getBoard().getHex(curPos), false, entity.getElevation()));
+
+        // Check the falls_end_movement option to see if it should be able to
+        // move on.
+        // Need to check here if the 'Mech actually went from non-prone to prone
+        // here because 'fellDuringMovement' is sometimes abused just to force
+        // another turn and so doesn't reliably tell us.
+        boolean continueTurnFromFall = !(getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
+                && (entity instanceof Mech) && !wasProne && entity.isProne())
+                && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
+                && !turnOver && (entity.mpUsed < entity.getRunMP())
+                && (overallMoveType != EntityMovementType.MOVE_JUMP);
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop || continueTurnFromCliffAscent
+                || detectedHiddenHazard)
+                && entity.isSelectableThisTurn() && !entity.isDoomed()) {
+            entity.applyDamage();
+            entity.setDone(false);
+            entity.setTurnInterrupted(true);
+
+            GameTurn newTurn = new SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
+            // Need to set the new turn's multiTurn state
+            newTurn.setMultiTurn(true);
+            getGame().insertNextTurn(newTurn);
+            // brief everybody on the turn update
+            gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
+
+            // let everyone know about what just happened
+            if (gameManager.getvPhaseReport().size() > 1) {
+                gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+            }
+        } else {
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                Hex hex = getGame().getBoard().getHex(curPos);
+                if (md.automaticWiGELanding(false)) {
+                    // try to land safely; LAMs require a psr when landing with gyro or leg actuator
+                    // damage and ProtoMechs always require a roll
+                    int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
+                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+                        addReport(gameManager.landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        gameManager.getvPhaseReport().addAll(gameManager.landGliderPM((Protomech) entity, entity.getPosition(),
+                                elevation, entity.delta_distance));
+                    } else {
+                        r = new Report(2123);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        addReport(r);
+                    }
+
+                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                        Building bldg = getGame().getBoard().getBuildingAt(entity.getPosition());
+                        entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+                        gameManager.addAffectedBldg(bldg, gameManager.checkBuildingCollapseWhileMoving(bldg,
+                                entity, entity.getPosition()));
+                    } else if (entity.isLocationProhibited(entity.getPosition(), 0)
+                            && !hex.hasPavement()) {
+                        // crash
+                        r = new Report(2124);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        addReport(r);
+                        addReport(gameManager.crashVTOLorWiGE((Tank) entity));
+                    } else {
+                        entity.setElevation(0);
+                    }
+
+                    // Check for stacking violations in the target hex
+                    Entity violation = Compute.stackingViolation(getGame(),
+                            entity.getId(), entity.getPosition(), entity.climbMode());
+                    if (violation != null) {
+                        PilotingRollData prd = new PilotingRollData(
+                                violation.getId(), 2, "fallen on");
+                        if (violation instanceof Dropship) {
+                            violation = entity;
+                            prd = null;
+                        }
+                        Coords targetDest = Compute.getValidDisplacement(getGame(),
+                                violation.getId(), entity.getPosition(), 0);
+                        if (targetDest != null) {
+                            addReport(gameManager.doEntityDisplacement(violation,
+                                    entity.getPosition(), targetDest, prd));
+                            // Update the violating entity's position on the
+                            // client.
+                            gameManager.entityUpdate(violation.getId());
+                        } else {
+                            // ack! automatic death! Tanks
+                            // suffer an ammo/power plant hit.
+                            // TODO : a Mech suffers a Head Blown Off crit.
+                            addReport(gameManager.destroyEntity(violation,
+                                    "impossible displacement",
+                                    violation instanceof Mech,
+                                    violation instanceof Mech));
+                        }
+                    }
+                } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)
+                        && !entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+
+                    // we didn't land, so we go to elevation 1 above the terrain
+                    // features
+                    // it might have been higher than one due to the extra MPs
+                    // it can spend to stay higher during movement, but should
+                    // end up at one
+
+                    entity.setElevation(Math.min(entity.getElevation(),
+                            1 + hex.maxTerrainFeatureElevation(
+                                    getGame().getBoard().inAtmosphere())));
+                }
+            }
+
+            // If we've somehow gotten here as an airborne LAM with a destroyed side torso
+            // (such as conversion while dropping), crash now.
+            if (entity instanceof LandAirMech
+                    && (entity.isLocationBad(Mech.LOC_RT) || entity.isLocationBad(Mech.LOC_LT))) {
+                r = new Report(9710);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                if (entity.isAirborneVTOLorWIGE()) {
+                    addReport(r);
+                    gameManager.crashAirMech(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                            "side torso destroyed"), gameManager.getvPhaseReport());
+                } else if (entity.isAirborne() && entity.isAero()) {
+                    addReport(r);
+                    addReport(gameManager.processCrash(entity, ((IAero) entity).getCurrentVelocity(), entity.getPosition()));
+                }
+            }
+
+            entity.setDone(true);
+        }
+
+        if (dropshipStillUnloading) {
+            // turns should have already been inserted but we need to set the
+            // entity as not done
+            entity.setDone(false);
+        }
+
+        // If the entity is being swarmed, update the attacker's position.
+        if (Entity.NONE != swarmerId) {
+            final Entity swarmer = getGame().getEntity(swarmerId);
+            swarmer.setPosition(curPos);
+            // If the hex is on fire, and the swarming infantry is
+            // *not* Battle Armor, it drops off.
+            if (!(swarmer instanceof BattleArmor) && getGame().getBoard()
+                    .getHex(curPos).containsTerrain(Terrains.FIRE)) {
+                swarmer.setSwarmTargetId(Entity.NONE);
+                entity.setSwarmAttackerId(Entity.NONE);
+                r = new Report(2145);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(swarmer.getShortName(), true);
+                addReport(r);
+            }
+            gameManager.entityUpdate(swarmerId);
+        }
+
+        // Update the entity's position,
+        // unless it is off the game map.
+        if (!getGame().isOutOfGame(entity)) {
+            gameManager.entityUpdate(entity.getId(), movePath, true, losCache);
+            if (entity.isDoomed()) {
+                gameManager.send(gameManager.createRemoveEntityPacket(entity.getId(),
+                        entity.getRemovalCondition()));
+            }
+        }
+
+        //If the entity is towing trailers, update the position of those trailers
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            Collections.reverse(reversedTrailers); // reverse in-place
+            List<Coords> trailerPath = gameManager.initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
+            gameManager.processTrailerMovement(entity, trailerPath);
+        }
+
+        // recovered units should now be recovered and dealt with
+        if (entity.isAero() && recovered && (loader != null)) {
+
+            if (loader.isCapitalFighter()) {
+                if (!(loader instanceof FighterSquadron)) {
+                    // this is a solo capital fighter so we need to add a new
+                    // squadron and load both the loader and loadee
+                    FighterSquadron fs = new FighterSquadron();
+                    fs.setDeployed(true);
+                    fs.setId(getGame().getNextEntityId());
+                    fs.setCurrentVelocity(((Aero) loader).getCurrentVelocity());
+                    fs.setNextVelocity(((Aero) loader).getNextVelocity());
+                    fs.setVectors(loader.getVectors());
+                    fs.setFacing(loader.getFacing());
+                    fs.setOwner(entity.getOwner());
+                    // set velocity and heading the same as parent entity
+                    getGame().addEntity(fs);
+                    gameManager.send(gameManager.createAddEntityPacket(fs.getId()));
+                    // make him not get a move this turn
+                    fs.setDone(true);
+                    // place on board
+                    fs.setPosition(loader.getPosition());
+                    gameManager.loadUnit(fs, loader, -1);
+                    loader = fs;
+                    gameManager.entityUpdate(fs.getId());
+                }
+                loader.load(entity);
+            } else {
+                loader.recover(entity);
+                entity.setRecoveryTurn(5);
+            }
+
+            // The loaded unit is being carried by the loader.
+            entity.setTransportId(loader.getId());
+
+            // Remove the loaded unit from the screen.
+            entity.setPosition(null);
+
+            // Update the loaded unit.
+            gameManager.entityUpdate(entity.getId());
+        }
+
+        // even if load was unsuccessful, I may need to update the loader
+        if (null != loader) {
+            gameManager.entityUpdate(loader.getId());
+        }
+
+        // if using double blind, update the player on new units he might see
+        if (gameManager.doBlind()) {
+            gameManager.send(entity.getOwner().getId(), gameManager.createFilteredFullEntitiesPacket(entity.getOwner(), losCache));
+        }
+
+        // if we generated a charge attack, report it now
+        if (charge != null) {
+            gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(charge));
+        }
+
+        // if we generated a ram attack, report it now
+        if (ram != null) {
+            gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(ram));
+        }
+        if ((entity instanceof Mech) && entity.hasEngine() && ((Mech) entity).isIndustrial()
+                && !entity.hasEnvironmentalSealing()
+                && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            if ((!entity.isProne()
+                    && (getGame().getBoard().getHex(entity.getPosition())
+                    .terrainLevel(Terrains.WATER) >= 2))
+                    || (entity.isProne()
+                    && (getGame().getBoard().getHex(entity.getPosition())
+                    .terrainLevel(Terrains.WATER) == 1))) {
+                ((Mech) entity).setJustMovedIntoIndustrialKillingWater(true);
+
+            } else {
+                ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
+                ((Mech) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
+            }
+        }
+    }
+
+    /**
+     * Iterate through the steps of the movement path and handle each step.
+     */
+    private void processSteps() {
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
             EntityMovementType stepMoveType = step.getMovementType(md.isEndStep(step));
@@ -2468,841 +3345,5 @@ class MovementHandler extends AbstractTWRuleHandler {
             }
         }
 
-        // set entity parameters
-        entity.setPosition(curPos);
-        entity.setFacing(curFacing);
-        entity.setSecondaryFacing(curFacing);
-        entity.delta_distance = distance;
-        entity.moved = moveType;
-        entity.mpUsed = mpUsed;
-        if (md.isAllUnderwater(getGame())) {
-            entity.underwaterRounds++;
-            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
-                    && entity.getMovementMode().isSubmarine()
-                    && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
-                r = new Report(2412);
-                r.addDesc(entity);
-                addReport(r);
-                gameManager.destroyEntity(entity, "mount drowned");
-            }
-        } else {
-            entity.underwaterRounds = 0;
-        }
-        entity.setClimbMode(curClimbMode);
-        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
-                && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
-            entity.setElevation(curVTOLElevation);
-        }
-        entity.setAltitude(curAltitude);
-        entity.setClimbMode(curClimbMode);
-
-        // add a list of places passed through
-        entity.setPassedThrough(passedThrough);
-        entity.setPassedThroughFacing(passedThroughFacing);
-
-        // if we ran with destroyed hip or gyro, we need a psr
-        rollTarget = entity.checkRunningWithDamage(overallMoveType);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
-        }
-
-        // if we sprinted with MASC or a supercharger, then we need a PSR
-        rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType,
-                entity.mpUsed);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
-        }
-
-        // if we used ProtoMech myomer booster, roll 2d6
-        // pilot damage on a 2
-        if ((entity instanceof Protomech) && ((Protomech) entity).hasMyomerBooster()
-                && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER))) {
-            r = new Report(2373);
-            r.addDesc(entity);
-            r.subject = entity.getId();
-            Roll diceRoll = Compute.rollD6(2);
-            r.add(diceRoll);
-
-            if (diceRoll.getIntValue() > 2) {
-                r.choose(true);
-                addReport(r);
-            } else {
-                r.choose(false);
-                addReport(r);
-                addReport(gameManager.damageCrew(entity, 1));
-            }
-        }
-
-        rollTarget = entity.checkSprintingWithMASCAndSupercharger(overallMoveType, entity.mpUsed);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
-        }
-        if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-                && (md.hasActiveMASC() || md.hasActiveSupercharger()) && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
-        }
-
-        if (entity.isAirborne() && entity.isAero()) {
-
-            IAero a = (IAero) entity;
-            int thrust = md.getMpUsed();
-
-            // consume fuel
-            if (((entity.isAero())
-                    && getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
-                    || (entity instanceof TeleMissile)) {
-                int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
-
-                // if we're a gas hog, aerospace fighter and going faster than walking, then use 2x fuel
-                if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
-                        (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
-                        (overallMoveType == EntityMovementType.MOVE_OVER_THRUST)) &&
-                        entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
-                    fuelUsed *= 2;
-                }
-
-                a.useFuel(fuelUsed);
-            }
-
-            // JumpShips and space stations need to reduce accumulated thrust if
-            // they spend some
-            if (entity instanceof Jumpship) {
-                Jumpship js = (Jumpship) entity;
-                double penalty = 0.0;
-                // JumpShips do not accumulate thrust when they make a turn or
-                // change velocity
-                if (md.contains(MovePath.MoveStepType.TURN_LEFT) || md.contains(MovePath.MoveStepType.TURN_RIGHT)) {
-                    // I need to subtract the station keeping thrust from their
-                    // accumulated thrust
-                    // because they did not actually use it
-                    penalty = js.getStationKeepingThrust();
-                }
-                if (thrust > 0) {
-                    penalty = thrust;
-                }
-                if (penalty > 0.0) {
-                    js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
-                }
-            }
-
-            // check to see if thrust exceeded SI
-
-            rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
-                        "Thrust spent during turn exceeds SI"));
-            }
-
-            if (!getGame().getBoard().inSpace()) {
-                rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
-                        overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
-                            "Velocity greater than 2x safe thrust"));
-                }
-
-                rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    getGame().addControlRoll(
-                            new PilotingRollData(entity.getId(), md.getFinalNDown(),
-                                    "descended more than two altitudes"));
-                }
-
-                // check for hovering
-                rollTarget = a.checkHover(md);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    getGame().addControlRoll(
-                            new PilotingRollData(entity.getId(), 0, "hovering"));
-                }
-
-                // check for aero stall
-                rollTarget = a.checkStall(md);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    r = new Report(9391);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
-                    getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
-                            "stalled out"));
-                    entity.setAltitude(entity.getAltitude() - 1);
-                    // check for crash
-                    if (gameManager.checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                        addReport(gameManager.processCrash(entity, 0, entity.getPosition()));
-                    }
-                }
-
-                // check to see if spheroids should lose one altitude
-                if (a.isSpheroid() && !a.isSpaceborne()
-                        && a.isAirborne() && (md.getFinalNDown() == 0) && (md.getMpUsed() == 0)) {
-                    r = new Report(9392);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
-                    entity.setAltitude(entity.getAltitude() - 1);
-                    // check for crash
-                    if (gameManager.checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                        addReport(gameManager.processCrash(entity, 0, entity.getPosition()));
-                    }
-                } else if (entity instanceof EscapePods && entity.isAirborne() && md.getFinalVelocity() < 2) {
-                    //Atmospheric Escape Pods that drop below velocity 2 lose altitude as dropping units
-                    entity.setAltitude(entity.getAltitude()
-                            - getGame().getPlanetaryConditions().getDropRate());
-                    r = new Report(6676);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(getGame().getPlanetaryConditions().getDropRate());
-                    addReport(r);
-                }
-            }
-        }
-
-        // We need to check for the removal of hull-down for tanks.
-        // Tanks can just drive out of hull-down: if the tank was hull-down
-        // and doesn't end hull-down we can remove the hull-down status
-        if (entity.isHullDown() && !md.getFinalHullDown()
-                && (entity instanceof Tank
-                || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
-            entity.setHullDown(false);
-        }
-
-        // If the entity is being swarmed, erratic movement may dislodge the
-        // fleas.
-        final int swarmerId = entity.getSwarmAttackerId();
-        if ((Entity.NONE != swarmerId) && md.contains(MovePath.MoveStepType.SHAKE_OFF_SWARMERS)) {
-            final Entity swarmer = getGame().getEntity(swarmerId);
-            rollTarget = entity.getBasePilotingRoll(overallMoveType);
-
-            entity.addPilotingModifierForTerrain(rollTarget);
-
-            // Add a +4 modifier.
-            if (md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN) {
-                rollTarget.addModifier(2,
-                        "dislodge swarming infantry with VTOL movement");
-            } else {
-                rollTarget.addModifier(4, "dislodge swarming infantry");
-            }
-
-            // If the swarmer has Assault claws, give a 1 modifier.
-            // We can stop looking when we find our first match.
-            for (Mounted mount : swarmer.getMisc()) {
-                EquipmentType equip = mount.getType();
-                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
-                    rollTarget.addModifier(1, "swarmer has magnetic claws");
-                    break;
-                }
-            }
-
-            // okay, print the info
-            r = new Report(2125);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            addReport(r);
-
-            // roll
-            final Roll diceRoll = Compute.rollD6(2);
-            r = new Report(2130);
-            r.subject = entity.getId();
-            r.add(rollTarget.getValueAsString());
-            r.add(rollTarget.getDesc());
-            r.add(diceRoll);
-
-            if (diceRoll.getIntValue() < rollTarget.getValue()) {
-                r.choose(false);
-                addReport(r);
-            } else {
-                // Dislodged swarmers don't get turns.
-                getGame().removeTurnFor(swarmer);
-                gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
-
-                // Update the report and the swarmer's status.
-                r.choose(true);
-                addReport(r);
-                entity.setSwarmAttackerId(Entity.NONE);
-                swarmer.setSwarmTargetId(Entity.NONE);
-
-                Hex curHex = getGame().getBoard().getHex(curPos);
-
-                // Did the infantry fall into water?
-                if (curHex.terrainLevel(Terrains.WATER) > 0) {
-                    // Swarming infantry die.
-                    swarmer.setPosition(curPos);
-                    r = new Report(2135);
-                    r.subject = entity.getId();
-                    r.indent();
-                    r.addDesc(swarmer);
-                    addReport(r);
-                    addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
-                } else {
-                    // Swarming infantry take a 3d6 point hit.
-                    // ASSUMPTION : damage should not be doubled.
-                    r = new Report(2140);
-                    r.subject = entity.getId();
-                    r.indent();
-                    r.addDesc(swarmer);
-                    r.add("3d6");
-                    addReport(r);
-                    addReport(gameManager.damageEntity(swarmer,
-                            swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                            Compute.d6(3)));
-                    addNewLines();
-                    swarmer.setPosition(curPos);
-                }
-                gameManager.entityUpdate(swarmerId);
-            } // End successful-PSR
-
-        } // End try-to-dislodge-swarmers
-
-        // but the danger isn't over yet! landing from a jump can be risky!
-        if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
-            final Hex curHex = getGame().getBoard().getHex(curPos);
-
-            // check for damaged criticals
-            rollTarget = entity.checkLandingWithDamage(overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                gameManager.doSkillCheckInPlace(entity, rollTarget);
-            }
-
-            // check for prototype JJs
-            rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                gameManager.doSkillCheckInPlace(entity, rollTarget);
-            }
-
-            // check for jumping into heavy woods
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
-                rollTarget = entity.checkLandingInHeavyWoods(overallMoveType, curHex);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    gameManager.doSkillCheckInPlace(entity, rollTarget);
-                }
-            }
-
-            // Mechanical jump boosters fall damage
-            if (md.shouldMechanicalJumpCauseFallDamage()) {
-                gameManager.getvPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
-                        entity.getElevation(), md.getJumpPathHighestPoint(),
-                        curPos, entity.getBasePilotingRoll(overallMoveType),
-                        false, entity.getJumpMP()));
-            }
-
-            // jumped into water?
-            int waterLevel = curHex.terrainLevel(Terrains.WATER);
-            if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
-                if (!(entity instanceof Infantry)) {
-                    // check for breaking ice
-                    Roll diceRoll = Compute.rollD6(1);
-                    r = new Report(2122);
-                    r.add(entity.getDisplayName(), true);
-                    r.add(diceRoll);
-                    r.subject = entity.getId();
-                    addReport(r);
-
-                    if (diceRoll.getIntValue() >= 4) {
-                        // oops!
-                        entity.setPosition(curPos);
-                        addReport(gameManager.resolveIceBroken(curPos));
-                        curPos = entity.getPosition();
-                    } else {
-                        // TacOps: immediate PSR with +4 for terrain. If you
-                        // fall then may break the ice after all
-                        rollTarget = entity.checkLandingOnIce(overallMoveType, curHex);
-                        if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
-                            // apply damage now, or it will show up as a
-                            // possible breach, if ice is broken
-                            entity.applyDamage();
-                            Roll diceRoll2 = Compute.rollD6(1);
-                            r = new Report(2118);
-                            r.addDesc(entity);
-                            r.add(diceRoll2);
-                            r.subject = entity.getId();
-                            addReport(r);
-
-                            if (diceRoll2.getIntValue() == 6) {
-                                entity.setPosition(curPos);
-                                addReport(gameManager.resolveIceBroken(curPos));
-                                curPos = entity.getPosition();
-                            }
-                        }
-                    }
-                }
-            } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE))
-                    && !(entity.getMovementMode().isHoverOrWiGE())) {
-                rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    // For falling elevation, Entity must not on hex surface
-                    int currElevation = entity.getElevation();
-                    entity.setElevation(0);
-                    boolean success = gameManager.doSkillCheckInPlace(entity, rollTarget);
-                    if (success) {
-                        entity.setElevation(currElevation);
-                    }
-                }
-                if (waterLevel > 1) {
-                    // Any swarming infantry will be destroyed.
-                    gameManager.drownSwarmer(entity, curPos);
-                }
-            }
-
-            // check for black ice
-            boolean useBlackIce = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-            boolean goodTemp = getGame().getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-            boolean goodWeather = getGame().getPlanetaryConditions().getWeather().isIceStorm();
-            if ((useBlackIce && goodTemp) || goodWeather) {
-                if (ServerHelper.checkEnteringBlackIce(gameManager, curPos, curHex, useBlackIce, goodTemp, goodWeather)) {
-                    rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
-                    if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
-                        entity.applyDamage();
-                    }
-                }
-            }
-
-            // check for building collapse
-            Building bldg = getGame().getBoard().getBuildingAt(curPos);
-            if (bldg != null) {
-                gameManager.checkForCollapse(bldg, getGame().getPositionMap(), curPos, true,
-                        gameManager.getvPhaseReport());
-            }
-
-            // Don't interact with terrain when jumping onto a building or a bridge
-            if (entity.getElevation() == 0) {
-                ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true,
-                        gameManager.getvPhaseReport(), gameManager);
-                ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
-
-                // jumped into swamp? maybe stuck!
-                if (curHex.getBogDownModifier(entity.getMovementMode(),
-                        entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
-                    if (entity instanceof Mech) {
-                        entity.setStuck(true);
-                        r = new Report(2121);
-                        r.add(entity.getDisplayName(), true);
-                        r.subject = entity.getId();
-                        addReport(r);
-                        // check for quicksand
-                        addReport(gameManager.checkQuickSand(curPos));
-                    } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-                        rollTarget = new PilotingRollData(entity.getId(),
-                                5, "entering boggy terrain");
-                        rollTarget.append(new PilotingRollData(entity.getId(),
-                                curHex.getBogDownModifier(entity.getMovementMode(),
-                                        entity instanceof LargeSupportTank),
-                                "avoid bogging down"));
-                        if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, curPos,
-                                rollTarget, false)) {
-                            entity.setStuck(true);
-                            r = new Report(2081);
-                            r.add(entity.getDisplayName());
-                            r.subject = entity.getId();
-                            addReport(r);
-                            // check for quicksand
-                            addReport(gameManager.checkQuickSand(curPos));
-                        }
-                    }
-                }
-            }
-
-            // If the entity is being swarmed, jumping may dislodge the fleas.
-            if (Entity.NONE != swarmerId) {
-                final Entity swarmer = getGame().getEntity(swarmerId);
-                rollTarget = entity.getBasePilotingRoll(overallMoveType);
-
-                entity.addPilotingModifierForTerrain(rollTarget);
-
-                // Add a +4 modifier.
-                rollTarget.addModifier(4, "dislodge swarming infantry");
-
-                // If the swarmer has Assault claws, give a 1 modifier.
-                // We can stop looking when we find our first match.
-                if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
-                    rollTarget.addModifier(1, "swarmer has magnetic claws");
-                }
-
-                // okay, print the info
-                r = new Report(2125);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
-
-                // roll
-                final Roll diceRoll = Compute.rollD6(2);
-                r = new Report(2130);
-                r.subject = entity.getId();
-                r.add(rollTarget.getValueAsString());
-                r.add(rollTarget.getDesc());
-                r.add(diceRoll);
-
-                if (diceRoll.getIntValue() < rollTarget.getValue()) {
-                    r.choose(false);
-                    addReport(r);
-                } else {
-                    // Dislodged swarmers don't get turns.
-                    getGame().removeTurnFor(swarmer);
-                    gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
-
-                    // Update the report and the swarmer's status.
-                    r.choose(true);
-                    addReport(r);
-                    entity.setSwarmAttackerId(Entity.NONE);
-                    swarmer.setSwarmTargetId(Entity.NONE);
-
-                    // Did the infantry fall into water?
-                    if (curHex.terrainLevel(Terrains.WATER) > 0) {
-                        // Swarming infantry die.
-                        swarmer.setPosition(curPos);
-                        r = new Report(2135);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.addDesc(swarmer);
-                        addReport(r);
-                        addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
-                    } else {
-                        // Swarming infantry take a 3d6 point hit.
-                        // ASSUMPTION : damage should not be doubled.
-                        r = new Report(2140);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.addDesc(swarmer);
-                        r.add("3d6");
-                        addReport(r);
-                        addReport(gameManager.damageEntity(swarmer,
-                                swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                                Compute.d6(3)));
-                        addNewLines();
-                        swarmer.setPosition(curPos);
-                    }
-                    gameManager.entityUpdate(swarmerId);
-                } // End successful-PSR
-
-            } // End try-to-dislodge-swarmers
-
-            // one more check for inferno wash-off
-            gameManager.checkForWashedInfernos(entity, curPos);
-
-            // a jumping tank needs to roll for movement damage
-            if (entity instanceof Tank) {
-                int modifier = 0;
-                if (curHex.containsTerrain(Terrains.ROUGH)
-                        || curHex.containsTerrain(Terrains.WOODS)
-                        || curHex.containsTerrain(Terrains.JUNGLE)) {
-                    modifier = 1;
-                }
-                r = new Report(2126);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                gameManager.getvPhaseReport().add(r);
-                gameManager.getvPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
-                        false, -1, true));
-                Report.addNewline(gameManager.getvPhaseReport());
-            }
-
-        } // End entity-is-jumping
-
-        //If converting to another mode, set the final movement mode and report it
-        if (entity.isConvertingNow()) {
-            r = new Report(1210);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            if (entity instanceof QuadVee && entity.isProne()
-                    && entity.getConversionMode() == QuadVee.CONV_MODE_MECH) {
-                //Fall while converting to vehicle mode cancels conversion.
-                entity.setConvertingNow(false);
-                r.messageId = 2454;
-            } else {
-                // LAMs converting from fighter mode need to have the elevation set properly.
-                if (entity.isAero()) {
-                    if (md.getFinalConversionMode() == EntityMovementMode.WIGE
-                            && entity.getAltitude() > 0 && entity.getAltitude() <= 3) {
-                        entity.setElevation(entity.getAltitude() * 10);
-                        entity.setAltitude(0);
-                    } else {
-                        Hex hex = getGame().getBoard().getHex(entity.getPosition());
-                        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
-                            entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
-                        } else {
-                            entity.setElevation(0);
-                        }
-                    }
-                }
-                entity.setMovementMode(md.getFinalConversionMode());
-                if (entity instanceof Mech && ((Mech) entity).hasTracks()) {
-                    r.messageId = 2455;
-                    r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
-                } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
-                        || entity.getMovementMode() == EntityMovementMode.WHEELED) {
-                    r.messageId = 2451;
-                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    r.messageId = 2452;
-                } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
-                    r.messageId = 2453;
-                } else {
-                    r.messageId = 2450;
-                }
-                if (entity.isAero()) {
-                    int altitude = entity.getAltitude();
-                    if (altitude == 0 && md.getFinalElevation() >= 8) {
-                        altitude = 1;
-                    }
-                    if (altitude == 0) {
-                        ((IAero) entity).land();
-                    } else {
-                        ((IAero) entity).liftOff(altitude);
-                    }
-                }
-            }
-            addReport(r);
-        }
-
-        // update entity's locations' exposure
-        gameManager.addReport(gameManager.doSetLocationsExposure(entity,
-                getGame().getBoard().getHex(curPos), false, entity.getElevation()));
-
-        // Check the falls_end_movement option to see if it should be able to
-        // move on.
-        // Need to check here if the 'Mech actually went from non-prone to prone
-        // here because 'fellDuringMovement' is sometimes abused just to force
-        // another turn and so doesn't reliably tell us.
-        boolean continueTurnFromFall = !(getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
-                && (entity instanceof Mech) && !wasProne && entity.isProne())
-                && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
-                && !turnOver && (entity.mpUsed < entity.getRunMP())
-                && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop || continueTurnFromCliffAscent
-                || detectedHiddenHazard)
-                && entity.isSelectableThisTurn() && !entity.isDoomed()) {
-            entity.applyDamage();
-            entity.setDone(false);
-            entity.setTurnInterrupted(true);
-
-            GameTurn newTurn = new SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
-            // Need to set the new turn's multiTurn state
-            newTurn.setMultiTurn(true);
-            getGame().insertNextTurn(newTurn);
-            // brief everybody on the turn update
-            gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
-
-            // let everyone know about what just happened
-            if (gameManager.getvPhaseReport().size() > 1) {
-                gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
-            }
-        } else {
-            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                Hex hex = getGame().getBoard().getHex(curPos);
-                if (md.automaticWiGELanding(false)) {
-                    // try to land safely; LAMs require a psr when landing with gyro or leg actuator
-                    // damage and ProtoMechs always require a roll
-                    int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
-                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
-                        addReport(gameManager.landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
-                                entity.delta_distance));
-                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                        gameManager.getvPhaseReport().addAll(gameManager.landGliderPM((Protomech) entity, entity.getPosition(),
-                                elevation, entity.delta_distance));
-                    } else {
-                        r = new Report(2123);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        addReport(r);
-                    }
-
-                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
-                        Building bldg = getGame().getBoard().getBuildingAt(entity.getPosition());
-                        entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
-                        gameManager.addAffectedBldg(bldg, gameManager.checkBuildingCollapseWhileMoving(bldg,
-                                entity, entity.getPosition()));
-                    } else if (entity.isLocationProhibited(entity.getPosition(), 0)
-                            && !hex.hasPavement()) {
-                        // crash
-                        r = new Report(2124);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        addReport(r);
-                        addReport(gameManager.crashVTOLorWiGE((Tank) entity));
-                    } else {
-                        entity.setElevation(0);
-                    }
-
-                    // Check for stacking violations in the target hex
-                    Entity violation = Compute.stackingViolation(getGame(),
-                            entity.getId(), entity.getPosition(), entity.climbMode());
-                    if (violation != null) {
-                        PilotingRollData prd = new PilotingRollData(
-                                violation.getId(), 2, "fallen on");
-                        if (violation instanceof Dropship) {
-                            violation = entity;
-                            prd = null;
-                        }
-                        Coords targetDest = Compute.getValidDisplacement(getGame(),
-                                violation.getId(), entity.getPosition(), 0);
-                        if (targetDest != null) {
-                            addReport(gameManager.doEntityDisplacement(violation,
-                                    entity.getPosition(), targetDest, prd));
-                            // Update the violating entity's position on the
-                            // client.
-                            gameManager.entityUpdate(violation.getId());
-                        } else {
-                            // ack! automatic death! Tanks
-                            // suffer an ammo/power plant hit.
-                            // TODO : a Mech suffers a Head Blown Off crit.
-                            addReport(gameManager.destroyEntity(violation,
-                                    "impossible displacement",
-                                    violation instanceof Mech,
-                                    violation instanceof Mech));
-                        }
-                    }
-                } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)
-                        && !entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-
-                    // we didn't land, so we go to elevation 1 above the terrain
-                    // features
-                    // it might have been higher than one due to the extra MPs
-                    // it can spend to stay higher during movement, but should
-                    // end up at one
-
-                    entity.setElevation(Math.min(entity.getElevation(),
-                            1 + hex.maxTerrainFeatureElevation(
-                                    getGame().getBoard().inAtmosphere())));
-                }
-            }
-
-            // If we've somehow gotten here as an airborne LAM with a destroyed side torso
-            // (such as conversion while dropping), crash now.
-            if (entity instanceof LandAirMech
-                    && (entity.isLocationBad(Mech.LOC_RT) || entity.isLocationBad(Mech.LOC_LT))) {
-                r = new Report(9710);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                if (entity.isAirborneVTOLorWIGE()) {
-                    addReport(r);
-                    gameManager.crashAirMech(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
-                            "side torso destroyed"), gameManager.getvPhaseReport());
-                } else if (entity.isAirborne() && entity.isAero()) {
-                    addReport(r);
-                    addReport(gameManager.processCrash(entity, ((IAero) entity).getCurrentVelocity(), entity.getPosition()));
-                }
-            }
-
-            entity.setDone(true);
-        }
-
-        if (dropshipStillUnloading) {
-            // turns should have already been inserted but we need to set the
-            // entity as not done
-            entity.setDone(false);
-        }
-
-        // If the entity is being swarmed, update the attacker's position.
-        if (Entity.NONE != swarmerId) {
-            final Entity swarmer = getGame().getEntity(swarmerId);
-            swarmer.setPosition(curPos);
-            // If the hex is on fire, and the swarming infantry is
-            // *not* Battle Armor, it drops off.
-            if (!(swarmer instanceof BattleArmor) && getGame().getBoard()
-                    .getHex(curPos).containsTerrain(Terrains.FIRE)) {
-                swarmer.setSwarmTargetId(Entity.NONE);
-                entity.setSwarmAttackerId(Entity.NONE);
-                r = new Report(2145);
-                r.subject = entity.getId();
-                r.indent();
-                r.add(swarmer.getShortName(), true);
-                addReport(r);
-            }
-            gameManager.entityUpdate(swarmerId);
-        }
-
-        // Update the entity's position,
-        // unless it is off the game map.
-        if (!getGame().isOutOfGame(entity)) {
-            gameManager.entityUpdate(entity.getId(), movePath, true, losCache);
-            if (entity.isDoomed()) {
-                gameManager.send(gameManager.createRemoveEntityPacket(entity.getId(),
-                        entity.getRemovalCondition()));
-            }
-        }
-
-        //If the entity is towing trailers, update the position of those trailers
-        if (!entity.getAllTowedUnits().isEmpty()) {
-            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
-            Collections.reverse(reversedTrailers); // reverse in-place
-            List<Coords> trailerPath = gameManager.initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
-            gameManager.processTrailerMovement(entity, trailerPath);
-        }
-
-        // recovered units should now be recovered and dealt with
-        if (entity.isAero() && recovered && (loader != null)) {
-
-            if (loader.isCapitalFighter()) {
-                if (!(loader instanceof FighterSquadron)) {
-                    // this is a solo capital fighter so we need to add a new
-                    // squadron and load both the loader and loadee
-                    FighterSquadron fs = new FighterSquadron();
-                    fs.setDeployed(true);
-                    fs.setId(getGame().getNextEntityId());
-                    fs.setCurrentVelocity(((Aero) loader).getCurrentVelocity());
-                    fs.setNextVelocity(((Aero) loader).getNextVelocity());
-                    fs.setVectors(loader.getVectors());
-                    fs.setFacing(loader.getFacing());
-                    fs.setOwner(entity.getOwner());
-                    // set velocity and heading the same as parent entity
-                    getGame().addEntity(fs);
-                    gameManager.send(gameManager.createAddEntityPacket(fs.getId()));
-                    // make him not get a move this turn
-                    fs.setDone(true);
-                    // place on board
-                    fs.setPosition(loader.getPosition());
-                    gameManager.loadUnit(fs, loader, -1);
-                    loader = fs;
-                    gameManager.entityUpdate(fs.getId());
-                }
-                loader.load(entity);
-            } else {
-                loader.recover(entity);
-                entity.setRecoveryTurn(5);
-            }
-
-            // The loaded unit is being carried by the loader.
-            entity.setTransportId(loader.getId());
-
-            // Remove the loaded unit from the screen.
-            entity.setPosition(null);
-
-            // Update the loaded unit.
-            gameManager.entityUpdate(entity.getId());
-        }
-
-        // even if load was unsuccessful, I may need to update the loader
-        if (null != loader) {
-            gameManager.entityUpdate(loader.getId());
-        }
-
-        // if using double blind, update the player on new units he might see
-        if (gameManager.doBlind()) {
-            gameManager.send(entity.getOwner().getId(), gameManager.createFilteredFullEntitiesPacket(entity.getOwner(), losCache));
-        }
-
-        // if we generated a charge attack, report it now
-        if (charge != null) {
-            gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(charge));
-        }
-
-        // if we generated a ram attack, report it now
-        if (ram != null) {
-            gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(ram));
-        }
-        if ((entity instanceof Mech) && entity.hasEngine() && ((Mech) entity).isIndustrial()
-                && !entity.hasEnvironmentalSealing()
-                && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            if ((!entity.isProne()
-                    && (getGame().getBoard().getHex(entity.getPosition())
-                    .terrainLevel(Terrains.WATER) >= 2))
-                    || (entity.isProne()
-                    && (getGame().getBoard().getHex(entity.getPosition())
-                    .terrainLevel(Terrains.WATER) == 1))) {
-                ((Mech) entity).setJustMovedIntoIndustrialKillingWater(true);
-
-            } else {
-                ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
-                ((Mech) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
-            }
-        }
     }
-
 }

@@ -23,48 +23,53 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Implements a victory condition that checks if all enemy commanders have been killed.
+ * This is a VictoryCondition that will match when a given percentage of all enemy BV is
+ * no longer alive.
  */
-public class EnemyCmdrDestroyedVictory implements VictoryCondition, Serializable {
+public class BVDestroyedVictoryCondition implements BvVictoryCondition {
+
+    protected int destroyedPercent;
+
+    public BVDestroyedVictoryCondition(int destroyedPercent) {
+        this.destroyedPercent = destroyedPercent;
+    }
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
-        VictoryResult victoryResult = new VictoryResult(true);
-        // check all players/teams for killing enemy commanders
-        // score is 1.0 when enemy commanders are dead
         boolean isVictory = false;
+        VictoryResult victoryResult = new VictoryResult(true);
         HashSet<Integer> doneTeams = new HashSet<>();
 
         for (Player player : game.getPlayersList()) {
+            if (player.isObserver()) {
+                continue;
+            }
             int team = player.getTeam();
             if (team != Player.TEAM_NONE) {
                 if (doneTeams.contains(team)) {
-                    // only consider each team once
                     continue;
                 }
                 doneTeams.add(team);
             }
+            int enemyBV = getEnemyBV(game, player);
+            int enemyInitialBV = getEnemyInitialBV(game, player);
 
-            boolean killedAllCommanders = game.getPlayersList().stream()
-                    .filter(p -> p.isEnemyOf(player))
-                    .mapToInt(game::getLiveCommandersOwnedBy).sum() == 0;
-
-            if (killedAllCommanders) {
-                Report r = new Report(7110, Report.PUBLIC);
+            if ((enemyInitialBV != 0) && ((enemyBV * 100) / enemyInitialBV <= 100 - destroyedPercent)) {
+                isVictory = true;
+                Report report = new Report(7105, Report.PUBLIC);
                 if (team == Player.TEAM_NONE) {
-                    r.add(player.getName());
+                    report.add(player.getName());
                     victoryResult.setPlayerScore(player.getId(), 1);
                 } else {
-                    r.add("Team " + team);
+                    report.add("Team " + team);
                     victoryResult.setTeamScore(team, 1);
                 }
-                victoryResult.addReport(r);
-                isVictory = true;
+                report.add(100 - ((enemyBV * 100) / enemyInitialBV));
+                victoryResult.addReport(report);
             }
         }
         return isVictory ? victoryResult : VictoryResult.noResult();

@@ -106,7 +106,7 @@ public class GameManagerTest {
         VictoryResult victoryResult = mock(VictoryResult.class);
         when(victoryResult.processVictory(testGame)).thenCallRealMethod();
         when(victoryResult.getReports()).thenReturn(new ArrayList<>());
-        when(victoryResult.victory()).thenReturn(true);
+        when(victoryResult.isVictory()).thenReturn(true);
         when(victoryResult.isDraw()).thenReturn(false);
         when(victoryResult.getWinningPlayer()).thenReturn(winner);
         when(victoryResult.getWinningTeam()).thenReturn(Player.TEAM_NONE);

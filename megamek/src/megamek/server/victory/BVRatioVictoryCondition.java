@@ -23,39 +23,46 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Implements a victory condition that checks if all enemy commanders have been killed.
+ * This is a VictoryCondition that will match when friendly BV over enemy BV is at least a given
+ * ratio in percent. For example, for a ratio of 150%, friendly BV must be 1.5 times enemy BV.
+ * In games with more than two teams, all enemy BV is considered together, so a starting point
+ * of 1:1:1 BV for three teams would place the initial ratio at 1 / (1 + 1) = 0.5.
  */
-public class EnemyCmdrDestroyedVictory implements VictoryCondition, Serializable {
+public class BVRatioVictoryCondition implements BvVictoryCondition {
+
+    protected int ratio;
+
+    public BVRatioVictoryCondition(int ratio) {
+        this.ratio = ratio;
+    }
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
-        VictoryResult victoryResult = new VictoryResult(true);
-        // check all players/teams for killing enemy commanders
-        // score is 1.0 when enemy commanders are dead
         boolean isVictory = false;
+        VictoryResult victoryResult = new VictoryResult(true);
         HashSet<Integer> doneTeams = new HashSet<>();
 
         for (Player player : game.getPlayersList()) {
+            if (player.isObserver()) {
+                continue;
+            }
             int team = player.getTeam();
             if (team != Player.TEAM_NONE) {
                 if (doneTeams.contains(team)) {
-                    // only consider each team once
                     continue;
                 }
                 doneTeams.add(team);
             }
+            int friendlyBV = getFriendlyBV(game, player);
+            int enemyBV = getEnemyBV(game, player);
 
-            boolean killedAllCommanders = game.getPlayersList().stream()
-                    .filter(p -> p.isEnemyOf(player))
-                    .mapToInt(game::getLiveCommandersOwnedBy).sum() == 0;
-
-            if (killedAllCommanders) {
-                Report r = new Report(7110, Report.PUBLIC);
+            if ((enemyBV == 0) || ((100 * friendlyBV) / enemyBV >= ratio)) {
+                Report r = new Report(7100, Report.PUBLIC);
+                isVictory = true;
                 if (team == Player.TEAM_NONE) {
                     r.add(player.getName());
                     victoryResult.setPlayerScore(player.getId(), 1);
@@ -63,8 +70,8 @@ public class EnemyCmdrDestroyedVictory implements VictoryCondition, Serializable
                     r.add("Team " + team);
                     victoryResult.setTeamScore(team, 1);
                 }
+                r.add(enemyBV == 0 ? 9999 : (100 * friendlyBV) / enemyBV);
                 victoryResult.addReport(r);
-                isVictory = true;
             }
         }
         return isVictory ? victoryResult : VictoryResult.noResult();

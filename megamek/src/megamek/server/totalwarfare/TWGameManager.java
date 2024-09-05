@@ -2072,7 +2072,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Report r : vr.processVictory(game)) {
             addReport(r);
         }
-        return vr.victory();
+        return vr.isVictory();
     }// end victory
 
     private boolean isPlayerForcedVictory() {

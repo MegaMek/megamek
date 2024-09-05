@@ -2027,7 +2027,7 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case MOVEMENT:
                 if (toSkip != null) {
-                    MovementHandler handler = new MovementHandler(this, toSkip, new MovePath(game, toSkip), null);
+                    MovePathHandler handler = new MovePathHandler(this, toSkip, new MovePath(game, toSkip), null);
                     handler.processMovement();
                 }
                 endCurrentTurn(toSkip);
@@ -3689,7 +3689,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // looks like mostly everything's okay
-        MovementHandler handler = new MovementHandler(this, entity, md, losCache);
+        MovePathHandler handler = new MovePathHandler(this, entity, md, losCache);
         handler.processMovement();
 
         // The attacker may choose to break a chain whip grapple by expending MP
@@ -4820,7 +4820,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     game.removeTurnFor(target);
                     send(packetHelper.createTurnListPacket());
-                    MovementHandler handler = new MovementHandler(this, target, md, null);
+                    MovePathHandler handler = new MovePathHandler(this, target, md, null);
                     handler.processMovement();
                     // for some reason it is not clearing out turn
                 } else {

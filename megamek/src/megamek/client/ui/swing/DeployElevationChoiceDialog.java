@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.AllowedDeploymentHelper;
+import megamek.common.DeploymentElevationType;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -28,12 +29,11 @@ import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.spanCSS;
 
-public class DeployElevationChoiceDialog extends AbstractChoiceDialog<DeploymentDisplay.ElevationOption> {
+public class DeployElevationChoiceDialog extends AbstractChoiceDialog<AllowedDeploymentHelper.ElevationOption> {
 
     private static final int BASE_PADDING = 10;
-    private static final int BASE_JUMP_SIZE = 35;
 
-    protected DeployElevationChoiceDialog(JFrame parent, List<DeploymentDisplay.ElevationOption> elevationOptions) {
+    protected DeployElevationChoiceDialog(JFrame parent, List<AllowedDeploymentHelper.ElevationOption> elevationOptions) {
         super(parent, "DeploymentDisplay.choiceDialogTitle", titleMessage(), elevationOptions, false);
         setColumns(elevationOptions.size() > 6 ? 2 : 1);
         initialize();
@@ -41,12 +41,15 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<Deployment
     }
 
     @Override
-    protected void detailLabel(JToggleButton button, DeploymentDisplay.ElevationOption elevationOption) {
-        //Messages.getString("DeploymentDisplay.ground") +
-        String targetText = elevationOption.type() + "";
-        targetText += "<BR>Elevation: " + elevationOption.elevation();
-        String text = "<HTML><HEAD>" + styles() + "</HEAD><BODY>"
-                + spanCSS("button", targetText)
+    protected void detailLabel(JToggleButton button, AllowedDeploymentHelper.ElevationOption elevationOption) {
+        String description = Messages.getString("DeploymentDisplay.deployElevation." + elevationOption.type());
+        String elevationAltitude = elevationOption.type() == DeploymentElevationType.ALTITUDE
+                ? Messages.getString("DeploymentDisplay.altitude")
+                : Messages.getString("DeploymentDisplay.elevation");
+        String elevationText = elevationAltitude + elevationOption.elevation();
+        String text = "<HTML><HEAD>" + styles() + "</HEAD><BODY><CENTER>"
+                + spanCSS("description", description) + "<BR>"
+                + spanCSS("elevation", elevationText)
                 + "</BODY></HTML>";
         button.setText(text);
     }
@@ -62,15 +65,13 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<Deployment
     }
 
     @Override
-    protected void summaryLabel(JToggleButton button, DeploymentDisplay.ElevationOption target) {
+    protected void summaryLabel(JToggleButton button, AllowedDeploymentHelper.ElevationOption target) {
         detailLabel(button, target);
     }
 
     private static String titleMessage() {
         return "<HTML><HEAD>" + styles() + "</HEAD><BODY><div class=frame>"
-                + spanCSS("label", "Choose the")
-                + spanCSS("speccell", " JUMP ")
-                + spanCSS("label", "points to use:")
+                + spanCSS("label", Messages.getString("DeploymentDisplay.choice"))
                 + "</div></BODY></HTML>";
     }
 
@@ -84,13 +85,12 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<Deployment
     }
 
     public static String styles() {
-        float labelSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+        int descriptionSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+        int elevationSize = (int) (0.8 * UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         int padding = UIUtil.scaleForGUI(BASE_PADDING);
-        int buttonSize = UIUtil.scaleForGUI(BASE_JUMP_SIZE);
         return "<style> " +
-                ".label { font-family:Noto Sans; font-size:" + labelSize + ";  }" +
-                ".frame { padding:" + padding + " " + 2 * padding + " 0 0;  }" +
-                ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
-                ".button { font-family:Exo; font-size:" + buttonSize + "; }";
+                ".description { font-family:Noto Sans; font-size:" + descriptionSize + ";  }" +
+                ".elevation { font-family:Noto Sans; font-size:" + elevationSize + ";  }" +
+                ".frame { padding:" + padding + " " + 2 * padding + " 0 0;  }";
     }
 }

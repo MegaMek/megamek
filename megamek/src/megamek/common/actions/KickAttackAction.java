@@ -50,12 +50,12 @@ public class KickAttackAction extends PhysicalAttackAction {
     /**
      * Damage that the specified mech does with a kick
      *
-     * @return The kick damage for the 'Mech, or 0 for non-'Mech entities.
+     * @return The kick damage for the 'Mek, or 0 for non-'Mek entities.
      */
     public static int getDamageFor(Entity entity, int leg,
             boolean targetInfantry) {
         if (!(entity instanceof Mech)) {
-            return 0; // Non-'Mechs can't kick, so can't deal damage this way.
+            return 0; // Non-'Meks can't kick, so can't deal damage this way.
         }
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && (leg != LEFTMULE) && (leg != RIGHTMULE)) {
@@ -119,7 +119,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Mechs can't kick.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Meks can't kick.");
         }
 
         if (ae.isStuck()) {

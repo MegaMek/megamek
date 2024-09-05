@@ -1,4 +1,4 @@
-Clan Wolf Heavy 'Mech
+Clan Wolf Heavy 'Mek
 Linebacker D,1
 Mad Cat (Timber Wolf) D,2
 Vulture (Mad Dog) Prime,3

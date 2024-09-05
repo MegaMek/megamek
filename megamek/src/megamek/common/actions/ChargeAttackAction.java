@@ -167,7 +167,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // mechs can only charge standing mechs
         if ((ae instanceof Mech) && !skid) {
             if (!(te instanceof Mech)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a 'Mech");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a 'Mek");
             }
 
             if (te.isProne()) {

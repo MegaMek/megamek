@@ -18,7 +18,9 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
+import static megamek.client.ui.swing.boardview.HexDrawUtilities.CUT_INSIDE;
+import static megamek.client.ui.swing.boardview.HexDrawUtilities.getHexBorderArea;
+import static megamek.client.ui.swing.boardview.HexDrawUtilities.getHexBorderAreaMid;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -36,11 +38,11 @@ import megamek.common.VTOL;
  * Sprite for displaying information about movement modifier that can be
  * achieved by provided MovePath. Multiple MovementModifierEnvelopeSprite can be
  * drawn on a single hex, one for each final facing.
- * 
+ *
  * @author Saginatio
  */
 public class MovementModifierEnvelopeSprite extends HexSprite {
-    
+
     private static final Color fontColor = Color.BLACK;
     private static final float fontSize = 9;
     private static final double borderW = 15;
@@ -59,12 +61,12 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         super(boardView, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());
-        
+
         int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
                 mp.isJumping(),
                 mp.getEntity() instanceof VTOL,
                 boardView.game).getValue();
-        //Add evasion bonus for 'Mech with dual cockpit
+        //Add evasion bonus for 'Mek with dual cockpit
         if (mp.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
                 && mp.getEntity().getCrew().hasDedicatedPilot()
                 && !mp.isJumping() && mp.getHexesMoved() > 0) {
@@ -80,7 +82,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
     public void prepare() {
         // adjust bounds (image size) to board zoom
         updateBounds();
-        
+
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();

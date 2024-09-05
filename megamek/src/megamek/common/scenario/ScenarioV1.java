@@ -461,7 +461,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         for (SetAmmoPlan sap : ammoPlans) {
             LogManager.getLogger().debug("Applying ammo adjustment to " + sap.entity.getShortName());
             for (SetAmmoType sa : sap.ammoSetType) {
-                // Limit to 'Mechs for now (needs to be extended later)
+                // Limit to 'Meks for now (needs to be extended later)
                 if (sap.entity instanceof Mech) {
                     if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);

@@ -1966,7 +1966,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * @param playerId the player's Id
-     * @return number of 'Mechs <code>playerId</code> has not selected yet this turn
+     * @return number of 'Meks <code>playerId</code> has not selected yet this turn
      */
     public int getMechsLeft(int playerId) {
         Player player = getPlayer(playerId);
@@ -3306,7 +3306,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         return result;
     }
-    
+
 	public Map<Coords, List<ICarryable>> getGroundObjects() {
         // this is a temporary guard to preserve savegame compatibility. Remove after this entire override after .50
 		if (groundObjects == null) {

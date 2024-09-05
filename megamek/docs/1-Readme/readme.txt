@@ -245,9 +245,9 @@ hexes with a three-button mouse. Both tools will pop up a window that tells you 
 intervening and whether one or both hexes has partial cover. The ruler tool also draws the line
 of sight on the board so that you can see which hexes LoS passes through.
 
-You can switch between 'Mech line of sight and non-'Mech line of sight in the "LoS Setting"
-panel, located under the "View" menu at the top of the screen. 'Mech line of sight and
-non-'Mech line of sight differ in that 'Mechs are assumed to be "looking" from one elevation
+You can switch between 'Mek line of sight and non-'Mek line of sight in the "LoS Setting"
+panel, located under the "View" menu at the top of the screen. 'Mek line of sight and
+non-'Mek line of sight differ in that 'Meks are assumed to be "looking" from one elevation
 level above that of the hex they are in, whereas infantry and vehicles only take up the
 elevation level of their hex.
 

@@ -1,4 +1,4 @@
-Mercenaries Light F 'Mech
+Mercenaries Light F 'Mek
 Panther PNT-9R,1
 Firestarter FS9-H,2
 UrbanMech UM-R60,3

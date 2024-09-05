@@ -722,7 +722,7 @@ public class MiscType extends EquipmentType {
                 return 2.0 * .250;
             }
         } else if (hasFlag(F_JUMP_BOOSTER)) {
-            // This is the 'Mech mechanical jump booster. The BA jump booster has the same flag but
+            // This is the 'Mek mechanical jump booster. The BA jump booster has the same flag but
             // has a fixed weight so doesn't get to this point.
             return defaultRounding.round((entity.getWeight() * entity.getOriginalJumpMP()) * 0.05, entity);
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {

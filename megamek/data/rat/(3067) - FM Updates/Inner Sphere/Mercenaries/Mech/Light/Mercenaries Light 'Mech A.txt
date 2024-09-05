@@ -1,4 +1,4 @@
-Mercenaries Light A 'Mech
+Mercenaries Light A 'Mek
 Spector SPR-5F,1
 Scarabus SCB-9A,2
 Hollander BZK-F3,3

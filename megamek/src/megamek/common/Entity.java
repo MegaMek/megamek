@@ -10966,7 +10966,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * exclude ("dry cost") the cost of ammunition on the unit.
      *
      * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
-     * @return The cost in C-Bills of the 'Mech in question.
+     * @return The cost in C-Bills of the 'Mek in question.
      */
     public final double getCost(boolean ignoreAmmo) {
         return getCost(new DummyCalculationReport(), ignoreAmmo);
@@ -10979,7 +10979,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param calcReport A CalculationReport to write the report for the cost calculation to
      * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
-     * @return The cost in C-Bills of the 'Mech in question.
+     * @return The cost in C-Bills of the 'Mek in question.
      */
     public abstract double getCost(CalculationReport calcReport, boolean ignoreAmmo);
 
@@ -12434,7 +12434,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((mount.getLocation() == loc)
                     && !mount.isDestroyed()
                     && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                    // On 'Mech torsos only, modular armor covers either front
+                    // On 'Mek torsos only, modular armor covers either front
                     // or rear, as mounted.
                     && (!(this instanceof Mech)
                     || !((loc == Mech.LOC_CT) || (loc == Mech.LOC_LT) || (loc == Mech.LOC_RT))
@@ -13046,7 +13046,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check for unstalling of this Entity's engine (only used for ICE-powered 'Mechs).
+     * Check for unstalling of this Entity's engine (only used for ICE-powered 'Meks).
      *
      * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase reports
      */

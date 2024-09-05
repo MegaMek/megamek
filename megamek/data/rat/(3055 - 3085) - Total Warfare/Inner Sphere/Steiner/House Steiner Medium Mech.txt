@@ -1,4 +1,4 @@
-House Steiner Medium 'Mech
+House Steiner Medium 'Mek
 Griffin GRF-6S,1
 Blitzkrieg BTZ-3F,2
 Enforcer ENF-5D,3

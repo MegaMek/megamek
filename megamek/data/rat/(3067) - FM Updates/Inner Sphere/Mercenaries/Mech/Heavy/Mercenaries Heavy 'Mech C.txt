@@ -1,4 +1,4 @@
-Mercenaries Heavy C 'Mech
+Mercenaries Heavy C 'Mek
 Gallowglas GAL-2GLS,1
 Hercules HRC-LS-9000,2
 War Dog WR-DG-02FC,3

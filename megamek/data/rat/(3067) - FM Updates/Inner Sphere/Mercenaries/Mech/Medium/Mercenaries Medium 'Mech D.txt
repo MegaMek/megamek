@@ -1,4 +1,4 @@
-Mercenaries Medium D 'Mech
+Mercenaries Medium D 'Mek
 Trebuchet TBT-7M,1
 Griffin GRF-3M,2
 Shadow Hawk SHD-2K,3

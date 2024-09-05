@@ -184,12 +184,12 @@ public abstract class Mech extends Entity {
             "Small Command", "Tripod Industrial", "Superheavy Tripod Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
-    
+
     /**
      * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
      */
     public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
-    
+
     static {
     	BLOCKED_FIRING_LOCATIONS = new HashMap<>();
     	BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
@@ -197,7 +197,7 @@ public abstract class Mech extends Entity {
     	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LT);
     	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_CT);
     	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_RT);
-    	
+
     	BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
     	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
     	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_LT);
@@ -302,7 +302,7 @@ public abstract class Mech extends Entity {
     // Cooling System Flaws quirk
     private boolean coolingFlawActive = false;
 
-    // QuadVees, LAMs, and tracked 'Mechs can change movement mode.
+    // QuadVees, LAMs, and tracked 'Meks can change movement mode.
     protected EntityMovementMode originalMovementMode = EntityMovementMode.BIPED;
 
     /**
@@ -6094,7 +6094,7 @@ public abstract class Mech extends Entity {
             return true;
         }
         // Gyro destroyed? TW p. 258 at least heavily implies that that counts
-        // as being immobilized as well, which makes sense because the 'Mech
+        // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
         int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
         return getGyroHits() >= hitsToDestroyGyro;
@@ -6443,7 +6443,7 @@ public abstract class Mech extends Entity {
     public boolean getsAutoExternalSearchlight() {
         return true;
     }
-    
+
     public static Map<Integer, String> getAllCockpitCodeName() {
         Map<Integer, String> result = new HashMap<>();
 
@@ -6470,7 +6470,7 @@ public abstract class Mech extends Entity {
 
         return result;
     }
-    
+
     /**
      * Method that returns the mapping between locations which, if cargo is carried,
      * block other locations from firing.

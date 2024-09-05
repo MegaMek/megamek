@@ -51,7 +51,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public static final int LOC_CAPITAL_WINGS = 10;
 
     /**
-     * Translate a 'Mech location to the equivalent Aero location.
+     * Translate a 'Mek location to the equivalent Aero location.
      */
     public static int getAeroLocation(int loc) {
         switch (loc) {
@@ -914,7 +914,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /*
-     * Cycling through conversion modes for LAMs in 'Mech or fighter mode is
+     * Cycling through conversion modes for LAMs in 'Mek or fighter mode is
      * simple toggling between two states. LAMs in AirMech mode have three
      * possible states.
      */

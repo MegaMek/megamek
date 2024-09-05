@@ -1,4 +1,4 @@
-ComStar Heavy 'Mech
+ComStar Heavy 'Mek
 Bombardier BMB-12D,1
 Champion CHP-3N,2
 Guillotine GLT-3N,3

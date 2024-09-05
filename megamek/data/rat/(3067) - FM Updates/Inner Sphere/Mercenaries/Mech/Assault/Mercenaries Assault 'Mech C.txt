@@ -1,4 +1,4 @@
-Mercenaries Assault C 'Mech
+Mercenaries Assault C 'Mek
 Salamander PPR-5S,1
 Gunslinger GUN-1ERD,2
 Stalker STK-5S,3

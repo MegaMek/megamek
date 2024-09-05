@@ -12732,7 +12732,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // Chain whips can entangle 'Mech and ProtoMech limbs. This
+        // Chain whips can entangle 'Mek and ProtoMech limbs. This
         // implementation assumes that in order to do so the limb must still
         // have some structure left, so if the whip hits and destroys a
         // location in the same attack no special effects take place.
@@ -19448,7 +19448,7 @@ public class TWGameManager extends AbstractGameManager {
         // ammo explosion
         // destroyed the unit
         if (ammoExplosion && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION)
-                // For 'Mechs we care whether there was CASE specifically in the
+                // For 'Meks we care whether there was CASE specifically in the
                 // location that went boom...
                 && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit.getLocation()))
                 // ...but vehicles and ASFs just have one CASE item for the
@@ -20446,7 +20446,7 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
                         Tank.CRIT_CREW_KILLED), false, 0, false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
-                // 'Mechs suffer two critical hits...
+                // 'Meks suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
@@ -20484,7 +20484,7 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
                         Tank.CRIT_CREW_STUNNED), false, 0, false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
-                // 'Mechs suffer a critical hit...
+                // 'Meks suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
 

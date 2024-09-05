@@ -7,17 +7,17 @@
 		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
 	</defaults>
-	
+
 	<!--FL unit composition is based primarily on the makeup of Beta,
 	Delta, and Epsilon Galaxies in the Invading Clans sourcebook.-->
-	
+
 	<toc>
 		<unitType>
 			<option ifDateBetween="3059,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 		</unitType>
-		
+
 		<eschelon>
 			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
 			<option ifUnitType="Warship">%CLUSTER%</option>
@@ -25,7 +25,7 @@
 			<option ifUnitType="Mek" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
-		
+
 		<rating>
 			<option ifUnitType="Tank|VTOL">SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
 			<option ifUnitType="Infantry" ifDateBetween="2900,">PG:Provisional Garrison,Sol:Solahma</option>
@@ -34,23 +34,23 @@
 			<option ifEschelon="%GALAXY%">FL:Front Line,SL:Second Line,Sol:Solahma</option>
 			<option>Keshik,FL:Front Line,SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
 		</rating>
-		
+
 		<flags>
 			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="%TRINARY%|%BINARY%">mixedMekBA:Combined Mek/BA unit</option>
 		</flags>
 	</toc>
-	
+
 	<force eschelon="%TOUMAN%" eschName="Touman">
 		<co>%KHAN%</co>
 		<xo>%SAKHAN%</xo>
-		
+
 		<subforces>
 			<subforce name="Alpha Galaxy" rating="FL"
 				role="command">%GALAXY%</subforce>
 			<subforce name="Beta Galaxy" rating="FL">%GALAXY%</subforce>
 			<subforce name="Delta Galaxy" rating="FL">%GALAXY%</subforce>
 			<subforce name="Epsilon Galaxy"
-				rating="FL">%GALAXY%</subforce>			
+				rating="FL">%GALAXY%</subforce>
 
 			<subforce name="Zeta Galaxy" rating="SL">%GALAXY%</subforce>
 			<subforce name="Kappa Galaxy" rating="SL">%GALAXY%</subforce>
@@ -60,22 +60,22 @@
 				rating="SL">%GALAXY%</subforce>
 			<subforce name="Psi Galaxy" rating="SL">%GALAXY%</subforce>
 			<subforce name="Omega Galaxy" rating="SL">%GALAXY%</subforce>
-			
+
 			<subforce name="Iron Guard Galaxy"
 				rating="Sol">%GALAXY%</subforce>
 			<subforce name="Watchmen Galaxy"
 				rating="Sol">%GALAXY%</subforce>
 		</subforces>
-		
+
 		<attachedForces>
 			<subforce unitType="Warship">%CLUSTER%</subforce>
 		</attachedForces>
 	</force>
-	
+
 	<force eschelon="%CLUSTER%" eschName="Fleet" ifUnitType="Warship">
 		<name>Naval Reserve</name>
 		<co>%GALAXY_CMDR%</co>
-		
+
 		<subforces>
 			<subforce role="command" fluffName="CSJ Obsidian"
 			 	ifDateBetween=",2868"
@@ -138,7 +138,7 @@
 	<force eschelon="%GALAXY%" eschName="Galaxy">
 		<name>{greek} Galaxy</name>
 		<co>%GALAXY_CMDR%</co>
-		
+
 		<subforces ifRating="FL">
 			<subforce role="command" unitType="Mek" rating="Keshik"
 				flags="keshik">%TRINARY%</subforce>
@@ -157,7 +157,7 @@
 			</subforceOption>
 		</subforces>
 	</force>
-	
+
 	<force eschelon="%CLUSTER%" eschName="Cluster">
 		<name ifRating="FL" ifWeightClass="A|H">Assault Cluster</name>
 		<name ifRating="FL" ifWeightClass="M">Battle Cluster</name>
@@ -165,18 +165,18 @@
 		<name ifRating="SL">Garrison Cluster</name>
 		<name ifRating="Sol">Solahma Cluster</name>
 		<co>%STAR_COL%</co>
-		
+
 		<weightClass>
 			<option weight="2">H</option>
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 		</weightClass>
-		
+
 		<!--Typical clusters contain a command trinary (usually Meks,
 		but sometimes two Novas and a BA or ASF star), 3-4 Mek trinaries
 		(sometimes SN or occasionally mixed Mek/BA), a BA binary, and
 		sometimes 1-3 ASF stars.-->
-		
+
 		<subforces>
 			<subforceOption ifWeightClass="A|H">
 				<option weightClass="A" unitType="Mek" role="command"
@@ -208,7 +208,7 @@
 		</subforces>
 
 		<!--FL clusters get at least three Mek trinaries.-->
-		
+
 		<subforces ifRating="FL|Keshik">
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="A,A,A" unitType="Mek"
@@ -257,13 +257,13 @@
 					>%TRINARY%</option>
 			</subforceOption>
 		</subforces>
-			
+
 		<!--SL, Solahma, and garrison units will have 2-3 Trinaries of either
-		'Mechs or vehicles or a mix. The Jaguars were annihilated before Clan vehicles
-		were introduced, but I suspect they were used less than most other Clans. --> 
-		
+		'Meks or vehicles or a mix. The Jaguars were annihilated before Clan vehicles
+		were introduced, but I suspect they were used less than most other Clans. -->
+
 		<!--The first two are either both Mek (SL/PG) or both armor (PG/Sol). -->
-		
+
 		<subforces ifRating="SL|Sol|PG">
 			<subforceOption ifWeightClass="H|A">
 				<option ifRating="SL|PG" weightClass="A,A" unitType="Mek"
@@ -307,7 +307,7 @@
 				<option ifRating="PG|Sol" weightClass="L,L" unitType="Tank"
 					flags="+testTrinary" weight="1">%TRINARY%</option>
 			</subforceOption>
-			
+
 			<!--The third, if there is one, can be either Mek or vee-->
 			<subforceOption ifWeightClass="A|H">
 				<option ifRating="SL|PG" weightClass="A" unitType="Mek"
@@ -343,9 +343,9 @@
 				<option weight="1" />
 			</subforceOption>
 		</subforces>
-		
+
 		<!--Possible additional SN trinary for FL clusters.-->
-			
+
 		<subforces ifRating="FL|Keshik">
 			<subforceOption ifWeightClass="A|H">
 				<option weightClass="A" unitType="Mek"
@@ -377,20 +377,20 @@
 				<option weight="10" />
 			</subforceOption>
 		</subforces>
-		
+
 		<!-- FL always has BA binary, some found in SL.-->
 		<subforces ifRating="!Sol">
 			<subforceOption>
-				<option ifDateBetween="2870," unitType="BattleArmor"  
+				<option ifDateBetween="2870," unitType="BattleArmor"
 					ifRating="FL">%BINARY%</option>
-				<option ifDateBetween="2900," unitType="BattleArmor"  
+				<option ifDateBetween="2900," unitType="BattleArmor"
 					ifRating="FL|SL">%BINARY%</option>
 				<option ifRating="FL" ifDateBetween="2870,2900"
 					weight="2" />
 				<option weight="2" ifRating="SL" />
 			</subforceOption>
 		</subforces>
-		
+
 		<!--Two or three infantry trinaries/binaries in Solahma units.-->
 		<subforces ifRating="Sol">
 			<subforceOption>
@@ -400,12 +400,12 @@
 					num="3">%TRINARY%</option>
 			</subforceOption>
 		</subforces>
-		
+
 		<!--Up to a trinary of ASF support. Just under half the clusters
 		detailed in the Invading Clans sourcebook have any ASF, but the
 		galaxy command trinary typically has at least a star and up to
 		an additional attached trinary.-->
-		
+
 		<subforces ifRating="!Sol">
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="H" unitType="AeroSpaceFighter"
@@ -436,15 +436,15 @@
 			</subforceOption>
 		</subforces>
 	</force>
-	
+
 	<!--About 1/3 galaxy and cluster command trinaries include two
 	novas and either a BA or an ASF star.-->
-		
+
 	<force eschelon="%TRINARY%" eschName="Trinary" ifRole="command" ifAugmented="1">
 		<name ifFlags="keshik">Trinary Galaxy [Command]</name>
 		<name>Trinary [Command]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="2">A</option>
 			<option weight="4">H</option>
@@ -536,22 +536,22 @@
 			</subforceOption>
 		</subforces>
 	</force>
-		
+
 	<!--Galaxy command trinaries may have attached ASF or artillery
 	units.-->
-	
+
 	<force eschelon="%TRINARY%" eschName="Trinary" ifRole="command">
 		<name ifFlags="keshik">Trinary Galaxy [Command]</name>
 		<name>Trinary [Command]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="2">A</option>
 			<option weight="4">H</option>
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 		</weightClass>
-		
+
 		<changeEschelon ifFlags="testTrinary"
 				ifRating="FL|Keshik" ifDateBetween="2870,">
 			<option flags="-testTrinary" augmented="1"
@@ -559,7 +559,7 @@
 			<option  flags="-testTrinary" augmented="0"
 				weight="1">%TRINARY%</option>
 		</changeEschelon>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -612,7 +612,7 @@
 		<name ifWeightClass="M">{ordinal:distinct} Trinary [Battle]</name>
 		<name ifWeightClass="L">{ordinal:distinct} Trinary [Striker]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
@@ -621,7 +621,7 @@
 			<option ifRole="command" weight="1">A</option>
 			<option ifRole="command" weight="1">H</option>
 		</weightClass>
-	
+
 		<unitType ifUnitType="Mek" ifDateBetween="3059,"
 				ifRating="SL|PG|Sol" ifTopLevel="0">
 			<option weight="6" />
@@ -631,7 +631,7 @@
 		<subforces ifUnitType="Mek">
 			<asParent />
 		</subforces>
-		
+
 		<subforces ifUnitType="ProtoMek">
 			<subforce num="3">%STAR%</subforce>
 		</subforces>
@@ -646,11 +646,11 @@
 		<name ifWeightClass="L"
 			>{ordinal:distinct} Supernova Striker</name>
 		<co>%NOVA_CAPTAIN%</co>
-		
+
 		<changeEschelon ifDateBetween=",2869">
 			<option augmented="0">%TRINARY%</option>
 		</changeEschelon>
-		
+
 		<ruleGroup>
 			<weightClass>
 				<option weight="1">A</option>
@@ -661,22 +661,22 @@
 				<option ifRole="command" weight="1">H</option>
 			</weightClass>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
 	</force>
-	
+
 	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Tank">
 		<name ifRole="command">Trinary Command</name>
 		<name>Trinary {ordinal}</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<changeEschelon ifFlags="testTrinary">
 			<option flags="-testTrinary">%TRINARY%</option>
 			<option flags="-testTrinary">%BINARY%</option>
 		</changeEschelon>
-		
+
 		<ruleGroup>
 			<weightClass>
 				<option weight="2">A</option>
@@ -685,7 +685,7 @@
 				<option weight="2">L</option>
 			</weightClass>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -695,13 +695,13 @@
 		<name ifRole="command">Trinary Command</name>
 		<name>{ordinal:distinct} Trinary [Fighter]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<changeEschelon ifFlags="testTrinary">
 			<option flags="-testTrinary" weight="6">%TRINARY%</option>
 			<option flags="-testTrinary" weight="1">%BINARY%</option>
 			<option flags="-testTrinary" weight="3">%STAR%</option>
 		</changeEschelon>
-		
+
 		<ruleGroup>
 			<weightClass>
 				<option>H</option>
@@ -711,7 +711,7 @@
 				<option ifRole="command" weight="1">H</option>
 			</weightClass>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -724,18 +724,18 @@
 		<name ifUnitType="Infantry"
 			>{ordinal:distinct} Trinary [Infantry]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<changeEschelon ifFlags="testTrinary">
 			<option flags="-testTrinary" weight="3">%TRINARY%</option>
 			<option flags="-testTrinary" weight="1">%BINARY%</option>
 		</changeEschelon>
 
-		<ruleGroup>				
+		<ruleGroup>
 			<unitType ifUnitType="BattleArmor" ifDateBetween=",2870">
 				<option>Infantry</option>
 			</unitType>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -747,7 +747,7 @@
 		<name ifWeightClass="M">{ordinal:distinct} Binary [Battle]</name>
 		<name ifWeightClass="L">{ordinal:distinct} Binary [Striker]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
@@ -756,7 +756,7 @@
 			<option ifRole="command" weight="1">A</option>
 			<option ifRole="command" weight="1">H</option>
 		</weightClass>
-		
+
 		<unitType ifUnitType="Mek" ifDateBetween="3059,"
 				ifRating="SL|PG|Sol" ifTopLevel="0">
 			<option weight="6" />
@@ -766,7 +766,7 @@
 		<subforces ifUnitType="Mek">
 			<asParent />
 		</subforces>
-		
+
 		<subforces ifUnitType="ProtoMek">
 			<subforce ifUnitType="ProtoMek"
 				num="2">%STAR%</subforce>
@@ -781,11 +781,11 @@
 		<name ifWeightClass="L"
 			>{ordinal:distinct} Supernova [Striker]</name>
 		<co>%NOVA_CAPTAIN%</co>
-		
+
 		<changeEschelon ifDateBetween=",2869">
 			<option augmented="0">%BINARY%</option>
 		</changeEschelon>
-		
+
 		<ruleGroup>
 			<weightClass>
 				<option weight="1">A</option>
@@ -796,7 +796,7 @@
 				<option ifRole="command" weight="1">H</option>
 			</weightClass>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -806,14 +806,14 @@
 		<name ifRole="command">Binary [Command]</name>
 		<name>Binary {ordinal:distinct}</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 		</weightClass>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -823,7 +823,7 @@
 		<name ifRole="command">Binary [Command]</name>
 		<name>{ordinal:distinct} Binary [Fighter]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option>H</option>
 			<option>M</option>
@@ -831,7 +831,7 @@
 			<option ifRole="command" weight="2">H</option>
 			<option ifRole="command" weight="1">M</option>
 		</weightClass>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -846,7 +846,7 @@
 		<name ifUnitType="ProtoMek"
 			>{ordinal:distinct} Binary [ProtoMek]</name>
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="2">H</option>
@@ -866,14 +866,14 @@
 	<force eschelon="%STAR%" eschName="Star" ifAugmented="0" ifUnitType="Mek">
 		<name>{phonetic} {name:parent} Star</name>
 		<co>%STAR_CMDR%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 			<option ifRole="command" weight="1">A</option>
-			<option ifRole="command" weight="1">H</option>			
+			<option ifRole="command" weight="1">H</option>
 		</weightClass>
 
         <ruleGroup>
@@ -912,35 +912,35 @@
 				<option weight="1" role="+urban">Urban</option>
 				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
 				<option weight="8" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>
 			</formation>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
 	</force>
-	
+
 	<force eschelon="%STAR%" eschName="Nova" ifAugmented="1" ifUnitType="Mek">
 		<name ifFlags="clusterCommand|keshik"
 			>{phonetic} Command  Nova</name>
 		<name>{phonetic} Nova</name>
 		<co>%NOVA_CMDR%</co>
 		<xo unitType="other">%STAR_CMDR%</xo>
-		
+
 		<changeEschelon ifDateBetween=",2869">
 			<option augmented="0">%STAR%</option>
 		</changeEschelon>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 			<option ifRole="command" weight="1">A</option>
-			<option ifRole="command" weight="1">H</option>			
+			<option ifRole="command" weight="1">H</option>
 		</weightClass>
-		
+
 		<role>
 			<option>+omni</option>
 		</role>
@@ -981,10 +981,10 @@
 				<option weight="1" role="+urban">Urban</option>
 				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
 				<option weight="8" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>
 			</formation>
 		</ruleGroup>
-		
+
 		<subforces>
 			<asParent />
 		</subforces>
@@ -993,7 +993,7 @@
 	<force eschelon="%STAR%" eschName="Star" ifUnitType="Tank">
 		<name>{phonetic} Star</name>
 		<co>%STAR_CMDR%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
@@ -1024,7 +1024,7 @@
 				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
 				<option weight="32" ifWeightClass="L|M" role="+recon">Recon</option>
 				<option weight="10" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>
 			</formation>
  		</ruleGroup>
 
@@ -1032,17 +1032,17 @@
 			<asParent />
 		</subforces>
 	</force>
-	
+
 	<force eschelon="%STAR%" eschName="Star" ifUnitType="AeroSpaceFighter">
 		<name>{phonetic} Fighter Star</name>
 		<co>%STAR_CMDR%</co>
-		
+
 		<weightClass>
 			<option>H</option>
 			<option>M</option>
 			<option>L</option>
 			<option ifRole="command" weight="2">H</option>
-			<option ifRole="command" weight="1">M</option>			
+			<option ifRole="command" weight="1">M</option>
 		</weightClass>
 
 		<ruleGroup>
@@ -1058,18 +1058,18 @@
 			<asParent />
 		</subforces>
 	</force>
-	
+
 	<force eschelon="%STAR%" eschName="Star" ifUnitType="BattleArmor|Infantry">
 		<name>{phonetic} {name:parent} Star</name>
 		<co>%STAR_CMDR%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="2">H</option>
 			<option weight="4">M</option>
 			<option weight="3">L</option>
 		</weightClass>
-		
+
 		<unitType ifUnitType="BattleArmor" ifDateBetween=",2870">
 			<option>Infantry</option>
 		</unitType>
@@ -1078,5 +1078,5 @@
 			<subforce num="5">%POINT%</subforce>
 		</subforces>
 	</force>
-	
+
 </ruleset>

@@ -1,4 +1,4 @@
-Periphery Heavy 'Mech
+Periphery Heavy 'Mek
 JagerMech JM6-S,1
 Quickdraw QKD-4G,2
 Dragon DRG-1N,3

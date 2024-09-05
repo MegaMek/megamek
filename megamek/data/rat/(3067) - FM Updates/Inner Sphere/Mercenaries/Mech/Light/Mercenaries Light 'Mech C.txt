@@ -1,4 +1,4 @@
-Mercenaries Light C 'Mech
+Mercenaries Light C 'Mek
 Tarantula ZPH-1,1
 Battle Hawk BH-K305,2
 Spider SDR-7M,3

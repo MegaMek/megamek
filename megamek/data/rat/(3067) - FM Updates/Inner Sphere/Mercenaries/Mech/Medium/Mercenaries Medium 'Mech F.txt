@@ -1,4 +1,4 @@
-Mercenaries Medium F 'Mech
+Mercenaries Medium F 'Mek
 Cronus CNS-3M,1
 Trebuchet TBT-5N,2
 Enforcer ENF-4R,3

@@ -1,4 +1,4 @@
-DCMS Light Mechs D 3067 FM-U
+DCMS Light Meks D 3067 FM-U
 Jenner JR7-D,1
 Locust LCT-1V,2
 Spider SDR-5V,3

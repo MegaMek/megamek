@@ -1,4 +1,4 @@
-Lyran Commonwealth Medium Mechs B
+Lyran Commonwealth Medium Meks B
 Hoplite HOP-4C,1
 Vulcan VL-2T,2
 Griffin GRF-1N,3

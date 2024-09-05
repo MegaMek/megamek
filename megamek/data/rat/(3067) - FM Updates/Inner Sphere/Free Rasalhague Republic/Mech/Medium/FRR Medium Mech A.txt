@@ -1,4 +1,4 @@
-FRR Medium Mechs A 3067
+FRR Medium Meks A 3067
 Firestarter FS9-O,1
 Beowulf BEO-12,2
 Trebuchet TBT-7K,3

@@ -1,4 +1,4 @@
-Escorpion Imperio Front-Line Light Mechs (3090)
+Escorpion Imperio Front-Line Light Meks (3090)
 UrbanMech UM-R60,1
 Firestarter FS9-K,2
 Thorn THE-N,3

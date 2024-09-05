@@ -1,4 +1,4 @@
-3059 Mercenary Light Mechs, Tech Level F
+3059 Mercenary Light Meks, Tech Level F
 Ostscout OTT-7J,1
 Firestarter FS9-H,2
 Locust LCT-1E,3

@@ -1,4 +1,4 @@
-Orloff Grenadiers Light Mechs
+Orloff Grenadiers Light Meks
 Hermes HER-1S,1
 Wasp WSP-1A,2
 Locust LCT-1V,3

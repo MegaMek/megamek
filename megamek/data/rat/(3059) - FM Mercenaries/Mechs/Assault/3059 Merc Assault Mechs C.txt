@@ -1,4 +1,4 @@
-3059 Mercenary Assault Mechs, Tech Level C
+3059 Mercenary Assault Meks, Tech Level C
 Gunslinger GUN-1ERD,1
 Banshee BNC-5S,2
 Shogun SHG-2F,3

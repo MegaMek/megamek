@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Heavy Mechs F
+Mercenary/Militia Meks Heavy Meks F
 Quickdraw QKD-4H,1
 Axman AXM-1N,2
 Archer ARC-2R,3

@@ -1,4 +1,4 @@
-Confederation Reserve Cavalry Heavy Mechs
+Confederation Reserve Cavalry Heavy Meks
 Archer ARC-2R,1
 Ostroc OSR-2C,2
 Koschei KSC-3I,3

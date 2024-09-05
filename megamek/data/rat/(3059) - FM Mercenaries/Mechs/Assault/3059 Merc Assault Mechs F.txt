@@ -1,4 +1,4 @@
-3059 Mercenary Assault Mechs, Tech Level F
+3059 Mercenary Assault Meks, Tech Level F
 Atlas AS7-D,1
 Zeus ZEU-6S,2
 Charger CGR-1A1,3

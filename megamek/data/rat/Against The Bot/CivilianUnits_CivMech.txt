@@ -14,7 +14,7 @@
 # * Civilian Mech table alone, for convenience                              #
 #############################################################################
 CivilianUnits_CivMech
-#IndustrialMechs
+#IndustrialMeks
 Arbiter ARB-001 SecurityMech,1
 Buster BC XV-M HaulerMech MOD,18
 Buster BC XV-M-B HaulerMech MOD,18

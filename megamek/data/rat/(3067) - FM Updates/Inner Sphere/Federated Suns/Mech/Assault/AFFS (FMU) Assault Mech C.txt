@@ -1,4 +1,4 @@
-AFFS Assault Mechs C 3067 (FMU)
+AFFS Assault Meks C 3067 (FMU)
 Goliath GOL-5D,1
 Gunslinger GUN-1ERD,2
 Awesome AWS-9M,3

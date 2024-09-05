@@ -1,4 +1,4 @@
-3064 Outworlds Alliance Assault Mechs
+3064 Outworlds Alliance Assault Meks
 Thug THG-10E,1
 Charger CGR-1L,2
 Awesome AWS-8Q,3

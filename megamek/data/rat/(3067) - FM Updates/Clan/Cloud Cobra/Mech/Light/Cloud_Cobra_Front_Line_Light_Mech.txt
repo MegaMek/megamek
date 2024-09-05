@@ -1,4 +1,4 @@
-Cloud Cobra FL Light Mechs (FMU)
+Cloud Cobra FL Light Meks (FMU)
 Hankyu (Arctic Cheetah) C,1
 Puma (Adder) A,2
 Puma (Adder) E,3

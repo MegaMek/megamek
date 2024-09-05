@@ -1,4 +1,4 @@
-CCAF Light Mechs B 3067
+CCAF Light Meks B 3067
 Anubis ABS-3L,1
 Jackal JA-KL-1532,2
 UrbanMech UM-R70,3

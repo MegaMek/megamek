@@ -1,4 +1,4 @@
-3075 Light Mechs - Generic Clan Front Line
+3075 Light Meks - Generic Clan Front Line
 Uller (Kit Fox) Prime,1
 Puma (Adder) Prime,2
 Hankyu (Arctic Cheetah) Prime,3

@@ -1,4 +1,4 @@
-Coyote Front-Line Light Mechs (FMU)
+Coyote Front-Line Light Meks (FMU)
 Hankyu (Arctic Cheetah) C,1
 Fire Falcon E,2
 Puma (Adder) E,3

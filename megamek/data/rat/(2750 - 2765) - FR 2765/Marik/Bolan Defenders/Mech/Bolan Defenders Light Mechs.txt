@@ -1,4 +1,4 @@
-Bolan Defenders Light Mechs
+Bolan Defenders Light Meks
 Thorn THE-N,1
 Stinger STG-3G,2
 Flea FLE-15,3

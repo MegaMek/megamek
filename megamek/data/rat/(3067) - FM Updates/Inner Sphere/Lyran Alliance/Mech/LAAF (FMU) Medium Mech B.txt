@@ -1,4 +1,4 @@
-LAAF Medium Mechs B 3067 (FMU)
+LAAF Medium Meks B 3067 (FMU)
 Enfield END-6Q,1
 Firestarter FS9-O,2
 Lynx LNX-9Q,3

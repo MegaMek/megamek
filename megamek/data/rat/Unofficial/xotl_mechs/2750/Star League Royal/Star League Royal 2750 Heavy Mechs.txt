@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Star League Royal 2750 Heavy Mechs
+Star League Royal 2750 Heavy Meks
 Lancelot LNC25-05,8
 Helepolis HEP-3H,37
 Guillotine GLT-3N,36

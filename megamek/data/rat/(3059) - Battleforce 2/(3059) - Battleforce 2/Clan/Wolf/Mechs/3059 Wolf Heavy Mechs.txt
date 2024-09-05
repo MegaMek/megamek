@@ -1,4 +1,4 @@
-3059 Wolf Front Line Heavy Mechs
+3059 Wolf Front Line Heavy Meks
 Linebacker Prime,1
 Mad Cat (Timber Wolf) D,2
 Vulture (Mad Dog) Prime,3

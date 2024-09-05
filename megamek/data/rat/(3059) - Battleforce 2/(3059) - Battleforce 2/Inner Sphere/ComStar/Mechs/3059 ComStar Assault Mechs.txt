@@ -1,4 +1,4 @@
-3059 ComStar Assault Mechs
+3059 ComStar Assault Meks
 King Crab KGC-001,1
 Stalker STK-5M,2
 Crockett CRK-5003-1,3

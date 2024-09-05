@@ -1,4 +1,4 @@
-CCAF Assault Mechs D 3067
+CCAF Assault Meks D 3067
 Atlas AS7-D,1
 Cyclops CP-10-Q,2
 Charger CGR-1A1,3

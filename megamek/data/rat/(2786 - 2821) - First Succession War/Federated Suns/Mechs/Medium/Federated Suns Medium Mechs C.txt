@@ -1,4 +1,4 @@
-Federated Suns Medium Mechs C
+Federated Suns Medium Meks C
 Hoplite HOP-4C,1
 Hunchback HBK-4G,2
 Vulcan VL-2T,3

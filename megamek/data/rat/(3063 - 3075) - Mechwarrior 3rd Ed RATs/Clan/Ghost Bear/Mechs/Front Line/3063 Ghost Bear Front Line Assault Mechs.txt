@@ -1,4 +1,4 @@
-3063 Ghost Bear Front Line Assault Mechs
+3063 Ghost Bear Front Line Assault Meks
 Masakari (Warhawk) A,1
 Kingfisher E,2
 Gladiator (Executioner) E,3

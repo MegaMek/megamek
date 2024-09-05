@@ -1,4 +1,4 @@
-Steel Viper Front-Line Assault Mechs (FMU)
+Steel Viper Front-Line Assault Meks (FMU)
 Naga Prime,1
 Kingfisher C,2
 Masakari (Warhawk) A,3

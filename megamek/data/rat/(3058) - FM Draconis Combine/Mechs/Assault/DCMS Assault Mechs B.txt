@@ -1,4 +1,4 @@
-DCMS Assault Mechs Early 3059, Tech Level B
+DCMS Assault Meks Early 3059, Tech Level B
 Gunslinger GUN-1ERD,1
 Charger CGR-3K,2
 Hatamoto-Mizo HTM-27Y,3

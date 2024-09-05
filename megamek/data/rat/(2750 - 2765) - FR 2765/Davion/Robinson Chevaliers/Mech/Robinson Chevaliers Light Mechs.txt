@@ -1,4 +1,4 @@
-Robinson Chevaliers Light Mechs
+Robinson Chevaliers Light Meks
 Hussar HSR-200-D,1
 Locust LCT-1M,2
 Ostscout OTT-7J,3

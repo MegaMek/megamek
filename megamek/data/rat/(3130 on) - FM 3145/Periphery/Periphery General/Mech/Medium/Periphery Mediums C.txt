@@ -1,4 +1,4 @@
-Periphery Medium Mechs C
+Periphery Medium Meks C
 Clint CLNT-3-3T,1
 Griffin GRF-1N,2
 Centurion CN9-Ar,3

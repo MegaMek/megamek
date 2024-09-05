@@ -1,4 +1,4 @@
-LAAF Medium Mechs F 3067 (FMU)
+LAAF Medium Meks F 3067 (FMU)
 Assassin ASN-21,1
 Clint CLNT-2-3T,2
 Vulcan VL-2T,3

@@ -1,4 +1,4 @@
-AFFS Light Mechs D (FMU)
+AFFS Light Meks D (FMU)
 Osiris OSR-4D,1
 Commando COM-2D,2
 Javelin JVN-11D,3

@@ -1,4 +1,4 @@
-AFFS Medium Mechs D 3067 (FMU)
+AFFS Medium Meks D 3067 (FMU)
 Centurion CN9-D,1
 Blackjack BJ-3,2
 Watchman WTC-4M,3

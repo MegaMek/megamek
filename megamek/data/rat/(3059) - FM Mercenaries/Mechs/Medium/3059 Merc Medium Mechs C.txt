@@ -1,4 +1,4 @@
-3059 Mercenary Medium Mechs, Tech Level C
+3059 Mercenary Medium Meks, Tech Level C
 Snake SNK-1V,1
 Blackjack BJ-2,2
 Hunchback HBK-5M,3

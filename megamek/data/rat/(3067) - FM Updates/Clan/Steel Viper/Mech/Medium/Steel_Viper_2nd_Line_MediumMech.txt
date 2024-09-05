@@ -1,4 +1,4 @@
-Steel Viper 2nd-Line Medium Mechs (FMU)
+Steel Viper 2nd-Line Medium Meks (FMU)
 Battle Cobra Prime,1
 Crab CRB-27,2
 Griffin IIC (Standard),3

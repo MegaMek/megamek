@@ -1,4 +1,4 @@
-AFFS Assault Mechs F 3067 (FMU)
+AFFS Assault Meks F 3067 (FMU)
 Goliath GOL-3M,1
 Cyclops CP-11-G,2
 Zeus ZEU-9S,3

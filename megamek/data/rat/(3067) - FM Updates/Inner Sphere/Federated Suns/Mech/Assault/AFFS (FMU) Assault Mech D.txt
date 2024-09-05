@@ -1,4 +1,4 @@
-AFFS Assault Mechs D 3067 (FMU)
+AFFS Assault Meks D 3067 (FMU)
 Goliath GOL-5D,1
 Victor VTR-10D,2
 Stalker STK-7D,3

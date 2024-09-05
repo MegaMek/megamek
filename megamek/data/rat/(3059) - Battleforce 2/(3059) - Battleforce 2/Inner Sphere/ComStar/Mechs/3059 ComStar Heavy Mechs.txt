@@ -1,4 +1,4 @@
-3059 ComStar Heavy Mechs
+3059 ComStar Heavy Meks
 Black Knight BL-9-KNT,1
 Champion CHP-3N,2
 Bombardier BMB-12D,3

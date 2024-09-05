@@ -1,4 +1,4 @@
-3059 Free Worlds League Light Mechs, Tech Level F
+3059 Free Worlds League Light Meks, Tech Level F
 UrbanMech UM-R60,1
 Javelin JVN-10N,2
 Firestarter FS9-H,3

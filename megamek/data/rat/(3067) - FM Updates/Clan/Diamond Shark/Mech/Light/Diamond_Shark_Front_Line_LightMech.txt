@@ -1,4 +1,4 @@
-Diamond_Shark Front-Line Light Mechs (FMU)
+Diamond_Shark Front-Line Light Meks (FMU)
 Hellion Prime,1
 Puma (Adder) B,2
 Hankyu (Arctic Cheetah) Prime,3

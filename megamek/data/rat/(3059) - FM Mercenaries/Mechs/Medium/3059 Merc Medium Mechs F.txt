@@ -1,4 +1,4 @@
-3059 Mercenary Medium Mechs, Tech Level F
+3059 Mercenary Medium Meks, Tech Level F
 Shadow Hawk SHD-2H,1
 Griffin GRF-1N,2
 Scorpion SCP-1N,3

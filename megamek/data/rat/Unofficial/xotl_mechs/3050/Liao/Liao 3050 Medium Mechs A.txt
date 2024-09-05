@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Liao 3050 Medium Mechs A
+Liao 3050 Medium Meks A
 Blackjack BJ-1,14
 Vindicator VND-1AA 'Avenging Angel',21
 Whitworth WTH-1,11

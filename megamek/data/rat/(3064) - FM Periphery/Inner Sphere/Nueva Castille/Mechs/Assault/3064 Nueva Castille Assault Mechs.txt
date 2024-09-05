@@ -1,4 +1,4 @@
-3064 Castillian/Umayyad Assault Mechs
+3064 Castillian/Umayyad Assault Meks
 Charger CGR-1A1,1
 Highlander HGN-733,2
 Victor VTR-9B,3

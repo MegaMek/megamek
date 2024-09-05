@@ -1,4 +1,4 @@
-DCMS Assault Mechs D 3067 FM-U
+DCMS Assault Meks D 3067 FM-U
 Charger CGR-3K,1
 Banshee BNC-3E,2
 Cyclops CP-10-Z,3

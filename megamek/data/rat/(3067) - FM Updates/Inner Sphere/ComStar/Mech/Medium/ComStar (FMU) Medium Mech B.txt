@@ -1,4 +1,4 @@
-ComStar Medium Mechs B 3067 (FMU)
+ComStar Medium Meks B 3067 (FMU)
 Wyvern WVE-9N,1
 Clint CLNT-2-3U,2
 Sentinel STN-3L,3

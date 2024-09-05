@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Assault Mechs F
+Mercenary/Militia Meks Assault Meks F
 Stalker STK-3F,1
 Banshee BNC-3Mr,2
 Charger CGR-SB 'Challenger',3

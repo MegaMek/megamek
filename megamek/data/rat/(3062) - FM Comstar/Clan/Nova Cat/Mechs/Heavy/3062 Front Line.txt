@@ -1,4 +1,4 @@
-3062 Clan Nova Cat Front-Line Heavy Mechs
+3062 Clan Nova Cat Front-Line Heavy Meks
 Linebacker Prime,1
 Nova Cat A,2
 Thor (Summoner) D,3

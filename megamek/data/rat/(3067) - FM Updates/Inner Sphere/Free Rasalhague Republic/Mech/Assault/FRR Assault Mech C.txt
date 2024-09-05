@@ -1,4 +1,4 @@
-FRR Assault Mechs C 3067
+FRR Assault Meks C 3067
 Mauler MAL-1R,1
 Victor VTR-9K,2
 Charger CGR-1A9,3

@@ -1,4 +1,4 @@
-Cloud Cobra SL Heavy Mechs (FMU)
+Cloud Cobra SL Heavy Meks (FMU)
 Viper (Black Python) (Standard),1
 Thresher (Standard),2
 Hellfire 2,3

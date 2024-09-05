@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Medium Mechs F
+Mercenary/Militia Meks Medium Meks F
 Hunchback HBK-4P,1
 Clint CLNT-2-3U,2
 Phoenix Hawk PXH-1,3

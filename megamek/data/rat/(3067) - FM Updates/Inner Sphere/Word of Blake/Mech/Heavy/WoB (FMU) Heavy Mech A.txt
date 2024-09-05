@@ -1,4 +1,4 @@
-WoB Heavy Mechs A 3067 (FMU)
+WoB Heavy Meks A 3067 (FMU)
 Perseus P1,1
 Marauder MAD-5L,2
 Champion CHP-3P,3

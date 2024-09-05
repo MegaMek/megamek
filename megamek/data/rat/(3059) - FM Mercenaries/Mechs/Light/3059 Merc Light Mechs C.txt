@@ -1,4 +1,4 @@
-3059 Mercenary Light Mechs, Tech Level C
+3059 Mercenary Light Meks, Tech Level C
 Scarabus SCB-9A,1
 Panther PNT-10K,2
 Valkyrie VLK-QD,3

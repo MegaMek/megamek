@@ -1,4 +1,4 @@
-3075 Light IndustrialMechs - Generic Inner Sphere
+3075 Light IndustrialMeks - Generic Inner Sphere
 Patron LoaderMech (Standard),1
 Copper SecurityMech CPK-65,2
 Crosscut ED-X4 LoggerMech,3

@@ -1,4 +1,4 @@
-Periphery States Heavy Mechs F
+Periphery States Heavy Meks F
 Catapult CPLT-C1,1
 Rifleman RFL-3N,2
 Thunderbolt TDR-5S,3

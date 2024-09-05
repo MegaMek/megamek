@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Heavy Mechs B
+Mercenary/Militia Meks Heavy Meks B
 Yeoman YMN-6Y,1
 Rifleman RFL-5M,2
 Hercules HRC-LS-9001,3

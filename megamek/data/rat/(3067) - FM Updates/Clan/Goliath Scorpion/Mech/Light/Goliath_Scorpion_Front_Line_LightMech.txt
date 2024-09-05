@@ -1,4 +1,4 @@
-Goliath Scorpion Front-Line Light Mechs (FMU)
+Goliath Scorpion Front-Line Light Meks (FMU)
 Peregrine (Horned Owl) (Standard),1
 Dasher (Fire Moth) B,2
 Uller (Kit Fox) C,3

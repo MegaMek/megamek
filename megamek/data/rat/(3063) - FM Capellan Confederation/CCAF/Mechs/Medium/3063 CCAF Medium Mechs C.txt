@@ -1,4 +1,4 @@
-3063 Capellan Confederation Medium Mechs C
+3063 Capellan Confederation Medium Meks C
 Clint CLNT-1-2R,1
 Hunchback HBK-4P,2
 Vulcan VL-2T,3

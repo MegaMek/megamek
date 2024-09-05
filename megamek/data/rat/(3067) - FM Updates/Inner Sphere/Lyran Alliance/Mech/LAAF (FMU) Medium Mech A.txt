@@ -1,4 +1,4 @@
-LAAF Medium Mechs A 3067 (FMU)
+LAAF Medium Meks A 3067 (FMU)
 Hollander II BZK-F7,1
 Cobra CBR-02,2
 Blitzkrieg BTZ-3F,3

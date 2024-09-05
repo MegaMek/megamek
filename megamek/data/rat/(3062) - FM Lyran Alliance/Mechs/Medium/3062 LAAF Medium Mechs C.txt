@@ -1,4 +1,4 @@
-3062 Lyran Alliance Medium Mechs C
+3062 Lyran Alliance Medium Meks C
 Centurion CN9-D,1
 Enforcer ENF-5D,2
 Stealth STH-1D,3

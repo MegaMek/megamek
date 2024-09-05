@@ -1,4 +1,4 @@
-3062 Com Guard Light Mechs A
+3062 Com Guard Light Meks A
 Cossack C-SK1,1
 Nexus NXS1-A,2
 Mongoose MON-66,3

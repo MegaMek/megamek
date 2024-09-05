@@ -1,4 +1,4 @@
-3075 Light Mechs - Mercenaries
+3075 Light Meks - Mercenaries
 Arctic Fox AF1,1
 Eagle EGL-2M,2
 Locust LCT-5M,3

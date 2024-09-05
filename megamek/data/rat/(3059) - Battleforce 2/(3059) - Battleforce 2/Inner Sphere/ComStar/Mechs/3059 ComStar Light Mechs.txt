@@ -1,4 +1,4 @@
-3059 ComStar Light Mechs
+3059 ComStar Light Meks
 Hussar HSR-400-D,1
 UrbanMech UM-R63,2
 Thorn THE-N,3

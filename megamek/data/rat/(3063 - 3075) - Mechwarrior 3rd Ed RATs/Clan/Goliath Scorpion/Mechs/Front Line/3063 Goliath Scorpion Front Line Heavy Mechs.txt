@@ -1,4 +1,4 @@
-3063 Goliath Scorpion Front Line Heavy Mechs
+3063 Goliath Scorpion Front Line Heavy Meks
 Night Gyr E,1
 Vulture (Mad Dog) Prime,2
 Cauldron-Born (Ebon Jaguar) D,3

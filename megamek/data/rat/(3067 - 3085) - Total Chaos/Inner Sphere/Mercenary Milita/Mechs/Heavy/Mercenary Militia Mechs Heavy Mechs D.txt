@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Heavy Mechs D
+Mercenary/Militia Meks Heavy Meks D
 Axman AXM-1N,1
 Archer ARC-2R,2
 JagerMech JM6-DD,3

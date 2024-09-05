@@ -1,4 +1,4 @@
-Capellan Chargers Light Mechs
+Capellan Chargers Light Meks
 Stinger STG-3R,1
 UrbanMech UM-R60,2
 Locust LCT-1V,3

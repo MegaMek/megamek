@@ -1,4 +1,4 @@
-Goliath Scorpion Front-Line Medium Mechs (FMU)
+Goliath Scorpion Front-Line Medium Meks (FMU)
 Battle Cobra B,1
 Fenris (Ice Ferret) D,2
 Black Hawk (Nova) Prime,3

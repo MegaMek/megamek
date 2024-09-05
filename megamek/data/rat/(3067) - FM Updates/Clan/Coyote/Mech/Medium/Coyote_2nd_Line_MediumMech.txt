@@ -1,4 +1,4 @@
-Coyote 2nd-Line Medium Mechs (FMU)
+Coyote 2nd-Line Medium Meks (FMU)
 Hoplite C,1
 Lobo (Standard),2
 Griffin IIC (Standard),3

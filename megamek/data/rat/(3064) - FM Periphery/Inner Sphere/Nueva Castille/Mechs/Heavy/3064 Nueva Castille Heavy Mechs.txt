@@ -1,4 +1,4 @@
-3064 Castillian/Umayyad Heavy Mechs
+3064 Castillian/Umayyad Heavy Meks
 Quickdraw QKD-4G,1
 Flashman FLS-7K,2
 Catapult CPLT-A1,3

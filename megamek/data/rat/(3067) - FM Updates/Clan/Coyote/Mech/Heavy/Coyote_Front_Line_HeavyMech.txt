@@ -1,4 +1,4 @@
-Coyote Front-Line Heavy Mechs (FMU)
+Coyote Front-Line Heavy Meks (FMU)
 Thor (Summoner) H,1
 Vulture (Mad Dog) D,2
 Mad Cat (Timber Wolf) C,3

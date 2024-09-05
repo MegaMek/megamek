@@ -1,4 +1,4 @@
-SLDF Heavy Mechs A
+SLDF Heavy Meks A
 Exterminator EXT-4Db,2
 Ostroc OSR-2Cb,3
 Bombardier BMB-12D,4

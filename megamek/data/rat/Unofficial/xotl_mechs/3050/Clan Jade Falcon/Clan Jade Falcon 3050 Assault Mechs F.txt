@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Jade Falcon 3050 Assault Mechs F
+Clan Jade Falcon 3050 Assault Meks F
 Man O' War (Gargoyle) Prime,308
 Man O' War (Gargoyle) B,15
 Masakari (Warhawk) B,12

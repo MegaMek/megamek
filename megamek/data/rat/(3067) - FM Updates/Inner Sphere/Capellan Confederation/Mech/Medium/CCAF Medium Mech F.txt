@@ -1,4 +1,4 @@
-CCAF Medium Mechs F 3067
+CCAF Medium Meks F 3067
 Hunchback HBK-4P,1
 Blackjack BJ-3,2
 Clint CLNT-2-3T,3

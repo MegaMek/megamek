@@ -1,4 +1,4 @@
-3063 ComStar Assault Mechs
+3063 ComStar Assault Meks
 Viking VKG-2F,1
 Nightstar NSR-9J,2
 Thunder Hawk TDK-7X,3

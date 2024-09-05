@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Diamond Shark 3050 Light Mechs B
+Clan Diamond Shark 3050 Light Meks B
 Dasher (Fire Moth) A,19
 Dasher (Fire Moth) C,35
 Koshi (Mist Lynx) D,23
@@ -38,9 +38,9 @@ Puma (Adder) B,46
 Puma (Adder) A,92
 Puma (Adder) Prime,59
 Dasher (Fire Moth) D,24
-@Clan Ghost Bear 3050 Light Mechs B,65
-@Clan Jade Falcon 3050 Light Mechs B,7
-@Clan Nova Cat 3050 Light Mechs B,7
-@Clan Smoke Jaguar 3050 Light Mechs B,7
-@Clan Steel Viper 3050 Light Mechs B,7
-@Clan Wolf 3050 Light Mechs B,7
+@Clan Ghost Bear 3050 Light Meks B,65
+@Clan Jade Falcon 3050 Light Meks B,7
+@Clan Nova Cat 3050 Light Meks B,7
+@Clan Smoke Jaguar 3050 Light Meks B,7
+@Clan Steel Viper 3050 Light Meks B,7
+@Clan Wolf 3050 Light Meks B,7

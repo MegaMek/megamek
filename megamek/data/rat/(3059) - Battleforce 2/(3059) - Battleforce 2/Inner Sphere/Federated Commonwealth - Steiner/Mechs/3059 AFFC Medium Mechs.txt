@@ -1,4 +1,4 @@
-3059 Federated Commonwealth - Steiner Medium Mechs
+3059 Federated Commonwealth - Steiner Medium Meks
 Enfield END-6Q,1
 Enforcer ENF-5D,2
 Hatchetman HCT-5S,3

@@ -1,4 +1,4 @@
-AFFS Light Mechs B 3067 (FMU)
+AFFS Light Meks B 3067 (FMU)
 Night Hawk NTK-2Q,1
 Dart DRT-6S,2
 Scarabus SCB-9A,3

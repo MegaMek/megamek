@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Star League Royal 2750 Medium Mechs
+Star League Royal 2750 Medium Meks
 Wyvern WVE-5Nb,91
 Phoenix Hawk PXH-2,92
 Sentinel STN-3Lb,183

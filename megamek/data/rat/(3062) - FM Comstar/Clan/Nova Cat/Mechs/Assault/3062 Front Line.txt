@@ -1,4 +1,4 @@
-3062 Clan Nova Cat Front-Line Assault Mechs
+3062 Clan Nova Cat Front-Line Assault Meks
 Turkina B,1
 Daishi (Dire Wolf) A,2
 Gladiator (Executioner) A,3

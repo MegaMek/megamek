@@ -1,4 +1,4 @@
-ComStar Light Mechs A 3067 (FMU)
+ComStar Light Meks A 3067 (FMU)
 Cossack C-SK1,1
 Nexus NXS1-A,2
 Mongoose MON-66,3

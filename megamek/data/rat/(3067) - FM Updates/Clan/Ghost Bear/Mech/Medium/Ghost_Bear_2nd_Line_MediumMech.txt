@@ -1,4 +1,4 @@
-Ghost Bear 2nd-Line Medium Mechs (FMU)
+Ghost Bear 2nd-Line Medium Meks (FMU)
 Lobo (Standard),1
 Great Wyrm (Standard),2
 Sentinel STN-3L,3

@@ -1,4 +1,4 @@
-DCMS Assault Mechs F 3067 FM-U
+DCMS Assault Meks F 3067 FM-U
 BattleMaster BLR-1G,1
 Goliath GOL-1H,2
 Stalker STK-3F,3

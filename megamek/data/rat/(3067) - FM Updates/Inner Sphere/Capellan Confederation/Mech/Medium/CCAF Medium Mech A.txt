@@ -1,4 +1,4 @@
-CCAF Medium Mechs A 3067
+CCAF Medium Meks A 3067
 Apollo APL-1M,1
 Shadow Hawk SHD-7M,2
 Sha Yu SYU-2B,3

@@ -1,4 +1,4 @@
-Coyote Front-Line Assault Mechs (FMU)
+Coyote Front-Line Assault Meks (FMU)
 Turkina Prime,1
 Man O' War (Gargoyle) D,2
 Savage Coyote C,3

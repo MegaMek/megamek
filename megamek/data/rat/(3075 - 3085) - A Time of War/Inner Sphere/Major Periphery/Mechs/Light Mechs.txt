@@ -1,4 +1,4 @@
-3075 Light Mechs - Major Periphery
+3075 Light Meks - Major Periphery
 Stinger STG-5T,1
 Wasp WSP-7MAF,2
 Javelin JVN-10P,3

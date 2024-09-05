@@ -1,4 +1,4 @@
-3059 ComStar Medium Mechs
+3059 ComStar Medium Meks
 Wyvern WVE-9N,1
 Clint CLNT-2-3U,2
 Sentinel STN-3L,3

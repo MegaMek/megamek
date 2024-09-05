@@ -1,4 +1,4 @@
-3063 Coyote Front Line Medium Mechs
+3063 Coyote Front Line Medium Meks
 Pouncer Prime,1
 Ryoken (Stormcrow) E,2
 Dragonfly (Viper) E,3

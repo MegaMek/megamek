@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Star League Regular 2750 Heavy Mechs
+Star League Regular 2750 Heavy Meks
 Ostroc OSR-2C,21
 Champion CHP-1N,36
 Champion CHP-1N2,16

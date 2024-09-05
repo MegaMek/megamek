@@ -1,4 +1,4 @@
-3064 Castillian/Umayyad Medium Mechs
+3064 Castillian/Umayyad Medium Meks
 Kintaro KTO-18,1
 Cicada CDA-2A,2
 Vulcan VL-2T,3

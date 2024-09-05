@@ -1,4 +1,4 @@
-Generic Periphery Medium Mechs - 3063
+Generic Periphery Medium Meks - 3063
 Centurion CN9-D,1
 Trebuchet TBT-5N,2
 Hatchetman HCT-5S,3

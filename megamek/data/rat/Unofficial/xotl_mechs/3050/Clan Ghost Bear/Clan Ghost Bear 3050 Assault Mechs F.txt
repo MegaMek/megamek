@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Ghost Bear 3050 Assault Mechs F
+Clan Ghost Bear 3050 Assault Meks F
 Man O' War (Gargoyle) Prime,200
 Naga C,2
 Naga Prime,15

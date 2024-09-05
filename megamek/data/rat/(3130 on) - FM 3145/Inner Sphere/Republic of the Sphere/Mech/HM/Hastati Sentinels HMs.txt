@@ -1,4 +1,4 @@
-Hastati Sentinels Heavy Mechs
+Hastati Sentinels Heavy Meks
 Tempest TMP-3M2 'Storm Tempest',1
 Marauder MAD-9M2,2
 Excalibur EXC-B2b,3

@@ -1,4 +1,4 @@
-Nova Cat Front-Line Light Mechs (FMU)
+Nova Cat Front-Line Light Meks (FMU)
 Arctic Fox AF1,1
 Fire Falcon Prime,2
 Hellion Prime,3

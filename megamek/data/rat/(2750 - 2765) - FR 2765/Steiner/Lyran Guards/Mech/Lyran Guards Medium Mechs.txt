@@ -1,4 +1,4 @@
-Lyran Guards Medium Mechs
+Lyran Guards Medium Meks
 Alfar AL-A1,1
 Cicada CDA-2A,2
 Dervish DV-6M,3

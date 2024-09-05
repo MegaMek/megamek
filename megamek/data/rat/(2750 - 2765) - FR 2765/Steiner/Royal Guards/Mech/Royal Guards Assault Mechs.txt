@@ -1,4 +1,4 @@
-Royal Guards Assault Mechs
+Royal Guards Assault Meks
 BattleMaster BLR-1G,1
 Ymir BWP-2E,2
 Stalker STK-3F,3

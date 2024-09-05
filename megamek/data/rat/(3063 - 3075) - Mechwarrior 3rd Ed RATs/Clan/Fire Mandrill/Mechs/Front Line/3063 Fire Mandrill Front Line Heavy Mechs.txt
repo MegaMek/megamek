@@ -1,4 +1,4 @@
-3063 Fire Mandrill Front Line Heavy Mechs
+3063 Fire Mandrill Front Line Heavy Meks
 Vulture (Mad Dog) B,1
 Thor (Summoner) H,2
 Thor (Summoner) B,3

@@ -1,4 +1,4 @@
-Federated Suns Light Mechs C
+Federated Suns Light Meks C
 Locust LCT-1M,1
 Wasp WSP-1A,2
 Falcon FLC-4N,3

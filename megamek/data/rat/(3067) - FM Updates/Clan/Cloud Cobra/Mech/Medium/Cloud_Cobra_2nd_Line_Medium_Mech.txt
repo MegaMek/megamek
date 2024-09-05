@@ -1,4 +1,4 @@
-Cloud Cobra SL Medium Mechs (FMU)
+Cloud Cobra SL Medium Meks (FMU)
 Clint IIC (Standard),1
 Rabid Coyote (Standard),2
 Shadow Hawk IIC (Standard),3

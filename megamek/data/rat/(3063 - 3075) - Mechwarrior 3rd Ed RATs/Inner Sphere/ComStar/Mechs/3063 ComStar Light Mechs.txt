@@ -1,4 +1,4 @@
-3063 ComStar Light Mechs
+3063 ComStar Light Meks
 Cossack C-SK1,1
 Nexus NXS1-A,2
 Mongoose MON-66,3

@@ -1,4 +1,4 @@
-3059 Mercenary Heavy Mechs, Tech Level C
+3059 Mercenary Heavy Meks, Tech Level C
 Gallowglas GAL-1GLS,1
 Warhammer WHM-7M,2
 Crusader CRD-5M,3

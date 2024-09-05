@@ -1,4 +1,4 @@
-3062 Lyran Alliance Medium Mechs A
+3062 Lyran Alliance Medium Meks A
 Enfield END-6Q,1
 Cobra CBR-02,2
 Blitzkrieg BTZ-3F,3

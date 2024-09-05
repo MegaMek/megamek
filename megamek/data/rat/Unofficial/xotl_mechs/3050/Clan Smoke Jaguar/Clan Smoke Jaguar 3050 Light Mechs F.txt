@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Smoke Jaguar 3050 Light Mechs F
+Clan Smoke Jaguar 3050 Light Meks F
 Koshi (Mist Lynx) A,166
 Dasher (Fire Moth) A,7
 Dasher (Fire Moth) C,13

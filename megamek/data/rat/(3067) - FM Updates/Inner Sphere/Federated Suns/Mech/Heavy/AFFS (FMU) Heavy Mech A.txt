@@ -1,4 +1,4 @@
-AFFS Heavy Mechs A 3067 (FMU)
+AFFS Heavy Meks A 3067 (FMU)
 Thunderbolt TDR-9NAIS,1
 Cestus CTS-6Y,2
 Marauder MAD-5T,3

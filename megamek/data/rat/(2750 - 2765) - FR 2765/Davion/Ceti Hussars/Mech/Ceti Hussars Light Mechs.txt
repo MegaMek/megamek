@@ -1,4 +1,4 @@
-Ceti Hussars Light Mechs
+Ceti Hussars Light Meks
 Wasp WSP-1A,1
 Hussar HSR-200-D,2
 Locust LCT-1M,3

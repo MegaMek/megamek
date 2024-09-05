@@ -1,4 +1,4 @@
-Clan Jade Falcon Front-Line Light Mechs (FMU)
+Clan Jade Falcon Front-Line Light Meks (FMU)
 Hellion Prime,1
 Cougar Prime,2
 Puma (Adder) A,3

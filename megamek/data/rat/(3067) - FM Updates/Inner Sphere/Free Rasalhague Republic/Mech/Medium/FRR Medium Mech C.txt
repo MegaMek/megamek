@@ -1,4 +1,4 @@
-FRR Medium Mechs C 3067
+FRR Medium Meks C 3067
 Sentinel STN-3M,1
 Hunchback HBK-5M,2
 Whitworth WTH-2,3

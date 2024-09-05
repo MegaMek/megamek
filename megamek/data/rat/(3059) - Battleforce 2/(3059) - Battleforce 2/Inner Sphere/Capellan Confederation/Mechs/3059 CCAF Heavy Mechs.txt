@@ -1,4 +1,4 @@
-3059 Capellan Confederation Heavy Mechs
+3059 Capellan Confederation Heavy Meks
 Thunder THR-1L,1
 Orion ON1-K,2
 Catapult CPLT-C1,3

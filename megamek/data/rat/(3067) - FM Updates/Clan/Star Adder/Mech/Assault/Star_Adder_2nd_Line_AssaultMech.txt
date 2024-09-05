@@ -1,4 +1,4 @@
-Clan Star Adder Second-Line Assault Mechs (FMU)
+Clan Star Adder Second-Line Assault Meks (FMU)
 Annihilator C 'Gausszilla',1
 Kraken (Bane) 3,2
 Marauder IIC (Standard),3

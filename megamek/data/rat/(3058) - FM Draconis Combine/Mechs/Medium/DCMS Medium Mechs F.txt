@@ -1,4 +1,4 @@
-DCMS Medium Mechs Early 3059, Tech Level F
+DCMS Medium Meks Early 3059, Tech Level F
 Cicada CDA-2A,1
 Scorpion SCP-1N,2
 Phoenix Hawk PXH-1,3

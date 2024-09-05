@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Medium Mechs A
+Mercenary/Militia Meks Medium Meks A
 Nightsky NGS-5S,1
 Shadow Hawk SHD-5M,2
 Hunchback HBK-5N,3

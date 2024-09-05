@@ -1,4 +1,4 @@
-LAAF Heavy Mechs C 3067 (FMU)
+LAAF Heavy Meks C 3067 (FMU)
 Warhammer WHM-7S,1
 Crusader CRD-5S,2
 Grasshopper GHR-5J,3

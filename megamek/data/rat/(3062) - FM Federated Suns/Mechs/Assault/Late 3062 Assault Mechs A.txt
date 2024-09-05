@@ -1,4 +1,4 @@
-Late 3062 AFFS Assault Mechs, Tech Level A
+Late 3062 AFFS Assault Meks, Tech Level A
 Templar TLR1-OB,1
 Templar TLR1-OA,2
 Salamander PPR-5S,3

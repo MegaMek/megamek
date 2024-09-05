@@ -1,4 +1,4 @@
-ComStar Assault Mechs A 3067 (FMU)
+ComStar Assault Meks A 3067 (FMU)
 Viking VKG-2F,1
 Nightstar NSR-9J,2
 Thunder Hawk TDK-7X,3

@@ -1,4 +1,4 @@
-Periphery Light Mechs C
+Periphery Light Meks C
 Toro TR-A-1,1
 Locust LCT-1V2,2
 Commando COM-4H,3

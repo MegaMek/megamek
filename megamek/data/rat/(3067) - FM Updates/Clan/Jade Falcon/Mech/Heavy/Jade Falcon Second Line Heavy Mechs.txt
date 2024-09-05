@@ -1,4 +1,4 @@
-Clan Jade Falcon Second-Line Heavy Mechs (FMU)
+Clan Jade Falcon Second-Line Heavy Meks (FMU)
 Mad Cat (Timber Wolf) Prime,1
 Vulture (Mad Dog) Prime,2
 Thor (Summoner) C,3

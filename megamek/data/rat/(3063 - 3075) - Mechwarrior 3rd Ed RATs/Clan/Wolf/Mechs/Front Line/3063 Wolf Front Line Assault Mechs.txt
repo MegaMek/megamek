@@ -1,4 +1,4 @@
-3063 Clan Wolf Front Line Assault Mechs
+3063 Clan Wolf Front Line Assault Meks
 Masakari (Warhawk) H,1
 Gladiator (Executioner) A,2
 Man O' War (Gargoyle) C,3

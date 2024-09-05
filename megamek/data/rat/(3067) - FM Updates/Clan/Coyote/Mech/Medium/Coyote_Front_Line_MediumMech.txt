@@ -1,4 +1,4 @@
-Coyote Front-Line Medium Mechs (FMU)
+Coyote Front-Line Medium Meks (FMU)
 Pouncer E,1
 Ryoken (Stormcrow) E,2
 Dragonfly (Viper) B,3

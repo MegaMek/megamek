@@ -1,4 +1,4 @@
-CCAF Heavy Mechs B 3067
+CCAF Heavy Meks B 3067
 Warhammer WHM-4L,1
 Helios HEL-3D,2
 Thunderbolt TDR-9M,3

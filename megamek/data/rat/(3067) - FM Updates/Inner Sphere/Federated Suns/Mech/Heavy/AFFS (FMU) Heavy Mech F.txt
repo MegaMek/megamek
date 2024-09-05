@@ -1,4 +1,4 @@
-AFFS Heavy Mechs F 3067 (FMU)
+AFFS Heavy Meks F 3067 (FMU)
 JagerMech JM6-DD,1
 Marauder MAD-5D,2
 Archer ARC-8M,3

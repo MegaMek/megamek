@@ -1,4 +1,4 @@
-ComStar Heavy Mechs B 3067 (FMU)
+ComStar Heavy Meks B 3067 (FMU)
 Black Knight BL-9-KNT,1
 Avatar AV1-O,2
 Bombardier BMB-12D,3

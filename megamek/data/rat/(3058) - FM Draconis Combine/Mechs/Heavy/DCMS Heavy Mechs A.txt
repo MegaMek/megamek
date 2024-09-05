@@ -1,4 +1,4 @@
-DCMS Heavy Mechs Early 3059, Tech Level A
+DCMS Heavy Meks Early 3059, Tech Level A
 Quickdraw QKD-5K,1
 Daikyu DAI-01,2
 Dragon Fire DGR-3F,3

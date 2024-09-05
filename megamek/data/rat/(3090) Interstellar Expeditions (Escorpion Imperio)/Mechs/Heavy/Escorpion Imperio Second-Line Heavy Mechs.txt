@@ -1,4 +1,4 @@
-Escorpion Imperio Second-Line Heavy Mechs (3090)
+Escorpion Imperio Second-Line Heavy Meks (3090)
 Catapult CPLT-C1,1
 Archer ARC-2R,2
 Rifleman RFL-1N,3

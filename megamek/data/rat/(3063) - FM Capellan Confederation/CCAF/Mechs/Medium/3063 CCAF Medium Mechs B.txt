@@ -1,4 +1,4 @@
-3063 Capellan Confederation Medium Mechs B
+3063 Capellan Confederation Medium Meks B
 Snake SNK-1V,1
 Marshal MHL-2L,2
 Trebuchet TBT-7M,3

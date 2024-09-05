@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Davion 3028 Heavy Mechs B
+Davion 3028 Heavy Meks B
 JagerMech JM6-S,87
 Rifleman RFL-3N,130
 Rifleman RFL-3C,4

@@ -1,4 +1,4 @@
-Clan Coyote Secondline ProtoMechs (WoRS)
+Clan Coyote Secondline ProtoMeks (WoRS)
 Boggart Ultraheavy ProtoMech (Standard), 1
 Sprite Ultraheavy ProtoMech 2, 2
 Procyon 4, 3

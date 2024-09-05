@@ -1,4 +1,4 @@
-3063 ComStar Heavy Mechs
+3063 ComStar Heavy Meks
 JagerMech III JM6-D3,1
 Cestus CTS-6Y,2
 Avatar AV1-O,3

@@ -1,4 +1,4 @@
-DCMS Light Mechs Early 3059, Tech Level C
+DCMS Light Meks Early 3059, Tech Level C
 Locust LCT-1V,1
 Wasp WSP-1A,2
 Javelin JVN-10P,3

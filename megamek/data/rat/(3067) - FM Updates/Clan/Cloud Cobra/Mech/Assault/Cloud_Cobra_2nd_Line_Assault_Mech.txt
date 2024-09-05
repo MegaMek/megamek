@@ -1,4 +1,4 @@
-Cloud Cobra SL Assault Mechs (FMU)
+Cloud Cobra SL Assault Meks (FMU)
 Kraken (Bane) (Standard),1
 Behemoth (Stone Rhino) (Standard),2
 Kraken (Bane) 3,3

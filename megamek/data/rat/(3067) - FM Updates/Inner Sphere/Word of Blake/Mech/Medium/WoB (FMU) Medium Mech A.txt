@@ -1,4 +1,4 @@
-WoB Medium Mechs A 3067 (FMU)
+WoB Medium Meks A 3067 (FMU)
 Hermes II HER-5C,1
 Blackjack BJ2-O,2
 Crab CRB-30,3

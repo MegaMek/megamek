@@ -1,4 +1,4 @@
-AFFS Light Mechs F 3067 (FMU)
+AFFS Light Meks F 3067 (FMU)
 UrbanMech UM-R70,1
 Dart DRT-3S,2
 Wolfhound WLF-2,3

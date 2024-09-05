@@ -1,4 +1,4 @@
-CCAF Light Mechs A 3067
+CCAF Light Meks A 3067
 Anubis ABS-3T,1
 Stinger STG-6L,2
 Stinger STG-6L,3

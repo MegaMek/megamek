@@ -1,4 +1,4 @@
-DCMS Light Mechs Early 3059, Tech Level F
+DCMS Light Meks Early 3059, Tech Level F
 UrbanMech UM-R60,1
 Firestarter FS9-H,2
 Panther PNT-9R,3

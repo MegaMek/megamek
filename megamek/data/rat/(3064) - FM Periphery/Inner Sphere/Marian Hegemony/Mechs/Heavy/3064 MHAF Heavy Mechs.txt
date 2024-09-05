@@ -1,4 +1,4 @@
-3064 Marian Hegemony Heavy Mechs
+3064 Marian Hegemony Heavy Meks
 Tempest TMP-3M,1
 Quickdraw QKD-5M,2
 Cataphract CTF-3D,3

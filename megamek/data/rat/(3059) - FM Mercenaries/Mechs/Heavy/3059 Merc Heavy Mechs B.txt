@@ -1,4 +1,4 @@
-3059 Mercenary Heavy Mechs, Tech Level B
+3059 Mercenary Heavy Meks, Tech Level B
 Dragon Fire DGR-3F,2
 Tempest TMP-3M,4
 Marauder MAD-3R,6

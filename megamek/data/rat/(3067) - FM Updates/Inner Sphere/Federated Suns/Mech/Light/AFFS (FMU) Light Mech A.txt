@@ -1,4 +1,4 @@
-AFFS Light Mechs A 3067 (FMU)
+AFFS Light Meks A 3067 (FMU)
 Valkyrie VLK-QD1,1
 Night Hawk NTK-2Q,2
 Garm GRM-01C,3

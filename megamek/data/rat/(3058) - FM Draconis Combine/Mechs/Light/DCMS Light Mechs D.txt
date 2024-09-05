@@ -1,4 +1,4 @@
-DCMS Light Mechs Early 3059, Tech Level D
+DCMS Light Meks Early 3059, Tech Level D
 Panther PNT-10K,1
 Locust LCT-1V,2
 Spider SDR-5V,3

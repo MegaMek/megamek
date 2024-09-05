@@ -1,4 +1,4 @@
-FRR Heavy Mechs B 3067
+FRR Heavy Meks B 3067
 Gallowglas GAL-1GLS,1
 Marauder MAD-5D,2
 War Dog WR-DG-02FC,3

@@ -1,4 +1,4 @@
-Clan Star Adder Second-Line Medium Mechs (FMU)
+Clan Star Adder Second-Line Medium Meks (FMU)
 Hoplite C,1
 Shadow Hawk IIC 3,2
 Great Wyrm (Standard),3

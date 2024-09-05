@@ -1,4 +1,4 @@
-﻿Liao Insurgent ‘Mechs, DATP:Liao
+﻿Liao Insurgent ‘Meks, DATP:Liao
 Jabberwocky JAW-66B EngineerMech, 1
 Carbine CON-1 ConstructionMech (RL), 2
 Harvester HVR-99 AgroMech (Standard), 3

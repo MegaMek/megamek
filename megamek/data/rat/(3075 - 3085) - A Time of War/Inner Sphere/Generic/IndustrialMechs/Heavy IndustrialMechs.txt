@@ -1,4 +1,4 @@
-3075 Heavy IndustrialMechs - Generic Inner Sphere
+3075 Heavy IndustrialMeks - Generic Inner Sphere
 Kiso K-3N-KR4 ConstructionMech,1
 Vampyr SC-V-1 SalvageMech (Standard),2
 Lumberjack LM4/C,3

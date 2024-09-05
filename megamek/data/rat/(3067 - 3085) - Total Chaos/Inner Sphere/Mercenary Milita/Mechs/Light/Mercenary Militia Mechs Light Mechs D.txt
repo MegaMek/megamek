@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Light Mechs D
+Mercenary/Militia Meks Light Meks D
 Wasp WSP-1S,1
 Valkyrie VLK-QA,2
 Commando COM-2Dr,3

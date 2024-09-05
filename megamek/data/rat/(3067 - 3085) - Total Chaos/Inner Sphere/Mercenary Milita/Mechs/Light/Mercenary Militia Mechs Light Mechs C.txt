@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Light Mechs C
+Mercenary/Militia Meks Light Meks C
 Commando COM-2Dr,1
 Wasp WSP-3M,2
 Eagle EGL-2M,3

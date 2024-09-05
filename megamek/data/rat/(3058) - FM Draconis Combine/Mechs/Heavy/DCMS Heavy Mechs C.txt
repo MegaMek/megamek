@@ -1,4 +1,4 @@
-DCMS Heavy Mechs Early 3059, Tech Level C
+DCMS Heavy Meks Early 3059, Tech Level C
 Orion ON1-K,1
 Ostroc OSR-2D,2
 JagerMech JM6-DD,3

@@ -1,4 +1,4 @@
-3059 Mercenary Medium Mechs, Tech Level B
+3059 Mercenary Medium Meks, Tech Level B
 Enfield END-6Q,2
 Stealth STH-1D,4
 Hatchetman HCT-3F,6

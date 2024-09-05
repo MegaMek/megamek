@@ -1,4 +1,4 @@
-Late 3062 AFFS Heavy Mechs, Tech Level F
+Late 3062 AFFS Heavy Meks, Tech Level F
 JagerMech JM6-DD,1
 Catapult CPLT-C1,2
 JagerMech JM6-A,3

@@ -1,4 +1,4 @@
-Syrtis Fusiliers Assault Mechs
+Syrtis Fusiliers Assault Meks
 BattleMaster BLR-1G,1
 Awesome AWS-8Q,2
 Stalker STK-3F,3

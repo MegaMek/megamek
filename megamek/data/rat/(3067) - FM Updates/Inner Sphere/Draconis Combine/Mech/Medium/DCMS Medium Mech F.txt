@@ -1,4 +1,4 @@
-DCMS Medium Mechs F 3067 FM-U
+DCMS Medium Meks F 3067 FM-U
 Cicada CDA-2A,1
 Scorpion SCP-1N,2
 Phoenix Hawk PXH-1,3

@@ -1,4 +1,4 @@
-3059 Capellan Confederation Medium Mechs
+3059 Capellan Confederation Medium Meks
 Blackjack BJ2-OE,1
 Snake SNK-1V,2
 Huron Warrior HUR-WO-R4L,3

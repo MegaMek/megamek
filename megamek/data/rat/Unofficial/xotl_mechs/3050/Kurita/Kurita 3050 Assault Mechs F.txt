@@ -17,9 +17,9 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Kurita 3050 Assault Mechs F
-@Davion 3028 Assault Mechs F,80
-@Steiner 3028 Assault Mechs F,80
+Kurita 3050 Assault Meks F
+@Davion 3028 Assault Meks F,80
+@Steiner 3028 Assault Meks F,80
 Charger CGR-1A1,96
 Cyclops CP-10-Z,45
 Longbow LGB-0W,45

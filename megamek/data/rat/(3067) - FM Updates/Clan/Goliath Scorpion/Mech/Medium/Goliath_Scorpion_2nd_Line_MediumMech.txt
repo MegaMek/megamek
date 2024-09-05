@@ -1,4 +1,4 @@
-Goliath Scorpion 2nd-Line Medium Mechs (FMU)
+Goliath Scorpion 2nd-Line Medium Meks (FMU)
 Pinion (Standard),1
 Griffin IIC (Standard),2
 Great Wyrm (Standard),3

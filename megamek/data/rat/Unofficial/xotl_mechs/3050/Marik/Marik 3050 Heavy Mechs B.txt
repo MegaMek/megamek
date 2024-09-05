@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Marik 3050 Heavy Mechs B
+Marik 3050 Heavy Meks B
 Rifleman RFL-3N,58
 Champion CHP-2N,6
 Quickdraw QKD-4G,43

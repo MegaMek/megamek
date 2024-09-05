@@ -1,4 +1,4 @@
-AFFS Medium Mechs C 3067 (FMU)
+AFFS Medium Meks C 3067 (FMU)
 Hellspawn HSN-8E,1
 Sentinel STN-4D,2
 Phoenix Hawk PXH-6D,3

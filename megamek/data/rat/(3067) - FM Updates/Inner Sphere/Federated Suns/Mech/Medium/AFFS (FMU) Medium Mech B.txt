@@ -1,4 +1,4 @@
-AFFS Medium Mechs B 3067 (FMU)
+AFFS Medium Meks B 3067 (FMU)
 Chimera CMA-1S,1
 Stealth STH-1D,2
 Phoenix Hawk PXH-3PL,3

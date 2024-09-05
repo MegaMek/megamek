@@ -1,4 +1,4 @@
-SLDF Light Mechs C
+SLDF Light Meks C
 Hussar HSR-200-D,2
 Firefly FFL-4A,3
 Mercury MCY-99,4

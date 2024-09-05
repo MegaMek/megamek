@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Star League Royal 2750 Assault Mechs
+Star League Royal 2750 Assault Meks
 Cyclops CP-10-HQ,8
 Cyclops CP-10-Z,24
 Rifleman II RFL-3N-2,35

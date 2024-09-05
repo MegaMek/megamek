@@ -1,4 +1,4 @@
-CCAF Medium Mechs D 3067
+CCAF Medium Meks D 3067
 Clint CLNT-2-3U,1
 Clint CLNT-2-3U,2
 Phoenix Hawk PXH-1,3

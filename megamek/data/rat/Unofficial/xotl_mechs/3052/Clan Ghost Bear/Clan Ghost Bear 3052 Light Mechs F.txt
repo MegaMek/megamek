@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Ghost Bear 3052 Light Mechs F
+Clan Ghost Bear 3052 Light Meks F
 Koshi (Mist Lynx) A,115
 Dasher (Fire Moth) A,15
 Dasher (Fire Moth) C,30

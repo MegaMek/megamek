@@ -1,4 +1,4 @@
-3063 Clan Wolf Second Line Heavy Mechs
+3063 Clan Wolf Second Line Heavy Meks
 Black Knight BL-6-KNT,1
 Viper (Black Python) (Standard),2
 Orion IIC (Standard),3

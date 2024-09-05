@@ -1,4 +1,4 @@
-AFFS Medium Mechs A 3067 (FMU)
+AFFS Medium Meks A 3067 (FMU)
 Firestarter FS9-OF,1
 Centurion CN10-B,2
 Stealth STH-1D,3

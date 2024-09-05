@@ -1,4 +1,4 @@
-Stewart Dragoons Light Mechs
+Stewart Dragoons Light Meks
 Thorn THE-N,1
 Stinger STG-3G,2
 Flea FLE-15,3

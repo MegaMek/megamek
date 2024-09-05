@@ -1,4 +1,4 @@
-DCMS Assault Mechs A 3067 FM-U
+DCMS Assault Meks A 3067 FM-U
 BattleMaster BLR-CM,1
 Naginata NG-C3A,2
 Gunslinger GUN-1ERD,3

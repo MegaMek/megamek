@@ -1,4 +1,4 @@
-3075 Heavy Mechs - Generic Clan Front Line
+3075 Heavy Meks - Generic Clan Front Line
 Linebacker Prime,1
 Nova Cat Prime,2
 Thor (Summoner) Prime,3

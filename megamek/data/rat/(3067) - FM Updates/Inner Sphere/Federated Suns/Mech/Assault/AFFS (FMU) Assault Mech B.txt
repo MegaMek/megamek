@@ -1,4 +1,4 @@
-AFFS Assault Mechs B 3067 (FMU)
+AFFS Assault Meks B 3067 (FMU)
 Nightstar NSR-9FC,1
 Marauder II MAD-4S,2
 Cerberus MR-V2,3

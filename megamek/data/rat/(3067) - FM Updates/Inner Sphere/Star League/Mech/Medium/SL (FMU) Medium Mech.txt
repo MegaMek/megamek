@@ -1,4 +1,4 @@
-SL Medium Mechs 3067 (FMU)
+SL Medium Meks 3067 (FMU)
 Griffin IIC (Standard),1
 Wolverine WVR-8C,2
 Tessen TSN-C3,3

@@ -1,4 +1,4 @@
-DCMS Light Mechs C 3067 FM-U
+DCMS Light Meks C 3067 FM-U
 Owens OW-1,1
 Locust LCT-1V,2
 Wasp WSP-1A,3

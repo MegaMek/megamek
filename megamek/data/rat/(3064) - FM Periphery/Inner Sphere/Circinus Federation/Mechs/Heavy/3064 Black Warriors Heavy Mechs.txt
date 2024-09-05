@@ -1,4 +1,4 @@
-3064 Circinus Federation Heavy Mechs
+3064 Circinus Federation Heavy Meks
 Tempest TMP-3M,1
 Caesar CES-3R,2
 JagerMech JM6-DD,3

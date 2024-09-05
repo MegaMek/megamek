@@ -1,4 +1,4 @@
-LAAF Assault Mechs C 3067 (FMU)
+LAAF Assault Meks C 3067 (FMU)
 Goliath GOL-4S,1
 Salamander PPR-5T,2
 Highlander HGN-732,3

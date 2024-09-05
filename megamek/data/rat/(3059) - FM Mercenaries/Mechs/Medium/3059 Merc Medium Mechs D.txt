@@ -1,4 +1,4 @@
-3059 Mercenary Medium Mechs, Tech Level D
+3059 Mercenary Medium Meks, Tech Level D
 Griffin GRF-3M,1
 Wolverine WVR-6R,2
 Blackjack BJ-1,3

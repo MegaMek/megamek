@@ -1,4 +1,4 @@
-Lyran Commonwealth Light Mechs A
+Lyran Commonwealth Light Meks A
 Thorn THE-N,1
 Commando COM-2D,2
 Talon TLN-5V,3

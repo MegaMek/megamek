@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Medium Mechs D
+Mercenary/Militia Meks Medium Meks D
 Clint CLNT-2-3U,1
 Phoenix Hawk PXH-1,2
 Hatchetman HCT-5S,3

@@ -1,4 +1,4 @@
-Diamond_Shark Front-Line Assault Mechs (FMU)
+Diamond_Shark Front-Line Assault Meks (FMU)
 Masakari (Warhawk) H,1
 Gladiator (Executioner) A,2
 Daishi (Dire Wolf) S,3

@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Heavy Mechs C
+Mercenary/Militia Meks Heavy Meks C
 JagerMech JM6-DD,1
 Ostsol OTL-9R,2
 Yeoman YMN-6Y,3

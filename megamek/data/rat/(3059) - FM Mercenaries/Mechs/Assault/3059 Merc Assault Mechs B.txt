@@ -1,4 +1,4 @@
-3059 Mercenary Assault Mechs, Tech Level B
+3059 Mercenary Assault Meks, Tech Level B
 Nightstar NSR-9J,2
 Albatross ALB-3U,4
 Stalker STK-3F,6

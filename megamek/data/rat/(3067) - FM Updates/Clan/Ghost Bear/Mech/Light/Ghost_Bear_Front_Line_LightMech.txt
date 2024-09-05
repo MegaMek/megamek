@@ -1,4 +1,4 @@
-Ghost Bear Front-Line Light Mechs (FMU)
+Ghost Bear Front-Line Light Meks (FMU)
 Koshi (Mist Lynx) C,1
 Dasher (Fire Moth) A,2
 Puma (Adder) D,3

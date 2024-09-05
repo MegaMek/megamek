@@ -1,4 +1,4 @@
-Steel Viper 2nd-Line Assault Mechs (FMU)
+Steel Viper 2nd-Line Assault Meks (FMU)
 Man O' War (Gargoyle) A,1
 Supernova (Standard),2
 Behemoth (Stone Rhino) (Standard),3

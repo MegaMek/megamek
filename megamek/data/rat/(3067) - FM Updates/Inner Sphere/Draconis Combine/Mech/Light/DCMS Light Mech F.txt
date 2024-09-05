@@ -1,4 +1,4 @@
-DCMS Light Mechs F 3067 FM-U
+DCMS Light Meks F 3067 FM-U
 UrbanMech UM-R60,1
 Firestarter FS9-H,2
 Panther PNT-9R,3

@@ -1,4 +1,4 @@
-CCAF Medium Mechs B 3067
+CCAF Medium Meks B 3067
 Snake SNK-1V,1
 Wraith TR1,2
 Huron Warrior HUR-WO-R4L,3

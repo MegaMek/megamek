@@ -1,4 +1,4 @@
-DCMS Assault Mechs Early 3059, Tech Level D
+DCMS Assault Meks Early 3059, Tech Level D
 Charger CGR-3K,1
 Banshee BNC-3E,2
 Cyclops CP-10-Z,3

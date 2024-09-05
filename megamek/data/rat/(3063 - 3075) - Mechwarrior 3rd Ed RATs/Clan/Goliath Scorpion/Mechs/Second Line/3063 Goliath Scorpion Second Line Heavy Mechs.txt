@@ -1,4 +1,4 @@
-3063 Goliath Scorpion Second Line Heavy Mechs
+3063 Goliath Scorpion Second Line Heavy Meks
 Fire Scorpion (Standard),1
 Lancelot LNC25-01,2
 Flashman FLS-8K,3

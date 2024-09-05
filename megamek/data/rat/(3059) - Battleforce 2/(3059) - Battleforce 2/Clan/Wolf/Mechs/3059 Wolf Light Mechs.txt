@@ -1,4 +1,4 @@
-3059 Wolf Front Line Light Mechs
+3059 Wolf Front Line Light Meks
 Jenner IIC (Standard),1
 Puma (Adder) A,2
 Koshi (Mist Lynx) B,3

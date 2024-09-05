@@ -1,4 +1,4 @@
-3075 Medium Mechs - Generic Clan Second Line
+3075 Medium Meks - Generic Clan Second Line
 Fenris (Ice Ferret) Prime,1
 Hellhound (Conjurer) 2,2
 Clint IIC (Standard),3

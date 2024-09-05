@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Light Mechs A
+Mercenary/Militia Meks Light Meks A
 Panther PNT-10K,1
 Valkyrie VLK-QD,2
 Falcon FLC-5P,3

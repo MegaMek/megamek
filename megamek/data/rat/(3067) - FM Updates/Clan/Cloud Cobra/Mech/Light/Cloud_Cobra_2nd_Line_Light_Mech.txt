@@ -1,4 +1,4 @@
-Cloud Cobra SL Light Mechs (FMU)
+Cloud Cobra SL Light Meks (FMU)
 Firefly C,1
 Pack Hunter (Standard),2
 Solitaire (Standard),3

@@ -1,4 +1,4 @@
-SLDF Medium Mechs C
+SLDF Medium Meks C
 Wyvern WVE-5N,2
 Phoenix Hawk PXH-1,3
 Griffin GRF-1N,4

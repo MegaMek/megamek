@@ -1,4 +1,4 @@
-3063 Goliath Scorpion Front Line Light Mechs
+3063 Goliath Scorpion Front Line Light Meks
 Peregrine (Horned Owl) (Standard),1
 Dasher (Fire Moth) B,2
 Uller (Kit Fox) C,3

@@ -1,4 +1,4 @@
-3063 ComStar Medium Mechs
+3063 ComStar Medium Meks
 Beowulf BEO-12,1
 Clint CLNT-2-3U,2
 Wyvern WVE-9N,3

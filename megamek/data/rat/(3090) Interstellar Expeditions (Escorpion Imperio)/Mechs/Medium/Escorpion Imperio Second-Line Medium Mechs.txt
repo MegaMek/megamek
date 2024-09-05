@@ -1,4 +1,4 @@
-Escorpion Imperio Second-Line Medium Mechs (3090)
+Escorpion Imperio Second-Line Medium Meks (3090)
 Arana ARA-S-1 MilitiaMech,1
 Arana ARA-S-1 MilitiaMech,2
 Shadow Hawk SHD-1R,3

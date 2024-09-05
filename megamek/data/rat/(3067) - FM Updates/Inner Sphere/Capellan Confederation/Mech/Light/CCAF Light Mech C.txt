@@ -1,4 +1,4 @@
-CCAF Light Mechs C 3067
+CCAF Light Meks C 3067
 Stinger STG-6L,1
 Raven RVN-3L,2
 Raven RVN-3L,3

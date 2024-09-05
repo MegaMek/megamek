@@ -1,4 +1,4 @@
-AFFS Heavy Mechs D 3067 (FMU)
+AFFS Heavy Meks D 3067 (FMU)
 Grasshopper GHR-6K,1
 Marauder MAD-5T,2
 Ostsol OTL-6D,3

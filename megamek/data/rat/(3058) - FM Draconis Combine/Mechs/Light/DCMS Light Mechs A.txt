@@ -1,4 +1,4 @@
-DCMS Light Mechs Early 3059, Tech Level A
+DCMS Light Meks Early 3059, Tech Level A
 Javelin JVN-10P,1
 Hitman HM-1,2
 Jenner JR7-K,3

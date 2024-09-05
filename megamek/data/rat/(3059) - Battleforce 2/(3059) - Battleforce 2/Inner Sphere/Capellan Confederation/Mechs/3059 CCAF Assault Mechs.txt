@@ -1,4 +1,4 @@
-3059 Capellan Confederation Assault Mechs
+3059 Capellan Confederation Assault Meks
 Striker STC-2D,1
 Awesome AWS-9M,2
 Cerberus MR-V2,3

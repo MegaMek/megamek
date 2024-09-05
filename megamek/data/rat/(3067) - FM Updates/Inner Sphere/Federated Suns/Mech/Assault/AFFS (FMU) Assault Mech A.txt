@@ -1,4 +1,4 @@
-AFFS Assault Mechs A 3067 (FMU)
+AFFS Assault Meks A 3067 (FMU)
 Templar TLR1-O,1
 Templar TLR1-O,2
 Nightstar NSR-9FC,3

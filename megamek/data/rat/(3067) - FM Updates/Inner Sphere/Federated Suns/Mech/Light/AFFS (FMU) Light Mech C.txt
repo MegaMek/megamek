@@ -1,4 +1,4 @@
-AFFS Light Mechs C 3067 (FMU)
+AFFS Light Meks C 3067 (FMU)
 Osiris OSR-4D,1
 Raven RVN-3L,2
 Wolfhound WLF-2,3

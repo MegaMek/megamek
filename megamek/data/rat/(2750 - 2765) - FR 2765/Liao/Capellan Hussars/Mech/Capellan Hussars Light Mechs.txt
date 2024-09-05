@@ -1,4 +1,4 @@
-Capellan Hussars Light Mechs
+Capellan Hussars Light Meks
 UrbanMech UM-R60,1
 Locust LCT-1V,2
 Firebee FRB-2E,3

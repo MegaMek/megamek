@@ -1,4 +1,4 @@
-DCMS Assault Mechs Early 3059, Tech Level C
+DCMS Assault Meks Early 3059, Tech Level C
 Hatamoto-Mizo HTM-27Y,1
 Hatamoto-Hi HTM-27U,2
 Hatamoto-Chi HTM-27T,3

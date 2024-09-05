@@ -1,4 +1,4 @@
-Clan Coyote Medium Mechs
+Clan Coyote Medium Meks
 Lynx LNX-9Q, 1
 Goshawk (Vapor Eagle) (Standard), 2
 Coyotl Prime, 3
@@ -9,7 +9,7 @@ Night Chanter Prime, 10
 Night Chanter A, 5
 Coyotl Prime, 6
 Coyotl A, 6
-Coyotl B, 6 
+Coyotl B, 6
 Shadow Hawk SHD-2Hb, 5
 Night Chanter Prime, 8
 Night Chanter A, 4

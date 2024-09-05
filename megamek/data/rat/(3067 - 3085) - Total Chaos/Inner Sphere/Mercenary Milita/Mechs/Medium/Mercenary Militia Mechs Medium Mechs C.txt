@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Medium Mechs C
+Mercenary/Militia Meks Medium Meks C
 Hatchetman HCT-5S,1
 Centurion CN9-D,2
 Dervish DV-6Mr,3

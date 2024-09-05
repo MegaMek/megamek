@@ -1,4 +1,4 @@
-3063 Nova Cat Front Line Heavy Mechs
+3063 Nova Cat Front Line Heavy Meks
 Linebacker Prime,1
 Nova Cat E,2
 Thor (Summoner) D,3

@@ -1,4 +1,4 @@
-Victoria War Mercenary Assault Mechs
+Victoria War Mercenary Assault Meks
 Peacekeeper PKP-1B,1
 HawkWolf HWK-4F,2
 BattleMaster BLR-3M,3

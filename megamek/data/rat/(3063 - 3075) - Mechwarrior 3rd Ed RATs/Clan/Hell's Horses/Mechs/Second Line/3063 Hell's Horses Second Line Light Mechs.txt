@@ -1,4 +1,4 @@
-3063 Hell's Horses Second Line Light Mechs
+3063 Hell's Horses Second Line Light Meks
 Thorn THE-N,1
 Baboon (Howler) (Standard),2
 UrbanMech IIC (Standard),3

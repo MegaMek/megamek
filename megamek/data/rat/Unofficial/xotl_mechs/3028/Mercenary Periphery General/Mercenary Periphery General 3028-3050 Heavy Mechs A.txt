@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Mercenary Periphery General 3028-3050 Heavy Mechs A
+Mercenary Periphery General 3028-3050 Heavy Meks A
 Rifleman RFL-3N,98
 Champion CHP-2N,5
 Dragon DRG-1N,34

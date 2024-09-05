@@ -1,4 +1,4 @@
-DCMS Assault Mechs Early 3059, Tech Level F
+DCMS Assault Meks Early 3059, Tech Level F
 BattleMaster BLR-1G,1
 Goliath GOL-1H,2
 Stalker STK-3F,3

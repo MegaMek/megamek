@@ -1,4 +1,4 @@
-3075 Heavy Mechs - Capellan Confederation
+3075 Heavy Meks - Capellan Confederation
 Thunder THR-1L,1
 Orion ON1-K,2
 Lao Hu LHU-2B,3

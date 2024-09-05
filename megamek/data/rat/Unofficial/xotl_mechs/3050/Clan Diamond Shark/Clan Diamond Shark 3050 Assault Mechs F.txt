@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Diamond Shark 3050 Assault Mechs F
+Clan Diamond Shark 3050 Assault Meks F
 Man O' War (Gargoyle) Prime,313
 Naga C,4
 Naga Prime,31

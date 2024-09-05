@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Ghost Bear 3052 Heavy Mechs D
+Clan Ghost Bear 3052 Heavy Meks D
 Loki (Hellbringer) B,65
 Vulture (Mad Dog) C,31
 Vulture (Mad Dog) A,54
@@ -34,9 +34,9 @@ Loki (Hellbringer) Prime,108
 Mad Cat (Timber Wolf) D,15
 Mad Cat (Timber Wolf) Prime,46
 Mad Cat (Timber Wolf) A,69
-@Clan Wolf 3050 Heavy Mechs D,15
-@Clan Diamond Shark 3050 Heavy Mechs D,2
-@Clan Jade Falcon 3050 Heavy Mechs D,2
-@Clan Nova Cat 3050 Heavy Mechs D,2
-@Clan Smoke Jaguar 3050 Heavy Mechs D,2
-@Clan Steel Viper 3050 Heavy Mechs D,2
+@Clan Wolf 3050 Heavy Meks D,15
+@Clan Diamond Shark 3050 Heavy Meks D,2
+@Clan Jade Falcon 3050 Heavy Meks D,2
+@Clan Nova Cat 3050 Heavy Meks D,2
+@Clan Smoke Jaguar 3050 Heavy Meks D,2
+@Clan Steel Viper 3050 Heavy Meks D,2

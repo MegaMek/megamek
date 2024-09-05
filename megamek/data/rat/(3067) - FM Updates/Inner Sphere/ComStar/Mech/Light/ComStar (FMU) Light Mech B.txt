@@ -1,4 +1,4 @@
-ComStar Light Mechs B 3067 (FMU)
+ComStar Light Meks B 3067 (FMU)
 Hussar HSR-400-D,1
 Firestarter FS9-S,2
 Mongoose MON-66,3

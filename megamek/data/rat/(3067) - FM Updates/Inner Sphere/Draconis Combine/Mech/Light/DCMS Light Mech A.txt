@@ -1,4 +1,4 @@
-DCMS Light Mechs A 3067 FM-U
+DCMS Light Meks A 3067 FM-U
 Locust IIC (Standard),1
 Venom SDR-9K,2
 Hitman HM-1,3

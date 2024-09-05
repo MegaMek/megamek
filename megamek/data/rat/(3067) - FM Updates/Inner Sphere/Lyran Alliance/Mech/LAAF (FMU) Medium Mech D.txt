@@ -1,4 +1,4 @@
-LAAF Medium Mechs D 3067 (FMU)
+LAAF Medium Meks D 3067 (FMU)
 Centurion CN9-D,1
 Phoenix Hawk PXH-1,2
 Shadow Hawk SHD-2H,3

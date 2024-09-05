@@ -1,4 +1,4 @@
-SL Light Mechs 3067 (FMU)
+SL Light Meks 3067 (FMU)
 Jenner IIC (Standard),1
 Ostscout OTT-9S,2
 Valkyrie VLK-QD1,3

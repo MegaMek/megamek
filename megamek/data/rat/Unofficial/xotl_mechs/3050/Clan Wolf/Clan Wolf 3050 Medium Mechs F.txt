@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Wolf 3050 Medium Mechs F
+Clan Wolf 3050 Medium Meks F
 Fenris (Ice Ferret) C,119
 Fenris (Ice Ferret) A,58
 Dragonfly (Viper) C,19

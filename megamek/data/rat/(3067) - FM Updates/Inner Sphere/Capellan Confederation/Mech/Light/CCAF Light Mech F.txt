@@ -1,4 +1,4 @@
-CCAF Light Mechs F 3067
+CCAF Light Meks F 3067
 Mercury MCY-98,1
 Jenner JR7-F,2
 Javelin JVN-10N,3

@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Assault Mechs A
+Mercenary/Militia Meks Assault Meks A
 Albatross ALB-3U,1
 Stalker STK-5M,2
 BattleMaster BLR-3M,3

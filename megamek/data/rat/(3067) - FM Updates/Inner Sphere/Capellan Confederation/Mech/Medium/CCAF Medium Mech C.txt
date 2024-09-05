@@ -1,4 +1,4 @@
-CCAF Medium Mechs C 3067
+CCAF Medium Meks C 3067
 Men Shen MS1-O,1
 Snake SNK-1V,2
 Clint CLNT-2-3U,3

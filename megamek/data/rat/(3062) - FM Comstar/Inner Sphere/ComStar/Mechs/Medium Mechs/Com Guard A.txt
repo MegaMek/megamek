@@ -1,4 +1,4 @@
-3062 Com Guard Medium Mechs A
+3062 Com Guard Medium Meks A
 Beowulf BEO-12,1
 Clint CLNT-2-3U,2
 Wyvern WVE-9N,3

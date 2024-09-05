@@ -17,9 +17,9 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Steiner 3039 Light Mechs F
-@Kurita 3028 Light Mechs F,121
-@Marik 3028 Light Mechs F,49
+Steiner 3039 Light Meks F
+@Kurita 3028 Light Meks F,121
+@Marik 3028 Light Meks F,49
 Stinger STG-3R,115
 Wasp WSP-1A,191
 Locust LCT-1V,27

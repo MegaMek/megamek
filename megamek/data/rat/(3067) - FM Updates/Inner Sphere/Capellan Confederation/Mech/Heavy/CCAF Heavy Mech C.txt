@@ -1,4 +1,4 @@
-CCAF Heavy Mechs C 3067
+CCAF Heavy Meks C 3067
 Helios HEL-4A,1
 Crusader CRD-7L,2
 Cataphract CTF-2X,3

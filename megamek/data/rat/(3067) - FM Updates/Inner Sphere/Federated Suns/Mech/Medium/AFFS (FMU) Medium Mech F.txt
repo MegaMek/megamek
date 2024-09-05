@@ -1,4 +1,4 @@
-AFFS Medium Mechs F 3067 (FMU)
+AFFS Medium Meks F 3067 (FMU)
 Hatchetman HCT-5S,1
 Phoenix Hawk PXH-6D,2
 Blackjack BJ-3,3

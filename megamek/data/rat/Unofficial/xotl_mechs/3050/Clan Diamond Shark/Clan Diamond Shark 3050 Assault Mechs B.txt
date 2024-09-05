@@ -17,7 +17,7 @@
 #   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
 #   receives a base Weight of 100.                                          #
 #############################################################################
-Clan Diamond Shark 3050 Assault Mechs B
+Clan Diamond Shark 3050 Assault Meks B
 Man O' War (Gargoyle) Prime,163
 Naga C,4
 Naga Prime,31
@@ -38,9 +38,9 @@ Gladiator (Executioner) B,36
 Masakari (Warhawk) C,7
 Gladiator (Executioner) A,18
 Masakari (Warhawk) Prime,53
-@Clan Ghost Bear 3050 Assault Mechs B,65
-@Clan Jade Falcon 3050 Assault Mechs B,7
-@Clan Nova Cat 3050 Assault Mechs B,7
-@Clan Smoke Jaguar 3050 Assault Mechs B,7
-@Clan Steel Viper 3050 Assault Mechs B,7
-@Clan Wolf 3050 Assault Mechs B,7
+@Clan Ghost Bear 3050 Assault Meks B,65
+@Clan Jade Falcon 3050 Assault Meks B,7
+@Clan Nova Cat 3050 Assault Meks B,7
+@Clan Smoke Jaguar 3050 Assault Meks B,7
+@Clan Steel Viper 3050 Assault Meks B,7
+@Clan Wolf 3050 Assault Meks B,7

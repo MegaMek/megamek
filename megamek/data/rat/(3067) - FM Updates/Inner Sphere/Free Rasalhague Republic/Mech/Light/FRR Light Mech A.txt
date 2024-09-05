@@ -1,4 +1,4 @@
-FRR Light Mechs A 3067
+FRR Light Meks A 3067
 Hitman HM-1,1
 Spider SDR-8M,2
 Mercury MCY-97,3

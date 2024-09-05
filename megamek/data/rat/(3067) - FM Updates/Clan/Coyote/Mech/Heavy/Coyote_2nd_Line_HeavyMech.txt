@@ -1,4 +1,4 @@
-Coyote 2nd-Line Heavy Mechs (FMU)
+Coyote 2nd-Line Heavy Meks (FMU)
 Mad Cat (Timber Wolf) Prime,1
 Grizzly (Standard),2
 Guillotine IIC (Standard),3

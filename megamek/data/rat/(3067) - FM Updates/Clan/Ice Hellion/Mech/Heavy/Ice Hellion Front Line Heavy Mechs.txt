@@ -1,4 +1,4 @@
-Clan Ice Hellion Front-Line Heavy Mechs (FMU)
+Clan Ice Hellion Front-Line Heavy Meks (FMU)
 Linebacker A,1
 Vulture (Mad Dog) D,2
 Nova Cat Prime,3

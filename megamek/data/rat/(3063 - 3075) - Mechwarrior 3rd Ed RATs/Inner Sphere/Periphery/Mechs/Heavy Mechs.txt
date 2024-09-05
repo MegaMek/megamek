@@ -1,4 +1,4 @@
-Generic Periphery Heavy Mechs - 3063
+Generic Periphery Heavy Meks - 3063
 Flashman FLS-7K,1
 Guillotine GLT-4L,2
 Bombardier BMB-10D,3

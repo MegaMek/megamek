@@ -1,4 +1,4 @@
-3075 Assault Mechs - Generic Clan Front Line
+3075 Assault Meks - Generic Clan Front Line
 Man O' War (Gargoyle) Prime,1
 Daishi (Dire Wolf) Prime,2
 Gladiator (Executioner) Prime,3

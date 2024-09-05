@@ -1,4 +1,4 @@
-FRR Heavy Mechs C 3067
+FRR Heavy Meks C 3067
 Marauder MAD-5S,1
 Dragon DRG-5N,2
 Crusader CRD-3K,3

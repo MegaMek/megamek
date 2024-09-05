@@ -1,4 +1,4 @@
-Andurien Hussars Light Mechs
+Andurien Hussars Light Meks
 Wasp WSP-1A,1
 Stinger STG-3R,2
 UrbanMech UM-R60,3

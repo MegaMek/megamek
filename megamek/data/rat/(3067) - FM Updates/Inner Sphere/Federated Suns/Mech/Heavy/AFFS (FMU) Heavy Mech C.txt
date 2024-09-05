@@ -1,4 +1,4 @@
-AFFS Heavy Mechs C 3067 (FMU)
+AFFS Heavy Meks C 3067 (FMU)
 War Dog WR-DG-02FC,1
 Falconer FLC-8R,2
 Guillotine GLT-8D,3

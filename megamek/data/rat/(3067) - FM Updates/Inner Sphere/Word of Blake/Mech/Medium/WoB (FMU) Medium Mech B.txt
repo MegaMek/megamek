@@ -1,4 +1,4 @@
-WoB Medium Mechs B 3067 (FMU)
+WoB Medium Meks B 3067 (FMU)
 Buccaneer BCN-3R,1
 Kintaro KTO-21,2
 Sentinel STN-3L,3

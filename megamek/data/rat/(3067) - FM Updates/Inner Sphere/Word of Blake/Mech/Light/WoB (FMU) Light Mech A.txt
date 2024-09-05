@@ -1,4 +1,4 @@
-WoB Light Mechs A 3067 (FMU)
+WoB Light Meks A 3067 (FMU)
 Hussar HSR-500-D,1
 Hussar HSR-400-D,2
 Red Shift RDS-2A,3

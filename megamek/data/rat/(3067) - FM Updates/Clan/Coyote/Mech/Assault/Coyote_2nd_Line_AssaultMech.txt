@@ -1,4 +1,4 @@
-Coyote 2nd-Line Assault Mechs (FMU)
+Coyote 2nd-Line Assault Meks (FMU)
 Man O' War (Gargoyle) A,1
 Imp C,2
 Supernova (Standard),3

@@ -1,4 +1,4 @@
-FRR Medium Mechs B 3067
+FRR Medium Meks B 3067
 Wolf Trap (Tora) WFT-1,1
 Vulcan VT-5S,2
 Griffin GRF-1DS,3

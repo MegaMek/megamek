@@ -1,4 +1,4 @@
-Periphery Light Mechs C 3067 FM-U
+Periphery Light Meks C 3067 FM-U
 Hermes HER-1A,1
 Panther PNT-9R,2
 UrbanMech UM-R60,3

@@ -1,4 +1,4 @@
-Diamond_Shark Front-Line Heavy Mechs (FMU)
+Diamond_Shark Front-Line Heavy Meks (FMU)
 Mad Cat (Timber Wolf) Prime,1
 Cauldron-Born (Ebon Jaguar) Prime,2
 Thor (Summoner) D,3

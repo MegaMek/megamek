@@ -1,4 +1,4 @@
-Proserpina Hussars Heavy Mechs
+Proserpina Hussars Heavy Meks
 Archer ARC-2R,1
 Rifleman RFL-3N,2
 Catapult CPLT-C1,3

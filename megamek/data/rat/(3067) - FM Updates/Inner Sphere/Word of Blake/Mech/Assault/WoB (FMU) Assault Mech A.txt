@@ -1,4 +1,4 @@
-WoB Assault Mechs A 3067 (FMU)
+WoB Assault Meks A 3067 (FMU)
 BattleMaster BLR-5M,1
 Vanquisher VQR-2B,2
 Legacy LGC-01,3

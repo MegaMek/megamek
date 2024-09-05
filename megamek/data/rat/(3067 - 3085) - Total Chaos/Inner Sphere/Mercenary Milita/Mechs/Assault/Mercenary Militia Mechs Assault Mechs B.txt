@@ -1,4 +1,4 @@
-Mercenary/Militia Mechs Assault Mechs B
+Mercenary/Militia Meks Assault Meks B
 Longbow LGB-7V,1
 Awesome AWS-9Q,2
 Albatross ALB-3U,3

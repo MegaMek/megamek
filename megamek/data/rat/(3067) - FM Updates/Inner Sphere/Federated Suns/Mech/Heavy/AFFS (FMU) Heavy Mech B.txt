@@ -1,4 +1,4 @@
-AFFS Heavy Mechs B 3067 (FMU)
+AFFS Heavy Meks B 3067 (FMU)
 Argus AGS-4D,1
 Rakshasa MDG-2A,2
 Warhammer WHM-8D,3

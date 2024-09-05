@@ -1,4 +1,4 @@
-Diamond_Shark Front-Line Medium Mechs (FMU)
+Diamond_Shark Front-Line Medium Meks (FMU)
 Hunchback IIC (Standard),1
 Black Hawk (Nova) A,2
 Fenris (Ice Ferret) Prime,3

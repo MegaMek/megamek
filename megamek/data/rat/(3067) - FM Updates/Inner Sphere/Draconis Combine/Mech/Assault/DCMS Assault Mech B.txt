@@ -1,4 +1,4 @@
-DCMS Assault Mechs B 3067 FM-U
+DCMS Assault Meks B 3067 FM-U
 Gunslinger GUN-1ERD,1
 Akuma AKU-1X,2
 Atlas AS7-K,3

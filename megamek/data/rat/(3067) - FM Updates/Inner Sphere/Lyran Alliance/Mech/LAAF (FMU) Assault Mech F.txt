@@ -1,4 +1,4 @@
-LAAF Assault Mechs F 3067 (FMU)
+LAAF Assault Meks F 3067 (FMU)
 Highlander HGN-732,1
 Stalker STK-3F,2
 Victor VTR-9S,3

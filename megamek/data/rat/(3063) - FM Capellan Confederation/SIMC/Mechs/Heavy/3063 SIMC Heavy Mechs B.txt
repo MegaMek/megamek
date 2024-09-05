@@ -1,4 +1,4 @@
-3063 St Ives Compact Heavy Mechs B
+3063 St Ives Compact Heavy Meks B
 Cestus CTS-6Y,1
 Axman AXM-1N,2
 JagerMech JM6-DD,3

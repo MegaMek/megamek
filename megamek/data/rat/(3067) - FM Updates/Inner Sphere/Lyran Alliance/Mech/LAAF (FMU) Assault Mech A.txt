@@ -1,4 +1,4 @@
-LAAF Assault Mechs A 3067 (FMU)
+LAAF Assault Meks A 3067 (FMU)
 BattleMaster BLR-4S,1
 Fafnir FNR-5,2
 Salamander PPR-5T,3

@@ -1,4 +1,4 @@
-CCAF Heavy Mechs A 3067
+CCAF Heavy Meks A 3067
 Helios HEL-3D,1
 Warhammer WHM-4L,2
 Lao Hu LHU-3B,3

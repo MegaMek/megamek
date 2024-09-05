@@ -1,4 +1,4 @@
-LAAF Light Mechs D 3067 (FMU)
+LAAF Light Meks D 3067 (FMU)
 Ostscout OTT-9S,1
 Spider SDR-5V,2
 Locust LCT-3S,3

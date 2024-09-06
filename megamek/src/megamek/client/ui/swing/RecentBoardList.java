@@ -44,9 +44,9 @@ public final class RecentBoardList {
 
     private static final MMLogger LOGGER = MMLogger.create(RecentBoardList.class);
     private static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory()
-                    .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-                    .disable(YAMLGenerator.Feature.SPLIT_LINES)
-            );
+            .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+            .disable(YAMLGenerator.Feature.SPLIT_LINES)
+    );
     private static final int MAX_RECENT_BOARDS = 10;
     private static final String RECENT_BOARD_FILENAME = "recent_boards.yml";
     private static final File RECENT_BOARD_FILE = new File(Configuration.configDir(), RECENT_BOARD_FILENAME);
@@ -56,14 +56,30 @@ public final class RecentBoardList {
 
     private List<String> recentBoards = null;
 
+    /**
+     * @return A list of the most recently opened board files. Can be empty
+     */
     public static List<String> getRecentBoards() {
         INSTANCE.initialize();
         return INSTANCE.recentBoards;
     }
 
+    /**
+     * Adds a new board to the recent board files, replacing the oldest if the list is full. Also
+     * saves the list to a file.
+     *
+     * @param board The board filename
+     */
     public static void addBoard(String board) {
         INSTANCE.addBoardImpl(board);
     }
+
+    /**
+     * Adds a new board to the recent board files, replacing the oldest if the list is full. Also
+     * saves the list to a file.
+     *
+     * @param board The board file
+     */
 
     public static void addBoard(File board) {
         addBoard(board.toString());
@@ -112,9 +128,11 @@ public final class RecentBoardList {
                 TypeReference<List<String>> typeRef = new TypeReference<>() { };
                 INSTANCE.recentBoards = YAML_MAPPER.readValue(RECENT_BOARD_FILE, typeRef);
             } catch (FileNotFoundException e) {
-                INSTANCE.recentBoards = new ArrayList<>();
+                // ignore, this happens when no list has been saved yet
             } catch (IOException e) {
                 LOGGER.error("Could not load recent board list", e);
+            }
+            if (INSTANCE.recentBoards == null) {
                 INSTANCE.recentBoards = new ArrayList<>();
             }
         }

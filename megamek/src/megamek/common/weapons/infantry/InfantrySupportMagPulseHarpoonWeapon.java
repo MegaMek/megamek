@@ -18,7 +18,7 @@ import megamek.common.AmmoType;
 /**
  * TODO
  * Any vehicular unit (including battle armor, ProtoMechs, Combat Vehicles and
- * BattleMechs) successfully struck by a shot from a MagPulse harpoon gun will
+ * BattleMeks) successfully struck by a shot from a MagPulse harpoon gun will
  * suffer electronic interference sufficient to cause a -1 roll modifier
  * for all Gunnery and Sensor Operations Skill Checks by its pilot for 10
  * seconds (1 Total Warfare combat turn), in addition to any physical damage the

@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
@@ -46,7 +46,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * Calculates ToHitData for a grapple attack.
-     * 
+     *
      * @param game The current {@link Game}
      * @param attackerId
      * @param target
@@ -61,15 +61,15 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int grappleSide,
                                   boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
-        
+
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
-        
+
         if ((toHit != null) && !isChainWhip) {
             return toHit;
         }
-        
+
         Entity te = (Entity) target;
-        
+
         // Set the base BTH
         int base = ae.getCrew().getPiloting();
 
@@ -173,10 +173,10 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // done!
         return toHit;
     }
-    
+
     /**
      * Various modifiers to check to see if the grapple attack is illegal.
-     * 
+     *
      * @param game The current {@link Game}
      * @param ae
      * @param target
@@ -225,7 +225,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if ((!(ae instanceof BipedMech) && !(ae instanceof Protomech))
                 || (!(target instanceof Mech) && !(target instanceof Protomech))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only biped mechs can grapple 'Mechs and ProtoMechs");
+                    "Only biped mechs can grapple 'Meks and ProtoMechs");
         }
 
         Entity te = (Entity) target;

@@ -19,23 +19,30 @@
 
 package megamek.server.totalwarfare;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.AirmechRamAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.ClearMinefieldAction;
+import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.RamAttackAction;
+import megamek.common.actions.UnjamAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
  */
 class MovePathHandler extends AbstractTWRuleHandler {
-    
+
     private final Entity entity;
     private final MovePath md;
     private final Map<UnitTargetPair, LosEffects> losCache;
@@ -114,7 +121,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         this.md = md;
         this.losCache = (losCache == null) ? new HashMap<>() : losCache;
     }
-    
+
     void processMovement() {
         // check for fleeing
         if (md.contains(MovePath.MoveStepType.FLEE)) {
@@ -930,7 +937,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // Check the falls_end_movement option to see if it should be able to
         // move on.
-        // Need to check here if the 'Mech actually went from non-prone to prone
+        // Need to check here if the 'Mek actually went from non-prone to prone
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
         boolean continueTurnFromFall = !(getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
@@ -1803,7 +1810,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             rollTarget = entity.checkGetUp(step, overallMoveType);
 
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                // Unless we're an ICE- or fuel cell-powered IndustrialMech,
+                // Unless we're an ICE- or fuel cell-powered IndustrialMek,
                 // standing up builds heat.
                 if ((entity instanceof Mech) && entity.hasEngine() && !(((Mech) entity).isIndustrial()
                         && ((entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)

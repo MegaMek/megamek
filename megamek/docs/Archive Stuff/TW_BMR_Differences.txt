@@ -1,11 +1,11 @@
 Lines marked with a 'x' have been addressed in megamek
 
 COMPONENTS
-1) In addition to the units described in the BMRr, IndustrialMechs, Mechanized Infantry (as described in the Conventional Infantry Construction rules from Combat Operations) Conventional Fighters, Aerospace Fighters, Small Craft, Dropships, & numerous Support Vehicle types are described.
+1) In addition to the units described in the BMRr, IndustrialMeks, Mechanized Infantry (as described in the Conventional Infantry Construction rules from Combat Operations) Conventional Fighters, Aerospace Fighters, Small Craft, Dropships, & numerous Support Vehicle types are described.
 
 x2) Wing in Ground Effect (WiGE) Vehicles are introduced, which are like a cross between a Hovercraft and a VTOL, with a maximum tonnage of 80 tons.  WiGEs move like Hovercraft, but hover one level above the underlying terrain.  In order to remain in flight, WiGEs must move at least 5 hexes a turn.
 
-3) There is a brief list of other units which will appear in other books, and what books they will appear in, such as Warships. 
+3) There is a brief list of other units which will appear in other books, and what books they will appear in, such as Warships.
 
 x4) Smoke & Fire have been removed from the terrain section of Components and Railways have been added.
 
@@ -16,7 +16,7 @@ PLAYING THE GAME
 
 3) The Default Skill Level Table is greatly expanded to include a larger variety of crew types.
 
-x4) An additional skill, The Anti-'Mech Skill, has been added for infantry, which all infantry possess.  Conventional Infantry have a typical value of 8 (as opposed to 5 for Anti-BattleMech Infantry/Battle Armor) and all infantry are now capable of performing Anti-Mech attacks.
+x4) An additional skill, The Anti-'Mek Skill, has been added for infantry, which all infantry possess.  Conventional Infantry have a typical value of 8 (as opposed to 5 for Anti-BattleMek Infantry/Battle Armor) and all infantry are now capable of performing Anti-Mech attacks.
 
 5) The section about damaging a Mechwarrior is expanded to cover the crew of all the different types of units.
 
@@ -30,7 +30,7 @@ x3) Hovercraft now Sideslip when Flanking, just like VTOLs.
 
 x4) The whole section describing WiGE Movement in detail.  WiGEs, as I descried earlier, move more or less like Hovercraft only they maintain one level above the underlying terrain.  They do not pay any MP to go up or down in elevation provided that they only go up or down one level in accordance with their operational altitude (1 level higher than the underlying terrain).  As stated earlier, if they do not move more than 5 hexes in a turn, they must land, and may move around on the ground as a Hovercraft with 1 MP.
 
-x5) Modifiers have been added for when a Piloting Skill Roll is attempted to avoid damage to the Pilot when a 'Mech auto-falls. 
+x5) Modifiers have been added for when a Piloting Skill Roll is attempted to avoid damage to the Pilot when a 'Mek auto-falls.
    +5 Modifier for Destroyed Leg when rolling to avoid pilot damage from an auto fall
    +6 Modifier for Destroyed Gyro when rolling to avoid pilot damage from an auto fall
 
@@ -63,7 +63,7 @@ AEROSPACE MOVEMENT
 
 COMBAT
 
-x1) Quad BattleMechs have a different Hit Location Table than Bipeds
+x1) Quad BattleMeks have a different Hit Location Table than Bipeds
 
 x2) Partial Cover now +1 to hit/hits against the leg locations instead strike the intervening terrain and are ignored.
 
@@ -99,19 +99,19 @@ x16) MASC Failure now results in an instant critical hit to each leg.  It no lon
 *errata removed this* 17) Apparently standard Narc Missile Beacons can now use a Pod which has the same effect as the iNarc Homing Pod, and visa versa.  I am unsure whether or not this is simply a mistake which slipped through or if this was intentional and there is some difference in ammo cost or BV which is unaccounted for in this section.
 
 18) A Significant amount of New Equipment is added, including
-x   B-Pods (improved A-Pods for attacking Battle Armor.  20 damage attack in 5 point clusters against Battle Armor or       1D6 damage against Conventional Infanty, forces swarming infantry off of the 'Mech, may be used as a       direct attack against infantry units in the same hex as the 'Mech with reduced damage effects)
+x   B-Pods (improved A-Pods for attacking Battle Armor.  20 damage attack in 5 point clusters against Battle Armor or       1D6 damage against Conventional Infantry, forces swarming infantry off of the 'Mek, may be used as a       direct attack against infantry units in the same hex as the 'Mek with reduced damage effects)
 x   Anti-Personnel Gauss Rifle (Clan Only, provides Burst Fire bonuses against Infantry)
 x   Hyper Assault Gauss Rifle (HAG) 20, 30, & 40 (Clan Only, fires 1 damage point shots that group in 5 point clusters       like LRMs, gain a +2 bonus on the Cluster Hits Table at Short Range and suffer a -2 penalty at Long       Range)
 x   Machine Gun Array (Clan & IS.  Not so much a weapon as a new piece of equipment which allows Machine Guns of
       the same type; Light, Standard, or Heavy; to be fired in a group as a single Cluster Weapon, with each hit       impacting on the same location of the target if they hit.)
 x   Multi-Missile Launcher 3, 5, 7, & 9 (IS Only.  Launchers which can fire LRMs or SRMs, or the Torpedo versions of       either)
 x   Retractable Blade (physical attack weapon which performs similarly to a sword, blocks use of the hand actuator       when extended)
-x   Plasma Cannon (IS only. It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts only 2D6 Heat Damage to 'Mechs and ASFs, or 3D6 Damage in 5 point clusters to non-      heat tracking units.  Infantry with Flame Resistant Armor take no damage.)
-x   Plasma Rifle (Clan only.  It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts 10 damage & 1D6 heat to 'Mechs & ASFs, or 10+2D6 Damage in 5 point clusters to       non-heat tracking units.  Infantry with Flame Resistant Armor take only half standard damage.)
+x   Plasma Cannon (IS only. It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts only 2D6 Heat Damage to 'Meks and ASFs, or 3D6 Damage in 5 point clusters to non-      heat tracking units.  Infantry with Flame Resistant Armor take no damage.)
+x   Plasma Rifle (Clan only.  It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts 10 damage & 1D6 heat to 'Meks & ASFs, or 10+2D6 Damage in 5 point clusters to       non-heat tracking units.  Infantry with Flame Resistant Armor take only half standard damage.)
 x   Light & Heavy Machine Gun (Now available for the Inner Sphere)
 x   Light AC/2 & AC/5 (As previously seen in MaximumTech)
 
-19) The following equipment from Combat Equipment, The Battletech Miniatures Rules, and the Solaris VII Mappack appear here: Backhoe, Light, Medium, & Heavy Bridgelayer, Bulldozer, Cargo Bay, Chainsaw, Combine, Dual Saw, Dumper, Extended Fuel Tanks/Cells, Heavy Duty Pile Driver, Lift Hoist, Mining Drill, Nail/Rivet Gun, Rock Cutter, Salvage Arm, Spot Welder, Tracks, Industrial TSM, Wrecking Ball
+19) The following equipment from Combat Equipment, The Battletech Miniatures Rules, and the Solaris VII Map pack appear here: Backhoe, Light, Medium, & Heavy Bridge layer, Bulldozer, Cargo Bay, Chainsaw, Combine, Dual Saw, Dumper, Extended Fuel Tanks/Cells, Heavy Duty Pile Driver, Lift Hoist, Mining Drill, Nail/Rivet Gun, Rock Cutter, Salvage Arm, Spot Welder, Tracks, Industrial TSM, Wrecking Ball
 
 x20) The Following Special Ammunition types are Tournament Legal: Armor Piercing (Standard & Light AC), Artemis IV (LRM/SRM), Cluster (LB-X), ECM Pod (iNarc), Explosive Pod (Narc/iNarc), Flechette (Standard & Light AC), Fragmentation (LRM/SRM), Haywaire Pod (iNarc), Homing Pod (Narc/iNarc), Inferno (SRM), Narc Seeking Missiles (LRM/SRM), Nemesis Pod (iNarc), Precision (Standard & Light AC), Semi-Guided (LRM)
 
@@ -123,7 +123,7 @@ x21) The rules for Infernos have changed extensively.  They now effect their tar
       Against Mechs/Aerospace Fighters: +2 heat per missile for the turn of impact
       Against Conventional Fighters: Every three missiles inflict 1 point of SI damage
          (round down)
-      Against Dropships: No Effect
+      Against DropShips: No Effect
       Against Vehicles: Each missile requires a roll on the Vehicle Critical Hits table with a
          -2 modifier for Combat Vehicles (no modifier for Support Vehicles)
 
@@ -145,9 +145,9 @@ x26) Targets of a Push attack cannot Countercharge the Pushing Mech. (Probably
 
 x27) Quads may now kick (Mule Kick) into their rear arc, but suffer a +1 to hit modifier when doing so.
 
-28) When a 'Mech is charging another 'Mech on terrain which may cause skidding, if the 'Mech's pilot fails a piloting skill roll and falls during the weapon attack face, the 'Mech will now skid into the target, performing an unintentional charge, instead of simply falling.   
+28) When a 'Mek is charging another 'Mek on terrain which may cause skidding, if the 'Mek's pilot fails a piloting skill roll and falls during the weapon attack face, the 'Mek will now skid into the target, performing an unintentional charge, instead of simply falling.
 
-x29) Vehicles must roll on the Motive System Damage Table when successfully performing or being hit by a charge (ram)      
+x29) Vehicles must roll on the Motive System Damage Table when successfully performing or being hit by a charge (ram)
 30) Infantry now have a falling damage chart for if they are displaced from their hex
 
 31) Vehicles & Non-Aerospace  Airborne units can now be hit by accidental falls from above
@@ -180,11 +180,11 @@ x3) The ProtoMech physical attack is now called a Frenzy
 
 VEHICLES
 
-x1) The new Vehicle Hit Location Table gives vehicles a good deal more survivability, although it has a tendancy to foul up their movement
+x1) The new Vehicle Hit Location Table gives vehicles a good deal more survivability, although it has a tendency to foul up their movement
 
-x2) The new Critical Hits Table combines the old Critical Hits Table with the Determining Critical Hits Table into one 2D6 roll.  The results are also signficantly less deadly to vehicles and less likely to result in an instant one-hit kill.
+x2) The new Critical Hits Table combines the old Critical Hits Table with the Determining Critical Hits Table into one 2D6 roll.  The results are also significantly less deadly to vehicles and less likely to result in an instant one-hit kill.
 
-x3) The Motive System Damage Table used to determine damage to a vehicle's mobility in place of the old, instant "-1 MP" penalties off the Vehicle Hit Location Table. 
+x3) The Motive System Damage Table used to determine damage to a vehicle's mobility in place of the old, instant "-1 MP" penalties off the Vehicle Hit Location Table.
 
 x4) The new VTOL Hit Location Table has significantly less chances of Rotor hits, and Rotors now take 1/10 damage from each individual weapon hit (rounded up).  The new VTOL critical table also significantly less deadly.
 
@@ -238,15 +238,15 @@ x13) Area Effect Attacks inflict their full damage to each individual trooper in
 
 x14) ALL Infantry units now have an Anti-Mech skill, which is used like other skills to resolve Anti-Mech attacks.  Base is 8, typical Anti-Mech forces are 5.  The chance of success is still modified by number of surviving troopers
 
-x15) Mechanized Infantry may not make Anti-BattleMech attacks (this most likely was also true in the Combat Operations rules)
+x15) Mechanized Infantry may not make Anti-BattleMek attacks (this most likely was also true in the Combat Operations rules)
 
 x16) ProtoMechs cannot be swarmed (probably a clarification?)
 
-x17) Anti-BattleMech Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
+x17) Anti-BattleMek Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
 
 x18) BA with Magnetic Claws are -1 to hit when performing Swarm Attacks.  The Vibroclaw bonus to Leg Attack damage applies to Swarm attacks as well.
 
-x19) Friendly Mechanized Battle Armor may now defend a Mech from swarm attacks, and may even board a BattleMech already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMech cause Infantry attempting to Swarm that 'Mech to suffer a penalty to their to-hit roll to swarm.
+x19) Friendly Mechanized Battle Armor may now defend a Mech from swarm attacks, and may even board a BattleMek already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMek cause Infantry attempting to Swarm that 'Mek to suffer a penalty to their to-hit roll to swarm.
 
 x20) Vehicles may be swarmed, and are -2 to hit.
 
@@ -256,7 +256,7 @@ x22) Vehicles may attempt to use Erratic Maneuvers to shake off a Swarming Infan
 
 x23) Shots fired at units which are being swarmed may strike the swarming infantry
 
-24) The Swarming unit and the defending Battle Armor unit may make standard attacks against each other, so you can literally have an Infantry vs. Infantry Battle raging on the outside of a BattleMech (!)
+24) The Swarming unit and the defending Battle Armor unit may make standard attacks against each other, so you can literally have an Infantry vs. Infantry Battle raging on the outside of a BattleMek (!)
 
 x25) Infantry now have a chance of surviving the destruction of the carrying unit.  Infantry carrying ECM equipment or other passive effect equipment have that equipment remain in effect while riding in a carrier.  Infantry riding inside a carrier may take damage from the vehicle's skid, sideslip, fall, collision or critical hit, however.
 
@@ -274,7 +274,7 @@ x29) Mechs carrying Battle Armor on their backs cannot dump ammunition
 
 x32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the Mech they are riding on.
 
-x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but its actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
+x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but its actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mek Leg Attack only targeting a 'Mek's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMek Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
 
 x34) Mimetic Armour adds to movement modifiers instead of replacing them (p228)
 
@@ -284,9 +284,9 @@ AEROSPACE UNITS
 2) Aerospace units designating targets with TAG are still prevented from making any other attack when doing so.
 
 3) Grounded Aerospace Fighters & Small Craft may fire at other targets on the Ground Combat Map with a +2 to hit modifier
-Grounded Dropships gain a -2 to hit bonus when attacking other units on the Ground Combat Map.
+Grounded DropShips gain a -2 to hit bonus when attacking other units on the Ground Combat Map.
 
-4) the rules for Screen Launchers and Tele-Operated Missiles are included, but none of the other optional rules from Aerotech2.
+4) the rules for Screen Launchers and Tele-Operated Missiles are included, but none of the other optional rules from AeroTech 2.
 
 SCENARIOS
-Very similar to the Scenario chapter in the BMRr.  BV is mentioned but the rules are not provided.  The Forced Withdrawal rules which have appeared in the Jihad sourcebooks are included and recommended for use in scenario play.  The Hidden Unit Rules appear here, and Clan Honor & Zellbrigen Rules are included as well
+Very similar to the Scenario chapter in the BMRr.  BV is mentioned but the rules are not provided.  The Forced Withdrawal rules which have appeared in the Jihad source books are included and recommended for use in scenario play.  The Hidden Unit Rules appear here, and Clan Honor & Zellbrigen Rules are included as well

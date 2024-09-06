@@ -1,4 +1,4 @@
-Warden Clan Front-Line Light Mechs (Snow Raven),
+Warden Clan Front-Line Light Meks (Snow Raven),
 Dasher (Fire Moth) H,1
 Dasher (Fire Moth) A,2
 Puma (Adder) C,3

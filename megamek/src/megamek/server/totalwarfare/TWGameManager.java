@@ -18,6 +18,16 @@
  */
 package megamek.server.totalwarfare;
 
+import java.awt.Color;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.GUIPreferences;
@@ -27,8 +37,14 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.enums.*;
-import megamek.common.equipment.*;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -41,24 +57,24 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.*;
+import megamek.common.util.BoardUtilities;
+import megamek.common.util.C3Util;
+import megamek.common.util.EmailService;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
-import megamek.common.weapons.*;
+import megamek.common.verifier.TestEntity;
+import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
+import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
+import megamek.common.weapons.DamageType;
+import megamek.common.weapons.TAGHandler;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.io.*;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Manages the Game and processes player actions.
@@ -5276,7 +5292,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // Handle any picked up MechWarriors
+        // Handle any picked up MekWarriors
         for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
             Entity mw = game.getEntity(mechWarriorId);
 
@@ -5284,7 +5300,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // Is the MechWarrior an enemy?
+            // Is the MekWarrior an enemy?
             int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
             r = new Report(2010);
             if (mw.isCaptured()) {
@@ -12732,7 +12748,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // Chain whips can entangle 'Mech and ProtoMech limbs. This
+        // Chain whips can entangle 'Mek and ProtoMech limbs. This
         // implementation assumes that in order to do so the limb must still
         // have some structure left, so if the whip hits and destroys a
         // location in the same attack no special effects take place.
@@ -16248,7 +16264,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * checks if IndustrialMechs should die because they moved into to-deep
+     * checks if IndustrialMeks should die because they moved into to-deep
      * water last round
      */
     private void checkForIndustrialWaterDeath() {
@@ -17387,7 +17403,7 @@ public class TWGameManager extends AbstractGameManager {
             final Entity e = i.next();
 
             // only unconscious pilots of mechs and protos, ASF and Small Craft
-            // and MechWarriors can roll to wake up
+            // and MekWarriors can roll to wake up
             if (e.isTargetable()
                     && ((e instanceof Mech) || (e instanceof Protomech)
                     || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
@@ -19448,7 +19464,7 @@ public class TWGameManager extends AbstractGameManager {
         // ammo explosion
         // destroyed the unit
         if (ammoExplosion && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION)
-                // For 'Mechs we care whether there was CASE specifically in the
+                // For 'Meks we care whether there was CASE specifically in the
                 // location that went boom...
                 && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit.getLocation()))
                 // ...but vehicles and ASFs just have one CASE item for the
@@ -19899,7 +19915,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if ((entity instanceof MechWarrior) && !((MechWarrior) entity).hasLanded()) {
-                // MechWarrior is still up in the air ejecting hence safe
+                // MekWarrior is still up in the air ejecting hence safe
                 // from this explosion.
                 continue;
             }
@@ -20446,7 +20462,7 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
                         Tank.CRIT_CREW_KILLED), false, 0, false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
-                // 'Mechs suffer two critical hits...
+                // 'Meks suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
@@ -20484,7 +20500,7 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
                         Tank.CRIT_CREW_STUNNED), false, 0, false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
-                // 'Mechs suffer a critical hit...
+                // 'Meks suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
 
@@ -23624,7 +23640,7 @@ public class TWGameManager extends AbstractGameManager {
 
             entity.setDoomed(true);
 
-            // Kill any picked up MechWarriors
+            // Kill any picked up MekWarriors
             Enumeration<Integer> iter = entity.getPickedUpMechWarriors().elements();
             while (iter.hasMoreElements()) {
                 int mechWarriorId = iter.nextElement();
@@ -28879,7 +28895,7 @@ public class TWGameManager extends AbstractGameManager {
                         // Pilots take damage based on ejection roll MoF
                         int damage = (rollTarget.getValue() - diceRoll.getIntValue());
                         if (entity instanceof Mech) {
-                            // MechWarriors only take 1 damage per 2 points of MoF
+                            // MekWarriors only take 1 damage per 2 points of MoF
                             damage /= 2;
                         }
                         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
@@ -28899,7 +28915,7 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addElement(r);
                 }
             }
-            // create the MechWarrior in any case, for campaign tracking
+            // create the MekWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setDeployed(true);
             pilot.setId(game.getNextEntityId());
@@ -28914,7 +28930,7 @@ public class TWGameManager extends AbstractGameManager {
             } else if (entity.isAirborne()) {
                 pilot.setAltitude(entity.getAltitude());
             }
-            //Pilot flight suits are vacuum-rated. MechWarriors wear shorts...
+            //Pilot flight suits are vacuum-rated. MekWarriors wear shorts...
             pilot.setSpaceSuit(entity.isAero());
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
@@ -29502,12 +29518,12 @@ public class TWGameManager extends AbstractGameManager {
                 return vDesc;
             }
 
-            // create the MechWarrior in any case, for campaign tracking
+            // create the MekWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(game.getNextEntityId());
-            //Pilot flight suits are vacuum-rated. MechWarriors wear shorts...
+            //Pilot flight suits are vacuum-rated. MekWarriors wear shorts...
             pilot.setSpaceSuit(entity.isAero());
             if (entity.isSpaceborne()) {
                 //In space, ejected pilots retain the heading and velocity of the unit they eject from
@@ -29573,7 +29589,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Checks if ejected MechWarriors are eligible to be picked up, and if so,
+     * Checks if ejected MekWarriors are eligible to be picked up, and if so,
      * captures them or picks them up
      */
     void resolveMechWarriorPickUp() {

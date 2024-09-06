@@ -4425,7 +4425,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = en.getWalkMP();
         } else if ((ce() instanceof Mech) && !(ce() instanceof QuadVee)
                 && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
-            // A non-QuadVee 'Mech that is using tracked movement is limited to walking
+            // A non-QuadVee 'Mek that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
@@ -4505,7 +4505,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = ce().getWalkMP();
         } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
                 && ce().getMovementMode() == EntityMovementMode.TRACKED) {
-            // A non-QuadVee 'Mech that is using tracked movement (or converting to it) is limited to walking
+            // A non-QuadVee 'Mek that is using tracked movement (or converting to it) is limited to walking
             maxMP = ce().getWalkMP();
         } else {
             maxMP = ce().getRunMP();

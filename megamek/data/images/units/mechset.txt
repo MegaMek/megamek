@@ -1455,7 +1455,7 @@ exact "Zou Heavy Battle Armor (C3)(Sqd5)" "battle armor/Zou_5.png"
 exact "Zou Heavy Battle Armor (Sqd6)" "battle armor/Zou_6.png"
 exact "Zou Heavy Battle Armor (C3)(Sqd6)" "battle armor/Zou_6.png"
 
-#BattleMechs
+#BattleMeks
 chassis "Agrotera" "mechs/Agrotera.png"
 chassis "Akuma" "mechs/Akuma.png"
 exact "Akuma AKU-1XJ" "mechs/Akuma_1XJ.png"
@@ -8867,4 +8867,3 @@ chassis "Assault Air Defense Missile Emplacement" "GunEmplacements/ArrowIV_Turre
 
 # Local Server/Client moved here to support overrides of existing images!
 include localserver_mechset.txt
-

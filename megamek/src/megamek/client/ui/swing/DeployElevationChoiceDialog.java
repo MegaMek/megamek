@@ -20,8 +20,8 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.AllowedDeploymentHelper;
 import megamek.common.DeploymentElevationType;
+import megamek.common.ElevationOption;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -29,11 +29,14 @@ import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.spanCSS;
 
-public class DeployElevationChoiceDialog extends AbstractChoiceDialog<AllowedDeploymentHelper.ElevationOption> {
+/**
+ * This dialog allows selecting an elevation (or altitude) during deployment.
+ */
+public class DeployElevationChoiceDialog extends AbstractChoiceDialog<ElevationOption> {
 
     private static final int BASE_PADDING = 10;
 
-    protected DeployElevationChoiceDialog(JFrame parent, List<AllowedDeploymentHelper.ElevationOption> elevationOptions) {
+    protected DeployElevationChoiceDialog(JFrame parent, List<ElevationOption> elevationOptions) {
         super(parent, "DeploymentDisplay.choiceDialogTitle", titleMessage(), elevationOptions, false);
         setColumns(elevationOptions.size() > 6 ? 2 : 1);
         initialize();
@@ -41,7 +44,7 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<AllowedDep
     }
 
     @Override
-    protected void detailLabel(JToggleButton button, AllowedDeploymentHelper.ElevationOption elevationOption) {
+    protected void detailLabel(JToggleButton button, ElevationOption elevationOption) {
         String description = Messages.getString("DeploymentDisplay.deployElevation." + elevationOption.type());
         String elevationAltitude = elevationOption.type() == DeploymentElevationType.ALTITUDE
                 ? Messages.getString("DeploymentDisplay.altitude")
@@ -65,7 +68,7 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<AllowedDep
     }
 
     @Override
-    protected void summaryLabel(JToggleButton button, AllowedDeploymentHelper.ElevationOption target) {
+    protected void summaryLabel(JToggleButton button, ElevationOption target) {
         detailLabel(button, target);
     }
 

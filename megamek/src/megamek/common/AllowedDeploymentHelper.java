@@ -26,8 +26,6 @@ import static megamek.common.DeploymentElevationType.*;
 
 public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board, Hex hex, Game game) {
 
-    public record ElevationOption(int elevation, DeploymentElevationType type) { }
-
     /**
      * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords. This
      * can be anything from the seafloor, swimming, ice, water surface, ground, up to elevations and
@@ -82,7 +80,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         // Bridges block deployment for units of more than 1 level height if they intersect; height() == 0 is 1 level
         if (hex.containsTerrain(Terrains.BRIDGE) && (entity.height() > 0)) {
             int bridgeHeight = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-            result.removeIf(o -> (o.elevation < bridgeHeight) && (o.elevation + entity.getHeight() >= bridgeHeight));
+            result.removeIf(o -> (o.elevation() < bridgeHeight) && (o.elevation() + entity.getHeight() >= bridgeHeight));
         }
 
         if (entity.getMovementMode().isVTOL()) {
@@ -90,7 +88,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         }
 
         //TODO: test stacking violations
-        result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation));
+        result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation()));
 
         return result;
     }
@@ -155,7 +153,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     }
 
     private boolean hasZeroElevationOption(List<ElevationOption> options) {
-        return options.stream().anyMatch(o -> o.elevation == 0);
+        return options.stream().anyMatch(o -> o.elevation() == 0);
     }
 
     private List<ElevationOption> findAllowedElevationsWithBuildings() {

@@ -19,5 +19,6 @@ factions:
   - fullname: Frogmen Blue Water Marine Response Teams (Frogmen)
   - fullname: Silverback Coastal Cutter
   - fullname: Bandit Hovercraft G
+  - fullname: Invader Jumpship (2631) (LF)
 
 

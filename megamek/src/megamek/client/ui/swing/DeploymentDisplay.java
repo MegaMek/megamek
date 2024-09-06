@@ -107,6 +107,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
+    private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
 
     private final ClientGUI clientgui;
 
@@ -157,6 +158,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /** Selects an entity for deployment. */
     public void selectEntity(int en) {
+        lastHexDeploymentOptions.clear();
+
         // hmm, sometimes this gets called when there's no ready entities?
         if (clientgui.getClient().getGame().getEntity(en) == null) {
             disableButtons();
@@ -492,7 +495,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         try {
             ToolTipManager.sharedInstance().setEnabled(false);
 
-            boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+            boolean shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
             Board board = clientgui.getClient().getGame().getBoard();
 //        final Hex deployhex = board.getHex(coords);
 //        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK)
@@ -501,34 +504,42 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 //                && deployhex.containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE_ELEV);
 
             // When the unit is not already on the board, ignore turn mode and place the unit instead
-            if ((entity.getPosition() != null) && (shiftheld || turnMode)) {
+            if ((entity.getPosition() != null) && (shiftHeld || turnMode)) {
                 processTurn(entity, coords);
                 return;
             } else if (entity.isBoardProhibited(board.getType())) {
                 showWrongBoardTypeMessage();
                 return;
             } else if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
-                showCannotDeployHereMessage(coords);
+                showOutsideDeployAreaMessage();
                 return;
             }
 
             int finalElevation;
             var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
                     board.getHex(coords), clientgui.getClient().getGame());
-            List<AllowedDeploymentHelper.ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
+            List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
+
             if (elevationOptions.isEmpty()) {
                 showCannotDeployHereMessage(coords);
                 return;
-            } else if (elevationOptions.size() > 1) {
+            } else if (elevationOptions.size() == 1) {
+                finalElevation = elevationOptions.get(0).elevation();
+                lastHexDeploymentOptions.clear();
+                lastHexDeploymentOptions.addAll(elevationOptions);
+            } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
+                // When the player clicks the same hex again, always ask for the elevation
+                finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
+            } else {
                 var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
                 DialogResult result = dlg.showDialog();
                 if (result == DialogResult.CONFIRMED && dlg.getFirstChoice() != null) {
                     finalElevation = dlg.getFirstChoice().elevation();
+                    lastHexDeploymentOptions.clear();
+                    lastHexDeploymentOptions.addAll(elevationOptions);
                 } else {
                     return;
                 }
-            } else {
-                finalElevation = elevationOptions.get(0).elevation();
             }
 
             if (entity.isAero()) {
@@ -608,7 +619,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 //            clientgui.getBoardView().getPanel().repaint();
 //            butDone.setEnabled(true);
 //        }
-            if (!shiftheld) {
+            if (!shiftHeld) {
                 clientgui.getBoardView().select(coords);
             }
         } finally {
@@ -616,18 +627,34 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    /**
+     * @return True when the last chosen elevation can be re-used without asking again. This is true
+     * when the options for the current hex have no option that the previous hex didn't.
+     */
+    private boolean useLastDeployElevation(List<ElevationOption> currentOptions) {
+        return currentOptions.size() <= lastHexDeploymentOptions.size()
+                && lastHexDeploymentOptions.containsAll(currentOptions);
+
+    }
+
     private void showWrongBoardTypeMessage() {
         Board board = clientgui.getClient().getGame().getBoard();
         String title = Messages.getString("DeploymentDisplay.alertDialog.title");
         String msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(),
                 Board.getTypeName(board.getType()));
-        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showOutsideDeployAreaMessage() {
+        String msg = Messages.getString("DeploymentDisplay.outsideDeployArea");
+        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showCannotDeployHereMessage(Coords coords) {
         String msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), coords.getBoardNum());
         String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void processTurn(Entity entity, Coords coords) {

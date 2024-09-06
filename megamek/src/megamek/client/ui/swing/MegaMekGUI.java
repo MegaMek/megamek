@@ -346,6 +346,16 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         editor.boardNew(GUIPreferences.getInstance().getBoardEdRndStart());
     }
 
+    /**
+     * Display the board editor and load the given board
+     */
+    void showEditor(String boardFile) {
+        BoardEditor editor = new BoardEditor(controller);
+        controller.boardEditor = editor;
+        launch(editor.getFrame());
+        editor.loadBoard(new File(boardFile));
+    }
+
     void showSkinEditor() {
         int response = JOptionPane.showConfirmDialog(frame,
                 "The skin editor is currently "
@@ -1016,6 +1026,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     private final ActionListener actionListener = ev -> {
+        if (ev.getActionCommand().startsWith(ClientGUI.BOARD_RECENT)) {
+            String recentBoard = ev.getActionCommand().substring(ClientGUI.BOARD_RECENT.length() + 1);
+            showEditor(recentBoard);
+        }
         switch (ev.getActionCommand()) {
             case ClientGUI.BOARD_NEW:
                 showEditor();

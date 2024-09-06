@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.*;
 
 import static java.awt.event.KeyEvent.*;
@@ -87,6 +88,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The Board menu
     private final JMenuItem boardNew = new JMenuItem(getString("CommonMenuBar.fileBoardNew"));
     private final JMenuItem boardOpen = new JMenuItem(getString("CommonMenuBar.fileBoardOpen"));
+    private final JMenu boardRecent = new JMenu(getString("CommonMenuBar.fileBoardRecent"));
     private final JMenuItem boardSave = new JMenuItem(getString("CommonMenuBar.fileBoardSave"));
     private final JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private final JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
@@ -216,6 +218,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         add(menu);
         initMenuItem(boardNew, menu, BOARD_NEW);
         initMenuItem(boardOpen, menu, BOARD_OPEN, VK_O);
+        initMenuItem(boardRecent, menu, BOARD_OPEN, VK_O);
+        initializeRecentBoardsMenu();
         initMenuItem(boardSave, menu, BOARD_SAVE);
         initMenuItem(boardSaveAs, menu, BOARD_SAVE_AS);
         initMenuItem(boardValidate, menu, BOARD_VALIDATE);
@@ -335,6 +339,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         setKeyBinds();
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
+        RecentBoardList.addListener(this);
     }
 
     /** Sets/updates the accelerators from the KeyCommandBinds preferences. */
@@ -479,6 +484,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardSaveAsImage.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
         boardNew.setEnabled(isBoardEditor || isMainMenu);
         boardOpen.setEnabled(isBoardEditor || isMainMenu);
+        boardRecent.setEnabled((isBoardEditor || isMainMenu) && !RecentBoardList.getRecentBoards().isEmpty());
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
         fileUnitsReinforce.setEnabled((isLobby || isInGame) && isNotVictory);
@@ -568,6 +574,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
         } else if (e.getName().equals(GUIPreferences.PLAYER_LIST_ENABLED)) {
             gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
+        } else if (e.getName().equals(RecentBoardList.RECENT_BOARD_EVENT)) {
+            initializeRecentBoardsMenu();
         }
     }
 
@@ -580,6 +588,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public void die() {
         GUIP.removePreferenceChangeListener(this);
         KeyBindParser.removePreferenceChangeListener(this);
+        RecentBoardList.removeListener(this);
     }
 
     private void initMenuItem(JMenuItem item, JMenu menu, String command) {
@@ -592,5 +601,19 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void initMenuItem(JMenuItem item, JMenu menu, String command, int mnemonic) {
         initMenuItem(item, menu, command);
         item.setMnemonic(mnemonic);
+    }
+
+    /**
+     * Updates the Recent Boards submenu with the current list of recent boards
+     */
+    public void initializeRecentBoardsMenu() {
+        List<String> recentBoards = RecentBoardList.getRecentBoards();
+        boardRecent.removeAll();
+        for (String recentBoard : recentBoards) {
+            File boardFile = new File(recentBoard);
+            JMenuItem item = new JMenuItem(boardFile.getName());
+            initMenuItem(item, boardRecent, BOARD_RECENT + "|" + recentBoard);
+        }
+        boardRecent.setEnabled(!recentBoards.isEmpty());
     }
 }

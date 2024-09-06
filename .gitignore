@@ -35,6 +35,7 @@ build/
 #MegaMek Data Folders
 # mmconf
 /megamek/mmconf/clientsettings.xml
+/megamek/mmconf/recent_boards.yml
 /megamek/mmconf/*gameoptions.xml
 /megamek/mmconf/*.properties
 !/megamek/mmconf/shared.properties

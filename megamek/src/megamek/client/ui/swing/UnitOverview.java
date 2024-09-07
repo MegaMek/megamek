@@ -503,7 +503,7 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
                 }
             }
             return adjustString(iconName, metrics);
-        } else if (e instanceof Protomech) {
+        } else if (e instanceof ProtoMek) {
             String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
         } else if ((e instanceof Infantry) || (e instanceof Mek) || (e instanceof GunEmplacement)

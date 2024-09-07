@@ -413,7 +413,7 @@ public class EntityListFile {
 
             // Protomechs only have system slots,
             // so we have to handle the ammo specially.
-            if (entity instanceof Protomech) {
+            if (entity instanceof ProtoMek) {
                 for (Mounted mount : entity.getAmmo()) {
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {

@@ -22,7 +22,7 @@ import megamek.common.*;
 
 public class ProtoMekBVCalculator extends BVCalculator {
 
-    Protomech protoMek = (Protomech) entity;
+    ProtoMek protoMek = (ProtoMek) entity;
 
     ProtoMekBVCalculator(Entity entity) {
         super(entity);

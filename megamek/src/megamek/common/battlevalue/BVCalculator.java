@@ -84,7 +84,7 @@ public abstract class BVCalculator {
     public static BVCalculator getBVCalculator(Entity entity) {
         if (entity instanceof Mek) {
             return new MekBVCalculator(entity);
-        } else if (entity instanceof Protomech) {
+        } else if (entity instanceof ProtoMek) {
             return new ProtoMekBVCalculator(entity);
         } else if (entity instanceof BattleArmor) {
             return new BattleArmorBVCalculator(entity);
@@ -1189,7 +1189,7 @@ public abstract class BVCalculator {
         int piloting = entity.getCrew().getPiloting();
 
         if (((entity instanceof Infantry) && (!((Infantry) entity).canMakeAntiMekAttacks()))
-                || (entity instanceof Protomech)) {
+                || (entity instanceof ProtoMek)) {
             piloting = 5;
         } else if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
             piloting = Infantry.ANTI_MECH_SKILL_NO_GEAR;

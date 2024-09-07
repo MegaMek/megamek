@@ -27,7 +27,7 @@ import megamek.common.EquipmentType;
 import megamek.common.Messages;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.Protomech;
+import megamek.common.ProtoMek;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtomech;
 
@@ -39,9 +39,9 @@ import megamek.common.verifier.TestProtomech;
  */
 public class ProtomechTROView extends TROView {
 
-    private final Protomech proto;
+    private final ProtoMek proto;
 
-    public ProtomechTROView(Protomech proto) {
+    public ProtomechTROView(ProtoMek proto) {
         this.proto = proto;
     }
 
@@ -112,8 +112,8 @@ public class ProtomechTROView extends TROView {
         }
     }
 
-    private static final int[][] PROTO_ARMOR_LOCS = { { Protomech.LOC_HEAD }, { Protomech.LOC_TORSO },
-            { Protomech.LOC_RARM, Protomech.LOC_LARM }, { Protomech.LOC_LEG }, { Protomech.LOC_MAINGUN } };
+    private static final int[][] PROTO_ARMOR_LOCS = { { ProtoMek.LOC_HEAD }, { ProtoMek.LOC_TORSO },
+            { ProtoMek.LOC_RARM, ProtoMek.LOC_LARM }, { ProtoMek.LOC_LEG }, { ProtoMek.LOC_MAINGUN } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",

@@ -179,7 +179,7 @@ final class ASMovementConverter {
 
     /** Returns true if the given entity has a ProtoMek Myomer Booster. */
     private static boolean hasMyomerBooster(Entity entity) {
-        return (entity instanceof Protomech) && entity.hasWorkingMisc(EquipmentTypeLookup.PROTOMECH_MYOMER_BOOSTER);
+        return (entity instanceof ProtoMek) && entity.hasWorkingMisc(EquipmentTypeLookup.PROTOMECH_MYOMER_BOOSTER);
     }
 
     /** Returns true if the given entity is a Mech and has MASC, regardless of its state (convert as if undamaged). */

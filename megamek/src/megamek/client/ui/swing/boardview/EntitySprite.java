@@ -754,7 +754,7 @@ class EntitySprite extends Sprite {
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
-            if (!((entity instanceof Mek) || (entity instanceof Protomech))
+            if (!((entity instanceof Mek) || (entity instanceof ProtoMek))
                     || (entity instanceof QuadVee)) {
                 secFacing = entity.getSecondaryFacing();
             } else if (entity.getArmsFlipped()) {

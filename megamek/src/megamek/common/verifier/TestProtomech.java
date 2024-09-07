@@ -37,12 +37,12 @@ public class TestProtomech extends TestEntity {
      * Any ProtoMek with a larger mass than this is ultra-heavy
      */
     public static final double MAX_STD_TONNAGE = 9.0;
-    
+
     /**
      * Maximum weight for a ProtoMek
      */
     public static final double MAX_TONNAGE = 15.0;
-    
+
     /**
      * Minimum walk MP for glider ProtoMek
      */
@@ -52,10 +52,10 @@ public class TestProtomech extends TestEntity {
      */
     public static final int QUAD_MIN_MP = 3;
 
-    private final Protomech proto;
+    private final ProtoMek proto;
     private final String fileString;
 
-    public static int maxJumpMP(Protomech proto) {
+    public static int maxJumpMP(ProtoMek proto) {
         if (proto.getMisc().stream().map(Mounted::getType)
                 .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
                         && eq.hasSubType(MiscType.S_IMPROVED))) {
@@ -64,7 +64,7 @@ public class TestProtomech extends TestEntity {
         return proto.getOriginalWalkMP();
     }
 
-    public TestProtomech(Protomech proto, TestEntityOption option, String fileString) {
+    public TestProtomech(ProtoMek proto, TestEntityOption option, String fileString) {
         super(option, proto.getEngine(), null);
         this.proto = proto;
         this.fileString = fileString;
@@ -99,17 +99,17 @@ public class TestProtomech extends TestEntity {
     public boolean isAdvancedAerospace() {
         return false;
     }
-    
+
     @Override
     public boolean isProtomech() {
         return true;
     }
-    
+
     @Override
     public double getWeightStructure() {
         return round(proto.getWeight() * 0.1, Ceil.KILO);
     }
-    
+
     @Override
     public double getWeightEngine() {
         return proto.getEngine().getWeightEngine(proto);
@@ -139,7 +139,7 @@ public class TestProtomech extends TestEntity {
     public int getCountHeatSinks() {
         return heatNeutralHSRequirement();
     }
-    
+
     @Override
     public double calculateWeight() {
         // Deal with some floating point precision issues
@@ -250,7 +250,7 @@ public class TestProtomech extends TestEntity {
         }
         return correct;
     }
-    
+
     @Override
     public boolean correctWeight(StringBuffer buff) {
         boolean correct = super.correctWeight(buff);
@@ -260,7 +260,7 @@ public class TestProtomech extends TestEntity {
         }
         return correct;
     }
-    
+
     @Override
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = false;
@@ -273,7 +273,7 @@ public class TestProtomech extends TestEntity {
             }
             slotsByLoc.merge(mount.getLocation(), 1, Integer::sum);
             weightByLoc.merge(mount.getLocation(), mount.getTonnage(), Double::sum);
-            if (mount.isRearMounted() && (mount.getLocation() != Protomech.LOC_TORSO)) {
+            if (mount.isRearMounted() && (mount.getLocation() != ProtoMek.LOC_TORSO)) {
                 buff.append("Equipment can only be rear-mounted on the torso\n");
                 illegal = true;
             }
@@ -315,7 +315,7 @@ public class TestProtomech extends TestEntity {
             buff.append("Does not have legal armor type.\n");
             illegal = true;
         } else {
-            slotsByLoc.merge(Protomech.LOC_TORSO, armor.getCriticals(proto), Integer::sum);
+            slotsByLoc.merge(ProtoMek.LOC_TORSO, armor.getCriticals(proto), Integer::sum);
         }
 
         for (int loc = 0; loc < proto.locations(); loc++) {
@@ -335,7 +335,7 @@ public class TestProtomech extends TestEntity {
             buff.append("Glider ProtoMeks cannot be quads.\n");
             illegal = true;
         }
-        
+
         return illegal;
     }
 
@@ -346,11 +346,11 @@ public class TestProtomech extends TestEntity {
      * @param buffer    If non-null and the location is invalid, will be appended with an explanation
      * @return           Whether the equipment can be mounted in the location on the ProtoMek
      */
-    public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location,
+    public static boolean isValidProtomechLocation(ProtoMek protomech, EquipmentType eq, int location,
                                                    @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)
-                    && (location != Protomech.LOC_LARM) && (location != Protomech.LOC_RARM)) {
+                    && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
@@ -358,14 +358,14 @@ public class TestProtomech extends TestEntity {
             }
             if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
                     || (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
-                    && (location != Protomech.LOC_TORSO)) {
+                    && (location != ProtoMek.LOC_TORSO)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
                 }
                 return false;
             }
         }
-        if (!TestProtomech.eqRequiresLocation(protomech, eq) && (location != Protomech.LOC_BODY)) {
+        if (!TestProtomech.eqRequiresLocation(protomech, eq) && (location != ProtoMek.LOC_BODY)) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" must be mounted in the body.\n");
             }
@@ -379,10 +379,10 @@ public class TestProtomech extends TestEntity {
         }
         return true;
     }
-    
+
     /**
      * Checks for exceeding the maximum number of armor points by location for the tonnage.
-     * 
+     *
      * @param buffer  A string buffer for appending error messages.
      * @return        Whether the number of armor points is legal
      */
@@ -398,10 +398,10 @@ public class TestProtomech extends TestEntity {
         }
         return correct;
     }
-    
+
     /**
      * Checks whether the protomech meets the minimum MP requirements for the configuration.
-     * 
+     *
      * @param buffer A buffer for error messages
      * @return       Whether the MP is legal.
      */
@@ -419,13 +419,13 @@ public class TestProtomech extends TestEntity {
             buffer.append("Exceeds maximum jump MP.\n");
             correct = false;
         }
-        if (proto.getAllUMUCount() > maxJump) { 
+        if (proto.getAllUMUCount() > maxJump) {
             buffer.append("Exceeds maximum UMU MP.\n");
             correct = false;
         }
         return correct;
     }
-    
+
 
     @Override
     public StringBuffer printEntity() {
@@ -469,14 +469,14 @@ public class TestProtomech extends TestEntity {
     public double getWeightPowerAmp() {
         return 0;
     }
-    
+
     /**
      * Determine the minimum walk MP for the ProtoMek based on configuration
-     * 
+     *
      * @param proto The ProtoMek
      * @return      The minimum walk MP
      */
-    public int getMinimumWalkMP(Protomech proto) {
+    public int getMinimumWalkMP(ProtoMek proto) {
         if (proto.isGlider()) {
             return 4;
         } else if (proto.isQuad()) {
@@ -485,21 +485,21 @@ public class TestProtomech extends TestEntity {
             return 1;
         }
     }
-    
+
     /**
      * Computes the required engine rating
-     * 
+     *
      * @param proto The ProtoMek
      * @return      The engine rating required for the weight, speed, and configuration
      */
-    public static int calcEngineRating(Protomech proto) {
+    public static int calcEngineRating(ProtoMek proto) {
         return calcEngineRating(proto.getOriginalWalkMP(),
                 proto.getWeight(), proto.isQuad() || proto.isGlider());
     }
-    
+
     /**
      * Computes the required engine rating
-     * 
+     *
      * @param walkMP The base walking MP
      * @param tonnage The weight of the ProtoMek in tons
      * @param quadOrGlider Whether the ProtoMek is a quad or glider configuration
@@ -521,10 +521,10 @@ public class TestProtomech extends TestEntity {
         }
         return rating;
     }
-    
+
     /**
      * Determines whether a piece of equipment counts toward the slot and weight limits of a location.
-     * 
+     *
      * @param etype The equipment
      * @return      Whether the equipment takes a slot.
      */
@@ -539,21 +539,21 @@ public class TestProtomech extends TestEntity {
         }
         return true;
     }
-    
+
     /**
      * Equipment slot limit by location
-     * 
+     *
      * @param loc The ProtoMek location
      * @param proto The ProtoMek
      * @return The number of equipment slots in the location
      */
-    public static int maxSlotsByLocation(int loc, Protomech proto) {
+    public static int maxSlotsByLocation(int loc, ProtoMek proto) {
         return maxSlotsByLocation(loc, proto.isQuad(), proto.getWeight() > MAX_STD_TONNAGE);
     }
 
     /**
      * Equipment slot limit by location
-     * 
+     *
      * @param loc The ProtoMek location
      * @param quad Whether the ProtoMek is a quad
      * @param ultra Whether the ProtoMek is ultraheavy
@@ -561,7 +561,7 @@ public class TestProtomech extends TestEntity {
      */
     public static int maxSlotsByLocation(int loc, boolean quad, boolean ultra) {
         switch (loc) {
-            case Protomech.LOC_TORSO: {
+            case ProtoMek.LOC_TORSO: {
                 int slots = 2;
                 if (ultra) {
                     slots++;
@@ -571,32 +571,32 @@ public class TestProtomech extends TestEntity {
                 }
                 return slots;
             }
-            case Protomech.LOC_LARM:
-            case Protomech.LOC_RARM:
+            case ProtoMek.LOC_LARM:
+            case ProtoMek.LOC_RARM:
                 return quad ? 0 : 1;
-            case Protomech.LOC_MAINGUN:
+            case ProtoMek.LOC_MAINGUN:
                 return (quad && ultra) ? 2 : 1;
-            case Protomech.LOC_HEAD:
-            case Protomech.LOC_LEG:
+            case ProtoMek.LOC_HEAD:
+            case ProtoMek.LOC_LEG:
             default:
                 return 0;
         }
     }
-    
+
     /**
      * The maximum total weight that can be mounted in a given location.
-     * 
+     *
      * @param loc   The Protomech location
      * @param proto The Protomech
      * @return      The weight limit for that location, in tons.
      */
-    public static double maxWeightByLocation(int loc, Protomech proto) {
+    public static double maxWeightByLocation(int loc, ProtoMek proto) {
         return maxWeightByLocation(loc, proto.isQuad(), proto.getWeight() > MAX_STD_TONNAGE);
     }
-    
+
     /**
      * The maximum total weight that can be mounted in a given location.
-     * 
+     *
      * @param loc   The Protomech location
      * @param quad  Whether the protomech is a quad
      * @param ultra Whether the protomech is ultraheavy
@@ -604,42 +604,42 @@ public class TestProtomech extends TestEntity {
      */
     public static double maxWeightByLocation(int loc, boolean quad, boolean ultra) {
         switch (loc) {
-            case Protomech.LOC_TORSO:
+            case ProtoMek.LOC_TORSO:
                 if (quad) {
                     return ultra? 8.0 : 5.0;
                 } else {
                     return ultra? 4.0 : 2.0;
                 }
-            case Protomech.LOC_LARM:
-            case Protomech.LOC_RARM:
+            case ProtoMek.LOC_LARM:
+            case ProtoMek.LOC_RARM:
                 if (quad) {
                     return 0;
                 }
                 return ultra? 1.0 : 0.5;
-            case Protomech.LOC_MAINGUN:
+            case ProtoMek.LOC_MAINGUN:
                 return Double.MAX_VALUE;
-            case Protomech.LOC_HEAD:
-            case Protomech.LOC_LEG:
+            case ProtoMek.LOC_HEAD:
+            case ProtoMek.LOC_LEG:
             default:
                 return 0.0;
         }
     }
-    
+
     private static final int[] MAX_ARMOR_FACTOR = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
-    
+
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
-     * 
+     *
      * @param proto   The protomech
      * @return        The maximum total number of armor points
      */
-    public static int maxArmorFactor(Protomech proto) {
+    public static int maxArmorFactor(ProtoMek proto) {
         return maxArmorFactor(proto.getWeight(), proto.hasMainGun());
     }
-    
+
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
-     * 
+     *
      * @param weight  The weight of the protomech in tons
      * @param mainGun Whether the protomech has a main gun location
      * @return        The maximum total number of armor points
@@ -654,22 +654,22 @@ public class TestProtomech extends TestEntity {
     }
     /**
      * Determine the maximum amount of armor in a location based on unit weight.
-     * 
+     *
      * @param proto   The protomech
      * @param location The location index
      * @return        The maximum total number of armor points
      */
-    public static int maxArmorFactor(Protomech proto, int location) {
-        if (location == Protomech.LOC_HEAD) {
+    public static int maxArmorFactor(ProtoMek proto, int location) {
+        if (location == ProtoMek.LOC_HEAD) {
             return 2 + (int) proto.getWeight() / 2;
-        } else if (location == Protomech.LOC_MAINGUN) {
+        } else if (location == ProtoMek.LOC_MAINGUN) {
             if (proto.hasMainGun()) {
                 return proto.getOInternal(location) * 3;
             } else {
                 return 0;
             }
-        } else if ((location == Protomech.LOC_LARM)
-                || (location == Protomech.LOC_RARM)) {
+        } else if ((location == ProtoMek.LOC_LARM)
+                || (location == ProtoMek.LOC_RARM)) {
             if (proto.isQuad()) {
                 return 0;
             } else if (proto.getWeight() < 6) {
@@ -679,10 +679,10 @@ public class TestProtomech extends TestEntity {
             } else {
                 return 6;
             }
-        } else if (location == Protomech.LOC_BODY) {
+        } else if (location == ProtoMek.LOC_BODY) {
             return 0;
         }
         return proto.getOInternal(location) * 2;
     }
-    
+
 }

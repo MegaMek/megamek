@@ -331,7 +331,7 @@ public class AreaEffectHelper {
             hits = Compute.d6(damage);
         }
         ToHitData toHit = new ToHitData();
-        if (entity instanceof Protomech) {
+        if (entity instanceof ProtoMek) {
             toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
         }
         int cluster = 5;
@@ -754,7 +754,7 @@ public class AreaEffectHelper {
                 cluster = damage;
             }
             int table = ToHitData.HIT_NORMAL;
-            if (entity instanceof Protomech) {
+            if (entity instanceof ProtoMek) {
                 table = ToHitData.HIT_SPECIAL_PROTO;
             }
             HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));

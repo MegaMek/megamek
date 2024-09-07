@@ -55,7 +55,7 @@ public final class ProtomechBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit, unless it is a ProtoMek
-        boolean result = unit instanceof Protomech;
+        boolean result = unit instanceof ProtoMek;
 
         // We must have enough space for the new troops.
         // TODO : POSSIBLE BUG : we may have to take the Math.ceil() of the weight.

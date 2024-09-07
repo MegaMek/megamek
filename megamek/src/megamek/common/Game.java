@@ -1938,7 +1938,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         for (Entity entity : inGameTWEntities()) {
             if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
-                    && (entity instanceof Protomech)) {
+                    && (entity instanceof ProtoMek)) {
                 remaining++;
             }
         }
@@ -2039,7 +2039,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Same thing but for ProtoMeks
         if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
-                && (entity instanceof Protomech) && getPhase().isMovement()) {
+                && (entity instanceof ProtoMek) && getPhase().isMovement()) {
             if ((getProtoMeksLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an ProtoMek turn, remove that
@@ -2118,7 +2118,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         if ((getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) &&
              (entity instanceof Infantry)) ||
             (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) &&
-             (entity instanceof Protomech))) {
+             (entity instanceof ProtoMek))) {
             useInfantryMoveLaterCheck = false;
         }
 
@@ -2818,7 +2818,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             if ((entity instanceof Infantry)
                 && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
                 excluded = true;
-            } else if ((entity instanceof Protomech)
+            } else if ((entity instanceof ProtoMek)
                        && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
                 excluded = true;
             }

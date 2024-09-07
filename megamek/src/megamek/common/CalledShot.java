@@ -53,7 +53,7 @@ public class CalledShot implements Serializable {
             return "called shots on entities only";
         }
         Entity te = (Entity) target;
-        if (te instanceof Infantry || te instanceof Protomech) {
+        if (te instanceof Infantry || te instanceof ProtoMek) {
             return "no called shots on infantry/ProtoMeks";
         }
 

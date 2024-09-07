@@ -159,11 +159,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 
-        if ((te instanceof Protomech) && !(ae instanceof Protomech)) {
+        if ((te instanceof ProtoMek) && !(ae instanceof ProtoMek)) {
             wmod = ae.getWeightClass() * -1;
-        } else if ((ae instanceof Protomech) && !(te instanceof Protomech)) {
+        } else if ((ae instanceof ProtoMek) && !(te instanceof ProtoMek)) {
             wmod = te.getWeightClass();
-        } else if ((te instanceof Protomech) && (ae instanceof Protomech)) {
+        } else if ((te instanceof ProtoMek) && (ae instanceof ProtoMek)) {
             wmod = 0;
         }
 
@@ -222,8 +222,8 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // final int targetHeight = targetElevation + target.getHeight();
 
         // non-mechs can't grapple or be grappled
-        if ((!(ae instanceof BipedMech) && !(ae instanceof Protomech))
-                || (!(target instanceof Mek) && !(target instanceof Protomech))) {
+        if ((!(ae instanceof BipedMech) && !(ae instanceof ProtoMek))
+                || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Only biped mechs can grapple 'Meks and ProtoMechs");
         }

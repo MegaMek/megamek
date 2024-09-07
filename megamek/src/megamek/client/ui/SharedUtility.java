@@ -398,7 +398,7 @@ public class SharedUtility {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof Protomech)
+            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
@@ -437,7 +437,7 @@ public class SharedUtility {
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
-            if ((buildingMove > 1) && !(entity instanceof Protomech)) {
+            if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.
                 Building bldg = null;
                 String reason ="entering";

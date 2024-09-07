@@ -64,7 +64,7 @@ class ForceDisplayMekCellFormatter {
 
             if (entity instanceof Infantry) {
                 uType = Messages.getString("ChatLounge.0");
-            } else if (entity instanceof Protomech) {
+            } else if (entity instanceof ProtoMek) {
                 uType = Messages.getString("ChatLounge.1");
             } else if (entity instanceof GunEmplacement) {
                 uType = Messages.getString("ChatLounge.2");

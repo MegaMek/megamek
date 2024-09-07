@@ -2,15 +2,15 @@
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
  * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.client.ui.swing.widget;
@@ -20,7 +20,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.Protomech;
+import megamek.common.ProtoMek;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -34,12 +34,12 @@ import java.util.Vector;
 public class ProtomechMapSet implements DisplayMapSet {
 
     private UnitDisplay unitDisplay;
-    
+
     // Boring list of labels.
-    private PMValueLabel[] sectionLabels = new PMValueLabel[Protomech.NUM_PMECH_LOCATIONS];
-    private PMValueLabel[] armorLabels = new PMValueLabel[Protomech.NUM_PMECH_LOCATIONS];
-    private PMValueLabel[] internalLabels = new PMValueLabel[Protomech.NUM_PMECH_LOCATIONS];
-    private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[Protomech.NUM_PMECH_LOCATIONS];
+    private PMValueLabel[] sectionLabels = new PMValueLabel[ProtoMek.NUM_PROTOMEK_LOCATIONS];
+    private PMValueLabel[] armorLabels = new PMValueLabel[ProtoMek.NUM_PROTOMEK_LOCATIONS];
+    private PMValueLabel[] internalLabels = new PMValueLabel[ProtoMek.NUM_PROTOMEK_LOCATIONS];
+    private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[ProtoMek.NUM_PROTOMEK_LOCATIONS];
 
     private Polygon head = new Polygon(new int[] { 50, 50, 60, 80, 90, 90, 80,
             60 }, new int[] { 40, 20, 10, 10, 20, 40, 50, 50 }, 8);
@@ -83,12 +83,12 @@ public class ProtomechMapSet implements DisplayMapSet {
      * Set the armor diagram on the mapset.
      */
     private void setAreas() {
-        areas[Protomech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Protomech.LOC_HEAD);
-        areas[Protomech.LOC_LEG] = new PMSimplePolygonArea(legs, unitDisplay, Protomech.LOC_LEG);
-        areas[Protomech.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, Protomech.LOC_LARM);
-        areas[Protomech.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, Protomech.LOC_RARM);
-        areas[Protomech.LOC_TORSO] = new PMSimplePolygonArea(torso, unitDisplay, Protomech.LOC_TORSO);
-        areas[Protomech.LOC_MAINGUN] = new PMSimplePolygonArea(mainGun, unitDisplay, Protomech.LOC_MAINGUN);
+        areas[ProtoMek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, ProtoMek.LOC_HEAD);
+        areas[ProtoMek.LOC_LEG] = new PMSimplePolygonArea(legs, unitDisplay, ProtoMek.LOC_LEG);
+        areas[ProtoMek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, ProtoMek.LOC_LARM);
+        areas[ProtoMek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, ProtoMek.LOC_RARM);
+        areas[ProtoMek.LOC_TORSO] = new PMSimplePolygonArea(torso, unitDisplay, ProtoMek.LOC_TORSO);
+        areas[ProtoMek.LOC_MAINGUN] = new PMSimplePolygonArea(mainGun, unitDisplay, ProtoMek.LOC_MAINGUN);
 
         for (int i = 0; i <= 5; i++) {
             content.addArea(areas[i]);
@@ -96,7 +96,7 @@ public class ProtomechMapSet implements DisplayMapSet {
 
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
 
-        for (int i = 0; i < Protomech.NUM_PMECH_LOCATIONS; i++) {
+        for (int i = 0; i < ProtoMek.NUM_PROTOMEK_LOCATIONS; i++) {
             sectionLabels[i] = new PMValueLabel(fm, Color.black);
             content.addArea(sectionLabels[i]);
             armorLabels[i] = new PMValueLabel(fm, Color.yellow.brighter());
@@ -104,24 +104,24 @@ public class ProtomechMapSet implements DisplayMapSet {
             internalLabels[i] = new PMValueLabel(fm, Color.red.brighter());
             content.addArea(internalLabels[i]);
         }
-        sectionLabels[Protomech.LOC_HEAD].moveTo(70, 30);
-        armorLabels[Protomech.LOC_HEAD].moveTo(60, 45);
-        internalLabels[Protomech.LOC_HEAD].moveTo(80, 45);
-        sectionLabels[Protomech.LOC_TORSO].moveTo(70, 70);
-        armorLabels[Protomech.LOC_TORSO].moveTo(70, 85);
-        internalLabels[Protomech.LOC_TORSO].moveTo(70, 100);
-        sectionLabels[Protomech.LOC_RARM].moveTo(125, 55);
-        armorLabels[Protomech.LOC_RARM].moveTo(125, 70);
-        internalLabels[Protomech.LOC_RARM].moveTo(125, 85);
-        sectionLabels[Protomech.LOC_LARM].moveTo(15, 55);
-        armorLabels[Protomech.LOC_LARM].moveTo(15, 70);
-        internalLabels[Protomech.LOC_LARM].moveTo(15, 85);
-        sectionLabels[Protomech.LOC_LEG].moveTo(70, 150);
-        armorLabels[Protomech.LOC_LEG].moveTo(60, 165);
-        internalLabels[Protomech.LOC_LEG].moveTo(80, 165);
-        sectionLabels[Protomech.LOC_MAINGUN].moveTo(35, 15);
-        armorLabels[Protomech.LOC_MAINGUN].moveTo(25, 30);
-        internalLabels[Protomech.LOC_MAINGUN].moveTo(45, 30);
+        sectionLabels[ProtoMek.LOC_HEAD].moveTo(70, 30);
+        armorLabels[ProtoMek.LOC_HEAD].moveTo(60, 45);
+        internalLabels[ProtoMek.LOC_HEAD].moveTo(80, 45);
+        sectionLabels[ProtoMek.LOC_TORSO].moveTo(70, 70);
+        armorLabels[ProtoMek.LOC_TORSO].moveTo(70, 85);
+        internalLabels[ProtoMek.LOC_TORSO].moveTo(70, 100);
+        sectionLabels[ProtoMek.LOC_RARM].moveTo(125, 55);
+        armorLabels[ProtoMek.LOC_RARM].moveTo(125, 70);
+        internalLabels[ProtoMek.LOC_RARM].moveTo(125, 85);
+        sectionLabels[ProtoMek.LOC_LARM].moveTo(15, 55);
+        armorLabels[ProtoMek.LOC_LARM].moveTo(15, 70);
+        internalLabels[ProtoMek.LOC_LARM].moveTo(15, 85);
+        sectionLabels[ProtoMek.LOC_LEG].moveTo(70, 150);
+        armorLabels[ProtoMek.LOC_LEG].moveTo(60, 165);
+        internalLabels[ProtoMek.LOC_LEG].moveTo(80, 165);
+        sectionLabels[ProtoMek.LOC_MAINGUN].moveTo(35, 15);
+        armorLabels[ProtoMek.LOC_MAINGUN].moveTo(25, 30);
+        internalLabels[ProtoMek.LOC_MAINGUN].moveTo(45, 30);
     }
 
     @Override
@@ -136,22 +136,22 @@ public class ProtomechMapSet implements DisplayMapSet {
 
     /**
      * Show the diagram for the given ProtoMek.
-     * 
+     *
      * @param entity the <code>Entity</code> to be displayed. This should be a <code>ProtoMek</code> unit.
      */
     @Override
     public void setEntity(Entity entity) {
-        Protomech protoMek = (Protomech) entity;
+        ProtoMek protoMek = (ProtoMek) entity;
 
         int loc = protoMek.locations();
         if (!protoMek.hasMainGun()) {
-            armorLabels[Protomech.LOC_MAINGUN].setVisible(false);
-            internalLabels[Protomech.LOC_MAINGUN].setVisible(false);
-            sectionLabels[Protomech.LOC_MAINGUN].setVisible(false);
+            armorLabels[ProtoMek.LOC_MAINGUN].setVisible(false);
+            internalLabels[ProtoMek.LOC_MAINGUN].setVisible(false);
+            sectionLabels[ProtoMek.LOC_MAINGUN].setVisible(false);
         } else {
-            armorLabels[Protomech.LOC_MAINGUN].setVisible(true);
-            internalLabels[Protomech.LOC_MAINGUN].setVisible(true);
-            sectionLabels[Protomech.LOC_MAINGUN].setVisible(true);
+            armorLabels[ProtoMek.LOC_MAINGUN].setVisible(true);
+            internalLabels[ProtoMek.LOC_MAINGUN].setVisible(true);
+            sectionLabels[ProtoMek.LOC_MAINGUN].setVisible(true);
         }
         for (int i = 0; i < loc; i++) {
             armorLabels[i].setValue(protoMek.getArmorString(i));

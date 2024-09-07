@@ -885,7 +885,7 @@ public abstract class BotClient extends Client {
             // ProtoMech
             // ->
             // -> Trees increase fitness by +2 (minor)
-            if (deployed_ent instanceof Protomech) {
+            if (deployed_ent instanceof ProtoMek) {
                 if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                         Terrains.WOODS)) {
                     coord.fitness += 2;

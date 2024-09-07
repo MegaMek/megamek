@@ -33,7 +33,7 @@ public abstract class UnitStatusFormatter {
                 .append(e.getTotalOInternal())
                 .append("----------------------------------------\n")
                 .append(formatArmor(e));
-        if ((e instanceof Mek) || (e instanceof Protomech)) {
+        if ((e instanceof Mek) || (e instanceof ProtoMek)) {
             sb.append("-------------------------------------------------------------\n")
                     .append(formatCrits(e));
         }
@@ -99,8 +99,8 @@ public abstract class UnitStatusFormatter {
                     }
                     if (e instanceof Mek) {
                         sb.append(((Mek) e).getSystemName(cs.getIndex()));
-                    } else if (e instanceof Protomech) {
-                        sb.append(Protomech.systemNames[cs.getIndex()]);
+                    } else if (e instanceof ProtoMek) {
+                        sb.append(ProtoMek.systemNames[cs.getIndex()]);
                     }
                 } else if (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     Mounted m = cs.getMount();
@@ -126,8 +126,8 @@ public abstract class UnitStatusFormatter {
             return formatArmorBattleArmor((BattleArmor) e);
         } else if (e instanceof Infantry) {
             return formatArmorInfantry((Infantry) e);
-        } else if (e instanceof Protomech) {
-            return formatArmorProtomech((Protomech) e);
+        } else if (e instanceof ProtoMek) {
+            return formatArmorProtomech((ProtoMek) e);
         } else {
             return "";
         }
@@ -264,26 +264,26 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatArmorProtomech(Protomech m) {
+    private static String formatArmorProtomech(ProtoMek m) {
         StringBuilder sb = new StringBuilder(1024);
         sb.append("         FRONT                INTERNAL\n");
 
         // head & main gun
         sb.append("        ");
         if (m.hasMainGun()) {
-            sb.append(renderArmor(m.getArmor(Protomech.LOC_MAINGUN), 1));
+            sb.append(renderArmor(m.getArmor(ProtoMek.LOC_MAINGUN), 1));
         } else {
             sb.append(" ");
         }
-        sb.append(" (").append(renderArmor(m.getArmor(Protomech.LOC_HEAD), 1))
+        sb.append(" (").append(renderArmor(m.getArmor(ProtoMek.LOC_HEAD), 1))
                 .append(")                  ");
         if (m.hasMainGun()) {
-            sb.append(renderArmor(m.getInternal(Protomech.LOC_MAINGUN), 1));
+            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_MAINGUN), 1));
         } else {
             sb.append(" ");
         }
         sb.append(" (");
-        sb.append(renderArmor(m.getInternal(Protomech.LOC_HEAD), 1))
+        sb.append(renderArmor(m.getInternal(ProtoMek.LOC_HEAD), 1))
                 .append(")\n");
         if (m.hasMainGun()) {
             sb.append("         \\/ \\                   \\/ \\\n");
@@ -293,26 +293,26 @@ public abstract class UnitStatusFormatter {
         // arms & torso
         if (!m.isQuad()) {
             sb.append("      (").append(
-                    renderArmor(m.getArmor(Protomech.LOC_LARM), 1));
+                    renderArmor(m.getArmor(ProtoMek.LOC_LARM), 1));
             sb.append(" /")
-                    .append(renderArmor(m.getArmor(Protomech.LOC_TORSO)))
+                    .append(renderArmor(m.getArmor(ProtoMek.LOC_TORSO)))
                     .append(" \\")
-                    .append(renderArmor(m.getArmor(Protomech.LOC_RARM)));
+                    .append(renderArmor(m.getArmor(ProtoMek.LOC_RARM)));
             sb.append(")            (");
-            sb.append(renderArmor(m.getInternal(Protomech.LOC_LARM), 1))
+            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_LARM), 1))
                     .append(" /")
-                    .append(renderArmor(m.getInternal(Protomech.LOC_TORSO)))
+                    .append(renderArmor(m.getInternal(ProtoMek.LOC_TORSO)))
                     .append(" \\");
-            sb.append(renderArmor(m.getInternal(Protomech.LOC_RARM)))
+            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_RARM)))
                     .append(")\n");
         }
 
         // legs
         sb.append("         | | |                  | | |\n");
         sb.append("        ( ").append(
-                renderArmor(m.getArmor(Protomech.LOC_LEG)));
+                renderArmor(m.getArmor(ProtoMek.LOC_LEG)));
         sb.append("  )                ( ");
-        sb.append(renderArmor(m.getInternal(Protomech.LOC_LEG))).append("  )\n\n");
+        sb.append(renderArmor(m.getInternal(ProtoMek.LOC_LEG))).append("  )\n\n");
         return sb.toString();
     }
 

@@ -950,12 +950,12 @@ public class MoveStep implements Serializable {
                         // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
                         // (LAMs and glider protomechs only)
                         if (getClearance() == 0) {
-                            setMp((entity instanceof Protomech) ? 4 : 5);
+                            setMp((entity instanceof ProtoMek) ? 4 : 5);
                         } else {
                             setMp(1);
                         }
                     } else {
-                        if (entity instanceof Protomech) {
+                        if (entity instanceof ProtoMek) {
                             setMp(isJumping() ? 0 : 2);
                         } else {
                             setMp(isJumping() ? 0 : 1);
@@ -975,7 +975,7 @@ public class MoveStep implements Serializable {
                     if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                         setMp(0);
                     } else {
-                        if (entity instanceof Protomech) {
+                        if (entity instanceof ProtoMek) {
                             setMp(isJumping() ? 0 : 2);
                         } else {
                             setMp(isJumping() ? 0 : 1);
@@ -1116,7 +1116,7 @@ public class MoveStep implements Serializable {
                         setElevation(altitude * 10);
                         setAltitude(0);
                     } else {
-                        setMp(entity instanceof Protomech ? 4 : 5);
+                        setMp(entity instanceof ProtoMek ? 4 : 5);
                     }
                 }
                 break;
@@ -2236,7 +2236,7 @@ public class MoveStep implements Serializable {
         if (type == MoveStepType.EVADE) {
             if (entity.hasHipCrit()
                     || (entity.getMovementMode() == EntityMovementMode.WIGE
-                    && (entity instanceof LandAirMech || entity instanceof Protomech)
+                    && (entity instanceof LandAirMech || entity instanceof ProtoMek)
                     && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
@@ -2265,16 +2265,16 @@ public class MoveStep implements Serializable {
                 && (getMpUsed() <= entity.getJumpMPWithTerrain())
                 && !isProne()
                 && !isHullDown()
-                && !((entity instanceof Protomech) && (entity
-                .getInternal(Protomech.LOC_LEG) == IArmorState.ARMOR_DESTROYED))
+                && !((entity instanceof ProtoMek) && (entity
+                .getInternal(ProtoMek.LOC_LEG) == IArmorState.ARMOR_DESTROYED))
                 && (!entity.isStuck() || entity.canUnstickByJumping())) {
             movementType = EntityMovementType.MOVE_JUMP;
         }
 
         // legged Protos may make one facing change
         if (isFirstStep()
-                && (entity instanceof Protomech)
-                && (entity.getInternal(Protomech.LOC_LEG) == IArmorState.ARMOR_DESTROYED)
+                && (entity instanceof ProtoMek)
+                && (entity.getInternal(ProtoMek.LOC_LEG) == IArmorState.ARMOR_DESTROYED)
                 && ((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT))
                 && !entity.isStuck()) {
             movementType = EntityMovementType.MOVE_WALK;
@@ -3012,7 +3012,7 @@ public class MoveStep implements Serializable {
                 && ((Mek) getEntity()).isSuperHeavy();
         final boolean isMechanizedInfantry = isInfantry
                 && ((Infantry) getEntity()).isMechanized();
-        final boolean isProto = getEntity() instanceof Protomech;
+        final boolean isProto = getEntity() instanceof ProtoMek;
         final boolean isMech = getEntity() instanceof Mek;
         final boolean isAmphibious = cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
                 cachedEntityState.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
@@ -3177,7 +3177,7 @@ public class MoveStep implements Serializable {
                         mp++;
                     } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {
                         if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                                && ((entity instanceof Mek) || (entity instanceof Protomech))) {
+                                && ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
                             mp += 2;
                         } else {
                             mp += 3;
@@ -3378,7 +3378,7 @@ public class MoveStep implements Serializable {
             // ProtoMechs that are jumping can't change the level inside a building,
             // they can only jump onto a building or out of it
             if (src.equals(dest) && (srcAlt != destAlt)
-                    && (entity instanceof Protomech)
+                    && (entity instanceof ProtoMek)
                     && (getMovementType(false) == EntityMovementType.MOVE_JUMP)) {
                 return false;
             }

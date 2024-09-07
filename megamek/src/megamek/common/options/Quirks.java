@@ -284,7 +284,7 @@ public class Quirks extends AbstractOptions {
             }
         }
 
-        if (en instanceof Protomech) {
+        if (en instanceof ProtoMek) {
             return quirk.isAnyOf(
                     QUIRK_POS_EASY_MAINTAIN, QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1,
                     QUIRK_POS_GOOD_REP_2, QUIRK_POS_IMP_COM, QUIRK_POS_RUGGED_1,

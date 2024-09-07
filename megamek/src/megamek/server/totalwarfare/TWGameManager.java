@@ -1290,7 +1290,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
                 && (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
-        boolean protosMoved = entityUsed instanceof Protomech;
+        boolean protosMoved = entityUsed instanceof ProtoMek;
         boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean tanksMoved = entityUsed instanceof Tank;
         boolean tanksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
@@ -1351,7 +1351,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 @Override
                 public boolean accept(Entity entity) {
-                    return (entity instanceof Protomech)
+                    return (entity instanceof ProtoMek)
                             && entity.isSelectableThisTurn()
                             && (ownerId == entity.getOwnerId())
                             && (entityId != entity.getId())
@@ -2226,7 +2226,7 @@ public class TWGameManager extends AbstractGameManager {
             Set<Short> movedUnits = new HashSet<>();
             for (Entity e : game.getEntitiesVector()) {
                 // This only effects Protos for the time being
-                if (!(e instanceof Protomech)) {
+                if (!(e instanceof ProtoMek)) {
                     entities.add(e);
                     continue;
                 }
@@ -2262,7 +2262,7 @@ public class TWGameManager extends AbstractGameManager {
         while (team_order.hasMoreElements()) {
             Entity e = (Entity) team_order.nextElement();
             if (e.isSelectableThisTurn()) {
-                if (!protosMoveMulti && (e instanceof Protomech) && (e.getUnitNumber() != Entity.NONE)) {
+                if (!protosMoveMulti && (e instanceof ProtoMek) && (e.getUnitNumber() != Entity.NONE)) {
                     turns.addElement(new UnitNumberTurn(e.getOwnerId(), e.getUnitNumber()));
                 } else {
                     turns.addElement(new SpecificEntityTurn(e.getOwnerId(), e.getId()));
@@ -2340,7 +2340,7 @@ public class TWGameManager extends AbstractGameManager {
 
                     @Override
                     public boolean accept(Entity entity) {
-                        return (entity instanceof Protomech)
+                        return (entity instanceof ProtoMek)
                                 && (ownerId == entity.getOwnerId())
                                 && entity.isSelectableThisTurn();
                     }
@@ -2401,7 +2401,7 @@ public class TWGameManager extends AbstractGameManager {
                     } else {
                         player.incrementOtherTurns();
                     }
-                } else if (entity instanceof Protomech) {
+                } else if (entity instanceof ProtoMek) {
                     if (!protosMoveByPoint) {
                         if (protosMoveEven) {
                             player.incrementEvenTurns();
@@ -4046,7 +4046,7 @@ public class TWGameManager extends AbstractGameManager {
                 while (damage > 0) {
                     int table = ToHitData.HIT_NORMAL;
                     int side = entity.sideTable(nextPos);
-                    if (entity instanceof Protomech) {
+                    if (entity instanceof ProtoMek) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
                     HitData hitData = entity.rollHitLocation(table, side);
@@ -4150,7 +4150,7 @@ public class TWGameManager extends AbstractGameManager {
                             r.addDesc(target);
                             addReport(r);
                             continue;
-                        } else if (target instanceof Protomech) {
+                        } else if (target instanceof ProtoMek) {
                             if (target != Compute.stackingViolation(game, entity, nextPos, null, entity.climbMode())) {
                                 r = new Report(2420);
                                 r.subject = target.getId();
@@ -5066,7 +5066,7 @@ public class TWGameManager extends AbstractGameManager {
                                 hit = victim.rollHitLocation(
                                         ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
                             }
-                            if (victim instanceof Protomech) {
+                            if (victim instanceof ProtoMek) {
                                 hit = victim.rollHitLocation(
                                         ToHitData.HIT_SPECIAL_PROTO, ToHitData.SIDE_FRONT);
                             }
@@ -6731,13 +6731,13 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = te.getId();
                     r.indent(2);
                     vPhaseReport.add(r);
-                } else if (te instanceof Protomech) {
+                } else if (te instanceof ProtoMek) {
                     te.heatFromExternal += missiles;
                     while (te.heatFromExternal >= 3) {
                         te.heatFromExternal -= 3;
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        if (hit.getLocation() == Protomech.LOC_NMISS) {
-                            Protomech proto = (Protomech) te;
+                        if (hit.getLocation() == ProtoMek.LOC_NMISS) {
+                            ProtoMek proto = (ProtoMek) te;
                             r = new Report(6035);
                             r.subject = te.getId();
                             r.indent(2);
@@ -6755,12 +6755,12 @@ public class TWGameManager extends AbstractGameManager {
                             te.destroyLocation(hit.getLocation());
                             // Handle ProtoMech pilot damage
                             // due to location destruction
-                            int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
-                                    - ((Protomech) te).getPilotDamageTaken(hit.getLocation());
+                            int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
+                                    - ((ProtoMek) te).getPilotDamageTaken(hit.getLocation());
                             if (hits > 0) {
                                 vPhaseReport.addAll(damageCrew(te, hits));
-                                ((Protomech) te).setPilotDamageTaken(hit.getLocation(),
-                                        Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
+                                ((ProtoMek) te).setPilotDamageTaken(hit.getLocation(),
+                                        ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                             if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
                                 vPhaseReport.addAll(destroyEntity(te,
@@ -8628,7 +8628,7 @@ public class TWGameManager extends AbstractGameManager {
         // Falling into water instantly destroys most non-mechs
         else if ((waterDepth > 0)
                 && !(entity instanceof Mek)
-                && !(entity instanceof Protomech)
+                && !(entity instanceof ProtoMek)
                 && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
@@ -11940,7 +11940,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             addReport(damageEntity(te, hit, damage, false, DamageType.NONE,
                     false, false, throughFront));
-            if (((Protomech) ae).isEDPCharged()) {
+            if (((ProtoMek) ae).isEDPCharged()) {
                 r = new Report(3701);
                 Roll diceRoll2 = Compute.rollD6(2);
                 int rollValue2 = diceRoll2.getIntValue() - 2;
@@ -11990,7 +11990,7 @@ public class TWGameManager extends AbstractGameManager {
                             te.setTaserInterference(2, 3, true);
                         }
                     }
-                } else if ((te instanceof Protomech) || (te instanceof Tank)
+                } else if ((te instanceof ProtoMek) || (te instanceof Tank)
                         || (te instanceof Aero)) {
                     if (rollValue2 >= 8) {
                         r = new Report(3705);
@@ -12753,7 +12753,7 @@ public class TWGameManager extends AbstractGameManager {
         // have some structure left, so if the whip hits and destroys a
         // location in the same attack no special effects take place.
         if (caa.getClub().getType().hasSubType(MiscType.S_CHAIN_WHIP)
-                && ((te instanceof Mek) || (te instanceof Protomech))) {
+                && ((te instanceof Mek) || (te instanceof ProtoMek))) {
             addNewLines();
 
             int loc = hit.getLocation();
@@ -12772,9 +12772,9 @@ public class TWGameManager extends AbstractGameManager {
                     && !te.hasActiveShield(loc)
                     && !te.hasPassiveShield(loc)
                     && !te.hasNoDefenseShield(loc))
-                    || ((te instanceof Protomech)
-                    && ((loc == Protomech.LOC_LARM) || (loc == Protomech.LOC_RARM)
-                    || (loc == Protomech.LOC_LEG))
+                    || ((te instanceof ProtoMek)
+                    && ((loc == ProtoMek.LOC_LARM) || (loc == ProtoMek.LOC_RARM)
+                    || (loc == ProtoMek.LOC_LEG))
                     // Only check location status after confirming we did
                     // hit a limb -- Protos have no actual near-miss
                     // "location" and will throw an exception if it's
@@ -15827,11 +15827,11 @@ public class TWGameManager extends AbstractGameManager {
                 // roll a critical hit
                 Report.addNewline(vPhaseReport);
                 addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus, 0, true));
-            } else if (entity instanceof Protomech) {
+            } else if (entity instanceof ProtoMek) {
                 // this code is taken from inferno hits
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                if (hit.getLocation() == Protomech.LOC_NMISS) {
-                    Protomech proto = (Protomech) entity;
+                if (hit.getLocation() == ProtoMek.LOC_NMISS) {
+                    ProtoMek proto = (ProtoMek) entity;
                     r = new Report(6035);
                     r.subject = entity.getId();
                     r.indent(2);
@@ -15848,12 +15848,12 @@ public class TWGameManager extends AbstractGameManager {
                     addReport(r);
                     entity.destroyLocation(hit.getLocation());
                     // Handle ProtoMech pilot damage due to location destruction
-                    int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
-                            - ((Protomech) entity).getPilotDamageTaken(hit.getLocation());
+                    int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
+                            - ((ProtoMek) entity).getPilotDamageTaken(hit.getLocation());
                     if (hits > 0) {
                         addReport(damageCrew(entity, hits));
-                        ((Protomech) entity).setPilotDamageTaken(hit.getLocation(),
-                                Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
+                        ((ProtoMek) entity).setPilotDamageTaken(hit.getLocation(),
+                                ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                     }
                     if (entity.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
                         addReport(destroyEntity(entity, "flaming death", false, true));
@@ -16545,9 +16545,9 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Glider ProtoMechs without sufficient movement to stay airborne make forced landings.
-        if ((entity instanceof Protomech) && ((Protomech) entity).isGlider()
+        if ((entity instanceof ProtoMek) && ((ProtoMek) entity).isGlider()
                 && entity.isAirborneVTOLorWIGE() && (entity.getRunMP() < 4)) {
-            vPhaseReport.addAll(landGliderPM((Protomech) entity, entity.getPosition(), entity.getElevation(),
+            vPhaseReport.addAll(landGliderPM((ProtoMek) entity, entity.getPosition(), entity.getElevation(),
                     entity.delta_distance));
         }
 
@@ -17264,8 +17264,8 @@ public class TWGameManager extends AbstractGameManager {
         if (en.isAirborneVTOLorWIGE() && !en.getCrew().isActive()) {
             if (en instanceof LandAirMech) {
                 crashAirMech(en, en.getBasePilotingRoll(), vDesc);
-            } else if (en instanceof Protomech) {
-                vDesc.addAll(landGliderPM((Protomech) en));
+            } else if (en instanceof ProtoMek) {
+                vDesc.addAll(landGliderPM((ProtoMek) en));
             }
         }
         return vDesc;
@@ -17405,7 +17405,7 @@ public class TWGameManager extends AbstractGameManager {
             // only unconscious pilots of mechs and protos, ASF and Small Craft
             // and MekWarriors can roll to wake up
             if (e.isTargetable()
-                    && ((e instanceof Mek) || (e instanceof Protomech)
+                    && ((e instanceof Mek) || (e instanceof ProtoMek)
                     || (e instanceof MekWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
                 for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
                     if (e.getCrew().isMissing(pos)) {
@@ -17855,7 +17855,7 @@ public class TWGameManager extends AbstractGameManager {
         int critBonus = 0;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL)
                 && (damage_orig > 0)
-                && ((te instanceof Mek) || (te instanceof Protomech))) {
+                && ((te instanceof Mek) || (te instanceof ProtoMek))) {
             critBonus = Math.min((damage_orig - 1) / 5, 4);
         }
 
@@ -17876,8 +17876,8 @@ public class TWGameManager extends AbstractGameManager {
         HitData nextHit = null;
 
         // Some "hits" on a ProtoMech are actually misses.
-        if ((te instanceof Protomech) && (hit.getLocation() == Protomech.LOC_NMISS)) {
-            Protomech proto = (Protomech) te;
+        if ((te instanceof ProtoMek) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
+            ProtoMek proto = (ProtoMek) te;
             r = new Report(6035);
             r.subject = te.getId();
             r.indent(2);
@@ -18062,7 +18062,7 @@ public class TWGameManager extends AbstractGameManager {
         // save EI status, in case sensors crit destroys it
         final boolean eiStatus = te.hasActiveEiCockpit();
         // BA using EI implants receive +1 damage from attacks
-        if (!(te instanceof Mek) && !(te instanceof Protomech) && eiStatus) {
+        if (!(te instanceof Mek) && !(te instanceof ProtoMek) && eiStatus) {
             damage += 1;
         }
 
@@ -18997,13 +18997,13 @@ public class TWGameManager extends AbstractGameManager {
 
                         // Handle ProtoMech pilot damage
                         // due to location destruction
-                        if (te instanceof Protomech) {
-                            int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
-                                    - ((Protomech) te).getPilotDamageTaken(hit.getLocation());
+                        if (te instanceof ProtoMek) {
+                            int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
+                                    - ((ProtoMek) te).getPilotDamageTaken(hit.getLocation());
                             if (hits > 0) {
                                 vDesc.addAll(damageCrew(te, hits));
-                                ((Protomech) te).setPilotDamageTaken(hit.getLocation(),
-                                        Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
+                                ((ProtoMek) te).setPilotDamageTaken(hit.getLocation(),
+                                        ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                         }
 
@@ -19421,7 +19421,7 @@ public class TWGameManager extends AbstractGameManager {
         // Mechs using EI implants take pilot damage each time a hit
         // inflicts IS damage
         if (tookInternalDamage
-                && ((te instanceof Mek) || (te instanceof Protomech))
+                && ((te instanceof Mek) || (te instanceof ProtoMek))
                 && te.hasActiveEiCockpit()) {
             Report.addNewline(vDesc);
             Roll diceRoll = Compute.rollD6(2);
@@ -20022,7 +20022,7 @@ public class TWGameManager extends AbstractGameManager {
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
                     int table = ToHitData.HIT_NORMAL;
-                    if (e instanceof Protomech) {
+                    if (e instanceof ProtoMek) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
                     HitData hit = e.rollHitLocation(table, ToHitData.SIDE_FRONT);
@@ -20461,7 +20461,7 @@ public class TWGameManager extends AbstractGameManager {
                 // ...and a Crew Killed hit.
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
                         Tank.CRIT_CREW_KILLED), false, 0, false));
-            } else if ((entity instanceof Mek) || (entity instanceof Protomech)) {
+            } else if ((entity instanceof Mek) || (entity instanceof ProtoMek)) {
                 // 'Meks suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
@@ -20499,7 +20499,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Plus a Crew Stunned critical.
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
                         Tank.CRIT_CREW_STUNNED), false, 0, false));
-            } else if ((entity instanceof Mek) || (entity instanceof Protomech)) {
+            } else if ((entity instanceof Mek) || (entity instanceof ProtoMek)) {
                 // 'Meks suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
@@ -20565,8 +20565,8 @@ public class TWGameManager extends AbstractGameManager {
         } else if (CriticalSlot.TYPE_SYSTEM == cs.getType()) {
             // Handle critical hits on system slots.
             cs.setHit(true);
-            if (en instanceof Protomech) {
-                vDesc.addAll(applyProtomechCritical((Protomech) en, loc, cs, secondaryEffects, damageCaused, isCapital));
+            if (en instanceof ProtoMek) {
+                vDesc.addAll(applyProtomechCritical((ProtoMek) en, loc, cs, secondaryEffects, damageCaused, isCapital));
             } else {
                 vDesc.addAll(applyMechSystemCritical(en, loc, cs));
             }
@@ -20864,26 +20864,26 @@ public class TWGameManager extends AbstractGameManager {
      * @param damageCaused     the amount of damage causing this critical.
      * @param isCapital        whether it was capital scale damage that caused critical
      */
-    private Vector<Report> applyProtomechCritical(Protomech pm, int loc, CriticalSlot cs,
+    private Vector<Report> applyProtomechCritical(ProtoMek pm, int loc, CriticalSlot cs,
                                                   boolean secondaryEffects, int damageCaused,
                                                   boolean isCapital) {
         Vector<Report> reports = new Vector<>();
         Report r;
         int numHit = pm.getCritsHit(loc);
-        if ((cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_A)
-                && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_B)
-                && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_C)
-                && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_D)
-                && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_E)
-                && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_F)) {
+        if ((cs.getIndex() != ProtoMek.SYSTEM_TORSO_WEAPON_A)
+                && (cs.getIndex() != ProtoMek.SYSTEM_TORSO_WEAPON_B)
+                && (cs.getIndex() != ProtoMek.SYSTEM_TORSO_WEAPON_C)
+                && (cs.getIndex() != ProtoMek.SYSTEM_TORSO_WEAPON_D)
+                && (cs.getIndex() != ProtoMek.SYSTEM_TORSO_WEAPON_E)
+                && (cs.getIndex() != ProtoMek.SYSTEM_TORSO_WEAPON_F)) {
             r = new Report(6225);
             r.subject = pm.getId();
             r.indent(3);
-            r.add(Protomech.systemNames[cs.getIndex()]);
+            r.add(ProtoMek.systemNames[cs.getIndex()]);
             reports.addElement(r);
         }
         switch (cs.getIndex()) {
-            case Protomech.SYSTEM_HEADCRIT:
+            case ProtoMek.SYSTEM_HEADCRIT:
                 if (2 == numHit) {
                     r = new Report(6230);
                     r.subject = pm.getId();
@@ -20891,7 +20891,7 @@ public class TWGameManager extends AbstractGameManager {
                     pm.destroyLocation(loc);
                 }
                 break;
-            case Protomech.SYSTEM_ARMCRIT:
+            case ProtoMek.SYSTEM_ARMCRIT:
                 if (2 == numHit) {
                     r = new Report(6235);
                     r.subject = pm.getId();
@@ -20899,7 +20899,7 @@ public class TWGameManager extends AbstractGameManager {
                     pm.destroyLocation(loc);
                 }
                 break;
-            case Protomech.SYSTEM_LEGCRIT:
+            case ProtoMek.SYSTEM_LEGCRIT:
                 if (3 == numHit) {
                     r = new Report(6240);
                     r.subject = pm.getId();
@@ -20908,7 +20908,7 @@ public class TWGameManager extends AbstractGameManager {
                     pm.destroyLocation(loc);
                 }
                 break;
-            case Protomech.SYSTEM_TORSOCRIT:
+            case ProtoMek.SYSTEM_TORSOCRIT:
                 if (3 == numHit) {
                     reports.addAll(destroyEntity(pm, "torso destruction"));
                 }
@@ -20922,7 +20922,7 @@ public class TWGameManager extends AbstractGameManager {
                         case 1:
                             if (pm.isQuad()) {
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                        Protomech.SYSTEM_TORSO_WEAPON_A);
+                                        ProtoMek.SYSTEM_TORSO_WEAPON_A);
                                 reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                         secondaryEffects, damageCaused, isCapital));
                                 break;
@@ -20930,20 +20930,20 @@ public class TWGameManager extends AbstractGameManager {
                         case 2:
                             if (pm.isQuad()) {
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                        Protomech.SYSTEM_TORSO_WEAPON_B);
+                                        ProtoMek.SYSTEM_TORSO_WEAPON_B);
                                 reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                         secondaryEffects, damageCaused, isCapital));
                                 break;
                             }
                             newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                    Protomech.SYSTEM_TORSO_WEAPON_A);
+                                    ProtoMek.SYSTEM_TORSO_WEAPON_A);
                             reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                     secondaryEffects, damageCaused, isCapital));
                             break;
                         case 3:
                             if (pm.isQuad()) {
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                        Protomech.SYSTEM_TORSO_WEAPON_C);
+                                        ProtoMek.SYSTEM_TORSO_WEAPON_C);
                                 reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                         secondaryEffects, damageCaused, isCapital));
                                 break;
@@ -20951,13 +20951,13 @@ public class TWGameManager extends AbstractGameManager {
                         case 4:
                             if (pm.isQuad()) {
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                        Protomech.SYSTEM_TORSO_WEAPON_D);
+                                        ProtoMek.SYSTEM_TORSO_WEAPON_D);
                                 reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                         secondaryEffects, damageCaused, isCapital));
                                 break;
                             }
                             newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                    Protomech.SYSTEM_TORSO_WEAPON_B);
+                                    ProtoMek.SYSTEM_TORSO_WEAPON_B);
                             reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                     secondaryEffects, damageCaused, isCapital));
                             break;
@@ -20965,14 +20965,14 @@ public class TWGameManager extends AbstractGameManager {
                             if (pm.getWeight() > 9) {
                                 if (pm.isQuad()) {
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                            Protomech.SYSTEM_TORSO_WEAPON_E);
+                                            ProtoMek.SYSTEM_TORSO_WEAPON_E);
                                     reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                             secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                                 newSlot = new CriticalSlot(
                                         CriticalSlot.TYPE_SYSTEM,
-                                        Protomech.SYSTEM_TORSO_WEAPON_C);
+                                        ProtoMek.SYSTEM_TORSO_WEAPON_C);
                                 reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                         secondaryEffects, damageCaused, isCapital));
                                 break;
@@ -20981,13 +20981,13 @@ public class TWGameManager extends AbstractGameManager {
                             if (pm.getWeight() > 9) {
                                 if (pm.isQuad()) {
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                            Protomech.SYSTEM_TORSO_WEAPON_F);
+                                            ProtoMek.SYSTEM_TORSO_WEAPON_F);
                                     reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                             secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                        Protomech.SYSTEM_TORSO_WEAPON_C);
+                                        ProtoMek.SYSTEM_TORSO_WEAPON_C);
                                 reports.addAll(applyCriticalHit(pm, Entity.NONE, newSlot,
                                         secondaryEffects, damageCaused, isCapital));
                                 break;
@@ -21004,7 +21004,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 break;
-            case Protomech.SYSTEM_TORSO_WEAPON_A:
+            case ProtoMek.SYSTEM_TORSO_WEAPON_A:
                 Mounted weaponA = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponA) {
                     weaponA.setHit(true);
@@ -21014,7 +21014,7 @@ public class TWGameManager extends AbstractGameManager {
                     reports.addElement(r);
                 }
                 break;
-            case Protomech.SYSTEM_TORSO_WEAPON_B:
+            case ProtoMek.SYSTEM_TORSO_WEAPON_B:
                 Mounted weaponB = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponB) {
                     weaponB.setHit(true);
@@ -21024,7 +21024,7 @@ public class TWGameManager extends AbstractGameManager {
                     reports.addElement(r);
                 }
                 break;
-            case Protomech.SYSTEM_TORSO_WEAPON_C:
+            case ProtoMek.SYSTEM_TORSO_WEAPON_C:
                 Mounted weaponC = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponC) {
                     weaponC.setHit(true);
@@ -21034,7 +21034,7 @@ public class TWGameManager extends AbstractGameManager {
                     reports.addElement(r);
                 }
                 break;
-            case Protomech.SYSTEM_TORSO_WEAPON_D:
+            case ProtoMek.SYSTEM_TORSO_WEAPON_D:
                 Mounted weaponD = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponD) {
                     weaponD.setHit(true);
@@ -21044,7 +21044,7 @@ public class TWGameManager extends AbstractGameManager {
                     reports.addElement(r);
                 }
                 break;
-            case Protomech.SYSTEM_TORSO_WEAPON_E:
+            case ProtoMek.SYSTEM_TORSO_WEAPON_E:
                 Mounted weaponE = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponE) {
                     weaponE.setHit(true);
@@ -21054,7 +21054,7 @@ public class TWGameManager extends AbstractGameManager {
                     reports.addElement(r);
                 }
                 break;
-            case Protomech.SYSTEM_TORSO_WEAPON_F:
+            case ProtoMek.SYSTEM_TORSO_WEAPON_F:
                 Mounted weaponF = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponF) {
                     weaponF.setHit(true);
@@ -21070,7 +21070,7 @@ public class TWGameManager extends AbstractGameManager {
         if (pm.shaded(loc, numHit)) {
             // Destroyed ProtoMech sections have
             // already damaged the pilot.
-            int pHits = Protomech.POSSIBLE_PILOT_DAMAGE[loc]
+            int pHits = ProtoMek.POSSIBLE_PILOT_DAMAGE[loc]
                     - pm.getPilotDamageTaken(loc);
             if (Math.min(1, pHits) > 0) {
                 Report.addNewline(reports);
@@ -22337,7 +22337,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param en    the landing glider ProtoMech
      */
-    private Vector<Report> landGliderPM(Protomech en) {
+    private Vector<Report> landGliderPM(ProtoMek en) {
         return landGliderPM(en, en.getPosition(), en.getElevation(), en.delta_distance);
     }
 
@@ -22351,7 +22351,7 @@ public class TWGameManager extends AbstractGameManager {
      *                          if the unit is forced to land due to insufficient movement
      * @param distance  the distance the unit moved in the turn prior to landing
      */
-    Vector<Report> landGliderPM(Protomech en, Coords pos, int startElevation,
+    Vector<Report> landGliderPM(ProtoMek en, Coords pos, int startElevation,
                                 int distance) {
         Vector<Report> vDesc = new Vector<>();
 
@@ -22365,10 +22365,10 @@ public class TWGameManager extends AbstractGameManager {
         PilotingRollData psr = en.checkGliderLanding();
         if ((psr.getValue() != TargetRoll.CHECK_FALSE)
                 && (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false))) {
-            for (int i = 0; i < en.getNumberOfCriticals(Protomech.LOC_LEG); i++) {
-                en.getCritical(Protomech.LOC_LEG, i).setHit(true);
+            for (int i = 0; i < en.getNumberOfCriticals(ProtoMek.LOC_LEG); i++) {
+                en.getCritical(ProtoMek.LOC_LEG, i).setHit(true);
             }
-            HitData hit = new HitData(Protomech.LOC_LEG);
+            HitData hit = new HitData(ProtoMek.LOC_LEG);
             vDesc.addAll(damageEntity(en, hit, 2 * startElevation));
         }
         return vDesc;
@@ -23040,7 +23040,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = en.getId();
                 vDesc.addElement(r);
             } else if ((!advancedCrit && (roll >= 12)) || (advancedCrit && (roll >= 15))) {
-                if (en instanceof Protomech) {
+                if (en instanceof ProtoMek) {
                     hits = 3;
                     r = new Report(6325);
                     r.subject = en.getId();
@@ -23843,7 +23843,7 @@ public class TWGameManager extends AbstractGameManager {
         Hex entityHex = game.getBoard().getHex(curPos);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
                 && (entityHex != null) && game.getBoard().onGround()
-                && !((entity instanceof Infantry) || (entity instanceof Protomech))) {
+                && !((entity instanceof Infantry) || (entity instanceof ProtoMek))) {
             // large support vees will create ultra rough, otherwise rough
             if (entity instanceof LargeSupportTank) {
                 if (entityHex.terrainLevel(Terrains.ROUGH) < 2) {
@@ -24345,13 +24345,13 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        if (entity instanceof Protomech) {
+        if (entity instanceof ProtoMek) {
             damageTable = ToHitData.HIT_SPECIAL_PROTO;
         }
         // Falling into water instantly destroys most non-mechs
         if ((waterDepth > 0)
                 && !(entity instanceof Mek)
-                && !(entity instanceof Protomech)
+                && !(entity instanceof ProtoMek)
                 && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
@@ -25745,14 +25745,14 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // If we're adding a ProtoMech, calculate it's unit number.
-            if (entity instanceof Protomech) {
+            if (entity instanceof ProtoMek) {
                 // How many ProtoMechs does the player already have?
                 int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
                     private final int ownerId = entity.getOwnerId();
 
                     @Override
                     public boolean accept(Entity entity) {
-                        return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
+                        return (entity instanceof ProtoMek) && (ownerId == entity.getOwnerId());
                     }
                 });
 
@@ -26361,7 +26361,7 @@ public class TWGameManager extends AbstractGameManager {
                 affectedForces.addAll(game.getForces().removeEntityFromForces(entity));
 
                 // If we're deleting a ProtoMech, recalculate unit numbers.
-                if (entity instanceof Protomech) {
+                if (entity instanceof ProtoMek) {
 
                     // How many ProtoMechs does the player have (include this one)?
                     int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
@@ -26369,7 +26369,7 @@ public class TWGameManager extends AbstractGameManager {
 
                         @Override
                         public boolean accept(Entity entity) {
-                            return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
+                            return (entity instanceof ProtoMek) && (ownerId == entity.getOwnerId());
                         }
                     });
 
@@ -26393,7 +26393,7 @@ public class TWGameManager extends AbstractGameManager {
 
                                     @Override
                                     public boolean accept(Entity entity) {
-                                        return (entity instanceof Protomech)
+                                        return (entity instanceof ProtoMek)
                                                 && (ownerId == entity.getOwnerId())
                                                 && (lastUnitNum == entity.getUnitNumber());
                                     }
@@ -27114,7 +27114,7 @@ public class TWGameManager extends AbstractGameManager {
                           EntityMovementType overallMoveType, boolean entering) {
         Report r;
 
-        if (entity instanceof Protomech) {
+        if (entity instanceof ProtoMek) {
             Vector<Report> vBuildingReport = damageBuilding(bldg, 1, curPos);
             for (Report report : vBuildingReport) {
                 report.subject = entity.getId();
@@ -27733,7 +27733,7 @@ public class TWGameManager extends AbstractGameManager {
                 while (remaining > 0) {
                     int next = Math.min(cluster, remaining);
                     int table;
-                    if (entity instanceof Protomech) {
+                    if (entity instanceof ProtoMek) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     } else if (entity.getElevation() == numFloors) {
                         table = ToHitData.HIT_NORMAL;
@@ -30161,7 +30161,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(processCrash(entity, 0, entity.getPosition()));
             return;
         }
-        if ((entity instanceof Protomech) || (entity instanceof BattleArmor)) {
+        if ((entity instanceof ProtoMek) || (entity instanceof BattleArmor)) {
             psr = new PilotingRollData(entity.getId(), 5, "landing assault drop");
         } else if (entity instanceof Infantry) {
             psr = new PilotingRollData(entity.getId(), 4, "landing assault drop");

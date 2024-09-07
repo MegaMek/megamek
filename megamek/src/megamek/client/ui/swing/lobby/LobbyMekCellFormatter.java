@@ -92,7 +92,7 @@ class LobbyMekCellFormatter {
             result.append(DOT_SPACER);
             if (entity instanceof Infantry) {
                 result.append(Messages.getString("ChatLounge.0"));
-            } else if (entity instanceof Protomech) {
+            } else if (entity instanceof ProtoMek) {
                 result.append(Messages.getString("ChatLounge.1"));
             } else if (entity instanceof GunEmplacement) {
                 result.append(Messages.getString("ChatLounge.2"));
@@ -507,7 +507,7 @@ class LobbyMekCellFormatter {
             String uType = "";
             if (entity instanceof Infantry) {
                 uType = Messages.getString("ChatLounge.0");
-            } else if (entity instanceof Protomech) {
+            } else if (entity instanceof ProtoMek) {
                 uType = Messages.getString("ChatLounge.1");
             } else if (entity instanceof GunEmplacement) {
                 uType = Messages.getString("ChatLounge.2");

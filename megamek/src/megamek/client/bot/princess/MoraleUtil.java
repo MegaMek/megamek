@@ -244,7 +244,7 @@ public class MoraleUtil {
         final float veteranThreshold = 2.5f;
 
         float skillAverage;
-        if ((unit instanceof Infantry) || (unit instanceof Protomech)) {
+        if ((unit instanceof Infantry) || (unit instanceof ProtoMek)) {
             skillAverage = unit.getCrew().getGunnery();
         } else {
             skillAverage = (unit.getCrew().getGunnery() + unit.getCrew().getPiloting()) / 2f;

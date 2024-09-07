@@ -35,7 +35,7 @@ import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mek;
-import megamek.common.Protomech;
+import megamek.common.ProtoMek;
 import megamek.common.QuadMech;
 import megamek.common.SmallCraft;
 import megamek.common.SuperHeavyTank;
@@ -217,7 +217,7 @@ class ArmorPanel extends PicMap {
             minTopMargin = minInfTopMargin;
             minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-        } else if (en instanceof Protomech) {
+        } else if (en instanceof ProtoMek) {
             ams = proto;
             minLeftMargin = minTankLeftMargin;
             minTopMargin = minTankTopMargin;

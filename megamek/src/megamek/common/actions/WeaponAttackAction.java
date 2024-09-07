@@ -1207,7 +1207,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // if those options are checked.
         if (isInferno && (((te instanceof Tank)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))
-                || ((te instanceof Protomech)
+                || ((te instanceof ProtoMek)
                         && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
             return Messages.getString("WeaponAttackAction.CantShootWithInferno");
         }
@@ -1548,7 +1548,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Protomechs can't fire energy weapons while charging EDP armor
-        if ((ae instanceof Protomech) && ((Protomech) ae).isEDPCharging()
+        if ((ae instanceof ProtoMek) && ((ProtoMek) ae).isEDPCharging()
                 && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
             return Messages.getString("WeaponAttackAction.ChargingEDP");
         }
@@ -2465,7 +2465,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Protomech can fire MGA only into front arc, TW page 137
             if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)
-                    && wtype.hasFlag(WeaponType.F_MGA) && (ae instanceof Protomech)) {
+                    && wtype.hasFlag(WeaponType.F_MGA) && (ae instanceof ProtoMek)) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
             }
 
@@ -2530,18 +2530,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // Protomechs cannot fire arm weapons and main gun in the same turn
-            if ((ae instanceof Protomech)
-                    && ((weapon.getLocation() == Protomech.LOC_MAINGUN)
-                    || (weapon.getLocation() == Protomech.LOC_RARM)
-                    || (weapon.getLocation() == Protomech.LOC_LARM))) {
-                final boolean firingMainGun = weapon.getLocation() == Protomech.LOC_MAINGUN;
+            if ((ae instanceof ProtoMek)
+                    && ((weapon.getLocation() == ProtoMek.LOC_MAINGUN)
+                    || (weapon.getLocation() == ProtoMek.LOC_RARM)
+                    || (weapon.getLocation() == ProtoMek.LOC_LARM))) {
+                final boolean firingMainGun = weapon.getLocation() == ProtoMek.LOC_MAINGUN;
                 for (EntityAction ea : game.getActionsVector()) {
                     if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
                         WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
                         final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
-                        if ((firingMainGun && ((otherWeapon.getLocation() == Protomech.LOC_RARM)
-                                || (otherWeapon.getLocation() == Protomech.LOC_LARM)))
-                                || !firingMainGun && (otherWeapon.getLocation() == Protomech.LOC_MAINGUN)) {
+                        if ((firingMainGun && ((otherWeapon.getLocation() == ProtoMek.LOC_RARM)
+                                || (otherWeapon.getLocation() == ProtoMek.LOC_LARM)))
+                                || !firingMainGun && (otherWeapon.getLocation() == ProtoMek.LOC_MAINGUN)) {
                             return Messages.getString("WeaponAttackAction.CantFireArmsAndMainGun");
                         }
                     }

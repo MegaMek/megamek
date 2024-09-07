@@ -2918,7 +2918,7 @@ public class FireControl {
                 // Battle Armor, Tanks and Protos, oh my!
                 if ((targetEntity instanceof BattleArmor)
                     || (targetEntity instanceof Tank)
-                    || (targetEntity instanceof Protomech)) {
+                    || (targetEntity instanceof ProtoMek)) {
                     if (debug) {
                         msg.append("\n\tTarget is BA/Proto/Tank... ");
                     }

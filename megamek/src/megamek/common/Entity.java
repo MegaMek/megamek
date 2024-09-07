@@ -2283,7 +2283,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 break;
             case BIPED:
             case QUAD:
-                if (this instanceof Protomech) {
+                if (this instanceof ProtoMek) {
                     minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
                 } else {
                     return false;
@@ -2345,7 +2345,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         return false;
                     }
                     maxAlt = hex.getLevel() + 25;
-                } else if (this instanceof Protomech) {
+                } else if (this instanceof ProtoMek) {
                     maxAlt = hex.getLevel() + 12;
                 } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                     maxAlt = Math.max(hex.getLevel(), hex.terrainLevel(Terrains.BLDG_ELEV)) + 1;
@@ -2355,7 +2355,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 break;
             case BIPED:
             case QUAD:
-                if (this instanceof Protomech) {
+                if (this instanceof ProtoMek) {
                     maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                 } else {
                     return false;
@@ -2433,7 +2433,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER)
                     && (assumedAlt < hex.getLevel()) && !(this instanceof Mek)
-                    && !(this instanceof Protomech)) {
+                    && !(this instanceof ProtoMek)) {
                 return false;
             }
             // can move on the ground unless its underwater
@@ -2454,7 +2454,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
                 // Meks, protos and infantry can occupy any floor in the
                 // building
-                if ((this instanceof Mek) || (this instanceof Protomech)
+                if ((this instanceof Mek) || (this instanceof ProtoMek)
                         || (this instanceof Infantry)) {
                     return (assumedAlt >= (hex.getLevel() - hex.depth(true))) && (assumedAlt <= hex.ceiling());
                 }
@@ -8003,7 +8003,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if ((waterLevel > 1) && hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                && ((this instanceof Mek) || (this instanceof Protomech))) {
+                && ((this instanceof Mek) || (this instanceof ProtoMek))) {
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
         if (waterLevel > 0) {
@@ -8051,7 +8051,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep,
                                        Coords curPos, Coords prevPos) {
         if ((prevPos == null)
-                || (prevPos.equals(curPos) && !(this instanceof Protomech))) {
+                || (prevPos.equals(curPos) && !(this instanceof ProtoMek))) {
             return 0;
         }
         Hex curHex = game.getBoard().getHex(curPos);
@@ -8066,7 +8066,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return 0;
         }
 
-        if ((this instanceof Protomech) && (prevStep != null)
+        if ((this instanceof ProtoMek) && (prevStep != null)
                 && (prevStep.getMovementType(false) == EntityMovementType.MOVE_JUMP)) {
             return 0;
         }
@@ -8123,7 +8123,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             rv = 8;
         }
 
-        if ((this instanceof Infantry) || (this instanceof Protomech)) {
+        if ((this instanceof Infantry) || (this instanceof ProtoMek)) {
             if ((rv != 2) && (rv != 8) && (rv != 10)) {
                 rv = 0;
             }
@@ -10238,7 +10238,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // only Meks and protos have physical attacks (except tank charges)
-        if (!((this instanceof Mek) || (this instanceof Protomech) || (this instanceof Infantry))) {
+        if (!((this instanceof Mek) || (this instanceof ProtoMek) || (this instanceof Infantry))) {
             return false;
         }
 
@@ -11745,7 +11745,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 || (overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)
                 && !(this instanceof Infantry)
-                && !(this instanceof Protomech)) {
+                && !(this instanceof ProtoMek)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
             if (isUsingManAce()) {
                 roll.addModifier(-1, "Maneuvering Ace");

@@ -175,7 +175,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         } else if (entityTarget instanceof BattleArmor) {
             interferenceTarget = 6;
             shutdownTarget = 8;
-        } else if (entityTarget instanceof Protomech) {
+        } else if (entityTarget instanceof ProtoMek) {
             interferenceTarget = 6;
             shutdownTarget = 9;
         } else if (entityTarget instanceof ConvFighter) {

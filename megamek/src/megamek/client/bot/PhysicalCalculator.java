@@ -715,22 +715,22 @@ public final class PhysicalCalculator {
             }
         }
         // If the target is a ProtoMech
-        if (target instanceof Protomech) {
+        if (target instanceof ProtoMek) {
             max_index = 6;
             // Create vector of body locations with targets current armor values
             // Create two high-armor dummy locations to represent the 'near
             // miss' hit locations
-            armor_values[0] = target.getArmor(Protomech.LOC_TORSO, false);
-            armor_values[1] = target.getArmor(Protomech.LOC_LEG, false);
-            armor_values[2] = target.getArmor(Protomech.LOC_RARM, false);
-            armor_values[3] = target.getArmor(Protomech.LOC_LARM, false);
-            armor_values[4] = target.getArmor(Protomech.LOC_HEAD, false);
+            armor_values[0] = target.getArmor(ProtoMek.LOC_TORSO, false);
+            armor_values[1] = target.getArmor(ProtoMek.LOC_LEG, false);
+            armor_values[2] = target.getArmor(ProtoMek.LOC_RARM, false);
+            armor_values[3] = target.getArmor(ProtoMek.LOC_LARM, false);
+            armor_values[4] = target.getArmor(ProtoMek.LOC_HEAD, false);
             armor_values[5] = 100;
             armor_values[6] = 100;
-            if (((Protomech) target).hasMainGun()) {
+            if (((ProtoMek) target).hasMainGun()) {
                 max_index++;
                 armor_values[max_index] = target.getArmor(
-                        Protomech.LOC_MAINGUN, false);
+                        ProtoMek.LOC_MAINGUN, false);
             }
         }
         // If the target is a vehicle

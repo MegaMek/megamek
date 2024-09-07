@@ -69,7 +69,7 @@ public class TROView {
         if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
             view = new MechTROView((Mek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            view = new ProtomechTROView((Protomech) entity);
+            view = new ProtomechTROView((ProtoMek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
                 || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
             view = new SupportVeeTROView((Tank) entity);

@@ -1033,7 +1033,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(STRAT_BASERECT);
 
             // Set a thin brush for filled areas (leave a thick brush for line symbols
-            if ((entity instanceof Mek) || (entity instanceof Protomech)
+            if ((entity instanceof Mek) || (entity instanceof ProtoMek)
                     || (entity instanceof VTOL) || (entity.isAero())) {
                 g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             } else {
@@ -1046,9 +1046,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
             // Add the weight class or other lettering for certain units
             g.setColor(fontColor);
-            if ((entity instanceof Protomech) || (entity instanceof Mek) || (entity instanceof Aero)) {
+            if ((entity instanceof ProtoMek) || (entity instanceof Mek) || (entity instanceof Aero)) {
                 String s = "";
-                if (entity instanceof Protomech) {
+                if (entity instanceof ProtoMek) {
                     s = "P";
                 } else if ((entity instanceof Mek) && ((Mek) entity).isIndustrial()) {
                     s = "I";

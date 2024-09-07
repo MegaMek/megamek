@@ -395,7 +395,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // if we used ProtoMech myomer booster, roll 2d6
         // pilot damage on a 2
-        if ((entity instanceof Protomech) && ((Protomech) entity).hasMyomerBooster()
+        if ((entity instanceof ProtoMek) && ((ProtoMek) entity).hasMyomerBooster()
                 && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER))) {
             r = new Report(2373);
             r.addDesc(entity);
@@ -974,7 +974,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
                                 entity.delta_distance));
                     } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-                        gameManager.getvPhaseReport().addAll(gameManager.landGliderPM((Protomech) entity, entity.getPosition(),
+                        gameManager.getvPhaseReport().addAll(gameManager.landGliderPM((ProtoMek) entity, entity.getPosition(),
                                 elevation, entity.delta_distance));
                     } else {
                         r = new Report(2123);
@@ -1297,8 +1297,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (entity instanceof LandAirMech) {
                         addReport(gameManager.landAirMech((LandAirMech) entity, step.getPosition(), elevation,
                                 distance));
-                    } else if (entity instanceof Protomech) {
-                        addReport(gameManager.landGliderPM((Protomech) entity, step.getPosition(), elevation,
+                    } else if (entity instanceof ProtoMek) {
+                        addReport(gameManager.landGliderPM((ProtoMek) entity, step.getPosition(), elevation,
                                 distance));
                     }
                     // landing always ends movement whether successful or not
@@ -3146,7 +3146,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // ProtoMechs changing levels within a building cause damage
-                if (((buildingMove & 8) == 8) && (entity instanceof Protomech)) {
+                if (((buildingMove & 8) == 8) && (entity instanceof ProtoMek)) {
                     Building bldg = getGame().getBoard().getBuildingAt(curPos);
                     Vector<Report> vBuildingReport = gameManager.damageBuilding(bldg, 1, curPos);
                     for (Report report : vBuildingReport) {
@@ -3161,7 +3161,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (bldgExited == null) {
                         // If we're not leaving a building, just handle the "entered".
                         reason = "entering";
-                    } else if (bldgExited.equals(bldgEntered) && !(entity instanceof Protomech)
+                    } else if (bldgExited.equals(bldgEntered) && !(entity instanceof ProtoMek)
                             && !(entity instanceof Infantry)) {
                         // If we're moving within the same building, just handle the "within".
                         reason = "moving in";
@@ -3225,7 +3225,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && ((QuadVee) entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof Protomech)
+            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure

@@ -136,7 +136,7 @@ public class EntityClassTurn extends GameTurn {
             return CLASS_AERO;
         } else if (entity instanceof Infantry) {
             return CLASS_INFANTRY;
-        } else if (entity instanceof Protomech) {
+        } else if (entity instanceof ProtoMek) {
             return CLASS_PROTOMECH;
         } else if (entity instanceof GunEmplacement) {
             return CLASS_GUN_EMPLACEMENT;

@@ -16,7 +16,7 @@ package megamek.common.actions;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Mek;
-import megamek.common.Protomech;
+import megamek.common.ProtoMek;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -79,7 +79,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         ToHitData toHit;
 
         // non-mechs can't grapple or be grappled
-        if (!(ae instanceof Mek) && !(ae instanceof Protomech)) {
+        if (!(ae instanceof Mek) && !(ae instanceof ProtoMek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
         }
 
@@ -137,11 +137,11 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 
-        if ((te instanceof Protomech) && !(ae instanceof Protomech)) {
+        if ((te instanceof ProtoMek) && !(ae instanceof ProtoMek)) {
             wmod = ae.getWeightClass() * -1;
-        } else if ((ae instanceof Protomech) && !(te instanceof Protomech)) {
+        } else if ((ae instanceof ProtoMek) && !(te instanceof ProtoMek)) {
             wmod = te.getWeightClass();
-        } else if ((te instanceof Protomech) && (ae instanceof Protomech)) {
+        } else if ((te instanceof ProtoMek) && (ae instanceof ProtoMek)) {
             wmod = 0;
         }
 

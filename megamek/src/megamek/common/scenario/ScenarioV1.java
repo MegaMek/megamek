@@ -422,12 +422,12 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                     LogManager.getLogger().error("Invalid location specified " + critHit.loc);
                 } else {
                     // Make sure that we have crit spot to hit
-                    if ((chp.entity instanceof Mek) || (chp.entity instanceof Protomech)) {
+                    if ((chp.entity instanceof Mek) || (chp.entity instanceof ProtoMek)) {
                         // Is this a torso weapon slot?
                         CriticalSlot cs = null;
-                        if ((chp.entity instanceof Protomech)
-                                && (Protomech.LOC_TORSO == critHit.loc)
-                                && ((Protomech.SYSTEM_TORSO_WEAPON_A == critHit.slot) || (Protomech.SYSTEM_TORSO_WEAPON_B == critHit.slot))) {
+                        if ((chp.entity instanceof ProtoMek)
+                                && (ProtoMek.LOC_TORSO == critHit.loc)
+                                && ((ProtoMek.SYSTEM_TORSO_WEAPON_A == critHit.slot) || (ProtoMek.SYSTEM_TORSO_WEAPON_B == critHit.slot))) {
                             cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot);
                         }
                         // Is this a valid slot number?

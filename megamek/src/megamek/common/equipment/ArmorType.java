@@ -1251,7 +1251,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 0;
         armor.cost = 625.0;
 
-        armor.techAdvancement = Protomech.TA_STANDARD_PROTOMECH;
+        armor.techAdvancement = ProtoMek.TA_STANDARD_PROTOMEK;
 
         armor.armorType = T_ARMOR_STANDARD_PROTOMEK;
         armor.weightPerPoint = 0.050;

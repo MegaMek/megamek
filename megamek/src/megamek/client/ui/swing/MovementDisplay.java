@@ -567,9 +567,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             } else if ((ce instanceof Mek) && ((Mek) ce).hasTracks()) {
                 flag = CMD_MECH | CMD_CONVERTER;
-            } else if ((ce instanceof Protomech) && ce.getMovementMode().isWiGE()) {
+            } else if ((ce instanceof ProtoMek) && ce.getMovementMode().isWiGE()) {
                 flag = CMD_PROTOMECH | CMD_MECH | CMD_AIRMECH;
-            } else if (ce instanceof Protomech) {
+            } else if (ce instanceof ProtoMek) {
             	flag = CMD_PROTOMECH;
             }
         }
@@ -2339,7 +2339,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (clientgui.getClient().getGame().getBoard().inSpace()) {
                 return;
             }
-        } else if (!(ce instanceof Protomech) && !(ce instanceof LandAirMech
+        } else if (!(ce instanceof ProtoMek) && !(ce instanceof LandAirMech
                 && (ce.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH))
                 && (ce.getAltitude() <= 3)) {
             return;
@@ -2716,7 +2716,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setRecklessEnabled(false);
         }
 
-        if (ce instanceof Protomech) {
+        if (ce instanceof ProtoMek) {
             setRecklessEnabled(false);
         } else {
             setRecklessEnabled((null == cmd) || (cmd.length() == 0));

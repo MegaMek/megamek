@@ -152,7 +152,7 @@ public class MechView {
         isInf = entity instanceof Infantry;
         isBA = entity instanceof BattleArmor;
         isVehicle = entity instanceof Tank;
-        isProto = entity instanceof Protomech;
+        isProto = entity instanceof ProtoMek;
         isGunEmplacement = entity instanceof GunEmplacement;
         isAero = entity instanceof Aero;
         isConvFighter = entity instanceof ConvFighter;

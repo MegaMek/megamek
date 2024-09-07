@@ -660,13 +660,13 @@ public class EquipChoicePanel extends JPanel {
 
                 // Only Protos can use Proto-specific ammo
                 if (atCheck.hasFlag(AmmoType.F_PROTOMECH)
-                        && !(entity instanceof Protomech)) {
+                        && !(entity instanceof ProtoMek)) {
                     continue;
                 }
 
                 // When dealing with machine guns, Protos can only
                 // use proto-specific machine gun ammo
-                if ((entity instanceof Protomech)
+                if ((entity instanceof ProtoMek)
                         && atCheck.hasFlag(AmmoType.F_MG)
                         && !atCheck.hasFlag(AmmoType.F_PROTOMECH)) {
                     continue;
@@ -1009,7 +1009,7 @@ public class EquipChoicePanel extends JPanel {
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
                 // ProtoMeks and BattleArmor are limited to the number of shots allocated in construction
-                if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
+                if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
                     shotsPerTon = m.getOriginalShots();
                     // BA tube artillery always comes in pairs
                     if (curType.getAmmoType() == AmmoType.T_BA_TUBE) {
@@ -1029,7 +1029,7 @@ public class EquipChoicePanel extends JPanel {
                     int numberOfShotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
 
                     // ProtoMeks are limited to number of shots added during construction
-                    if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
+                    if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
                         numberOfShotsPerTon = m.getOriginalShots();
                     }
                     for (int i = 0; i <= numberOfShotsPerTon; i++) {

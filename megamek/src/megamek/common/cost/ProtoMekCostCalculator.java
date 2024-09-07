@@ -24,7 +24,7 @@ import megamek.common.equipment.ArmorType;
 
 public class ProtoMekCostCalculator {
 
-    public static double calculateCost(Protomech protoMek, CalculationReport costReport, boolean ignoreAmmo) {
+    public static double calculateCost(ProtoMek protoMek, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[15];
         int idx = 0;
 

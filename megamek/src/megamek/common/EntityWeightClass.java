@@ -350,7 +350,7 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (en instanceof Protomech) {
+        } else if (en instanceof ProtoMek) {
             for (i = 0; i < (protoWeightLimits.length - 1); i++) {
                 if (tonnage <= protoWeightLimits[i]) {
                     break;
@@ -402,7 +402,7 @@ public class EntityWeightClass {
             if ((wClass >= 0) && (wClass < SIZE)) {
                 return vehicleWeightLimits[wClass];
             }
-        } else if (en instanceof Protomech) {
+        } else if (en instanceof ProtoMek) {
             if ((wClass >= 0) && (wClass < SIZE)) {
                 return protoWeightLimits[wClass];
             }

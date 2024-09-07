@@ -652,7 +652,7 @@ public class Compute {
                 && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         boolean vehicleAffectedByCliff = entity instanceof Tank
                 && !entity.isAirborneVTOLorWIGE();
-        boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof Protomech)
+        boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                 && movementType != EntityMovementType.MOVE_JUMP
                 && !entity.isAero(); // LAM
         int stepHeight = destElevation + destHex.getLevel() - (srcElevation + srcHex.getLevel());
@@ -721,7 +721,7 @@ public class Compute {
         if ((entity instanceof VTOL)
                 || (entity.getMovementMode() == EntityMovementMode.HOVER)
                 || (entity.getMovementMode() == EntityMovementMode.WIGE
-                        && destElevation > 0 && !(entity instanceof Protomech))) {
+                        && destElevation > 0 && !(entity instanceof ProtoMek))) {
             if (isTurning
                     && ((movementType == EntityMovementType.MOVE_RUN)
                             || (movementType == EntityMovementType.MOVE_SPRINT)
@@ -1433,9 +1433,9 @@ public class Compute {
                     mods.addModifier(ae.getMediumRangeModifier(), "medium range");
                 } else if (range == RangeType.RANGE_LONG) {
                     // Protos that loose head sensors can't shoot long range.
-                    if ((ae instanceof Protomech)
-                            && (2 == ((Protomech) ae)
-                            .getCritsHit(Protomech.LOC_HEAD))) {
+                    if ((ae instanceof ProtoMek)
+                            && (2 == ((ProtoMek) ae)
+                            .getCritsHit(ProtoMek.LOC_HEAD))) {
                         mods.addModifier(TargetRoll.IMPOSSIBLE,
                                          "No long range attacks with destroyed head sensors.");
                     } else {
@@ -1443,9 +1443,9 @@ public class Compute {
                     }
                 } else if (range == RangeType.RANGE_EXTREME) {
                     // Protos that loose head sensors can't shoot extreme range.
-                    if ((ae instanceof Protomech)
-                            && (2 == ((Protomech) ae)
-                            .getCritsHit(Protomech.LOC_HEAD))) {
+                    if ((ae instanceof ProtoMek)
+                            && (2 == ((ProtoMek) ae)
+                            .getCritsHit(ProtoMek.LOC_HEAD))) {
                         mods.addModifier(TargetRoll.IMPOSSIBLE,
                                          "No extreme range attacks with destroyed head sensors.");
                     } else {
@@ -1454,9 +1454,9 @@ public class Compute {
                     }
                 } else if (range == RangeType.RANGE_LOS) {
                     // Protos that loose head sensors can't shoot LOS range.
-                    if ((ae instanceof Protomech)
-                            && (2 == ((Protomech) ae)
-                            .getCritsHit(Protomech.LOC_HEAD))) {
+                    if ((ae instanceof ProtoMek)
+                            && (2 == ((ProtoMek) ae)
+                            .getCritsHit(ProtoMek.LOC_HEAD))) {
                         mods.addModifier(TargetRoll.IMPOSSIBLE,
                                          "No LOS range attacks with destroyed head sensors.");
                     } else {
@@ -2245,29 +2245,29 @@ public class Compute {
      */
     public static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
         ToHitData mods = new ToHitData();
-        if (attacker instanceof Protomech) {
+        if (attacker instanceof ProtoMek) {
             // Head criticals add to target number of all weapons.
-            int hits = ((Protomech) attacker).getCritsHit(Protomech.LOC_HEAD);
+            int hits = ((ProtoMek) attacker).getCritsHit(ProtoMek.LOC_HEAD);
             if (hits > 0) {
                 mods.addModifier(hits, hits + " head critical(s)");
             }
 
             // Arm mounted (and main gun) weapons get DRMs from arm crits.
             switch (weapon.getLocation()) {
-                case Protomech.LOC_LARM:
-                case Protomech.LOC_RARM:
-                    hits = ((Protomech) attacker).getCritsHit(weapon
+                case ProtoMek.LOC_LARM:
+                case ProtoMek.LOC_RARM:
+                    hits = ((ProtoMek) attacker).getCritsHit(weapon
                                                                       .getLocation());
                     if (hits > 0) {
                         mods.addModifier(hits, hits + " arm critical(s)");
                     }
                     break;
-                case Protomech.LOC_MAINGUN:
+                case ProtoMek.LOC_MAINGUN:
                     // Main gun is affected by crits in *both* arms.
-                    hits = ((Protomech) attacker)
-                            .getCritsHit(Protomech.LOC_LARM);
-                    hits += ((Protomech) attacker)
-                            .getCritsHit(Protomech.LOC_RARM);
+                    hits = ((ProtoMek) attacker)
+                            .getCritsHit(ProtoMek.LOC_LARM);
+                    hits += ((ProtoMek) attacker)
+                            .getCritsHit(ProtoMek.LOC_RARM);
                     if (4 == hits) {
                         mods.addModifier(TargetRoll.IMPOSSIBLE,
                                          "Cannot fire main gun with no arms.");
@@ -2606,7 +2606,7 @@ public class Compute {
         }
 
         if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                && ((attacker instanceof Mek) || (attacker instanceof Protomech))
+                && ((attacker instanceof Mek) || (attacker instanceof ProtoMek))
                 && (game.getBoard().getHex(attacker.getPosition()).terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
@@ -3730,7 +3730,7 @@ public class Compute {
                                               .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))) {
                                     ammo_multiple = 1.1;
                                 }
-                                if ((target instanceof Protomech)
+                                if ((target instanceof ProtoMek)
                                     && !(cgame.getOptions()
                                               .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS))) {
                                     ammo_multiple = 1.1;
@@ -7427,7 +7427,7 @@ public class Compute {
         if (entity.getCrew().getCrewType() == CrewType.COMMAND_CONSOLE) {
             return 2;
         }
-        if (entity instanceof Mek || entity instanceof Tank || entity instanceof Aero || entity instanceof Protomech) {
+        if (entity instanceof Mek || entity instanceof Tank || entity instanceof Aero || entity instanceof ProtoMek) {
             //only one driver please
             return 1;
         } else if (entity instanceof Infantry) {

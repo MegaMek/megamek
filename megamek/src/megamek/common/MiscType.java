@@ -543,7 +543,7 @@ public class MiscType extends EquipmentType {
             }
             return defaultRounding.round(e.getWeightEngine(entity, defaultRounding) / 10.0, entity);
         } else if (hasFlag(F_MASC)) {
-            if (entity instanceof Protomech) {
+            if (entity instanceof ProtoMek) {
                 return RoundWeight.nearestKg(entity.getWeight() * 0.025);
                 // Myomer Boosters for BA
             } else if (entity instanceof BattleArmor) {
@@ -922,7 +922,7 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_MASC)) {
-                if (entity instanceof Protomech) {
+                if (entity instanceof ProtoMek) {
                     costValue = Math.round((entity.hasEngine() ? entity.getEngine().getRating() : 0) * 1000
                             * entity.getWeight() * 0.025f);
                 } else if (entity instanceof BattleArmor) {

@@ -55,13 +55,13 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0);
         }
 
-        if (((Protomech) entity).isEDPCharged() && target.isConventionalInfantry()) {
+        if (((ProtoMek) entity).isEDPCharged() && target.isConventionalInfantry()) {
             toReturn++;
             // TODO: add another +1 to damage if target is cybernetically enhanced
         }
 
         // underwater damage is half, round up (see bug 1110692)
-        if (entity.getLocationStatus(Protomech.LOC_TORSO) == ILocationExposureStatus.WET) {
+        if (entity.getLocationStatus(ProtoMek.LOC_TORSO) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
 
@@ -128,7 +128,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         }
 
         // non-protos can't make protomech-physicalattacks
-        if (!(ae instanceof Protomech)) {
+        if (!(ae instanceof ProtoMek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
         }
 

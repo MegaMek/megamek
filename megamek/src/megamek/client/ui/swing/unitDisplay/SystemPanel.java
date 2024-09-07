@@ -388,8 +388,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             sb.append("x");
                         }
                         // Protomechs have different system names.
-                        if (en instanceof Protomech) {
-                            sb.append(Protomech.systemNames[cs.getIndex()]);
+                        if (en instanceof ProtoMek) {
+                            sb.append(ProtoMek.systemNames[cs.getIndex()]);
                         } else {
                             sb.append(((Mek) en).getSystemName(cs
                                     .getIndex()));

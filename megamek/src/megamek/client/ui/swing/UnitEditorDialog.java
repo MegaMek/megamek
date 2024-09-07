@@ -376,7 +376,7 @@ public class UnitEditorDialog extends JDialog {
             setupTankSystemPanel();
         } else if (entity instanceof Aero) {
             setupAeroSystemPanel();
-        } else if (entity instanceof Protomech) {
+        } else if (entity instanceof ProtoMek) {
             setupProtoSystemPanel();
         }
     }
@@ -715,13 +715,13 @@ public class UnitEditorDialog extends JDialog {
     private void setupProtoSystemPanel() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
-        Protomech proto = (Protomech) entity;
+        ProtoMek proto = (ProtoMek) entity;
 
         protoCrits = new CheckCritPanel[proto.locations()];
         gridBagConstraints.gridy = 0;
 
         for (int loc = 0; loc < proto.locations(); loc++) {
-            if ((loc == Protomech.LOC_MAINGUN) || (loc == Protomech.LOC_NMISS)) {
+            if ((loc == ProtoMek.LOC_MAINGUN) || (loc == ProtoMek.LOC_NMISS)) {
                 continue;
             }
             gridBagConstraints.gridx = 0;
@@ -735,24 +735,24 @@ public class UnitEditorDialog extends JDialog {
                     String.format(Messages.getString("UnitEditorDialog.protoCritString"), entity.getLocationName(loc))
                     + "</b><br></html>"), gridBagConstraints);
             int hits = 0;
-            if ((loc == Protomech.LOC_LARM) || (loc == Protomech.LOC_RARM)) {
+            if ((loc == ProtoMek.LOC_LARM) || (loc == ProtoMek.LOC_RARM)) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Protomech.SYSTEM_ARMCRIT, loc);
+                        ProtoMek.SYSTEM_ARMCRIT, loc);
             }
-            if (loc == Protomech.LOC_LEG) {
+            if (loc == ProtoMek.LOC_LEG) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Protomech.SYSTEM_LEGCRIT, loc);
+                        ProtoMek.SYSTEM_LEGCRIT, loc);
             }
-            if (loc == Protomech.LOC_HEAD) {
+            if (loc == ProtoMek.LOC_HEAD) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Protomech.SYSTEM_HEADCRIT, loc);
+                        ProtoMek.SYSTEM_HEADCRIT, loc);
             }
-            if (loc == Protomech.LOC_TORSO) {
+            if (loc == ProtoMek.LOC_TORSO) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Protomech.SYSTEM_TORSOCRIT, loc);
+                        ProtoMek.SYSTEM_TORSOCRIT, loc);
             }
             int nCrits = 2;
-            if (loc == Protomech.LOC_LEG) {
+            if (loc == ProtoMek.LOC_LEG) {
                 nCrits = 3;
             }
             CheckCritPanel protoCrit = new CheckCritPanel(nCrits, hits);
@@ -1324,29 +1324,29 @@ public class UnitEditorDialog extends JDialog {
                     }
                 }
             }
-        } else if (entity instanceof Protomech) {
+        } else if (entity instanceof ProtoMek) {
             for (int loc = 0; loc < entity.locations(); loc++) {
                 if (null == protoCrits[loc]) {
                     continue;
                 }
-                if ((loc == Protomech.LOC_LARM) || (loc == Protomech.LOC_RARM)) {
+                if ((loc == ProtoMek.LOC_LARM) || (loc == ProtoMek.LOC_RARM)) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                            Protomech.SYSTEM_ARMCRIT, loc,
+                            ProtoMek.SYSTEM_ARMCRIT, loc,
                             protoCrits[loc].getHits());
                 }
-                if (loc == Protomech.LOC_LEG) {
+                if (loc == ProtoMek.LOC_LEG) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                            Protomech.SYSTEM_LEGCRIT, loc,
+                            ProtoMek.SYSTEM_LEGCRIT, loc,
                             protoCrits[loc].getHits());
                 }
-                if (loc == Protomech.LOC_HEAD) {
+                if (loc == ProtoMek.LOC_HEAD) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                            Protomech.SYSTEM_HEADCRIT, loc,
+                            ProtoMek.SYSTEM_HEADCRIT, loc,
                             protoCrits[loc].getHits());
                 }
-                if (loc == Protomech.LOC_TORSO) {
+                if (loc == ProtoMek.LOC_TORSO) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                            Protomech.SYSTEM_TORSOCRIT, loc,
+                            ProtoMek.SYSTEM_TORSOCRIT, loc,
                             protoCrits[loc].getHits());
                 }
             }

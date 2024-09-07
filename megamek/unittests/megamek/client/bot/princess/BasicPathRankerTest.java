@@ -1283,7 +1283,7 @@ public class BasicPathRankerTest {
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
         // Test walking a ProtoMek over magma crust
-        final Entity mockProto = mock(Protomech.class);
+        final Entity mockProto = mock(ProtoMek.class);
         when(mockProto.locations()).thenReturn(6);
         when(mockProto.getArmor(anyInt())).thenReturn(5);
         when(mockProto.getCrew()).thenReturn(mockCrew);

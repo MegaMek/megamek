@@ -108,7 +108,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
             testEntity = new TestMech((Mek) unit, entityVerifier.mechOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            testEntity = new TestProtomech((Protomech) unit, entityVerifier.protomechOption, null);
+            testEntity = new TestProtomech((ProtoMek) unit, entityVerifier.protomechOption, null);
         } else if (unit.isSupportVehicle()) {
             testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_TANK) && !unit.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
@@ -448,7 +448,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             return Tank.LOC_BODY;
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            return Protomech.LOC_BODY;
+            return ProtoMek.LOC_BODY;
         }
         return Entity.LOC_NONE;
     }
@@ -1404,7 +1404,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             if (m.getType().hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
-                if (getEntity() instanceof Protomech) {
+                if (getEntity() instanceof ProtoMek) {
                     illegal = true;
                     buff.append("ProtoMech can't mount light fluid suction system\n");
                 }
@@ -1666,8 +1666,8 @@ public abstract class TestEntity implements TestEntityOption {
             return TestMech.isValidMechLocation((Mek) entity, eq, location, buffer);
         } else if (entity instanceof Tank) {
             return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
-        } else if (entity instanceof Protomech) {
-            return TestProtomech.isValidProtomechLocation((Protomech) entity, eq, location, buffer);
+        } else if (entity instanceof ProtoMek) {
+            return TestProtomech.isValidProtomechLocation((ProtoMek) entity, eq, location, buffer);
         } else if (entity.isFighter()) {
             return TestAero.isValidAeroLocation(eq, location, buffer);
         }

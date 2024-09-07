@@ -1641,7 +1641,7 @@ public class MULParser {
 
                 // Protomechs only have system slots,
                 // so we have to handle the ammo specially.
-                if (entity instanceof Protomech || entity instanceof GunEmplacement) {
+                if (entity instanceof ProtoMek || entity instanceof GunEmplacement) {
                     // Get the saved ammo load.
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {

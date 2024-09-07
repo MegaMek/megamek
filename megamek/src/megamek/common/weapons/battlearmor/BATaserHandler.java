@@ -100,7 +100,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(1, 3, true);
                 }
             }
-        } else if ((entityTarget instanceof Protomech)
+        } else if ((entityTarget instanceof ProtoMek)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
             if (diceRoll.getIntValue() >= 11) {

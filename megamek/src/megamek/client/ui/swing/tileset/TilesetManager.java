@@ -301,7 +301,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image imageFor(Entity entity, int secondaryPos) {
         // mechs look like they're facing their secondary facing
         // (except QuadVees, which are using turrets instead of torso twists
-        if (((entity instanceof Mek) || (entity instanceof Protomech))
+        if (((entity instanceof Mek) || (entity instanceof ProtoMek))
                 && !(entity instanceof QuadVee)) {
             return imageFor(entity, entity.getSecondaryFacing(), secondaryPos);
         }

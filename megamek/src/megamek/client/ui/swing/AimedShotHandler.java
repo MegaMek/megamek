@@ -80,8 +80,8 @@ class AimedShotHandler implements ActionListener, ItemListener {
                 if (side == ToHitData.SIDE_FRONT) {
                     aimingAt = Tank.LOC_FRONT;
                 }
-            } else if (this.firingDisplay.target instanceof Protomech) {
-                aimingAt = Protomech.LOC_TORSO;
+            } else if (this.firingDisplay.target instanceof ProtoMek) {
+                aimingAt = ProtoMek.LOC_TORSO;
             } else if (this.firingDisplay.target instanceof BattleArmor) {
                 aimingAt = BattleArmor.LOC_TROOPER_1;
             } else {
@@ -212,9 +212,9 @@ class AimedShotHandler implements ActionListener, ItemListener {
         }
 
         // remove main gun on protos that don't have one
-        if (this.firingDisplay.target instanceof Protomech) {
-            if (!((Protomech) this.firingDisplay.target).hasMainGun()) {
-                mask[Protomech.LOC_MAINGUN] = false;
+        if (this.firingDisplay.target instanceof ProtoMek) {
+            if (!((ProtoMek) this.firingDisplay.target).hasMainGun()) {
+                mask[ProtoMek.LOC_MAINGUN] = false;
             }
         }
 
@@ -328,7 +328,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
         allowAim = ((this.firingDisplay.target != null) && (this.firingDisplay.ce() != null)
                 && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.target instanceof Mek)
                 || (this.firingDisplay.target instanceof Tank)
-                || (this.firingDisplay.target instanceof BattleArmor) || (this.firingDisplay.target instanceof Protomech)));
+                || (this.firingDisplay.target instanceof BattleArmor) || (this.firingDisplay.target instanceof ProtoMek)));
         if (allowAim) {
             aimingMode = AimingMode.TARGETING_COMPUTER;
             return;

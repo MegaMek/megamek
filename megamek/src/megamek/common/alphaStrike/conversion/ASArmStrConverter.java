@@ -174,7 +174,7 @@ final class ASArmStrConverter {
             report.addLine("BA", "2");
             return 2;
         } else if ((entity instanceof Infantry) || (entity instanceof Jumpship)
-                || (entity instanceof Protomech)) {
+                || (entity instanceof ProtoMek)) {
             report.addLine("CI, JS or PM", "1");
             return 1;
         } else if (entity instanceof Tank) {

@@ -639,7 +639,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             isAirMech &= (e instanceof LandAirMech)
                     && (((LandAirMech) e).getLAMType() == LandAirMech.LAM_STANDARD)
                     && (choStartingMode.getSelectedIndex() == 1);
-            isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
+            isGlider &= (e instanceof ProtoMek) && (e.getMovementMode() == EntityMovementMode.WIGE);
         }
 
         // get values
@@ -1070,7 +1070,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         final boolean isWiGE = entities.stream().allMatch(e -> (e instanceof Tank) && e.getMovementMode().isWiGE());
         final boolean isQuadVee = entities.stream().allMatch(e -> e instanceof QuadVee);
         final boolean isLAM = entities.stream().allMatch(e -> e instanceof LandAirMech);
-        final boolean isGlider = entities.stream().allMatch(e -> (e instanceof Protomech) && e.getMovementMode().isWiGE());
+        final boolean isGlider = entities.stream().allMatch(e -> (e instanceof ProtoMek) && e.getMovementMode().isWiGE());
         final boolean hasStealth = entities.stream().allMatch(e -> e.hasStealth());
         boolean eligibleForOffBoard = true;
 

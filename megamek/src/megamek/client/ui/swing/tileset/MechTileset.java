@@ -220,7 +220,7 @@ public class MechTileset {
             return default_ba;
         } else if (entity instanceof Infantry) {
             return default_inf;
-        } else if (entity instanceof Protomech) {
+        } else if (entity instanceof ProtoMek) {
             return default_proto;
         } else if (entity instanceof TripodMech) {
             return default_tripod;

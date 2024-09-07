@@ -1160,7 +1160,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         // if so, ask and tell the user that to-hits will change
         if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)
                 && (ce() instanceof Mek) || (ce() instanceof Tank)
-                || (ce() instanceof Protomech)) {
+                || (ce() instanceof ProtoMek)) {
             EntityAction lastAction = null;
             try {
                 lastAction = attacks.lastElement();

@@ -265,7 +265,7 @@ public class CustomPilotView extends JPanel {
             }
         }
 
-        if (entity instanceof Protomech) {
+        if (entity instanceof ProtoMek) {
             // All ProtoMechs have a callsign.
             String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " +
                     (entity.getUnitNumber() + PreferenceManager
@@ -284,7 +284,7 @@ public class CustomPilotView extends JPanel {
 
                         @Override
                         public boolean accept(Entity unitEntity) {
-                            return (unitEntity instanceof Protomech)
+                            return (unitEntity instanceof ProtoMek)
                                     && (ownerId == unitEntity.getOwnerId())
                                     && (unitNumber != unitEntity.getUnitNumber());
                         }

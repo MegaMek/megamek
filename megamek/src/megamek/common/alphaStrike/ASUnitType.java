@@ -31,7 +31,7 @@ public enum ASUnitType {
     public static ASUnitType getUnitType(Entity en) {
         if (en instanceof Mek) {
             return ((Mek) en).isIndustrial() ? IM : BM;
-        } else if (en instanceof Protomech) {
+        } else if (en instanceof ProtoMek) {
             return PM;
         } else if (en instanceof Tank) {
             return en.isSupportVehicle() ? SV : CV;

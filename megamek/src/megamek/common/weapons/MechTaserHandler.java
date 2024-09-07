@@ -103,7 +103,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(2, 3, true);
                 }
             }
-        } else if ((entityTarget instanceof Protomech)
+        } else if ((entityTarget instanceof ProtoMek)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
             if (diceRoll.getIntValue() >= 8) {

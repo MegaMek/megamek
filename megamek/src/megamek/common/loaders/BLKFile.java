@@ -608,7 +608,7 @@ public class BLKFile {
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");
-        } else if (t instanceof Protomech) {
+        } else if (t instanceof ProtoMek) {
             blk.writeBlockData("UnitType", "ProtoMech");
         } else if (t instanceof Mek) {
             blk.writeBlockData("UnitType", "Mech");
@@ -760,7 +760,7 @@ public class BLKFile {
                 if (t.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                     blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
                     blk.writeBlockData("interface_cockpit",
-                            String.valueOf(((Protomech) t).hasInterfaceCockpit()));
+                            String.valueOf(((ProtoMek) t).hasInterfaceCockpit()));
                 }
             }
         }
@@ -1240,7 +1240,7 @@ public class BLKFile {
         // location but they have different formats, yay!
         if ((m.getEntity() instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
-        } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
+        } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
         } else if (m.getType().isVariableSize()
                 || (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {

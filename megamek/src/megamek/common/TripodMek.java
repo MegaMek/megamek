@@ -1,17 +1,21 @@
 /**
- * MegaMek -
- *  Copyright (C) 2013
- *    Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -27,7 +31,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 
-public class TripodMech extends Mek {
+public class TripodMek extends Mek {
     /**
      *
      */
@@ -42,16 +46,16 @@ public class TripodMech extends Mek {
 
     private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6, 6};
 
-    public TripodMech(String inGyroType, String inCockpitType) {
+    public TripodMek(String inGyroType, String inCockpitType) {
         this(getGyroTypeForString(inGyroType),
              getCockpitTypeForString(inCockpitType));
     }
 
-    public TripodMech() {
+    public TripodMek() {
         this(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD);
     }
 
-    public TripodMech(int inGyroType, int inCockpitType) {
+    public TripodMek(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
 
         movementMode = EntityMovementMode.TRIPOD;
@@ -205,10 +209,10 @@ public class TripodMech extends Mek {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        //A Mech using tracks has its movement reduced by 1/3 per leg or track destroyed, based
-        //on analogy with biped and quad mechs.
+        //A Mek using tracks has its movement reduced by 1/3 per leg or track destroyed, based
+        //on analogy with biped and quad Meks.
         if (getMovementMode().isTracked()) {
-            for (Mounted m : getMisc()) {
+            for (Mounted<?> m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
                         legsDestroyed++;
@@ -318,7 +322,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Sets the internal structure for the mech.
+     * Sets the internal structure for the Mek.
      *
      * @param head head
      * @param ct   center torso
@@ -463,7 +467,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Check to see if a Biped mech has a claw in one of its arms
+     * Check to see if a Biped Mek has a claw in one of its arms
      *
      * @param location (LOC_RARM or LOC_LARM)
      * @return True/False
@@ -483,7 +487,7 @@ public class TripodMech extends Mek {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
                 && type.hasFlag(MiscType.F_HAND_WEAPON)
@@ -495,9 +499,9 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Checks to see if this bipmech has any vibro blades on them.
+     * Checks to see if this bipMek has any vibro blades on them.
      *
-     * @return boolean <code>true</code> if the mech has vibroblades
+     * @return boolean <code>true</code> if the Mek has vibroblades
      * <code>false</code> if not.
      */
     @Override
@@ -515,10 +519,10 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Checks to see if this bipedmech has a vibroblade in this location.
+     * Checks to see if this bipedMek has a vibroblade in this location.
      *
      * @param location
-     * @return boolean <code>true</code> if the mech has vibroblades
+     * @return boolean <code>true</code> if the Mek has vibroblades
      * <code>false</code> if not.
      */
     public boolean hasVibrobladesInLocation(int location) {
@@ -537,7 +541,7 @@ public class TripodMech extends Mek {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             // sometimes this mounted is null in MML - causing problems so check
             if (null == m) {
                 continue;
@@ -556,7 +560,7 @@ public class TripodMech extends Mek {
      */
     @Override
     public boolean hasRetractedBlade(int loc) {
-        for (Mounted m : getEquipment()) {
+        for (Mounted<?> m : getEquipment()) {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached()
                 && (m.getType() instanceof MiscType)
                 && m.getType().hasFlag(MiscType.F_CLUB)
@@ -597,7 +601,7 @@ public class TripodMech extends Mek {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             // sometimes this mounted is null in MML - causing problems so check
             if (null == m) {
                 continue;
@@ -623,13 +627,13 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Does the mech have any shields. a mech can have up to 2 shields.
+     * Does the Mek have any shields. a Mek can have up to 2 shields.
      *
      * @return <code>true</code> if unit has a shield crit.
      */
     @Override
     public boolean hasShield() {
-        for (Mounted m : getMisc()) {
+        for (Mounted<?> m : getMisc()) {
             EquipmentType type = m.getType();
             if (((m.getLocation() == Mek.LOC_LARM) || (m.getLocation() == Mek.LOC_RARM))
                     && (type instanceof MiscType)
@@ -665,7 +669,7 @@ public class TripodMech extends Mek {
         int raShield = 0;
         int laShield = 0;
 
-        for (Mounted m : getMisc()) {
+        for (Mounted<?> m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB)
                 && (type.hasSubType(size))) {
@@ -686,7 +690,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Does the mech have an active shield This should only be called after
+     * Does the Mek have an active shield This should only be called after
      * hasShield has been called.
      */
     @Override
@@ -717,7 +721,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Does the mech have an active shield This should only be called by
+     * Does the Mek have an active shield This should only be called by
      * hasActiveShield(location, rear)
      */
     @Override
@@ -757,7 +761,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Does the mech have a passive shield This should only be called after
+     * Does the Mek have a passive shield This should only be called after
      * hasShield has been called.
      */
     @Override
@@ -788,7 +792,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Does the mech have a passive shield This should only be called by
+     * Does the Mek have a passive shield This should only be called by
      * hasPassiveShield(location, rear)
      */
     @Override
@@ -828,7 +832,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Does the mech have an shield in no defense mode
+     * Does the Mek have an shield in no defense mode
      */
     @Override
     public boolean hasNoDefenseShield(int location) {
@@ -885,7 +889,7 @@ public class TripodMech extends Mek {
             return false;
         }
 
-        for (Mounted mounted : getMisc()) {
+        for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == location)
                 && mounted.getType().hasFlag(
                     MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
@@ -912,7 +916,7 @@ public class TripodMech extends Mek {
         boolean leftLeg = false;
         boolean centerLeg = false;
 
-        for (Mounted mounted : getMisc()) {
+        for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == Mek.LOC_LLEG)
                 || (mounted.getLocation() == Mek.LOC_RLEG)
                 || (mounted.getLocation() == Mek.LOC_CLEG)) {
@@ -1010,7 +1014,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * @return if this mech cannot stand up from hulldown
+     * @return if this Mek cannot stand up from hulldown
      */
     @Override
     public boolean cannotStandUpFromHullDown() {
@@ -1652,7 +1656,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Can this mech torso twist in the given direction?
+     * Can this Mek torso twist in the given direction?
      */
     @Override
     public boolean isValidSecondaryFacing(int dir) {
@@ -1660,7 +1664,7 @@ public class TripodMech extends Mek {
     }
 
     /**
-     * Based on the mech's current damage status, return valid brace locations.
+     * Based on the Mek's current damage status, return valid brace locations.
      */
     @Override
     public List<Integer> getValidBraceLocations() {

@@ -1067,7 +1067,7 @@ public class BasicPathRanker extends PathRanker {
         // Find the submerged locations.
         Set<Integer> submergedLocations = new HashSet<>();
         for (int loc = 0; loc < movingUnit.locations(); loc++) {
-            if (Mek.LOC_CLEG == loc && !(movingUnit instanceof TripodMech)) {
+            if (Mek.LOC_CLEG == loc && !(movingUnit instanceof TripodMek)) {
                 continue;
             }
 
@@ -1277,7 +1277,7 @@ public class BasicPathRanker extends PathRanker {
             dmg = 14;
             exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
             logMsg.append("legs (");
-        } else if (movingUnit instanceof TripodMech) {
+        } else if (movingUnit instanceof TripodMek) {
             exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).stream()
                     .mapToInt(a -> movingUnit.getArmor(a)).sum();
             dmg = 21;

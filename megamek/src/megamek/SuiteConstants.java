@@ -29,7 +29,7 @@ public abstract class SuiteConstants {
 
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.50.0-SNAPSHOT");
+    public static final Version VERSION = new Version("0.50.01-SNAPSHOT");
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file

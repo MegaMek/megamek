@@ -24,7 +24,8 @@ public class ISBAGaussRifleMagshot extends Weapon {
     public ISBAGaussRifleMagshot() {
         super();
         name = "Gauss Rifle [Magshot]";
-        setInternalName("ISBAMagshotGR");
+        setInternalName("ISBAMagshotGaussRifle");
+        addLookupName("ISBAMagshotGR");
         damage = 2;
         shortRange = 3;
         mediumRange = 6;

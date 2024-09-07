@@ -14,6 +14,14 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -26,11 +34,6 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This describes equipment mounted on a mech.
@@ -1080,7 +1083,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Used for associating the equipment mount with a cargo bay. This is for dumpers and transient bays
-     * created on load for use by 'Mech cargo equipment.
+     * created on load for use by 'Mek cargo equipment.
      *
      * @return The index of the bay this mount is linked to, or -1 if it is not linked.
      * @see Entity#getBayById(int)

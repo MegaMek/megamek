@@ -412,7 +412,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 for (MechSummary unit : units) {
                     String unitType = unit.getUnitType();
                     if (unitType.equalsIgnoreCase("mek")) {
-                        unitType = "'Mech";
+                        unitType = "'Mek";
                     }
 
                     if (!officialUnitList) {

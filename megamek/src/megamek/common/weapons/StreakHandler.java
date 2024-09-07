@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -35,7 +35,7 @@ public class StreakHandler extends MissileWeaponHandler {
      * @param g
      * @param m
      */
-    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

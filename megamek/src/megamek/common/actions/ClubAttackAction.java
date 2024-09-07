@@ -285,13 +285,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if (!(ae instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't club");
         }
-        
+
         // if somehow carrying cargo while holding a club
         if (!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ||
         		!((Mech) ae).canFireWeapon(Mech.LOC_LARM) ) {
-    		return new ToHitData(TargetRoll.IMPOSSIBLE, 
+    		return new ToHitData(TargetRoll.IMPOSSIBLE,
     				Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo"));
-    	}     
+    	}
 
         // Quads can't club...
         // except for torso mounted industrial tools of course!
@@ -335,7 +335,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
                                   && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB))
                     || zweihandering;
-        // Cast is safe because non-'Mechs never even get here.
+        // Cast is safe because non-'Meks never even get here.
         final boolean hasClaws = ((Mech) ae).hasClaw(Mech.LOC_RARM)
                                  || ((Mech) ae).hasClaw(Mech.LOC_LARM);
         final boolean shield = clubType.isShield();

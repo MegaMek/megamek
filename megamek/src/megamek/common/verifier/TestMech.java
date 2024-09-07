@@ -14,12 +14,22 @@
  */
 package megamek.common.verifier;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.common.options.Quirks;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -28,10 +38,6 @@ import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Reinhard Vicinus
@@ -880,7 +886,7 @@ public class TestMech extends TestEntity {
             if (misc.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
                     && !mech.isIndustrial()) {
                 illegal = true;
-                buff.append("BattleMech can't mount light fluid suction system\n");
+                buff.append("BattleMek can't mount light fluid suction system\n");
             }
 
             if (!mech.entityIsQuad()) {
@@ -1363,7 +1369,7 @@ public class TestMech extends TestEntity {
 
         if (hasHarjelII || hasHarjelIII) {
             if (mech.isIndustrial()) {
-                buff.append("Cannot mount HarJel repair system on IndustrialMech\n");
+                buff.append("Cannot mount HarJel repair system on IndustrialMek\n");
                 illegal = true;
             }
             for (int loc = 0; loc < mech.locations(); ++loc) {

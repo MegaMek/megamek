@@ -25,7 +25,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -42,7 +42,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * @param g
      * @param m
      */
-    public MGHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MGHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         damageType = DamageType.ANTI_INFANTRY;
     }

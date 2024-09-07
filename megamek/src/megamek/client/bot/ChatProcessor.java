@@ -70,7 +70,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.getGame().getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersList()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
@@ -345,7 +345,7 @@ public class ChatProcessor {
             msg = "Aggression changed from " + currentAggression + " to " +
                     princess.getBehaviorSettings().getHyperAggressionIndex();
             princess.sendChat(msg);
-            princess.resetSpinupThreshold();
+            princess.resetSpinUpThreshold();
         }
 
         // Adjust herd mentality.

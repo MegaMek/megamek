@@ -1163,7 +1163,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         entity.setGame(this);
         if (entity instanceof Mek) {
             ((Mek) entity).setBAGrabBars();
-            ((Mek) entity).setProtomechClampMounts();
+            ((Mek) entity).setProtoMekClampMounts();
         } else if (entity instanceof Tank) {
             ((Tank) entity).setBAGrabBars();
             ((Tank) entity).setTrailerHitches();

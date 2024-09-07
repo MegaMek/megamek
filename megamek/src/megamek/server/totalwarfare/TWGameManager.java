@@ -223,7 +223,7 @@ public class TWGameManager extends AbstractGameManager {
 
             if (entity instanceof Mek) {
                 ((Mek) entity).setBAGrabBars();
-                ((Mek) entity).setProtomechClampMounts();
+                ((Mek) entity).setProtoMekClampMounts();
             }
             if (entity instanceof Tank) {
                 ((Tank) entity).setBAGrabBars();

@@ -57,7 +57,7 @@ public final class RecentBoardList {
     private List<String> recentBoards = null;
 
     /**
-     * @return A list of the most recently opened board files. Can be empty
+     * @return A list of the most recently opened board files. Can be empty.
      */
     public static List<String> getRecentBoards() {
         INSTANCE.initialize();
@@ -66,9 +66,9 @@ public final class RecentBoardList {
 
     /**
      * Adds a new board to the recent board files, replacing the oldest if the list is full. Also
-     * saves the list to a file.
+     * saves the list to file.
      *
-     * @param board The board filename
+     * @param board The board filename (full path)
      */
     public static void addBoard(String board) {
         INSTANCE.addBoardImpl(board);
@@ -76,17 +76,16 @@ public final class RecentBoardList {
 
     /**
      * Adds a new board to the recent board files, replacing the oldest if the list is full. Also
-     * saves the list to a file.
+     * saves the list to file.
      *
      * @param board The board file
      */
-
     public static void addBoard(File board) {
         addBoard(board.toString());
     }
 
     /**
-     * Adds a listener for recent board changes.
+     * Adds a listener for recent board changes. The event will have the name {@link #RECENT_BOARD_EVENT}.
      */
     public static void addListener(IPreferenceChangeListener listener) {
         if (!LISTENERS.contains(listener)) {
@@ -94,9 +93,6 @@ public final class RecentBoardList {
         }
     }
 
-    /**
-     * Removes the given listener from this store.
-     */
     public static void removeListener(IPreferenceChangeListener listener) {
         LISTENERS.remove(listener);
     }

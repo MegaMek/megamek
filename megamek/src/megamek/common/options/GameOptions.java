@@ -128,7 +128,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MECHWARRIORS, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false);

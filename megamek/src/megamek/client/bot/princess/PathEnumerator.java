@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
@@ -172,7 +178,7 @@ public class PathEnumerator {
             List<MovePath> paths = new ArrayList<>();
 
             // Aero movement on atmospheric ground maps
-            // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
+            // currently only applies to a) conventional aircraft, b) AeroTek units, c) lams in air mode
             if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
                 MovePath startPath = new MovePath(getGame(), mover);
@@ -198,7 +204,7 @@ public class PathEnumerator {
                     paths.add(offBoardFilter.getShortestPath());
                 }
 
-                LogManager.getLogger().debug("Filtered out offboard paths: " + paths.size());
+                LogManager.getLogger().debug("Filtered out off board paths: " + paths.size());
 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down.
                 // disabled
@@ -213,7 +219,7 @@ public class PathEnumerator {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
-            // this handles the case of the mover being a winged aerospace unit on a low-atmo map
+            // this handles the case of the mover being a winged aerospace unit on a low-atmosphere map
             } else if (mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
@@ -337,9 +343,9 @@ public class PathEnumerator {
 
                 // If there are no active or sensor contacts, check the heat maps for best location
                 // we've seen for finding targets
-                List<Coords> enemyHotspots = owner.getEnemyHotspots();
-                if (enemyHotspots != null && !enemyHotspots.isEmpty()) {
-                    destinations.addAll(enemyHotspots);
+                List<Coords> enemyHotSpots = owner.getEnemyHotSpots();
+                if (enemyHotSpots != null && !enemyHotSpots.isEmpty()) {
+                    destinations.addAll(enemyHotSpots);
                 } else {
 
                     // If the heat map doesn't have any useful targets, just go to the other side of
@@ -436,13 +442,13 @@ public class PathEnumerator {
      * Returns whether a {@link MovePath} is legit for an {@link Aero} unit isMoveLegal() seems  to disagree with me
      * on some aero moves, but I can't exactly figure out why, and who is right. So, I'm just going to put a list of
      * exceptions here instead of possibly screwing up {@link MovePath#isMoveLegal()} for everyone.  I think it has
-     * to do with flyoff or return at the end of a move.  This also affects cliptopossible
+     * to do with fly off or return at the end of a move.  This also affects clip to possible
      *
      * @param path The path to be examined.
      * @return TRUE if the path is legal.
      */
     public boolean isLegalAeroMove(MovePath path) {
-        // no non-aeros allowed
+        // no non-aero's allowed
         if (!path.getEntity().isAero()) {
             return true;
         }

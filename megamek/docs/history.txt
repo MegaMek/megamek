@@ -803,7 +803,7 @@ MEGAMEK VERSION HISTORY:
 + PR #3734: Fixing Nowhwere Typos
 + PR #3733: Change border colors on the minimap for moved units
 + Issue #3599: Unjam/clear turret buttons update properly after canceling pending firing orders
-+ Issue #3711: Female mechwarriors are now able to have a beer after ejecting from their mech
++ Issue #3711: Female mekwarriors are now able to have a beer after ejecting from their mech
 + Data: New Sprites including the return of 'Royal' sprites (Thanks to UlyssesSockdrawer)
 + Data: Battle Armor moving to new MUL conventions (4,5,6 unit squads).
 + Issue #3695: Increased amount and usefulness of data displayed in the General tab of the unit display.
@@ -3967,7 +3967,7 @@ v0.37.12 (2014-06-03 19:06 UTC)
 + Revised bombing attacks to roll per bomb and scatter by MoF (as per dive
     bombing errata)
 + Errata: Superheavy 'Meks can move and fire (i)HGRs safely, no PSR needed
-+ Bug [4119]: Princess won't shoot Mechwarriors.
++ Bug [4119]: Princess won't shoot MekWarriors.
 + Data: Unit images and fixes, tech level fixes.
 + Bug [#4123]: Client never receives COMMAND_SERVER_CORRECT_NAME packet
 + Bug [#4121]: ClientGUI.bots map may not be accurate
@@ -4717,7 +4717,7 @@ v0.37.4 (2014-01-12 02:20)
     way incendiary ammo works and to take into account fire-resistant armor.
 + Bug: TESMP shutdown effect on tanks didn't last as long as it should
 + Bug: Tanks don't report when they automatically startup in the end phase
-+ Added code to reduce the utility of firing on ejected mechwarriors/crews by
++ Added code to reduce the utility of firing on ejected mekwarriors/crews by
     1000. This should make Princess much less likely to fire on them.
 + Bug: /localLoad not working
 + Bug [#3981]: NPE in WeaponAttackAction.toHit with Apollo and ArtV
@@ -9655,7 +9655,7 @@ v0.33.5 (2007-04-14, 19:12 GMT+1)
    locations.
 + Added a couple more RS:PPU 'Meks
 + Corrected RS:PPU 'Meks to be level 2 rather than 3
-+ Added House rule that Mechwarriors on the field only have 1 hex vis in double
++ Added House rule that Mearriors on the field only have 1 hex vis in double
   blind games
 + Corrected internal structure points for meks<=20t (they missed 1 point in the
   legs)

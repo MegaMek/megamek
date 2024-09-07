@@ -263,7 +263,7 @@ public final class PhysicalCalculator {
                 continue;
             }
 
-            // don't bother stomping mechwarriors
+            // don't bother stomping MekWarriors
             if (target instanceof MekWarrior) {
                 continue;
             }

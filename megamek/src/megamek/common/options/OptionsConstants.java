@@ -366,7 +366,7 @@ public class OptionsConstants {
     public static final String ADVANCED_NO_IGNITE_CLEAR = "no_ignite_clear";
     public static final String ADVANCED_ALL_HAVE_EI_COCKPIT = "all_have_ei_cockpit";
     public static final String ADVANCED_EXTREME_TEMPERATURE_SURVIVAL = "extreme_temperature_survival";
-    public static final String ADVANCED_ARMED_MECHWARRIORS = "armed_mechwarriors";
+    public static final String ADVANCED_ARMED_MEKWARRIORS = "armed_mekwarriors";
     public static final String ADVANCED_PILOTS_VISUAL_RANGE_ONE = "pilots_visual_range_one";
     public static final String ADVANCED_PILOTS_CANNOT_SPOT = "pilots_cannot_spot";
     public static final String ADVANCED_METAL_CONTENT = "metal_content";

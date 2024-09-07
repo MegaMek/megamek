@@ -29595,8 +29595,8 @@ public class TWGameManager extends AbstractGameManager {
     void resolveMekWarriorPickUp() {
         Report r;
 
-        // fetch all mechWarriors that are not picked up
-        Iterator<Entity> mechWarriors = game.getSelectedEntities(entity -> {
+        // fetch all MekWarriors that are not picked up
+        Iterator<Entity> mekWarriors = game.getSelectedEntities(entity -> {
             if (entity instanceof MekWarrior) {
                 MekWarrior mw = (MekWarrior) entity;
                 return (mw.getPickedUpById() == Entity.NONE)
@@ -29607,9 +29607,9 @@ public class TWGameManager extends AbstractGameManager {
         });
         // loop through them, check if they are in a hex occupied by another
         // unit
-        while (mechWarriors.hasNext()) {
+        while (mekWarriors.hasNext()) {
             boolean pickedUp = false;
-            MekWarrior e = (MekWarrior) mechWarriors.next();
+            MekWarrior e = (MekWarrior) mekWarriors.next();
             // Check for owner entities first...
             for (Entity pe : game.getEntitiesVector(e.getPosition())) {
                 if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()

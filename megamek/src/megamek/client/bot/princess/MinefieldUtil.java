@@ -1,16 +1,20 @@
 /*
-* MegaMek -
-* Copyright (C) 2021 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
 */
 
 package megamek.client.bot.princess;
@@ -68,8 +72,6 @@ public class MinefieldUtil {
         double hoverMovementMultiplier = hoverMovement ?
                 Compute.oddsAbove(Minefield.HOVER_WIGE_DETONATION_TARGET) : 1;
 
-        // only mechs interact with vibrabombs
-        boolean unitIsMech = movingUnit instanceof Mek;
 
         for (Minefield minefield : movingUnit.getGame().getMinefields(step.getPosition())) {
             switch (minefield.getType()) {
@@ -84,9 +86,10 @@ public class MinefieldUtil {
                     hazardAccumulator += minefield.getDensity() * hoverMovementMultiplier;
                     break;
                 case Minefield.TYPE_VIBRABOMB:
-                    // mechs >10 tons the "setting" will set off vibrabombs before they
+                    // only mechs interact with VibraBombs
+                    // mechs > 10 tons the "setting" will set off VibraBombs before they
                     // get to them so we don't particularly care
-                    if (unitIsMech && (!isJumping || lastStep) &&
+                    if (movingUnit instanceof Mek && (!isJumping || lastStep) &&
                             (movingUnit.getWeight() >= minefield.getSetting()) &&
                             (movingUnit.getWeight() <= minefield.getSetting() + 10)) {
                         hazardAccumulator += minefield.getDensity();

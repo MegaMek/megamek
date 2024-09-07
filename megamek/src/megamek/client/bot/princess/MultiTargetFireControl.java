@@ -1,15 +1,20 @@
 /*
- * MegaMek - Copyright (C) 2019 Megamek Team
+ * Copyright (c) 2019-2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package megamek.client.bot.princess;
@@ -23,7 +28,6 @@ import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -49,7 +53,7 @@ public class MultiTargetFireControl extends FireControl {
             final Map<WeaponMounted, Double> ammoConservation) {
         FiringPlan bestPlan = new FiringPlan();
 
-        // optimal firing patterns for units such as dropships, Thunderbolts with multi-trac
+        // optimal firing patterns for units such as DropShips, Thunderbolts with multi-trac
         // units with 'multi-tasker' quirk, multi-gunner vehicles, etc.
         // are different (and easier to calculate) than optimal firing patterns for other units
         // because there is no secondary target penalty.
@@ -57,9 +61,9 @@ public class MultiTargetFireControl extends FireControl {
         // So, the basic algorithm is as follows:
         // For each weapon, calculate the easiest shot.
         // Then, solve the backpack problem.
-        
+
         List<WeaponMounted> weaponList;
-        
+
         if (shooter.usesWeaponBays()) {
             weaponList = shooter.getWeaponBayList();
         } else {
@@ -161,7 +165,7 @@ public class MultiTargetFireControl extends FireControl {
      * @param overheatTolerance
      *            How much overheat we're willing to forgive.
      * @param shooterIsAero
-     *            Set TRUE if the shooter is an Aero unit. Overheating Aeros
+     *            Set TRUE if the shooter is an Aero unit. Overheating Aero's
      *            take stiffer penalties.
      */
     @Override
@@ -185,7 +189,7 @@ public class MultiTargetFireControl extends FireControl {
         // Multiply the combined damage/crit/kill utility for a target by a log-scaled factor based on the target's damage potential.
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
-        // eliminated ejected pilot disutility, as it's superflous - we will ignore ejected mechwarriors altogether.
+        // eliminated ejected pilot disutility, as it's super flows - we will ignore ejected MekWarriors altogether.
         firingPlan.setUtility(utility);
     }
 
@@ -325,7 +329,7 @@ public class MultiTargetFireControl extends FireControl {
         FiringPlan retVal = new FiringPlan();
 
         // the 'heat capacity' is affected negatively by having existing heat and by being an aerospace fighter
-        // it is affected positively by being a mech (you can overheat a little)
+        // it is affected positively by being a mek (you can overheat a little)
         // and by having the combat computer quirk
         int heatCapacityModifier = -shooter.getHeat();
         heatCapacityModifier += shooter.isAero() ? 0 : 4;

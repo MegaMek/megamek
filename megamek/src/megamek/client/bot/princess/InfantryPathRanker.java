@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+*/
 package megamek.client.bot.princess;
 
 import java.util.List;
@@ -10,7 +28,7 @@ import megamek.common.MekWarrior;
 import megamek.common.MovePath;
 import megamek.common.options.OptionsConstants;
 
-public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
+public class InfantryPathRanker extends BasicPathRanker {
 
     public InfantryPathRanker(Princess princess) {
         super(princess);
@@ -56,7 +74,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
 
             EntityEvaluationResponse eval;
             // For units that have already moved
-            // TODO: Always consider Aeros to have moved, as right now we
+            // TODO: Always consider Aero's to have moved, as right now we
             // don't try to predict their movement.
             if (!enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAero()) {
                 eval = evaluateMovedEnemy(enemy, pathCopy, game);
@@ -117,7 +135,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         EntityEvaluationResponse returnResponse =
                 new EntityEvaluationResponse();
 
-        //Aeros always move after other units, and would require an
+        //Aero's always move after other units, and would require an
         // entirely different evaluation
         //TODO (low priority) implement a way to see if I can dodge aero units
         if (enemy.isAirborneAeroOnGroundMap()) {

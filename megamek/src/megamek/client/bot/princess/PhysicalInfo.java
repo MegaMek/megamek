@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
@@ -137,9 +143,9 @@ public class PhysicalInfo {
                                                              .append(" at ").append(getTarget().getDisplayName())
                                                              .append(":");
 
-        // Only mechs do physical attacks.
+        // Only meks do physical attacks.
         if (!(getShooter() instanceof Mek)) {
-            LogManager.getLogger().warn(msg.append("\n\tNot a mech!").toString());
+            LogManager.getLogger().warn(msg.append("\n\tNot a mek!").toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -218,10 +224,10 @@ public class PhysicalInfo {
         }
 
         // now guess how many critical hits will be done
-        Mek targetMech = (Mek) getTarget();
+        Mek targetMek = (Mek) getTarget();
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
-            while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CT)
+            while (targetMek.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CT)
                     // Need to account for still-active 'Meks with destroyed
                     // heads so as not to spin into an endless loop.
                     && (hitLoc != Mek.LOC_HEAD)) {
@@ -236,8 +242,8 @@ public class PhysicalInfo {
             } else { // assume kick
                 hitLocationProbability = ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(), hitLoc);
             }
-            int targetArmor = targetMech.getArmor(hitLoc, (getDamageDirection() == 3));
-            int targetInternals = targetMech.getInternal(hitLoc);
+            int targetArmor = targetMek.getArmor(hitLoc, (getDamageDirection() == 3));
+            int targetInternals = targetMek.getInternal(hitLoc);
             if (targetArmor < 0) {
                 targetArmor = 0; // ignore NA or Destroyed cases
             }
@@ -387,7 +393,7 @@ public class PhysicalInfo {
         return getAttackType().toString() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
                + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
                + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
-               + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
+               + ", Num Criticals: " + LOG_DEC.format(getExpectedCriticals())
                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
     }

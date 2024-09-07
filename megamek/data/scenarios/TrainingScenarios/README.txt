@@ -1,6 +1,6 @@
-FUTURE AMMENDMENTS (for game developers)
+FUTURE AMENDMENTS (for game developers)
 This training scenario series is intended to introduce small chunks of the rules with each scenario.
-Provide game options to disable the following Advance rules: Torso Twisting, Heat, Mechwarriors, Piloting Skill Rolls, Critical Hits, Physical Attacks.
+Provide game options to disable the following Advance rules: Torso Twisting, Heat, MekWarriors, Piloting Skill Rolls, Critical Hits, Physical Attacks.
 Provide a way to set Game Options within the .mms file.
 
 **********Battletech 3rd Edition Training Scenario #1 - First Run, pg. 36**********
@@ -107,7 +107,7 @@ VICTORY CONDITIONS
 The BattleMaster must exit the South map edge to claim victory.  Otherwise the Attacker wins.
 
 SPECIAL RULES
-This scenario should only use the Basic Rules of moving & firing, plus the Advance Rules of Torso Twisting, Heat, Mechwarriors, & Piloting Skill Rolls.
+This scenario should only use the Basic Rules of moving & firing, plus the Advance Rules of Torso Twisting, Heat, MekWarriors, & Piloting Skill Rolls.
 No Physical Attacks from any mech.
 Set Game Options "Allow pushing off the map" to false.
 Set Game Options "Fire and smoke" to false.

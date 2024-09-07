@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
@@ -548,8 +554,7 @@ public class WeaponFireInfo {
      * @param bombedHex The target hex.
      * @return The expected damage of the attack.
      */
-    private double computeExpectedBombDamage(final Entity shooter, final Mounted weapon,
-                                             final Coords bombedHex) {
+    private double computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final Coords bombedHex) {
         double damage = 0D; //lol double damage I wish
 
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
@@ -653,7 +658,7 @@ public class WeaponFireInfo {
         // now that we've calculated hit odds, if we're shooting
         // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
         String currentFireMode = getWeapon().curMode().getName();
-        int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
+        int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinUpThreshold());
         if (!currentFireMode.equals(getWeapon().curMode().getName())) {
             setUpdatedFiringMode(spinMode);
         }
@@ -695,31 +700,31 @@ public class WeaponFireInfo {
 
         // now guess how many critical hits will be done
         setKillProbability(0);
-        Mek targetMech = null;
+        Mek targetMek = null;
         Targetable potentialTarget = getTarget();
 
-        if (potentialTarget instanceof Mek) {
-            targetMech = (Mek) potentialTarget;
+        if (potentialTarget instanceof Mek potentialTargetMek) {
+            targetMek = potentialTargetMek;
         } else if (potentialTarget instanceof HexTarget || potentialTarget instanceof BuildingTarget) {
             Coords c = potentialTarget.getPosition();
             Iterator<Entity> targetEnemies = game.getEnemyEntities(c, this.shooter);
             while (targetEnemies.hasNext()) {
                 Entity next = targetEnemies.next();
-                if (next instanceof Mek) {
-                    targetMech = (Mek) next;
+                if (next instanceof Mek potentialTargetMek) {
+                    targetMek = potentialTargetMek;
                     break;
                 }
             }
         }
-        // No target Mech found; nothing to do
-        if (null == targetMech) {
+        // No target Mek found; nothing to do
+        if (null == targetMek) {
             if (debugging) {
                 LogManager.getLogger().debug(msg.toString());
             }
             return;
         }
 
-        // A mech with a torso-mounted cockpit can survive losing its head.
+        // A Mek with a torso-mounted cockpit can survive losing its head.
         double headlessOdds = 0.0;
 
         // Loop through hit locations.
@@ -727,7 +732,7 @@ public class WeaponFireInfo {
         for (int i = 0; 7 >= i; i++) {
             int hitLocation = i;
 
-            while (targetMech.isLocationBad(hitLocation) &&
+            while (targetMek.isLocationBad(hitLocation) &&
                    (Mek.LOC_CT != hitLocation)) {
 
                 // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
@@ -746,8 +751,8 @@ public class WeaponFireInfo {
             hitLocationProbability += (hitLocationProbability * headlessOdds);
 
             // Get the armor and internals for this location.
-            final int targetArmor = Math.max(0, targetMech.getArmor(hitLocation, (3 == getDamageDirection())));
-            final int targetInternals = Math.max(0, targetMech.getInternal(hitLocation));
+            final int targetArmor = Math.max(0, targetMek.getArmor(hitLocation, (3 == getDamageDirection())));
+            final int targetInternals = Math.max(0, targetMek.getInternal(hitLocation));
 
             // If the location could be destroyed outright...
             if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
@@ -755,7 +760,7 @@ public class WeaponFireInfo {
                 if (Mek.LOC_CT == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 } else if ((Mek.LOC_HEAD == hitLocation) &&
-                           (Mek.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType())) {
+                           (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 }
 

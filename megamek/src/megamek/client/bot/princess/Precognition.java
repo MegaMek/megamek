@@ -1,16 +1,21 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
@@ -54,7 +59,7 @@ public class Precognition implements Runnable {
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
-     * Computing ECMInfo requires iterating over all Entities in the Game and 
+     * Computing ECMInfo requires iterating over all Entities in the Game and
      * this can be an expensive operation, so it's cheaper to use cache it and
      * re-use the cache.
      */
@@ -351,7 +356,7 @@ public class Precognition implements Runnable {
         try {
             pause();
             for (Entity entity : getGame().getEntitiesVector()) {
-                // If Precog is done, just exit
+                // If PreCog is done, just exit
                 if (getDone().get()) {
                     return;
                 }
@@ -361,7 +366,7 @@ public class Precognition implements Runnable {
                 if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
                      || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
                                              .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
-                    dirtifyUnit(entity.getId());
+                    markUnitAsDirty(entity.getId());
                 }
             }
             while (!getDirtyUnits().isEmpty()) {
@@ -369,7 +374,7 @@ public class Precognition implements Runnable {
                 if (getDone().get()) {
                     return;
                 }
-                
+
                 Integer entityId = getDirtyUnits().pollFirst();
                 Entity entity = getGame().getEntity(entityId);
                 if (entity != null) {
@@ -488,7 +493,7 @@ public class Precognition implements Runnable {
                     LogManager.getLogger().debug("Received entity change event for "
                                     + changeEvent.getEntity().getDisplayName()
                                     + " (ID " + entity.getId() + ")");
-                    dirtifyUnit(changeEvent.getEntity().getId());
+                    markUnitAsDirty(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
                     LogManager.getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());
@@ -514,7 +519,7 @@ public class Precognition implements Runnable {
      * Called when a unit has moved and should be put on the dirty list, as well
      * as any units who's moves contain that unit
      */
-    private void dirtifyUnit(int id) {
+    private void markUnitAsDirty(int id) {
         // Prevent Game from changing while processing
         GAME_LOCK.lock();
         try {
@@ -611,7 +616,7 @@ public class Precognition implements Runnable {
             PATH_ENUMERATOR_LOCK.writeLock().unlock();
         }
     }
-    
+
     public List<ECMInfo> getECMInfo() {
         return Collections.unmodifiableList(ecmInfo);
     }
@@ -661,7 +666,7 @@ public class Precognition implements Runnable {
             LogManager.getLogger().debug("GAME_LOCK read unlocked.");
         }
     }
-   
+
     /**
      * Returns the individual player assigned the index parameter.
      */
@@ -673,12 +678,12 @@ public class Precognition implements Runnable {
      * Receives player information from the message packet.
      */
     private void receivePlayerInfo(Packet c) {
-        int pindex = c.getIntValue(0);
+        int playerIndex = c.getIntValue(0);
         Player newPlayer = (Player) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
-            getGame().addPlayer(pindex, newPlayer);
+            getGame().addPlayer(playerIndex, newPlayer);
         } else {
-            getGame().setPlayer(pindex, newPlayer);
+            getGame().setPlayer(playerIndex, newPlayer);
         }
     }
 
@@ -718,11 +723,11 @@ public class Precognition implements Runnable {
      */
     @SuppressWarnings("unchecked")
     private void receiveEntityUpdate(Packet c) {
-        int eindex = c.getIntValue(0);
+        int entityIndex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
         Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
         // Replace this entity in the game.
-        getGame().setEntity(eindex, entity, movePath);
+        getGame().setEntity(entityIndex, entity, movePath);
     }
 
     private void receiveEntityAdd(Packet packet) {
@@ -749,7 +754,7 @@ public class Precognition implements Runnable {
             e.setWhoCanSee((Vector<Player>) packet.getObject(4));
             e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
             // this next call is only needed sometimes, but we'll just
-            // call it everytime
+            // call it every time
             getGame().processGameEvent(new GameEntityChangeEvent(this, e));
         }
     }
@@ -828,7 +833,7 @@ public class Precognition implements Runnable {
                 // The equipment type of a club needs to be restored.
                 if (ea instanceof ClubAttackAction) {
                     ClubAttackAction caa = (ClubAttackAction) ea;
-                    Mounted club = caa.getClub();
+                    Mounted<?> club = caa.getClub();
                     club.restore();
                 }
             }
@@ -862,6 +867,7 @@ public class Precognition implements Runnable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void receiveUpdateGroundObjects(Packet packet) {
         game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
     }

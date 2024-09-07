@@ -574,7 +574,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
         } else if (e.getName().equals(GUIPreferences.PLAYER_LIST_ENABLED)) {
             gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
-        } else if (e.getName().equals(RecentBoardList.RECENT_BOARD_EVENT)) {
+        } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
         }
     }

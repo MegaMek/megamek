@@ -40,7 +40,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class RecentBoardList {
 
-    public static final String RECENT_BOARD_EVENT = "recent_board_event";
+    public static final String RECENT_BOARDS_UPDATED = "recent_board_event";
 
     private static final MMLogger LOGGER = MMLogger.create(RecentBoardList.class);
     private static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory()
@@ -85,7 +85,7 @@ public final class RecentBoardList {
     }
 
     /**
-     * Adds a listener for recent board changes. The event will have the name {@link #RECENT_BOARD_EVENT}.
+     * Adds a listener for recent board changes. The event will have the name {@link #RECENT_BOARDS_UPDATED}.
      */
     public static void addListener(IPreferenceChangeListener listener) {
         if (!LISTENERS.contains(listener)) {
@@ -107,7 +107,7 @@ public final class RecentBoardList {
         }
         saveRecentBoards();
         LISTENERS.forEach(l -> l.preferenceChange(
-                new PreferenceChangeEvent(board, RECENT_BOARD_EVENT, null, null)));
+                new PreferenceChangeEvent(board, RECENT_BOARDS_UPDATED, null, null)));
     }
 
     private void saveRecentBoards() {

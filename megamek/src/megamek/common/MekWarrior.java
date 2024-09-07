@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2014-2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -21,7 +27,7 @@ import megamek.common.options.OptionsConstants;
  *         from its ride.
  */
 
-public class MechWarrior extends EjectedCrew {
+public class MekWarrior extends EjectedCrew {
 
     private static final long serialVersionUID = 6227549671448329770L;
     private int pickedUpById = Entity.NONE;
@@ -34,12 +40,12 @@ public class MechWarrior extends EjectedCrew {
      * @param originalRide the <code>Entity</code> that was this MW's original
      *            ride
      */
-    public MechWarrior(Entity originalRide) {
+    public MekWarrior(Entity originalRide) {
         super(originalRide);
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
 
-    public MechWarrior(Crew crew, Player owner, Game game) {
+    public MekWarrior(Crew crew, Player owner, Game game) {
         super(crew, owner, game);
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
@@ -47,7 +53,7 @@ public class MechWarrior extends EjectedCrew {
     /**
      * This constructor is so MULParser can load these entities
      */
-    public MechWarrior() {
+    public MekWarrior() {
         super();
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
@@ -120,7 +126,7 @@ public class MechWarrior extends EjectedCrew {
 
     @Override
     public boolean isCrippled() {
-        return true; //Ejected mechwarriors should always attempt to flee according to Forced Withdrawal.
+        return true; //Ejected MekWarriors should always attempt to flee according to Forced Withdrawal.
     }
 
     @Override
@@ -131,7 +137,7 @@ public class MechWarrior extends EjectedCrew {
 
     @Override
     public long getEntityType() {
-        return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
+        return Entity.ETYPE_INFANTRY | Entity.ETYPE_MEKWARRIOR;
     }
 
     @Override

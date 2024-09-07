@@ -18,8 +18,21 @@
  */
 package megamek.server.totalwarfare;
 
+import java.util.Vector;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MegaMek;
-import megamek.common.*;
+import megamek.common.Aero;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.FighterSquadron;
+import megamek.common.GameTurn;
+import megamek.common.IAero;
+import megamek.common.MapSettings;
+import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -27,10 +40,6 @@ import megamek.common.util.EmailService;
 import megamek.server.DynamicTerrainProcessor;
 import megamek.server.Server;
 import megamek.server.ServerBoardHelper;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 public class TWPhasePreparationManager {
 
@@ -192,7 +201,7 @@ public class TWPhasePreparationManager {
                 gameManager.resolveSelfDestruct();
                 gameManager.resolveShutdownCrashes();
                 gameManager.checkForIndustrialEndOfTurn();
-                gameManager.resolveMechWarriorPickUp();
+                gameManager.resolveMekWarriorPickUp();
                 gameManager.resolveVeeINarcPodRemoval();
                 gameManager.resolveFortify();
 

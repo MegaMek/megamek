@@ -87,7 +87,7 @@ public class FireControl {
     static final TargetRollModifier TH_TAR_INF = new TargetRollModifier(1, "infantry target");
     static final TargetRollModifier TH_ANTI_AIR = new TargetRollModifier(-2, "anti-aircraft quirk");
     static final TargetRollModifier TH_INDUSTRIAL = new TargetRollModifier(1, "industrial cockpit without advanced fire control");
-    static final TargetRollModifier TH_PRIMATIVE_INDUSTRIAL = new TargetRollModifier(2, "primitive industrial cockpit without advanced fire control");
+    static final TargetRollModifier TH_PRIMITIVE_INDUSTRIAL = new TargetRollModifier(2, "primitive industrial cockpit without advanced fire control");
     static final TargetRollModifier TH_TAR_SUPER = new TargetRollModifier(-1, "superheavy target");
     static final TargetRollModifier TH_TAR_GROUND_DS = new TargetRollModifier(-4, "grounded DropShip target");
     static final TargetRollModifier TH_TAR_LOW_PROFILE = new TargetRollModifier(1, "narrow/low profile target");
@@ -331,7 +331,7 @@ public class FireControl {
         if (!isShooterInfantry) {
             if (target instanceof BattleArmor) {
                 toHitData.addModifier(TH_TAR_BA);
-            } else if (target instanceof MechWarrior) {
+            } else if (target instanceof MekWarrior) {
                 toHitData.addModifier(TH_TAR_MW);
             } else if (target instanceof Infantry) {
                 toHitData.addModifier(TH_TAR_INF);
@@ -346,7 +346,7 @@ public class FireControl {
         if (shooter instanceof Mech) {
             final Mech shooterMech = (Mech) shooter;
             if (Mech.COCKPIT_PRIMITIVE_INDUSTRIAL == shooterMech.getCockpitType()) {
-                toHitData.addModifier(TH_PRIMATIVE_INDUSTRIAL);
+                toHitData.addModifier(TH_PRIMITIVE_INDUSTRIAL);
             } else if (!shooterMech.hasAdvancedFireControl()) {
                 toHitData.addModifier(TH_INDUSTRIAL);
             }
@@ -615,7 +615,7 @@ public class FireControl {
      */
     @StaticWrapper
     private ToHitData getDamageWeaponMods(final Entity attacker,
-                                          final Mounted weapon) {
+                                          final Mounted<?> weapon) {
         return Compute.getDamageWeaponMods(attacker, weapon);
     }
 
@@ -674,7 +674,7 @@ public class FireControl {
 
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
-        final Mounted firingAmmo;
+        final Mounted<?> firingAmmo;
         if (AmmoType.T_NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
             firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
@@ -1295,7 +1295,7 @@ public class FireControl {
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
-        utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
+        utility -= (firingPlan.getTarget() instanceof MekWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         firingPlan.setUtility(utility);
     }
 
@@ -1477,7 +1477,7 @@ public class FireControl {
         utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
         utility *= calcTargetPotentialDamageMultiplier(physicalInfo.getTarget());
-        utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
+        utility -= (physicalInfo.getTarget() instanceof MekWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         utility += calcCommandUtility(physicalInfo.getTarget());
         utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());
         utility += calcPriorityUnitTargetUtility(physicalInfo.getTarget());
@@ -2439,7 +2439,7 @@ public class FireControl {
 
         try {
             // Beware concurrent modification
-            for (Mounted weapon : shooter.getWeaponList()) {
+            for (Mounted<?> weapon : shooter.getWeaponList()) {
                 if (weapon.hasModeType(Weapon.MODE_MISSILE_INDIRECT) || weapon.hasModeType(Weapon.MODE_INDIRECT_HEAT)) {
                     fireControlState.getEntityIDFStates().put(shooter.getId(), true);
                     return true;
@@ -2462,7 +2462,7 @@ public class FireControl {
     public SpotAction getSpotAction(FiringPlan plan, Entity spotter, FireControlState fireControlState) {
         // logic applies as follows:
         // if I am disqualified from spotting, don't spot
-        // disqualifiers are:
+        // disqualifies are:
         //     legally can't spot
         //     am firing and don't have a command console to mitigate the spotting penalty
         // otherwise, attempt to spot the closest enemy
@@ -3474,7 +3474,7 @@ public class FireControl {
         }
 
         // step 1: loop through all the unit's jammed weapons to determine the biggest one
-        for (Mounted mounted : tankShooter.getJammedWeapons()) {
+        for (Mounted<?> mounted : tankShooter.getJammedWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
@@ -3562,16 +3562,16 @@ public class FireControl {
                     if ((ent.getId() == shooter.getId()) || ent.isIlluminated()) {
                         continue;
                     } else {
-                        boolean willbeIlluminated = false;
+                        boolean willBeIlluminated = false;
 
                         for (SearchlightAttackAction searchlight : searchlights) {
                             if (searchlight.willIlluminate(shooter.getGame(), ent)) {
-                                willbeIlluminated = true;
+                                willBeIlluminated = true;
                                 break;
                             }
                         }
 
-                        if (willbeIlluminated) {
+                        if (willBeIlluminated) {
                             continue;
                         }
                     }
@@ -3631,10 +3631,10 @@ public class FireControl {
      * @return true if wtype doesn't actually track ammo
      */
     protected static boolean effectivelyAmmoless(WeaponType wtype) {
-        List<Integer> atypes = Arrays.asList(
+        List<Integer> ammoTypes = Arrays.asList(
                 AmmoType.T_NA,
                 AmmoType.T_INFANTRY
         );
-        return atypes.contains(wtype.getAmmoType());
+        return ammoTypes.contains(wtype.getAmmoType());
     }
 }

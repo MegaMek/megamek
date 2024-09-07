@@ -958,8 +958,8 @@ public class TWGameManager extends AbstractGameManager {
             // this flag is relevant only within the context of a single phase, but not between phases
             entity.setTurnInterrupted(false);
 
-            if (entity instanceof MechWarrior) {
-                ((MechWarrior) entity).setLanded(true);
+            if (entity instanceof MekWarrior) {
+                ((MekWarrior) entity).setLanded(true);
             }
         }
 
@@ -5293,7 +5293,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Handle any picked up MekWarriors
-        for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
+        for (Integer mechWarriorId : entity.getPickedUpMekWarriors()) {
             Entity mw = game.getEntity(mechWarriorId);
 
             if (mw == null) {
@@ -17315,7 +17315,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<>();
         final int totalHits = e.getCrew().getHits(crewPos);
-        if ((e instanceof MechWarrior) || !e.isTargetable()
+        if ((e instanceof MekWarrior) || !e.isTargetable()
                 || !e.getCrew().isActive(crewPos) || (damage == 0)) {
             return vDesc;
         }
@@ -17406,7 +17406,7 @@ public class TWGameManager extends AbstractGameManager {
             // and MekWarriors can roll to wake up
             if (e.isTargetable()
                     && ((e instanceof Mech) || (e instanceof Protomech)
-                    || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
+                    || (e instanceof MekWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
                 for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
                     if (e.getCrew().isMissing(pos)) {
                         continue;
@@ -19914,7 +19914,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            if ((entity instanceof MechWarrior) && !((MechWarrior) entity).hasLanded()) {
+            if ((entity instanceof MekWarrior) && !((MekWarrior) entity).hasLanded()) {
                 // MekWarrior is still up in the air ejecting hence safe
                 // from this explosion.
                 continue;
@@ -23641,7 +23641,7 @@ public class TWGameManager extends AbstractGameManager {
             entity.setDoomed(true);
 
             // Kill any picked up MekWarriors
-            Enumeration<Integer> iter = entity.getPickedUpMechWarriors().elements();
+            Enumeration<Integer> iter = entity.getPickedUpMekWarriors().elements();
             while (iter.hasMoreElements()) {
                 int mechWarriorId = iter.nextElement();
                 Entity mw = game.getEntity(mechWarriorId);
@@ -28916,7 +28916,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
             // create the MekWarrior in any case, for campaign tracking
-            MechWarrior pilot = new MechWarrior(entity);
+            MekWarrior pilot = new MekWarrior(entity);
             pilot.setDeployed(true);
             pilot.setId(game.getNextEntityId());
             pilot.setLanded(false);
@@ -28942,7 +28942,7 @@ public class TWGameManager extends AbstractGameManager {
                     living++;
                 }
             }
-            pilot.setInternal(living, MechWarrior.LOC_INFANTRY);
+            pilot.setInternal(living, MekWarrior.LOC_INFANTRY);
             if (entity.getCrew().isDead() || entity.getCrew().getHits() >= Crew.DEATH) {
                 pilot.setDoomed(true);
             }
@@ -29519,7 +29519,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // create the MekWarrior in any case, for campaign tracking
-            MechWarrior pilot = new MechWarrior(entity);
+            MekWarrior pilot = new MekWarrior(entity);
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(game.getNextEntityId());
@@ -29592,13 +29592,13 @@ public class TWGameManager extends AbstractGameManager {
      * Checks if ejected MekWarriors are eligible to be picked up, and if so,
      * captures them or picks them up
      */
-    void resolveMechWarriorPickUp() {
+    void resolveMekWarriorPickUp() {
         Report r;
 
         // fetch all mechWarriors that are not picked up
         Iterator<Entity> mechWarriors = game.getSelectedEntities(entity -> {
-            if (entity instanceof MechWarrior) {
-                MechWarrior mw = (MechWarrior) entity;
+            if (entity instanceof MekWarrior) {
+                MekWarrior mw = (MekWarrior) entity;
                 return (mw.getPickedUpById() == Entity.NONE)
                         && !mw.isDoomed()
                         && (mw.getTransportId() == Entity.NONE);
@@ -29609,7 +29609,7 @@ public class TWGameManager extends AbstractGameManager {
         // unit
         while (mechWarriors.hasNext()) {
             boolean pickedUp = false;
-            MechWarrior e = (MechWarrior) mechWarriors.next();
+            MekWarrior e = (MekWarrior) mechWarriors.next();
             // Check for owner entities first...
             for (Entity pe : game.getEntitiesVector(e.getPosition())) {
                 if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()
@@ -29619,7 +29619,7 @@ public class TWGameManager extends AbstractGameManager {
                         || (pe.getId() == e.getId())) {
                     continue;
                 }
-                if (pe instanceof MechWarrior) {
+                if (pe instanceof MekWarrior) {
                     // MWs have a beer together
                     r = new Report(6415, Report.PUBLIC);
                     r.add(pe.getDisplayName());
@@ -29649,7 +29649,7 @@ public class TWGameManager extends AbstractGameManager {
                             || (pe.getOwner().getTeam() != e.getOwner().getTeam())) {
                         continue;
                     }
-                    if (pe instanceof MechWarrior) {
+                    if (pe instanceof MekWarrior) {
                         // MWs have a beer together
                         r = new Report(6416, Report.PUBLIC);
                         r.add(pe.getDisplayName());
@@ -29678,7 +29678,7 @@ public class TWGameManager extends AbstractGameManager {
                             || pe.isAirborne() || (pe.getElevation() != e.getElevation())) {
                         continue;
                     }
-                    if (pe instanceof MechWarrior) {
+                    if (pe instanceof MekWarrior) {
                         // MWs have a beer together
                         r = new Report(6417, Report.PUBLIC);
                         r.add(pe.getDisplayName());

@@ -13,17 +13,12 @@
 */
 package megamek.client.ui.swing.tooltip;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.CrewSkillSummaryUtil;
-import org.apache.logging.log4j.LogManager;
+import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
+import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
@@ -31,10 +26,22 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
-import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
+import javax.imageio.ImageIO;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Configuration;
+import megamek.common.Crew;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.InGameObject;
+import megamek.common.MekWarrior;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.CrewSkillSummaryUtil;
 
 public final class PilotToolTip {
 
@@ -169,7 +176,7 @@ public final class PilotToolTip {
         Game game = entity.getGame();
 
         String pickedUp = game.getEntitiesVector().stream()
-                .filter(e -> (e.isDeployed() && ((e instanceof MechWarrior) && ((MechWarrior) e).getPickedUpById() == entity.getId())))
+                .filter(e -> (e.isDeployed() && ((e instanceof MekWarrior) && ((MekWarrior) e).getPickedUpById() == entity.getId())))
                 .map(e -> e.getCrew().getName())
                 .collect(Collectors.joining(", "));
 

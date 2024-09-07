@@ -16,25 +16,7 @@ package megamek.client.bot;
 
 import java.util.Iterator;
 
-import megamek.common.BattleArmor;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.INarcPod;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
@@ -282,7 +264,7 @@ public final class PhysicalCalculator {
             }
 
             // don't bother stomping mechwarriors
-            if (target instanceof MechWarrior) {
+            if (target instanceof MekWarrior) {
                 continue;
             }
 

@@ -627,7 +627,7 @@ public class MULParser {
             return new EjectedCrew();
         } else if (chassis.equals(EjectedCrew.PILOT_EJECT_NAME)
                 || chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
-            return new MechWarrior();
+            return new MekWarrior();
         } else if (chassis.equals(EscapePods.POD_EJECT_NAME)) {
             return new EscapePods();
         }
@@ -853,12 +853,12 @@ public class MULParser {
         entity.setExternalIdAsString(extId);
 
         // external id
-        if (entity instanceof MechWarrior) {
+        if (entity instanceof MekWarrior) {
             String pickUpId = entityTag.getAttribute(ATTR_PICKUP_ID);
             if (pickUpId.isBlank()) {
                 pickUpId = "-1";
             }
-            ((MechWarrior) entity).setPickedUpByExternalId(pickUpId);
+            ((MekWarrior) entity).setPickedUpByExternalId(pickUpId);
         }
 
         // quirks

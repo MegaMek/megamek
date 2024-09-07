@@ -123,7 +123,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final long ETYPE_INFANTRY = 1L << 15;
     public static final long ETYPE_BATTLEARMOR = 1L << 16;
-    public static final long ETYPE_MECHWARRIOR = 1L << 17;
+    public static final long ETYPE_MEKWARRIOR = 1L << 17;
 
     public static final long ETYPE_PROTOMECH = 1L << 18;
 
@@ -547,7 +547,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * The ids of the MekWarriors this entity has picked up
      */
-    private Vector<Integer> pickedUpMechWarriors = new Vector<>();
+    private Vector<Integer> pickedUpMekWarriors = new Vector<>();
 
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
@@ -8651,8 +8651,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    public void pickUp(MechWarrior mw) {
-        pickedUpMechWarriors.addElement(mw.getId());
+    public void pickUp(MekWarrior mw) {
+        pickedUpMekWarriors.addElement(mw.getId());
     }
 
     /**
@@ -10553,8 +10553,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setDeployed(shouldOffBoardDeploy(round));
     }
 
-    public Vector<Integer> getPickedUpMechWarriors() {
-        return pickedUpMechWarriors;
+    public Vector<Integer> getPickedUpMekWarriors() {
+        return pickedUpMekWarriors;
     }
 
     /**
@@ -10724,7 +10724,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         setDoomed(true);
 
-        Enumeration<Integer> iter = getPickedUpMechWarriors().elements();
+        Enumeration<Integer> iter = getPickedUpMekWarriors().elements();
         while (iter.hasMoreElements()) {
             Integer mechWarriorId = iter.nextElement();
             Entity mw = game.getEntity(mechWarriorId);
@@ -14657,7 +14657,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return "Aerospace fighter";
         } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
             return "Battlearmor";
-        } else if ((typeId & ETYPE_MECHWARRIOR) == ETYPE_MECHWARRIOR) {
+        } else if ((typeId & ETYPE_MEKWARRIOR) == ETYPE_MEKWARRIOR) {
             return "Mechwarrior";
         } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
             return "ProtoMech";

@@ -13,6 +13,16 @@
  */
 package megamek.common.actions;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -29,17 +39,17 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.battlearmor.CLBALBX;
-import megamek.common.weapons.bayweapons.*;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayweapons.LaserBayWeapon;
+import megamek.common.weapons.bayweapons.PPCBayWeapon;
+import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
+import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Represents intention to fire a weapon at the target.
@@ -4280,8 +4290,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.PlMasc"));
         }
 
-        // Ejected MechWarriors are harder to hit
-        if (te instanceof MechWarrior) {
+        // Ejected MekWarriors are harder to hit
+        if (te instanceof MekWarrior) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
         }
 

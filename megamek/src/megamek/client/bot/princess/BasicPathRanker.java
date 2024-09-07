@@ -514,7 +514,7 @@ public class BasicPathRanker extends PathRanker {
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
-            if (enemy instanceof MechWarrior) {
+            if (enemy instanceof MekWarrior) {
                 continue;
             }
 

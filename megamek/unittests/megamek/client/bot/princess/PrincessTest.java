@@ -19,6 +19,27 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -26,19 +47,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -229,7 +237,7 @@ public class PrincessTest {
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockTank), any(StringBuilder.class))).thenReturn(2.5);
 
-        Entity mockEjectedMechwarrior = mock(MechWarrior.class);
+        Entity mockEjectedMechwarrior = mock(MekWarrior.class);
         when(mockEjectedMechwarrior.getRunMP()).thenReturn(1);
         when(mockEjectedMechwarrior.isOffBoard()).thenReturn(false);
         when(mockEjectedMechwarrior.getPosition()).thenReturn(mockCoords);

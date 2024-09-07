@@ -78,7 +78,7 @@ public class EjectedCrew extends Infantry {
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
         Game tmpGame = originalRide.getGame();
         if (tmpGame != null
-            && (!(this instanceof MechWarrior)
+            && (!(this instanceof MekWarrior)
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
@@ -144,7 +144,7 @@ public class EjectedCrew extends Infantry {
         }
         Game tmpGame = game;
         if (tmpGame != null
-            && (!(this instanceof MechWarrior)
+            && (!(this instanceof MekWarrior)
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),

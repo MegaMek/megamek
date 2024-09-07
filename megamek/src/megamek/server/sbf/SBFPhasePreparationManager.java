@@ -18,13 +18,13 @@
  */
 package megamek.server.sbf;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MegaMek;
 import megamek.common.InGameObject;
-import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormation;
-import org.apache.logging.log4j.LogManager;
 
 record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
@@ -180,7 +180,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
 //                resolveSelfDestruct();
 //                resolveShutdownCrashes();
 //                checkForIndustrialEndOfTurn();
-//                resolveMechWarriorPickUp();
+//                resolveMekWarriorPickUp();
 //                resolveVeeINarcPodRemoval();
 //                resolveFortify();
 

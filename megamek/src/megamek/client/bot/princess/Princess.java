@@ -2004,7 +2004,7 @@ public class Princess extends BotClient {
                 break;
             }
 
-            if (entity instanceof MechWarrior) {
+            if (entity instanceof MekWarrior) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
@@ -2813,7 +2813,7 @@ public class Princess extends BotClient {
 
     private boolean isEnemyInfantry(final Entity entity,
                                     final Coords coords) {
-        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
+        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MEKWARRIOR)
                 && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
                 && entity.getOwner().isEnemyOf(getLocalPlayer())
                 && !getStrategicBuildingTargets().contains(coords)

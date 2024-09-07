@@ -65,7 +65,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (ae.isEvading()) {
             return "Attacker is evading.";
         }
-        
+
         // can't make physical attacks if loading/unloading cargo
         if (ae.endOfTurnCargoInteraction()) {
         	return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
@@ -145,8 +145,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "infantry squad target");
         }
 
-        // Ejected MechWarriors are also more difficult targets.
-        if (target instanceof MechWarrior) {
+        // Ejected MekWarriors are also more difficult targets.
+        if (target instanceof MekWarrior) {
             toHit.addModifier(2, "ejected Pilot target");
         }
         // attacker movement
@@ -165,7 +165,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if ((ae instanceof Mech) && ae.isSuperHeavy()) {
             toHit.addModifier(1, "attacker is superheavy mech");
         }
-        
+
         if ((ae instanceof TripodMech) && ae.getCrew().hasDedicatedPilot()) {
             toHit.addModifier(-1, "attacker is tripod with dedicated pilot");
         }
@@ -250,7 +250,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.append(te.getStealthModifier(RangeType.RANGE_MINIMUM, ae));
             }
         }
-        
+
         if ((ae instanceof Mech) && ((Mech) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }

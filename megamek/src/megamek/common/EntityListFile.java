@@ -13,6 +13,20 @@
  */
 package megamek.common;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.codeUtilities.StringUtility;
@@ -22,10 +36,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utilities.xml.MMXMLUtility;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -775,9 +785,9 @@ public class EntityListFile {
                 output.write(Integer.toString(entity.getCamouflage().getScale()));
             }
 
-            if ((entity instanceof MechWarrior) && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
+            if ((entity instanceof MekWarrior) && !((MekWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" " + MULParser.ATTR_PICKUP_ID + "=\"");
-                output.write(((MechWarrior) entity).getPickedUpByExternalIdAsString());
+                output.write(((MekWarrior) entity).getPickedUpByExternalIdAsString());
             }
 
             // Save some values for conventional infantry

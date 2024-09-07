@@ -1797,9 +1797,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISFlakStandardInfArmor());
         EquipmentType.addType(MiscType.createISFlakConcealedInfArmor());
         EquipmentType.addType(MiscType.createISHeatSuitInfArmor());
-        EquipmentType.addType(MiscType.createISMechWarriorCombatSuitInfArmor());
-        EquipmentType.addType(MiscType.createISMechWarriorCoolingSuitInfArmor());
-        EquipmentType.addType(MiscType.createMechWarriorCoolingVestInfArmor());
+        EquipmentType.addType(MiscType.createISMekWarriorCombatSuitInfArmor());
+        EquipmentType.addType(MiscType.createISMekWarriorCoolingSuitInfArmor());
+        EquipmentType.addType(MiscType.createMekWarriorCoolingVestInfArmor());
         EquipmentType.addType(MiscType.createMyomerSuitInfArmor());
         EquipmentType.addType(MiscType.createMyomerVestInfArmor());
         EquipmentType.addType(MiscType.createParkaInfArmor());
@@ -2702,7 +2702,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISMechWarriorCombatSuitInfArmor() {
+    public static MiscType createISMekWarriorCombatSuitInfArmor() {
         MiscType misc = new MiscType();
 
         misc.name = "MechWarrior Combat Suit";
@@ -2722,7 +2722,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISMechWarriorCoolingSuitInfArmor() {
+    public static MiscType createISMekWarriorCoolingSuitInfArmor() {
         MiscType misc = new MiscType();
 
         misc.name = "MechWarrior Cooling Suit";
@@ -2742,7 +2742,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createMechWarriorCoolingVestInfArmor() {
+    public static MiscType createMekWarriorCoolingVestInfArmor() {
         MiscType misc = new MiscType();
 
         misc.name = "MechWarrior Cooling Vest (Only)";

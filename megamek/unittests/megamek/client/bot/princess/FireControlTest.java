@@ -1063,7 +1063,7 @@ public class FireControlTest {
                 mockShooter, mockShooterState, mockTarget, mockTargetState, 10, mockGame));
         when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);
         expected = new ToHitData();
-        expected.addModifier(FireControl.TH_PRIMATIVE_INDUSTRIAL);
+        expected.addModifier(FireControl.TH_PRIMITIVE_INDUSTRIAL);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(
                 mockShooter, mockShooterState, mockTarget, mockTargetState, 10, mockGame));
         when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
@@ -1281,7 +1281,7 @@ public class FireControlTest {
         mockTarget = mock(BipedMech.class);
 
         // Firing at an ejected mechwarrior.
-        mockTarget = mock(MechWarrior.class);
+        mockTarget = mock(MekWarrior.class);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_TAR_MW);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
@@ -2051,7 +2051,7 @@ public class FireControlTest {
         final double TOLERANCE = 0.00001;
         int overheatTolerance = 5;
         final double baseUtility = 20.6154;
-        final MechWarrior mockPilot = mock(MechWarrior.class);
+        final MekWarrior mockPilot = mock(MekWarrior.class);
         when(mockPilot.getId()).thenReturn(20);
         when(mockPilot.isMilitary()).thenReturn(true);
 
@@ -2690,8 +2690,8 @@ public class FireControlTest {
      * a MekWarrior, instead of choosing to do nothing.
      */
     @Test
-    public void testCalcFiringPlansAtMechWarrior() {
-        mockTarget = mock(MechWarrior.class);
+    public void testCalcFiringPlansAtMekWarrior() {
+        mockTarget = mock(MekWarrior.class);
         when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockPPCFireInfo.getHeat()).thenReturn(10);
         when(mockPPCFireInfo.getExpectedDamageOnHit()).thenReturn(10.0);

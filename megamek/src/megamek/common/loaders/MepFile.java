@@ -29,7 +29,7 @@ import megamek.common.LocationFullException;
 import megamek.common.Mek;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.QuadMech;
+import megamek.common.QuadMek;
 import megamek.common.TechConstants;
 
 // Known bug! Split-location weapons are not supported.
@@ -163,7 +163,7 @@ public class MepFile implements IMechLoader {
             Mek mech;
 
             if ("Quad".equals(chassisType.trim())) {
-                mech = new QuadMech();
+                mech = new QuadMek();
             } else {
                 mech = new BipedMech();
             }

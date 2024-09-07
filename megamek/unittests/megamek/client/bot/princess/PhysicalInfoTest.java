@@ -36,7 +36,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Mek;
-import megamek.common.QuadMech;
+import megamek.common.QuadMek;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -145,7 +145,7 @@ public class PhysicalInfoTest {
         assertEquals(10.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
         // Test a non-biped trying to punch.
-        testPhysicalInfo.setShooter(mock(QuadMech.class));
+        testPhysicalInfo.setShooter(mock(QuadMek.class));
         testPhysicalInfo.initDamage(punch, mockShooterState, mockTargetState, true, mockGame);
         assertEquals(0.0, testPhysicalInfo.getProbabilityToHit(), TOLERANCE);
         assertEquals(0.0, testPhysicalInfo.getMaxDamage(), TOLERANCE);

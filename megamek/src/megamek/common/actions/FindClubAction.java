@@ -20,7 +20,7 @@ import megamek.common.Game;
 import megamek.common.Hex;
 import megamek.common.Mek;
 import megamek.common.Terrains;
-import megamek.common.TripodMech;
+import megamek.common.TripodMek;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -51,7 +51,7 @@ public class FindClubAction extends AbstractEntityAction {
         final Hex hex = game.getBoard().getHex(entity.getPosition());
 
         // Only biped and tripod 'Meks qualify at all.
-        if (!(entity instanceof BipedMech || entity instanceof TripodMech)) {
+        if (!(entity instanceof BipedMech || entity instanceof TripodMek)) {
             return false;
         }
 

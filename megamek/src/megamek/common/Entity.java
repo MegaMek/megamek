@@ -7244,8 +7244,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return new PilotingRollData(entityId,
                     TargetRoll.AUTOMATIC_FAIL,
                     getCrew().getPiloting() + 10, "Both legs destroyed");
-        } else if (this instanceof QuadMech) {
-            if (((QuadMech) this).countBadLegs() >= 3) {
+        } else if (this instanceof QuadMek) {
+            if (((QuadMek) this).countBadLegs() >= 3) {
                 return new PilotingRollData(entityId,
                         TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting()
                         + (((Mek) this).countBadLegs() * 5),
@@ -7436,7 +7436,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
 
-        if (isHullDown() && (this instanceof QuadMech)) {
+        if (isHullDown() && (this instanceof QuadMek)) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,
                     "getting up from hull down");
             return roll;
@@ -11265,7 +11265,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         boolean targetIsTank = (this instanceof Tank)
                 || (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS) && (this instanceof QuadMech));
+                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS) && (this instanceof QuadMek));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;

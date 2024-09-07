@@ -7774,13 +7774,13 @@ public class TWGameManager extends AbstractGameManager {
                 entity.setLocationStatus(Mek.LOC_LLEG, ILocationExposureStatus.WET);
                 vPhaseReport.addAll(breachCheck(entity, Mek.LOC_RLEG, hex));
                 vPhaseReport.addAll(breachCheck(entity, Mek.LOC_LLEG, hex));
-                if (entity instanceof QuadMech) {
+                if (entity instanceof QuadMek) {
                     entity.setLocationStatus(Mek.LOC_RARM, ILocationExposureStatus.WET);
                     entity.setLocationStatus(Mek.LOC_LARM, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mek.LOC_RARM, hex));
                     vPhaseReport.addAll(breachCheck(entity, Mek.LOC_LARM, hex));
                 }
-                if (entity instanceof TripodMech) {
+                if (entity instanceof TripodMek) {
                     entity.setLocationStatus(Mek.LOC_CLEG, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mek.LOC_CLEG, hex));
                 }
@@ -11346,7 +11346,7 @@ public class TWGameManager extends AbstractGameManager {
         if ((kaa.getLeg() == KickAttackAction.LEFTMULE)
                 || (kaa.getLeg() == KickAttackAction.RIGHTMULE)) {
             legName = legName.concat("rear ");
-        } else if (ae instanceof QuadMech) {
+        } else if (ae instanceof QuadMek) {
             legName = legName.concat("front ");
         }
         legName = legName.concat("leg");
@@ -11522,10 +11522,10 @@ public class TWGameManager extends AbstractGameManager {
             int leg;
             switch (kaa.getLeg()) {
                 case KickAttackAction.LEFT:
-                    leg = (ae instanceof QuadMech) ? Mek.LOC_LARM : Mek.LOC_LLEG;
+                    leg = (ae instanceof QuadMek) ? Mek.LOC_LARM : Mek.LOC_LLEG;
                     break;
                 case KickAttackAction.RIGHT:
-                    leg = (ae instanceof QuadMech) ? Mek.LOC_RARM : Mek.LOC_RLEG;
+                    leg = (ae instanceof QuadMek) ? Mek.LOC_RARM : Mek.LOC_RLEG;
                     break;
                 case KickAttackAction.LEFTMULE:
                     leg = Mek.LOC_LLEG;
@@ -14727,7 +14727,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(criticalEntity(ae, Mek.LOC_LLEG, false, 0, 0));
             addNewLines();
             addReport(criticalEntity(ae, Mek.LOC_RLEG, false, 0, 0));
-            if (ae instanceof QuadMech) {
+            if (ae instanceof QuadMek) {
                 addNewLines();
                 addReport(criticalEntity(ae, Mek.LOC_LARM, false, 0, 0));
                 addNewLines();
@@ -28786,7 +28786,7 @@ public class TWGameManager extends AbstractGameManager {
                         DamageType.NONE, true));
             }
         }
-        if (entity instanceof QuadMech) {
+        if (entity instanceof QuadMek) {
             for (int i = 4; i <= 7; i++) {
                 hit = new HitData(i);
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,

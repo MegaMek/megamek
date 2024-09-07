@@ -1083,7 +1083,7 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            if ((movingUnit instanceof QuadMech) && (Mek.LOC_RARM == loc ||
+            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RARM == loc ||
                     Mek.LOC_LARM == loc)) {
                 submergedLocations.add(loc);
             }

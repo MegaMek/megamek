@@ -145,7 +145,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             usedWeapons[Mek.LOC_LARM] = true;
         }
 
-        if (ae instanceof QuadMech) {
+        if (ae instanceof QuadMek) {
             if (usedWeapons[Mek.LOC_RARM]) {
                 if (usedWeapons[Mek.LOC_LARM]) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
@@ -168,7 +168,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // Get best leg
-        if (ae instanceof QuadMech) {
+        if (ae instanceof QuadMek) {
             if (limb1 == Entity.LOC_NONE) {
                 ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LARM, ae);
                 ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RARM, ae);

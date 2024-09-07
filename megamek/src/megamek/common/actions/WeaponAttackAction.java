@@ -1387,7 +1387,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.isHullDown() && weapon != null) {
             if (((ae instanceof BipedMech)
                     && ((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)))
-                    || ((ae instanceof QuadMech) && ((weapon.getLocation() == Mek.LOC_LLEG)
+                    || ((ae instanceof QuadMek) && ((weapon.getLocation() == Mek.LOC_LLEG)
                             || (weapon.getLocation() == Mek.LOC_RLEG) || (weapon.getLocation() == Mek.LOC_LARM)
                             || (weapon.getLocation() == Mek.LOC_RARM)))) {
                 return Messages.getString("WeaponAttackAction.NoLegHullDown");
@@ -2162,7 +2162,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     if (!((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }
-                } else if (ae instanceof QuadMech) {
+                } else if (ae instanceof QuadMek) {
                     if (!((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)
                             || (weapon.getLocation() == Mek.LOC_LARM) || (weapon.getLocation() == Mek.LOC_RARM))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
@@ -3947,7 +3947,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
+        if ((ae instanceof TripodMek || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
         }
 

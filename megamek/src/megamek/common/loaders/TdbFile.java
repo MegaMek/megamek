@@ -117,7 +117,7 @@ public class TdbFile implements IMechLoader {
             }
 
             if ("Quad".equals(basics.chassisConfig)) {
-                mech = new QuadMech(gyroType, cockpitType);
+                mech = new QuadMek(gyroType, cockpitType);
             } else {
                 mech = new BipedMech(gyroType, cockpitType);
             }
@@ -255,7 +255,7 @@ public class TdbFile implements IMechLoader {
 
     private void parseCrits(Mek mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
-        if (!(mech instanceof QuadMech)) {
+        if (!(mech instanceof QuadMek)) {
             if ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM)) {
                 for (Location l : critdefs.locations) {
                     if (l.bodyPart == loc) {

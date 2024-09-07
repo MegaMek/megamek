@@ -929,7 +929,7 @@ public class TestMech extends TestEntity {
                 buff.append("head turret requires torso mounted cockpit\n");
             }
 
-            if (misc.hasFlag(MiscType.F_SHOULDER_TURRET) && mech instanceof QuadMech) {
+            if (misc.hasFlag(MiscType.F_SHOULDER_TURRET) && mech instanceof QuadMek) {
                 illegal = true;
                 buff.append("quad mechs can't mount shoulder turrets\n");
             }
@@ -977,7 +977,7 @@ public class TestMech extends TestEntity {
             }
 
             if (misc.hasFlag(MiscType.F_RAM_PLATE)) {
-                if (!(mech instanceof QuadMech)) {
+                if (!(mech instanceof QuadMek)) {
                     buff.append(misc.getName()).append(" can only be mounted on a quad mech.\n");
                     illegal = true;
                 }

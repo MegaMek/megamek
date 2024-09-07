@@ -4255,9 +4255,9 @@ public abstract class Mek extends Entity {
             sb.append("Biped");
         } else if (this instanceof QuadVee) {
             sb.append("QuadVee");
-        } else if (this instanceof QuadMech) {
+        } else if (this instanceof QuadMek) {
             sb.append("Quad");
-        } else if (this instanceof TripodMech) {
+        } else if (this instanceof TripodMek) {
             sb.append("Tripod");
         }
 
@@ -4413,7 +4413,7 @@ public abstract class Mek extends Entity {
         sb.append(newLine);
 
         for (int element : MtfFile.locationOrder) {
-            if ((element == Mek.LOC_CLEG) && !(this instanceof TripodMech)) {
+            if ((element == Mek.LOC_CLEG) && !(this instanceof TripodMek)) {
                 continue;
             }
             sb.append(getLocationAbbr(element)).append(" ").append(MtfFile.ARMOR);
@@ -4437,7 +4437,7 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
         for (int l : MtfFile.locationOrder) {
-            if ((l == Mek.LOC_CLEG) && !(this instanceof TripodMech)) {
+            if ((l == Mek.LOC_CLEG) && !(this instanceof TripodMek)) {
                 continue;
             }
             String locationName = getLocationName(l);
@@ -4626,14 +4626,14 @@ public abstract class Mek extends Entity {
         addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
         if (isSuperHeavy()) {
-            if (this instanceof TripodMech) {
+            if (this instanceof TripodMek) {
                 setCockpitType(isIndustrial() ? COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL : COCKPIT_SUPERHEAVY_TRIPOD);
             } else if (isIndustrial()) {
                 setCockpitType(COCKPIT_SUPERHEAVY_INDUSTRIAL);
             } else {
                 setCockpitType(COCKPIT_SUPERHEAVY);
             }
-        } else if (this instanceof TripodMech) {
+        } else if (this instanceof TripodMek) {
             setCockpitType(isIndustrial() ? COCKPIT_TRIPOD_INDUSTRIAL : COCKPIT_TRIPOD);
         } else {
             setCockpitType(isIndustrial() ? COCKPIT_INDUSTRIAL : COCKPIT_STANDARD);

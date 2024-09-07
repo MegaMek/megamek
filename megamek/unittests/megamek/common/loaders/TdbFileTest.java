@@ -38,7 +38,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.Mek;
 import megamek.common.Mounted;
-import megamek.common.QuadMech;
+import megamek.common.QuadMek;
 import megamek.common.loaders.TdbFile.CriticalSlot;
 import megamek.common.loaders.TdbFile.Location;
 
@@ -179,8 +179,8 @@ public class TdbFileTest {
 
         Entity result = testMe.getEntity();
 
-        assertTrue(result instanceof QuadMech);
-        QuadMech mek = (QuadMech) result;
+        assertTrue(result instanceof QuadMek);
+        QuadMek mek = (QuadMek) result;
 
         assertEquals("Tarantula", mek.getChassis());
         assertEquals("ZPH-1A", mek.getModel());

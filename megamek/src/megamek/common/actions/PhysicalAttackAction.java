@@ -166,7 +166,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "attacker is superheavy mech");
         }
 
-        if ((ae instanceof TripodMech) && ae.getCrew().hasDedicatedPilot()) {
+        if ((ae instanceof TripodMek) && ae.getCrew().hasDedicatedPilot()) {
             toHit.addModifier(-1, "attacker is tripod with dedicated pilot");
         }
 

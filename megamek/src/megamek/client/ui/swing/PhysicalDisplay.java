@@ -611,7 +611,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             attackSide = KickAttackAction.RIGHT;
             attackLeg = rightLeg;
         }
-        if (clientgui.getClient().getGame().getEntity(currentEntity) instanceof QuadMech) {
+        if (clientgui.getClient().getGame().getEntity(currentEntity) instanceof QuadMek) {
             rightRearLeg = KickAttackAction.toHit(clientgui.getClient()
                     .getGame(), currentEntity, target, KickAttackAction.RIGHTMULE);
             leftRearLeg = KickAttackAction.toHit(clientgui.getClient()

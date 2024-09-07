@@ -27,7 +27,7 @@ import megamek.common.Game;
 import megamek.common.Mek;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.TripodMech;
+import megamek.common.TripodMek;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
@@ -183,7 +183,7 @@ public class PhysicalInfo {
 
         // Calculate the max damage.
         if (physicalAttackType.isPunch()) {
-            if ((getShooter() instanceof BipedMech) || (getShooter() instanceof TripodMech)) {
+            if ((getShooter() instanceof BipedMech) || (getShooter() instanceof TripodMek)) {
                 setMaxDamage((int) Math.ceil(getShooter().getWeight() / 10.0));
             } else {
                 // Only bipeds & tripods can punch.

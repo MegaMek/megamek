@@ -36,11 +36,11 @@ import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mek;
 import megamek.common.ProtoMek;
-import megamek.common.QuadMech;
+import megamek.common.QuadMek;
 import megamek.common.SmallCraft;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
-import megamek.common.TripodMech;
+import megamek.common.TripodMek;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import org.apache.logging.log4j.LogManager;
@@ -151,13 +151,13 @@ class ArmorPanel extends PicMap {
         }
         DisplayMapSet ams = mech;
         removeAll();
-        if (en instanceof QuadMech) {
+        if (en instanceof QuadMek) {
             ams = quad;
             minLeftMargin = minMechLeftMargin;
             minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
-        } else if (en instanceof TripodMech) {
+        } else if (en instanceof TripodMek) {
             ams = tripod;
             minLeftMargin = minMechLeftMargin;
             minTopMargin = minMechTopMargin;

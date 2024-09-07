@@ -2243,7 +2243,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.criticalEntity(entity, Mek.LOC_LLEG, false, 0, 0));
                         addNewLines();
                         addReport(gameManager.criticalEntity(entity, Mek.LOC_RLEG, false, 0, 0));
-                        if (entity instanceof QuadMech) {
+                        if (entity instanceof QuadMek) {
                             addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_LARM), leapDistance));
                             addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_RARM), leapDistance));
                             addNewLines();

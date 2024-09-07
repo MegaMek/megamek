@@ -406,7 +406,7 @@ public class HmpFile implements IMechLoader {
         try {
             Mek mech = null;
             if ((chassisType == ChassisType.QUADRAPED_OMNI) || (chassisType == ChassisType.QUADRAPED)) {
-                mech = new QuadMech(gyroType, cockpitType);
+                mech = new QuadMek(gyroType, cockpitType);
             } else if (chassisType == ChassisType.ARMLESS) {
                 mech = new ArmlessMech(gyroType, cockpitType);
             } else {

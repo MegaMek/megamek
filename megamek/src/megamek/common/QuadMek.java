@@ -1,18 +1,21 @@
 /*
- * MegaMek -
- * Copyright (C) 2000-2002
- *  Ben Mazur (bmazur@sev.org)
- *  Cord Awtry (kipsta@bs-interactive.com)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -27,7 +30,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 
-public class QuadMech extends Mek {
+public class QuadMek extends Mek {
     private static final long serialVersionUID = 7183093787457804717L;
 
     private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
@@ -36,15 +39,15 @@ public class QuadMech extends Mek {
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 6, 6, 6, 6 };
 
-    public QuadMech(String inGyroType, String inCockpitType) {
+    public QuadMek(String inGyroType, String inCockpitType) {
         this(Mek.getGyroTypeForString(inGyroType), Mek.getCockpitTypeForString(inCockpitType));
     }
 
-    public QuadMech() {
+    public QuadMek() {
         this(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD);
     }
 
-    public QuadMech(int inGyroType, int inCockpitType) {
+    public QuadMek(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
 
         movementMode = EntityMovementMode.QUAD;
@@ -62,7 +65,7 @@ public class QuadMech extends Mek {
     }
 
     /**
-     * Returns true if the Mech cannot stand up any longer.
+     * Returns true if the Mek cannot stand up any longer.
      */
     @Override
     public boolean cannotStandUpFromHullDown() {
@@ -90,9 +93,9 @@ public class QuadMech extends Mek {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        // A Mech using tracks has its movement reduced by 25% per leg or track destroyed.
+        // A Mek using tracks has its movement reduced by 25% per leg or track destroyed.
         if (movementMode == EntityMovementMode.TRACKED) {
-            for (Mounted m : getMisc()) {
+            for (Mounted<?> m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
                         legsDestroyed++;
@@ -234,7 +237,7 @@ public class QuadMech extends Mek {
      */
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType) &&
@@ -271,7 +274,7 @@ public class QuadMech extends Mek {
     }
 
     /**
-     * Sets the internal structure for the mech.
+     * Sets the internal structure for the Mek.
      *
      * @param head
      *            head
@@ -877,7 +880,7 @@ public class QuadMech extends Mek {
         boolean rearRightLeg = false;
         boolean rearLeftLeg = false;
 
-        for (Mounted mounted : getMisc()) {
+        for (Mounted<?> mounted : getMisc()) {
             if (IntStream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
                     .anyMatch(i -> (mounted.getLocation() == i))) {
                 if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
@@ -943,7 +946,7 @@ public class QuadMech extends Mek {
     }
 
     /**
-     * quad mechs can't have claws
+     * quad Meks can't have claws
      */
     @Override
     public boolean hasClaw(int location) {

@@ -39,7 +39,7 @@ public class ASLocationMapper {
             } else {
                 return 4;
             }
-        } else if ((en instanceof TripodMech) || (en instanceof QuadVee)) {
+        } else if ((en instanceof TripodMek) || (en instanceof QuadVee)) {
             return 3;
         } else if (en instanceof Mek) {
             return (en.hasMisc(F_QUAD_TURRET) || en.hasMisc(F_SHOULDER_TURRET) || en.hasMisc(F_HEAD_TURRET)) ? 3 : 2;
@@ -80,7 +80,7 @@ public class ASLocationMapper {
         } else if (en instanceof Infantry) {
             // CI only ever have loc == 0 (no TUR, REAR, arcs); do not count standard weapons when it has field guns
             return (!((Infantry) en).hasFieldWeapon() || (mount.getLocation() == Infantry.LOC_FIELD_GUNS)) ? 1 : 0;
-        } else if (en instanceof TripodMech) {
+        } else if (en instanceof TripodMek) {
             return getTripodMekLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof QuadVee) {
             return getQuadVeeLocationMultiplier(loc, mount.isRearMounted());
@@ -296,7 +296,7 @@ public class ASLocationMapper {
         if ((index == 0 && !rearMounted || (index == 1) && rearMounted)) {
             return 1;
         } else if (index == 2) {
-            if (location != TripodMech.LOC_CLEG && location != TripodMech.LOC_RLEG && location != TripodMech.LOC_LLEG) {
+            if (location != TripodMek.LOC_CLEG && location != TripodMek.LOC_RLEG && location != TripodMek.LOC_LLEG) {
                 return 1;
             }
         }

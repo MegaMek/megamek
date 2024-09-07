@@ -231,7 +231,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean canShift() {
-        return ((getEntity() instanceof QuadMech
+        return ((getEntity() instanceof QuadMek
                 // QuadVee cannot shift in vee mode
                 && !(getEntity() instanceof QuadVee
                 && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
@@ -246,7 +246,7 @@ public class MovePath implements Cloneable, Serializable {
                 && getEntity() instanceof Tank
                 && (getEntity().getMovementMode() == EntityMovementMode.VTOL
                 || getEntity().getMovementMode() == EntityMovementMode.HOVER))
-                || ((getEntity() instanceof TripodMech)
+                || ((getEntity() instanceof TripodMek)
                 && (((Mek) getEntity()).countBadLegs() == 0)))
                 && !isJumping();
     }

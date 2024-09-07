@@ -1689,7 +1689,7 @@ public final class UnitToolTip {
                 sMove += guiScaledFontHTML(GUIP.getWarningColor()) + sDamage + "</FONT>";
             }
 
-            if ((entity instanceof BipedMech) || (entity instanceof TripodMech)) {
+            if ((entity instanceof BipedMech) || (entity instanceof TripodMek)) {
                 int shieldMod = 0;
                 if (entity.hasShield()) {
                     shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_LARGE);

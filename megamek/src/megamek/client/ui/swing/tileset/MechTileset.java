@@ -222,7 +222,7 @@ public class MechTileset {
             return default_inf;
         } else if (entity instanceof ProtoMek) {
             return default_proto;
-        } else if (entity instanceof TripodMech) {
+        } else if (entity instanceof TripodMek) {
             return default_tripod;
         } else if (entity instanceof QuadVee) {
             return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE

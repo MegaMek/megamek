@@ -1273,7 +1273,7 @@ public class MiscType extends EquipmentType {
                 return 10;
             }
         } else if (hasFlag(F_JUMP_BOOSTER) || hasFlag(F_TALON)) {
-            return (entity instanceof QuadMech) ? 8 : 4; // all slots in all
+            return (entity instanceof QuadMek) ? 8 : 4; // all slots in all
             // legs
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             return (int) Math.ceil(entity.getWeight() / 15);
@@ -1290,7 +1290,7 @@ public class MiscType extends EquipmentType {
             }
             return entity.getWeightClass();
         } else if (hasFlag(F_TRACKS)) {
-            if (entity instanceof QuadMech) {
+            if (entity instanceof QuadMek) {
                 return 4;
             }
             if (entity instanceof BipedMech) {

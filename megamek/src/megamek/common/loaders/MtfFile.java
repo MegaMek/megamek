@@ -208,7 +208,7 @@ public class MtfFile implements IMechLoader {
                 }
                 mech = new QuadVee(iGyroType, iMotiveType);
             } else if (chassisConfig.contains("Quad")) {
-                mech = new QuadMech(iGyroType, iCockpitType);
+                mech = new QuadMek(iGyroType, iCockpitType);
             } else if (chassisConfig.contains("LAM")) {
                 int iLAMType;
                 try {
@@ -221,7 +221,7 @@ public class MtfFile implements IMechLoader {
                 }
                 mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
             } else if (chassisConfig.contains("Tripod")) {
-                mech = new TripodMech(iGyroType, iCockpitType);
+                mech = new TripodMek(iGyroType, iCockpitType);
             } else {
                 mech = new BipedMech(iGyroType, iCockpitType);
             }
@@ -336,7 +336,7 @@ public class MtfFile implements IMechLoader {
             mech.recalculateTechAdvancement();
 
             for (int x = 0; x < locationOrder.length; x++) {
-                if ((locationOrder[x] == Mek.LOC_CLEG) && !(mech instanceof TripodMech)) {
+                if ((locationOrder[x] == Mek.LOC_CLEG) && !(mech instanceof TripodMek)) {
                     continue;
                 }
                 mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
@@ -663,7 +663,7 @@ public class MtfFile implements IMechLoader {
 
     private void parseCrits(Mek mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
-        if (!(mech instanceof QuadMech)) {
+        if (!(mech instanceof QuadMek)) {
             if ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM)) {
                 String toCheck = critData[loc][3].toUpperCase().trim();
                 if (toCheck.endsWith(ARMORED)) {

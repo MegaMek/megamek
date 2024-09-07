@@ -156,17 +156,17 @@ public class CachedEntityState {
      */
     public int getNumBreachedLegs() {
         if (numBreachedLegs == null) {
-            if (backingEntity instanceof QuadMech) {
+            if (backingEntity instanceof QuadMek) {
                 numBreachedLegs =
-                        ((backingEntity.getArmor(QuadMech.LOC_LLEG) > 0) ? 0 : 1) +
-                        ((backingEntity.getArmor(QuadMech.LOC_LARM) > 0) ? 0 : 1) +
-                        ((backingEntity.getArmor(QuadMech.LOC_RLEG) > 0) ? 0 : 1) +
-                        ((backingEntity.getArmor(QuadMech.LOC_RARM) > 0) ? 0 : 1);
-            } else if (backingEntity instanceof TripodMech) {
+                        ((backingEntity.getArmor(QuadMek.LOC_LLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(QuadMek.LOC_LARM) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(QuadMek.LOC_RLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(QuadMek.LOC_RARM) > 0) ? 0 : 1);
+            } else if (backingEntity instanceof TripodMek) {
                 numBreachedLegs =
-                        ((backingEntity.getArmor(TripodMech.LOC_LLEG) > 0) ? 0 : 1) +
-                        ((backingEntity.getArmor(TripodMech.LOC_CLEG) > 0) ? 0 : 1) +
-                        ((backingEntity.getArmor(TripodMech.LOC_RLEG) > 0) ? 0 : 1);
+                        ((backingEntity.getArmor(TripodMek.LOC_LLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(TripodMek.LOC_CLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(TripodMek.LOC_RLEG) > 0) ? 0 : 1);
             } else if (backingEntity instanceof Mek) {
                 numBreachedLegs =
                         ((backingEntity.getArmor(Mek.LOC_LLEG) > 0) ? 0 : 1) +

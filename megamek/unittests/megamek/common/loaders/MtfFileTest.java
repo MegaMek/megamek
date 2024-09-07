@@ -36,7 +36,7 @@ import megamek.common.EquipmentType;
 import megamek.common.EquipmentTypeLookup;
 import megamek.common.Mek;
 import megamek.common.Mounted;
-import megamek.common.TripodMech;
+import megamek.common.TripodMek;
 
 public class MtfFileTest {
 
@@ -114,7 +114,7 @@ public class MtfFileTest {
     // the Left torso.
     @Test
     public void loadSuperheavyVariableSizeSlot() throws Exception {
-        Mek mech = new TripodMech();
+        Mek mech = new TripodMek();
         double varSize = 24.0;
         mech.setWeight(150.0);
         mech.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
@@ -134,7 +134,7 @@ public class MtfFileTest {
     // Should _not_ allow loading size 25 CommsGear; 25 / 2.0 -> 13 crits, 1 more than allowed
     @Test
     public void ExceptionLoadSuperheavyVariableSizeSlot() throws Exception {
-        Mek mech = new TripodMech();
+        Mek mech = new TripodMek();
         double varSize = 25.0;
         mech.setWeight(150.0);
         mech.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));

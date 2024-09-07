@@ -6013,7 +6013,7 @@ public class Compute {
             return true;
         }
 
-        if ((game.getEntity(entityId) instanceof QuadMech)
+        if ((game.getEntity(entityId) instanceof QuadMek)
             && ((KickAttackAction.toHit(game, entityId, target,
                                         KickAttackAction.LEFTMULE).getValue() != TargetRoll.IMPOSSIBLE) ||
                 (KickAttackAction

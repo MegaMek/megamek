@@ -382,7 +382,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         if (entity.hasFunctionalLegAES()) {
             if (mek instanceof BipedMech) {
                 aesMultiplier += 0.2;
-            } else if (mek instanceof QuadMech) {
+            } else if (mek instanceof QuadMek) {
                 aesMultiplier += 0.4;
             }
         }

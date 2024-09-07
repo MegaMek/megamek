@@ -848,7 +848,7 @@ public class MoveStep implements Serializable {
                 }
 
                 // tripods with all their legs only pay for their first facing change
-                if ((getEntity() instanceof TripodMech) && (((Mek) getEntity()).countBadLegs() < 1)
+                if ((getEntity() instanceof TripodMek) && (((Mek) getEntity()).countBadLegs() < 1)
                         && ((prev.type == MoveStepType.TURN_LEFT) || (prev.type == MoveStepType.TURN_RIGHT))) {
                     setMp(0);
                 }
@@ -892,7 +892,7 @@ public class MoveStep implements Serializable {
                 if (entity.isAirborne()) {
                     setMp(0);
                 } else if (entity.isUsingManAce()
-                        & (entity instanceof QuadMech)) {
+                        & (entity instanceof QuadMek)) {
                     setMp(getMp());
                 } else if (isJumping() &&
                         (entity.getJumpType() == Mek.JUMP_BOOSTER)) {
@@ -910,7 +910,7 @@ public class MoveStep implements Serializable {
                 if (entity.isAirborne()) {
                     setMp(0);
                 } else if (entity.isUsingManAce()
-                        & (entity instanceof QuadMech)) {
+                        & (entity instanceof QuadMek)) {
                     setMp(getMp());
                 } else if (isJumping() &&
                         (entity.getJumpType() == Mek.JUMP_BOOSTER)) {
@@ -1005,9 +1005,9 @@ public class MoveStep implements Serializable {
                                 mpUsed += 99;
                                 break;
                             }
-                            mpUsed += ((QuadMech) entity)
+                            mpUsed += ((QuadMek) entity)
                                     .countLegActuatorCrits(location);
-                            if (((QuadMech) entity).legHasHipCrit(location)) {
+                            if (((QuadMek) entity).legHasHipCrit(location)) {
                                 mpUsed += 1;
                             }
                         }

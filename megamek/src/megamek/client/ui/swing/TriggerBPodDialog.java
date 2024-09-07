@@ -45,7 +45,7 @@ import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mek;
 import megamek.common.Mounted;
-import megamek.common.QuadMech;
+import megamek.common.QuadMek;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.TriggerBPodAction;
@@ -157,7 +157,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                             && (mount.getLocation() != Mek.LOC_CT)
                             && (mount.getLocation() != Mek.LOC_LLEG)
                             && (mount.getLocation() != Mek.LOC_RLEG)) {
-                        if (entity instanceof QuadMech) {
+                        if (entity instanceof QuadMek) {
                             if ((mount.getLocation() != Mek.LOC_LARM)
                                     || (mount.getLocation() != Mek.LOC_RARM)) {
                                 pod.setEnabled(false);

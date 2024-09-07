@@ -155,9 +155,9 @@ public final class ASConverter {
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASDamageConverter.getASDamageConverter(entity, element, conversionReport).convert();
         ASSpecialAbilityConverter.getConverter(entity, element, conversionReport).processAbilities();
-        if (entity instanceof TripodMech) {
+        if (entity instanceof TripodMek) {
             element.getSpecialAbilities().setSUA(BattleForceSUA.TRI);
-        } else if (entity instanceof QuadMech) {
+        } else if (entity instanceof QuadMek) {
             element.getSpecialAbilities().setSUA(BattleForceSUA.QUAD);
         } else if ((entity instanceof SmallCraft) && !(entity instanceof Dropship) && !((IAero) entity).isSpheroid()) {
             element.getSpecialAbilities().setSUA(BattleForceSUA.AERODYNESC);

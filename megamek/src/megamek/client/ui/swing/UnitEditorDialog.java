@@ -563,7 +563,7 @@ public class UnitEditorDialog extends JDialog {
         for (int loc = Mek.LOC_RARM; loc <= (tripod ? Mek.LOC_CLEG : Mek.LOC_LLEG); loc++) {
             int start = Mek.ACTUATOR_SHOULDER;
             int end = Mek.ACTUATOR_HAND;
-            if ((loc >= Mek.LOC_RLEG) || (entity instanceof QuadMech)) {
+            if ((loc >= Mek.LOC_RLEG) || (entity instanceof QuadMek)) {
                 start = Mek.ACTUATOR_HIP;
                 end = Mek.ACTUATOR_FOOT;
             }
@@ -1304,7 +1304,7 @@ public class UnitEditorDialog extends JDialog {
                     }
                     int loc = i + Mek.LOC_RARM;
                     int actuator = j + Mek.ACTUATOR_SHOULDER;
-                    if ((loc >= Mek.LOC_RLEG) || (entity instanceof QuadMech)) {
+                    if ((loc >= Mek.LOC_RLEG) || (entity instanceof QuadMek)) {
                         actuator = j + Mek.ACTUATOR_HIP;
                     }
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator,

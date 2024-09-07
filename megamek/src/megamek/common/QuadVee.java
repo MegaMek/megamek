@@ -28,7 +28,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
  *
  * @author Neoancient
  */
-public class QuadVee extends QuadMech {
+public class QuadVee extends QuadMek {
     private static final long serialVersionUID = 1283551018632228647L;
 
     public static final int CONV_MODE_MECH    = 0;

@@ -867,12 +867,12 @@ public class MapMenu extends JPopupMenu {
                 menu.add(createTripJMenuItem());
             }
 
-            if ((myEntity instanceof BipedMech)
+            if ((myEntity instanceof BipedMek)
                     && (!myEntity.isLocationBad(Mek.LOC_LARM) || !myEntity.isLocationBad(Mek.LOC_RARM))) {
                 menu.add(createPunchJMenuItem());
             }
 
-            if ((myEntity instanceof BipedMech)
+            if ((myEntity instanceof BipedMek)
                     && !myEntity.isLocationBad(Mek.LOC_LARM)
                     && !myEntity.isLocationBad(Mek.LOC_RARM)) {
                 menu.add(createPushJMenuItem());
@@ -1349,7 +1349,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu createTorsoTwistMenu() {
         JMenu menu = new JMenu();
 
-        if (myEntity instanceof BipedMech) {
+        if (myEntity instanceof BipedMek) {
             menu.setText("Torso Twist");
             if (coords.equals(myEntity.getPosition())) {
                 menu.add(createTorsoTwistJMenuItem(1));

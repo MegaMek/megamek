@@ -33,7 +33,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.Mek;
@@ -58,8 +58,8 @@ public class TdbFileTest {
 
         Entity result = testMe.getEntity();
 
-        assertTrue(result instanceof BipedMech);
-        BipedMech mek = (BipedMech) result;
+        assertTrue(result instanceof BipedMek);
+        BipedMek mek = (BipedMek) result;
 
         assertEquals("Jenner", mek.getChassis());
         assertEquals("JR7-D", mek.getModel());

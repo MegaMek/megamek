@@ -144,7 +144,7 @@ public class BasicPathRankerTest {
 
     @Test
     public void testGetMovePathSuccessProbability() {
-        final Entity mockMech = mock(BipedMech.class);
+        final Entity mockMech = mock(BipedMek.class);
         when(mockMech.getMASCTarget()).thenReturn(3);
 
         final Crew mockCrew = mock(Crew.class);
@@ -190,7 +190,7 @@ public class BasicPathRankerTest {
 
         final Coords testCoords = new Coords(10, 10);
 
-        final Entity mockMyUnit = mock(BipedMech.class);
+        final Entity mockMyUnit = mock(BipedMek.class);
         when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
         doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
                 eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
@@ -213,7 +213,7 @@ public class BasicPathRankerTest {
         // Test an enemy mech 5 hexes away, in my LoS and unable to kick my flank.
         Coords enemyCoords = new Coords(10, 15);
         int enemyMechId = 1;
-        Entity mockEnemyMech = mock(BipedMech.class);
+        Entity mockEnemyMech = mock(BipedMek.class);
         when(mockEnemyMech.getWeight()).thenReturn(50.0);
         when(mockEnemyMech.getId()).thenReturn(enemyMechId);
         doReturn(enemyCoords)
@@ -239,7 +239,7 @@ public class BasicPathRankerTest {
 
         // Test an enemy mech 5 hexes away but not in my LoS.
         enemyCoords = new Coords(10, 15);
-        mockEnemyMech = mock(BipedMech.class);
+        mockEnemyMech = mock(BipedMek.class);
         when(mockEnemyMech.getWeight()).thenReturn(50.0);
         when(mockEnemyMech.getId()).thenReturn(enemyMechId);
         doReturn(enemyCoords)
@@ -265,7 +265,7 @@ public class BasicPathRankerTest {
 
         // Test an enemy mech 5 hexes away, not in my LoS and able to kick me.
         enemyCoords = new Coords(10, 15);
-        mockEnemyMech = mock(BipedMech.class);
+        mockEnemyMech = mock(BipedMek.class);
         when(mockEnemyMech.getWeight()).thenReturn(50.0);
         when(mockEnemyMech.getId()).thenReturn(enemyMechId);
         doReturn(enemyCoords)
@@ -296,7 +296,7 @@ public class BasicPathRankerTest {
         doReturn(mockPrincess).when(testRanker).getOwner();
 
         final MovePath mockPath = mock(MovePath.class);
-        final Entity mockMyUnit = mock(BipedMech.class);
+        final Entity mockMyUnit = mock(BipedMek.class);
         final Crew mockCrew = mock(Crew.class);
         final PilotOptions mockOptions = mock(PilotOptions.class);
 
@@ -310,7 +310,7 @@ public class BasicPathRankerTest {
         final Game mockGame = mock(Game.class);
 
         final int mockEnemyMechId = 1;
-        final Entity mockEnemyMech = mock(BipedMech.class);
+        final Entity mockEnemyMech = mock(BipedMek.class);
         when(mockEnemyMech.getId()).thenReturn(mockEnemyMechId);
         when(mockEnemyMech.getPosition()).thenReturn(new Coords(1, 0));
         when(mockEnemyMech.getCrew()).thenReturn(mockCrew);
@@ -377,7 +377,7 @@ public class BasicPathRankerTest {
                 .when(testRanker)
                 .checkPathForHazards(any(MovePath.class), any(Entity.class), any(Game.class));
 
-        final Entity mockMover = mock(BipedMech.class);
+        final Entity mockMover = mock(BipedMek.class);
         when(mockMover.isClan()).thenReturn(false);
         when(mockPrincess.wantsToFallBack(eq(mockMover))).thenReturn(false);
 
@@ -426,7 +426,7 @@ public class BasicPathRankerTest {
         doReturn(3)
                 .when(enemyMech1Position)
                 .direction(nullable(Coords.class));
-        final Entity mockEnemyMech1 = mock(BipedMech.class);
+        final Entity mockEnemyMech1 = mock(BipedMek.class);
         when(mockEnemyMech1.isOffBoard()).thenReturn(false);
         when(mockEnemyMech1.getPosition()).thenReturn(enemyMech1Position);
         when(mockEnemyMech1.isSelectableThisTurn()).thenReturn(false);
@@ -444,7 +444,7 @@ public class BasicPathRankerTest {
                 .when(testRanker)
                 .findClosestEnemy(eq(mockMover), nullable(Coords.class), any(Game.class));
 
-        final Entity mockEnemyMech2 = mock(BipedMech.class);
+        final Entity mockEnemyMech2 = mock(BipedMek.class);
         when(mockEnemyMech2.isOffBoard()).thenReturn(false);
         when(mockEnemyMech2.getPosition()).thenReturn(new Coords(10, 10));
         when(mockEnemyMech2.isSelectableThisTurn()).thenReturn(true);
@@ -884,7 +884,7 @@ public class BasicPathRankerTest {
     public void testFindClosestEnemy() {
         final List<Entity> enemyList = new ArrayList<>(3);
 
-        final Entity enemyMech = mock(BipedMech.class);
+        final Entity enemyMech = mock(BipedMek.class);
         when(enemyMech.getPosition()).thenReturn(new Coords(10, 10));
         when(enemyMech.isSelectableThisTurn()).thenReturn(false);
         when(enemyMech.isImmobile()).thenReturn(false);
@@ -903,7 +903,7 @@ public class BasicPathRankerTest {
         enemyList.add(enemyBA);
 
         final Coords position = new Coords(0, 0);
-        final Entity me = mock(BipedMech.class);
+        final Entity me = mock(BipedMek.class);
         final Game mockGame = mock(Game.class);
 
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
@@ -912,7 +912,7 @@ public class BasicPathRankerTest {
         assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame, false));
 
         // Add in an unmoved mech.
-        final Entity unmovedMech = mock(BipedMech.class);
+        final Entity unmovedMech = mock(BipedMek.class);
         // Now the closest by position.
         when(unmovedMech.getPosition()).thenReturn(new Coords(9, 9));
         when(unmovedMech.isSelectableThisTurn()).thenReturn(true);
@@ -949,28 +949,28 @@ public class BasicPathRankerTest {
         final Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
 
-        final Entity mockFriend1 = mock(BipedMech.class);
+        final Entity mockFriend1 = mock(BipedMek.class);
         when(mockFriend1.getId()).thenReturn(myId);
         when(mockFriend1.isOffBoard()).thenReturn(false);
         final Coords friendPosition1 = new Coords(0, 0);
         when(mockFriend1.getPosition()).thenReturn(friendPosition1);
         friends.add(mockFriend1);
 
-        final Entity mockFriend2 = mock(BipedMech.class);
+        final Entity mockFriend2 = mock(BipedMek.class);
         when(mockFriend2.getId()).thenReturn(2);
         when(mockFriend2.isOffBoard()).thenReturn(false);
         final Coords friendPosition2 = new Coords(10, 0);
         when(mockFriend2.getPosition()).thenReturn(friendPosition2);
         friends.add(mockFriend2);
 
-        final Entity mockFriend3 = mock(BipedMech.class);
+        final Entity mockFriend3 = mock(BipedMek.class);
         when(mockFriend3.getId()).thenReturn(3);
         when(mockFriend3.isOffBoard()).thenReturn(false);
         final Coords friendPosition3 = new Coords(0, 10);
         when(mockFriend3.getPosition()).thenReturn(friendPosition3);
         friends.add(mockFriend3);
 
-        final Entity mockFriend4 = mock(BipedMech.class);
+        final Entity mockFriend4 = mock(BipedMek.class);
         when(mockFriend4.getId()).thenReturn(4);
         when(mockFriend4.isOffBoard()).thenReturn(false);
         final Coords friendPosition4 = new Coords(10, 10);
@@ -1131,7 +1131,7 @@ public class BasicPathRankerTest {
      * @return
      */
     private Entity generateMockEntity(int x, int y) {
-        final Entity mockEntity = mock(BipedMech.class);
+        final Entity mockEntity = mock(BipedMek.class);
         when(mockEntity.getMaxWeaponRange()).thenReturn(21);
 
         final Crew mockCrew = mock(Crew.class);
@@ -1257,7 +1257,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
 
@@ -1432,7 +1432,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
 
@@ -1555,7 +1555,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
         when(mockUnit.getHeight()).thenReturn(2);
@@ -1636,7 +1636,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
         when(mockUnit.getHeight()).thenReturn(2);
@@ -1693,7 +1693,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.getWeight()).thenReturn(70.0);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);

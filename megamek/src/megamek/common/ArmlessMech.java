@@ -15,7 +15,7 @@
  */
 package megamek.common;
 
-public class ArmlessMech extends BipedMech {
+public class ArmlessMech extends BipedMek {
     private static final long serialVersionUID = 1333922747670982513L;
 
     public ArmlessMech(String inGyroType, String inCockpitType) {

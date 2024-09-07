@@ -112,7 +112,7 @@ public class PrincessTest {
                 nullable(Game.class))).thenReturn(10.0);
 
         // Test a 6/9/6 regular mech.
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMech = mock(BipedMek.class);
         when(mockMech.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
         when(mockMech.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
         when(mockMech.isProne()).thenReturn(false);
@@ -216,7 +216,7 @@ public class PrincessTest {
 
         Coords mockCoords = mock(Coords.class);
 
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMech = mock(BipedMek.class);
         when(mockMech.getRunMP()).thenReturn(6);
         when(mockMech.isOffBoard()).thenReturn(false);
         when(mockMech.getPosition()).thenReturn(mockCoords);
@@ -243,7 +243,7 @@ public class PrincessTest {
         when(mockEjectedMechwarrior.getPosition()).thenReturn(mockCoords);
         when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
 
-        Entity mockImmobileMech = mock(BipedMech.class);
+        Entity mockImmobileMech = mock(BipedMek.class);
         when(mockImmobileMech.getRunMP()).thenReturn(0);
         when(mockImmobileMech.isOffBoard()).thenReturn(false);
         when(mockImmobileMech.getPosition()).thenReturn(mockCoords);
@@ -332,7 +332,7 @@ public class PrincessTest {
 
     @Test
     public void testWantsToFallBack() {
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMech = mock(BipedMek.class);
         when(mockMech.isCrippled()).thenReturn(false);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenCallRealMethod();
@@ -368,7 +368,7 @@ public class PrincessTest {
 
     @Test
     public void testIsFallingBack() {
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMech = mock(BipedMek.class);
         when(mockMech.isImmobile()).thenReturn(false);
         when(mockMech.isCrippled(anyBoolean())).thenReturn(false);
         when(mockMech.getId()).thenReturn(1);
@@ -401,7 +401,7 @@ public class PrincessTest {
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
         // Unit is capable of fleeing.
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMech = mock(BipedMek.class);
         when(mockMech.canFlee()).thenReturn(true);
 
         // Unit is on home edge.
@@ -479,7 +479,7 @@ public class PrincessTest {
         Coords mockPriorPosition = mock(Coords.class);
 
         // Test a fully mobile mech.
-        Mek mockMech = mock(BipedMech.class);
+        Mek mockMech = mock(BipedMek.class);
         when(mockMech.getRunMP()).thenReturn(6);
         when(mockMech.isImmobile()).thenReturn(false);
         when(mockMech.isShutDown()).thenReturn(false);
@@ -568,7 +568,7 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMech();
+        Mek mech1 = new BipedMek();
         Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
         Mounted wpn1 = mech1.addEquipment(mockAC5, Mek.LOC_RT);
 
@@ -603,7 +603,7 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMech();
+        Mek mech1 = new BipedMek();
         Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
         Mounted wpn1 = mech1.addEquipment(mockAC5, Mek.LOC_RT);
 
@@ -637,7 +637,7 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMech();
+        Mek mech1 = new BipedMek();
         Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
         Mounted wpn1 = mech1.addEquipment(mockAC5, Mek.LOC_RT);
 
@@ -669,7 +669,7 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMech();
+        Mek mech1 = new BipedMek();
         Mounted wpn1 = mech1.addEquipment(mockRL20, Mek.LOC_LT);
 
         // Check default toHitThresholds

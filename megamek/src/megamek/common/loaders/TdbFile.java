@@ -119,7 +119,7 @@ public class TdbFile implements IMechLoader {
             if ("Quad".equals(basics.chassisConfig)) {
                 mech = new QuadMek(gyroType, cockpitType);
             } else {
-                mech = new BipedMech(gyroType, cockpitType);
+                mech = new BipedMek(gyroType, cockpitType);
             }
 
             // aarg! those stupid sub-names in parenthesis screw everything up

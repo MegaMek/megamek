@@ -1,18 +1,21 @@
 /*
- * MegaMek -
- *  Copyright (C) 2000-2002
- *    Ben Mazur (bmazur@sev.org)
- *    Cord Awtry (kipsta@bs-interactive.com)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -23,7 +26,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
-public class BipedMech extends Mek {
+public class BipedMek extends Mek {
     private static final long serialVersionUID = 4166375446709772785L;
 
     private static final String[] LOCATION_NAMES =
@@ -33,15 +36,15 @@ public class BipedMech extends Mek {
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6 };
 
-    public BipedMech(String inGyroType, String inCockpitType) {
+    public BipedMek(String inGyroType, String inCockpitType) {
         this(getGyroTypeForString(inGyroType), getCockpitTypeForString(inCockpitType));
     }
 
-    public BipedMech() {
+    public BipedMek() {
         this(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD);
     }
 
-    public BipedMech(int inGyroType, int inCockpitType) {
+    public BipedMek(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
 
         movementMode = EntityMovementMode.BIPED;
@@ -157,9 +160,9 @@ public class BipedMech extends Mek {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        //A Mech using tracks has its movement reduced by 50% per leg or track destroyed;
+        //A Mek using tracks has its movement reduced by 50% per leg or track destroyed;
         if (getMovementMode().isTracked()) {
-            for (Mounted m : getMisc()) {
+            for (Mounted<?> m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
                         legsDestroyed++;
@@ -264,7 +267,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Returns this mech's running/flank mp modified for leg loss and stuff.
+     * Returns this Mek's running/flank mp modified for leg loss and stuff.
      */
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
@@ -276,7 +279,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Sets the internal structure for the mech.
+     * Sets the internal structure for the Mek.
      *
      * @param head head
      * @param ct   center torso
@@ -401,9 +404,9 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Checks to see if this bipmech has any vibro blades on them.
+     * Checks to see if this bipMek has any vibro blades on them.
      *
-     * @return boolean <code>true</code> if the mech has vibroblades
+     * @return boolean <code>true</code> if the Mek has vibroblades
      * <code>false</code> if not.
      */
     @Override
@@ -421,10 +424,10 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Checks to see if this bipedmech has a vibroblade in this location.
+     * Checks to see if this bipedMek has a vibroblade in this location.
      *
      * @param location
-     * @return boolean <code>true</code> if the mech has vibroblades
+     * @return boolean <code>true</code> if the Mek has vibroblades
      * <code>false</code> if not.
      */
     public boolean hasVibrobladesInLocation(int location) {
@@ -443,7 +446,7 @@ public class BipedMech extends Mek {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isVibroblade()) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
@@ -458,7 +461,7 @@ public class BipedMech extends Mek {
      */
     @Override
     public boolean hasRetractedBlade(int loc) {
-        for (Mounted m : getEquipment()) {
+        for (Mounted<?> m : getEquipment()) {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType)
                 && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m
                     .curMode().equals("extended")) {
@@ -497,7 +500,7 @@ public class BipedMech extends Mek {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && (m.curMode().equals("Active") ||
                                                                                    ignoreMode) && !(m.isDestroyed()
@@ -521,13 +524,13 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Does the mech have any shields. a mech can have up to 2 shields.
+     * Does the Mek have any shields. a Mek can have up to 2 shields.
      *
      * @return <code>true</code> if unit has a shield crit.
      */
     @Override
     public boolean hasShield() {
-        for (Mounted m : getMisc()) {
+        for (Mounted<?> m : getMisc()) {
             boolean isShield = (m.getType() instanceof MiscType)
                     && ((MiscType) m.getType()).isShield();
             if (((m.getLocation() == Mek.LOC_LARM) || (m.getLocation() == Mek.LOC_RARM))
@@ -560,7 +563,7 @@ public class BipedMech extends Mek {
         int raShield = 0;
         int laShield = 0;
 
-        for (Mounted m : getMisc()) {
+        for (Mounted<?> m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB)
                     && (type.hasSubType(size))) {
@@ -581,7 +584,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Does the mech have an active shield This should only be called after
+     * Does the Mek have an active shield This should only be called after
      * hasShield has been called.
      */
     @Override
@@ -611,7 +614,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Does the mech have an active shield This should only be called by
+     * Does the Mek have an active shield This should only be called by
      * hasActiveShield(location, rear)
      */
     @Override
@@ -649,7 +652,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Does the mech have a passive shield This should only be called after
+     * Does the Mek have a passive shield This should only be called after
      * hasShield has been called.
      */
     @Override
@@ -680,7 +683,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Does the mech have a passive shield This should only be called by
+     * Does the Mek have a passive shield This should only be called by
      * hasPassiveShield(location, rear)
      */
     @Override
@@ -718,7 +721,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Does the mech have an shield in no defense mode
+     * Does the Mek have an shield in no defense mode
      */
     @Override
     public boolean hasNoDefenseShield(int location) {
@@ -772,7 +775,7 @@ public class BipedMech extends Mek {
             return false;
         }
 
-        for (Mounted mounted : getMisc()) {
+        for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == location) && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                 hasAES = true;
             } // AES is destroyed their for it cannot be used.
@@ -792,7 +795,7 @@ public class BipedMech extends Mek {
         boolean rightLeg = false;
         boolean leftLeg = false;
 
-        for (Mounted mounted : getMisc()) {
+        for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == Mek.LOC_LLEG) || (mounted.getLocation() == Mek.LOC_RLEG)) {
                 if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted
                         .isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
@@ -876,7 +879,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * @return if this mech cannot stand up from hulldown
+     * @return if this Mek cannot stand up from hulldown
      */
     @Override
     public boolean cannotStandUpFromHullDown() {
@@ -916,7 +919,7 @@ public class BipedMech extends Mek {
     }
 
     /**
-     * Based on the mech's current damage status, return valid brace locations.
+     * Based on the Mek's current damage status, return valid brace locations.
      */
     @Override
     public List<Integer> getValidBraceLocations() {

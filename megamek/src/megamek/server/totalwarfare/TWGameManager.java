@@ -19047,7 +19047,7 @@ public class TWGameManager extends AbstractGameManager {
                             vDesc.addElement(r);
                             Hex h = game.getBoard().getHex(te.getPosition());
                             if (null != h) {
-                                if (te instanceof BipedMech) {
+                                if (te instanceof BipedMek) {
                                     if (!h.containsTerrain(Terrains.ARMS)) {
                                         h.addTerrain(new Terrain(Terrains.ARMS, 1));
                                     } else {
@@ -28779,7 +28779,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> doExtremeGravityDamage(Entity entity, int damage) {
         Vector<Report> vPhaseReport = new Vector<>();
         HitData hit;
-        if (entity instanceof BipedMech) {
+        if (entity instanceof BipedMek) {
             for (int i = 6; i <= 7; i++) {
                 hit = new HitData(i);
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,

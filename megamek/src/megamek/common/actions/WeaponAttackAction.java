@@ -1385,7 +1385,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Hull down mechs cannot fire any leg weapons
         if (ae.isHullDown() && weapon != null) {
-            if (((ae instanceof BipedMech)
+            if (((ae instanceof BipedMek)
                     && ((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)))
                     || ((ae instanceof QuadMek) && ((weapon.getLocation() == Mek.LOC_LLEG)
                             || (weapon.getLocation() == Mek.LOC_RLEG) || (weapon.getLocation() == Mek.LOC_LARM)
@@ -2158,7 +2158,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
                 // Leg-mounted B-Pods can be fired at infantry in the attacker's hex, other locations
                 // can only be fired in response to leg/swarm attacks
-                if (ae instanceof BipedMech) {
+                if (ae instanceof BipedMek) {
                     if (!((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }

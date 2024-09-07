@@ -239,7 +239,7 @@ public class MovePath implements Cloneable, Serializable {
                 // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
                 //  speed to perform a lateral shift
                 || (getEntity().isUsingManAce()
-                && ((getEntity() instanceof BipedMech)
+                && ((getEntity() instanceof BipedMek)
                 || ((getEntity() instanceof VTOL)
                 && (getMpUsed() <= getCachedEntityState().getWalkMP()))))
                 || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)

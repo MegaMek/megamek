@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 import org.junit.jupiter.api.Test;
 
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -53,7 +53,7 @@ public class MtfFileTest {
 
     @Test
     public void testLoadEquipment() throws Exception {
-        Mek mech = new BipedMech();
+        Mek mech = new BipedMek();
         Mounted<?> mount = Mounted.createMounted(mech, EquipmentType.get("Medium Laser"));
         mount.setOmniPodMounted(true);
         mount.setMechTurretMounted(true);
@@ -71,7 +71,7 @@ public class MtfFileTest {
 
     @Test
     public void setVGLFacing() throws Exception {
-        Mek mech = new BipedMech();
+        Mek mech = new BipedMek();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
         mech.addEquipment(vgl, Mek.LOC_LT).setFacing(0);
         mech.addEquipment(vgl, Mek.LOC_LT).setFacing(1);
@@ -93,7 +93,7 @@ public class MtfFileTest {
 
     @Test
     public void loadSuperheavyDoubleSlot() throws Exception {
-        Mek mech = new BipedMech();
+        Mek mech = new BipedMek();
         mech.setWeight(120.0);
         mech.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
         EquipmentType hs = EquipmentType.get(EquipmentTypeLookup.SINGLE_HS);

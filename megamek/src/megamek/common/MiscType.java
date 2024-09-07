@@ -1293,7 +1293,7 @@ public class MiscType extends EquipmentType {
             if (entity instanceof QuadMek) {
                 return 4;
             }
-            if (entity instanceof BipedMech) {
+            if (entity instanceof BipedMek) {
                 return 2;
             }
         } else if (hasFlag(F_BLUE_SHIELD)) {

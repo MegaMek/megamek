@@ -1273,7 +1273,7 @@ public class BasicPathRanker extends PathRanker {
             dmg = 7 * movingUnit.locations();
             exposedArmor = movingUnit.getTotalArmor();
             logMsg.append("everything [prone] (");
-        } else if (movingUnit instanceof BipedMech) {
+        } else if (movingUnit instanceof BipedMek) {
             dmg = 14;
             exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
             logMsg.append("legs (");

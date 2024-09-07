@@ -197,7 +197,7 @@ public class TestProtoMekTest {
     @Test
     public void testEngineWeight() {
         Entity proto = new ProtoMek();
-        Entity nonProto = new BipedMech();
+        Entity nonProto = new BipedMek();
         Engine engine45 = new Engine(45, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         Engine engine42 = new Engine(42, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         Engine engine40 = new Engine(40, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);

@@ -28,7 +28,7 @@ public class MechFileParserTest {
 
     @Test
     public void splitMGsBetweenMGAs() throws LocationFullException {
-        Mek mech = new BipedMech();
+        Mek mech = new BipedMek();
         WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
@@ -45,7 +45,7 @@ public class MechFileParserTest {
 
     @Test
     public void loadMGAsFromContiguousBlocks() throws LocationFullException {
-        Mek mech = new BipedMech();
+        Mek mech = new BipedMek();
         WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISLMGA"), Mek.LOC_LT);
         WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);

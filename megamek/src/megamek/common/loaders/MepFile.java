@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -165,7 +165,7 @@ public class MepFile implements IMechLoader {
             if ("Quad".equals(chassisType.trim())) {
                 mech = new QuadMek();
             } else {
-                mech = new BipedMech();
+                mech = new BipedMek();
             }
 
             int firstSpace = name.indexOf(" ");

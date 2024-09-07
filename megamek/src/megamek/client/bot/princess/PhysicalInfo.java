@@ -19,7 +19,7 @@ import java.text.NumberFormat;
 import org.apache.logging.log4j.LogManager;
 
 import megamek.client.bot.PhysicalOption;
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -183,7 +183,7 @@ public class PhysicalInfo {
 
         // Calculate the max damage.
         if (physicalAttackType.isPunch()) {
-            if ((getShooter() instanceof BipedMech) || (getShooter() instanceof TripodMek)) {
+            if ((getShooter() instanceof BipedMek) || (getShooter() instanceof TripodMek)) {
                 setMaxDamage((int) Math.ceil(getShooter().getWeight() / 10.0));
             } else {
                 // Only bipeds & tripods can punch.

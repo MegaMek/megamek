@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -65,13 +65,13 @@ public class PhysicalInfoTest {
                .thenReturn(mockToHit);
         when(mockToHit.getValue()).thenReturn(7);
 
-        Entity mockShooter = mock(BipedMech.class);
+        Entity mockShooter = mock(BipedMek.class);
         when(mockShooter.getId()).thenReturn(1);
         when(mockShooter.getWeight()).thenReturn(50.0);
 
         EntityState mockShooterState = mock(EntityState.class);
 
-        Mek mockTarget = mock(BipedMech.class);
+        Mek mockTarget = mock(BipedMek.class);
         when(mockTarget.isLocationBad(anyInt())).thenReturn(false);
         when(mockTarget.getArmor(anyInt(), eq(false))).thenReturn(10);
         when(mockTarget.getArmor(anyInt(), eq(true))).thenReturn(5);

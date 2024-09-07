@@ -986,7 +986,7 @@ public class MoveStep implements Serializable {
             case HULL_DOWN:
                 if (isProne() && (entity instanceof Mek)) {
                     int mpUsed = 1;
-                    if (entity instanceof BipedMech) {
+                    if (entity instanceof BipedMek) {
                         for (int location = Mek.LOC_RLEG; location <= Mek.LOC_LLEG; location++) {
                             if (entity.isLocationBad(location)) {
                                 mpUsed += 99;

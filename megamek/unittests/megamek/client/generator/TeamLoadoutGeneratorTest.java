@@ -89,7 +89,7 @@ class TeamLoadoutGeneratorTest {
     }
 
     Mek createMech(String chassis, String model, String crewName) {
-        Mek mockMech = new BipedMech();
+        Mek mockMech = new BipedMek();
         mockMech.setChassis(chassis);
         mockMech.setModel(model);
 

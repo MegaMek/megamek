@@ -414,8 +414,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         final Entity en = ce();
         final boolean isAptPiloting = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        final boolean canZweihander = (en instanceof BipedMech)
-                && ((BipedMech) en).canZweihander()
+        final boolean canZweihander = (en instanceof BipedMek)
+                && ((BipedMek) en).canZweihander()
                 && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
@@ -902,8 +902,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = (en instanceof BipedMech)
-                && ((BipedMech) en).canZweihander()
+        final boolean canZweihander = (en instanceof BipedMek)
+                && ((BipedMek) en).canZweihander()
                 && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
 
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()

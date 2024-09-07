@@ -398,7 +398,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         if (entity instanceof Mek) {
 
-            if (entity instanceof BipedMech) {
+            if (entity instanceof BipedMek) {
 
                 return (entity.hasWorkingMisc(MiscType.F_TALON, -1,
                                               Mek.LOC_RLEG) && entity.hasWorkingSystem(

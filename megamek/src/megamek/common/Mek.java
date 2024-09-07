@@ -2827,7 +2827,7 @@ public abstract class Mek extends Entity {
         // gauss and AC weapons on omni arms means no arm actuators, so we
         // remove them
         if (isOmni()
-                && (this instanceof BipedMech)
+                && (this instanceof BipedMek)
                 && ((loc == LOC_LARM) || (loc == LOC_RARM))
                 && ((mounted.getType() instanceof GaussWeapon)
                         || (mounted.getType() instanceof ACWeapon)
@@ -4251,7 +4251,7 @@ public abstract class Mek extends Entity {
         sb.append("Config:");
         if (this instanceof LandAirMech) {
             sb.append("LAM");
-        } else if (this instanceof BipedMech) {
+        } else if (this instanceof BipedMek) {
             sb.append("Biped");
         } else if (this instanceof QuadVee) {
             sb.append("QuadVee");
@@ -6080,7 +6080,7 @@ public abstract class Mek extends Entity {
         // legged biped Mek (and a double legged quad Mek) or a hipped Mek are not
         // escapable, although technically they still have as much MP as foot infantry which
         // can escape. We could also consider creating options to control this.
-        if (((this instanceof BipedMech) && (legsDestroyed > 0))
+        if (((this instanceof BipedMek) && (legsDestroyed > 0))
                 || (legsDestroyed > 1) || (hipHits > 0)) {
             return false;
         }

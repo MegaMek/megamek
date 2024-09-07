@@ -108,7 +108,7 @@ public class MockGenerators {
 	}
 
 	public static Entity generateMockBipedMech(int x, int y) {
-		final Entity mockEntity = mock(BipedMech.class);
+		final Entity mockEntity = mock(BipedMek.class);
 		return generateMockEntity(x, y, mockEntity);
 	}
 

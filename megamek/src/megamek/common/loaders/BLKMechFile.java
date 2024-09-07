@@ -63,7 +63,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (chassisType == 1) {
             mech = new QuadMek();
         } else {
-            mech = new BipedMech();
+            mech = new BipedMek();
         }
 
         setBasicEntityData(mech);

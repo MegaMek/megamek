@@ -4627,7 +4627,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             // daddStepToMovePath(MoveStepType.SWIM);
             gear = MovementDisplay.GEAR_SWIM;
-            ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
+            ce.setMovementMode((ce instanceof BipedMek) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
             EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());

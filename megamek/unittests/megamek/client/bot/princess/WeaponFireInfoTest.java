@@ -54,9 +54,9 @@ public class WeaponFireInfoTest {
     private static ToHitData mockToHitEight;
     private static ToHitData mockToHitSix;
     private static ToHitData mockToHitThirteen;
-    private static BipedMech mockShooter;
+    private static BipedMek mockShooter;
     private static EntityState mockShooterState;
-    private static BipedMech mockTarget;
+    private static BipedMek mockTarget;
     private static EntityState mockTargetState;
     private static Game mockGame;
     private static WeaponMounted mockWeapon;
@@ -88,7 +88,7 @@ public class WeaponFireInfoTest {
         when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         when(mockPrincess.getMaxWeaponRange(any(Entity.class))).thenReturn(21);
 
-        mockShooter = mock(BipedMech.class);
+        mockShooter = mock(BipedMek.class);
         when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
         when(mockShooter.getWeight()).thenReturn(75.0);
         when(mockShooter.getId()).thenReturn(SHOOTER_ID);
@@ -98,7 +98,7 @@ public class WeaponFireInfoTest {
         mockShooterState = mock(EntityState.class);
         when(mockShooterState.getPosition()).thenReturn(SHOOTER_COORDS);
 
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
         when(mockTarget.getPosition()).thenReturn(TARGET_COORDS_9);
         when(mockTarget.isLocationBad(anyInt())).thenReturn(false);
         when(mockTarget.getId()).thenReturn(TARGET_ID);

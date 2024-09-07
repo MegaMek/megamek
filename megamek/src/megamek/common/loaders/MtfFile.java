@@ -223,7 +223,7 @@ public class MtfFile implements IMechLoader {
             } else if (chassisConfig.contains("Tripod")) {
                 mech = new TripodMek(iGyroType, iCockpitType);
             } else {
-                mech = new BipedMech(iGyroType, iCockpitType);
+                mech = new BipedMek(iGyroType, iCockpitType);
             }
             mech.setFullHeadEject(fullHead);
             mech.setChassis(chassis.trim());

@@ -526,7 +526,7 @@ public class TestMech extends TestEntity {
             }
             // Check for illegal allocations
             if (mech.isOmni()
-                    && (mech instanceof BipedMech)
+                    && (mech instanceof BipedMek)
                     && ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM))
                     && ((m.getType() instanceof GaussWeapon)
                             || (m.getType() instanceof ACWeapon)

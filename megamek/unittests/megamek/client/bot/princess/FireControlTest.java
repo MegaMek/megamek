@@ -195,7 +195,7 @@ public class FireControlTest {
         final IHonorUtil mockHonorUtil = mock(IHonorUtil.class);
         when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
 
-        mockShooter = mock(BipedMech.class);
+        mockShooter = mock(BipedMek.class);
         when(mockShooter.getId()).thenReturn(1);
         when(mockShooter.getMaxWeaponRange()).thenReturn(21);
         when(mockShooter.getHeatCapacity()).thenReturn(10);
@@ -234,7 +234,7 @@ public class FireControlTest {
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGame.getBoard()).thenReturn(mockBoard);
 
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
         when(mockTarget.getDisplayName()).thenReturn("mock target");
         when(mockTarget.getId()).thenReturn(MOCK_TARGET_ID);
         when(mockTarget.isMilitary()).thenReturn(true);
@@ -920,8 +920,8 @@ public class FireControlTest {
 
     @Test
     public void testGetPreferredAmmo() {
-        final Entity mockShooter = mock(BipedMech.class);
-        Targetable mockTarget = mock(BipedMech.class);
+        final Entity mockShooter = mock(BipedMek.class);
+        Targetable mockTarget = mock(BipedMek.class);
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         final FireControl testFireControl = new FireControl(mockPrincess);
 
@@ -987,7 +987,7 @@ public class FireControlTest {
                         mockWeaponAC5)));
 
         // Test a LBX at a heavily damaged target.
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         when(((Entity) mockTarget).getDamageLevel()).thenReturn(Entity.DMG_HEAVY);
@@ -1264,7 +1264,7 @@ public class FireControlTest {
                                                                                              10,
                                                                                              mockGame));
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(false);
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
         when(mockTarget.isAirborne()).thenReturn(false);
         when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
 
@@ -1278,7 +1278,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
 
         // Firing at an ejected mechwarrior.
         mockTarget = mock(MekWarrior.class);
@@ -1290,7 +1290,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
 
         // Firing at infantry
         mockTarget = mock(Infantry.class);
@@ -1302,7 +1302,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
 
         // Target is out of range.
         when(mockPrincess.getMaxWeaponRange(any(Entity.class), anyBoolean())).thenReturn(5);

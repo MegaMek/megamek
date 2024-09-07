@@ -40,7 +40,7 @@ public class MovePathTest {
         mockPC.setGravity(1.0f);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
 
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMech = mock(BipedMek.class);
 
         Vector<MoveStep> stepVector = new Vector<>();
 

@@ -7237,8 +7237,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // both legs present?
-        if ((this instanceof BipedMech)
-                && (((BipedMech) this).countBadLegs() == 2)
+        if ((this instanceof BipedMek)
+                && (((BipedMek) this).countBadLegs() == 2)
                 && (moveType != EntityMovementType.MOVE_VTOL_WALK)
                 && (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
             return new PilotingRollData(entityId,
@@ -7426,7 +7426,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         PilotingRollData roll = getBasePilotingRoll(moveType);
 
-        if (this instanceof BipedMech) {
+        if (this instanceof BipedMek) {
             if ((((Mek) this).countBadLegs() >= 1)
                     && (isLocationBad(Mek.LOC_LARM)
                     && isLocationBad(Mek.LOC_RARM))) {

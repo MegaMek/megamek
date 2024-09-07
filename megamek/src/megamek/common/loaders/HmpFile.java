@@ -410,7 +410,7 @@ public class HmpFile implements IMechLoader {
             } else if (chassisType == ChassisType.ARMLESS) {
                 mech = new ArmlessMech(gyroType, cockpitType);
             } else {
-                mech = new BipedMech(gyroType, cockpitType);
+                mech = new BipedMek(gyroType, cockpitType);
             }
 
             mech.setChassis(name);

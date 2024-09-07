@@ -24,7 +24,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
-public class LandAirMech extends BipedMech implements IAero, IBomber {
+public class LandAirMech extends BipedMek implements IAero, IBomber {
     private static final long serialVersionUID = -8118673802295814548L;
 
     public static final int CONV_MODE_MECH = 0;

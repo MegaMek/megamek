@@ -520,6 +520,14 @@ public class BoardEditor extends JPanel
         });
     }
 
+    /**
+     * Shows a prompt to save the current board. When the board is actually saved or the user presses
+     * "No" (don't want to save), returns DialogResult.CONFIRMED. In this case, the action (loading a board
+     * or leaving the board editor) that led to this prompt may be continued.
+     * In all other cases, returns DialogResult.CANCELLED, meaning the action should not be continued.
+     *
+     * @return DialogResult.CANCELLED (cancel action) or CONFIRMED (continue action)
+     */
     private DialogResult showSavePrompt() {
         ignoreHotKeys = true;
         int savePrompt = JOptionPane.showConfirmDialog(null,
@@ -1445,7 +1453,7 @@ public class BoardEditor extends JPanel
         mapSettings = newSettings;
     }
 
-    public void boardLoad() {
+    public void loadBoard() {
         JFileChooser fc = new JFileChooser(loadPath);
         setDialogSize(fc);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
@@ -1456,9 +1464,6 @@ public class BoardEditor extends JPanel
             // I want a file, y'know!
             return;
         }
-        curBoardFile = fc.getSelectedFile();
-        RecentBoardList.addBoard(curBoardFile);
-        loadPath = curBoardFile.getParentFile();
         loadBoard(fc.getSelectedFile());
     }
 
@@ -1480,15 +1485,31 @@ public class BoardEditor extends JPanel
             }
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
+            curBoardFile = file;
+            RecentBoardList.addBoard(curBoardFile);
+            loadPath = curBoardFile.getParentFile();
 
             // Now, *after* initialization of the board which will correct some errors,
             // do a board validation
             validateBoard(false);
-
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
             LogManager.getLogger().error("", ex);
+            showBoardLoadError(ex);
+            initializeBoardIfEmpty();
+        }
+    }
+
+    private void showBoardLoadError(Exception ex) {
+        String message = Messages.getString("BoardEditor.loadBoardError") + System.lineSeparator() + ex.getMessage();
+        String title = Messages.getString("Error");
+        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void initializeBoardIfEmpty() {
+        if ((board == null) || (board.getWidth() == 0) || (board.getHeight() == 0)) {
+            boardNew(false);
         }
     }
 
@@ -1795,7 +1816,7 @@ public class BoardEditor extends JPanel
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_OPEN)) {
             ignoreHotKeys = true;
-            boardLoad();
+            loadBoard();
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SAVE)) {
             ignoreHotKeys = true;

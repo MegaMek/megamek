@@ -606,7 +606,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /**
      * Updates the Recent Boards submenu with the current list of recent boards
      */
-    public void initializeRecentBoardsMenu() {
+    private void initializeRecentBoardsMenu() {
         List<String> recentBoards = RecentBoardList.getRecentBoards();
         boardRecent.removeAll();
         for (String recentBoard : recentBoards) {

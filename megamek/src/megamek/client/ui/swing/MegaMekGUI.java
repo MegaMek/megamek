@@ -378,7 +378,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         BoardEditor editor = new BoardEditor(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
-        editor.boardLoad();
+        editor.loadBoard();
     }
 
     /**

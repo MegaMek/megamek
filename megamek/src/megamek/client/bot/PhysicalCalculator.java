@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package megamek.client.bot;
@@ -52,7 +58,7 @@ public final class PhysicalCalculator {
         int best_brush = PhysicalOption.NONE;
         boolean aptPiloting = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
 
-        // If the attacker is a Mech
+        // If the attacker is a Mek
 
         if (entity instanceof Mek) {
 
@@ -68,41 +74,35 @@ public final class PhysicalCalculator {
                 // Check for left arm punch damage to self
 
                 odds = BrushOffAttackAction.toHit(game, entity.getId(), game
-                        .getEntity(entity.getSwarmAttackerId()),
-                                                  BrushOffAttackAction.LEFT);
+                        .getEntity(entity.getSwarmAttackerId()), BrushOffAttackAction.LEFT);
                 if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
 
-                    l_dmg = BrushOffAttackAction.getDamageFor(entity,
-                                                              BrushOffAttackAction.LEFT);
+                    l_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
                     l_dmg *= 1.0 - (Compute.oddsAbove(odds.getValue(), aptPiloting) / 100.0);
                     breach = punchThroughMod(entity, ToHitData.HIT_PUNCH,
                                              ToHitData.SIDE_FRONT, l_dmg, l_dmg);
                     if (breach < 1.5) {
                         best_brush = PhysicalOption.BRUSH_LEFT;
                         breach_a = breach;
-                        final_dmg = BrushOffAttackAction.getDamageFor(entity,
-                                                                      BrushOffAttackAction.LEFT);
+                        final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
                     }
                 }
 
                 // Check for right arm punch damage to self
                 odds = BrushOffAttackAction.toHit(game, entity.getId(), game
-                        .getEntity(entity.getSwarmAttackerId()),
-                                                  BrushOffAttackAction.RIGHT);
+                        .getEntity(entity.getSwarmAttackerId()), BrushOffAttackAction.RIGHT);
                 if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
 
                     // If chance of breaching armor is minimal set brush left
 
-                    r_dmg = BrushOffAttackAction.getDamageFor(entity,
-                                                              BrushOffAttackAction.RIGHT);
+                    r_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
                     r_dmg *= 1.0 - (Compute.oddsAbove(odds.getValue(), aptPiloting) / 100.0);
                     breach = punchThroughMod(entity, ToHitData.HIT_PUNCH,
                                              ToHitData.SIDE_FRONT, r_dmg, r_dmg);
                     if (breach < Math.min(breach_a, 1.5)) {
                         best_brush = PhysicalOption.BRUSH_RIGHT;
                         breach_a = breach;
-                        final_dmg = BrushOffAttackAction.getDamageFor(entity,
-                                                                      BrushOffAttackAction.RIGHT);
+                        final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
                     }
                 }
 
@@ -119,18 +119,18 @@ public final class PhysicalCalculator {
                     if (breach < Math.min(breach_a, 1.5)) {
                         best_brush = PhysicalOption.BRUSH_BOTH;
                         breach_a = breach;
-                        final_dmg = BrushOffAttackAction.getDamageFor(entity,
-                                                                      BrushOffAttackAction.LEFT);
-                        final_dmg += BrushOffAttackAction.getDamageFor(entity,
-                                                                       BrushOffAttackAction.RIGHT);
+                        final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
+                        final_dmg += BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
                     }
                 }
 
                 // Construct and return Physical option
                 if (best_brush != PhysicalOption.NONE) {
-                    return new PhysicalOption(entity, game.getEntity(entity
-                                                                             .getSwarmAttackerId()), final_dmg,
-                                              best_brush, null);
+                    return new PhysicalOption(entity,
+                            game.getEntity(entity.getSwarmAttackerId()),
+                            final_dmg,
+                            best_brush,
+                            null);
                 }
             }
 
@@ -315,7 +315,7 @@ public final class PhysicalCalculator {
                                              from.getPosition());
 
         // Check for punches
-        // If the target is a Mech, must determine if punch lands on the punch,
+        // If the target is a Mek, must determine if punch lands on the punch,
         // kick, or full table
         if (to instanceof Mek) {
             if (!to.isProne()) {
@@ -378,7 +378,7 @@ public final class PhysicalCalculator {
         }
 
         // Check for a kick
-        // If the target is a Mech, must determine if it lands on the kick or
+        // If the target is a Mek, must determine if it lands on the kick or
         // punch table
         if (to instanceof Mek) {
             location_table = ToHitData.HIT_KICK;
@@ -409,7 +409,7 @@ public final class PhysicalCalculator {
 
         // Check for mounted club-type weapon or carried improvised club
         for (MiscMounted club : from.getClubs()) {
-            // If the target is a Mech, must determine if it hits full body,
+            // If the target is a Mek, must determine if it hits full body,
             // punch, or kick table
             if (to instanceof Mek) {
                 location_table = ToHitData.HIT_NORMAL;
@@ -448,27 +448,26 @@ public final class PhysicalCalculator {
             double breach;
             boolean water_landing = false;
             dmg = 0.0;
-            int disp_dir = from.getPosition().direction(to.getPosition());
-            Coords disp_c = to.getPosition().translated(disp_dir);
+            int displayDirection = from.getPosition().direction(to.getPosition());
+            Coords displayCoords = to.getPosition().translated(displayDirection);
             // If the displacement hex is a valid one
-            if (Compute.isValidDisplacement(game, to.getId(), to.getPosition(),
-                                            disp_c)) {
+            if (Compute.isValidDisplacement(game, to.getId(), to.getPosition(), displayCoords)) {
                 // If the displacement hex is not on the map, credit damage
                 // against full target armor
-                if (!game.getBoard().contains(disp_c)) {
+                if (!game.getBoard().contains(displayCoords)) {
                     dmg = (to.getTotalArmor()
                            * Compute.oddsAbove(odds.getValue(), toAptPiloting)) / 100.0;
                 }
-                if (game.getBoard().contains(disp_c)) {
+                if (game.getBoard().contains(displayCoords)) {
                     // Find the elevation difference
                     elev_diff = game.getBoard().getHex(to.getPosition())
                                     .getLevel();
-                    elev_diff -= game.getBoard().getHex(disp_c).getLevel();
+                    elev_diff -= game.getBoard().getHex(displayCoords).getLevel();
                     if (elev_diff < 0) {
                         elev_diff = 0;
                     }
                     // Set a flag if the displacement hex has water
-                    if (game.getBoard().getHex(disp_c).containsTerrain(
+                    if (game.getBoard().getHex(displayCoords).containsTerrain(
                             Terrains.WATER)) {
                         water_landing = true;
                     }
@@ -497,8 +496,7 @@ public final class PhysicalCalculator {
                 }
             }
             // If the displacement hex is not valid
-            if (!Compute.isValidDisplacement(game, to.getId(),
-                                             to.getPosition(), disp_c)) {
+            if (!Compute.isValidDisplacement(game, to.getId(), to.getPosition(), displayCoords)) {
                 // Set a flag if the displacement hex has water
                 if (game.getBoard().getHex(to.getPosition()).containsTerrain(
                         Terrains.WATER)) {
@@ -638,7 +636,7 @@ public final class PhysicalCalculator {
             return final_multiplier;
         }
 
-        // If the target is a Mech
+        // If the target is a Mek
         if (target instanceof Mek) {
             // Create vector of body locations with targets current armor values
             // Use hit table and direction to determine locations that are hit
@@ -714,7 +712,7 @@ public final class PhysicalCalculator {
                 }
             }
         }
-        // If the target is a ProtoMech
+        // If the target is a ProtoMek
         if (target instanceof ProtoMek) {
             max_index = 6;
             // Create vector of body locations with targets current armor values

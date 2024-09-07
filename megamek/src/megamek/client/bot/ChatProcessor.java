@@ -1,16 +1,21 @@
 /*
- * MegaMek -
- * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot;
 
@@ -27,7 +32,6 @@ import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
@@ -104,14 +108,14 @@ public class ChatProcessor {
         }
         String name = st.nextToken().trim();
         // who is the message from?
-        Enumeration<Player> e = bot.getGame().getPlayers();
-        Player p = null;
-        while (e.hasMoreElements()) {
-            p = e.nextElement();
-            if (name.equalsIgnoreCase(p.getName())) {
+        Player player = null;
+        for (Player gamePlayer : bot.getGame().getPlayersList()) {
+            if (name.equalsIgnoreCase(gamePlayer.getName())) {
+                player = gamePlayer;
                 break;
             }
         }
+
         if (name.equals(Server.ORIGIN)) {
             String msg = st.nextToken();
             if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
@@ -120,20 +124,20 @@ public class ChatProcessor {
                 bot.sendChat("/allowGM");
             }
             return;
-        } else if (p == null) {
+        } else if (player == null) {
             return;
         }
+
         additionalPrincessCommands(ge, (Princess) bot);
     }
 
     private Player getPlayer(Game game, String playerName) {
-        Enumeration<Player> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            Player testPlayer = players.nextElement();
-            if (playerName.equalsIgnoreCase(testPlayer.getName())) {
-                return testPlayer;
+        for (Player player : game.getPlayersList()) {
+            if (playerName.equalsIgnoreCase(player.getName())) {
+                return player;
             }
         }
+
         return null;
     }
 

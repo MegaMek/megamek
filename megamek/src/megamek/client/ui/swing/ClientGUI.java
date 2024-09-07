@@ -367,7 +367,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         registerCommand(new DeployCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
-        registerCommand(new SitrepCommand(this));
+        registerCommand(new SituationReportCommand(this));
         registerCommand(new LookCommand(this));
         registerCommand(new ChatCommand(this));
         registerCommand(new DoneCommand(this));
@@ -1180,7 +1180,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             // otherwise, hide the panel
             panSecondary.setVisible(false);
         }
-        
+
         // Set the new panel's listeners
         if (curPanel instanceof BoardViewListener) {
             bv.addBoardViewListener((BoardViewListener) curPanel);
@@ -2920,7 +2920,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public void showCollapseWarning(List<Coords> warnList) {
         collapseWarningSpriteHandler.setCFWarningSprites(warnList);
     }
-    
+
     /**
      * Shows ground object icons in the given list of Coords in the BoardView
      *

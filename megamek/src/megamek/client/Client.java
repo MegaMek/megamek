@@ -38,7 +38,6 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.Report;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -287,7 +286,7 @@ public class Client extends AbstractClient {
     /**
      * Send s done with prephase turn
      */
-    public void sendPrephaseData(int aen) {
+    public void sendPrePhaseData(int aen) {
         send(new Packet(PacketCommand.ENTITY_PREPHASE, aen));
         flushConn();
     }
@@ -385,7 +384,7 @@ public class Client extends AbstractClient {
     public void sendDeployMinefields(Vector<Minefield> minefields) {
         send(new Packet(PacketCommand.DEPLOY_MINEFIELDS, minefields));
     }
-    
+
     /**
      * Sends an updated state of ground objects (i.e. cargo etc)
      */
@@ -583,7 +582,7 @@ public class Client extends AbstractClient {
             game.processGameEvent(new GameEntityChangeEvent(this, e));
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void receiveUpdateGroundObjects(Packet packet) {
     	game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));

@@ -274,7 +274,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     public void ready() {
         // stop further input (hopefully)
         disableButtons();
-        clientgui.getClient().sendPrephaseData(cen);
+        clientgui.getClient().sendPrePhaseData(cen);
         endMyTurn();
     }
 

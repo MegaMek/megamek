@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot;
 
@@ -57,7 +63,7 @@ public abstract class BotClient extends Client {
      * This is used to ensure keep the ClientGUI synchronized with changes to
      * this BotClient (particularly the bot's name).
      */
-    private ClientGUI clientgui = null;
+    private ClientGUI clientGUI = null;
 
     public class CalculateBotTurn implements Runnable {
         @Override
@@ -207,7 +213,7 @@ public abstract class BotClient extends Client {
     protected void initTargeting() { }
 
     /**
-     * Calculates the targeting/offboard turn
+     * Calculates the targeting/off board turn
      * This includes firing TAG and non-direct-fire artillery
      * Does nothing in this implementation.
      */
@@ -218,11 +224,11 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Calculates the prephase turn
+     * Calculates the pre phase turn
      * currently does nothing other than end turn
      */
-    protected void calculatePrephaseTurn() {
-        sendPrephaseData(game.getFirstEntityNum(getMyTurn()));
+    protected void calculatePrePhaseTurn() {
+        sendPrePhaseData(game.getFirstEntityNum(getMyTurn()));
         sendDone(true);
     }
 
@@ -546,7 +552,7 @@ public abstract class BotClient extends Client {
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
             } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
-                // For now, declare no autohit hexes.
+                // For now, declare no auto hit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
@@ -554,7 +560,7 @@ public abstract class BotClient extends Client {
                 // TODO: TAG should be handled separately.
                 calculateTargetingOffBoardTurn();
             } else if (game.getPhase().isPremovement() || game.getPhase().isPrefiring()) {
-                calculatePrephaseTurn();
+                calculatePrePhaseTurn();
             }
 
             return true;
@@ -663,34 +669,34 @@ public abstract class BotClient extends Client {
         // Increase average range if the unit has an active c3 link
         av_range = 0.0;
         weapon_count = 0;
-        for (Mounted mounted : deployed_ent.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if ((!wtype.getName().equals("ATM 3"))
-                && (!wtype.getName().equals("ATM 6"))
-                && (!wtype.getName().equals("ATM 9"))
-                && (!wtype.getName().equals("ATM 12"))) {
+        for (Mounted<?> mounted : deployed_ent.getWeaponList()) {
+            WeaponType weaponType = (WeaponType) mounted.getType();
+            if ((!weaponType.getName().equals("ATM 3"))
+                && (!weaponType.getName().equals("ATM 6"))
+                && (!weaponType.getName().equals("ATM 9"))
+                && (!weaponType.getName().equals("ATM 12"))) {
                 if (deployed_ent.getC3Master() != null) {
-                    av_range += wtype.getLongRange() * 1.25;
+                    av_range += weaponType.getLongRange() * 1.25;
                 } else {
-                    av_range += wtype.getLongRange();
+                    av_range += weaponType.getLongRange();
                 }
                 weapon_count++;
             }
         }
-        for (Mounted mounted : deployed_ent.getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-            if (atype.getAmmoType() == AmmoType.T_ATM) {
+        for (Mounted<?> mounted : deployed_ent.getAmmo()) {
+            AmmoType ammoType = (AmmoType) mounted.getType();
+            if (ammoType.getAmmoType() == AmmoType.T_ATM) {
                 weapon_count++;
                 av_range += 15.0;
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                     av_range -= 6;
                 }
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                     av_range += 12.0;
                 }
-            } else if (atype.getAmmoType() == AmmoType.T_MML) {
+            } else if (ammoType.getAmmoType() == AmmoType.T_MML) {
                 weapon_count++;
-                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+                if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
                     av_range = 9.0;
                 } else {
                     av_range = 21.0;
@@ -747,7 +753,7 @@ public abstract class BotClient extends Client {
             // -> Approximate total damage taken in the current position; this
             // keeps units from deploying into x-fires
             for (Entity test_ent : valid_attackers) {
-                for (Mounted mounted : test_ent.getWeaponList()) {
+                for (Mounted<?> mounted : test_ent.getWeaponList()) {
                     test_attack = new WeaponAttackAction(test_ent.getId(),
                                                          deployed_ent.getId(),
                                                          test_ent.getEquipmentNum(mounted));
@@ -763,7 +769,7 @@ public abstract class BotClient extends Client {
             // -> Conventional infantry ALWAYS come out on the short end of the
             // stick in damage given/taken... solutions?
             total_damage = 0.0;
-            for (Mounted mounted : deployed_ent.getWeaponList()) {
+            for (Mounted<?> mounted : deployed_ent.getWeaponList()) {
                 max_damage = 0.0;
                 for (Entity test_ent : valid_attackers) {
                     test_attack = new WeaponAttackAction(deployed_ent.getId(),
@@ -779,7 +785,7 @@ public abstract class BotClient extends Client {
             }
             coord.fitness += (total_damage / 10);
 
-            // Mech
+            // Mek
             if (deployed_ent.hasETypeFlag(Entity.ETYPE_MEK)) {
                 // -> Trees are good, when they're tall enough
                 // -> Water isn't that great below depth 1 -> this saves actual
@@ -872,17 +878,15 @@ public abstract class BotClient extends Client {
                 // -> Water in hex increases fitness, hover vehicles have an
                 // advantage in water areas
                 if (deployed_ent.getMovementMode() == EntityMovementMode.HOVER) {
-                    if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
-                            Terrains.WATER)) {
+                    if (board.getHex(coord.getX(), coord.getY()).containsTerrain(Terrains.WATER)) {
                         coord.fitness += 2;
                     }
                 }
                 // If building, make sure not too heavy to safely move out of.
-                coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
-                                                         deployed_ent);
+                coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(), deployed_ent);
             }
 
-            // ProtoMech
+            // ProtoMek
             // ->
             // -> Trees increase fitness by +2 (minor)
             if (deployed_ent instanceof ProtoMek) {
@@ -969,13 +973,13 @@ public abstract class BotClient extends Client {
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc. This has been copied almost wholesale from
-     * Compute.getExpectedDamage; the logfile print commands were removed due to
+     * Compute.getExpectedDamage; the log file print commands were removed due to
      * excessive data generated
      */
     private static float getDeployDamage(Game g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
         Entity attacker = g.getEntity(waa.getEntityId());
         boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        Mounted weapon = attacker.getEquipment(waa.getWeaponId());
+        Mounted<?> weapon = attacker.getEquipment(waa.getWeaponId());
         ToHitData hitData = waa.toHit(g, allECMInfo);
         if (hitData.getValue() > 12) {
             return 0.0f;
@@ -1044,7 +1048,7 @@ public abstract class BotClient extends Client {
         for (Entity check_ent : game.getEntitiesVector()) {
             if ((check_ent.getOwnerId() == localPlayerNumber)) {
                 if (check_ent.hasStealth()) {
-                    for (Mounted mEquip : check_ent.getMisc()) {
+                    for (Mounted<?> mEquip : check_ent.getMisc()) {
                         MiscType mtype = (MiscType) mEquip.getType();
                         if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
@@ -1052,7 +1056,7 @@ public abstract class BotClient extends Client {
                                 // Always activate Stealth if the heat doesn't matter!
                                 new_stealth = 1;
                             } else {
-                                // If the Mech is in danger of shutting down (14+
+                                // If the Mek is in danger of shutting down (14+
                                 // heat), consider shutting
                                 // off the armor
                                 trigger_range = 13 + Compute.randomInt(7);
@@ -1060,17 +1064,17 @@ public abstract class BotClient extends Client {
                                 if (check_ent.heat > trigger_range) {
                                     new_stealth = 0;
                                 } else if ((check_ent.getPosition() == null)) {
-                                    // Off-board entities that _do_ track heat should be Stealthing up
+                                    // Off-board entities that _do_ track heat should be Stealth-ing up
                                     // before they come back on-board.
                                     new_stealth = 1;
 
                                 } else {
 
-                                    // Mech is not in danger of shutting down soon;
+                                    // Mek is not in danger of shutting down soon;
                                     // if most of the
-                                    // enemy is right next to the Mech deactivate
+                                    // enemy is right next to the Mek deactivate
                                     // armor to free up
-                                    // heatsinks for weapons fire
+                                    // heat sinks for weapons fire
 
                                     total_bv = 0;
                                     known_bv = 0;
@@ -1157,7 +1161,7 @@ public abstract class BotClient extends Client {
 
     @Override
     protected void correctName(Packet inP) {
-        // If we have a clientgui, it keeps track of a Name -> Client map, and
+        // If we have a clientGUI, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
             Map<String, AbstractClient> bots = getClientGUI().getLocalBots();
@@ -1174,11 +1178,11 @@ public abstract class BotClient extends Client {
     }
 
     private ClientGUI getClientGUI() {
-        return clientgui;
+        return clientGUI;
     }
 
-    public void setClientGUI(ClientGUI clientgui) {
-        this.clientgui = clientgui;
+    public void setClientGUI(ClientGUI clientGUI) {
+        this.clientGUI = clientGUI;
     }
 
     public void endOfTurnProcessing() {

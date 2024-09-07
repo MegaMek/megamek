@@ -20,6 +20,33 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -30,8 +57,8 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
+import megamek.client.event.MekDisplayEvent;
+import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
@@ -66,25 +93,9 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.*;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, IPreferenceChangeListener, MechDisplayListener {
+        ActionListener, IPreferenceChangeListener, MekDisplayListener {
     // region Variable Declarations
     // region action commands
     // region main menu
@@ -2982,7 +2993,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     @Override
-    public void weaponSelected(MechDisplayEvent b) {
+    public void weaponSelected(MekDisplayEvent b) {
         setSelectedEntityNum(b.getEntityId());
         updateFiringArc(b.getEntity());
     }

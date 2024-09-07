@@ -25,7 +25,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import megamek.MMConstants;
 import megamek.client.Client;
-import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -2057,7 +2057,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // send event to other parts of the UI which care
         unitDisplay.getClientGUI().showSensorRanges(entity);
-        unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
+        unitDisplay.processMechDisplayEvent(new MekDisplayEvent(this, entity, mounted));
         onResize();
         addListeners();
     }

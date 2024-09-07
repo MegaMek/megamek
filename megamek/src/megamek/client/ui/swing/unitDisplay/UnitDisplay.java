@@ -14,8 +14,27 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.event.MekDisplayEvent;
+import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
@@ -25,21 +44,17 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special
@@ -72,7 +87,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private ClientGUI clientgui;
     private Entity currentlyDisplaying;
     private JLabel labTitle;
-    private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
+    private ArrayList<MekDisplayListener> eventListeners = new ArrayList<>();
 
     public static final String NON_TABBED_GENERAL = "General";
     public static final String NON_TABBED_PILOT = "Pilot";
@@ -438,7 +453,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      */
     public void displayEntity(Entity en) {
         if ((en == null) || (currentlyDisplaying == en)) {
-            // Issue #5650 - this method should not be executed if the currently displayed entity hasn't changed. 
+            // Issue #5650 - this method should not be executed if the currently displayed entity hasn't changed.
             return;
         }
         currentlyDisplaying = en;
@@ -513,7 +528,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      *
      * @param listener the listener.
      */
-    public void addMechDisplayListener(MechDisplayListener listener) {
+    public void addMechDisplayListener(MekDisplayListener listener) {
         eventListeners.add(listener);
     }
 
@@ -522,11 +537,11 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      *
      * @param event the mech display event.
      */
-    void processMechDisplayEvent(MechDisplayEvent event) {
+    void processMechDisplayEvent(MekDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
-            MechDisplayListener lis = eventListeners.get(i);
+            MekDisplayListener lis = eventListeners.get(i);
             switch (event.getType()) {
-                case MechDisplayEvent.WEAPON_SELECTED:
+                case MekDisplayEvent.WEAPON_SELECTED:
                     lis.weaponSelected(event);
                     break;
                 default:

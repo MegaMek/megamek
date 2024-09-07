@@ -4092,7 +4092,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     break;
                 case BOARD_HEX_DOUBLECLICK:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers, mouseButton));
+                            BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_DRAG:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,

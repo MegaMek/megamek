@@ -19,13 +19,44 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.lobby.LobbyMekPopupActions.resetBombChoices;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.teamColor;
+import static megamek.client.ui.swing.util.UIUtil.uiYellow;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.RoundingMode;
+import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.generator.ReconfigurationParameters;
-import megamek.client.generator.TeamLoadoutGenerator;
+import megamek.client.generator.TeamLoadOutGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.GBC;
@@ -38,39 +69,23 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.client.ui.swing.util.UIUtil.Content;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
+import megamek.client.ui.swing.util.UIUtil.OptionPanel;
+import megamek.client.ui.swing.util.UIUtil.TipButton;
+import megamek.client.ui.swing.util.UIUtil.TipLabel;
+import megamek.client.ui.swing.util.UIUtil.TipTextField;
+import megamek.common.Briefcase;
+import megamek.common.Entity;
+import megamek.common.ICarryable;
+import megamek.common.IStartingPositions;
+import megamek.common.MapSettings;
+import megamek.common.OffBoardDirection;
+import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.math.RoundingMode;
-import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import static megamek.client.ui.Messages.getString;
-
-import static megamek.client.ui.swing.lobby.LobbyMekPopupActions.resetBombChoices;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.util.UIUtil.*;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -84,7 +99,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 	private static final String CMD_ADD_GROUND_OBJECT = "CMD_ADD_GROUND_OBJECT";
 	private static final String CMD_REMOVE_GROUND_OBJECT = "CMD_REMOVE_GROUND_OBJECT_%d";
 	private static final String CMD_REMOVE_GROUND_OBJECT_PREFIX = "CMD_REMOVE_GROUND_OBJECT_";
-	
+
     public PlayerSettingsDialog(ClientGUI cg, Client cl, BoardView bv) {
         super(cg.getFrame(), "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
@@ -97,16 +112,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         NumberFormat numFormat = NumberFormat.getIntegerInstance();
         numFormat.setGroupingUsed(false);
-        
+
         NumberFormatter numFormatter = new NumberFormatter(numFormat);
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);
-        
+
         DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
-        
+
         txtOffset = new JFormattedTextField(formatterFactory, 0);
         txtWidth = new JFormattedTextField(formatterFactory, 3);
-        
+
         DecimalFormat tonnageFormat = new DecimalFormat();
         tonnageFormat.setGroupingUsed(false);
         tonnageFormat.setRoundingMode(RoundingMode.UNNECESSARY);
@@ -268,7 +283,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
     private JSpinner spinStartingAnySEy;
-    
+
     // ground object config section
     private Content groundSectionContent = new Content(new GridLayout(2, 3));
     private final JTextField txtGroundObjectName;
@@ -293,7 +308,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JButton butSaveADF = new JButton(Messages.getString("PlayerSettingsDialog.saveADF"));
     private final JButton butLoadADF = new JButton(Messages.getString("PlayerSettingsDialog.loadADF"));
     private final JButton butRestoreMT = new JButton(Messages.getString("PlayerSettingsDialog.restore"));
-    private TeamLoadoutGenerator tlg;
+    private TeamLoadOutGenerator tlg;
     private MunitionTree munitionTree = null;
     private MunitionTree originalMT = null;
 
@@ -377,73 +392,73 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         butRestoreMT.setEnabled(false);
         return result;
     }
-    
+
     private JPanel groundObjectConfigSection() {
     	JPanel result = new OptionPanel("PlayerSettingsDialog.header.GroundObjects");
     	result.setToolTipText("Define carryable objects that can be placed prior to unit deployment");
     	groundSectionContent = new Content(new GridBagLayout());
     	GridBagConstraints gbc = new GridBagConstraints();
-    	
+
     	gbc.gridx = 0;
     	gbc.gridy = 0;
     	JLabel lblName = new JLabel("Name");
     	groundSectionContent.add(lblName, gbc);
-    	
+
     	gbc.gridx = 1;
     	JLabel lblTonnage = new JLabel("Tonnage");
     	groundSectionContent.add(lblTonnage, gbc);
-    	
+
     	gbc.gridx = 2;
     	JLabel lblInvulnerable = new JLabel("Invulnerable");
     	groundSectionContent.add(lblInvulnerable);
-    	
+
     	gbc.gridy = 1;
     	gbc.gridx = 0;
     	groundSectionContent.add(txtGroundObjectName, gbc);
-    	
+
     	gbc.gridx = 1;
     	groundSectionContent.add(txtGroundObjectTonnage, gbc);
-    	
+
     	gbc.gridx = 2;
     	groundSectionContent.add(chkGroundObjectInvulnerable, gbc);
-    	
+
     	gbc.gridx = 3;
     	JButton btnAdd = new JButton("Add");
     	btnAdd.setActionCommand(CMD_ADD_GROUND_OBJECT);
     	btnAdd.addActionListener(listener);
     	groundSectionContent.add(btnAdd, gbc);
-    	
+
     	for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
     		addGroundObjectToUI(groundObject);
     	}
-    	
+
     	result.add(groundSectionContent);
     	return result;
     }
- 
+
     /**
      * Worker function that adds the given ground object to the UI
      */
     private void addGroundObjectToUI(ICarryable groundObject) {
     	GridBagConstraints gbc = new GridBagConstraints();
-    	gbc.gridy = groundSectionComponents.size() + 2; // there's always two extra rows - header + text fields 
+    	gbc.gridy = groundSectionComponents.size() + 2; // there's always two extra rows - header + text fields
 		gbc.gridx = 0;
-		
+
 		JLabel nameLabel = new JLabel(groundObject.generalName());
 		groundSectionContent.add(nameLabel, gbc);
 		List<Component> row = new ArrayList<>();
 		row.add(nameLabel);
-    	
+
 		gbc.gridx = 1;
 		JLabel tonnageLabel = new JLabel(Double.toString(groundObject.getTonnage()));
 		groundSectionContent.add(tonnageLabel, gbc);
 		row.add(tonnageLabel);
-    	
+
 		gbc.gridx = 2;
 		JLabel flagLabel = new JLabel(groundObject.isInvulnerable() ? "Yes" : "No");
 		groundSectionContent.add(flagLabel, gbc);
 		row.add(flagLabel);
-		
+
 		gbc.gridx = 3;
     	JButton btnRemove = new JButton("Remove");
     	btnRemove.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, player.getGroundObjectsToPlace().size() - 1));
@@ -453,7 +468,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     	groundSectionComponents.add(row);
     	validate();
     }
-    
+
     /**
      * Worker function that uses the current state of the ground object inputs to
      * add a new ground object to the backing player and the UI
@@ -461,27 +476,27 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void addGroundObject() {
     	Briefcase briefcase = new Briefcase();
     	briefcase.setName(txtGroundObjectName.getText());
-    	
+
     	Double tonnage = 0.0;
-    	
+
     	try {
     		tonnage = Double.parseDouble(txtGroundObjectTonnage.getText());
-    		
+
     		// don't allow negative tonnage as we do not have anti-gravity technology
     		if (tonnage < 0) {
     			tonnage = 0.0;
     		}
     	} catch (Exception ignored) {
-    		
+
     	}
-    	
+
     	briefcase.setTonnage(tonnage);
     	briefcase.setInvulnerable(chkGroundObjectInvulnerable.isSelected());
     	player.getGroundObjectsToPlace().add(briefcase);
-    	
+
     	addGroundObjectToUI(briefcase);
     }
-    
+
     /**
      * Worker function that removes the chosen ground object from the backing player and the UI
      */
@@ -492,14 +507,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     		groundSectionContent.remove(component);
     	}
     	groundSectionComponents.remove(index);
-    	
+
     	// kind of a hack, but I'm being lazy - re-index all the CMD_REMOVE_GROUND_OBJECT commands beyond
     	// the one that just removed, so they're not pointing to higher indexes than they need to
     	for (int componentIndex = index; componentIndex < groundSectionComponents.size(); componentIndex++) {
     		((JButton) groundSectionComponents.get(index).get(2))
     			.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, componentIndex));
     	}
-    	
+
     	validate();
     }
 
@@ -604,7 +619,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
             if (null != munitionTree && null != rp) {
                 rp.friendlyFaction = faction;
-                rp.binFillPercent = (rp.isPirate) ? TeamLoadoutGenerator.UNSET_FILL_RATIO : 1.0f;
+                rp.binFillPercent = (rp.isPirate) ? TeamLoadOutGenerator.UNSET_FILL_RATIO : 1.0f;
                 // Clear any bomb assignments
                 resetBombChoices(clientgui, client.getGame(), updateEntities);
                 tlg.reconfigureEntities(updateEntities, faction, munitionTree, rp);
@@ -678,7 +693,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         // For new auto-loadout-configuration
         team = client.getGame().getTeamForPlayer(player);
-        tlg = new TeamLoadoutGenerator(clientgui.getClient().getGame());
+        tlg = new TeamLoadOutGenerator(clientgui.getClient().getGame());
         originalMT = new MunitionTree();
         originalMT.loadEntityList(client.getGame().getPlayerEntities(player, false));
 
@@ -816,7 +831,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butAutoconfigure.setEnabled(true);
                 butRandomize.setEnabled(false);
                 tlg.setTrueRandom(chkTrulyRandom.isSelected());
-                munitionTree = TeamLoadoutGenerator.generateRandomizedMT();
+                munitionTree = TeamLoadOutGenerator.generateRandomizedMT();
             }
 
             if (cmbFaction.equals(e.getSource())) {
@@ -858,11 +873,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
             }
-            
+
             if (e.getActionCommand().equals(CMD_ADD_GROUND_OBJECT)) {
             	addGroundObject();
             }
-            
+
             if (e.getActionCommand().contains(CMD_REMOVE_GROUND_OBJECT_PREFIX)) {
             	removeGroundObject(e.getActionCommand());
             }

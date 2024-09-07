@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,7 +20,12 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.*;
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.LandAirMech;
+import megamek.common.Mek;
+import megamek.common.Tank;
 
 public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerator {
     //region Constructors

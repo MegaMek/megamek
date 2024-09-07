@@ -105,7 +105,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMech = createMech("Mauler", "MAL-1K", "Tyson");
         Mounted bin1 = mockMech.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
         Mounted bin2 = mockMech.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
@@ -130,7 +130,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechNoAmmoTypesRequested() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -145,7 +145,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechOneAmmoType() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -173,7 +173,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureEntityMechThreeAmmoTypesFourBins() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -204,7 +204,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureTwoEntityMechsGenericAndNamed() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mek mockMech2 = createMech("Catapult", "CPLT-C1", "John Q. Public");
@@ -242,7 +242,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureTeamOfMechs()  throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         ReconfigurationParameters rp = new ReconfigurationParameters();
         Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
@@ -293,7 +293,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testRandomReconfigureBotTeam()  throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -323,7 +323,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testLoadEntityListTwoEntities() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -350,7 +350,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
         Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
@@ -380,7 +380,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testReconfigureBotTeamAllArtemis()  throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMech = createMech("Warhammer", "WHM-6Rb", "Asgard");
         mockMech.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mek.LOC_RT);
         Mek mockMech2 = createMech("Valkyrie", "VLK-QW5", "Wobbles");
@@ -413,7 +413,7 @@ class TeamLoadoutGeneratorTest {
     // Section: legalityCheck tests
     @Test
     void testAmmoTypeIllegalByTechLevel() {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
@@ -440,7 +440,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testAmmoTypeIllegalBeforeCreation() {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
@@ -521,7 +521,7 @@ class TeamLoadoutGeneratorTest {
         ReconfigurationParameters rp = new ReconfigurationParameters();
         rp.nukesBannedForMe = true;
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         // Have the Munition Tree generator use our pre-made mwc so we can see its
         // changes
@@ -535,7 +535,7 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testClampAmmoShotsReduceAmmoBinsToZero() throws LocationFullException {
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -549,7 +549,7 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testClampAmmoShotsPositiveSmallFloatGivesOneShot() throws LocationFullException {
         // LRM15s carry 8 shots, the clamp function should give 1 shot at 10% / 0.1f ratio
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -563,7 +563,7 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testClampAmmoShotsSetToHalf() throws LocationFullException {
         // LRM15s carry 8 shots, the clamp function should give 4 shot at 40% / 0.5f ratio
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -577,7 +577,7 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testClampAmmoShotsCannotExceedFull() throws LocationFullException {
         // LRM15s carry 8 shots, the clamp function should give 8 shot at 100% or over
-        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);

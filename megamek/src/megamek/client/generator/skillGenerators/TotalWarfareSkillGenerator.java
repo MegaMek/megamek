@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,13 +45,11 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     //endregion Constructors
 
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                      final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
         return generateRandomSkills(getLevel(), entity, clanPilot, forceClan);
     }
 
-    protected int[] generateRandomSkills(final SkillLevel level, final Entity entity,
-                                         final boolean clanPilot, final boolean forceClan) {
+    protected int[] generateRandomSkills(final SkillLevel level, final Entity entity,final boolean clanPilot, final boolean forceClan) {
         final int bonus = determineBonus(entity, clanPilot, forceClan);
 
         final int gunneryRoll = Compute.d6(1) + bonus;

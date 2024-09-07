@@ -17,7 +17,7 @@
     <entry key="mtGuidedAmmoFriendlyTAGThreshold">1.0</entry>
     <entry key="mtGuidedAmmoFriendlyNARCThreshold">1.0</entry>
     <entry key="mtGuidedAmmoFriendlyMissileBoatFractionDivisor">3.0</entry>
-    <entry key="mtUtilityAmmoOffboardUnitsThreshold">2.0</entry>
+    <entry key="mtUtilityAmmoOffBoardUnitsThreshold">2.0</entry>
     <entry key="mtUtilityAmmoFriendlyVsEnemyFractionDivisor">1.0</entry>
     <entry key="mtEnergyBoatEnemyFractionDivisor">4.0</entry>
     <entry key="mtSeekingAmmoEnemyTSMExceedThreshold">1.0</entry>
@@ -77,7 +77,7 @@
     <entry key="defaultStandardMunitionWeight">2.0</entry>
     <entry key="defaultMissileStandardMunitionWeight">2.0</entry>
     <entry key="defaultDeadFireMunitionWeight">3.0</entry>
-    <entry key="defaultArtemiscapableMunitionWeight">0.0</entry>
+    <entry key="defaultArtemisCapableMunitionWeight">0.0</entry>
     <entry key="defaultATMMunitionWeight">2.0</entry>
     <entry key="defaultATMStandardWeight">1.0</entry>
     <entry key="increaseWeightFactor">2.0</entry>
@@ -100,7 +100,7 @@
     <entry key="bombersToAddTagMaxCount">3</entry>
     <entry key="bomberRandomThresholdMaxPercent">100</entry>
     <entry key="fighterCAPRandomPercentageRange">100</entry>
-    <entry key="fighterCAPAntiShipLoadoutRandomPercentageMax">20</entry>
+    <entry key="fighterCAPAntiShipLoadOutRandomPercentageMax">20</entry>
     <entry key="commentReplacementBomb">If a munition must be replaced, range and threshold of RL vs HE</entry>
     <entry key="bombReplacementIntRange">2</entry>
     <entry key="bombReplacementRLThreshold">0</entry>

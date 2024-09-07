@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2020 - The MegaMek Team. All Rights Reserved
+ * Copyright (c) 2020-2024 - The MegaMek Team. All Rights Reserved
+ *
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +18,22 @@
  */
 package megamek.client.generator;
 
-import megamek.MMConstants;
-import megamek.common.enums.Gender;
-import megamek.common.util.weightedMaps.WeightedIntMap;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.MMConstants;
+import megamek.common.enums.Gender;
+import megamek.common.util.weightedMaps.WeightedIntMap;
 
 /**
  * This class sets up a random name generator that can then be used to generate random pilot names.

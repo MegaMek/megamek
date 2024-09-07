@@ -40,8 +40,7 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
      * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
      */
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                      final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
         int bonus;
         switch (getLevel()) {
             case ULTRA_GREEN:

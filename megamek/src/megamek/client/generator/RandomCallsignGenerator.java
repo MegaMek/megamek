@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved
+ * Copyright (c) 2020-2024 - The MegaMek Team. All Rights Reserved
  *
  * This file is part of MegaMek.
  *
@@ -18,10 +18,6 @@
  */
 package megamek.client.generator;
 
-import megamek.MMConstants;
-import megamek.common.util.weightedMaps.WeightedIntMap;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -30,6 +26,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.MMConstants;
+import megamek.common.util.weightedMaps.WeightedIntMap;
 
 /**
  * Save File Formatting:

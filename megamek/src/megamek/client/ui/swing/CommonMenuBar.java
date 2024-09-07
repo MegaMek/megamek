@@ -615,5 +615,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             initMenuItem(item, boardRecent, BOARD_RECENT + "|" + recentBoard);
         }
         boardRecent.setEnabled(!recentBoards.isEmpty());
+        adaptToGUIScale();
     }
 }

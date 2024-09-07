@@ -24,7 +24,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.TripodMech;
@@ -138,7 +138,7 @@ public class PhysicalInfo {
                                                              .append(":");
 
         // Only mechs do physical attacks.
-        if (!(getShooter() instanceof Mech)) {
+        if (!(getShooter() instanceof Mek)) {
             LogManager.getLogger().warn(msg.append("\n\tNot a mech!").toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -213,22 +213,22 @@ public class PhysicalInfo {
         setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
         setKillProbability(0);
 
-        if (!(getTarget() instanceof Mech)) {
+        if (!(getTarget() instanceof Mek)) {
             return;
         }
 
         // now guess how many critical hits will be done
-        Mech targetMech = (Mech) getTarget();
+        Mek targetMech = (Mek) getTarget();
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
-            while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)
+            while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CT)
                     // Need to account for still-active 'Meks with destroyed
                     // heads so as not to spin into an endless loop.
-                    && (hitLoc != Mech.LOC_HEAD)) {
+                    && (hitLoc != Mek.LOC_HEAD)) {
                 if (hitLoc > 7) {
                     hitLoc = 0;
                 }
-                hitLoc = Mech.getInnerLocation(hitLoc);
+                hitLoc = Mek.getInnerLocation(hitLoc);
             }
             double hitLocationProbability;
             if (getAttackType().isPunch()) {
@@ -248,7 +248,7 @@ public class PhysicalInfo {
             // If the location could be destroyed outright...
             if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
                 setExpectedCriticals(getExpectedCriticals() + hitLocationProbability * getProbabilityToHit());
-                if ((hitLoc == Mech.LOC_HEAD) || (hitLoc == Mech.LOC_CT)) {
+                if ((hitLoc == Mek.LOC_HEAD) || (hitLoc == Mek.LOC_CT)) {
                     setKillProbability(getKillProbability() + hitLocationProbability * getProbabilityToHit());
                 }
 

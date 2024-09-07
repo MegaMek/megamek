@@ -19,6 +19,24 @@
  */
 package megamek.client.ui.swing.tileset;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
@@ -28,19 +46,12 @@ import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
-import megamek.common.preference.*;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageProducer;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.*;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -290,7 +301,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image imageFor(Entity entity, int secondaryPos) {
         // mechs look like they're facing their secondary facing
         // (except QuadVees, which are using turrets instead of torso twists
-        if (((entity instanceof Mech) || (entity instanceof Protomech))
+        if (((entity instanceof Mek) || (entity instanceof Protomech))
                 && !(entity instanceof QuadVee)) {
             return imageFor(entity, entity.getSecondaryFacing(), secondaryPos);
         }
@@ -568,22 +579,22 @@ public class TilesetManager implements IPreferenceChangeListener {
         mechImageList.clear();
         mechImages.clear();
         hexTileset.clearAllHexes();
-    }  
-    
+    }
+
     public synchronized void reloadUnitIcons() {
         mechImages.clear();
     }
-    
+
     /** Returns the number of available ultralight destroyed bottom decal images. */
     private int getULightDecalCount() {
         return getUltraDecalImgCount(FILENAME_SUFFIX_WRECKS_ULTRALIGHT);
     }
-    
+
     /** Returns the number of available ultraheavy destroyed bottom decal images. */
     private int getUHeavyDecalCount() {
         return getUltraDecalImgCount(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS);
     }
-    
+
     private int getUltraDecalImgCount(String suffix) {
         File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
         File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);

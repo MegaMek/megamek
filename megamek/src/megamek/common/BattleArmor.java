@@ -655,24 +655,24 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public HitData getTrooperAtLocation(HitData hit, Entity transport) {
-        if (transport instanceof Mech) {
+        if (transport instanceof Mek) {
             int loc = 99;
             switch (hit.getLocation()) {
-                case Mech.LOC_RT:
+                case Mek.LOC_RT:
                     if (hit.isRear()) {
                         loc = 3;
                     } else {
                         loc = 1;
                     }
                     break;
-                case Mech.LOC_LT:
+                case Mek.LOC_LT:
                     if (hit.isRear()) {
                         loc = 4;
                     } else {
                         loc = 2;
                     }
                     break;
-                case Mech.LOC_CT:
+                case Mek.LOC_CT:
                     if (hit.isRear()) {
                         loc = 5;
                     } else {

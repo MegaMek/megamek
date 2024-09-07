@@ -82,7 +82,7 @@ public abstract class BVCalculator {
     }
 
     public static BVCalculator getBVCalculator(Entity entity) {
-        if (entity instanceof Mech) {
+        if (entity instanceof Mek) {
             return new MekBVCalculator(entity);
         } else if (entity instanceof Protomech) {
             return new ProtoMekBVCalculator(entity);

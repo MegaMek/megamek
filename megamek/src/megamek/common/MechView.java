@@ -148,7 +148,7 @@ public class MechView {
                     final boolean ignorePilotBV, final ViewFormatting formatting) {
         this.entity = entity;
         this.formatting = formatting;
-        isMech = entity instanceof Mech;
+        isMech = entity instanceof Mek;
         isInf = entity instanceof Infantry;
         isBA = entity instanceof BattleArmor;
         isVehicle = entity instanceof Tank;
@@ -434,7 +434,7 @@ public class MechView {
         }
 
         if (isMech) {
-            Mech aMech = (Mech) entity;
+            Mek aMech = (Mek) entity;
             StringBuilder hsString = new StringBuilder();
             hsString.append(aMech.heatSinks());
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {

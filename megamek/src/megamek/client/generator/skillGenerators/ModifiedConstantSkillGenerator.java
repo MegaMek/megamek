@@ -55,7 +55,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
             // 'Meks and Battle Armour are better (but not ProtoMechs),
             // Tanks are worse, while Gunnery is worse for Infantry, Conventional Fighters
             // and Small Craft
-            if ((entity instanceof Mech) || (entity instanceof BattleArmor)) {
+            if ((entity instanceof Mek) || (entity instanceof BattleArmor)) {
                 skills[0]--;
                 skills[1]--;
             } else if (entity instanceof Tank) {
@@ -74,7 +74,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
             // Tanks are Regular with the same -1 modifier.
             // Infantry and ProtoMechs are both Regular.
             // Aerospace Fighters are Veteran.
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 skills[0]=3;
                 skills[1]=5;
             } else if (entity instanceof Tank) {

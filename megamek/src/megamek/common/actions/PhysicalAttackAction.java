@@ -162,7 +162,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "Modular Armor");
         }
 
-        if ((ae instanceof Mech) && ae.isSuperHeavy()) {
+        if ((ae instanceof Mek) && ae.isSuperHeavy()) {
             toHit.addModifier(1, "attacker is superheavy mech");
         }
 
@@ -173,11 +173,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+                                                Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                 Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                                                 Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Sensors Completely Destroyed for Torso-Mounted Cockpit");
@@ -251,7 +251,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             }
         }
 
-        if ((ae instanceof Mech) && ((Mech) ae).hasIndustrialTSM()) {
+        if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
     }

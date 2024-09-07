@@ -19,6 +19,18 @@
 
 package megamek.client.generator;
 
+import static java.util.Map.entry;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
+import java.util.stream.IntStream;
+
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
@@ -28,17 +40,6 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import org.apache.commons.collections4.IteratorUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.*;
-import java.util.stream.IntStream;
-
-import static java.util.Map.entry;
 
 /**
  * Notes: check out
@@ -489,7 +490,7 @@ public class TeamLoadoutGenerator {
     }
 
     private static long checkForTSM(ArrayList<Entity> el) {
-        return el.stream().filter(e -> e.isMek() && ((Mech) e).hasTSM(false)).count();
+        return el.stream().filter(e -> e.isMek() && ((Mek) e).hasTSM(false)).count();
     }
     // endregion Check for various unit types, armor types, etc.
 

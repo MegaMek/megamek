@@ -54,7 +54,7 @@ public final class PhysicalCalculator {
 
         // If the attacker is a Mech
 
-        if (entity instanceof Mech) {
+        if (entity instanceof Mek) {
 
             l_dmg = 0.0;
             r_dmg = 0.0;
@@ -317,7 +317,7 @@ public final class PhysicalCalculator {
         // Check for punches
         // If the target is a Mech, must determine if punch lands on the punch,
         // kick, or full table
-        if (to instanceof Mech) {
+        if (to instanceof Mek) {
             if (!to.isProne()) {
                 location_table = ToHitData.HIT_PUNCH;
                 if (to.getElevation() == (from.getElevation() + 1)) {
@@ -380,7 +380,7 @@ public final class PhysicalCalculator {
         // Check for a kick
         // If the target is a Mech, must determine if it lands on the kick or
         // punch table
-        if (to instanceof Mech) {
+        if (to instanceof Mek) {
             location_table = ToHitData.HIT_KICK;
             if (!to.isProne()) {
                 if (to.getElevation() == (from.getElevation() - 1)) {
@@ -411,7 +411,7 @@ public final class PhysicalCalculator {
         for (MiscMounted club : from.getClubs()) {
             // If the target is a Mech, must determine if it hits full body,
             // punch, or kick table
-            if (to instanceof Mech) {
+            if (to instanceof Mek) {
                 location_table = ToHitData.HIT_NORMAL;
                 if ((to.getElevation() == (from.getElevation() - 1))
                         && !to.isProne()) {
@@ -587,7 +587,7 @@ public final class PhysicalCalculator {
         }
 
         // Calculate collateral damage, due to possible target fall
-        if (to instanceof Mech) {
+        if (to instanceof Mek) {
             boolean toAptPiloting = to.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
             coll_damage = calculateFallingDamage(Compute.oddsAbove(odds.getValue(), toAptPiloting) / 100.0, to);
         }
@@ -639,61 +639,61 @@ public final class PhysicalCalculator {
         }
 
         // If the target is a Mech
-        if (target instanceof Mech) {
+        if (target instanceof Mek) {
             // Create vector of body locations with targets current armor values
             // Use hit table and direction to determine locations that are hit
             if (hitTable == ToHitData.HIT_NORMAL) {
                 max_index = 7;
-                armor_values[0] = target.getArmor(Mech.LOC_HEAD, false);
+                armor_values[0] = target.getArmor(Mek.LOC_HEAD, false);
                 if (hitSide != ToHitData.SIDE_FRONT) {
-                    armor_values[1] = target.getArmor(Mech.LOC_CT, true);
+                    armor_values[1] = target.getArmor(Mek.LOC_CT, true);
                 } else {
-                    armor_values[1] = target.getArmor(Mech.LOC_CT, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
                 }
                 if (hitSide != ToHitData.SIDE_FRONT) {
-                    armor_values[2] = target.getArmor(Mech.LOC_RT, true);
+                    armor_values[2] = target.getArmor(Mek.LOC_RT, true);
                 } else {
-                    armor_values[2] = target.getArmor(Mech.LOC_RT, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_RT, false);
                 }
                 if (hitSide != ToHitData.SIDE_FRONT) {
-                    armor_values[3] = target.getArmor(Mech.LOC_LT, true);
+                    armor_values[3] = target.getArmor(Mek.LOC_LT, true);
                 } else {
-                    armor_values[3] = target.getArmor(Mech.LOC_LT, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_LT, false);
                 }
-                armor_values[4] = target.getArmor(Mech.LOC_RARM, false);
-                armor_values[5] = target.getArmor(Mech.LOC_LARM, false);
-                armor_values[6] = target.getArmor(Mech.LOC_RLEG, false);
-                armor_values[7] = target.getArmor(Mech.LOC_RLEG, false);
+                armor_values[4] = target.getArmor(Mek.LOC_RARM, false);
+                armor_values[5] = target.getArmor(Mek.LOC_LARM, false);
+                armor_values[6] = target.getArmor(Mek.LOC_RLEG, false);
+                armor_values[7] = target.getArmor(Mek.LOC_RLEG, false);
             }
             if (hitTable == ToHitData.HIT_PUNCH) {
-                armor_values[0] = target.getArmor(Mech.LOC_HEAD, false);
+                armor_values[0] = target.getArmor(Mek.LOC_HEAD, false);
                 if (hitSide == ToHitData.SIDE_RIGHT) {
                     max_index = 3;
-                    armor_values[1] = target.getArmor(Mech.LOC_CT, false);
-                    armor_values[2] = target.getArmor(Mech.LOC_RT, false);
-                    armor_values[3] = target.getArmor(Mech.LOC_RARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_RT, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_RARM, false);
                 }
                 if (hitSide == ToHitData.SIDE_LEFT) {
                     max_index = 3;
-                    armor_values[1] = target.getArmor(Mech.LOC_CT, false);
-                    armor_values[2] = target.getArmor(Mech.LOC_LT, false);
-                    armor_values[3] = target.getArmor(Mech.LOC_LARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_LT, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_LARM, false);
                 }
                 if (hitSide == ToHitData.SIDE_FRONT) {
                     max_index = 5;
-                    armor_values[1] = target.getArmor(Mech.LOC_CT, false);
-                    armor_values[2] = target.getArmor(Mech.LOC_RT, false);
-                    armor_values[3] = target.getArmor(Mech.LOC_LT, false);
-                    armor_values[4] = target.getArmor(Mech.LOC_RARM, false);
-                    armor_values[5] = target.getArmor(Mech.LOC_LARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_RT, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_LT, false);
+                    armor_values[4] = target.getArmor(Mek.LOC_RARM, false);
+                    armor_values[5] = target.getArmor(Mek.LOC_LARM, false);
                 }
                 if (hitSide == ToHitData.SIDE_REAR) {
                     max_index = 5;
-                    armor_values[1] = target.getArmor(Mech.LOC_CT, true);
-                    armor_values[2] = target.getArmor(Mech.LOC_RT, true);
-                    armor_values[3] = target.getArmor(Mech.LOC_LT, true);
-                    armor_values[4] = target.getArmor(Mech.LOC_RARM, false);
-                    armor_values[5] = target.getArmor(Mech.LOC_LARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CT, true);
+                    armor_values[2] = target.getArmor(Mek.LOC_RT, true);
+                    armor_values[3] = target.getArmor(Mek.LOC_LT, true);
+                    armor_values[4] = target.getArmor(Mek.LOC_RARM, false);
+                    armor_values[5] = target.getArmor(Mek.LOC_LARM, false);
                 }
             }
             if (hitTable == ToHitData.HIT_KICK) {
@@ -702,14 +702,14 @@ public final class PhysicalCalculator {
                         || (hitSide == ToHitData.SIDE_REAR)
                         || (hitSide == ToHitData.SIDE_RIGHT)) {
                     max_index++;
-                    armor_values[max_index] = target.getArmor(Mech.LOC_RLEG,
+                    armor_values[max_index] = target.getArmor(Mek.LOC_RLEG,
                                                               false);
                 }
                 if ((hitSide == ToHitData.SIDE_FRONT)
                         || (hitSide == ToHitData.SIDE_REAR)
                         || (hitSide == ToHitData.SIDE_LEFT)) {
                     max_index++;
-                    armor_values[max_index] = target.getArmor(Mech.LOC_LLEG,
+                    armor_values[max_index] = target.getArmor(Mek.LOC_LLEG,
                                                               false);
                 }
             }

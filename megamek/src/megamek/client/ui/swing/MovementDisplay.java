@@ -19,6 +19,22 @@
  */
 package megamek.client.ui.swing;
 
+import static megamek.common.MiscType.F_CHAFF_POD;
+import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -28,7 +44,6 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
-import megamek.common.UnloadStrandedTurn;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -47,20 +62,6 @@ import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static megamek.common.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
 
 public class MovementDisplay extends ActionPhaseDisplay {
@@ -564,7 +565,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 } else {
                     flag = CMD_MECH | CMD_CONVERTER;
                 }
-            } else if ((ce instanceof Mech) && ((Mech) ce).hasTracks()) {
+            } else if ((ce instanceof Mek) && ((Mek) ce).hasTracks()) {
                 flag = CMD_MECH | CMD_CONVERTER;
             } else if ((ce instanceof Protomech) && ce.getMovementMode().isWiGE()) {
                 flag = CMD_PROTOMECH | CMD_MECH | CMD_AIRMECH;
@@ -733,7 +734,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LogManager.getLogger().error("Cannot update buttons based on a null entity");
             return;
         }
-        boolean isMech = (ce instanceof Mech);
+        boolean isMech = (ce instanceof Mek);
         boolean isInfantry = (ce instanceof Infantry);
         boolean isTank = (ce instanceof Tank);
         boolean isAero = ce.isAero();
@@ -865,7 +866,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             setEjectEnabled(hasLegalHex);
         } else {
-            setEjectEnabled(((isMech && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) || isAero)
+            setEjectEnabled(((isMech && (((Mek) ce).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)) || isAero)
                     && ce.isActive()
                     && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
@@ -1697,7 +1698,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
         } else if ((gear == GEAR_JUMP)
-                && (ce().getJumpType() == Mech.JUMP_BOOSTER)) {
+                && (ce().getJumpType() == Mek.JUMP_BOOSTER)) {
             // Jumps with mechanical jump boosters are special
             Coords src;
             if (cmd.getLastStep() != null) {
@@ -2147,7 +2148,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        boolean isMech = ce instanceof Mech;
+        boolean isMech = ce instanceof Mek;
 
         if (cmd.getFinalProne()) {
             setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
@@ -2156,7 +2157,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (cmd.getFinalHullDown()) {
             if (isMech) {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck()
-                        && !((Mech) ce).cannotStandUpFromHullDown());
+                        && !((Mek) ce).cannotStandUpFromHullDown());
             } else {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
             }
@@ -2549,7 +2550,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (!((ce instanceof Mech) || (ce instanceof Tank))) {
+        if (!((ce instanceof Mek) || (ce instanceof Tank))) {
             return;
         }
 
@@ -2680,7 +2681,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
         } else if (!((ce instanceof QuadVee)
-                || ((ce instanceof Mech) && ((Mech) ce).hasTracks()))) {
+                || ((ce instanceof Mek) && ((Mek) ce).hasTracks()))) {
             setModeConvertEnabled(false);
             return;
         }
@@ -3093,7 +3094,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(choice);
-            } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 bayChoices = new ArrayList<>();
                 for (Transporter t : ce().getTransports()) {
                     if ((t instanceof ProtomechClampMount)
@@ -4423,7 +4424,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = en.getJumpMP();
         } else if (mvMode == GEAR_BACKUP) {
             maxMP = en.getWalkMP();
-        } else if ((ce() instanceof Mech) && !(ce() instanceof QuadVee)
+        } else if ((ce() instanceof Mek) && !(ce() instanceof QuadVee)
                 && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
             // A non-QuadVee 'Mek that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
@@ -4503,7 +4504,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = ce().getJumpMP();
         } else if (gear == GEAR_BACKUP) {
             maxMP = ce().getWalkMP();
-        } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
+        } else if (ce() instanceof Mek && !(ce() instanceof QuadVee)
                 && ce().getMovementMode() == EntityMovementMode.TRACKED) {
             // A non-QuadVee 'Mek that is using tracked movement (or converting to it) is limited to walking
             maxMP = ce().getWalkMP();
@@ -4641,17 +4642,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             adjustConvertSteps(nextMode);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_LEG.getCmd())) {
-            if ((ce.getEntityType() & Entity.ETYPE_QUAD_MECH) == Entity.ETYPE_QUAD_MECH) {
+            if ((ce.getEntityType() & Entity.ETYPE_QUAD_MEK) == Entity.ETYPE_QUAD_MEK) {
                 adjustConvertSteps(EntityMovementMode.QUAD);
-            } else if ((ce.getEntityType() & Entity.ETYPE_TRIPOD_MECH) == Entity.ETYPE_TRIPOD_MECH) {
+            } else if ((ce.getEntityType() & Entity.ETYPE_TRIPOD_MEK) == Entity.ETYPE_TRIPOD_MEK) {
                 adjustConvertSteps(EntityMovementMode.TRIPOD);
-            } else if ((ce.getEntityType() & Entity.ETYPE_BIPED_MECH) == Entity.ETYPE_BIPED_MECH) {
+            } else if ((ce.getEntityType() & Entity.ETYPE_BIPED_MEK) == Entity.ETYPE_BIPED_MEK) {
                 adjustConvertSteps(EntityMovementMode.BIPED);
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_VEE.getCmd())) {
             if (ce instanceof QuadVee && ((QuadVee) ce).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
                 adjustConvertSteps(EntityMovementMode.WHEELED);
-            } else if ((ce instanceof Mech && ((Mech) ce).hasTracks())
+            } else if ((ce instanceof Mek && ((Mek) ce).hasTracks())
                     || ce instanceof QuadVee) {
                 adjustConvertSteps(EntityMovementMode.TRACKED);
             } else if (ce instanceof LandAirMech
@@ -5425,7 +5426,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (cmd.getFinalConversionMode() != endMode) {
             addStepToMovePath(MoveStepType.CONVERT_MODE);
         }
-        if (ce() instanceof Mech && ((Mech) ce()).hasTracks()) {
+        if (ce() instanceof Mek && ((Mek) ce()).hasTracks()) {
             ce().setMovementMode(endMode);
         }
         updateMove();
@@ -5873,7 +5874,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0))
-                && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
+                && !(cmd.isJumping() && (ce instanceof Mek) && (ce.getJumpType() == Mek.JUMP_BOOSTER)));
     }
 
     /** Shortcut to clientgui.getClient().getGame(). */

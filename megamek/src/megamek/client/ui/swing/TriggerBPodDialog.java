@@ -43,7 +43,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Infantry;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.Targetable;
@@ -154,12 +154,12 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 if (mount.canFire()) {
                     // Only Leg's and CT BPods can be used against Leg attacks
                     if (attackType.equals(Infantry.LEG_ATTACK)
-                            && (mount.getLocation() != Mech.LOC_CT)
-                            && (mount.getLocation() != Mech.LOC_LLEG)
-                            && (mount.getLocation() != Mech.LOC_RLEG)) {
+                            && (mount.getLocation() != Mek.LOC_CT)
+                            && (mount.getLocation() != Mek.LOC_LLEG)
+                            && (mount.getLocation() != Mek.LOC_RLEG)) {
                         if (entity instanceof QuadMech) {
-                            if ((mount.getLocation() != Mech.LOC_LARM)
-                                    || (mount.getLocation() != Mech.LOC_RARM)) {
+                            if ((mount.getLocation() != Mek.LOC_LARM)
+                                    || (mount.getLocation() != Mek.LOC_RARM)) {
                                 pod.setEnabled(false);
                             }
                         } else {
@@ -170,9 +170,9 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                     // Swarm attacks
                     else if (attackType.equals(Infantry.SWARM_MEK)
                             && (mount.isRearMounted()
-                                    || (mount.getLocation() == Mech.LOC_CT)
-                                    || (mount.getLocation() == Mech.LOC_LLEG) || (mount
-                                    .getLocation() == Mech.LOC_RLEG))) {
+                                    || (mount.getLocation() == Mek.LOC_CT)
+                                    || (mount.getLocation() == Mek.LOC_LLEG) || (mount
+                                    .getLocation() == Mek.LOC_RLEG))) {
                         pod.setEnabled(false);
                     } else {
                         // Yup. Add a traker for this pod.

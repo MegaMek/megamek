@@ -1,29 +1,41 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChoiceDialog;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.*;
-import megamek.common.*;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.options.OptionsConstants;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ChoiceDialog;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
+import megamek.common.*;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * This class shows the critical hits and systems for a mech
@@ -379,7 +391,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                         if (en instanceof Protomech) {
                             sb.append(Protomech.systemNames[cs.getIndex()]);
                         } else {
-                            sb.append(((Mech) en).getSystemName(cs
+                            sb.append(((Mek) en).getSystemName(cs
                                     .getIndex()));
                         }
                         break;
@@ -514,12 +526,12 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                         && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
-                        if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit() && (en instanceof Mech)) {
-                            Mech mech = (Mech) en;
+                        if ((cs.getIndex() == Mek.SYSTEM_COCKPIT)
+                                && en.hasEiCockpit() && (en instanceof Mek)) {
+                            Mek mech = (Mek) en;
                             mech.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
-                                    en.getId(), Mech.SYSTEM_COCKPIT, nMode);
+                                    en.getId(), Mek.SYSTEM_COCKPIT, nMode);
                             if (mech.getCockpitStatus() == mech.getCockpitStatusNextRound()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.switched",
                                         "Cockpit", m_chMode.getSelectedItem()));
@@ -711,16 +723,16 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 m_chMode.setEnabled(false);
                 Mounted m = getSelectedEquipment();
                 boolean carryingBAsOnBack = false;
-                if ((en instanceof Mech)
-                        && ((en.getExteriorUnitAt(Mech.LOC_CT, true) != null)
-                                || (en.getExteriorUnitAt(Mech.LOC_LT, true) != null) || (en
-                                .getExteriorUnitAt(Mech.LOC_RT, true) != null))) {
+                if ((en instanceof Mek)
+                        && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
+                                || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
+                                .getExteriorUnitAt(Mek.LOC_RT, true) != null))) {
                     carryingBAsOnBack = true;
                 }
 
                 boolean invalidEnvironment = false;
-                if ((en instanceof Mech)
-                        && (en.getLocationStatus(Mech.LOC_CT) > ILocationExposureStatus.NORMAL)) {
+                if ((en instanceof Mek)
+                        && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
 
@@ -783,7 +795,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                         EquipmentMode em = e.nextElement();
                         //Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
-                        if (em.equals("HotLoad") && en instanceof Mech
+                        if (em.equals("HotLoad") && en instanceof Mek
                                 && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                             continue;
                         }
@@ -805,14 +817,14 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                     CriticalSlot cs = getSelectedCritical();
                     if ((cs != null)
                             && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
+                        if ((cs.getIndex() == Mek.SYSTEM_COCKPIT)
                                 && en.hasEiCockpit()
-                                && (en instanceof Mech)) {
+                                && (en instanceof Mek)) {
                             m_chMode.setEnabled(true);
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");
                             m_chMode.addItem("Aimed shot");
-                            m_chMode.setSelectedItem(((Mech) en).getCockpitStatusNextRound());
+                            m_chMode.setSelectedItem(((Mek) en).getCockpitStatusNextRound());
                         }
                     }
                 }

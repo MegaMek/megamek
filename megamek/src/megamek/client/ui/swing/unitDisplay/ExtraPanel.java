@@ -115,7 +115,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         heatR.setEditable(false);
         heatR.setOpaque(false);
         heatR.setForeground(Color.WHITE);
-        
+
         lblLastTarget = new JLabel(Messages.getString("MechDisplay.LastTarget"),
                 SwingConstants.CENTER);
         lblLastTarget.setForeground(Color.WHITE);
@@ -406,7 +406,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
 
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive()
-                    && ((en instanceof Mech) || (en instanceof Tank))) {
+                    && ((en instanceof Mek) || (en instanceof Tank))) {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(Messages.getString("MechDisplay.UnderStealth"));
             }
@@ -490,7 +490,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
                 carrysR.append(club.getName());
                 carrysR.append("\n");
             }
-            
+
             // show cargo.
             for (ICarryable cargo : en.getDistinctCarriedObjects()) {
             	carrysR.append(cargo.specificName());
@@ -510,8 +510,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             heatR.setText("");
             sinksR.setText("");
 
-            if (en instanceof Mech) {
-                Mech m = (Mech) en;
+            if (en instanceof Mek) {
+                Mek m = (Mek) en;
 
                 sinks2B.setEnabled(!dontChange);
                 sinks = m.getActiveSinksNextRound();
@@ -524,7 +524,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
 
                 boolean hasTSM = false;
                 boolean mtHeat = false;
-                if (((Mech) en).hasTSM(false)) {
+                if (((Mek) en).hasTSM(false)) {
                     hasTSM = true;
                 }
 
@@ -555,7 +555,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
                 curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
             }
         }
-        
+
         if (en.getLastTarget() != Entity.NONE) {
             lastTargetR.setText(en.getLastTargetDisplayName());
         } else {
@@ -618,14 +618,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             prompt = new Slider(clientgui.getFrame(),
                     Messages.getString("MechDisplay.changeSinks"),
                     Messages.getString("MechDisplay.changeSinks"), sinks,
-                    0, ((Mech) clientgui.getClient().getGame().getEntity(myMechId)).getNumberOfSinks());
+                    0, ((Mek) clientgui.getClient().getGame().getEntity(myMechId)).getNumberOfSinks());
             if (!prompt.showDialog()) {
                 return;
             }
             clientgui.getMenuBar().actionPerformed(ae);
             int numActiveSinks = prompt.getValue();
 
-            ((Mech) clientgui.getClient().getGame().getEntity(myMechId))
+            ((Mek) clientgui.getClient().getGame().getEntity(myMechId))
                     .setActiveSinksNextRound(numActiveSinks);
             clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
             displayMech(clientgui.getClient().getGame().getEntity(myMechId));

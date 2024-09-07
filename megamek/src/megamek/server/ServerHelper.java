@@ -18,12 +18,16 @@
  */
 package megamek.server;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
 import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
-
-import java.util.*;
 
 /**
  * This class contains computations carried out by the Server class.
@@ -410,9 +414,9 @@ public class ServerHelper {
         boolean heatArmor = false;
         boolean laserHS = false;
 
-        if (entity instanceof Mech) {
-            laserHS = ((Mech) entity).hasLaserHeatSinks();
-            heatArmor = ((Mech) entity).hasIntactHeatDissipatingArmor();
+        if (entity instanceof Mek) {
+            laserHS = ((Mek) entity).hasLaserHeatSinks();
+            heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
         }
 
         if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
@@ -653,8 +657,8 @@ public class ServerHelper {
             boolean beyondPointBlankRange = dist > 1;
 
             // Check for Void/Null Sig - only detected by Bloodhound probes
-            if (beyondPointBlankRange && (detected instanceof Mech)) {
-                Mech m = (Mech) detected;
+            if (beyondPointBlankRange && (detected instanceof Mek)) {
+                Mek m = (Mek) detected;
                 if ((m.isVoidSigActive() || m.isNullSigActive()) && !detectorHasBloodhound) {
                     continue;
                 }

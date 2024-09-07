@@ -14,6 +14,20 @@
  */
 package megamek.common.verifier;
 
+import java.io.File;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.MPBoosters;
@@ -21,12 +35,6 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
-
-import java.io.File;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Abstract parent class for testing and validating instantiations of <code> Entity</code> subclasses.
@@ -97,9 +105,9 @@ public abstract class TestEntity implements TestEntityOption {
                 Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
         TestEntity testEntity = null;
 
-        if (unit.hasETypeFlag(Entity.ETYPE_MECH)) {
-            testEntity = new TestMech((Mech) unit, entityVerifier.mechOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
+            testEntity = new TestMech((Mek) unit, entityVerifier.mechOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             testEntity = new TestProtomech((Protomech) unit, entityVerifier.protomechOption, null);
         } else if (unit.isSupportVehicle()) {
             testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
@@ -344,7 +352,7 @@ public abstract class TestEntity implements TestEntityOption {
             return TestAero.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_TANK) != 0) {
             return TestTank.legalArmorsFor(movementMode, techManager);
-        } else if ((etype & Entity.ETYPE_MECH) != 0) {
+        } else if ((etype & Entity.ETYPE_MEK) != 0) {
             return TestMech.legalArmorsFor(etype, industrial, techManager);
         } else {
             return Collections.emptyList();
@@ -352,13 +360,13 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {
-        if ((entitytype & Entity.ETYPE_MECH) != 0) {
+        if ((entitytype & Entity.ETYPE_MEK) != 0) {
             return TestMech.MechJumpJets.allJJs(industrial);
         } else if ((entitytype & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entitytype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.BAMotiveSystems.allSystems();
-        } else if ((entitytype & Entity.ETYPE_PROTOMECH) != 0) {
+        } else if ((entitytype & Entity.ETYPE_PROTOMEK) != 0) {
             // Until we have a TestProtomech
             return Arrays.asList(new EquipmentType[] {
                 EquipmentType.get(EquipmentTypeLookup.PROTOMECH_JUMP_JET),
@@ -414,7 +422,7 @@ public abstract class TestEntity implements TestEntityOption {
     public static boolean eqRequiresLocation(Entity entity, EquipmentType eq) {
         if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
             return TestAero.eqRequiresLocation(eq, entity.isFighter());
-        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return TestProtomech.requiresSlot(eq);
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             return !TestTank.isBodyEquipment(eq);
@@ -439,14 +447,14 @@ public abstract class TestEntity implements TestEntityOption {
             return Aero.LOC_FUSELAGE;
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             return Tank.LOC_BODY;
-        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return Protomech.LOC_BODY;
         }
         return Entity.LOC_NONE;
     }
 
     public MPBoosters getMPBoosters() {
-        return (getEntity() instanceof Mech) ? getEntity().getMPBoosters() : MPBoosters.NONE;
+        return (getEntity() instanceof Mek) ? getEntity().getMPBoosters() : MPBoosters.NONE;
     }
 
     public String printShortMovement() {
@@ -727,7 +735,7 @@ public abstract class TestEntity implements TestEntityOption {
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
                     if (isMech()) {
                         sb.append(j).append(". ")
-                                .append(((Mech) getEntity()).getSystemName(slot.getIndex()))
+                                .append(((Mek) getEntity()).getSystemName(slot.getIndex()))
                                 .append("\n");
                     } else {
                         sb.append(j).append(". UNKNOWN SYSTEM NAME").append("\n");
@@ -1052,9 +1060,9 @@ public abstract class TestEntity implements TestEntityOption {
         if (getEntity().hasETypeFlag(Entity.ETYPE_AERO)) {
             cockpit = ((Aero) getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Aero) getEntity()).getCockpitTypeString();
-        } else if (getEntity() instanceof Mech) {
-            cockpit = ((Mech) getEntity()).getCockpitTechAdvancement();
-            cockpitName = ((Mech) getEntity()).getCockpitTypeString();
+        } else if (getEntity() instanceof Mek) {
+            cockpit = ((Mek) getEntity()).getCockpitTechAdvancement();
+            cockpitName = ((Mek) getEntity()).getCockpitTypeString();
         }
         if (cockpit != null) {
             int eqRulesLevel = getEntity().isMixedTech()
@@ -1079,8 +1087,8 @@ public abstract class TestEntity implements TestEntityOption {
                 retVal = true;
             }
         }
-        if (getEntity() instanceof Mech) {
-            ITechnology gyro = ((Mech) getEntity()).getGyroTechAdvancement();
+        if (getEntity() instanceof Mek) {
+            ITechnology gyro = ((Mek) getEntity()).getGyroTechAdvancement();
             if (gyro != null) {
                 int eqRulesLevel = getEntity().isMixedTech()
                         ? gyro.findMinimumRulesLevel().ordinal() : gyro.findMinimumRulesLevel(getEntity().isClan()).ordinal();
@@ -1096,7 +1104,7 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append(", ");
                     buff.append(eTLYear);
                     buff.append("): ");
-                    buff.append(((Mech) getEntity()).getGyroTypeString());
+                    buff.append(((Mek) getEntity()).getGyroTypeString());
                     buff.append(" (");
                     buff.append(TechConstants
                             .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
@@ -1284,9 +1292,9 @@ public abstract class TestEntity implements TestEntityOption {
         if ((getEntity() instanceof Aero) && !getEntity().isSupportVehicle()) {
             cockpit = ((Aero) getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Aero) getEntity()).getCockpitTypeString();
-        } else if (getEntity() instanceof Mech) {
-            cockpit = ((Mech) getEntity()).getCockpitTechAdvancement();
-            cockpitName = ((Mech) getEntity()).getCockpitTypeString();
+        } else if (getEntity() instanceof Mek) {
+            cockpit = ((Mek) getEntity()).getCockpitTechAdvancement();
+            cockpitName = ((Mek) getEntity()).getCockpitTypeString();
         }
         if (null != cockpit) {
             int introDate = cockpit.getIntroductionDate(getEntity().isClan());
@@ -1301,8 +1309,8 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("\n");
             }
         }
-        if (getEntity() instanceof Mech) {
-            ITechnology gyro = ((Mech) getEntity()).getGyroTechAdvancement();
+        if (getEntity() instanceof Mek) {
+            ITechnology gyro = ((Mek) getEntity()).getGyroTechAdvancement();
             if (null != gyro) {
                 int introDate = gyro.getIntroductionDate(getEntity().isClan());
                 if (getEntity().isMixedTech()) {
@@ -1310,7 +1318,7 @@ public abstract class TestEntity implements TestEntityOption {
                 }
                 if (introDate > useIntroYear) {
                     retVal = true;
-                    buff.append(((Mech) getEntity()).getGyroTypeString());
+                    buff.append(((Mek) getEntity()).getGyroTypeString());
                     buff.append(" has intro date of ");
                     buff.append(introDate);
                     buff.append("\n");
@@ -1522,7 +1530,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Unit has more than one RISC emergency coolant system\n");
             illegal = true;
         }
-        if (!(getEntity() instanceof Mech) && (hasHarjelII || hasHarjelIII)) {
+        if (!(getEntity() instanceof Mek) && (hasHarjelII || hasHarjelIII)) {
             buff.append("Cannot mount HarJel repair system on non-Mech\n");
             illegal = true;
         }
@@ -1538,7 +1546,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Stealth armor requires an ECM generator.\n");
             illegal = true;
         }
-        if ((getEntity() instanceof Mech) && (liftHoists > 2)) {
+        if ((getEntity() instanceof Mek) && (liftHoists > 2)) {
             illegal = true;
             buff.append("Can mount a maximum of two lift hoists.\n");
         } else if ((getEntity().isSupportVehicle() || (getEntity() instanceof Tank)) && (liftHoists > 4)) {
@@ -1654,8 +1662,8 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static boolean isValidLocation(Entity entity, EquipmentType eq, int location,
                                           @Nullable StringBuffer buffer) {
-        if (entity instanceof Mech) {
-            return TestMech.isValidMechLocation((Mech) entity, eq, location, buffer);
+        if (entity instanceof Mek) {
+            return TestMech.isValidMechLocation((Mek) entity, eq, location, buffer);
         } else if (entity instanceof Tank) {
             return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
         } else if (entity instanceof Protomech) {
@@ -1747,7 +1755,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public static boolean usesKgStandard(Entity entity) {
         return entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                || entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)
                 || (EntityWeightClass.getWeightClass(entity.getWeight(), entity)
                         == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }

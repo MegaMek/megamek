@@ -227,7 +227,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         Entity entity = ce();
 
         target(null);
-        if (entity instanceof Mech) {
+        if (entity instanceof Mek) {
             int grapple = entity.getGrappled();
             if (grapple != Entity.NONE) {
                 Entity t = clientgui.getClient().getGame().getEntity(grapple);
@@ -267,7 +267,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
         buttons.get(PhysicalCommand.PHYSICAL_CLUB).setText(clubLabel);
 
-        if ((entity instanceof Mech)
+        if ((entity instanceof Mek)
             && !entity.isProne()
             && entity.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER)) {
             setDodgeEnabled(true);
@@ -445,27 +445,27 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             // check for retractable blade that can be extended in each arm
             boolean leftBladeExtend = false;
             boolean rightBladeExtend = false;
-            if ((en instanceof Mech)
+            if ((en instanceof Mek)
                     && (target instanceof Entity)
                     && clientgui.getClient().getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
-                    && ((Mech) ce()).hasRetractedBlade(Mech.LOC_LARM)) {
+                    && ((Mek) ce()).hasRetractedBlade(Mek.LOC_LARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
                         Messages.getString("PhysicalDisplay.ExtendBladeDialog.title"),
                         Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
-                                ce().getLocationName(Mech.LOC_LARM)));
+                                ce().getLocationName(Mek.LOC_LARM)));
             }
-            if ((en instanceof Mech)
+            if ((en instanceof Mek)
                     && (target instanceof Entity)
                     && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && clientgui.getClient().getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
-                    && ((Mech) en).hasRetractedBlade(Mech.LOC_RARM)) {
+                    && ((Mek) en).hasRetractedBlade(Mek.LOC_RARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                         Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
                         Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
-                                en.getLocationName(Mech.LOC_RARM)));
+                                en.getLocationName(Mek.LOC_RARM)));
             }
 
             boolean zweihandering = false;
@@ -1713,7 +1713,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         + ce().getGame().getBoard()
                                 .getHex(target.getPosition()).getLevel();
 
-                if ((target instanceof Mech) && (ce() instanceof Mech)
+                if ((target instanceof Mek) && (ce() instanceof Mek)
                         && (attackerElevation == targetElevation)) {
                     String[] options = { "punch", "kick" };
                     boolean[] enabled = { true, true };

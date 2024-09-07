@@ -58,9 +58,9 @@ public class CalledShot implements Serializable {
         }
 
         // only meks can be high or low
-        if (!(te instanceof Mech) && (current == CALLED_HIGH)) {
+        if (!(te instanceof Mek) && (current == CALLED_HIGH)) {
             return "called shots (high) only on Meks";
-        } else if (!(te instanceof Mech) && (current == CALLED_LOW)) {
+        } else if (!(te instanceof Mek) && (current == CALLED_LOW)) {
             return "called shots (low) only on Meks";
         }
 

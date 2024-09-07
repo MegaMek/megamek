@@ -166,7 +166,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         }
 
         // Laser heatsinks
-        if ((night_modifier > 0) && (te instanceof Mech) && ((Mech) te).hasLaserHeatSinks()) {
+        if ((night_modifier > 0) && (te instanceof Mek) && ((Mek) te).hasLaserHeatSinks()) {
             boolean lhsused = false;
             if (te.heat > 0) {
                 toHit.addModifier(-night_modifier, "target overheated with laser heatsinks");

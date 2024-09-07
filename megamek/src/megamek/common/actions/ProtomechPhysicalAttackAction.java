@@ -14,10 +14,11 @@
 
 package megamek.common.actions;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacking ProtoMech makes its combo physical attack action.
@@ -202,7 +203,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // Standing 'mechs use kick table
-        if ((te instanceof Mech) && !te.isProne()) {
+        if ((te instanceof Mek) && !te.isProne()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
         } // Everything else uses the standard table, which is default
 

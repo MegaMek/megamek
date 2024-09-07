@@ -5,7 +5,7 @@
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
@@ -13,20 +13,43 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.LosEffects;
+import megamek.common.Mek;
+import megamek.common.TargetRoll;
+import megamek.common.ToHitData;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  * @author Ken Nguyen (kenn)
@@ -64,10 +87,10 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private JTextField height1 = new JTextField();
     private JLabel heightLabel2;
     private JTextField height2 = new JTextField();
-    
-    private JCheckBox cboIsMech1 = 
+
+    private JCheckBox cboIsMech1 =
         new JCheckBox(Messages.getString("Ruler.isMech"));
-    private JCheckBox cboIsMech2 = 
+    private JCheckBox cboIsMech2 =
         new JCheckBox(Messages.getString("Ruler.isMech"));
 
     public Ruler(JFrame f, Client c, BoardView b, Game g) {
@@ -128,7 +151,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         });
         height1.setColumns(5);
         cboIsMech1.addItemListener(e -> checkBoxSelectionChanged());
-        
+
         heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT);
         heightLabel2.setForeground(endColor);
         height2.setText("1");
@@ -140,9 +163,9 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         });
         height2.setColumns(5);
         cboIsMech2.addItemListener(e -> checkBoxSelectionChanged());
-        
+
         GridBagConstraints c = new GridBagConstraints();
-        
+
         c.anchor = GridBagConstraints.EAST;
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
@@ -162,14 +185,14 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(heightLabel2, c);
         panelMain.add(heightLabel2);
-        c.anchor = GridBagConstraints.WEST;   
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         gridBagLayout1.setConstraints(height2, c);
         panelMain.add(height2);
         c.gridx = 2;
         gridBagLayout1.setConstraints(cboIsMech2, c);
         panelMain.add(cboIsMech2);
-        
+
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.EAST;
@@ -189,7 +212,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         panelMain.add(jLabel2);
         c.anchor = GridBagConstraints.WEST;
         c.gridwidth = 2;
-        c.gridx = 1;        
+        c.gridx = 1;
         gridBagLayout1.setConstraints(tf_end, c);
         c.gridwidth = 1;
         panelMain.add(tf_end);
@@ -279,7 +302,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             int trAbsheight = ent.relHeight();
             if (trAbsheight > absHeight) {
                 absHeight = trAbsheight;
-                isMech = ent instanceof Mech;
+                isMech = ent instanceof Mek;
                 entFound = true;
             }
         }
@@ -321,7 +344,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         if (!game.getBoard().contains(start) || !game.getBoard().contains(end)) {
             return;
         }
-        
+
         String toHit1 = "", toHit2 = "";
         ToHitData thd;
         if (flip) {
@@ -363,7 +386,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
 
     /**
      * Ignores determining if the attack is on land or under water.
-     * 
+     *
      * @param c1
      * @param c2
      * @param h1
@@ -456,7 +479,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         setText();
         setVisible(true);
     }
-    
+
     void checkBoxSelectionChanged() {
         setText();
         setVisible(true);

@@ -97,13 +97,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Entity Type Id Definitions These are used to identify the type of Entity,
-     * such as 'mech or aero.
+     * such as 'Mek or aero.
      */
-    public static final long ETYPE_MECH = 1L;
-    public static final long ETYPE_BIPED_MECH = 1L << 1;
-    public static final long ETYPE_LAND_AIR_MECH = 1L << 2;
-    public static final long ETYPE_QUAD_MECH = 1L << 3;
-    public static final long ETYPE_ARMLESS_MECH = 1L << 4;
+    public static final long ETYPE_MEK = 1L;
+    public static final long ETYPE_BIPED_MEK = 1L << 1;
+    public static final long ETYPE_LAND_AIR_MEK = 1L << 2;
+    public static final long ETYPE_QUAD_MEK = 1L << 3;
+    public static final long ETYPE_ARMLESS_MEK = 1L << 4;
 
     public static final long ETYPE_AERO = 1L << 5;
 
@@ -125,7 +125,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final long ETYPE_BATTLEARMOR = 1L << 16;
     public static final long ETYPE_MEKWARRIOR = 1L << 17;
 
-    public static final long ETYPE_PROTOMECH = 1L << 18;
+    public static final long ETYPE_PROTOMEK = 1L << 18;
 
     public static final long ETYPE_TANK = 1L << 19;
 
@@ -139,7 +139,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final long ETYPE_VTOL = 1L << 24;
     public static final long ETYPE_SUPPORT_VTOL = 1L << 25;
 
-    public static final long ETYPE_TRIPOD_MECH = 1L << 26;
+    public static final long ETYPE_TRIPOD_MEK = 1L << 26;
     public static final long ETYPE_QUADVEE = 1L << 27;
 
     public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
@@ -273,7 +273,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private Quirks quirks = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
 
-    // Variable for manually shutdown mechs.
+    // Variable for manually shutdown Meks.
     protected boolean manualShutdown = false;
     protected boolean startupThisPhase = false;
 
@@ -508,7 +508,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * This matrix stores critical slots in the format [location][slot #]. What
      * locations entities have and how many slots there are in each is
-     * determined by the subclasses of Entity such as Mech.
+     * determined by the subclasses of Entity such as Mek.
      */
     protected CriticalSlot[][] crits;
 
@@ -1919,7 +1919,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Set whether or not the mech's arms are flipped to the rear
+     * Set whether or not the Mek's arms are flipped to the rear
      */
     public void setArmsFlipped(boolean armsFlipped) {
         GamePhase phase = getGame().getPhase();
@@ -1929,7 +1929,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 return;
             }
             if (phase.isTargeting() || phase.isOffboard() || phase.isFiring()) {
-                // Only Offboard and Firing phases could conceivably have later phases with twisting
+                // Only Off-board and Firing phases could conceivably have later phases with twisting
                 setAlreadyTwisted(true);
             }
         }
@@ -1937,7 +1937,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Set whether or not the mech's arms are flipped to the rear.
+     * Set whether or not the Mek's arms are flipped to the rear.
      * Does not fire the game event, useful for when it's called repeatedly
      * such as during bot turn calculations
      */
@@ -1950,14 +1950,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the mech's arms are flipped to the rear
+     * Returns true if the Mek's arms are flipped to the rear
      */
     public boolean getArmsFlipped() {
         return armsFlipped;
     }
 
     /**
-     * @return true if the VTOL or LAM is making a VTOL strafe or VTOL/AirMech bomb attack
+     * @return true if the VTOL or LAM is making a VTOL strafe or VTOL/AirMek bomb attack
      */
     public boolean isMakingVTOLGroundAttack() {
         return false;
@@ -1967,7 +1967,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the current position of this entity on the board. This is not
      * named getLocation(), since I want the word location to refer to hit
-     * locations on a mech or vehicle.
+     * locations on a Mek or vehicle.
      */
     @Override
     public Coords getPosition() {
@@ -2106,9 +2106,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (next.containsTerrain(Terrains.WATER)) {
                     int waterLevel = next.terrainLevel(Terrains.WATER);
                     if (next.containsTerrain(Terrains.ICE)) {
-                        // a mech can only climb out onto ice in depth 2 or
+                        // a Mek can only climb out onto ice in depth 2 or
                         // shallower water
-                        // mech on the surface will stay on the surface
+                        // Mek on the surface will stay on the surface
 
                         if (((waterLevel == 1) && (prevWaterLevel == 1))
                                 || ((prevWaterLevel <= 2) && climb)
@@ -2124,7 +2124,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 int bldcur = Math.max(-current.depth(true), current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(-next.depth(true), next.terrainLevel(Terrains.BLDG_ELEV));
                 if (((assumedElevation == bldcur)
-                        && (climb || isJumpingNow) && (this instanceof Mech))
+                        && (climb || isJumpingNow) && (this instanceof Mek))
                         || (retVal > bldnex)) {
                     retVal = bldnex;
                 } else if ((bldnex + next.getLevel()) > (bldcur + current.getLevel())) {
@@ -2430,9 +2430,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     return true;
                 }
             }
-            // only mechs can move underwater
+            // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER)
-                    && (assumedAlt < hex.getLevel()) && !(this instanceof Mech)
+                    && (assumedAlt < hex.getLevel()) && !(this instanceof Mek)
                     && !(this instanceof Protomech)) {
                 return false;
             }
@@ -2452,9 +2452,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if ((assumedAlt < 0) && (hex.depth(true) > 0)) {
                     return true;
                 }
-                // Mechs, protos and infantry can occupy any floor in the
+                // Meks, protos and infantry can occupy any floor in the
                 // building
-                if ((this instanceof Mech) || (this instanceof Protomech)
+                if ((this instanceof Mek) || (this instanceof Protomech)
                         || (this instanceof Infantry)) {
                     return (assumedAlt >= (hex.getLevel() - hex.depth(true))) && (assumedAlt <= hex.ceiling());
                 }
@@ -3354,7 +3354,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Joins the abbreviations for the locations into a String with / as the separator.
      * If the number of locations exceeds the provided limit, the result is
-     * abbreviated. By default the abbreviation is simply an asterisk, but Mechs have
+     * abbreviated. By default the abbreviation is simply an asterisk, but Meks have
      * specific abbreviations locations that include all torso or leg positions.
      *
      * @param locations A list of location indices
@@ -4722,7 +4722,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param flag      A MiscType.F_XXX
      * @param secondary A MiscType.S_XXX or -1 for don't care
-     * @param location  The location to check e.g. Mech.LOC_LARM
+     * @param location  The location to check e.g. Mek.LOC_LARM
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(BigInteger flag, long secondary, int location) {
@@ -4754,7 +4754,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * any way (could be null although that is probably an error in the internal representation
      * of the unit.)
      *
-     * @param location The location, e.g. Mech.LOC_HEAD
+     * @param location The location, e.g. Mek.LOC_HEAD
      * @return A list of CriticalSlots in that location, possibly empty
      */
     public List<CriticalSlot> getCriticalSlots(int location) {
@@ -4811,7 +4811,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param flag      A WeaponType.F_XXX
      * @param secondary A WeaponType.S_XXX or -1 for don't care
-     * @param location  The location to check e.g. Mech.LOC_LARM
+     * @param location  The location to check e.g. Mek.LOC_LARM
      * @return true if at least one ready item.
      */
     public boolean hasWorkingWeapon(BigInteger flag, int secondary, int location) {
@@ -5011,7 +5011,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only Mechs have Gyros but this helps keep the code a bit cleaner.
+     * Only Meks have Gyros but this helps keep the code a bit cleaner.
      *
      * @return <code>-1</code>
      */
@@ -5022,21 +5022,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static Map<Integer, String> getAllGyroCodeName() {
         Map<Integer, String> result = new HashMap<>();
 
-        result.put(Mech.GYRO_UNKNOWN, Mech.getGyroDisplayString(Mech.GYRO_UNKNOWN));
-        result.put(Mech.GYRO_STANDARD, Mech.getGyroDisplayString(Mech.GYRO_STANDARD));
-        result.put(Mech.GYRO_XL, Mech.getGyroDisplayString(Mech.GYRO_XL));
-        result.put(Mech.GYRO_COMPACT, Mech.getGyroDisplayString(Mech.GYRO_COMPACT));
-        result.put(Mech.GYRO_HEAVY_DUTY, Mech.getGyroDisplayString(Mech.GYRO_HEAVY_DUTY));
-        result.put(Mech.GYRO_NONE, Mech.getGyroDisplayString(Mech.GYRO_NONE));
-        result.put(Mech.GYRO_SUPERHEAVY, Mech.getGyroDisplayString(Mech.GYRO_SUPERHEAVY));
+        result.put(Mek.GYRO_UNKNOWN, Mek.getGyroDisplayString(Mek.GYRO_UNKNOWN));
+        result.put(Mek.GYRO_STANDARD, Mek.getGyroDisplayString(Mek.GYRO_STANDARD));
+        result.put(Mek.GYRO_XL, Mek.getGyroDisplayString(Mek.GYRO_XL));
+        result.put(Mek.GYRO_COMPACT, Mek.getGyroDisplayString(Mek.GYRO_COMPACT));
+        result.put(Mek.GYRO_HEAVY_DUTY, Mek.getGyroDisplayString(Mek.GYRO_HEAVY_DUTY));
+        result.put(Mek.GYRO_NONE, Mek.getGyroDisplayString(Mek.GYRO_NONE));
+        result.put(Mek.GYRO_SUPERHEAVY, Mek.getGyroDisplayString(Mek.GYRO_SUPERHEAVY));
 
         return result;
     }
 
     /**
-     * Only Mechs have gyros, but this helps keep the code a bit cleaner.
+     * Only Meks have gyros, but this helps keep the code a bit cleaner.
      *
-     * @return true if the <code>Entity</code> is a Mech and has taken enough gyro hits to destroy it
+     * @return true if the <code>Entity</code> is a Mek and has taken enough gyro hits to destroy it
      */
     public boolean isGyroDestroyed() {
         return false;
@@ -5095,8 +5095,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 LogManager.getLogger().error("Null Equipment found in equipment list of entity " + this);
                 return 0;
             }
-            if ((this instanceof Mech) && m.is(EquipmentTypeLookup.SCM)) {
-                return ((Mech) this).scmCritStateCount(slotState);
+            if ((this instanceof Mek) && m.is(EquipmentTypeLookup.SCM)) {
+                return ((Mek) this).scmCritStateCount(slotState);
             }
         }
 
@@ -5169,7 +5169,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the number of critical slots present in the mech, destroyed or
+     * Returns the number of critical slots present in the Mek, destroyed or
      * not.
      */
     public int getNumberOfCriticals(EquipmentType etype) {
@@ -5182,7 +5182,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns how many of the given equipment are present in the mech,
+     * Returns how many of the given equipment are present in the Mek,
      * destroyed or not.
      */
     public int getNumberOf(EquipmentType etype) {
@@ -5211,13 +5211,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (int i = 0; i < locations(); i++) {
             if (locationIsLeg(i)) {
                 if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_HIP, i) > 0)
+                        Mek.ACTUATOR_HIP, i) > 0)
                         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_UPPER_LEG, i) > 0)
+                        Mek.ACTUATOR_UPPER_LEG, i) > 0)
                         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_LOWER_LEG, i) > 0)
+                        Mek.ACTUATOR_LOWER_LEG, i) > 0)
                         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_FOOT, i) > 0)) {
+                        Mek.ACTUATOR_FOOT, i) > 0)) {
                     hasCrit = true;
                     break;
                 }
@@ -5274,7 +5274,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks to see if this entity is wielding any vibroblades
      *
-     * @return always returns <code>false</code> as Only biped mechs can wield
+     * @return always returns <code>false</code> as Only biped Meks can wield
      * vibroblades
      */
     public boolean hasVibroblades() {
@@ -5285,7 +5285,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks to see if any heat is given off by an active vibro blade
      *
      * @param location
-     * @return always returns <code>0</code> as Only biped mechs can wield
+     * @return always returns <code>0</code> as Only biped Meks can wield
      * vibroblades
      */
     public int getActiveVibrobladeHeat(int location) {
@@ -5297,7 +5297,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have any shields. a mech can have up to 2 shields.
+     * Does the Mek have any shields. a Mek can have up to 2 shields.
      *
      * @return <code>true</code> if <code>shieldCount</code> is greater than 0
      * else <code>false</code>
@@ -5307,9 +5307,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check to see how many shields of a certian size a mek has. you can have
-     * up to shields per mech. However they can be of different size and each
-     * size has its own draw backs. So check each size and add modifers based on
+     * Check to see how many shields of a certain size a mek has. you can have
+     * up to shields per Mek. However they can be of different size and each
+     * size has its own draw backs. So check each size and add modifiers based on
      * the number shields of that size.
      */
     public int getNumberOfShields(long size) {
@@ -5317,7 +5317,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have an active shield This should only be called after
+     * Does the Mek have an active shield This should only be called after
      * hasShield has been called.
      */
     public boolean hasActiveShield(int location, boolean rear) {
@@ -5325,7 +5325,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have an active shield This should only be called by
+     * Does the Mek have an active shield This should only be called by
      * hasActiveShield(location, rear)
      */
     public boolean hasActiveShield(int location) {
@@ -5333,7 +5333,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a passive shield This should only be called after
+     * Does the Mek have a passive shield This should only be called after
      * hasShield has been called.
      */
     public boolean hasPassiveShield(int location, boolean rear) {
@@ -5341,7 +5341,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a passive shield This should only be called by
+     * Does the Mek have a passive shield This should only be called by
      * hasPassiveShield(location, rear)
      */
     public boolean hasPassiveShield(int location) {
@@ -5349,7 +5349,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have an shield in no defense mode
+     * Does the Mek have an shield in no defense mode
      */
     public boolean hasNoDefenseShield(int location) {
         return false;
@@ -5365,7 +5365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * This counts the number of UMU's a Mech has that are still viable
+     * This counts the number of UMU's a Mek has that are still viable
      *
      * @return number <code>int</code>of useable UMU's
      */
@@ -5383,9 +5383,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * This returns all UMU a mech has.
+     * This returns all UMU a Mek has.
      *
-     * @return <code>int</code>Total number of UMUs a mech has.
+     * @return <code>int</code>Total number of UMUs a Mek has.
      */
     public int getAllUMUCount() {
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
@@ -5401,7 +5401,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a functioning ECM unit?
+     * Does the Mek have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
         return hasActiveECM(false);
@@ -5439,7 +5439,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a functioning ECM unit?
+     * Does the Mek have a functioning ECM unit?
      */
     public boolean hasActiveAngelECM() {
         // no ECM in space unless strat op option enabled
@@ -5462,7 +5462,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * WOR Does the mech have a functioning ECM unit?
+     * WOR Does the Mek have a functioning ECM unit?
      */
     public boolean hasActiveNovaECM() {
         // no ECM in space unless strat op option enabled
@@ -5492,7 +5492,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a functioning ECM unit, tuned to ghost target generation?
+     * Does the Mek have a functioning ECM unit, tuned to ghost target generation?
      */
     public boolean hasGhostTargets(boolean active) {
         // no Ghost Targets in space unless strat op option enabled
@@ -5628,7 +5628,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a functioning BAP? This is just for the basic BAP for
+     * Does the Mek have a functioning BAP? This is just for the basic BAP for
      * Beagle BloodHound WatchDog Clan Active or Light.
      */
     public boolean hasBAP() {
@@ -5787,8 +5787,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean hasAimModeTargComp() {
         if (hasActiveEiCockpit()) {
-            if (this instanceof Mech) {
-                if (((Mech) this).getCockpitStatus() == Mech.COCKPIT_AIMED_SHOT) {
+            if (this instanceof Mek) {
+                if (((Mek) this).getCockpitStatus() == Mek.COCKPIT_AIMED_SHOT) {
                     return true;
                 }
             } else {
@@ -5805,7 +5805,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns whether this 'mech has a C3 Slave or not.
+     * Returns whether this 'Mek has a C3 Slave or not.
      */
     public boolean hasC3S() {
         if (isShutDown() || isOffBoard()) {
@@ -6406,10 +6406,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Active Mek Stealth prevents entity from participating in C3.
         // Turn off the stealth, and your back in the network.
-        if (((this instanceof Mech) || (this instanceof Tank)) && isStealthActive()) {
+        if (((this instanceof Mek) || (this instanceof Tank)) && isStealthActive()) {
             return false;
         }
-        if (((e instanceof Mech) || (e instanceof Tank)) && e.isStealthActive()) {
+        if (((e instanceof Mek) || (e instanceof Tank)) && e.isStealthActive()) {
             return false;
         }
 
@@ -6486,7 +6486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns whether there is CASE anywhere on this {@code Entity}.
      */
     public boolean hasCase() {
-        // Clan Mechs always have CASE!
+        // Clan Meks always have CASE!
         if (isClan()) {
             return true;
         }
@@ -6911,7 +6911,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * add a narc pod from this team to the mech. Unremovable
+     * add a narc pod from this team to the Mek. Unremovable
      *
      * @param pod The <code>NarcPod</code> to be attached.
      */
@@ -7248,8 +7248,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (((QuadMech) this).countBadLegs() >= 3) {
                 return new PilotingRollData(entityId,
                         TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting()
-                        + (((Mech) this).countBadLegs() * 5),
-                        ((Mech) this).countBadLegs() + " legs destroyed");
+                        + (((Mek) this).countBadLegs() * 5),
+                        ((Mek) this).countBadLegs() + " legs destroyed");
             }
         }
         // entity shut down?
@@ -7282,10 +7282,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (getPartialRepairs() != null) {
-            if (getPartialRepairs().booleanOption("mech_gyro_1_crit")) {
+            if (getPartialRepairs().booleanOption("mek_gyro_1_crit")) {
                 roll.addModifier(+1, "Partial repair of Gyro (+1)");
             }
-            if (getPartialRepairs().booleanOption("mech_gyro_2_crit")) {
+            if (getPartialRepairs().booleanOption("mek_gyro_2_crit")) {
                 roll.addModifier(+1, "Partial repair of Gyro (+2)");
             }
         }
@@ -7342,7 +7342,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
             if (conditions.getWeather().isGustingRain()) {
-                if ((this instanceof Mech)
+                if ((this instanceof Mek)
                         || isAirborne()
                         || getMovementMode().isTrackedOrWheeled()) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
@@ -7380,7 +7380,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             if (conditions.getWind().isStrongGale()) {
-                if ((this instanceof Mech)
+                if ((this instanceof Mek)
                         || isAirborne()
                         || isAirborneVTOLorWIGE()
                         || getMovementMode().isHover()) {
@@ -7389,7 +7389,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             if (conditions.getWind().isStorm()) {
-                if ((this instanceof Mech)
+                if ((this instanceof Mek)
                         || isAirborneVTOLorWIGE()
                         || getMovementMode().isHover()) {
                     roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
@@ -7427,9 +7427,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(moveType);
 
         if (this instanceof BipedMech) {
-            if ((((Mech) this).countBadLegs() >= 1)
-                    && (isLocationBad(Mech.LOC_LARM)
-                    && isLocationBad(Mech.LOC_RARM))) {
+            if ((((Mek) this).countBadLegs() >= 1)
+                    && (isLocationBad(Mek.LOC_LARM)
+                    && isLocationBad(Mek.LOC_RARM))) {
                 roll.addModifier(TargetRoll.IMPOSSIBLE,
                         "can't get up with destroyed leg and arms");
                 return roll;
@@ -7465,8 +7465,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mech.SYSTEM_GYRO, Mech.LOC_CT);
-        if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                Mek.SYSTEM_GYRO, Mek.LOC_CT);
+        if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
         if (((overallMoveType == EntityMovementType.MOVE_RUN)
@@ -7650,9 +7650,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
         //Heavy duty gyro does not force PSR until second hit
-        if (getGyroType() == Mech.GYRO_HEAVY_DUTY || getGyroType() == Mech.GYRO_SUPERHEAVY) {
+        if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
             gyroHits--;
         }
         if (gyroHits > 0 || hasLegActuatorCrit()) {
@@ -7677,7 +7677,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if (getJumpType() == Mech.JUMP_PROTOTYPE) {
+        if (getJumpType() == Mek.JUMP_PROTOTYPE) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 3,
                     "landing with prototype jump jets"));
@@ -7875,7 +7875,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && !movementMode.isHoverOrWiGE()
                 && (prevFacing != curFacing)
                 && !lastPos.equals(curPos)) {
-            if (this instanceof Mech) {
+            if (this instanceof Mek) {
                 roll.append(new PilotingRollData(getId(),
                         getMovementBeforeSkidPSRModifier(distance),
                         "running & turning on pavement"));
@@ -7941,8 +7941,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
 
-            if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
-                roll.addModifier(1, "superheavy mech avoiding bogging down");
+            if ((this instanceof Mek) && ((Mek) this).isSuperHeavy()) {
+                roll.addModifier(1, "superheavy Mek avoiding bogging down");
             }
 
             if (hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
@@ -8003,7 +8003,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if ((waterLevel > 1) && hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                && ((this instanceof Mech) || (this instanceof Protomech))) {
+                && ((this instanceof Mek) || (this instanceof Protomech))) {
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
         if (waterLevel > 0) {
@@ -8138,8 +8138,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                                    String why, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
-            roll.addModifier(4, "superheavy mech moving in building");
+        if ((this instanceof Mek) && ((Mek) this).isSuperHeavy()) {
+            roll.addModifier(4, "superheavy Mek moving in building");
         }
 
         if (this.hasQuirk(OptionsConstants.QUIRK_NEG_OVERSIZED)) {
@@ -8226,7 +8226,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Only check for satisfied turn mode for Tanks or QuadVees in vehicle mode, or LAMs in
-     * AirMech mode. Except for LAMs, check whether advanced vehicle ground movement is enabled.
+     * AirMek mode. Except for LAMs, check whether advanced vehicle ground movement is enabled.
      *
      * @return True if this <code>Entity</code> must make a driving check for turning too sharply.
      */
@@ -8422,7 +8422,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // one can only load one's own team's units!
         if (!unit.isEnemyOf(this)) {
 
-            /* Mechanized BA and protomechs occupy the same space, and if one is already
+            /* Mechanized BA and protoMeks occupy the same space, and if one is already
              * present the other cannot be loaded. It is still possible for a support vee
              * to carry mechanized BA externally and protos in a bay, so we need to check for
              * external units first then check for conflicts only for other external mounts. */
@@ -8430,9 +8430,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             boolean hasExternalProtos = false;
             boolean hasExternalUltraheavy = false;
             if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                    || unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    || unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 for (Transporter t : transports) {
-                    // ProtomechClampMount is a subclass of BattleArmorHandles so we need to check it first
+                    // ProtoMekClampMount is a subclass of BattleArmorHandles so we need to check it first
                     if (t instanceof ProtomechClampMount) {
                         hasExternalProtos |= t.getUnused() == 0;
                         hasExternalUltraheavy |= t.getLoadedUnits().stream()
@@ -8444,9 +8444,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // We can't mix BA and protos, and we can't mount an ultraheavy proto if already carrying another.
             boolean noExternalMount = (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR) && hasExternalProtos)
-                    || (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalBA);
+                    || (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK) && hasExternalBA);
 
-            if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalProtos) {
+            if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK) && hasExternalProtos) {
                 noExternalMount |= hasExternalUltraheavy
                         || (unit.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
             }
@@ -9486,7 +9486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check for vulnerability to anti-TSM munitions. ATSM affects mechs with prototype TSM and
+     * Check for vulnerability to anti-TSM munitions. ATSM affects Meks with prototype TSM and
      * any industrial TSM created before 3050, and conventional infantry with TSM implants.
      *
      * @return Whether the unit is affected by ATSM munitions
@@ -9857,7 +9857,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (p == null) {
             return false;
         }
-        // A Player can always see their own 'mechs
+        // A Player can always see their own 'Meks
         if (getOwner().equals(p)) {
             return true;
         }
@@ -10237,8 +10237,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return hex.containsTerrain(Terrains.BUILDING);
         }
 
-        // only mechs and protos have physical attacks (except tank charges)
-        if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
+        // only Meks and protos have physical attacks (except tank charges)
+        if (!((this instanceof Mek) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;
         }
 
@@ -10278,7 +10278,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // check if we have iNarc pods attached that can be brushed off
-        if (hasINarcPodsAttached() && (this instanceof Mech)) {
+        if (hasINarcPodsAttached() && (this instanceof Mek)) {
             return true;
         }
 
@@ -10306,7 +10306,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             canHit |= Compute.canPhysicalTarget(game, getId(), target);
             // check if we can dodge and target can attack us,
             // then we are eligible.
-            canHit |= ((this instanceof Mech) && !isProne()
+            canHit |= ((this instanceof Mek) && !isProne()
                     && hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
                     .canPhysicalTarget(game, target.getId(), this));
         }
@@ -10405,7 +10405,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if this unit has a ClampMountMech or ClampMountTank that
+     * Returns true if this unit has a ClampMountMek or ClampMountTank that
      * is currently unloaded.
      * @return
      */
@@ -10726,8 +10726,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         Enumeration<Integer> iter = getPickedUpMekWarriors().elements();
         while (iter.hasMoreElements()) {
-            Integer mechWarriorId = iter.nextElement();
-            Entity mw = game.getEntity(mechWarriorId);
+            Integer mekWarriorId = iter.nextElement();
+            Entity mw = game.getEntity(mekWarriorId);
             mw.setDestroyed(true);
             game.removeEntity(mw.getId(), condition);
             sb.append("\n*** ").append(mw.getDisplayName()).append(" died in the wreckage. ***\n");
@@ -11039,52 +11039,52 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (cover > LosEffects.COVER_NONE) {
             switch (cover) {
                 case LosEffects.COVER_LOWLEFT:
-                    if (location == Mech.LOC_LLEG) {
+                    if (location == Mek.LOC_LLEG) {
                         return true;
                     }
                     break;
                 case LosEffects.COVER_LOWRIGHT:
-                    if (location == Mech.LOC_RLEG) {
+                    if (location == Mek.LOC_RLEG) {
                         return true;
                     }
                     break;
                 case LosEffects.COVER_LEFT:
-                    if ((location == Mech.LOC_LLEG)
-                            || (location == Mech.LOC_LARM)
-                            || (location == Mech.LOC_LT)) {
+                    if ((location == Mek.LOC_LLEG)
+                            || (location == Mek.LOC_LARM)
+                            || (location == Mek.LOC_LT)) {
                         return true;
                     }
                     break;
                 case LosEffects.COVER_RIGHT:
-                    if ((location == Mech.LOC_RLEG)
-                            || (location == Mech.LOC_RARM)
-                            || (location == Mech.LOC_RT)) {
+                    if ((location == Mek.LOC_RLEG)
+                            || (location == Mek.LOC_RARM)
+                            || (location == Mek.LOC_RT)) {
                         return true;
                     }
                     break;
                 case LosEffects.COVER_HORIZONTAL:
-                    if ((location == Mech.LOC_LLEG)
-                            || (location == Mech.LOC_RLEG)) {
+                    if ((location == Mek.LOC_LLEG)
+                            || (location == Mek.LOC_RLEG)) {
                         return true;
                     }
                     break;
                 case LosEffects.COVER_UPPER:
-                    if ((location == Mech.LOC_LLEG)
-                            || (location == Mech.LOC_RLEG)) {
+                    if ((location == Mek.LOC_LLEG)
+                            || (location == Mek.LOC_RLEG)) {
                         return false;
                     }
                     return true;
                 case LosEffects.COVER_FULL:
                     return true;
                 case LosEffects.COVER_75LEFT:
-                    if ((location == Mech.LOC_RARM)
-                            || (location == Mech.LOC_RLEG)) {
+                    if ((location == Mek.LOC_RARM)
+                            || (location == Mek.LOC_RLEG)) {
                         return false;
                     }
                     return true;
                 case LosEffects.COVER_75RIGHT:
-                    if ((location == Mech.LOC_LLEG)
-                            || (location == Mech.LOC_LARM)) {
+                    if ((location == Mek.LOC_LLEG)
+                            || (location == Mek.LOC_LARM)) {
                         return false;
                     }
                     return true;
@@ -11265,7 +11265,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         boolean targetIsTank = (this instanceof Tank)
                 || (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS) && (this instanceof QuadMech));
+                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS) && (this instanceof QuadMech));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;
@@ -11647,7 +11647,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (cs != null) {
                 // count engine hits for maxtech engine explosions
                 if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                        && (cs.getIndex() == Mech.SYSTEM_ENGINE)
+                        && (cs.getIndex() == Mek.SYSTEM_ENGINE)
                         && !cs.isDamaged()) {
                     engineHitsThisPhase++;
                 }
@@ -12463,8 +12463,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                     // On 'Mek torsos only, modular armor covers either front
                     // or rear, as mounted.
-                    && (!(this instanceof Mech)
-                    || !((loc == Mech.LOC_CT) || (loc == Mech.LOC_LT) || (loc == Mech.LOC_RT))
+                    && (!(this instanceof Mek)
+                    || !((loc == Mek.LOC_CT) || (loc == Mek.LOC_LT) || (loc == Mek.LOC_RT))
                     || (hit.isRear() == mount.isRearMounted()))) {
 
                 int damageAbsorption = mount.getBaseDamageCapacity() - mount.getDamageTaken();
@@ -12823,7 +12823,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the initiative bonus this Entity grants for quirks
      */
     public int getQuirkIniBonus() {
-        // command battlemech and and battle computer are not cumulative
+        // command battleMek and and battle computer are not cumulative
         if (hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP) && !getCrew().isDead()
                 && !getCrew().isUnconscious()) {
             return 2;
@@ -13062,7 +13062,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Possibly do a ICE-Engine stall PSR (only intended for Mechs, both
+     * Possibly do a ICE-Engine stall PSR (only intended for Meks, both
      * Industrial and Battle).
      *
      * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase reports
@@ -13844,7 +13844,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             boolean isSupercharger = masc.getType().hasSubType(MiscType.S_SUPERCHARGER);
             //WHY is this -1 here?
             if (isSupercharger
-                    && (((this instanceof Mech) && ((Mech) this).isIndustrial())
+                    && (((this instanceof Mek) && ((Mek) this).isIndustrial())
                     || (this instanceof SupportTank) || (this instanceof SupportVTOL))) {
                 rollValue -= 1;
                 rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - 1]";
@@ -13907,13 +13907,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         r.newlines = 0;
                         vDesc.addElement(r);
                     }
-                    if (this instanceof Mech) {
-                        vCriticals.put(Mech.LOC_CT, new LinkedList<>());
+                    if (this instanceof Mek) {
+                        vCriticals.put(Mek.LOC_CT, new LinkedList<>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
-                            CriticalSlot cs = getCritical(Mech.LOC_CT, i);
+                            CriticalSlot cs = getCritical(Mek.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                                    && (cs.getIndex() == Mech.SYSTEM_ENGINE) && cs.isHittable()) {
-                                vCriticals.get(Mech.LOC_CT).add(cs);
+                                    && (cs.getIndex() == Mek.SYSTEM_ENGINE) && cs.isHittable()) {
+                                vCriticals.get(Mek.LOC_CT).add(cs);
                                 hits--;
                             }
                         }
@@ -14014,7 +14014,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * get a supercharger mounted on this mech
+     * get a supercharger mounted on this Mek
      *
      * @return
      */
@@ -14242,7 +14242,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * This is used to get an alternative cost that will be added to the
-     * MechSummaryCache - at the moment it is primarily used to rework infantry
+     * MekSummaryCache - at the moment it is primarily used to rework infantry
      * costs for MekHQ, but it could be applied to other unit types as well -
      * defaults to -1, so there is no confusion
      *
@@ -14359,21 +14359,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Sets the movement mode to the next in the conversion sequence for QuadVees, LAMs, and Mechs
+     * Sets the movement mode to the next in the conversion sequence for QuadVees, LAMs, and Meks
      * with tracks. In most cases this switches between two available modes, but LAMs that start
-     * the turn in AirMech mode have three available.
+     * the turn in AirMek mode have three available.
      */
     public void toggleConversionMode() {
         setMovementMode(nextConversionMode(movementMode));
     }
 
     /**
-     * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
+     * Only applicable to Meks, but here for convenience. Meks that are already prone, or
      * QuadVees and LAMs in non-leg mode are not subject to PSRs for falling. Note that PSRs
      * are sometimes required for other reasons.
      *
      * @param gyroLegDamage Whether the potential fall is due to damage to gyro or leg actuators,
-     *                      in which case Mechs using tracks are not subject to falls.
+     *                      in which case Meks using tracks are not subject to falls.
      * @return Whether the <code>Entity</code> is required to make PSRs to avoid falling.
      */
     public boolean canFall(boolean gyroLegDamage) {
@@ -14381,7 +14381,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
+     * Only applicable to Meks, but here for convenience. Meks that are already prone, or
      * QuadVees and LAMs in fighter mode are not subject to PSRs for falling. Note that PSRs
      * are sometimes required for other reasons.
      *
@@ -14469,7 +14469,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the Mounted that is referred to by the quirkEntry (which must be a weapon quirk).
      * //FIXME: This is very specialized code that is only needed because we need to identify a weapon
      * in the blk/mtf file. It might be better to write the weaponquirk directly to the weapon,
-     * removing the need to find it. Note the override in ProtoMech that doesnt use crit slots.
+     * removing the need to find it. Note the override in ProtoMek that doesnt use crit slots.
      * For meks, this is challenge as the specific weapon in a location must
      * still be addressed.
      *
@@ -14591,14 +14591,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Given an Entity type, return the name of the major class it belongs to
-     * (eg: Mech, Aero, Tank, Infantry).
+     * (eg: Mek, Aero, Tank, Infantry).
      *
      * @param typeId The type Id to get a major name for
      * @return The major class name for the given type id
      */
     public static String getEntityMajorTypeName(long typeId) {
-        if ((typeId & ETYPE_MECH) == ETYPE_MECH) {
-            return "Mech";
+        if ((typeId & ETYPE_MEK) == ETYPE_MEK) {
+            return "Mek";
         } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
             return "Aero";
         } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
@@ -14607,8 +14607,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return "Tank";
         } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
             return "Infantry";
-        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
-            return "Protomech";
+        } else if ((typeId & ETYPE_PROTOMEK) == ETYPE_PROTOMEK) {
+            return "ProtoMek";
         } else {
             return "Unknown";
         }
@@ -14616,25 +14616,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns the specific entity type name for the given type id
-     * (eg: Biped Mech, Conventional Fighter, VTOL).
+     * (eg: Biped Mek, Conventional Fighter, VTOL).
      *
      * @param typeId
      * @return
      */
     public static String getEntityTypeName(long typeId) {
 
-        if ((typeId & ETYPE_LAND_AIR_MECH) == ETYPE_LAND_AIR_MECH) {
-            return "Landair Mech";
-        } else if ((typeId & ETYPE_BIPED_MECH) == ETYPE_BIPED_MECH) {
-            return "Biped Mech";
-        } else if ((typeId & ETYPE_QUAD_MECH) == ETYPE_QUAD_MECH) {
-            return "Quad Mech";
-        } else if ((typeId & ETYPE_TRIPOD_MECH) == ETYPE_TRIPOD_MECH) {
-            return "Tripod Mech";
-        } else if ((typeId & ETYPE_ARMLESS_MECH) == ETYPE_ARMLESS_MECH) {
-            return "Armless Mech";
-        } else if ((typeId & ETYPE_MECH) == ETYPE_MECH) {
-            return "Mech";
+        if ((typeId & ETYPE_LAND_AIR_MEK) == ETYPE_LAND_AIR_MEK) {
+            return "Landair Mek";
+        } else if ((typeId & ETYPE_BIPED_MEK) == ETYPE_BIPED_MEK) {
+            return "Biped Mek";
+        } else if ((typeId & ETYPE_QUAD_MEK) == ETYPE_QUAD_MEK) {
+            return "Quad Mek";
+        } else if ((typeId & ETYPE_TRIPOD_MEK) == ETYPE_TRIPOD_MEK) {
+            return "Tripod Mek";
+        } else if ((typeId & ETYPE_ARMLESS_MEK) == ETYPE_ARMLESS_MEK) {
+            return "Armless Mek";
+        } else if ((typeId & ETYPE_MEK) == ETYPE_MEK) {
+            return "Mek";
         } else if ((typeId & ETYPE_WARSHIP) == ETYPE_WARSHIP) {
             return "WarShip";
         } else if ((typeId & ETYPE_SPACE_STATION) == ETYPE_SPACE_STATION) {
@@ -14658,9 +14658,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
             return "Battlearmor";
         } else if ((typeId & ETYPE_MEKWARRIOR) == ETYPE_MEKWARRIOR) {
-            return "Mechwarrior";
-        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
-            return "ProtoMech";
+            return "MekWarrior";
+        } else if ((typeId & ETYPE_PROTOMEK) == ETYPE_PROTOMEK) {
+            return "ProtoMek";
         } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
             return "Infantry";
         } else if ((typeId & ETYPE_GUN_EMPLACEMENT) == ETYPE_GUN_EMPLACEMENT) {
@@ -14755,9 +14755,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         int maxRange = 0;
-        if ((ETYPE_MECH == getEntityType())
+        if ((ETYPE_MEK == getEntityType())
                 || (ETYPE_INFANTRY == getEntityType())
-                || (ETYPE_PROTOMECH == getEntityType())) {
+                || (ETYPE_PROTOMEK == getEntityType())) {
             // account for physical attacks.
             maxRange = 1;
         }
@@ -15898,21 +15898,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @return does this mech have MASC, Supercharger or both?
+     * @return does this Mek have MASC, Supercharger or both?
      */
     public MPBoosters getMPBoosters() {
         return getMPBoosters(false);
     }
 
     /**
-     * @return does this mech have Armed MASC, Supercharger or both?
+     * @return does this Mek have Armed MASC, Supercharger or both?
      */
     public MPBoosters getArmedMPBoosters() {
         return getMPBoosters(true);
     }
 
     /**
-     * @return if this mech has MASC, Supercharger or both?
+     * @return if this Mek has MASC, Supercharger or both?
      */
     public MPBoosters getMPBoosters(boolean onlyArmed) {
         boolean hasMASC = false;

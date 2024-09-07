@@ -28,7 +28,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
-    private final Mech mek = (Mech) entity;
+    private final Mek mek = (Mek) entity;
 
     /**
      * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
@@ -50,17 +50,17 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             assign("Omni Unit", OMNI);
         }
 
-        String cockpitName = Mech.getCockpitDisplayString(mek.getCockpitType());
+        String cockpitName = Mek.getCockpitDisplayString(mek.getCockpitType());
         switch (mek.getCockpitType()) {
-            case Mech.COCKPIT_INTERFACE:
+            case Mek.COCKPIT_INTERFACE:
                 assign(cockpitName, DN);
                 break;
-            case Mech.COCKPIT_COMMAND_CONSOLE:
-            case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
-            case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+            case Mek.COCKPIT_COMMAND_CONSOLE:
+            case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+            case Mek.COCKPIT_SMALL_COMMAND_CONSOLE:
                 assign(cockpitName, MHQ, 1);
                 break;
-            case Mech.COCKPIT_VRRP:
+            case Mek.COCKPIT_VRRP:
                 assign(cockpitName, VR);
                 break;
         }

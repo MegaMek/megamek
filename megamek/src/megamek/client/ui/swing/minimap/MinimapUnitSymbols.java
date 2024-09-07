@@ -29,7 +29,7 @@ import java.awt.geom.Path2D;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.MekWarrior;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -257,7 +257,7 @@ public class MinimapUnitSymbols {
     public static Path2D getForm(Entity entity) {
         boolean stratOps = GUIP.getMmSymbol();
 
-        if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+        if ((entity instanceof Mek) || (entity instanceof Protomech)) {
             return stratOps ? STRAT_MECH : STD_MECH;
         } else if (entity instanceof VTOL) {
             return stratOps ? STRAT_VTOL : STD_VTOL;

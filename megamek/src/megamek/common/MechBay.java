@@ -44,7 +44,7 @@ public final class MechBay extends Bay {
     public boolean canLoad(Entity unit) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH);
         boolean loadableLAM = (unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER);
-        boolean loadableOtherMek = (unit instanceof Mech) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMech);
+        boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMech);
         return (getUnused() >= 1) && (doors > loadedThisTurn) && (loadableLAM || loadableQuadVee || loadableOtherMek);
     }
 
@@ -79,7 +79,7 @@ public final class MechBay extends Bay {
                 doors
         );
     }
-    
+
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(2445, 2470, 2500)
@@ -87,7 +87,7 @@ public final class MechBay extends Bay {
                 .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         return MechBay.techAdvancement();

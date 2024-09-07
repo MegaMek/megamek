@@ -24,7 +24,7 @@ import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -132,7 +132,7 @@ public class LRMHandler extends MissileWeaponHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
         Mounted mLinker = weapon.getLinkedBy();

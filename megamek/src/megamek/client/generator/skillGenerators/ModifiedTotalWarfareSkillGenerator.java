@@ -36,7 +36,7 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
 
         int bonus = 0;
         if (type.isClan()) {
-            if ((entity instanceof Mech) || (entity instanceof BattleArmor)) {
+            if ((entity instanceof Mek) || (entity instanceof BattleArmor)) {
                 bonus += 2;
             } else if ((entity instanceof Tank) || (entity instanceof Infantry)) {
                 bonus -= 2;
@@ -44,7 +44,7 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
         } else if (type.isManeiDomini()) {
             bonus++;
         } else if (type.isSociety()) {
-            if ((entity instanceof Mech) || (entity instanceof Tank)) {
+            if ((entity instanceof Mek) || (entity instanceof Tank)) {
                 bonus -= 1;
             }
         }

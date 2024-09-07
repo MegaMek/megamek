@@ -13,12 +13,12 @@
  */
 package megamek.common.options;
 
-import megamek.common.*;
+import static java.util.stream.Collectors.toList;
+import static megamek.common.options.OptionsConstants.*;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-import static megamek.common.options.OptionsConstants.*;
+import megamek.common.*;
 
 /**
  * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note
@@ -168,18 +168,18 @@ public class Quirks extends AbstractOptions {
                             || (en.getEngine().getEngineType() == Engine.FUEL_CELL));
         }
 
-        if (en instanceof Mech) {
+        if (en instanceof Mek) {
             switch (qName) {
                 case QUIRK_POS_BATTLE_FIST_LA:
-                    return en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM);
+                    return en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
                 case QUIRK_POS_BATTLE_FIST_RA:
-                    return en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM);
+                    return en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
                 case QUIRK_POS_BARREL_FIST_RA:
-                    return en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)
-                            && !en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM);
+                    return en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)
+                            && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
                 case QUIRK_POS_BARREL_FIST_LA:
-                    return en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)
-                            && !en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM);
+                    return en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)
+                            && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
                 case QUIRK_NEG_OVERSIZED:
                     return en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT:

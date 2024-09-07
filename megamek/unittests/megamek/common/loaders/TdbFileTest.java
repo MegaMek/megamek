@@ -19,21 +19,28 @@
  */
 package megamek.common.loaders;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
 import megamek.common.BipedMech;
 import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.loaders.TdbFile.CriticalSlot;
 import megamek.common.loaders.TdbFile.Location;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author nderwin
@@ -58,8 +65,8 @@ public class TdbFileTest {
         assertEquals("JR7-D", mek.getModel());
         assertEquals(35.0f, mek.getWeight(), 0.0f);
 
-        assertEquals(Mech.COCKPIT_STANDARD, mek.getCockpitType());
-        assertEquals(Mech.GYRO_STANDARD, mek.getGyroType());
+        assertEquals(Mek.COCKPIT_STANDARD, mek.getCockpitType());
+        assertEquals(Mek.GYRO_STANDARD, mek.getGyroType());
 
         assertTrue(mek.getEngine().engineValid);
         assertTrue(mek.getEngine().isFusion());
@@ -69,17 +76,17 @@ public class TdbFileTest {
 
         assertEquals(10, mek.getActiveSinks());
 
-        assertEquals(7, mek.getArmor(Mech.LOC_HEAD));
-        assertEquals(8, mek.getArmor(Mech.LOC_RT));
-        assertEquals(10, mek.getArmor(Mech.LOC_CT));
-        assertEquals(8, mek.getArmor(Mech.LOC_LT));
-        assertEquals(4, mek.getArmor(Mech.LOC_RT, true));
-        assertEquals(3, mek.getArmor(Mech.LOC_CT, true));
-        assertEquals(4, mek.getArmor(Mech.LOC_LT, true));
-        assertEquals(4, mek.getArmor(Mech.LOC_RARM));
-        assertEquals(4, mek.getArmor(Mech.LOC_LARM));
-        assertEquals(6, mek.getArmor(Mech.LOC_RLEG));
-        assertEquals(6, mek.getArmor(Mech.LOC_LLEG));
+        assertEquals(7, mek.getArmor(Mek.LOC_HEAD));
+        assertEquals(8, mek.getArmor(Mek.LOC_RT));
+        assertEquals(10, mek.getArmor(Mek.LOC_CT));
+        assertEquals(8, mek.getArmor(Mek.LOC_LT));
+        assertEquals(4, mek.getArmor(Mek.LOC_RT, true));
+        assertEquals(3, mek.getArmor(Mek.LOC_CT, true));
+        assertEquals(4, mek.getArmor(Mek.LOC_LT, true));
+        assertEquals(4, mek.getArmor(Mek.LOC_RARM));
+        assertEquals(4, mek.getArmor(Mek.LOC_LARM));
+        assertEquals(6, mek.getArmor(Mek.LOC_RLEG));
+        assertEquals(6, mek.getArmor(Mek.LOC_LLEG));
 
         assertFalse(mek.getFailedEquipment().hasNext());
 
@@ -93,7 +100,7 @@ public class TdbFileTest {
 
         for (Mounted m : mek.getEquipment()) {
             switch (m.getLocation()) {
-                case Mech.LOC_CT:
+                case Mek.LOC_CT:
                     if ("Jump Jet".equals(m.getName())) {
                         jjCT++;
                     }
@@ -108,7 +115,7 @@ public class TdbFileTest {
                     assertNotEquals("SRM 4 Ammo", m.getName(), "Found a SRM-4 ammo in CT");
                     assertFalse(m.getName().contains("Heat Sink"), "Found a Heat Sink in CT");
                     break;
-                case Mech.LOC_RT:
+                case Mek.LOC_RT:
                     if ("Jump Jet".equals(m.getName())) {
                         jjRT++;
                     }
@@ -122,7 +129,7 @@ public class TdbFileTest {
                     assertNotEquals("SRM 4", m.getName(), "Found a SRM-4 in RT");
                     assertNotEquals("Medium Laser", m.getName(), "Found a Medium Laser in RT");
                     break;
-                case Mech.LOC_LT:
+                case Mek.LOC_LT:
                     if ("Jump Jet".equals(m.getName())) {
                         jjLT++;
                     }
@@ -131,7 +138,7 @@ public class TdbFileTest {
                     assertNotEquals("Medium Laser", m.getName(), "Found a Medium Laser in LT");
                     assertNotEquals("SRM 4 Ammo", m.getName(), "Found a SRM-4 ammo in LT");
                     break;
-                case Mech.LOC_RARM:
+                case Mek.LOC_RARM:
                     if ("Medium Laser".equals(m.getName())) {
                         mlRARM++;
                     }
@@ -140,7 +147,7 @@ public class TdbFileTest {
                     assertNotEquals("Jump Jet", m.getName(), "Found a Jump Jet in RARM");
                     assertNotEquals("SRM 4 Ammo", m.getName(), "Found a SRM-4 ammo in RARM");
                     break;
-                case Mech.LOC_LARM:
+                case Mek.LOC_LARM:
                     if ("Medium Laser".equals(m.getName())) {
                         mlLARM++;
                     }
@@ -179,8 +186,8 @@ public class TdbFileTest {
         assertEquals("ZPH-1A", mek.getModel());
         assertEquals(25.0f, mek.getWeight(), 0.0f);
 
-        assertEquals(Mech.COCKPIT_STANDARD, mek.getCockpitType());
-        assertEquals(Mech.GYRO_STANDARD, mek.getGyroType());
+        assertEquals(Mek.COCKPIT_STANDARD, mek.getCockpitType());
+        assertEquals(Mek.GYRO_STANDARD, mek.getGyroType());
 
         assertTrue(mek.getEngine().engineValid);
         assertTrue(mek.getEngine().isFusion());
@@ -190,17 +197,17 @@ public class TdbFileTest {
 
         assertEquals(10, mek.getActiveSinks());
 
-        assertEquals(6, mek.getArmor(Mech.LOC_HEAD));
-        assertEquals(7, mek.getArmor(Mech.LOC_RT));
-        assertEquals(10, mek.getArmor(Mech.LOC_CT));
-        assertEquals(7, mek.getArmor(Mech.LOC_LT));
-        assertEquals(4, mek.getArmor(Mech.LOC_RT, true));
-        assertEquals(6, mek.getArmor(Mech.LOC_CT, true));
-        assertEquals(4, mek.getArmor(Mech.LOC_LT, true));
-        assertEquals(7, mek.getArmor(Mech.LOC_RARM));
-        assertEquals(7, mek.getArmor(Mech.LOC_LARM));
-        assertEquals(7, mek.getArmor(Mech.LOC_RLEG));
-        assertEquals(7, mek.getArmor(Mech.LOC_LLEG));
+        assertEquals(6, mek.getArmor(Mek.LOC_HEAD));
+        assertEquals(7, mek.getArmor(Mek.LOC_RT));
+        assertEquals(10, mek.getArmor(Mek.LOC_CT));
+        assertEquals(7, mek.getArmor(Mek.LOC_LT));
+        assertEquals(4, mek.getArmor(Mek.LOC_RT, true));
+        assertEquals(6, mek.getArmor(Mek.LOC_CT, true));
+        assertEquals(4, mek.getArmor(Mek.LOC_LT, true));
+        assertEquals(7, mek.getArmor(Mek.LOC_RARM));
+        assertEquals(7, mek.getArmor(Mek.LOC_LARM));
+        assertEquals(7, mek.getArmor(Mek.LOC_RLEG));
+        assertEquals(7, mek.getArmor(Mek.LOC_LLEG));
 
         assertFalse(mek.getFailedEquipment().hasNext());
 
@@ -216,7 +223,7 @@ public class TdbFileTest {
 
         for (Mounted m : mek.getEquipment()) {
             switch (m.getLocation()) {
-                case Mech.LOC_CT:
+                case Mek.LOC_CT:
                     if (!foundSSRM && "Streak SRM 2".equals(m.getName())) {
                         foundSSRM = true;
                     } else if (foundSSRM && "Streak SRM 2".equals(m.getName())) {
@@ -233,7 +240,7 @@ public class TdbFileTest {
                     assertNotEquals("Jump Jet", m.getName(), "Found a Jump Jet in CT");
                     assertFalse(m.getName().contains("Heat Sink"), "Found a Heat Sink in CT");
                     break;
-                case Mech.LOC_RT:
+                case Mek.LOC_RT:
                     if ("Double Heat Sink".equals(m.getName())) {
                         dblHS++;
                     }
@@ -246,7 +253,7 @@ public class TdbFileTest {
                     assertNotEquals("Streak SRM 2 Ammo", m.getName(), "Found SSRM-2 ammo in RT");
                     assertNotEquals("Jump Jet", m.getName(), "Found a Jump Jet in RT");
                     break;
-                case Mech.LOC_LT:
+                case Mek.LOC_LT:
                     if ("Double Heat Sink".equals(m.getName())) {
                         dblHS++;
                     }
@@ -259,7 +266,7 @@ public class TdbFileTest {
                     assertNotEquals("Streak SRM 2 Ammo", m.getName(), "Found SSRM-2 ammo in LT");
                     assertNotEquals("Jump Jet", m.getName(), "Found a Jump Jet in LT");
                     break;
-                case Mech.LOC_RARM:
+                case Mek.LOC_RARM:
                     if ("Jump Jet".equals(m.getName())) {
                         jjFRL++;
                     }
@@ -269,7 +276,7 @@ public class TdbFileTest {
                     assertNotEquals("Streak SRM 2", m.getName(), "Found a SSRM-2 in RARM");
                     assertNotEquals("Streak SRM 2 Ammo", m.getName(), "Found SSRM-2 ammo in RARM");
                     break;
-                case Mech.LOC_LARM:
+                case Mek.LOC_LARM:
                     if ("Jump Jet".equals(m.getName())) {
                         jjFLL++;
                     }
@@ -279,7 +286,7 @@ public class TdbFileTest {
                     assertNotEquals("Streak SRM 2", m.getName(), "Found a SSRM-2 in LARM");
                     assertNotEquals("Streak SRM 2 Ammo", m.getName(), "Found SSRM-2 ammo in LARM");
                     break;
-                case Mech.LOC_RLEG:
+                case Mek.LOC_RLEG:
                     if ("Jump Jet".equals(m.getName())) {
                         jjRRL++;
                     }
@@ -289,7 +296,7 @@ public class TdbFileTest {
                     assertNotEquals("Streak SRM 2", m.getName(), "Found a SSRM-2 in RLEG");
                     assertNotEquals("Streak SRM 2 Ammo", m.getName(), "Found SSRM-2 ammo in RLEG");
                     break;
-                case Mech.LOC_LLEG:
+                case Mek.LOC_LLEG:
                     if ("Jump Jet".equals(m.getName())) {
                         jjRLL++;
                     }
@@ -316,22 +323,22 @@ public class TdbFileTest {
     @Test
     public void testLocationSorting() {
         List<Location> locations = new ArrayList<>();
-        locations.add(new Location(Mech.LOC_LLEG, 1, 0));
-        locations.add(new Location(Mech.LOC_RT, 1, 1));
-        locations.add(new Location(Mech.LOC_HEAD, 1, 0));
-        locations.add(new Location(Mech.LOC_CLEG, 1, 0));
+        locations.add(new Location(Mek.LOC_LLEG, 1, 0));
+        locations.add(new Location(Mek.LOC_RT, 1, 1));
+        locations.add(new Location(Mek.LOC_HEAD, 1, 0));
+        locations.add(new Location(Mek.LOC_CLEG, 1, 0));
 
         Collections.sort(locations);
 
-        assertEquals(Mech.LOC_HEAD, locations.get(0).bodyPart.intValue());
-        assertEquals(Mech.LOC_RT, locations.get(1).bodyPart.intValue());
-        assertEquals(Mech.LOC_LLEG, locations.get(2).bodyPart.intValue());
-        assertEquals(Mech.LOC_CLEG, locations.get(3).bodyPart.intValue());
+        assertEquals(Mek.LOC_HEAD, locations.get(0).bodyPart.intValue());
+        assertEquals(Mek.LOC_RT, locations.get(1).bodyPart.intValue());
+        assertEquals(Mek.LOC_LLEG, locations.get(2).bodyPart.intValue());
+        assertEquals(Mek.LOC_CLEG, locations.get(3).bodyPart.intValue());
     }
 
     @Test
     public void testCriticalSorting() {
-        Location location = new Location(Mech.LOC_RLEG, 1, 0);
+        Location location = new Location(Mek.LOC_RLEG, 1, 0);
         location.criticalSlots.add(new CriticalSlot(0, "Empty"));
         location.criticalSlots.add(new CriticalSlot(1, "Hip"));
         location.criticalSlots.add(new CriticalSlot(2, "Empty"));

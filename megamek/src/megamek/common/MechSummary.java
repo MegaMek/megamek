@@ -271,9 +271,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
             case "Tank":
                 return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
             case "Mek":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_MECH);
+                return Entity.getEntityMajorTypeName(Entity.ETYPE_MEK);
             case "ProtoMek":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMECH);
+                return Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMEK);
             case "Space Station":
             case "Jumpship":
             case "Dropship":

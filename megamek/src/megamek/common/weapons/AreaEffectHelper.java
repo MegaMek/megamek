@@ -404,7 +404,7 @@ public class AreaEffectHelper {
                     cluster = damage;
                 } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                         && attackSource.equals(coords)) {
-                    if (entity instanceof Mech) {
+                    if (entity instanceof Mek) {
                         toHit.setHitTable(ToHitData.HIT_ABOVE);
                     } else if (entity instanceof Tank) {
                         toHit.setSideTable(ToHitData.SIDE_FRONT);

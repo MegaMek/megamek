@@ -34,10 +34,10 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
         this.ammoType = AmmoType.T_SRM_STREAK;
         flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
     }
-    
+
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.5;
         } else {
             return super.getTonnage(entity, location, size);

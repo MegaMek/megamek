@@ -15,7 +15,7 @@ public class DropShipMekLoadTest {
     @Test
     public void test() throws Exception {
         MechSummaryCache instance = MechSummaryCache.getInstance(true);
-        Mech atlas = (Mech) instance.getMech("Atlas AS7-D").loadEntity();
+        Mek atlas = (Mek) instance.getMech("Atlas AS7-D").loadEntity();
         atlas.setId(2);
         Dropship leopard = (Dropship) instance.getMech("Leopard (2537)").loadEntity();
         leopard.setId(1);

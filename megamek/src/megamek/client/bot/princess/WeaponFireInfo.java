@@ -13,6 +13,15 @@
  */
 package megamek.client.bot.princess;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -24,12 +33,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
-
-import org.apache.logging.log4j.LogManager;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -692,18 +695,18 @@ public class WeaponFireInfo {
 
         // now guess how many critical hits will be done
         setKillProbability(0);
-        Mech targetMech = null;
+        Mek targetMech = null;
         Targetable potentialTarget = getTarget();
 
-        if (potentialTarget instanceof Mech) {
-            targetMech = (Mech) potentialTarget;
+        if (potentialTarget instanceof Mek) {
+            targetMech = (Mek) potentialTarget;
         } else if (potentialTarget instanceof HexTarget || potentialTarget instanceof BuildingTarget) {
             Coords c = potentialTarget.getPosition();
             Iterator<Entity> targetEnemies = game.getEnemyEntities(c, this.shooter);
             while (targetEnemies.hasNext()) {
                 Entity next = targetEnemies.next();
-                if (next instanceof Mech) {
-                    targetMech = (Mech) next;
+                if (next instanceof Mek) {
+                    targetMech = (Mek) next;
                     break;
                 }
             }
@@ -725,16 +728,16 @@ public class WeaponFireInfo {
             int hitLocation = i;
 
             while (targetMech.isLocationBad(hitLocation) &&
-                   (Mech.LOC_CT != hitLocation)) {
+                   (Mek.LOC_CT != hitLocation)) {
 
                 // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
-                if (Mech.LOC_HEAD == hitLocation) {
-                    headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mech.LOC_HEAD);
+                if (Mek.LOC_HEAD == hitLocation) {
+                    headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mek.LOC_HEAD);
                     break;
                 }
 
                 // Get the next most inward location.
-                hitLocation = Mech.getInnerLocation(hitLocation);
+                hitLocation = Mek.getInnerLocation(hitLocation);
             }
             double hitLocationProbability =
                     ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
@@ -749,10 +752,10 @@ public class WeaponFireInfo {
             // If the location could be destroyed outright...
             if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
-                if (Mech.LOC_CT == hitLocation) {
+                if (Mek.LOC_CT == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
-                } else if ((Mech.LOC_HEAD == hitLocation) &&
-                           (Mech.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType())) {
+                } else if ((Mek.LOC_HEAD == hitLocation) &&
+                           (Mek.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType())) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 }
 

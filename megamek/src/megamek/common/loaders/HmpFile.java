@@ -108,8 +108,8 @@ public class HmpFile implements IMechLoader {
     private Hashtable<EquipmentType, Mounted> spreadEquipment = new Hashtable<>();
     private Vector<Mounted> vSplitWeapons = new Vector<>();
 
-    private int gyroType = Mech.GYRO_STANDARD;
-    private int cockpitType = Mech.COCKPIT_STANDARD;
+    private int gyroType = Mek.GYRO_STANDARD;
+    private int cockpitType = Mek.COCKPIT_STANDARD;
     private int jjType;
 
     private int atmCounter = 0;
@@ -359,8 +359,8 @@ public class HmpFile implements IMechLoader {
                 dis.skipBytes(16);
                 readUnsignedShort(dis);
             } else {
-                gyroType = Mech.GYRO_STANDARD;
-                cockpitType = Mech.COCKPIT_STANDARD;
+                gyroType = Mek.GYRO_STANDARD;
+                cockpitType = Mek.COCKPIT_STANDARD;
             }
 
             dis.close();
@@ -404,7 +404,7 @@ public class HmpFile implements IMechLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
-            Mech mech = null;
+            Mek mech = null;
             if ((chassisType == ChassisType.QUADRAPED_OMNI) || (chassisType == ChassisType.QUADRAPED)) {
                 mech = new QuadMech(gyroType, cockpitType);
             } else if (chassisType == ChassisType.ARMLESS) {
@@ -495,20 +495,20 @@ public class HmpFile implements IMechLoader {
                         throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
             }
-            mech.initializeArmor(laArmor, Mech.LOC_LARM);
-            mech.initializeArmor(ltArmor, Mech.LOC_LT);
-            mech.initializeRearArmor(ltrArmor, Mech.LOC_LT);
-            mech.initializeArmor(llArmor, Mech.LOC_LLEG);
+            mech.initializeArmor(laArmor, Mek.LOC_LARM);
+            mech.initializeArmor(ltArmor, Mek.LOC_LT);
+            mech.initializeRearArmor(ltrArmor, Mek.LOC_LT);
+            mech.initializeArmor(llArmor, Mek.LOC_LLEG);
 
-            mech.initializeArmor(raArmor, Mech.LOC_RARM);
-            mech.initializeArmor(rtArmor, Mech.LOC_RT);
-            mech.initializeRearArmor(rtrArmor, Mech.LOC_RT);
-            mech.initializeArmor(rlArmor, Mech.LOC_RLEG);
+            mech.initializeArmor(raArmor, Mek.LOC_RARM);
+            mech.initializeArmor(rtArmor, Mek.LOC_RT);
+            mech.initializeRearArmor(rtrArmor, Mek.LOC_RT);
+            mech.initializeArmor(rlArmor, Mek.LOC_RLEG);
 
-            mech.initializeArmor(headArmor, Mech.LOC_HEAD);
+            mech.initializeArmor(headArmor, Mek.LOC_HEAD);
 
-            mech.initializeArmor(ctArmor, Mech.LOC_CT);
-            mech.initializeRearArmor(ctrArmor, Mech.LOC_CT);
+            mech.initializeArmor(ctArmor, Mek.LOC_CT);
+            mech.initializeRearArmor(ctrArmor, Mek.LOC_CT);
 
             setupCriticals(mech);
 
@@ -534,7 +534,7 @@ public class HmpFile implements IMechLoader {
         }
     }
 
-    private void removeArmActuators(Mech mech, long[] criticals, int location) {
+    private void removeArmActuators(Mek mech, long[] criticals, int location) {
         // Quad have leg and foot actuators, not arm and hand actuators.
         if (mech.getMovementMode() == EntityMovementMode.QUAD) {
             if (!isLowerLegActuator(criticals[2])) {
@@ -553,28 +553,28 @@ public class HmpFile implements IMechLoader {
         }
     }
 
-    private void setupCriticals(Mech mech) throws EntityLoadingException {
-        removeArmActuators(mech, laCriticals, Mech.LOC_LARM);
-        removeArmActuators(mech, raCriticals, Mech.LOC_RARM);
+    private void setupCriticals(Mek mech) throws EntityLoadingException {
+        removeArmActuators(mech, laCriticals, Mek.LOC_LARM);
+        removeArmActuators(mech, raCriticals, Mek.LOC_RARM);
 
         compactCriticals(rlCriticals);
-        setupCriticals(mech, rlCriticals, Mech.LOC_RLEG);
+        setupCriticals(mech, rlCriticals, Mek.LOC_RLEG);
         compactCriticals(llCriticals);
-        setupCriticals(mech, llCriticals, Mech.LOC_LLEG);
+        setupCriticals(mech, llCriticals, Mek.LOC_LLEG);
         if (chassisType != ChassisType.ARMLESS) {
             // HMP helpfully includes arm actuators in armless mechs
             compactCriticals(raCriticals);
-            setupCriticals(mech, raCriticals, Mech.LOC_RARM);
+            setupCriticals(mech, raCriticals, Mek.LOC_RARM);
             compactCriticals(laCriticals);
-            setupCriticals(mech, laCriticals, Mech.LOC_LARM);
+            setupCriticals(mech, laCriticals, Mek.LOC_LARM);
         }
         compactCriticals(rtCriticals);
-        setupCriticals(mech, rtCriticals, Mech.LOC_RT);
+        setupCriticals(mech, rtCriticals, Mek.LOC_RT);
         compactCriticals(ltCriticals);
-        setupCriticals(mech, ltCriticals, Mech.LOC_LT);
+        setupCriticals(mech, ltCriticals, Mek.LOC_LT);
         compactCriticals(ctCriticals);
-        setupCriticals(mech, ctCriticals, Mech.LOC_CT);
-        setupCriticals(mech, headCriticals, Mech.LOC_HEAD);
+        setupCriticals(mech, ctCriticals, Mek.LOC_CT);
+        setupCriticals(mech, headCriticals, Mek.LOC_HEAD);
     }
 
     private String mutateLBXAmmo(String crit) {
@@ -599,7 +599,7 @@ public class HmpFile implements IMechLoader {
         return crit;
     }
 
-    private void setupCriticals(Mech mech, long[] criticals, int location) throws EntityLoadingException {
+    private void setupCriticals(Mek mech, long[] criticals, int location) throws EntityLoadingException {
         // Use pass-by-value in case we need the original criticals
         // later (getMtf for example).
         long[] crits = criticals.clone();
@@ -610,15 +610,15 @@ public class HmpFile implements IMechLoader {
                 String criticalName = getCriticalName(critical);
 
                 if (isFusionEngine(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE));
                 } else if (isGyro(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
                 } else if (isCockpit(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT));
                 } else if (isLifeSupport(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT));
                 } else if (isSensor(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS));
                 } else if (isJumpJet(critical)) {
                     try {
                         if (jjType == 0) {
@@ -670,7 +670,7 @@ public class HmpFile implements IMechLoader {
                                 for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                                     m = vSplitWeapons.elementAt(x);
                                     int nLoc = m.getLocation();
-                                    if (((nLoc == location) || (location == Mech.getInnerLocation(nLoc))) && m.getType().equals(equipment)) {
+                                    if (((nLoc == location) || (location == Mek.getInnerLocation(nLoc))) && m.getType().equals(equipment)) {
                                         bFound = true;
                                         break;
                                     }
@@ -688,9 +688,9 @@ public class HmpFile implements IMechLoader {
                                     // give the most restrictive location for
                                     // arcs
                                     int help = m.getLocation();
-                                    m.setLocation(Mech.mostRestrictiveLoc(location, help));
+                                    m.setLocation(Mek.mostRestrictiveLoc(location, help));
                                     if (location != help) {
-                                        m.setSecondLocation(Mech.leastRestrictiveLoc(location, help));
+                                        m.setSecondLocation(Mek.leastRestrictiveLoc(location, help));
                                     }
                                 } else {
                                     // make a new one
@@ -1759,11 +1759,11 @@ public class HmpFile implements IMechLoader {
         sb.append(nl);
         sb.append("Structure:").append(internalStructureType).append(nl);
         sb.append("Myomer:").append(myomerType).append(nl);
-        if (gyroType != Mech.GYRO_STANDARD) {
-            sb.append("Gyro:").append(Mech.getGyroTypeString(gyroType)).append(nl);
+        if (gyroType != Mek.GYRO_STANDARD) {
+            sb.append("Gyro:").append(Mek.getGyroTypeString(gyroType)).append(nl);
         }
-        if (cockpitType != Mech.COCKPIT_STANDARD) {
-            sb.append("Cockpit:").append(Mech.getCockpitTypeString(cockpitType)).append(nl);
+        if (cockpitType != Mek.COCKPIT_STANDARD) {
+            sb.append("Cockpit:").append(Mek.getCockpitTypeString(cockpitType)).append(nl);
         }
         sb.append(nl);
 
@@ -1966,7 +1966,7 @@ abstract class HMPType {
         final HMPType other = (HMPType) obj;
         return Objects.equals(name, other.name) && (id == other.id);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(name, id);

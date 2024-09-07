@@ -42,8 +42,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** 
- * This class provides static helper functions for the Lobby aka ChatLounge. 
+/**
+ * This class provides static helper functions for the Lobby aka ChatLounge.
  * @author Simon
  *
  */
@@ -93,7 +93,7 @@ public class LobbyUtility {
             }
         }
     }
-    
+
     /**
      * Returns true when double blind and exclusive deployment are on,
      * meaning that player's deployment zones may not overlap.
@@ -102,24 +102,24 @@ public class LobbyUtility {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
-    }  
-    
+    }
+
     /**
      * Returns true when blind drop is on.
      */
     static boolean isBlindDrop(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
-    } 
-    
+    }
+
     /**
      * Returns true when real blind drop is on.
      */
     static boolean isRealBlindDrop(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-    }  
-    
+    }
+
     /**
      * Returns true when teams share vision is on, reagardless of whether
      * double blind is on.
@@ -127,36 +127,36 @@ public class LobbyUtility {
     static boolean isTeamsShareVision(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
-    } 
-    
+    }
+
     /** Returns true if the given entities all belong to the same player. */
     static boolean haveSingleOwner(Collection<Entity> entities) {
         return entities.stream().mapToInt(e -> e.getOwner().getId()).distinct().count() == 1;
     }
-    
-    /** Returns true if any of the given entities are embarked (transported by something). */ 
+
+    /** Returns true if any of the given entities are embarked (transported by something). */
     static boolean containsTransportedUnit(Collection<Entity> entities) {
         return entities.stream().anyMatch(e -> e.getTransportId() != Entity.NONE);
     }
-    
-    /** 
+
+    /**
      * Returns true when the given board name does not start with one of the control strings
-     * of MapSettings signalling a random, generated or surprise board. 
-     */ 
+     * of MapSettings signalling a random, generated or surprise board.
+     */
     @SuppressWarnings("deprecation")
     static boolean isBoardFile(String board) {
         return !board.startsWith(MapSettings.BOARD_GENERATED)
                 && !board.startsWith(MapSettings.BOARD_RANDOM)
                 && !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
-    
+
     /** Returns a formatted and colored tooltip string warning that a board is invalid. */
     static String invalidBoardTip() {
         return UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())
                 + Messages.getString("ChatLounge.map.invalidTip") + "</FONT>";
     }
-    
-    /** 
+
+    /**
      * Draws the given text (the board name or special text) as a label on the
      * lower edge of the image for which the graphics g is given.
      */
@@ -173,7 +173,7 @@ public class LobbyUtility {
         FontMetrics fm = g.getFontMetrics(font);
         int th = fm.getAscent() + fm.getDescent(); // The text height
         int cx = (w - fm.stringWidth(text)) / 2; // The left edge for centered text
-        // When the text is wider than the image, let the text start close to the left edge 
+        // When the text is wider than the image, let the text start close to the left edge
         cx = Math.max(w / 20, cx);
         int cy = h - th / 2;
         Color col = new Color(250, 250, 250, 140);
@@ -193,8 +193,8 @@ public class LobbyUtility {
         g.drawString(text, cx, cy);
         g.setClip(null);
     }
-    
-    /** 
+
+    /**
      * Removes the board size ("16x17") and file path from the given board name if it is
      * a board file. Also, reconstructs the text if it's a surprise map or generated map.
      */
@@ -216,11 +216,11 @@ public class LobbyUtility {
         String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight();
         return boardName.replace(boardSize, "").replace(".board", "").trim();
     }
-    
-    /** 
-     * Specialized method that returns a list of board names from the given 
-     * boardsString that starts with the prefix for a Surprise board.  
-     */ 
+
+    /**
+     * Specialized method that returns a list of board names from the given
+     * boardsString that starts with the prefix for a Surprise board.
+     */
     public static ArrayList<String> extractSurpriseMaps(String boardsString) {
         if (boardsString.startsWith(MapSettings.BOARD_SURPRISE)) {
             boardsString = boardsString.substring(MapSettings.BOARD_SURPRISE.length());
@@ -230,11 +230,11 @@ public class LobbyUtility {
         result.addAll(Arrays.asList(boards));
         return result;
     }
-    
-    /** 
+
+    /**
      * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
-     * Ignores entity ids that don't exist. The resulting list may be empty but not null. 
-     */ 
+     * Ignores entity ids that don't exist. The resulting list may be empty but not null.
+     */
     public static HashSet<Entity> getEntities(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Entity> result = new HashSet<>();
@@ -247,11 +247,11 @@ public class LobbyUtility {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Converts an id list of the form 1,2,4,12 to a set of corresponding forces.
-     * Ignores force ids that don't exist. The resulting list may be empty but not null. 
-     */ 
+     * Ignores force ids that don't exist. The resulting list may be empty but not null.
+     */
     public static HashSet<Force> getForces(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Force> result = new HashSet<>();
@@ -264,17 +264,17 @@ public class LobbyUtility {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * Returns true if a and b share at least one non-hierarchic C3 system
-     * (C3i, Naval C3, Nova CEWS). Symmetrical (the order of a and b does not matter). 
+     * (C3i, Naval C3, Nova CEWS). Symmetrical (the order of a and b does not matter).
      */
     public static boolean sameNhC3System(Entity a, Entity b) {
-        return (a.hasC3i() && b.hasC3i()) 
-                || (a.hasNavalC3() && b.hasNavalC3()) 
+        return (a.hasC3i() && b.hasC3i())
+                || (a.hasNavalC3() && b.hasNavalC3())
                 || (a.hasNovaCEWS() && b.hasNovaCEWS());
     }
-    
+
     /** Returns the string with some content shortened like Battle Armor -> BA */
     static String abbreviateUnitName(String unitName) {
         return unitName
@@ -283,15 +283,15 @@ public class LobbyUtility {
                 .replace("Medium", "Med.").replace("Support", "Spt.")
                 .replace("Heavy", "Hvy.").replace("Light", "Lgt.");
     }
-    
+
     static boolean hasYellowWarning(Entity entity) {
         return (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty())
                 || ((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
                 || (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))
                 || ((entity.getC3Master() == null) && entity.hasC3S());
     }
-    
-    /** 
+
+    /**
      * Returns true when the entities can embark onto loader given the other constraints.
      * If false, the passed errorMsg contains a suitable error message for display.
      */
@@ -302,7 +302,7 @@ public class LobbyUtility {
         double capacity;
         boolean hasEnoughCargoCapacity;
         String errorMessage = "";
-        
+
         if (bayNumber != -1) {
             Bay bay = loader.getBayById(bayNumber);
             if (null != bay) {
@@ -311,8 +311,8 @@ public class LobbyUtility {
                 hasEnoughCargoCapacity = loadSize <= capacity;
                 errorMessage = Messages.getString("LoadingBay.baytoomany",
                         (int) bay.getUnusedSlots(), bay.getDefaultSlotDescription());
-            } else if (loader.hasETypeFlag(Entity.ETYPE_MECH)
-                    && soleProtoMek.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            } else if (loader.hasETypeFlag(Entity.ETYPE_MEK)
+                    && soleProtoMek.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 // We're also using bay number to distinguish between front and rear locations
                 // for ProtoMek mag clamp systems
                 hasEnoughCargoCapacity = entities.size() == 1;
@@ -330,8 +330,8 @@ public class LobbyUtility {
                 long entityType = e.getEntityType();
                 long loaderType = loader.getEntityType();
                 double unitSize;
-                if ((entityType & Entity.ETYPE_MECH) != 0) {
-                    entityType = Entity.ETYPE_MECH;
+                if ((entityType & Entity.ETYPE_MEK) != 0) {
+                    entityType = Entity.ETYPE_MEK;
                     unitSize = 1;
                 } else if ((entityType & Entity.ETYPE_INFANTRY) != 0) {
                     entityType = Entity.ETYPE_INFANTRY;
@@ -371,12 +371,12 @@ public class LobbyUtility {
                     } else {
                         unitSize = e.getWeight();
                     }
-                } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
-                    entityType = Entity.ETYPE_PROTOMECH;
+                } else if ((entityType & Entity.ETYPE_PROTOMEK) != 0) {
+                    entityType = Entity.ETYPE_PROTOMEK;
                     unitSize = 1;
                     // Loading using mag clamps; user can specify front or rear.
                     // Make use of bayNumber field
-                    if ((loaderType & Entity.ETYPE_MECH) != 0) {
+                    if ((loaderType & Entity.ETYPE_MEK) != 0) {
                         bayNumber = loadRear? 1 : 0;
                     }
                 } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
@@ -427,7 +427,7 @@ public class LobbyUtility {
                 }
             }
         }
-        if (loader instanceof FighterSquadron 
+        if (loader instanceof FighterSquadron
                 && entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
             errorMessage = "Only aerospace and conventional fighters can join squadrons.";
             hasEnoughCargoCapacity = false;
@@ -436,10 +436,10 @@ public class LobbyUtility {
         return hasEnoughCargoCapacity;
     }
 
-    /** 
+    /**
      * Returns true when the two starting positions overlap, i.e.
      * if they are equal or adjacent (e.g. E and NE, SW and S).
-     * ANY overlaps all others. 
+     * ANY overlaps all others.
      */
     private static boolean startPosOverlap(int pos1, int pos2) {
         if (pos1 > 10) {

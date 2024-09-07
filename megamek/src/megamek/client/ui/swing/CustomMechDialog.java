@@ -1063,7 +1063,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         boolean multipleEntities = (entities.size() > 1) || (entity instanceof FighterSquadron);
         boolean quirksEnabled = gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
         boolean partialRepairsEnabled = gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS);
-        final boolean isMech = entities.stream().allMatch(e -> e instanceof Mech);
+        final boolean isMech = entities.stream().allMatch(e -> e instanceof Mek);
         final boolean isShip = entities.stream().allMatch(Entity::isLargeAerospace);
         final boolean isAero = entities.stream().allMatch(e -> e.isAero() && !e.isLargeAerospace());
         final boolean isVTOL = entities.stream().allMatch(e -> e.getMovementMode().isVTOL());

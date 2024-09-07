@@ -153,14 +153,14 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         lamType = inLAMType;
 
         setTechLevel(TechConstants.T_IS_ADVANCED);
-        setCritical(Mech.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mech.LOC_LT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mech.LOC_RT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mech.LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        setCritical(Mech.LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        for (int i = 0; i < getNumberOfCriticals(Mech.LOC_CT); i++) {
-            if (null == getCritical(Mech.LOC_CT, i)) {
-                setCritical(Mech.LOC_CT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        setCritical(Mek.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        setCritical(Mek.LOC_LT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        setCritical(Mek.LOC_RT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        setCritical(Mek.LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        setCritical(Mek.LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        for (int i = 0; i < getNumberOfCriticals(Mek.LOC_CT); i++) {
+            if (null == getCritical(Mek.LOC_CT, i)) {
+                setCritical(Mek.LOC_CT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
                 break;
             }
         }
@@ -181,10 +181,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public String getSystemName(int index) {
         if (index == SYSTEM_GYRO) {
-            return Mech.getGyroDisplayString(gyroType);
+            return Mek.getGyroDisplayString(gyroType);
         }
         if (index == SYSTEM_COCKPIT) {
-            return Mech.getCockpitDisplayString(cockpitType);
+            return Mek.getCockpitDisplayString(cockpitType);
         }
         return systemNames[index];
     }
@@ -291,7 +291,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public int getAirMechCruiseMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.getBoard().inAtmosphere()
-                && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
+                && (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
             return 0;
         }
         return getJumpMP(mpCalculationSetting) * 3;
@@ -299,7 +299,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public int getAirMechFlankMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.getBoard().inAtmosphere()
-                && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
+                && (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
             return 0;
         }
         return (int) Math.ceil(getAirMechCruiseMP(mpCalculationSetting) * 1.5);
@@ -674,9 +674,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
 
         // In fighter mode a destroyed gyro gives +6 to the control roll.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
         if (gyroHits > 0) {
-            if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+            if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
                 if (gyroHits == 1) {
                     roll.addModifier(1, "HD Gyro damaged once");
                 } else if (gyroHits == 2) {
@@ -705,7 +705,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Mech.COCKPIT_SMALL)
+        if ((getCockpitType() == Mek.COCKPIT_SMALL)
                 && !hasAbility(OptionsConstants.MD_BVDNI)
                 && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "Small Cockpit");
@@ -767,8 +767,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         // Landing in AirMech mode only requires a roll if gyro or hip/leg
         // actuators are damaged.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
-        if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
+        if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroHits--;
         }
 
@@ -781,7 +781,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     required = true;
                 } else {
                     // check for damaged hip actuators
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                         roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
                         if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                             continue;
@@ -789,17 +789,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                         required = true;
                     }
                     // upper leg actuators?
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
                         required = true;
                     }
                     // lower leg actuators?
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                         required = true;
                     }
                     // foot actuators?
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
                         required = true;
                     }
@@ -961,7 +961,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean canConvertTo(int fromMode, int toMode) {
         // Cannot convert with any gyro damage
         int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO, LOC_CT);
-        if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+        if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroHits--;
         }
         if (gyroHits > 0) {
@@ -971,24 +971,24 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         // Cannot convert to or from mech mode with damage shoulder or arm
         // actuators
         if ((toMode == CONV_MODE_MECH || fromMode == CONV_MODE_MECH)
-                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_RARM)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_RARM)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_RARM)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_LARM)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_LARM)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
+                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_RARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_RARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_RARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_LARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_LARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
             return false;
         }
 
         // Cannot convert to or from fighter mode with damage hip or leg
         // actuators
         if ((toMode == CONV_MODE_FIGHTER || fromMode == CONV_MODE_FIGHTER)
-                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_RLEG)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_RLEG)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_RLEG)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_LLEG)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_LLEG)
-                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
+                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_RLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_RLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_RLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_LLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_LLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
             return false;
         }
 
@@ -1878,10 +1878,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         Map<String, Integer> groups = new HashMap<>();
         for (Mounted mounted : getTotalWeaponList()) {
             int loc = LOC_CAPITAL_WINGS;
-            if ((loc == Mech.LOC_CT) || (loc == Mech.LOC_HEAD)) {
+            if ((loc == Mek.LOC_CT) || (loc == Mek.LOC_HEAD)) {
                 loc = LOC_CAPITAL_NOSE;
             }
-            if (mounted.isRearMounted() || (loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG)) {
+            if (mounted.isRearMounted() || (loc == Mek.LOC_LLEG) || (loc == Mek.LOC_RLEG)) {
                 loc = LOC_CAPITAL_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
@@ -2122,7 +2122,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     @Override
     public long getEntityType() {
-        return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
+        return Entity.ETYPE_MEK | Entity.ETYPE_BIPED_MEK | Entity.ETYPE_LAND_AIR_MEK;
     }
 
     /**

@@ -58,7 +58,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             chassisType = dataFile.getDataAsInt("chassis_type")[0];
         }
 
-        Mech mech = null;
+        Mek mech = null;
 
         if (chassisType == 1) {
             mech = new QuadMech();
@@ -135,21 +135,21 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         }
         int[] armor = dataFile.getDataAsInt("Armor");
 
-        mech.initializeArmor(armor[BLKMechFile.HD], Mech.LOC_HEAD);
+        mech.initializeArmor(armor[BLKMechFile.HD], Mek.LOC_HEAD);
 
-        mech.initializeArmor(armor[BLKMechFile.LA], Mech.LOC_LARM);
-        mech.initializeArmor(armor[BLKMechFile.RA], Mech.LOC_RARM);
-        mech.initializeArmor(armor[BLKMechFile.LL], Mech.LOC_LLEG);
-        mech.initializeArmor(armor[BLKMechFile.RL], Mech.LOC_RLEG);
+        mech.initializeArmor(armor[BLKMechFile.LA], Mek.LOC_LARM);
+        mech.initializeArmor(armor[BLKMechFile.RA], Mek.LOC_RARM);
+        mech.initializeArmor(armor[BLKMechFile.LL], Mek.LOC_LLEG);
+        mech.initializeArmor(armor[BLKMechFile.RL], Mek.LOC_RLEG);
 
-        mech.initializeArmor(armor[BLKMechFile.CF], Mech.LOC_CT);
-        mech.initializeArmor(armor[BLKMechFile.LF], Mech.LOC_LT);
-        mech.initializeArmor(armor[BLKMechFile.RF], Mech.LOC_RT);
+        mech.initializeArmor(armor[BLKMechFile.CF], Mek.LOC_CT);
+        mech.initializeArmor(armor[BLKMechFile.LF], Mek.LOC_LT);
+        mech.initializeArmor(armor[BLKMechFile.RF], Mek.LOC_RT);
 
         // changed...
-        mech.initializeRearArmor(armor[BLKMechFile.CB], Mech.LOC_CT);
-        mech.initializeRearArmor(armor[BLKMechFile.LB], Mech.LOC_LT);
-        mech.initializeRearArmor(armor[BLKMechFile.RB], Mech.LOC_RT);
+        mech.initializeRearArmor(armor[BLKMechFile.CB], Mek.LOC_CT);
+        mech.initializeRearArmor(armor[BLKMechFile.LB], Mek.LOC_LT);
+        mech.initializeRearArmor(armor[BLKMechFile.RB], Mek.LOC_RT);
 
         mech.recalculateTechAdvancement();
 
@@ -166,33 +166,33 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         // no lower right arm
         if (!dataFile.getDataAsString("ra criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
+            mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no right hand
         if (!dataFile.getDataAsString("ra criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+            mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // no lower left arm
         if (!dataFile.getDataAsString("la criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
+            mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no left hand
         if (!dataFile.getDataAsString("la criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+            mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // load equipment stuff...
         List<String>[] criticals = new Vector[8];
 
-        criticals[Mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
-        criticals[Mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
-        criticals[Mech.LOC_RARM] = dataFile.getDataAsVector("ra criticals");
-        criticals[Mech.LOC_LLEG] = dataFile.getDataAsVector("ll criticals");
-        criticals[Mech.LOC_RLEG] = dataFile.getDataAsVector("rl criticals");
-        criticals[Mech.LOC_LT] = dataFile.getDataAsVector("lt criticals");
-        criticals[Mech.LOC_RT] = dataFile.getDataAsVector("rt criticals");
-        criticals[Mech.LOC_CT] = dataFile.getDataAsVector("ct criticals");
+        criticals[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
+        criticals[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticals");
+        criticals[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticals");
+        criticals[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticals");
+        criticals[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticals");
+        criticals[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticals");
+        criticals[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticals");
+        criticals[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticals");
 
         // prefix is "Clan " or "IS "
         String prefix;
@@ -221,7 +221,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     armored = true;
                     critName = critName.substring(4);
                 }
-                
+
                 boolean isOmniMounted = critName.endsWith(":OMNI");
                 critName = critName.replace(":OMNI", "");
                 int facing = -1;
@@ -242,19 +242,19 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     critName = critName.substring(0, critName.length() - 4).trim();
                 }
                 if (critName.contains("Engine")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, armored));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, armored));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Cockpit")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, armored));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Gyro")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, armored));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, armored));
                     continue;
                 }
 

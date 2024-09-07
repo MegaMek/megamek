@@ -465,8 +465,8 @@ public class MechSummaryCache {
         if (e.isSupportVehicle()) {
             ms.setSupport(true);
         }
-        if (e instanceof Mech) {
-            if (((Mech) e).isIndustrial()) {
+        if (e instanceof Mek) {
+            if (((Mek) e).isIndustrial()) {
                 ms.setUnitSubType("Industrial");
             } else if (e.isOmni()) {
                 ms.setUnitSubType("Omni");
@@ -499,8 +499,8 @@ public class MechSummaryCache {
         ms.setDoomedInVacuum(e.doomedInVacuum());
 
         // Check to see if this entity has a cockpit, and if so, set it's type
-        if ((e instanceof Mech)) {
-            ms.setCockpitType(((Mech) e).getCockpitType());
+        if ((e instanceof Mek)) {
+            ms.setCockpitType(((Mek) e).getCockpitType());
         } else if ((e instanceof Aero)) {
             ms.setCockpitType(((Aero) e).getCockpitType());
         } else {
@@ -533,12 +533,12 @@ public class MechSummaryCache {
             ms.setEngineType(-1);
         }
 
-        if (e instanceof Mech) {
-            if (((Mech) e).hasTSM(false)) {
+        if (e instanceof Mek) {
+            if (((Mek) e).hasTSM(false)) {
                 ms.setMyomerName("Triple-Strength");
-            } else if (((Mech) e).hasTSM(true)) {
+            } else if (((Mek) e).hasTSM(true)) {
                     ms.setMyomerName("Prototype Triple-Strength");
-            } else if (((Mech) e).hasIndustrialTSM()) {
+            } else if (((Mek) e).hasIndustrialTSM()) {
                 ms.setMyomerName("Industrial Triple-Strength");
             } else {
                 ms.setMyomerName("Standard");
@@ -550,11 +550,11 @@ public class MechSummaryCache {
         int lowerArms = 0;
         int hands = 0;
 
-        if (e instanceof Mech) {
-            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ? 1 : 0;
-            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ? 1 : 0;
-            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ? 1 : 0;
-            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ? 1 : 0;
+        if (e instanceof Mek) {
+            lowerArms += e.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM) ? 1 : 0;
+            lowerArms += e.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM) ? 1 : 0;
+            hands += e.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) ? 1 : 0;
+            hands += e.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) ? 1 : 0;
         }
 
         ms.setLowerArms(lowerArms);

@@ -34,7 +34,7 @@ import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.SmallCraft;
@@ -72,7 +72,7 @@ class ArmorPanel extends PicMap {
     private int minLeftMargin;
     private int minBottomMargin;
     private int minRightMargin;
-    
+
     private UnitDisplay unitDisplay;
 
     private static final int minTankTopMargin = 8;
@@ -169,7 +169,7 @@ class ArmorPanel extends PicMap {
             minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
-        } else if (en instanceof Mech) {
+        } else if (en instanceof Mek) {
             ams = mech;
             minLeftMargin = minMechLeftMargin;
             minTopMargin = minMechTopMargin;

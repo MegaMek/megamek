@@ -38,7 +38,7 @@ public class HGRHandler extends GRHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -46,8 +46,8 @@ public class HGRHandler extends GRHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
-        if ((ae.mpUsed > 0) && (ae instanceof Mech) && ae.canFall()
+
+        if ((ae.mpUsed > 0) && (ae instanceof Mek) && ae.canFall()
             // Only check up to assault class, superheavies do not roll.
             && ae.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
             // Modifier is weight-based.

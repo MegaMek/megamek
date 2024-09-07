@@ -111,7 +111,7 @@ class EntitySprite extends Sprite {
                 case FULL:
                     return standardLabelName();
                 case ABBREV:
-                    return (entity instanceof Mech) ? entity.getModel() : abbreviateUnitName(standardLabelName());
+                    return (entity instanceof Mek) ? entity.getModel() : abbreviateUnitName(standardLabelName());
                 case CHASSIS:
                     return reduceVehicleName(entity);
                 case NICKNAME:
@@ -217,7 +217,7 @@ class EntitySprite extends Sprite {
         } else {
             ePos = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
         }
-        
+
         if (ePos != null) {
             bounds.setLocation(hexOrigin.x + ePos.x, hexOrigin.y + ePos.y);
         }
@@ -246,8 +246,8 @@ class EntitySprite extends Sprite {
                 bv.getPanel().getFontMetrics(labelFont).getAscent() + 2);
 
         Coords position = entity.getPosition();
-        
-        if (position != null) {			
+
+        if (position != null) {
             if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.hex_size.width * 0.55), (int) (0.75 * bv.hex_size.height));
                 labelPos = Positioning.RIGHT;
@@ -754,7 +754,7 @@ class EntitySprite extends Sprite {
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
-            if (!((entity instanceof Mech) || (entity instanceof Protomech))
+            if (!((entity instanceof Mek) || (entity instanceof Protomech))
                     || (entity instanceof QuadVee)) {
                 secFacing = entity.getSecondaryFacing();
             } else if (entity.getArmsFlipped()) {

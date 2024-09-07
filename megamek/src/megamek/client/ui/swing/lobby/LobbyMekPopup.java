@@ -310,7 +310,7 @@ class LobbyMekPopup {
                 .forEach(e -> menu.add(menuItem(
                         "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()) + " (Free Collars: " + ((Jumpship) e).getFreeDockingCollars() + ")",
                         LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
-            } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH))) {
+            } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
                 .filter(e -> !e.isCapitalFighter(true))
@@ -331,17 +331,17 @@ class LobbyMekPopup {
     private static JMenu protoMenu(ClientGUI cg, boolean enabled, ActionListener listener,
                                    Collection<Entity> entities) {
         JMenu menu = new JMenu("Load ProtoMek");
-        if(!(enabled || entities.stream().allMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)))){
+        if(!(enabled || entities.stream().allMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK)))){
             return menu;
         }
 
         Game game = cg.getClient().getGame();
-        Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)).findAny().get();
+        Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK)).findAny().get();
         List<Entity> loaders = game.getEntitiesVector();
 
         // Handle front and rear Magnetic Clamp Mounts
         for (Entity loader: loaders) {
-            if (!loader.hasETypeFlag(Entity.ETYPE_MECH)) {
+            if (!loader.hasETypeFlag(Entity.ETYPE_MEK)) {
                 continue;
             }
             Transporter front = null;

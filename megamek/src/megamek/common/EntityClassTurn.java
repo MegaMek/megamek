@@ -142,7 +142,7 @@ public class EntityClassTurn extends GameTurn {
             return CLASS_GUN_EMPLACEMENT;
         } else if ((entity instanceof Tank) || entity.isAero()) {
             return CLASS_TANK;
-        } else if (entity instanceof Mech) {
+        } else if (entity instanceof Mek) {
             return CLASS_MECH;
         } else {
             return 0;

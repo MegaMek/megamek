@@ -29,9 +29,9 @@ import megamek.common.verifier.TestMech;
  */
 public class MechTROView extends TROView {
 
-    private final Mech mech;
+    private final Mek mech;
 
-    public MechTROView(Mech mech) {
+    public MechTROView(Mek mech) {
         this.mech = mech;
     }
 
@@ -57,8 +57,8 @@ public class MechTROView extends TROView {
         addFluff();
         mech.setConversionMode(0);
         setModelData("isOmni", mech.isOmni());
-        setModelData("isQuad", mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH));
-        setModelData("isTripod", mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH));
+        setModelData("isQuad", mech.hasETypeFlag(Entity.ETYPE_QUAD_MEK));
+        setModelData("isTripod", mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK));
         final TestMech testMech = new TestMech(mech, verifier.mechOption, null);
         setModelData("structureName", mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD ? ""
                 : EquipmentType.getStructureTypeName(mech.getStructureType()));
@@ -72,16 +72,16 @@ public class MechTROView extends TROView {
         setModelData("hsCount",
                 mech.hasDoubleHeatSinks() ? mech.heatSinks() + " [" + (mech.heatSinks() * 2) + "]" : mech.heatSinks());
         setModelData("hsMass", NumberFormat.getInstance().format(testMech.getWeightHeatSinks()));
-        if (mech.getGyroType() == Mech.GYRO_STANDARD) {
-            setModelData("gyroType", mech.getRawSystemName(Mech.SYSTEM_GYRO));
+        if (mech.getGyroType() == Mek.GYRO_STANDARD) {
+            setModelData("gyroType", mech.getRawSystemName(Mek.SYSTEM_GYRO));
         } else {
-            setModelData("gyroType", Mech.getGyroDisplayString(mech.getGyroType()));
+            setModelData("gyroType", Mek.getGyroDisplayString(mech.getGyroType()));
         }
         setModelData("gyroMass", NumberFormat.getInstance().format(testMech.getWeightGyro()));
-        if ((mech.getCockpitType() == Mech.COCKPIT_STANDARD) || (mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
-            setModelData("cockpitType", mech.getRawSystemName(Mech.SYSTEM_COCKPIT));
+        if ((mech.getCockpitType() == Mek.COCKPIT_STANDARD) || (mech.getCockpitType() == Mek.COCKPIT_INDUSTRIAL)) {
+            setModelData("cockpitType", mech.getRawSystemName(Mek.SYSTEM_COCKPIT));
         } else {
-            setModelData("cockpitType", Mech.getCockpitDisplayString(mech.getCockpitType()));
+            setModelData("cockpitType", Mek.getCockpitDisplayString(mech.getCockpitType()));
         }
         setModelData("cockpitMass", NumberFormat.getInstance().format(testMech.getWeightCockpit()));
         final String atName = formatArmorType(mech, true);
@@ -95,7 +95,7 @@ public class MechTROView extends TROView {
         if (mech.isOmni()) {
             addFixedOmni(mech);
         }
-        if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+        if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
             final LandAirMech lam = (LandAirMech) mech;
             final int mode = lam.getConversionMode();
             setModelData("lamConversionMass", testMech.getWeightMisc());
@@ -120,13 +120,13 @@ public class MechTROView extends TROView {
             setModelData("qvFlank", qv.getRunMPasString());
             qv.setConversionMode(mode);
         }
-        setModelData("rightArmActuators", countArmActuators(Mech.LOC_RARM));
-        setModelData("leftArmActuators", countArmActuators(Mech.LOC_LARM));
+        setModelData("rightArmActuators", countArmActuators(Mek.LOC_RARM));
+        setModelData("leftArmActuators", countArmActuators(Mek.LOC_LARM));
     }
 
     private String countArmActuators(int location) {
         final StringJoiner sj = new StringJoiner(", ");
-        for (int act = Mech.ACTUATOR_SHOULDER; act <= Mech.ACTUATOR_HAND; act++) {
+        for (int act = Mek.ACTUATOR_SHOULDER; act <= Mek.ACTUATOR_HAND; act++) {
             if (mech.hasSystem(act, location)) {
                 sj.add(mech.getRawSystemName(act));
             }
@@ -142,10 +142,10 @@ public class MechTROView extends TROView {
         setModelData("jumpCapacity", mech.getJumpMP() * 30);
     }
 
-    private static final int[][] MECH_ARMOR_LOCS = { { Mech.LOC_HEAD }, { Mech.LOC_CT }, { Mech.LOC_RT, Mech.LOC_LT },
-            { Mech.LOC_RARM, Mech.LOC_LARM }, { Mech.LOC_RLEG, Mech.LOC_CLEG, Mech.LOC_LLEG } };
+    private static final int[][] MECH_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT },
+            { Mek.LOC_RARM, Mek.LOC_LARM }, { Mek.LOC_RLEG, Mek.LOC_CLEG, Mek.LOC_LLEG } };
 
-    private static final int[][] MECH_ARMOR_LOCS_REAR = { { Mech.LOC_CT }, { Mech.LOC_RT, Mech.LOC_LT } };
+    private static final int[][] MECH_ARMOR_LOCS_REAR = { { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
@@ -168,11 +168,11 @@ public class MechTROView extends TROView {
         }
         if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
             chassisDesc += Messages.getString("TROView.chassisQuadVee");
-        } else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH)) {
+        } else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MEK)) {
             chassisDesc += Messages.getString("TROView.chassisQuad");
-        } else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH)) {
+        } else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK)) {
             chassisDesc += Messages.getString("TROView.chassisTripod");
-        } else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+        } else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
             chassisDesc += Messages.getString("TROView.chassisLAM");
         } else {
             chassisDesc += Messages.getString("TROView.chassisBiped");
@@ -182,15 +182,15 @@ public class MechTROView extends TROView {
 
     private String formatJJDesc() {
         switch (mech.getJumpType()) {
-            case Mech.JUMP_STANDARD:
+            case Mek.JUMP_STANDARD:
                 return Messages.getString("TROView.jjStandard");
-            case Mech.JUMP_IMPROVED:
+            case Mek.JUMP_IMPROVED:
                 return Messages.getString("TROView.jjImproved");
-            case Mech.JUMP_PROTOTYPE:
+            case Mek.JUMP_PROTOTYPE:
                 return Messages.getString("TROView.jjPrototype");
-            case Mech.JUMP_PROTOTYPE_IMPROVED:
+            case Mek.JUMP_PROTOTYPE_IMPROVED:
                 return Messages.getString("TROView.jjImpPrototype");
-            case Mech.JUMP_BOOSTER:
+            case Mek.JUMP_BOOSTER:
                 return Messages.getString("TROView.jjBooster");
             default:
                 return Messages.getString("TROView.jjNone");
@@ -199,21 +199,21 @@ public class MechTROView extends TROView {
 
     @Override
     protected boolean showFixedSystem(Entity entity, int index, int loc) {
-        return ((index != Mech.SYSTEM_COCKPIT) || (loc != Mech.LOC_HEAD))
-                && ((index != Mech.SYSTEM_SENSORS) || (loc != Mech.LOC_HEAD))
-                && ((index != Mech.SYSTEM_LIFE_SUPPORT) || (loc != Mech.LOC_HEAD))
-                && ((index != Mech.SYSTEM_ENGINE) || (loc != Mech.LOC_CT)) && (index != Mech.SYSTEM_GYRO)
-                && (index != Mech.ACTUATOR_SHOULDER) && (index != Mech.ACTUATOR_UPPER_ARM)
-                && (index != Mech.ACTUATOR_LOWER_ARM) && (index != Mech.ACTUATOR_HAND) && (index != Mech.ACTUATOR_HIP)
-                && (index != Mech.ACTUATOR_UPPER_LEG) && (index != Mech.ACTUATOR_LOWER_LEG)
-                && (index != Mech.ACTUATOR_FOOT);
+        return ((index != Mek.SYSTEM_COCKPIT) || (loc != Mek.LOC_HEAD))
+                && ((index != Mek.SYSTEM_SENSORS) || (loc != Mek.LOC_HEAD))
+                && ((index != Mek.SYSTEM_LIFE_SUPPORT) || (loc != Mek.LOC_HEAD))
+                && ((index != Mek.SYSTEM_ENGINE) || (loc != Mek.LOC_CT)) && (index != Mek.SYSTEM_GYRO)
+                && (index != Mek.ACTUATOR_SHOULDER) && (index != Mek.ACTUATOR_UPPER_ARM)
+                && (index != Mek.ACTUATOR_LOWER_ARM) && (index != Mek.ACTUATOR_HAND) && (index != Mek.ACTUATOR_HIP)
+                && (index != Mek.ACTUATOR_UPPER_LEG) && (index != Mek.ACTUATOR_LOWER_LEG)
+                && (index != Mek.ACTUATOR_FOOT);
     }
 
     @Override
     protected String getSystemName(Entity entity, int index) {
         // Here we're only concerned with engines that take extra critical slots in the
         // side torso
-        if (index == Mech.SYSTEM_ENGINE) {
+        if (index == Mek.SYSTEM_ENGINE) {
             final StringBuilder sb = new StringBuilder();
             if (entity.getEngine().hasFlag(Engine.LARGE_ENGINE)) {
                 sb.append("Large ");
@@ -232,7 +232,7 @@ public class MechTROView extends TROView {
             sb.append(" Engine");
             return sb.toString();
         } else {
-            return ((Mech) entity).getRawSystemName(index);
+            return ((Mek) entity).getRawSystemName(index);
         }
     }
 

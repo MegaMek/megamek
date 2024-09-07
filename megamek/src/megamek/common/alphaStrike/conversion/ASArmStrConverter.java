@@ -155,7 +155,7 @@ final class ASArmStrConverter {
         report.addSubHeader("Structure:");
 
         int structure;
-        if (entity instanceof Mech) {
+        if (entity instanceof Mek) {
             structure = AS_MECH_STRUCTURE[getEngineIndex(conversionData)][getWeightIndex(entity)];
             report.addLine("Structure ", "", "" + structure);
             if (entity.getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE) {

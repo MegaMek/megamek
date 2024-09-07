@@ -19,13 +19,27 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
-import megamek.MMConstants;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.table.MegamekTable;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
-import megamek.common.options.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -34,11 +48,18 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.table.MegamekTable;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.*;
+import megamek.common.equipment.ArmorType;
+import megamek.common.options.AbstractOptions;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 
 /**
  * Panel that allows the user to create a unit filter.
@@ -603,7 +624,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadYesNo(cPatchwork);
 
         loadTriStateItem(ArmorType.getAllArmorCodeName(), listArmorType, 5);
-        loadTriStateItem(Mech.getAllCockpitCodeName(), listCockpitType, 7);
+        loadTriStateItem(Mek.getAllCockpitCodeName(), listCockpitType, 7);
         loadTriStateItem(EquipmentType.getAllStructureCodeName(), listInternalsType, 7);
         loadTriStateItem(Engine.getAllEngineCodeName(), listEngineType, 5);
         loadTriStateItem(Entity.getAllGyroCodeName(), listGyroType, 7);

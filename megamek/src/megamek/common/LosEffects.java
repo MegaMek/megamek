@@ -483,14 +483,14 @@ public class LosEffects {
         final int targetHeightAdjustment = game.hasRooftopGunEmplacement(targetHex.getCoords()) ? 1 : 0;
 
         final AttackInfo ai = new AttackInfo();
-        ai.attackerIsMech = attacker instanceof Mech;
+        ai.attackerIsMech = attacker instanceof Mek;
         ai.attackPos = attackerPosition;
         ai.attackerId = attacker.getId();
         ai.targetPos = targetPosition;
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         if (ai.targetEntity) {
             ai.targetId = ((Entity) target).getId();
-            ai.targetIsMech = target instanceof Mech;
+            ai.targetIsMech = target instanceof Mek;
         } else {
             ai.targetIsMech = false;
         }
@@ -1857,4 +1857,3 @@ public class LosEffects {
         return infProtected;
     }
 }
-

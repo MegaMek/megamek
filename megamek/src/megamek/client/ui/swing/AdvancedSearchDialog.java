@@ -208,8 +208,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         DefaultListModel dlmc  = new DefaultListModel();
 
-        for (int i = 0; i < Mech.COCKPIT_STRING.length; i++) {
-            dlmc.addElement("\u2610 " + Mech.COCKPIT_STRING[i]);
+        for (int i = 0; i < Mek.COCKPIT_STRING.length; i++) {
+            dlmc.addElement("\u2610 " + Mek.COCKPIT_STRING[i]);
         }
 
         listCockpitType.setModel(dlmc);

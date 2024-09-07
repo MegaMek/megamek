@@ -86,7 +86,7 @@ public class MiscMounted extends Mounted<MiscType> {
         // Shields can only be used in arms so if you've got a shield in a
         // location
         // other than an arm your SOL --Torren.
-        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
+        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
             return 0;
         }
 
@@ -112,17 +112,17 @@ public class MiscMounted extends Mounted<MiscType> {
             }
         }
 
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, location)) {
             base -= 2;
         }
 
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
             base--;
         }
 
@@ -143,7 +143,7 @@ public class MiscMounted extends Mounted<MiscType> {
         // Shields can only be used in arms so if you've got a shield in a
         // location
         // other than an arm your SOL --Torren.
-        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
+        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
             return 0;
         }
 
@@ -168,17 +168,17 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, location)) {
             base -= 2;
         }
 
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, location)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
             base--;
         }
 

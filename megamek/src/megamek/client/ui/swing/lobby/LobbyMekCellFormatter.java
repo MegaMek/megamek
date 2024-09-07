@@ -100,7 +100,7 @@ class LobbyMekCellFormatter {
                 result.append(entity.getWeightClassName());
             } else if (entity.isFighter()) {
                 result.append(entity.getWeightClassName() + Messages.getString("ChatLounge.4"));
-            } else if (entity instanceof Mech) {
+            } else if (entity instanceof Mek) {
                 result.append(entity.getWeightClassName() + Messages.getString("ChatLounge.3"));
             } else if (entity instanceof Tank) {
                 result.append(entity.getWeightClassName() + Messages.getString("ChatLounge.6"));
@@ -458,8 +458,8 @@ class LobbyMekCellFormatter {
 
         // Auto Eject
         String msg_autoejectdisabled = Messages.getString("ChatLounge.AutoEjectDisabled");
-        if (entity instanceof Mech) {
-            Mech mech = ((Mech) entity);
+        if (entity instanceof Mek) {
+            Mek mech = ((Mek) entity);
             if ((mech.hasEjectSeat()) && (!mech.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiYellow()));
@@ -515,7 +515,7 @@ class LobbyMekCellFormatter {
                 uType = entity.getWeightClassName();
             } else if (entity.isFighter()) {
                 uType = entity.getWeightClassName() + Messages.getString("ChatLounge.4");
-            } else if (entity instanceof Mech) {
+            } else if (entity instanceof Mek) {
                 uType = entity.getWeightClassName() + Messages.getString("ChatLounge.3");
             } else if (entity instanceof Tank) {
                 uType = entity.getWeightClassName() + Messages.getString("ChatLounge.6");
@@ -762,8 +762,8 @@ class LobbyMekCellFormatter {
         }
 
         // Auto Eject
-        if (entity instanceof Mech) {
-            Mech mech = ((Mech) entity);
+        if (entity instanceof Mek) {
+            Mek mech = ((Mek) entity);
             if ((mech.hasEjectSeat()) && (!mech.isAutoEject())) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()));
                 result.append(guiScaledFontHTML(uiYellow()));

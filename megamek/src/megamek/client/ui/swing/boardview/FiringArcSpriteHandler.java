@@ -76,7 +76,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             clearValues();
             return;
         }
-        // findRanges must be called before any call to testUnderWater due to usage of 
+        // findRanges must be called before any call to testUnderWater due to usage of
         // global-style variables for some reason
         findRanges(weapon);
         if (movePath != null) {
@@ -90,7 +90,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         }
         firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getPosition();
         arc = firingEntity.getWeaponArc(weaponId);
-        
+
         renewSprites();
     }
 
@@ -295,7 +295,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 facing = firingEntity.getSecondaryFacing();
             }
             // If this is mech with turrets, check to see if the weapon is on a turret.
-            if ((firingEntity instanceof Mech) && (weapon.isMechTurretMounted())) {
+            if ((firingEntity instanceof Mek) && (weapon.isMechTurretMounted())) {
                 // facing is currently adjusted for mek torso twist and facing, adjust for turret facing.
                 facing = (weapon.getFacing() + facing) % 6;
             }
@@ -468,7 +468,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         int location = clientGUI.getDisplayedWeapon().get().getLocation();
         Hex hex = game.getBoard().getHex(position);
         int waterDepth = hex.terrainLevel(Terrains.WATER);
-        
+
         // if this is a ship/sub on the surface and we have a weapon that only has water
         // ranges, consider it an underwater weapon for the purposes of displaying range brackets
         if (waterDepth > 0 && firingEntity.isSurfaceNaval() &&
@@ -477,7 +477,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         }
 
         if ((waterDepth > 0) && allowSubmerge && (unitElevation < 0)) {
-            if ((firingEntity instanceof Mech) && !firingEntity.isProne() && (waterDepth == 1)) {
+            if ((firingEntity instanceof Mek) && !firingEntity.isProne() && (waterDepth == 1)) {
                 return firingEntity.locationIsLeg(location);
             } else {
                 return true;

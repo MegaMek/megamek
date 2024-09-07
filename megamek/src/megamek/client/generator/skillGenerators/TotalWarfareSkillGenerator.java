@@ -18,13 +18,14 @@
  */
 package megamek.client.generator.skillGenerators;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Tank;
 import megamek.common.enums.SkillLevel;
-import org.apache.logging.log4j.LogManager;
 
 public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     //region Variable Declarations
@@ -107,7 +108,7 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     protected int determineBonus(final Entity entity, final boolean clanPilot,
                                  final boolean forceClan) {
         if (getType().isClan() || (forceClan && clanPilot)) {
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 return 2;
             } else if (entity instanceof Tank) {
                 return -2;

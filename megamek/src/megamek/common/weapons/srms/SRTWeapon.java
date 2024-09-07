@@ -46,10 +46,10 @@ public abstract class SRTWeapon extends MissileWeapon {
         ammoType = AmmoType.T_SRM_TORPEDO;
         flags = flags.or(F_ARTEMIS_COMPATIBLE);
     }
-    
+
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.25;
         } else {
             return super.getTonnage(entity, location, size);
@@ -61,7 +61,7 @@ public abstract class SRTWeapon extends MissileWeapon {
             WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new SRMHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (range >= AlphaStrikeElement.LONG_RANGE) {
@@ -101,12 +101,12 @@ public abstract class SRTWeapon extends MissileWeapon {
             }
         }
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, int baSquadSize) {
         return super.getBattleForceDamage(range, baSquadSize) * 2;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_TORP;

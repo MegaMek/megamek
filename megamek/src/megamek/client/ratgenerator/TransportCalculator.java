@@ -64,9 +64,9 @@ public class TransportCalculator {
         List<Entity> allUnits = new ArrayList<>();
         fd.addAllEntities(allUnits);
         for (Entity en : allUnits) {
-            if (en.hasETypeFlag(Entity.ETYPE_MECH)) {
+            if (en.hasETypeFlag(Entity.ETYPE_MEK)) {
                 unitCounts.merge(UnitType.MEK, 1, Integer::sum);
-            } else if (en.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            } else if (en.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 unitCounts.merge(UnitType.PROTOMEK, 1, Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_TANK)) {
                 if (en.getWeight() > 100) {

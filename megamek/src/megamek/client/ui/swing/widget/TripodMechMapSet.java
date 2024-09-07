@@ -15,19 +15,25 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
 
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for
@@ -41,7 +47,7 @@ public class TripodMechMapSet implements DisplayMapSet {
     private static final int INT_STRUCTURE_OFFSET = 12;
 
     private UnitDisplay unitDisplay;
-    
+
     // Array of polygonal areas - parts of mech body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[21];
     // Array of fixed labels - short names of body parts
@@ -180,7 +186,7 @@ public class TripodMechMapSet implements DisplayMapSet {
 
     @Override
     public void setEntity(Entity e) {
-        Mech m = (Mech) e;
+        Mek m = (Mek) e;
         boolean mtHeat = false;
         if ((e.getGame() != null)
                 && e.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
@@ -225,39 +231,39 @@ public class TripodMechMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Mech.LOC_HEAD);
-        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay, Mech.LOC_CT);
-        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay, Mech.LOC_RT);
-        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay, Mech.LOC_LT);
-        areas[Mech.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, Mech.LOC_RARM);
-        areas[Mech.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, Mech.LOC_LARM);
-        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay, Mech.LOC_RLEG);
-        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay, Mech.LOC_LLEG);
-        areas[Mech.LOC_CLEG] = new PMSimplePolygonArea(centerLeg, unitDisplay, Mech.LOC_CLEG);
-        areas[REAR_AREA_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
-                rearCentralTorso, unitDisplay, Mech.LOC_CT);
-        areas[REAR_AREA_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
-                rearRightTorso, unitDisplay, Mech.LOC_RT);
-        areas[REAR_AREA_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(
-                rearLeftTorso, unitDisplay, Mech.LOC_LT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = new PMSimplePolygonArea(
-                intStHead, unitDisplay, Mech.LOC_HEAD);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
-                inStCentralTorso, unitDisplay, Mech.LOC_CT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
-                inStRightTorso, unitDisplay, Mech.LOC_RT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(
-                inStLeftTorso, unitDisplay, Mech.LOC_LT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = new PMSimplePolygonArea(
-                inStRightArm, unitDisplay, Mech.LOC_RARM);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = new PMSimplePolygonArea(
-                inStLeftArm, unitDisplay, Mech.LOC_LARM);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = new PMSimplePolygonArea(
-                inStRightLeg, unitDisplay, Mech.LOC_RLEG);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = new PMSimplePolygonArea(
-                inStLeftLeg, unitDisplay, Mech.LOC_LLEG);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_CLEG] = new PMSimplePolygonArea(
-                inStCenterLeg, unitDisplay, Mech.LOC_CLEG);
+        areas[Mek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Mek.LOC_HEAD);
+        areas[Mek.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay, Mek.LOC_CT);
+        areas[Mek.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay, Mek.LOC_RT);
+        areas[Mek.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay, Mek.LOC_LT);
+        areas[Mek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, Mek.LOC_RARM);
+        areas[Mek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, Mek.LOC_LARM);
+        areas[Mek.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay, Mek.LOC_RLEG);
+        areas[Mek.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay, Mek.LOC_LLEG);
+        areas[Mek.LOC_CLEG] = new PMSimplePolygonArea(centerLeg, unitDisplay, Mek.LOC_CLEG);
+        areas[REAR_AREA_OFFSET + Mek.LOC_CT] = new PMSimplePolygonArea(
+                rearCentralTorso, unitDisplay, Mek.LOC_CT);
+        areas[REAR_AREA_OFFSET + Mek.LOC_RT] = new PMSimplePolygonArea(
+                rearRightTorso, unitDisplay, Mek.LOC_RT);
+        areas[REAR_AREA_OFFSET + Mek.LOC_LT] = new PMSimplePolygonArea(
+                rearLeftTorso, unitDisplay, Mek.LOC_LT);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = new PMSimplePolygonArea(
+                intStHead, unitDisplay, Mek.LOC_HEAD);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_CT] = new PMSimplePolygonArea(
+                inStCentralTorso, unitDisplay, Mek.LOC_CT);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_RT] = new PMSimplePolygonArea(
+                inStRightTorso, unitDisplay, Mek.LOC_RT);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_LT] = new PMSimplePolygonArea(
+                inStLeftTorso, unitDisplay, Mek.LOC_LT);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_RARM] = new PMSimplePolygonArea(
+                inStRightArm, unitDisplay, Mek.LOC_RARM);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_LARM] = new PMSimplePolygonArea(
+                inStLeftArm, unitDisplay, Mek.LOC_LARM);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_RLEG] = new PMSimplePolygonArea(
+                inStRightLeg, unitDisplay, Mek.LOC_RLEG);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_LLEG] = new PMSimplePolygonArea(
+                inStLeftLeg, unitDisplay, Mek.LOC_LLEG);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_CLEG] = new PMSimplePolygonArea(
+                inStCenterLeg, unitDisplay, Mek.LOC_CLEG);
         heatImage = comp.createImage(10, 120);
         drawHeatControl(0);
         heatHotArea = new PMPicPolygonalArea(heatControl, heatImage);
@@ -267,49 +273,49 @@ public class TripodMechMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[Mech.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_H"),
+        labels[Mek.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_H"),
                 fm, Color.black, 62, 6);
-        labels[Mech.LOC_LARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LA"),
+        labels[Mek.LOC_LARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LA"),
                 fm, Color.black, 14, 59);
-        labels[Mech.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
+        labels[Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
                 fm, Color.black, 41, 52);
-        labels[Mech.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CT"),
+        labels[Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CT"),
                 fm, Color.black, 62, 42);
-        labels[Mech.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
+        labels[Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
                 fm, Color.black, 84, 52);
-        labels[Mech.LOC_RARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RA"),
+        labels[Mek.LOC_RARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RA"),
                 fm, Color.black, 109, 59);
-        labels[Mech.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LL"),
+        labels[Mek.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LL"),
                 fm, Color.black, 36, 92);
-        labels[Mech.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RL"),
+        labels[Mek.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RL"),
                 fm, Color.black, 90, 92);
-        labels[Mech.LOC_CLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CL"),
+        labels[Mek.LOC_CLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CL"),
                 fm, Color.black, 62, 94);
         // Labels for Back view
-        labels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils.createLabel(
+        labels[REAR_AREA_OFFSET + Mek.LOC_LT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_LT"), fm, Color.black, 133, 39);
-        labels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils.createLabel(
+        labels[REAR_AREA_OFFSET + Mek.LOC_CT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_CT"), fm, Color.black, 156, 25);
-        labels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils.createLabel(
+        labels[REAR_AREA_OFFSET + Mek.LOC_RT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_RT"), fm, Color.black, 178, 39);
         // Labels for Internal Structure
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_H"), fm, Color.black, 63, 130);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LARM] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_LA"), fm, Color.black, 14, 174);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_LT"), fm, Color.black, 42, 166);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_CT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.L_CT"), fm, Color.black, 63, 168);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_RT"), fm, Color.black, 85, 166);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RARM] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.L_RA"), fm, Color.black, 111, 174);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LLEG] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_LL"), fm, Color.black, 33, 210);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RLEG] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_RL"), fm, Color.black, 93, 210);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_CLEG] = WidgetUtils.createLabel(
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_CLEG] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_CL"), fm, Color.black, 62, 210);
         labels[21] = WidgetUtils.createLabel(Messages.getString("MechMapSet.BARRating"),
                 fm, Color.white, 65, 343);
@@ -317,31 +323,31 @@ public class TripodMechMapSet implements DisplayMapSet {
         // Value labels for all parts of mek
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[Mech.LOC_HEAD] = WidgetUtils.createValueLabel(62, 22, "", fm);
-        vLabels[Mech.LOC_LARM] = WidgetUtils.createValueLabel(13, 72, "", fm);
-        vLabels[Mech.LOC_LT] = WidgetUtils.createValueLabel(38, 44, "", fm);
-        vLabels[Mech.LOC_CT] = WidgetUtils.createValueLabel(62, 57, "", fm);
-        vLabels[Mech.LOC_RT] = WidgetUtils.createValueLabel(86, 44, "", fm);
-        vLabels[Mech.LOC_RARM] = WidgetUtils.createValueLabel(112, 72, "", fm);
-        vLabels[Mech.LOC_LLEG] = WidgetUtils.createValueLabel(31, 113, "", fm);
-        vLabels[Mech.LOC_RLEG] = WidgetUtils.createValueLabel(94, 113, "", fm);
-        vLabels[Mech.LOC_CLEG] = WidgetUtils.createValueLabel(62, 113, "", fm);
+        vLabels[Mek.LOC_HEAD] = WidgetUtils.createValueLabel(62, 22, "", fm);
+        vLabels[Mek.LOC_LARM] = WidgetUtils.createValueLabel(13, 72, "", fm);
+        vLabels[Mek.LOC_LT] = WidgetUtils.createValueLabel(38, 44, "", fm);
+        vLabels[Mek.LOC_CT] = WidgetUtils.createValueLabel(62, 57, "", fm);
+        vLabels[Mek.LOC_RT] = WidgetUtils.createValueLabel(86, 44, "", fm);
+        vLabels[Mek.LOC_RARM] = WidgetUtils.createValueLabel(112, 72, "", fm);
+        vLabels[Mek.LOC_LLEG] = WidgetUtils.createValueLabel(31, 113, "", fm);
+        vLabels[Mek.LOC_RLEG] = WidgetUtils.createValueLabel(94, 113, "", fm);
+        vLabels[Mek.LOC_CLEG] = WidgetUtils.createValueLabel(62, 113, "", fm);
 
         // back
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils.createValueLabel(132, 28, "", fm);
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils.createValueLabel(156, 39, "", fm);
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils.createValueLabel(177, 28, "", fm);
+        vLabels[REAR_AREA_OFFSET + Mek.LOC_LT] = WidgetUtils.createValueLabel(132, 28, "", fm);
+        vLabels[REAR_AREA_OFFSET + Mek.LOC_CT] = WidgetUtils.createValueLabel(156, 39, "", fm);
+        vLabels[REAR_AREA_OFFSET + Mek.LOC_RT] = WidgetUtils.createValueLabel(177, 28, "", fm);
 
         // Internal structure
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils.createValueLabel(63, 142, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = WidgetUtils.createValueLabel(15, 187, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils.createValueLabel(42, 180, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils.createValueLabel(63, 182, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils.createValueLabel(85, 180, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = WidgetUtils.createValueLabel(111, 187, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils.createValueLabel(33, 223, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils.createValueLabel(92, 223, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CLEG] = WidgetUtils.createValueLabel(62, 223, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = WidgetUtils.createValueLabel(63, 142, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_LARM] = WidgetUtils.createValueLabel(15, 187, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_LT] = WidgetUtils.createValueLabel(42, 180, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_CT] = WidgetUtils.createValueLabel(63, 182, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_RT] = WidgetUtils.createValueLabel(85, 180, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_RARM] = WidgetUtils.createValueLabel(111, 187, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_LLEG] = WidgetUtils.createValueLabel(33, 223, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_RLEG] = WidgetUtils.createValueLabel(92, 223, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mek.LOC_CLEG] = WidgetUtils.createValueLabel(62, 223, "", fm);
         // heat
         vLabels[21] = WidgetUtils.createValueLabel(155, 90, "", fm);
         // BAR rating

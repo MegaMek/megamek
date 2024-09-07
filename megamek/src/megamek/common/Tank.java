@@ -13,6 +13,14 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CombatVehicleCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -23,9 +31,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
 
 /**
  * You know what tanks are, silly.
@@ -285,11 +290,11 @@ public class Tank extends Entity {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
-        
+
         if (engineHit || isImmobile()) {
             return 0;
         }
-        
+
         if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
             mp = (int) Math.round(mp * 1.25);
         }
@@ -2249,7 +2254,7 @@ public class Tank extends Entity {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_BODY); slot++) {
             CriticalSlot cs = getCritical(LOC_BODY, slot);
             if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                    && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
+                    && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }

@@ -41,7 +41,7 @@ public class ASLocationMapper {
             }
         } else if ((en instanceof TripodMech) || (en instanceof QuadVee)) {
             return 3;
-        } else if (en instanceof Mech) {
+        } else if (en instanceof Mek) {
             return (en.hasMisc(F_QUAD_TURRET) || en.hasMisc(F_SHOULDER_TURRET) || en.hasMisc(F_HEAD_TURRET)) ? 3 : 2;
         } else if (en instanceof Aero) {
             return 2;
@@ -55,7 +55,7 @@ public class ASLocationMapper {
     }
 
     public static double damageLocationMultiplier(Entity en, int loc, Mounted mount) {
-        if (locationName(en, loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
+        if (locationName(en, loc).startsWith("TUR") && (en instanceof Mek) && mount.isMechTurretMounted()) {
             return 1;
         } else if (en instanceof Warship) {
             return getWarShipLocationMultiplier(loc, mount.getLocation());
@@ -84,7 +84,7 @@ public class ASLocationMapper {
             return getTripodMekLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof QuadVee) {
             return getQuadVeeLocationMultiplier(loc, mount.isRearMounted());
-        } else if (en instanceof Mech) {
+        } else if (en instanceof Mek) {
             return getMekLocationMultiplier(loc, mount.isRearMounted());
         } else {
             return 1;
@@ -149,7 +149,7 @@ public class ASLocationMapper {
                 return "";
             }
             return en.getLocationAbbrs()[index];
-        } else if ((en instanceof Mech) || (en instanceof Tank)) {
+        } else if ((en instanceof Mek) || (en instanceof Tank)) {
             if (index == 1) {
                 return "REAR";
             } else if (index == 2) {

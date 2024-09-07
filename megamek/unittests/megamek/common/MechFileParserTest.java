@@ -28,14 +28,14 @@ public class MechFileParserTest {
 
     @Test
     public void splitMGsBetweenMGAs() throws LocationFullException {
-        Mech mech = new BipedMech();
-        WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
-        WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
+        Mek mech = new BipedMech();
+        WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
 
         MechFileParser.linkMGAs(mech);
 
@@ -45,13 +45,13 @@ public class MechFileParserTest {
 
     @Test
     public void loadMGAsFromContiguousBlocks() throws LocationFullException {
-        Mech mech = new BipedMech();
-        WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISLMGA"), Mech.LOC_LT);
-        WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISLightMG"), Mech.LOC_LT);
-        mech.addEquipment(EquipmentType.get("ISLightMG"), Mech.LOC_LT);
-        WeaponMounted lastMG = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
+        Mek mech = new BipedMech();
+        WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISLMGA"), Mek.LOC_LT);
+        WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISLightMG"), Mek.LOC_LT);
+        mech.addEquipment(EquipmentType.get("ISLightMG"), Mek.LOC_LT);
+        WeaponMounted lastMG = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
 
         MechFileParser.linkMGAs(mech);
 

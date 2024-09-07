@@ -236,7 +236,7 @@ public class MechTileset {
                 default:
                     return default_lam_mech;
             }
-        } else if (entity instanceof Mech) {
+        } else if (entity instanceof Mek) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
                 return default_quad;
             } else {

@@ -409,7 +409,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 // Need to clear attacks again in case previous en was making VTOL ground attack
                 clearAttacks();
                 int lastTarget = ce().getLastTarget();
-                if (ce() instanceof Mech) {
+                if (ce() instanceof Mek) {
                     int grapple = ce().getGrappled();
                     if (grapple != Entity.NONE) {
                         lastTarget = grapple;
@@ -1159,7 +1159,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
         if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)
-                && (ce() instanceof Mech) || (ce() instanceof Tank)
+                && (ce() instanceof Mek) || (ce() instanceof Tank)
                 || (ce() instanceof Protomech)) {
             EntityAction lastAction = null;
             try {

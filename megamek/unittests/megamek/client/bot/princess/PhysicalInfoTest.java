@@ -18,13 +18,30 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.*;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.PunchAttackAction;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import megamek.common.BipedMech;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Mek;
+import megamek.common.QuadMech;
+import megamek.common.Tank;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.PunchAttackAction;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -54,7 +71,7 @@ public class PhysicalInfoTest {
 
         EntityState mockShooterState = mock(EntityState.class);
 
-        Mech mockTarget = mock(BipedMech.class);
+        Mek mockTarget = mock(BipedMech.class);
         when(mockTarget.isLocationBad(anyInt())).thenReturn(false);
         when(mockTarget.getArmor(anyInt(), eq(false))).thenReturn(10);
         when(mockTarget.getArmor(anyInt(), eq(true))).thenReturn(5);

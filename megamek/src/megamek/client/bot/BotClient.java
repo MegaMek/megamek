@@ -780,7 +780,7 @@ public abstract class BotClient extends Client {
             coord.fitness += (total_damage / 10);
 
             // Mech
-            if (deployed_ent.hasETypeFlag(Entity.ETYPE_MECH)) {
+            if (deployed_ent.hasETypeFlag(Entity.ETYPE_MEK)) {
                 // -> Trees are good, when they're tall enough
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)

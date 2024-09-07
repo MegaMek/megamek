@@ -18,7 +18,7 @@ import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
 import megamek.common.options.OptionsConstants;
@@ -79,10 +79,10 @@ public class FindClubAction extends AbstractEntityAction {
 
         // also, need shoulders and hands
         // Claws can substitute as hands --Torren
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-                || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity).hasClaw(Mech.LOC_RARM))
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((Mech) entity).hasClaw(Mech.LOC_LARM))) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
+                || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)
+                || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && !((Mek) entity).hasClaw(Mek.LOC_RARM))
+                || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && !((Mek) entity).hasClaw(Mek.LOC_LARM))) {
             return false;
         }
 

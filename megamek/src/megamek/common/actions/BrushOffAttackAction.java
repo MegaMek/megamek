@@ -19,7 +19,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.Infantry;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
@@ -110,12 +110,12 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             te = (Entity) target;
             targetId = target.getId();
         }
-        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mech.LOC_RARM
-                                                               : Mech.LOC_LARM;
+        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RARM
+                                                               : Mek.LOC_LARM;
         ToHitData toHit;
 
         // non-mechs can't BrushOff
-        if (!(ae instanceof Mech)) {
+        if (!(ae instanceof Mek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Only mechs can brush off swarming infantry or iNarc Pods");
         }
@@ -153,7 +153,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
 
         // check if shoulder is functional
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, armLoc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder destroyed");
         }
 
@@ -189,10 +189,10 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         toHit.addModifier(4, "brush off swarming infantry");
 
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, armLoc)) {
             toHit.addModifier(2, "Upper arm actuator destroyed");
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
 
@@ -205,11 +205,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // Rules state +1 bth with claws and if claws are critted then you get
         // the normal +1 bth for missing hand actuator.
         // Damn if you do damned if you dont. --Torren.
-        final boolean hasClaws = ((Mech) ae).hasClaw(armLoc);
+        final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
         final boolean hasLowerArmActuator =
-                ae.hasSystem(Mech.ACTUATOR_LOWER_ARM, armLoc);
+                ae.hasSystem(Mek.ACTUATOR_LOWER_ARM, armLoc);
         final boolean hasHandActuator =
-                ae.hasSystem(Mech.ACTUATOR_HAND, armLoc);
+                ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
         // Missing hand actuator is not cumulative with missing actuator,
         //  but critical damage is cumulative
         if (!hasClaws && !hasHandActuator &&
@@ -217,7 +217,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "Hand actuator missing");
             // Check for present but damaged hand actuator
         } else if (hasHandActuator && !hasClaws &&
-                   !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
+                   !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator destroyed");
         } else if (hasClaws) {
             toHit.addModifier(1, "Using Claws");
@@ -226,11 +226,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+                                                Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                 Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                                                 Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");

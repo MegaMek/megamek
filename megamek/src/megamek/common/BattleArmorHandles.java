@@ -89,7 +89,7 @@ class BattleArmorHandles implements Transporter {
     public void resetTransporter() {
         carriedUnit = Entity.NONE;
     }
-    
+
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         Entity carriedBA = game.getEntity(carriedUnit);
@@ -98,13 +98,13 @@ class BattleArmorHandles implements Transporter {
         } else {
             int tloc = BattleArmor.LOC_SQUAD;
             switch (loc) {
-                case Mech.LOC_CT:
+                case Mek.LOC_CT:
                     tloc = isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
                     break;
-                case Mech.LOC_LT:
+                case Mek.LOC_LT:
                     tloc = isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
                     break;
-                case Mech.LOC_RT:
+                case Mek.LOC_RT:
                     tloc = isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                     break;
             }
@@ -126,7 +126,7 @@ class BattleArmorHandles implements Transporter {
     public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
-    
+
     @Override
     public String toString() {
         return "BattleArmorHandles - troopers:" + carriedUnit;

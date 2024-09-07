@@ -47,11 +47,11 @@ class AimedShotHandler implements ActionListener, ItemListener {
             } else {
                 return;
             }
-            if (this.firingDisplay.target instanceof Mech) {
+            if (this.firingDisplay.target instanceof Mek) {
                 if (aimingMode.isImmobile()) {
-                    aimingAt = Mech.LOC_HEAD;
+                    aimingAt = Mek.LOC_HEAD;
                 } else if (aimingMode.isTargetingComputer()) {
-                    aimingAt = Mech.LOC_CT;
+                    aimingAt = Mek.LOC_CT;
                 }
             } else if (this.firingDisplay.target instanceof Tank) {
                 int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.target);
@@ -226,44 +226,44 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
         // remove locations hidden by partial cover
         if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
-            mask[Mech.LOC_LLEG] = false;
-            mask[Mech.LOC_RLEG] = false;
+            mask[Mek.LOC_LLEG] = false;
+            mask[Mek.LOC_RLEG] = false;
         }
         if (side == ToHitData.SIDE_FRONT) {
             if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                mask[Mech.LOC_RLEG] = false;
+                mask[Mek.LOC_RLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                mask[Mech.LOC_LLEG] = false;
+                mask[Mek.LOC_LLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mech.LOC_RARM] = false;
-                mask[Mech.LOC_RT] = false;
+                mask[Mek.LOC_RARM] = false;
+                mask[Mek.LOC_RT] = false;
             }
             if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mech.LOC_LARM] = false;
-                mask[Mech.LOC_LT] = false;
+                mask[Mek.LOC_LARM] = false;
+                mask[Mek.LOC_LT] = false;
             }
         } else {
             if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                mask[Mech.LOC_LLEG] = false;
+                mask[Mek.LOC_LLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                mask[Mech.LOC_RLEG] = false;
+                mask[Mek.LOC_RLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mech.LOC_LARM] = false;
-                mask[Mech.LOC_LT] = false;
+                mask[Mek.LOC_LARM] = false;
+                mask[Mek.LOC_LT] = false;
             }
             if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mech.LOC_RARM] = false;
-                mask[Mech.LOC_RT] = false;
+                mask[Mek.LOC_RARM] = false;
+                mask[Mek.LOC_RT] = false;
             }
         }
 
         if (aimingMode.isTargetingComputer()) {
             // Can't target head with targeting computer.
-            mask[Mech.LOC_HEAD] = false;
+            mask[Mek.LOC_HEAD] = false;
         }
         return mask;
     }
@@ -326,7 +326,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
         // TC against a mech
         allowAim = ((this.firingDisplay.target != null) && (this.firingDisplay.ce() != null)
-                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.target instanceof Mech)
+                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.target instanceof Mek)
                 || (this.firingDisplay.target instanceof Tank)
                 || (this.firingDisplay.target instanceof BattleArmor) || (this.firingDisplay.target instanceof Protomech)));
         if (allowAim) {
@@ -336,7 +336,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
         // immobile mech or gun emplacement
         allowAim = ((this.firingDisplay.target != null)
                 && ((this.firingDisplay.target.isImmobile()
-                && ((this.firingDisplay.target instanceof Mech)
+                && ((this.firingDisplay.target instanceof Mek)
                 || (this.firingDisplay.target instanceof Tank)))
                 || (this.firingDisplay.target instanceof GunEmplacement)));
         if (allowAim) {

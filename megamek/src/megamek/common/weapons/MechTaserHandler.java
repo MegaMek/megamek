@@ -39,7 +39,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -72,8 +72,8 @@ public class MechTaserHandler extends AmmoWeaponHandler {
                         "all troopers eliminated", false));
             }
             done = true;
-        } else if (entityTarget instanceof Mech) {
-            if (((Mech) entityTarget).isIndustrial()) {
+        } else if (entityTarget instanceof Mek) {
+            if (((Mek) entityTarget).isIndustrial()) {
                 if (diceRoll.getIntValue() >= 8) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);

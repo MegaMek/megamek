@@ -161,9 +161,9 @@ public class NarcHandler extends MissileWeaponHandler {
 
         // If our narc pod "hits" an already-missing head, reroll until we hit
         // somewhere else as per the errata for torso-mounted cockpits.
-        if (entityTarget instanceof Mech
-            && !narcCanAttachTo(entityTarget, Mech.LOC_HEAD)) {
-            while (hit.getLocation() == Mech.LOC_HEAD) {
+        if (entityTarget instanceof Mek
+            && !narcCanAttachTo(entityTarget, Mek.LOC_HEAD)) {
+            while (hit.getLocation() == Mek.LOC_HEAD) {
                 hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                 toHit.getSideTable(), waa.getAimedLocation(),
                 waa.getAimingMode(), toHit.getCover());
@@ -193,9 +193,9 @@ public class NarcHandler extends MissileWeaponHandler {
 
         // If the pod would attach to a destroyed location, have it transfer
         // inwards.
-        if (entityTarget instanceof Mech) {
+        if (entityTarget instanceof Mek) {
             while (!narcCanAttachTo(entityTarget, hit.getLocation())
-                && (hit.getLocation() != Mech.LOC_CT)) {
+                && (hit.getLocation() != Mek.LOC_CT)) {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }

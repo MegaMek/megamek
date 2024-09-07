@@ -868,13 +868,13 @@ public class MapMenu extends JPopupMenu {
             }
 
             if ((myEntity instanceof BipedMech)
-                    && (!myEntity.isLocationBad(Mech.LOC_LARM) || !myEntity.isLocationBad(Mech.LOC_RARM))) {
+                    && (!myEntity.isLocationBad(Mek.LOC_LARM) || !myEntity.isLocationBad(Mek.LOC_RARM))) {
                 menu.add(createPunchJMenuItem());
             }
 
             if ((myEntity instanceof BipedMech)
-                    && !myEntity.isLocationBad(Mech.LOC_LARM)
-                    && !myEntity.isLocationBad(Mech.LOC_RARM)) {
+                    && !myEntity.isLocationBad(Mek.LOC_LARM)
+                    && !myEntity.isLocationBad(Mek.LOC_RARM)) {
                 menu.add(createPushJMenuItem());
             }
 
@@ -1000,7 +1000,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu createConvertMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
 
-        if (myEntity instanceof Mech && ((Mech) myEntity).hasTracks()) {
+        if (myEntity instanceof Mek && ((Mek) myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
@@ -1319,7 +1319,7 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem createRotateTurretJMenuItem(final Mech mech, final Mounted turret) {
+    private JMenuItem createRotateTurretJMenuItem(final Mek mech, final Mounted turret) {
         String turretString;
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
             turretString = "Rotate Shoulder Turret (" + mech.getLocationAbbr(turret.getLocation()) + ")";
@@ -1378,12 +1378,12 @@ public class MapMenu extends JPopupMenu {
     private JMenu createRotateTurretMenu() {
         JMenu menu = new JMenu();
         menu.setText("Turret Rotation");
-        if (myEntity instanceof Mech) {
+        if (myEntity instanceof Mek) {
             for (Mounted mount : myEntity.getMisc()) {
                 if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET)
                         || mount.getType().hasFlag(MiscType.F_HEAD_TURRET)
                         || mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
-                    menu.add(createRotateTurretJMenuItem((Mech) myEntity, mount));
+                    menu.add(createRotateTurretJMenuItem((Mek) myEntity, mount));
                 }
             }
         }

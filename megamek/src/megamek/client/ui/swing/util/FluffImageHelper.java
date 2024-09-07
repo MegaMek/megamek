@@ -22,7 +22,7 @@ package megamek.client.ui.swing.util;
 
 import megamek.common.BTObject;
 import megamek.common.Configuration;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 
@@ -167,8 +167,8 @@ public final class FluffImageHelper {
         String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
         nameCandidates.add((sanitizedChassis + " " + sanitizedModel).trim());
-        if (unit instanceof Mech && !((Mech) unit).getClanChassisName().isBlank()) {
-            Mech mek = (Mech) unit;
+        if (unit instanceof Mek && !((Mek) unit).getClanChassisName().isBlank()) {
+            Mek mek = (Mek) unit;
             String fullChassis = sanitize(mek.getFullChassis());
             nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
             String clanChassis = sanitize(mek.getClanChassisName());

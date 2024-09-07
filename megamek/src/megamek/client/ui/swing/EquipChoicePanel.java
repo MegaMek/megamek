@@ -136,8 +136,8 @@ public class EquipChoicePanel extends JPanel {
 
         // **EQUIPMENT TAB**//
         // Auto-eject checkbox and conditional ejections.
-        if (entity instanceof Mech) {
-            Mech mech = (Mech) entity;
+        if (entity instanceof Mek) {
+            Mek mech = (Mek) entity;
 
             if (mech.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
@@ -305,8 +305,8 @@ public class EquipChoicePanel extends JPanel {
         boolean condEjectFuel = chCondEjectFuel.isSelected();
         boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
-        if (entity instanceof Mech) {
-            Mech mech = (Mech) entity;
+        if (entity instanceof Mek) {
+            Mek mech = (Mek) entity;
             mech.setAutoEject(!autoEject);
             mech.setCondEjectAmmo(condEjectAmmo);
             mech.setCondEjectEngine(condEjectEngine);

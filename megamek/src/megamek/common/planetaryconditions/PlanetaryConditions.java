@@ -16,10 +16,11 @@
 
 package megamek.common.planetaryconditions;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.*;
-
 import java.io.Serializable;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import megamek.common.*;
 
 
 /**
@@ -327,14 +328,14 @@ public class PlanetaryConditions implements Serializable {
                 if ((en instanceof VTOL)
                         || en.getMovementMode().isHoverOrWiGE()) {
                     penalty = 2;
-                } else if ((en instanceof Mech)
+                } else if ((en instanceof Mek)
                         || (en.isAirborne())) {
                     penalty = 1;
                 }
                 break;
             case STORM:
                 if ((en instanceof VTOL)
-                        || (en instanceof Mech)
+                        || (en instanceof Mek)
                         || en.getMovementMode().isHoverOrWiGE()) {
                     penalty = 3;
                 } else if (en.isAirborne()) {
@@ -589,7 +590,7 @@ public class PlanetaryConditions implements Serializable {
             return "vacuum";
         }
         if (getWind().isTornadoF4()
-                && !(en instanceof Mech)) {
+                && !(en instanceof Mek)) {
             return "tornado";
         }
         boolean doomF1ToF3Types = en.isConventionalInfantry()
@@ -634,7 +635,7 @@ public class PlanetaryConditions implements Serializable {
             Spotlight = targetIlluminated;
         } else {
             Spotlight = en.isUsingSearchlight();
-            isMechOrVee = (en instanceof Mech && !en.isAero())
+            isMechOrVee = (en instanceof Mek && !en.isAero())
                     || (en instanceof Tank);
             isLargeCraft = (en instanceof Dropship)
                     || (en instanceof Jumpship);

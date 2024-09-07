@@ -78,7 +78,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nMissilesModifier = getClusterModifiers(true);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
         Mounted mLinker = weapon.getLinkedBy();

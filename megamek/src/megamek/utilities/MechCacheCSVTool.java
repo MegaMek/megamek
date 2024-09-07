@@ -137,9 +137,9 @@ public final class MechCacheCSVTool {
                 csvLine.append(unit.getMyomerName()).append(DELIM);
 
                 // Cockpit Type
-                if ((unit.getCockpitType() >= 0) && (unit.getCockpitType() < Mech.COCKPIT_STRING.length)) {
+                if ((unit.getCockpitType() >= 0) && (unit.getCockpitType() < Mek.COCKPIT_STRING.length)) {
                     if (unit.getUnitType().equals("Mek")) {
-                        csvLine.append(Mech.COCKPIT_STRING[unit.getCockpitType()]).append(DELIM);
+                        csvLine.append(Mek.COCKPIT_STRING[unit.getCockpitType()]).append(DELIM);
                     } else {
                         csvLine.append(Aero.COCKPIT_STRING[unit.getCockpitType()]).append(DELIM);
                     }
@@ -149,7 +149,7 @@ public final class MechCacheCSVTool {
 
                 // Gyro Type
                 if (unit.getGyroType() >= 0) {
-                    csvLine.append(Mech.GYRO_STRING[unit.getGyroType()]).append(DELIM);
+                    csvLine.append(Mek.GYRO_STRING[unit.getGyroType()]).append(DELIM);
                 } else if (unit.getGyroType() < 0) {
                     csvLine.append(NOT_APPLICABLE).append(DELIM);
                 }

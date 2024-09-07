@@ -213,7 +213,7 @@ public class MechFileParser {
         }
 
         // add any sensors to the entity's vector of sensors
-        if (ent instanceof Mech) {
+        if (ent instanceof Mek) {
             // all meks get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_IR));
@@ -365,7 +365,7 @@ public class MechFileParser {
                     throw new EntityLoadingException("Unable to match Artemis to launcher for " + ent.getShortName());
                 }
             } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG))
-                    && (ent instanceof Mech)) {
+                    && (ent instanceof Mek)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
                 for (Mounted mEquip : ent.getMisc()) {
@@ -487,30 +487,30 @@ public class MechFileParser {
                 }
             }
 
-            if ((ent instanceof Mech) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)
+            if ((ent instanceof Mek) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)
                     || m.getType().hasFlag(MiscType.F_CASEP)
 
             )) {
-                ((Mech) ent).setAutoEject(false);
+                ((Mek) ent).setAutoEject(false);
             }
 
-            if ((ent instanceof Mech)
+            if ((ent instanceof Mek)
                     && m.getType().hasFlag(
                             MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
                 if (ent.hasTargComp()
-                        || ((Mech) ent).hasTSM(true)
+                        || ((Mek) ent).hasTSM(true)
                         || (!ent.getMPBoosters().isNone() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible systems for "+ent.getShortName());
                 }
 
-                if ((m.getLocation() != Mech.LOC_LARM)
-                        && (m.getLocation() != Mech.LOC_LLEG)
-                        && (m.getLocation() != Mech.LOC_RARM)
-                        && (m.getLocation() != Mech.LOC_RLEG)
-                        && (m.getLocation() != Mech.LOC_CLEG)) {
+                if ((m.getLocation() != Mek.LOC_LARM)
+                        && (m.getLocation() != Mek.LOC_LLEG)
+                        && (m.getLocation() != Mek.LOC_RARM)
+                        && (m.getLocation() != Mek.LOC_RLEG)
+                        && (m.getLocation() != Mek.LOC_CLEG)) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible location for "+ent.getShortName());
                 }
@@ -518,28 +518,28 @@ public class MechFileParser {
             }
 
             if (m.getType().hasFlag(MiscType.F_HARJEL)
-                    && (m.getLocation() == Mech.LOC_HEAD)) {
+                    && (m.getLocation() == Mek.LOC_HEAD)) {
                 throw new EntityLoadingException(
                         "Unable to load harjel in head for "+ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_MASS)
-                    && ((m.getLocation() != Mech.LOC_HEAD) || ((((Mech) ent)
-                            .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (m
-                            .getLocation() != Mech.LOC_CT)))) {
+                    && ((m.getLocation() != Mek.LOC_HEAD) || ((((Mek) ent)
+                            .getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) && (m
+                            .getLocation() != Mek.LOC_CT)))) {
                 throw new EntityLoadingException(
                         "Unable to load MASS for "+ent.getShortName()+"!  Must be located in the same location as the cockpit.");
             }
 
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                    && (((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD)) || ((ent instanceof VTOL) && (m
+                    && (((ent instanceof Mek) && (m.getLocation() == Mek.LOC_HEAD)) || ((ent instanceof VTOL) && (m
                             .getLocation() == VTOL.LOC_ROTOR)))) {
                 throw new EntityLoadingException(
                         "Unable to load Modular Armor in Rotor/Head location for "+ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_TALON)) {
-                if (ent instanceof Mech) {
+                if (ent instanceof Mek) {
                     if (!ent.locationIsLeg(m.getLocation())) {
                         throw new EntityLoadingException("Talons are only legal in the Legs for " + ent.getShortName());
                     }
@@ -879,7 +879,7 @@ public class MechFileParser {
             try {
                 MechFileParser mfp = new MechFileParser(file);
                 Entity e = mfp.getEntity();
-                if (e instanceof Mech) {
+                if (e instanceof Mek) {
                     outFilename += ".mtf";
                     File outFile = new File(outFilename);
                     if (outFile.exists()) {
@@ -888,7 +888,7 @@ public class MechFileParser {
                         }
                     }
                     out = new BufferedWriter(new FileWriter(outFile));
-                    out.write(((Mech) e).getMtf());
+                    out.write(((Mek) e).getMtf());
                 } else if (e instanceof Tank) {
                     outFilename += ".blk";
                     BLKFile.encode(outFilename, e);

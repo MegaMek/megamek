@@ -18,6 +18,16 @@
  */
 package megamek.common.scenario;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -28,21 +38,19 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.*;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.BlowingSand;
+import megamek.common.planetaryconditions.EMI;
+import megamek.common.planetaryconditions.Fog;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.Weather;
+import megamek.common.planetaryconditions.Wind;
+import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.IGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * This class holds all scenario info loaded from a scenario (.mms) file. It is a map of constants given in
@@ -414,7 +422,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                     LogManager.getLogger().error("Invalid location specified " + critHit.loc);
                 } else {
                     // Make sure that we have crit spot to hit
-                    if ((chp.entity instanceof Mech) || (chp.entity instanceof Protomech)) {
+                    if ((chp.entity instanceof Mek) || (chp.entity instanceof Protomech)) {
                         // Is this a torso weapon slot?
                         CriticalSlot cs = null;
                         if ((chp.entity instanceof Protomech)
@@ -462,7 +470,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             LogManager.getLogger().debug("Applying ammo adjustment to " + sap.entity.getShortName());
             for (SetAmmoType sa : sap.ammoSetType) {
                 // Limit to 'Meks for now (needs to be extended later)
-                if (sap.entity instanceof Mech) {
+                if (sap.entity instanceof Mek) {
                     if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
                         if (cs != null) {
@@ -486,7 +494,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
             for (SetAmmoTo sa : sap.ammoSetTo) {
                 // Only can be done against Mechs
-                if (sap.entity instanceof Mech) {
+                if (sap.entity instanceof Mek) {
                     if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
                         // Get the piece of equipment and check to make sure it
                         // is a ammo item then set its amount!
@@ -774,8 +782,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     private void parseAutoEject(Entity entity, String eject) {
-        if (entity instanceof Mech) {
-            Mech mech = (Mech) entity;
+        if (entity instanceof Mek) {
+            Mek mech = (Mek) entity;
             mech.setAutoEject(Boolean.parseBoolean(eject));
         }
     }

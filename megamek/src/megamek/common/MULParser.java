@@ -1189,23 +1189,23 @@ public class MULParser {
             entity.setCrew(crew);
 
             if (attributes.containsKey(ATTR_AUTOEJECT) && !attributes.get(ATTR_AUTOEJECT).isBlank()) {
-                ((Mech) entity).setAutoEject(Boolean.parseBoolean(attributes.get(ATTR_AUTOEJECT)));
+                ((Mek) entity).setAutoEject(Boolean.parseBoolean(attributes.get(ATTR_AUTOEJECT)));
             }
 
             if (attributes.containsKey(ATTR_CONDEJECTAMMO) && !attributes.get(ATTR_CONDEJECTAMMO).isBlank()) {
-                ((Mech) entity).setCondEjectAmmo(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTAMMO)));
+                ((Mek) entity).setCondEjectAmmo(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTAMMO)));
             }
 
             if (attributes.containsKey(ATTR_CONDEJECTENGINE) && !attributes.get(ATTR_CONDEJECTENGINE).isBlank()) {
-                ((Mech) entity).setCondEjectEngine(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTENGINE)));
+                ((Mek) entity).setCondEjectEngine(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTENGINE)));
             }
 
             if (attributes.containsKey(ATTR_CONDEJECTCTDEST) && !attributes.get(ATTR_CONDEJECTCTDEST).isBlank()) {
-                ((Mech) entity).setCondEjectCTDest(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTCTDEST)));
+                ((Mek) entity).setCondEjectCTDest(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTCTDEST)));
             }
 
             if (attributes.containsKey(ATTR_CONDEJECTHEADSHOT) && !attributes.get(ATTR_CONDEJECTHEADSHOT).isBlank()) {
-                ((Mech) entity).setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTHEADSHOT)));
+                ((Mek) entity).setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTHEADSHOT)));
             }
         }
     }
@@ -1865,7 +1865,7 @@ public class MULParser {
                         }
                         if (capacity.equals(VALUE_NA)) {
                             if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                                    || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                                    || entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                                 ((AmmoMounted) mounted).setAmmoCapacity(mounted.getOriginalShots()
                                         * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
                             } else {

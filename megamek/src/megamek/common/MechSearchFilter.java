@@ -801,22 +801,22 @@ public class MechSearchFilter {
         long entityTypes = 0;
 
         if (f.filterMech == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_MEK;
         }
         if (f.filterBipedMech == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_BIPED_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_BIPED_MEK;
         }
         if (f.filterProtomech == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_PROTOMECH;
+            entityTypes = entityTypes | Entity.ETYPE_PROTOMEK;
         }
         if (f.filterLAM == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_LAND_AIR_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_LAND_AIR_MEK;
         }
         if (f.filterTripod == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_TRIPOD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_TRIPOD_MEK;
         }
         if (f.filterQuad == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_QUAD_MEK;
         }
         if (f.filterQuadVee == 1) {
             entityTypes = entityTypes | Entity.ETYPE_QUADVEE;
@@ -883,22 +883,22 @@ public class MechSearchFilter {
         entityTypes = 0;
 
         if (f.filterMech == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_MEK;
         }
         if (f.filterBipedMech == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_BIPED_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_BIPED_MEK;
         }
         if (f.filterProtomech == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_PROTOMECH;
+            entityTypes = entityTypes | Entity.ETYPE_PROTOMEK;
         }
         if (f.filterLAM == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_LAND_AIR_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_LAND_AIR_MEK;
         }
         if (f.filterTripod == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_TRIPOD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_TRIPOD_MEK;
         }
         if (f.filterQuad == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_QUAD_MEK;
         }
         if (f.filterQuadVee == 2) {
             entityTypes = entityTypes | Entity.ETYPE_QUADVEE;

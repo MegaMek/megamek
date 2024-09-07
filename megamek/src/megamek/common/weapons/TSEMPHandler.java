@@ -13,21 +13,21 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.totalwarfare.TWGameManager;
 
-import java.util.Vector;
-
 /**
- * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, 
+ * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon,
  * which is found in FM:3145 pg 255.
- * 
+ *
  * @author arlith
  * Created on Sept 5, 2005
- */ 
+ */
 public class TSEMPHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 5545991061428671743L;
 
@@ -43,14 +43,14 @@ public class TSEMPHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         return 0;
     }
-    
+
     // Copied from megamek.common.weapons.HVACWeaponHandler#doChecks(java.util.Vector)
     /*
     * (non-Javadoc)
@@ -103,7 +103,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
                                       Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-        
+
         // Increment the TSEMP hit counter
         entityTarget.addTsempHitThisTurn();
 
@@ -124,7 +124,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             vPhaseReport.add(r);
             return;
         }
-        
+
         // Determine roll modifiers
         int tsempModifiers = 0;
         if (entityTarget.getWeight() >= 200) {
@@ -137,35 +137,35 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         } else if (entityTarget.getWeight() >= 100) {
             tsempModifiers -= 2;
         }
-        
+
         if (entityTarget.getEngine() != null &&
-                entityTarget.getEngine().getEngineType() == 
+                entityTarget.getEngine().getEngineType() ==
                     Engine.COMBUSTION_ENGINE) {
             tsempModifiers -= 1;
         } else if (entityTarget.getEngine() != null &&
-                entityTarget.getEngine().getEngineType() == 
+                entityTarget.getEngine().getEngineType() ==
                 Engine.STEAM) {
             tsempModifiers -= 2;
         }
-        
+
         tsempModifiers += Math.min(4, entityTarget.getTsempHitsThisTurn() - 1);
-        // Multiple hits add a +1 for each hit after the first, 
+        // Multiple hits add a +1 for each hit after the first,
         //  up to a max of 4
         Roll diceRoll = Compute.rollD6(2);
         int rollValue = Math.max(2, diceRoll.getIntValue() + tsempModifiers);
         String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + tsempModifiers +  "] max 2";
-        
+
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
         int interferenceTarget = 13;
-        if (entityTarget instanceof Mech) {
-            if (((Mech) entityTarget).isIndustrial()) {
+        if (entityTarget instanceof Mek) {
+            if (((Mek) entityTarget).isIndustrial()) {
                 interferenceTarget = 6;
                 shutdownTarget = 8;
             } else {
                 interferenceTarget = 7;
                 shutdownTarget = 9;
-            }            
+            }
         } else if (entityTarget instanceof SupportTank) {
             interferenceTarget = 5;
             shutdownTarget = 7;
@@ -233,7 +233,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             tsempEffect = "No Effect!";
         }
         r.add(tsempEffect);
-        vPhaseReport.add(r); 
+        vPhaseReport.add(r);
         if (baShutdownReport != null) {
             vPhaseReport.add(baShutdownReport);
         }

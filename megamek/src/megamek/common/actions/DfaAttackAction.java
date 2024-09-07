@@ -88,7 +88,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Infantry can't D.F.A.");
         }
 
-        if (ae.getJumpType() == Mech.JUMP_BOOSTER) {
+        if (ae.getJumpType() == Mek.JUMP_BOOSTER) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Can't D.F.A. using mechanical jump boosters.");
         }
@@ -310,7 +310,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             toHit.addModifier(1, "battle armor target");
         }
 
-        if ((ae instanceof Mech) && ((Mech) ae).isSuperHeavy()) {
+        if ((ae instanceof Mek) && ((Mek) ae).isSuperHeavy()) {
             toHit.addModifier(1, "attacker is superheavy mech");
         }
 
@@ -340,12 +340,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if ((ae instanceof Mech)
-            && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
+        if ((ae instanceof Mek)
+            && (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+                                                Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                 Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                                                 Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
@@ -386,7 +386,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             }
         }
 
-        if ((ae instanceof Mech) && ((Mech) ae).hasIndustrialTSM()) {
+        if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
 
@@ -396,27 +396,27 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
     public static boolean hasTalons(Entity entity) {
 
-        if (entity instanceof Mech) {
+        if (entity instanceof Mek) {
 
             if (entity instanceof BipedMech) {
 
                 return (entity.hasWorkingMisc(MiscType.F_TALON, -1,
-                                              Mech.LOC_RLEG) && entity.hasWorkingSystem(
-                        Mech.ACTUATOR_FOOT, Mech.LOC_RLEG))
+                                              Mek.LOC_RLEG) && entity.hasWorkingSystem(
+                        Mek.ACTUATOR_FOOT, Mek.LOC_RLEG))
                        || (entity.hasWorkingMisc(MiscType.F_TALON, -1,
-                                                 Mech.LOC_LLEG) && entity.hasWorkingSystem(
-                        Mech.ACTUATOR_FOOT, Mech.LOC_LLEG));
+                                                 Mek.LOC_LLEG) && entity.hasWorkingSystem(
+                        Mek.ACTUATOR_FOOT, Mek.LOC_LLEG));
             }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity
-                    .hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG))
+            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RLEG) && entity
+                    .hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RLEG))
                    || (entity.hasWorkingMisc(MiscType.F_TALON, -1,
-                                             Mech.LOC_LLEG) && entity.hasWorkingSystem(
-                    Mech.ACTUATOR_FOOT, Mech.LOC_LLEG))
+                                             Mek.LOC_LLEG) && entity.hasWorkingSystem(
+                    Mek.ACTUATOR_FOOT, Mek.LOC_LLEG))
                    || ((entity.hasWorkingMisc(MiscType.F_TALON, -1,
-                                              Mech.LOC_RARM)) && (entity.hasWorkingSystem(
-                    Mech.ACTUATOR_FOOT, Mech.LOC_RARM) || (entity
-                                                                   .hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) && entity
-                                                                   .hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LARM))));
+                                              Mek.LOC_RARM)) && (entity.hasWorkingSystem(
+                    Mek.ACTUATOR_FOOT, Mek.LOC_RARM) || (entity
+                                                                   .hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LARM) && entity
+                                                                   .hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LARM))));
         }
 
         return false;

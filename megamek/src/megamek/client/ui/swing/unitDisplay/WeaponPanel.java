@@ -1,15 +1,45 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.FiringDisplay;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
@@ -23,18 +53,6 @@ import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.*;
 
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
@@ -1051,16 +1069,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 + en.heatBuildup) // heat we're building up this round
                 - Math.min(9, en.coolFromExternal); // cooling from external
         // sources
-        if (en instanceof Mech) {
+        if (en instanceof Mek) {
             if (en.infernos.isStillBurning()) { // hit with inferno ammo
                 currentHeatBuildup += en.infernos.getHeat();
             }
 
-            if (!((Mech) en).hasLaserHeatSinks()) {
+            if (!((Mek) en).hasLaserHeatSinks()) {
                 // extreme temperatures.
                 if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
                     int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
-                    if (((Mech) en).hasIntactHeatDissipatingArmor()) {
+                    if (((Mek) en).hasIntactHeatDissipatingArmor()) {
                         buildup /= 2;
                     }
                     currentHeatBuildup += buildup;
@@ -1075,8 +1093,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (hex.containsTerrain(Terrains.FIRE)
                     && (hex.getFireTurn() > 0)) {
                 // standing in fire
-                if ((en instanceof Mech)
-                        && ((Mech) en).hasIntactHeatDissipatingArmor()) {
+                if ((en instanceof Mek)
+                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
                     currentHeatBuildup += 2;
                 } else {
                     currentHeatBuildup += 5;
@@ -1084,15 +1102,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
 
             if (hex.terrainLevel(Terrains.MAGMA) == 1) {
-                if ((en instanceof Mech)
-                        && ((Mech) en).hasIntactHeatDissipatingArmor()) {
+                if ((en instanceof Mek)
+                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
                     currentHeatBuildup += 2;
                 } else {
                     currentHeatBuildup += 5;
                 }
             } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
-                if ((en instanceof Mech)
-                        && ((Mech) en).hasIntactHeatDissipatingArmor()) {
+                if ((en instanceof Mek)
+                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
                     currentHeatBuildup += 5;
                 } else {
                     currentHeatBuildup += 10;
@@ -1100,16 +1118,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         }
 
-        if ((((en instanceof Mech) || (en instanceof Aero)) && en.isStealthActive())
+        if ((((en instanceof Mek) || (en instanceof Aero)) && en.isStealthActive())
                 || en.isNullSigActive() || en.isVoidSigActive()) {
             currentHeatBuildup += 10; // active stealth/null sig/void sig heat
         }
 
-        if ((en instanceof Mech) && en.isChameleonShieldOn()) {
+        if ((en instanceof Mek) && en.isChameleonShieldOn()) {
             currentHeatBuildup += 6;
         }
 
-        if (((en instanceof Mech) || (en instanceof Aero)) && en.hasActiveNovaCEWS()) {
+        if (((en instanceof Mek) || (en instanceof Aero)) && en.hasActiveNovaCEWS()) {
             currentHeatBuildup += 2;
         }
 

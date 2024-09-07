@@ -14,16 +14,16 @@
  */
 package megamek.client.ui;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
 import megamek.client.Client;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 public class SharedUtility {
 
@@ -245,7 +245,7 @@ public class SharedUtility {
             }
 
             // check for leap
-            if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+            if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
                     && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
@@ -347,7 +347,7 @@ public class SharedUtility {
 
             // Check if used more MPs than Mech/Vehicle would have w/o gravity
             if (!i.hasMoreElements() && !firstStep) {
-                if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                if ((entity instanceof Mek) || (entity instanceof Tank)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                             || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                             || (moveType == EntityMovementType.MOVE_RUN)
@@ -398,7 +398,7 @@ public class SharedUtility {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
+            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof Protomech)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
@@ -460,7 +460,7 @@ public class SharedUtility {
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
+                    && !(md.isJumping() && (entity.getJumpType() == Mek.JUMP_BOOSTER))
                     && (lastHex.getLevel() + lastElevation != (curHex.getLevel() + step.getElevation()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
@@ -474,7 +474,7 @@ public class SharedUtility {
             }
 
             // Check for Ejecting
-            if ((step.getType() == MoveStepType.EJECT) && (entity instanceof Mech)) {
+            if ((step.getType() == MoveStepType.EJECT) && (entity instanceof Mek)) {
                 rollTarget = TWGameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }

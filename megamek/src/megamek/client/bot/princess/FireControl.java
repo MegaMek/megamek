@@ -343,19 +343,19 @@ public class FireControl {
             toHitData.addModifier(TH_ANTI_AIR);
         }
 
-        if (shooter instanceof Mech) {
-            final Mech shooterMech = (Mech) shooter;
-            if (Mech.COCKPIT_PRIMITIVE_INDUSTRIAL == shooterMech.getCockpitType()) {
+        if (shooter instanceof Mek) {
+            final Mek shooterMech = (Mek) shooter;
+            if (Mek.COCKPIT_PRIMITIVE_INDUSTRIAL == shooterMech.getCockpitType()) {
                 toHitData.addModifier(TH_PRIMITIVE_INDUSTRIAL);
             } else if (!shooterMech.hasAdvancedFireControl()) {
                 toHitData.addModifier(TH_INDUSTRIAL);
             }
         }
 
-        if (target instanceof Mech) {
-            final Mech targetMech = (Mech) target;
-            if (Mech.COCKPIT_SUPERHEAVY == targetMech.getCockpitType() ||
-                Mech.COCKPIT_SUPERHEAVY_TRIPOD == targetMech.getCockpitType()) {
+        if (target instanceof Mek) {
+            final Mek targetMech = (Mek) target;
+            if (Mek.COCKPIT_SUPERHEAVY == targetMech.getCockpitType() ||
+                Mek.COCKPIT_SUPERHEAVY_TRIPOD == targetMech.getCockpitType()) {
                 toHitData.addModifier(TH_TAR_SUPER);
             }
         }
@@ -388,7 +388,7 @@ public class FireControl {
         // todo weapons, frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
 
-        if (!(shooter instanceof Mech)) {
+        if (!(shooter instanceof Mek)) {
             return new ToHitData(TH_PHY_NOT_MECH);
         }
 
@@ -448,23 +448,23 @@ public class FireControl {
             if (target instanceof Infantry) {
                 return new ToHitData(TH_PHY_P_TAR_INF);
             }
-            final int armLocation = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mech.LOC_RARM : Mech.LOC_LARM;
+            final int armLocation = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mek.LOC_RARM : Mek.LOC_LARM;
             if (shooter.isLocationBad(armLocation)) {
                 return new ToHitData(TH_PHY_P_NO_ARM);
             }
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, armLocation)) {
                 return new ToHitData(TH_PHY_P_NO_SHOULDER);
             }
 
             // Base to hit chance.
             toHitData.addModifier(shooter.getCrew().getPiloting(), TH_PHY_BASE);
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, armLocation)) {
                 toHitData.addModifier(TH_PHY_P_UPPER_ARM);
             }
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, armLocation)) {
                 toHitData.addModifier(TH_PHY_P_LOWER_ARM);
             }
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_HAND, armLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_HAND, armLocation)) {
                 toHitData.addModifier(TH_PHY_P_HAND);
             }
         } else { // assuming kick
@@ -478,17 +478,17 @@ public class FireControl {
             if ((shooter).hasHipCrit()) {
                 return new ToHitData(TH_PHY_K_HIP);
             }
-            final int legLocation = PhysicalAttackType.RIGHT_KICK == attackType ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+            final int legLocation = PhysicalAttackType.RIGHT_KICK == attackType ? Mek.LOC_RLEG : Mek.LOC_LLEG;
 
             // Base to hit chance.
             toHitData.addModifier(shooter.getCrew().getPiloting() - 2, TH_PHY_BASE);
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, legLocation)) {
                 toHitData.addModifier(TH_PHY_K_UPPER_LEG);
             }
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, legLocation)) {
                 toHitData.addModifier(TH_PHY_K_LOWER_LEG);
             }
-            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLocation)) {
+            if (!shooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLocation)) {
                 toHitData.addModifier(TH_PHY_K_FOOT);
             }
             if (target instanceof Infantry) {
@@ -512,9 +512,9 @@ public class FireControl {
             (target instanceof Dropship && target.isAirborne())) {
             toHitData.addModifier(TH_PHY_LARGE);
         }
-        final Mech shooterMech = (Mech) shooter;
-        if (Mech.COCKPIT_SUPERHEAVY == shooterMech.getCockpitType() ||
-            Mech.COCKPIT_SUPERHEAVY_TRIPOD == shooterMech.getCockpitType()) {
+        final Mek shooterMech = (Mek) shooter;
+        if (Mek.COCKPIT_SUPERHEAVY == shooterMech.getCockpitType() ||
+            Mek.COCKPIT_SUPERHEAVY_TRIPOD == shooterMech.getCockpitType()) {
             toHitData.addModifier(TH_PHY_SUPER);
         }
 
@@ -624,13 +624,13 @@ public class FireControl {
             (target instanceof Dropship && target.isAirborne())) {
             return true;
         }
-        if (!(target instanceof Mech)) {
+        if (!(target instanceof Mek)) {
             return false;
         }
 
-        final Mech targetMech = (Mech) target;
-        return (Mech.COCKPIT_SUPERHEAVY == targetMech.getCockpitType()) ||
-               (Mech.COCKPIT_SUPERHEAVY_TRIPOD == targetMech.getCockpitType());
+        final Mek targetMech = (Mek) target;
+        return (Mek.COCKPIT_SUPERHEAVY == targetMech.getCockpitType()) ||
+               (Mek.COCKPIT_SUPERHEAVY_TRIPOD == targetMech.getCockpitType());
     }
 
     /**
@@ -690,16 +690,16 @@ public class FireControl {
 
         if (shooterState.isProne()) {
             // Cannot fire if we cannot at least prop ourselves up.
-            if (shooter.isLocationBad(Mech.LOC_LARM) && shooter.isLocationBad(Mech.LOC_RARM)) {
+            if (shooter.isLocationBad(Mek.LOC_LARM) && shooter.isLocationBad(Mek.LOC_RARM)) {
                 return new ToHitData(TH_WEAP_PRONE_ARMLESS);
             }
             // Cannot fire weapons mounted in the propping arm.
-            if ((Mech.LOC_LARM == weapon.getLocation() || Mech.LOC_RARM == weapon.getLocation())
+            if ((Mek.LOC_LARM == weapon.getLocation() || Mek.LOC_RARM == weapon.getLocation())
                 && shooter.isLocationBad(weapon.getLocation())) {
                 return new ToHitData(TH_WEAP_ARM_PROP);
             }
             // Cannot fire leg-mounted weapons while prone.)
-            if ((Mech.LOC_LLEG == weapon.getLocation()) || (Mech.LOC_RLEG == weapon.getLocation())) {
+            if ((Mek.LOC_LLEG == weapon.getLocation()) || (Mek.LOC_RLEG == weapon.getLocation())) {
                 return new ToHitData(TH_WEAP_PRONE_LEG);
             }
         }
@@ -812,7 +812,7 @@ public class FireControl {
         }
 
         // Handle mechs being swarmed.
-        if (targetEntity instanceof Mech) {
+        if (targetEntity instanceof Mek) {
             if (Infantry.SWARM_MEK.equals(weaponType.getInternalName())) {
                 toHit.append(getSwarmMekBaseToHit(shooter, targetEntity, game));
             }
@@ -1167,7 +1167,7 @@ public class FireControl {
         }
 
         // only mechs can do physicals
-        if (!(shooter instanceof Mech)) {
+        if (!(shooter instanceof Mek)) {
             return null;
         }
 
@@ -2843,7 +2843,7 @@ public class FireControl {
             if (target instanceof Entity) {
                 targetEntity = (Entity) target;
                 final int armorType = targetEntity.getArmorType(0);
-                if (targetEntity instanceof Mech) {
+                if (targetEntity instanceof Mek) {
                     targetEntity.getArmorType(1);
                 }
                 if (EquipmentType.T_ARMOR_BA_FIRE_RESIST == armorType
@@ -3427,7 +3427,7 @@ public class FireControl {
         //     two left, two right if he has "extended torso twist" quirk
         // vehicles and turrets can turn any direction unless he has no turret
         final List<Integer> validFacingChanges = new ArrayList<>();
-        if (((Entity.ETYPE_MECH & shooter.getEntityType()) > 0)
+        if (((Entity.ETYPE_MEK & shooter.getEntityType()) > 0)
             && !shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)
             && !shooter.hasFallen()) {
             validFacingChanges.add(1);

@@ -165,8 +165,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // mechs can only charge standing mechs
-        if ((ae instanceof Mech) && !skid) {
-            if (!(te instanceof Mech)) {
+        if ((ae instanceof Mek) && !skid) {
+            if (!(te instanceof Mek)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a 'Mek");
             }
 
@@ -246,7 +246,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
-        if ((ae instanceof Mech) && ((Mech) ae).isSuperHeavy()) {
+        if ((ae instanceof Mek) && ((Mek) ae).isSuperHeavy()) {
             toHit.addModifier(+1, "attacker is superheavy mech");
         }
 
@@ -274,10 +274,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if ((ae instanceof Mech)
-                && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+        if ((ae instanceof Mek)
+                && (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Sensors Completely Destroyed for Torso-Mounted Cockpit");
@@ -337,7 +337,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
 
-        if ((ae instanceof Mech) && ((Mech) ae).hasIndustrialTSM()) {
+        if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
 

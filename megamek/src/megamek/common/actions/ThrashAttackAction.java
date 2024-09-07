@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -13,9 +13,10 @@
  */
 package megamek.common.actions;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The prone attacker thrashes at the target.
@@ -40,7 +41,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * prone Mek in a clear or pavement terrain hex that contains infantry. This
      * attack will force a PSR check for the prone Mek; if the PSR is missed,
      * the Mek takes normal falling damage.
-     * 
+     *
      * @param game The current {@link Game} containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
@@ -61,7 +62,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        
+
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
@@ -75,7 +76,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Non-mechs can't thrash.
-        if (!(ae instanceof Mech)) {
+        if (!(ae instanceof Mek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can thrash at infantry");
         }
 
@@ -134,9 +135,9 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Mech must have at least one working arm or leg.
-        if (ae.isLocationBad(Mech.LOC_RARM) && ae.isLocationBad(Mech.LOC_LARM)
-                && ae.isLocationBad(Mech.LOC_RLEG)
-                && ae.isLocationBad(Mech.LOC_LLEG)) {
+        if (ae.isLocationBad(Mek.LOC_RARM) && ae.isLocationBad(Mek.LOC_LARM)
+                && ae.isLocationBad(Mek.LOC_RLEG)
+                && ae.isLocationBad(Mek.LOC_LLEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Mech has no arms or legs to thrash");
         }
 
@@ -146,7 +147,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
 
     /**
      * Damage caused by a successful thrashing attack.
-     * 
+     *
      * @param entity - the <code>Entity</code> conducting the thrash attack.
      * @return The <code>int</code> amount of damage caused by this attack.
      */

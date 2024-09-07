@@ -247,7 +247,7 @@ public class MovePath implements Cloneable, Serializable {
                 && (getEntity().getMovementMode() == EntityMovementMode.VTOL
                 || getEntity().getMovementMode() == EntityMovementMode.HOVER))
                 || ((getEntity() instanceof TripodMech)
-                && (((Mech) getEntity()).countBadLegs() == 0)))
+                && (((Mek) getEntity()).countBadLegs() == 0)))
                 && !isJumping();
     }
 
@@ -440,7 +440,7 @@ public class MovePath implements Cloneable, Serializable {
         } else {
             // if we're jumping without a mechanical jump booster (?)
             // or we're acting like a spheroid DropShip in the atmosphere
-            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
+            if ((isJumping() && (getEntity().getJumpType() != Mek.JUMP_BOOSTER)) ||
                     (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
                 int distance = start.distance(land);
 
@@ -617,7 +617,7 @@ public class MovePath implements Cloneable, Serializable {
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload/disconnect, or go prone.
         Coords pos = getEntity().getPosition();
-        boolean isMech = getEntity() instanceof Mech;
+        boolean isMech = getEntity() instanceof Mek;
         int elev = getEntity().getElevation();
         if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMech, elev)) {
             // There is an enemy, can't go out and back in, and go out again
@@ -683,7 +683,7 @@ public class MovePath implements Cloneable, Serializable {
                 getEntity().setConvertingNow(false);
                 // Mechs using tracks have the movement mode set at the beginning of the turn, so
                 // it will need to be reset.
-                if (getEntity() instanceof Mech && ((Mech) getEntity()).hasTracks()) {
+                if (getEntity() instanceof Mek && ((Mek) getEntity()).hasTracks()) {
                     getEntity().toggleConversionMode();
                 }
             }
@@ -742,7 +742,7 @@ public class MovePath implements Cloneable, Serializable {
         // for mechs, the check is complicated - you have to be directly in front of a hex with either
         // a) level 1 level higher than your hex level
         // b) building/bridge ceiling 1 level higher than your hex level (?)
-        if (getEntity() instanceof Mech) {
+        if (getEntity() instanceof Mek) {
             boolean onBoard = getGame().getBoard().contains(coords);
             Coords nextPosition = coords.translated(facing);
             boolean nextHexOnBoard = getGame().getBoard().contains(nextPosition);
@@ -1603,7 +1603,7 @@ public class MovePath implements Cloneable, Serializable {
      * @return
      */
     public boolean shouldMechanicalJumpCauseFallDamage() {
-        if (isJumping() && (getEntity().getJumpType() == Mech.JUMP_BOOSTER) &&
+        if (isJumping() && (getEntity().getJumpType() == Mek.JUMP_BOOSTER) &&
                 (getJumpMaxElevationChange() > getEntity().getJumpMP())) {
             return true;
         }
@@ -1686,7 +1686,7 @@ public class MovePath implements Cloneable, Serializable {
             moved += getHexesMoved();
         }
         if ((moved >= 5)
-                || (getEntity().hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                || (getEntity().hasETypeFlag(Entity.ETYPE_PROTOMEK)
                 && moved == 4)) {
             return false;
         }

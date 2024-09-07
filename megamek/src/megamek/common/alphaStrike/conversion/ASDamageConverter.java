@@ -370,7 +370,7 @@ public class ASDamageConverter {
 
         // Actuator Enhancement System
         if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, weapon.getLocation())
-                && ((weapon.getLocation() == Mech.LOC_LARM) || (weapon.getLocation() == Mech.LOC_RARM))) {
+                && ((weapon.getLocation() == Mek.LOC_LARM) || (weapon.getLocation() == Mek.LOC_RARM))) {
             damageModifier *= 1.05;
         }
 
@@ -908,8 +908,8 @@ public class ASDamageConverter {
      * If onlyLongRange is true, only weapons with an L damage value are included.
      */
     protected int getHeatGeneration(boolean onlyRear, boolean onlyLongRange) {
-        if (entity instanceof Mech) {
-            return getMekHeatGeneration((Mech) entity, element, onlyRear, onlyLongRange);
+        if (entity instanceof Mek) {
+            return getMekHeatGeneration((Mek) entity, element, onlyRear, onlyLongRange);
         } else {
             return 0;
         }
@@ -920,7 +920,7 @@ public class ASDamageConverter {
      * If onlyRear is true, rear-facing weapons are included, otherwise only front-facing weapons are included!
      * If onlyLongRange is true, only weapons with an L damage value are included.
      */
-    private int getMekHeatGeneration(Mech entity, AlphaStrikeElement element, boolean onlyRear, boolean onlyLongRange) {
+    private int getMekHeatGeneration(Mek entity, AlphaStrikeElement element, boolean onlyRear, boolean onlyLongRange) {
         int totalHeat = 0;
 
         if (entity.getJumpMP() > 0) {
@@ -959,12 +959,12 @@ public class ASDamageConverter {
     }
 
     private static int getJumpHeat(Entity entity, AlphaStrikeElement element) {
-        if (entity.getJumpType() == Mech.JUMP_PROTOTYPE_IMPROVED) {
+        if (entity.getJumpType() == Mek.JUMP_PROTOTYPE_IMPROVED) {
             return Math.max(3, element.getJumpMove());
-        } else if ((entity.getJumpType() == Mech.JUMP_IMPROVED)
+        } else if ((entity.getJumpType() == Mek.JUMP_IMPROVED)
                 && (entity.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
             return Math.max(3, element.getJumpMove() / 2);
-        } else if (entity.getJumpType() == Mech.JUMP_IMPROVED) {
+        } else if (entity.getJumpType() == Mek.JUMP_IMPROVED) {
             return Math.max(3, ASConverter.roundUp(0.25 * element.getJumpMove()));
         } else if (entity.getEngine().getEngineType() == Engine.XXL_ENGINE) {
             return Math.max(6, element.getJumpMove());
@@ -987,8 +987,8 @@ public class ASDamageConverter {
     /** Returns the heat dissipation for Meks and AFs, according to ASC - Converting Heat Errata v1.2. */
     protected int getHeatCapacity() {
         int heatCapacity = 0;
-        if (entity instanceof Mech) {
-            heatCapacity = ((Mech) entity).getHeatCapacity(false, false);
+        if (entity instanceof Mek) {
+            heatCapacity = ((Mek) entity).getHeatCapacity(false, false);
         } else if (entity.isFighter() || element.usesArcs()) {
             heatCapacity = entity.getHeatCapacity(false);
         }

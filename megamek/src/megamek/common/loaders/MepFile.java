@@ -26,7 +26,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
@@ -160,7 +160,7 @@ public class MepFile implements IMechLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
-            Mech mech;
+            Mek mech;
 
             if ("Quad".equals(chassisType.trim())) {
                 mech = new QuadMech();
@@ -217,17 +217,17 @@ public class MepFile implements IMechLoader {
 
             mech.setArmorType(armorType);
 
-            decodeArmorAndInternals(mech, Mech.LOC_HEAD, headArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_LARM, larmArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_LT, ltArmor);
-            decodeRearArmor(mech, Mech.LOC_LT, ltrArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_CT, ctArmor);
-            decodeRearArmor(mech, Mech.LOC_CT, ctrArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_RT, rtArmor);
-            decodeRearArmor(mech, Mech.LOC_RT, rtrArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_RARM, rarmArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_RLEG, rlegArmor);
-            decodeArmorAndInternals(mech, Mech.LOC_LLEG, llegArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_HEAD, headArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_LARM, larmArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_LT, ltArmor);
+            decodeRearArmor(mech, Mek.LOC_LT, ltrArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_CT, ctArmor);
+            decodeRearArmor(mech, Mek.LOC_CT, ctrArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_RT, rtArmor);
+            decodeRearArmor(mech, Mek.LOC_RT, rtrArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_RARM, rarmArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_RLEG, rlegArmor);
+            decodeArmorAndInternals(mech, Mek.LOC_LLEG, llegArmor);
 
             // remove arm actuators
             for (int i = 0; i < equipData.length; i++) {
@@ -235,21 +235,21 @@ public class MepFile implements IMechLoader {
                 eqName = eqName.substring(5, 28).trim();
 
                 if (eqName.equals("No Lower Right Arm")) {
-                    mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
-                    mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+                    mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+                    mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
                 } else if (eqName.equals("No Lower Left Arm")) {
-                    mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
-                    mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+                    mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+                    mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
                 } else if (eqName.equals("No Right Hand")) {
-                    mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+                    mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
                 } else if (eqName.equals("No Left Hand")) {
-                    mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+                    mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
                 }
             }
 
@@ -331,7 +331,7 @@ public class MepFile implements IMechLoader {
     /**
      * Decodes and sets the mech's armor and internal structure values
      */
-    private void decodeArmorAndInternals(Mech mech, int loc, String s) {
+    private void decodeArmorAndInternals(Mek mech, int loc, String s) {
         mech.initializeArmor(Integer.parseInt(s.substring(2, 4)), loc);
         mech.initializeInternal(Integer.parseInt(s.substring(12)), loc);
     }
@@ -339,7 +339,7 @@ public class MepFile implements IMechLoader {
     /**
      * Decodes and sets the mech's rear armor values
      */
-    private void decodeRearArmor(Mech mech, int loc, String string) {
+    private void decodeRearArmor(Mek mech, int loc, String string) {
         mech.initializeRearArmor(Integer.parseInt(string.substring(2, 4)), loc);
     }
 

@@ -67,10 +67,10 @@ public class QuadVee extends QuadMech {
     @Override
     public String getSystemName(int index) {
         if (index == SYSTEM_GYRO) {
-            return Mech.getGyroDisplayString(gyroType);
+            return Mek.getGyroDisplayString(gyroType);
         }
         if (index == SYSTEM_COCKPIT) {
-            return Mech.getCockpitDisplayString(cockpitType);
+            return Mek.getCockpitDisplayString(cockpitType);
         }
         return systemNames[index];
     }
@@ -551,6 +551,6 @@ public class QuadVee extends QuadMech {
 
     @Override
     public long getEntityType() {
-        return Entity.ETYPE_MECH | Entity.ETYPE_QUAD_MECH | Entity.ETYPE_QUADVEE;
+        return Entity.ETYPE_MEK | Entity.ETYPE_QUAD_MEK | Entity.ETYPE_QUADVEE;
     }
 }

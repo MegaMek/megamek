@@ -261,8 +261,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         ejectR.setString(Messages.getString("GeneralInfoMapSet.NA"));
-        if (en instanceof Mech) {
-            if (((Mech) en).isAutoEject()) {
+        if (en instanceof Mek) {
+            if (((Mek) en).isAutoEject()) {
                 ejectR.setString(Messages.getString("GeneralInfoMapSet.Operational"));
             } else {
                 ejectR.setString(Messages.getString("GeneralInfoMapSet.Disabled"));
@@ -353,7 +353,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
-        if (en instanceof Mech) {
+        if (en instanceof Mek) {
             heatL.setVisible(true);
             heatR.setVisible(true);
         } else {
@@ -368,7 +368,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
         } else if (en instanceof QuadVee || en instanceof LandAirMech
-                || (en instanceof Mech && ((Mech) en).hasTracks())) {
+                || (en instanceof Mek && ((Mek) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
                 // Show "Fighter/AirMech" instead of "Aerodyne/WiGE"

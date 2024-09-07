@@ -228,7 +228,7 @@ public class EntityWeightClass {
         int i;
 
         // Order of IF statements is important!! Any subclasses must come before their parent class!
-        if (en instanceof Mech) {
+        if (en instanceof Mek) {
             for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
@@ -368,7 +368,7 @@ public class EntityWeightClass {
 
     public static double getClassLimit(int wClass, Entity en) {
         // Order of IF statements is important!! Any subclasses must come before their parent class!
-        if (en instanceof Mech) {
+        if (en instanceof Mek) {
         if ((wClass >= 0) && (wClass < SIZE)) {
                 return mechWeightLimits[wClass];
             }

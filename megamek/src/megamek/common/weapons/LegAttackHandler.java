@@ -28,7 +28,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Game;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -48,7 +48,7 @@ public class LegAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -67,10 +67,10 @@ public class LegAttackHandler extends WeaponHandler {
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
         if (entityTarget.getInternal(hit) <= 0) {
-            if (hit.getLocation() == Mech.LOC_RLEG) {
-                hit = new HitData(Mech.LOC_LLEG);
+            if (hit.getLocation() == Mek.LOC_RLEG) {
+                hit = new HitData(Mek.LOC_LLEG);
             } else {
-                hit = new HitData(Mech.LOC_RLEG);
+                hit = new HitData(Mek.LOC_RLEG);
             }
         }
         hit.setGeneralDamageType(generalDamageType);

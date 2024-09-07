@@ -15,7 +15,7 @@ package megamek.common.actions;
 
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -70,16 +70,16 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         if ((impossible != null) && !impossible.equals("Locked in Grapple")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
-        
+
         if ((ae.getGrappled() != Entity.NONE) && ae.isChainWhipGrappled()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, 
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "cannot break free from a chain whip grapple");
         }
 
         ToHitData toHit;
 
         // non-mechs can't grapple or be grappled
-        if (!(ae instanceof Mech) && !(ae instanceof Protomech)) {
+        if (!(ae instanceof Mek) && !(ae instanceof Protomech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
         }
 
@@ -102,34 +102,34 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
         setCommonModifiers(toHit, game, ae, target);
 
-        if (ae instanceof Mech) {
+        if (ae instanceof Mek) {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
-            if (ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
+            if (ae.hasFunctionalArmAES(Mek.LOC_RARM) && ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
                 toHit.addModifier(-1,"AES modifer");
             }
         }

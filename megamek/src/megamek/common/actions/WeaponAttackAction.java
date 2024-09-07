@@ -380,7 +380,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
 
@@ -1074,16 +1074,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (weapon != null) {
                 int loc = weapon.getLocation();
                 // Can't fire arm and leg-mounted weapons while grappling
-                if (((ae instanceof Mech) && (ae.getGrappleSide() == Entity.GRAPPLE_BOTH)
-                        && ((loc != Mech.LOC_CT) && (loc != Mech.LOC_LT) && (loc != Mech.LOC_RT) && (loc != Mech.LOC_HEAD)))
+                if (((ae instanceof Mek) && (ae.getGrappleSide() == Entity.GRAPPLE_BOTH)
+                        && ((loc != Mek.LOC_CT) && (loc != Mek.LOC_LT) && (loc != Mek.LOC_RT) && (loc != Mek.LOC_HEAD)))
                         || weapon.isRearMounted()) {
                     return Messages.getString("WeaponAttackAction.CantFireWhileGrappled");
                 }
                 // If caught by a chain whip, can't use weapons in the affected arm
-                if ((ae instanceof Mech) && (ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (loc == Mech.LOC_LARM)) {
+                if ((ae instanceof Mek) && (ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (loc == Mek.LOC_LARM)) {
                     return Messages.getString("WeaponAttackAction.CantShootWhileChained");
                 }
-                if ((ae instanceof Mech) && (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (loc == Mech.LOC_RARM)) {
+                if ((ae instanceof Mek) && (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (loc == Mek.LOC_RARM)) {
                     return Messages.getString("WeaponAttackAction.CantShootWhileChained");
                 }
             }
@@ -1098,7 +1098,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((weapon != null)) {
         	int loc = weapon.getLocation();
 
-        	if ((ae instanceof Mech) && !weapon.isRearMounted() && !((Mech) ae).canFireWeapon(loc)) {
+        	if ((ae instanceof Mek) && !weapon.isRearMounted() && !((Mek) ae).canFireWeapon(loc)) {
         		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         	}
         }
@@ -1159,9 +1159,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         // Are the sensors operational?
         // Battlemech sensors are destroyed after 2 hits, unless they have a torso-mounted cockpit
-        int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-            sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+        int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+        if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
+            sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if (sensorHits > 2) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
@@ -1173,7 +1173,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         // Industrialmechs and other unit types have destroyed sensors with 2 or more hits
         } else if ((sensorHits > 1)
-                || ((ae instanceof Mech) && (((Mech) ae).isIndustrial() && (sensorHits == 1)))) {
+                || ((ae instanceof Mek) && (((Mek) ae).isIndustrial() && (sensorHits == 1)))) {
             return Messages.getString("WeaponAttackAction.SensorsDestroyed");
         }
 
@@ -1386,10 +1386,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Hull down mechs cannot fire any leg weapons
         if (ae.isHullDown() && weapon != null) {
             if (((ae instanceof BipedMech)
-                    && ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)))
-                    || ((ae instanceof QuadMech) && ((weapon.getLocation() == Mech.LOC_LLEG)
-                            || (weapon.getLocation() == Mech.LOC_RLEG) || (weapon.getLocation() == Mech.LOC_LARM)
-                            || (weapon.getLocation() == Mech.LOC_RARM)))) {
+                    && ((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)))
+                    || ((ae instanceof QuadMech) && ((weapon.getLocation() == Mek.LOC_LLEG)
+                            || (weapon.getLocation() == Mek.LOC_RLEG) || (weapon.getLocation() == Mek.LOC_LARM)
+                            || (weapon.getLocation() == Mek.LOC_RARM)))) {
                 return Messages.getString("WeaponAttackAction.NoLegHullDown");
             }
         }
@@ -1710,8 +1710,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         }
                     // LAMs can't use leg or rear-mounted weapons
                     } else if (ae instanceof LandAirMech) {
-                        if ((weapon.getLocation() == Mech.LOC_LLEG)
-                                || (weapon.getLocation() == Mech.LOC_RLEG)
+                        if ((weapon.getLocation() == Mek.LOC_LLEG)
+                                || (weapon.getLocation() == Mek.LOC_RLEG)
                                 || weapon.isRearMounted()) {
                             return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
                         }
@@ -2159,12 +2159,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // Leg-mounted B-Pods can be fired at infantry in the attacker's hex, other locations
                 // can only be fired in response to leg/swarm attacks
                 if (ae instanceof BipedMech) {
-                    if (!((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG))) {
+                    if (!((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }
                 } else if (ae instanceof QuadMech) {
-                    if (!((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)
-                            || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getLocation() == Mech.LOC_RARM))) {
+                    if (!((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)
+                            || (weapon.getLocation() == Mek.LOC_LARM) || (weapon.getLocation() == Mek.LOC_RARM))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }
                 }
@@ -3471,15 +3471,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // industrial cockpit: +1 to hit, +2 for primitive
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+        if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
-        } else if ((ae instanceof Mech) && !((Mech) ae).hasAdvancedFireControl()) {
+        } else if ((ae instanceof Mek) && !((Mek) ae).hasAdvancedFireControl()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
         }
 
         // primitive industrial cockpit with advanced firing control: +1 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE)
-                && ((Mech) ae).isIndustrial()) {
+        if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_PRIMITIVE)
+                && ((Mek) ae).isIndustrial()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.PrimIndustrialAfc"));
         }
 
@@ -3938,7 +3938,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Bonuses for dual cockpits, etc
         // Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
-        if (ae instanceof Mech && ((Mech) ae).getCockpitType() == Mech.COCKPIT_DUAL) {
+        if (ae instanceof Mek && ((Mek) ae).getCockpitType() == Mek.COCKPIT_DUAL) {
             if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));
             } else if (ae.getCrew().hasDedicatedGunner()) {
@@ -4069,7 +4069,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Hull Down
         if ((te != null) && te.isHullDown()) {
-            if ((te instanceof Mech) && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
+            if ((te instanceof Mek) && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
                     && (los.getTargetCover() > LosEffects.COVER_NONE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
             }
@@ -4253,7 +4253,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Unit-specific modifiers
 
         // -1 to hit a SuperHeavy mech
-        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
         }
 
@@ -4453,7 +4453,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // target in water?
         int partialWaterLevel = 1;
-        if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if (te != null && (te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
             partialWaterLevel = 2;
         }
         if ((te != null) && targetHexContainsWater
@@ -4551,7 +4551,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Tanks get hit in a random side.
             if (target instanceof Tank) {
                 toHit.setSideTable(ToHitData.SIDE_RANDOM);
-            } else if (target instanceof Mech) {
+            } else if (target instanceof Mek) {
                 // Meks have special tables for shots from above and below.
                 if (aElev > tElev) {
                     toHit.setHitTable(ToHitData.HIT_ABOVE);
@@ -4713,7 +4713,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Leg attacks and Swarm attacks have their own base toHit values
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             toHit = Compute.getLegAttackBaseToHit(ae, te, game);
-            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
             }
             if (te.isProne()) {
@@ -4735,7 +4735,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (te instanceof Tank) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeVehicle"));
             }
-            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
             }
             if (te.isProne()) {
@@ -4890,7 +4890,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // target in partial water - depth 1 for most units
             int partialWaterLevel = 1;
             // Depth 2 for superheavy mechs
-            if (target != null && (target instanceof Mech) && ((Mech) target).isSuperHeavy()) {
+            if (target != null && (target instanceof Mek) && ((Mek) target).isSuperHeavy()) {
                 partialWaterLevel = 2;
             }
             if (targHex.containsTerrain(Terrains.WATER)
@@ -4912,7 +4912,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // I-Swarm bonus
             toHit.append(proneMod);
             if (!isECMAffected && (atype != null) && !oldEnt.isEnemyOf(ae)
-                    && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+                    && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0)
                     && (munition.contains(AmmoType.Munitions.M_SWARM_I))) {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.SwarmIFriendly"));
             }

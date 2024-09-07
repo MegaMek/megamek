@@ -32,7 +32,7 @@ import java.util.*;
 
 /**
  * This class represents mtf files which are used to store Meks. The class contains the file reader while the
- * mtf file generation is currently located in {@link Mech#getMtf()}.
+ * mtf file generation is currently located in {@link Mek#getMtf()}.
  *
  * @author Ben
  * @author Simon (Juliez)
@@ -91,9 +91,9 @@ public class MtfFile implements IMechLoader {
     private final List<String> quirkLines = new ArrayList<>();
 
     public static final int[] locationOrder =
-            {Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG};
+            {Mek.LOC_LARM, Mek.LOC_RARM, Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT, Mek.LOC_HEAD, Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG};
     public static final int[] rearLocationOrder =
-            {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
+            {Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT};
 
     public static final String COMMENT = "#";
     public static final String MTF_VERSION = "version:";
@@ -169,30 +169,30 @@ public class MtfFile implements IMechLoader {
     @Override
     public Entity getEntity() throws Exception {
         try {
-            Mech mech;
+            Mek mech;
 
             int iGyroType;
             try {
-                iGyroType = Mech.getGyroTypeForString(gyroType.substring(5));
-                if (iGyroType == Mech.GYRO_UNKNOWN) {
-                    iGyroType = Mech.GYRO_STANDARD;
+                iGyroType = Mek.getGyroTypeForString(gyroType.substring(5));
+                if (iGyroType == Mek.GYRO_UNKNOWN) {
+                    iGyroType = Mek.GYRO_STANDARD;
                 }
             } catch (Exception ignored) {
-                iGyroType = Mech.GYRO_STANDARD;
+                iGyroType = Mek.GYRO_STANDARD;
             }
 
             int iCockpitType;
             try {
-                iCockpitType = Mech.getCockpitTypeForString(cockpitType.substring(8));
-                if (iCockpitType == Mech.COCKPIT_UNKNOWN) {
-                    iCockpitType = Mech.COCKPIT_STANDARD;
+                iCockpitType = Mek.getCockpitTypeForString(cockpitType.substring(8));
+                if (iCockpitType == Mek.COCKPIT_UNKNOWN) {
+                    iCockpitType = Mek.COCKPIT_STANDARD;
                 }
             } catch (Exception ignored) {
-                iCockpitType = Mech.COCKPIT_STANDARD;
+                iCockpitType = Mek.COCKPIT_STANDARD;
             }
             boolean fullHead;
             try {
-                fullHead = ejectionType.substring(9).equals(Mech.FULL_HEAD_EJECT_STRING);
+                fullHead = ejectionType.substring(9).equals(Mek.FULL_HEAD_EJECT_STRING);
             } catch (Exception ignored) {
                 fullHead = false;
             }
@@ -336,7 +336,7 @@ public class MtfFile implements IMechLoader {
             mech.recalculateTechAdvancement();
 
             for (int x = 0; x < locationOrder.length; x++) {
-                if ((locationOrder[x] == Mech.LOC_CLEG) && !(mech instanceof TripodMech)) {
+                if ((locationOrder[x] == Mek.LOC_CLEG) && !(mech instanceof TripodMech)) {
                     continue;
                 }
                 mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
@@ -579,7 +579,7 @@ public class MtfFile implements IMechLoader {
         }
     }
 
-    private void setTechLevel(Mech mech) throws EntityLoadingException {
+    private void setTechLevel(Mek mech) throws EntityLoadingException {
         String techBase = this.techBase.substring(9).trim();
         if (techBase.equalsIgnoreCase("Inner Sphere")) {
             switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
@@ -661,10 +661,10 @@ public class MtfFile implements IMechLoader {
         }
     }
 
-    private void parseCrits(Mech mech, int loc) throws EntityLoadingException {
+    private void parseCrits(Mek mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
-            if ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM)) {
+            if ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM)) {
                 String toCheck = critData[loc][3].toUpperCase().trim();
                 if (toCheck.endsWith(ARMORED)) {
                     toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
@@ -704,19 +704,19 @@ public class MtfFile implements IMechLoader {
             }
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, isArmored));
                 continue;
             } else if ((critName.contains("Actuator")) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
@@ -818,8 +818,8 @@ public class MtfFile implements IMechLoader {
                         for (Mounted vSplitWeapon : vSplitWeapons) {
                             m = vSplitWeapon;
                             int nLoc = m.getLocation();
-                            if ((((nLoc == loc) || (loc == Mech.getInnerLocation(nLoc)))
-                                    || ((nLoc == Mech.LOC_CT) && (loc == Mech.LOC_HEAD)))
+                            if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
+                                    || ((nLoc == Mek.LOC_CT) && (loc == Mek.LOC_HEAD)))
                                     && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
@@ -837,9 +837,9 @@ public class MtfFile implements IMechLoader {
                             }
                             // give the most restrictive location for arcs
                             int help = m.getLocation();
-                            m.setLocation(Mech.mostRestrictiveLoc(loc, help));
+                            m.setLocation(Mek.mostRestrictiveLoc(loc, help));
                             if (loc != help) {
-                                m.setSecondLocation(Mech.leastRestrictiveLoc(loc, help));
+                                m.setSecondLocation(Mek.leastRestrictiveLoc(loc, help));
                             }
                         } else {
                             // make a new one
@@ -925,8 +925,8 @@ public class MtfFile implements IMechLoader {
         }
     }
 
-    private void parseNoCritEquipment(Mech mech, String name) throws EntityLoadingException {
-        int loc = Mech.LOC_NONE;
+    private void parseNoCritEquipment(Mek mech, String name) throws EntityLoadingException {
+        int loc = Mek.LOC_NONE;
         int splitIndex = name.indexOf(":");
         if (splitIndex > 0) {
             loc = mech.getLocationFromAbbr(name.substring(splitIndex + 1));
@@ -951,14 +951,14 @@ public class MtfFile implements IMechLoader {
      * location), will cause the file crits and MegaMek's crits to become out of
      * sync.
      */
-    private void compactCriticals(Mech mech) {
+    private void compactCriticals(Mek mech) {
         for (int loc = 0; loc < mech.locations(); loc++) {
             compactCriticals(mech, loc);
         }
     }
 
-    private void compactCriticals(Mech mech, int loc) {
-        if (loc == Mech.LOC_HEAD) {
+    private void compactCriticals(Mek mech, int loc) {
+        if (loc == Mek.LOC_HEAD) {
             // This location has an empty slot inbetween systems crits
             // which will mess up parsing if compacted.
             return;
@@ -986,39 +986,39 @@ public class MtfFile implements IMechLoader {
 
     private int getLocation(String location) {
         if (location.equalsIgnoreCase("Left Arm:") || location.equalsIgnoreCase("Front Left Leg:")) {
-            return Mech.LOC_LARM;
+            return Mek.LOC_LARM;
         }
 
         if (location.equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Front Right Leg:")) {
-            return Mech.LOC_RARM;
+            return Mek.LOC_RARM;
         }
 
         if (location.equalsIgnoreCase("Left Leg:") || location.equalsIgnoreCase("Rear Left Leg:")) {
-            return Mech.LOC_LLEG;
+            return Mek.LOC_LLEG;
         }
 
         if (location.equalsIgnoreCase("Right Leg:") || location.equalsIgnoreCase("Rear Right Leg:")) {
-            return Mech.LOC_RLEG;
+            return Mek.LOC_RLEG;
         }
 
         if (location.equalsIgnoreCase("Center Leg:")) {
-            return Mech.LOC_CLEG;
+            return Mek.LOC_CLEG;
         }
 
         if (location.equalsIgnoreCase("Left Torso:")) {
-            return Mech.LOC_LT;
+            return Mek.LOC_LT;
         }
 
         if (location.equalsIgnoreCase("Right Torso:")) {
-            return Mech.LOC_RT;
+            return Mek.LOC_RT;
         }
 
         if (location.equalsIgnoreCase("Center Torso:")) {
-            return Mech.LOC_CT;
+            return Mek.LOC_CT;
         }
 
         // else
-        return Mech.LOC_HEAD;
+        return Mek.LOC_HEAD;
     }
 
     private int getArmorLocation(String location) {
@@ -1027,32 +1027,32 @@ public class MtfFile implements IMechLoader {
         boolean rear = false;
         String locationName = location.toLowerCase();
         if (locationName.startsWith("la armor:") || locationName.startsWith("fll armor:")) {
-            loc = Mech.LOC_LARM;
+            loc = Mek.LOC_LARM;
         } else if (locationName.startsWith("ra armor:") || locationName.startsWith("frl armor:")) {
-            loc = Mech.LOC_RARM;
+            loc = Mek.LOC_RARM;
         } else if (locationName.startsWith("lt armor:")) {
-            loc = Mech.LOC_LT;
+            loc = Mek.LOC_LT;
         } else if (locationName.startsWith("rt armor:")) {
-            loc = Mech.LOC_RT;
+            loc = Mek.LOC_RT;
         } else if (locationName.startsWith("ct armor:")) {
-            loc = Mech.LOC_CT;
+            loc = Mek.LOC_CT;
         } else if (locationName.startsWith("hd armor:")) {
-            loc = Mech.LOC_HEAD;
+            loc = Mek.LOC_HEAD;
         } else if (locationName.startsWith("ll armor:") || locationName.startsWith("rll armor:")) {
-            loc = Mech.LOC_LLEG;
+            loc = Mek.LOC_LLEG;
         } else if (locationName.startsWith("rl armor:") || locationName.startsWith("rrl armor:")) {
-            loc = Mech.LOC_RLEG;
+            loc = Mek.LOC_RLEG;
         } else if (locationName.startsWith("rtl armor:")) {
-            loc = Mech.LOC_LT;
+            loc = Mek.LOC_LT;
             rear = true;
         } else if (locationName.startsWith("rtr armor:")) {
-            loc = Mech.LOC_RT;
+            loc = Mek.LOC_RT;
             rear = true;
         } else if (locationName.startsWith("rtc armor:")) {
-            loc = Mech.LOC_CT;
+            loc = Mek.LOC_CT;
             rear = true;
         } else if (locationName.startsWith("cl armor:")) {
-            loc = Mech.LOC_CLEG;
+            loc = Mek.LOC_CLEG;
         }
 
         if (!rear) {

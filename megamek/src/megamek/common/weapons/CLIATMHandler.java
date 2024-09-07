@@ -820,7 +820,7 @@ public class CLIATMHandler extends ATMHandler {
                     hits -= nCluster;
                     firstHit = false;
                     // do IMP stuff here!
-                    if ((entityTarget instanceof Mech)
+                    if ((entityTarget instanceof Mek)
                             || (entityTarget instanceof Aero)
                             || (entityTarget instanceof Tank)) {
                         entityTarget.addIMPHits(Math.max(0,

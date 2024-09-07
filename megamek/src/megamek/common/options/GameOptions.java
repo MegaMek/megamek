@@ -13,6 +13,19 @@
  */
 package megamek.common.options;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
@@ -23,17 +36,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Vector;
 
 /**
  * Contains the options determining play in the current game.
@@ -173,7 +175,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false);
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false);

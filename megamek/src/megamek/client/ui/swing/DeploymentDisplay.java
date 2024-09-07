@@ -755,7 +755,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         other.setTargetBay(bayNum);
                         // We need to update the entity here so that the server knows about our target bay
                         client.sendUpdateEntity(other);
-                    } else if (other.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    } else if (other.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                         bayChoices = new ArrayList<>();
                         for (Transporter t : ce().getTransports()) {
                             if ((t instanceof ProtomechClampMount) && t.canLoad(other)) {

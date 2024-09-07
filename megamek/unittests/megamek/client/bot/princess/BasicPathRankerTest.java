@@ -1340,12 +1340,12 @@ public class BasicPathRankerTest {
         when(mockHexTwo.depth()).thenReturn(0);
         when(mockHexThree.depth()).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(2);
-        when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(0);
+        when(mockUnit.getArmor(Mek.LOC_CT)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(10);
-        when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(0);
+        when(mockUnit.getArmor(Mek.LOC_CT)).thenReturn(10);
+        when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(10);
+        when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(10);
         when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
@@ -1397,9 +1397,9 @@ public class BasicPathRankerTest {
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(2);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(0);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(0);
         assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(10);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(10);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
@@ -1448,8 +1448,8 @@ public class BasicPathRankerTest {
 
         // Test jumping onto Magma Crust.
         when(mockPath.isJumping()).thenReturn(true);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(24);
-        when(mockUnit.getArmor(eq(Mech.LOC_RLEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(24);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
         // Only 50% chance to break through Crust, but must make PSR to avoid getting
@@ -1488,8 +1488,8 @@ public class BasicPathRankerTest {
         // increases)
         when(mockCrew.getPiloting()).thenReturn(5);
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(2);
-        when(mockUnit.getArmor(eq(Mech.LOC_RLEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(2);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(0);
         // Moderate damage means moderate hazard

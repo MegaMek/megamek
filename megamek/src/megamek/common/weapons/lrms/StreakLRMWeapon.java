@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons.lrms;
@@ -45,10 +45,10 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
         .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.4;
         } else {
             return super.getTonnage(entity, location, size);
@@ -65,7 +65,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     public double getBattleForceDamage(int range, Mounted fcs) {
         return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.1 * getRackSize() : 0;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;

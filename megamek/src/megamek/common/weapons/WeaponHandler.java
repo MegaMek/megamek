@@ -15,6 +15,17 @@
  */
 package megamek.common.weapons;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
@@ -25,19 +36,9 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * A basic, simple attack handler. May or may not work for any particular weapon; must be overloaded
@@ -1372,8 +1373,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int hitLoc = pcHit.getLocation();
             // Primary stores the left side, from the perspective of the
             // attacker
-            if (hitLoc == Mech.LOC_RLEG || hitLoc == Mech.LOC_RT
-                    || hitLoc == Mech.LOC_RARM) {
+            if (hitLoc == Mek.LOC_RLEG || hitLoc == Mek.LOC_RT
+                    || hitLoc == Mek.LOC_RARM) {
                 // Left side is primary
                 damageableCoverType = toHit.getDamagableCoverTypePrimary();
                 coverBuilding = toHit.getCoverBuildingPrimary();
@@ -1561,7 +1562,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
                     ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                     false, false, throughFront, underWater, nukeS2S));
-            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mech)
+            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mek)
                     && entityTarget.antiTSMVulnerable()) {
                 vPhaseReport.addAll(gameManager.doGreenSmokeDamage(entityTarget));
             }
@@ -1774,7 +1775,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         gameManager = m;
         subjectId = getAttackerId();
         nRange = Compute.effectiveDistance(game, ae, target);
-        if (target instanceof Mech) {
+        if (target instanceof Mek) {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), (Entity) target);
         } else {
             throughFront = true;

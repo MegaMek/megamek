@@ -711,7 +711,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Primitive gyros are not identified, so check for use of advanced types
         if (unitType == UnitType.MEK) {
-            if (unitData.getGyroType() >= Mech.GYRO_COMPACT) {
+            if (unitData.getGyroType() >= Mek.GYRO_COMPACT) {
                 return false;
             }
         }
@@ -752,13 +752,13 @@ public class ModelRecord extends AbstractUnitRecord {
         // Cockpit control systems
         int checkCockpit = unitData.getCockpitType();
         if (unitType == UnitType.MEK) {
-            if (checkCockpit != Mech.COCKPIT_STANDARD &&
-                    checkCockpit != Mech.COCKPIT_INDUSTRIAL &&
-                    checkCockpit != Mech.COCKPIT_PRIMITIVE &&
-                    checkCockpit != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            if (checkCockpit != Mek.COCKPIT_STANDARD &&
+                    checkCockpit != Mek.COCKPIT_INDUSTRIAL &&
+                    checkCockpit != Mek.COCKPIT_PRIMITIVE &&
+                    checkCockpit != Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 return false;
-            } else if (checkCockpit == Mech.COCKPIT_PRIMITIVE ||
-                    checkCockpit == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            } else if (checkCockpit == Mek.COCKPIT_PRIMITIVE ||
+                    checkCockpit == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 hasPrimitive = true;
             }
         } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
@@ -816,8 +816,8 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Cockpit/control systems
         if (unitType == UnitType.MEK &&
-                (unitData.getCockpitType() == Mech.COCKPIT_PRIMITIVE ||
-                        unitData.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+                (unitData.getCockpitType() == Mek.COCKPIT_PRIMITIVE ||
+                        unitData.getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             return true;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) &&
@@ -871,7 +871,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Gyro. Star League has no advanced gyro types.
         if (unitType == UnitType.MEK && !starLeagueOnly) {
-            if (unitData.getGyroType() >= Mech.GYRO_COMPACT) {
+            if (unitData.getGyroType() >= Mek.GYRO_COMPACT) {
                 return true;
             }
         }
@@ -904,12 +904,12 @@ public class ModelRecord extends AbstractUnitRecord {
         // Cockpit. Star League is limited to command consoles.
         int checkCockpit = unitData.getCockpitType();
         if (unitType == UnitType.MEK) {
-            if (starLeagueOnly && checkCockpit == Mech.COCKPIT_COMMAND_CONSOLE) {
+            if (starLeagueOnly && checkCockpit == Mek.COCKPIT_COMMAND_CONSOLE) {
                 return true;
-            } else if (checkCockpit != Mech.COCKPIT_STANDARD &&
-                    checkCockpit != Mech.COCKPIT_PRIMITIVE &&
-                    checkCockpit != Mech.COCKPIT_INDUSTRIAL &&
-                    checkCockpit != Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            } else if (checkCockpit != Mek.COCKPIT_STANDARD &&
+                    checkCockpit != Mek.COCKPIT_PRIMITIVE &&
+                    checkCockpit != Mek.COCKPIT_INDUSTRIAL &&
+                    checkCockpit != Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 return true;
             }
         } else if (unitType == UnitType.CONV_FIGHTER ||
@@ -1117,4 +1117,3 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
 }
-

@@ -91,7 +91,7 @@ public final class ASConverter {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
             LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
-            return null; 
+            return null;
         }
 
         var element = new AlphaStrikeElement();
@@ -123,7 +123,7 @@ public final class ASConverter {
         // Type
         element.setType(ASUnitType.getUnitType(entity));
         String unitType = Entity.getEntityTypeName(entity.getEntityType());
-        if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()) {
+        if ((entity instanceof Mek) && ((Mek) entity).isIndustrial()) {
             unitType += " / Industrial";
         }
         conversionReport.addLine("Unit Type:", unitType, element.getASUnitType().toString());
@@ -239,7 +239,7 @@ public final class ASConverter {
 
     /** Returns the given number, rounded up to the nearest integer, based on the first decimal only. */
     public static int roundUp(double number) {
-        return (int) Math.round(number + 0.4); 
+        return (int) Math.round(number + 0.4);
     }
 
     public static int toInt(ASArcs arc) {

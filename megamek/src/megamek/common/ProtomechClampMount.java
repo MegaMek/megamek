@@ -19,7 +19,7 @@ package megamek.common;
  * protomech can only be carried on the front mount, and if carried this way the rear cannot be
  * used. The two mounts are not aware of each other and it is the responsibility of the code that
  * handles loading to enforce this limitation.
- * 
+ *
  * @author Neoancient
  */
 public class ProtomechClampMount extends BattleArmorHandles {
@@ -33,7 +33,7 @@ public class ProtomechClampMount extends BattleArmorHandles {
     public ProtomechClampMount(boolean rear) {
         this.rear = rear;
     }
-    
+
     public boolean isRear() {
         return rear;
     }
@@ -51,7 +51,7 @@ public class ProtomechClampMount extends BattleArmorHandles {
 
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        return (rear == isRear) && (loc == Mech.LOC_CT) && (carriedUnit != Entity.NONE);
+        return (rear == isRear) && (loc == Mek.LOC_CT) && (carriedUnit != Entity.NONE);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ProtomechClampMount extends BattleArmorHandles {
             if (carrier.isOmni()) {
                 protoWeight = Math.max(0, protoWeight - 3.0);
             }
-        }            
+        }
         if (protoWeight < carrier.getWeight() * 0.1) {
             return 0;
         } else if (protoWeight < carrier.getWeight() * 0.25) {

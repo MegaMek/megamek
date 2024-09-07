@@ -110,8 +110,8 @@ public final class DebugEntity {
                         result.append("[").append(slot).append("] ").append(criticalSlot);
                         if (criticalSlot.getType() == 0) {
                             result.append(" (");
-                            if (entity instanceof Mech) {
-                                result.append(((Mech) entity).getSystemName(criticalSlot.getIndex()));
+                            if (entity instanceof Mek) {
+                                result.append(((Mek) entity).getSystemName(criticalSlot.getIndex()));
                             } else if (entity instanceof Protomech) {
                                 result.append(Protomech.systemNames[criticalSlot.getIndex()]);
                             }

@@ -190,7 +190,7 @@ public class EntityListFile {
      *            - the <code>Entity</code> whose location state is needed
      */
     public static String getLocString(Entity entity, int indentLvl) {
-        boolean isMech = entity instanceof Mech;
+        boolean isMech = entity instanceof Mek;
         boolean isNonSmallCraftAero = (entity instanceof Aero) && !(entity instanceof SmallCraft);
         boolean haveSlot = false;
         StringBuilder output = new StringBuilder();
@@ -284,7 +284,7 @@ public class EntityListFile {
                     // Nope. Record missing actuators on Biped Mechs.
                     if (isMech
                             && !entity.entityIsQuad()
-                            && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))
+                            && ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM))
                             && ((loop == 2) || (loop == 3))) {
                         thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_SLOT + " " + MULParser.ATTR_INDEX + "=\"");
                         thisLoc.append(loop + 1);
@@ -1251,30 +1251,30 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_IMPLANTS + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
         }
-        if (entity instanceof Mech) {
-            if (((Mech) entity).isAutoEject()) {
+        if (entity instanceof Mek) {
+            if (((Mek) entity).isAutoEject()) {
                 output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"true");
             } else {
                 output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"false");
             }
             if ((null != entity.getGame())
                     && (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
-                if (((Mech) entity).isCondEjectAmmo()) {
+                if (((Mek) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"true");
                 } else {
                     output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"false");
                 }
-                if (((Mech) entity).isCondEjectEngine()) {
+                if (((Mek) entity).isCondEjectEngine()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTENGINE + "=\"true");
                 } else {
                     output.write("\" " + MULParser.ATTR_CONDEJECTENGINE + "=\"false");
                 }
-                if (((Mech) entity).isCondEjectCTDest()) {
+                if (((Mek) entity).isCondEjectCTDest()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTCTDEST + "=\"true");
                 } else {
                     output.write("\" " + MULParser.ATTR_CONDEJECTCTDEST + "=\"false");
                 }
-                if (((Mech) entity).isCondEjectHeadshot()) {
+                if (((Mek) entity).isCondEjectHeadshot()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTHEADSHOT + "=\"true");
                 } else {
                     output.write("\" " + MULParser.ATTR_CONDEJECTHEADSHOT + "=\"false");

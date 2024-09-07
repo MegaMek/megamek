@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * This class is intended to be used to find a (potentially long) legal path
  * given a movement type from a particular hex to the specified board edge
- * 
+ *
  * Note: This class is largely obsolete now, only used for its static methods
  * @author NickAragua
  */
@@ -70,7 +70,7 @@ public class BoardEdgePathFinder {
         // if they're even, pick one arbitrarily
 
         int edge = Board.START_NONE;
-        
+
         double normalizedXPosition = (double) entity.getPosition().getX() / board.getWidth();
         double normalizedYPosition = (double) entity.getPosition().getY() / board.getHeight();
 
@@ -479,7 +479,7 @@ public class BoardEdgePathFinder {
             children.add(child);
         }
     }
-    
+
     /**
      * A "light-weight" version of the logic found in "isMovementPossible" in MoveStep.java
      *
@@ -491,20 +491,20 @@ public class BoardEdgePathFinder {
         Board board = movePath.getGame().getBoard();
         Hex destHex = board.getHex(dest);
         Building destinationBuilding = board.getBuildingAt(dest);
-        
+
         return isLegalMove(movePath, destHex, destinationBuilding);
     }
 
     /**
      * A "light-weight" version of the logic found in "isMovementPossible" in MoveStep.java
-     * 
+     *
      *
      * @param movePath The move path to process
      * @param destHex the hex at the end of the path
      * @param destinationBuilding the building at the end of the path, can be null
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
-    private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, Building destinationBuilding) {        
+    private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, Building destinationBuilding) {
         Coords dest = movePath.getFinalCoords();
         Board board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();
@@ -512,7 +512,7 @@ public class BoardEdgePathFinder {
         Entity entity = movePath.getEntity();
 
         MoveLegalityIndicator mli = new MoveLegalityIndicator();
-        
+
         boolean destinationInBounds = board.contains(dest);
         if (!destinationInBounds) {
             mli.outOfBounds = true;
@@ -529,29 +529,29 @@ public class BoardEdgePathFinder {
                             movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
                             movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
         boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
-        
+
         // this indicates that we are stepping off a bridge
         boolean sourceIsBridge = srcHex.containsTerrain(Terrains.BRIDGE_CF) &&
                 movePath.getSecondLastStep().getElevation() == srcHex.maxTerrainFeatureElevation(false);
-        
+
         // this indicates that we are stepping onto a bridge
-        boolean destinationIsBridge = destHex.containsTerrain(Terrains.BRIDGE_CF) && 
+        boolean destinationIsBridge = destHex.containsTerrain(Terrains.BRIDGE_CF) &&
                 movePath.getFinalElevation() == destHex.maxTerrainFeatureElevation(false);
-        
+
         // jumpers can clear higher objects than walkers and crawlers
         int maxUpwardElevationChange = movePath.isJumping() ? movePath.getCachedEntityState().getJumpMP() : entity.getMaxElevationChange();
         // jumpers can just hop down wherever they want
         int maxDownwardElevationChange = movePath.isJumping() ? Entity.UNLIMITED_JUMP_DOWN : entity.getMaxElevationDown();
         mli.destHexElevation = calculateUnitElevationInHex(destHex, entity, isHovercraft, isAmphibious, destinationIsBridge);
-        mli.srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious, sourceIsBridge);     
-        
+        mli.srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious, sourceIsBridge);
+
         mli.elevationChange = mli.destHexElevation - mli.srcHexElevation;
         mli.steppingOntoBridge = destinationIsBridge;
-        
+
         mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
-        
+
         boolean destinationHasBuilding = destHex.containsTerrain(Terrains.BLDG_CF) || destHex.containsTerrain(Terrains.FUEL_TANK_CF);
-        
+
         // if we're going to step onto a bridge that will collapse, let's not consider going there
         mli.destinationHasWeakBridge = destinationIsBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
@@ -580,8 +580,8 @@ public class BoardEdgePathFinder {
                 || (destHex.containsTerrain(Terrains.SNOW) && (destHex.terrainLevel(Terrains.SNOW) > 1)));
 
         // tracked and wheeled tanks cannot go into water without a bridge, unless amphibious
-        mli.groundTankIntoWater = (isTracked || isWheeled) && 
-                destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) && 
+        mli.groundTankIntoWater = (isTracked || isWheeled) &&
+                destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) &&
                 !isAmphibious && !destHex.containsTerrain(Terrains.BRIDGE);
 
         // naval units cannot go out of water
@@ -605,7 +605,7 @@ public class BoardEdgePathFinder {
     public static int calculateUnitElevationInHex(Hex hex, Entity entity, boolean isHovercraft, boolean isAmphibious) {
         return calculateUnitElevationInHex(hex, entity, isHovercraft, isAmphibious, false);
     }
-    
+
     /**
      * Helper function that calculates the effective elevation for a unit standing there.
      * @param hex The hex to check
@@ -621,14 +621,14 @@ public class BoardEdgePathFinder {
         // We are naval unit going under a bridge, in which case the height is the water level (naval units go on the surface, mostly)
         // We are non-naval going into water but not onto a bridge, in which case the height is the floor (mechs sink to the bottom)
         // if we are explicitly going to the top of a bridge, use that.
-        
+
         if (useBridgeTop && !entity.isSurfaceNaval() && hex.containsTerrain(Terrains.BRIDGE_CF)) {
             return hex.ceiling();
         }
-        
+
         int hexElevation = hex.getLevel();
-        
-        if (entity.hasETypeFlag(Entity.ETYPE_MECH) && 
+
+        if (entity.hasETypeFlag(Entity.ETYPE_MEK) &&
                 (hex.containsTerrain(Terrains.BLDG_CF) || hex.containsTerrain(Terrains.FUEL_TANK_CF))) {
             hexElevation = hex.ceiling();
         } else if (entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) {
@@ -717,7 +717,7 @@ public class BoardEdgePathFinder {
             return distanceDifference != 0 ? distanceDifference : costDifference;
         }
     }
-    
+
     public static class MoveLegalityIndicator {
         public boolean destinationImpassable;
         public boolean destinationHasWeakBridge;
@@ -731,14 +731,14 @@ public class BoardEdgePathFinder {
         public boolean shipOutofWater;
         public boolean tankGoingThroughBuilding;
         public boolean outOfBounds;
-        
+
         // these are not strictly legality indicators, but they are useful to keep track of
         // so we store them here to avoid re-computing them later
         public int elevationChange;
         public boolean steppingOntoBridge;
         public int srcHexElevation;
         public int destHexElevation;
-        
+
         public boolean isLegal() {
             return
                     !outOfBounds &&

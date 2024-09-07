@@ -1,5 +1,25 @@
 package megamek.client.generator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.collections4.IteratorUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
@@ -8,20 +28,6 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import org.apache.commons.collections4.IteratorUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TeamLoadoutGeneratorTest {
 
@@ -82,8 +88,8 @@ class TeamLoadoutGeneratorTest {
     void reconfigureBotTeam() {
     }
 
-    Mech createMech(String chassis, String model, String crewName) {
-        Mech mockMech = new BipedMech();
+    Mek createMech(String chassis, String model, String crewName) {
+        Mek mockMech = new BipedMech();
         mockMech.setChassis(chassis);
         mockMech.setModel(model);
 
@@ -100,11 +106,11 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
-        Mech mockMech = createMech("Mauler", "MAL-1K", "Tyson");
-        Mounted bin1 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
-        Mounted bin3 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
-        Mounted bin4 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mek mockMech = createMech("Mauler", "MAL-1K", "Tyson");
+        Mounted bin1 = mockMech.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted bin3 = mockMech.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted bin4 = mockMech.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
 
         // Create a set of imperatives, some of which won't work
         MunitionTree mt = new MunitionTree();
@@ -126,9 +132,9 @@ class TeamLoadoutGeneratorTest {
     void testReconfigureEntityMechNoAmmoTypesRequested() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
         MunitionTree mt = new MunitionTree();
 
         // We expect to see no change in loadouts
@@ -141,9 +147,9 @@ class TeamLoadoutGeneratorTest {
     void testReconfigureEntityMechOneAmmoType() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Dead-Fire");
@@ -169,11 +175,11 @@ class TeamLoadoutGeneratorTest {
     void testReconfigureEntityMechThreeAmmoTypesFourBins() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin3 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin4 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin3 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin4 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         MunitionTree mt = new MunitionTree();
         // First, set all bins to Smoke
@@ -200,16 +206,16 @@ class TeamLoadoutGeneratorTest {
     void testReconfigureTwoEntityMechsGenericAndNamed() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mech mockMech2 = createMech("Catapult", "CPLT-C1", "John Q. Public");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin3 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin4 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin5 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin6 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin7 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin8 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mek mockMech2 = createMech("Catapult", "CPLT-C1", "John Q. Public");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin3 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin4 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin5 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin6 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin7 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin8 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         // Set up two loadouts: one for a named pilot, and one for all LRMs on any
         // Catapults
@@ -238,9 +244,9 @@ class TeamLoadoutGeneratorTest {
     void testReconfigureTeamOfMechs()  throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
         ReconfigurationParameters rp = new ReconfigurationParameters();
-        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
-        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
-        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
         mockMech.setOwner(player);
         mockMech2.setOwner(player);
         mockMech3.setOwner(player);
@@ -249,13 +255,13 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(2, mockMech3);
 
         // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
-        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
-        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         MunitionTree mt = new MunitionTree();
         HashMap<String, String> imperatives = new HashMap<>();
@@ -288,9 +294,9 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testRandomReconfigureBotTeam()  throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
-        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
-        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
-        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
         mockMech.setOwner(player);
         mockMech2.setOwner(player);
         mockMech3.setOwner(player);
@@ -299,13 +305,13 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(2, mockMech3);
 
         // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
-        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
-        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         // Just check that the bins are populated still
         tlg.randomizeBotTeamConfiguration(team, "FWL");
@@ -318,9 +324,9 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testLoadEntityListTwoEntities() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
-        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
-        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
-        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
         mockMech.setOwner(player);
         mockMech2.setOwner(player);
         mockMech3.setOwner(player);
@@ -329,13 +335,13 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(2, mockMech3);
 
         // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
-        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
-        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         MunitionTree original = new MunitionTree();
         original.loadEntityList(game.getPlayerEntities(player, false));
@@ -345,9 +351,9 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
-        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
-        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
-        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        Mek mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mek mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mek mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
         mockMech.setOwner(player);
         mockMech2.setOwner(player);
         mockMech3.setOwner(player);
@@ -356,13 +362,13 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(2, mockMech3);
 
         // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
-        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
-        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
-        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
-        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         // Just check that the bins are populated still
         tlg.reconfigureTeam(team, "CL", "");
@@ -375,12 +381,12 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testReconfigureBotTeamAllArtemis()  throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
-        Mech mockMech = createMech("Warhammer", "WHM-6Rb", "Asgard");
-        mockMech.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mech.LOC_RT);
-        Mech mockMech2 = createMech("Valkyrie", "VLK-QW5", "Wobbles");
-        mockMech2.addEquipment(EquipmentType.get("Clan Artemis IV FCS"), Mech.LOC_RT);
-        Mech mockMech3 = createMech("Cougar", "XR", "Sarandon");
-        mockMech3.addEquipment(EquipmentType.get("Clan Artemis V"), Mech.LOC_RT);
+        Mek mockMech = createMech("Warhammer", "WHM-6Rb", "Asgard");
+        mockMech.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mek.LOC_RT);
+        Mek mockMech2 = createMech("Valkyrie", "VLK-QW5", "Wobbles");
+        mockMech2.addEquipment(EquipmentType.get("Clan Artemis IV FCS"), Mek.LOC_RT);
+        Mek mockMech3 = createMech("Cougar", "XR", "Sarandon");
+        mockMech3.addEquipment(EquipmentType.get("Clan Artemis V"), Mek.LOC_RT);
         mockMech.setOwner(player);
         mockMech2.setOwner(player);
         mockMech3.setOwner(player);
@@ -389,11 +395,11 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(2, mockMech3);
 
         // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMech.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
-        Mounted bin2 = mockMech2.addEquipment(mockMML7LRMAmmoType, Mech.LOC_LT);
-        Mounted bin3 = mockMech2.addEquipment(mockMML7SRMAmmoType, Mech.LOC_LT);
-        Mounted bin4 = mockMech3.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin5 = mockMech3.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin1 = mockMech.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        Mounted bin2 = mockMech2.addEquipment(mockMML7LRMAmmoType, Mek.LOC_LT);
+        Mounted bin3 = mockMech2.addEquipment(mockMML7SRMAmmoType, Mek.LOC_LT);
+        Mounted bin4 = mockMech3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin5 = mockMech3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
 
         // Just check that the bins are populated still
         tlg.reconfigureTeam(team, "IS", "");
@@ -531,9 +537,9 @@ class TeamLoadoutGeneratorTest {
     void testClampAmmoShotsReduceAmmoBinsToZero() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMech, 0.0f);
         assertEquals(0, bin1.getUsableShotsLeft());
@@ -545,9 +551,9 @@ class TeamLoadoutGeneratorTest {
         // LRM15s carry 8 shots, the clamp function should give 1 shot at 10% / 0.1f ratio
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMech, 0.1f);
         assertEquals(1, bin1.getUsableShotsLeft());
@@ -559,9 +565,9 @@ class TeamLoadoutGeneratorTest {
         // LRM15s carry 8 shots, the clamp function should give 4 shot at 40% / 0.5f ratio
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMech, 0.5f);
         assertEquals(4, bin1.getUsableShotsLeft());
@@ -573,9 +579,9 @@ class TeamLoadoutGeneratorTest {
         // LRM15s carry 8 shots, the clamp function should give 8 shot at 100% or over
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
 
-        Mech mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
-        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mek mockMech = createMech("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted bin1 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMech, 1.5f);
         assertEquals(8, bin1.getUsableShotsLeft());

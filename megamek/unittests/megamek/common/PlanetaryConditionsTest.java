@@ -1,11 +1,5 @@
 package megamek.common;
 
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.planetaryconditions.Wind;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -14,6 +8,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
 
 public class PlanetaryConditionsTest {
 
@@ -51,7 +52,7 @@ public class PlanetaryConditionsTest {
         // F4 Tornado - Entity is a mech (not doomed)
         planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setWind(Wind.TORNADO_F4);
-        mockEntity = mock(Mech.class);
+        mockEntity = mock(Mek.class);
         when(mockEntity.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         assertNull(planetaryConditions.whyDoomed(mockEntity, mockGame));

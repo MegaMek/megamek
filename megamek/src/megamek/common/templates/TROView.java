@@ -14,6 +14,28 @@
 */
 package megamek.common.templates;
 
+import static megamek.client.ui.WrapLayout.wordWrap;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
 import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
 import megamek.common.*;
@@ -24,20 +46,6 @@ import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.WrapLayout.wordWrap;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -58,9 +66,9 @@ public class TROView {
 
     public static TROView createView(Entity entity, ViewFormatting formatting) {
         TROView view;
-        if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-            view = new MechTROView((Mech) entity);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
+            view = new MechTROView((Mek) entity);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             view = new ProtomechTROView((Protomech) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
                 || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
@@ -337,7 +345,7 @@ public class TROView {
                 for (int i = 1; i < locs.length; i++) {
                     if ((locs[i] < entity.locations())
                             && ((!provider.apply(entity, locs[i]).equals(provider.apply(entity, locs[0])))
-                                    || !entity.hasETypeFlag(Entity.ETYPE_MECH))) {
+                                    || !entity.hasETypeFlag(Entity.ETYPE_MEK))) {
                         val = Arrays.stream(locs).filter(l -> l < entity.locations())
                                 .mapToObj(l -> String.valueOf(provider.apply(entity, l)))
                                 .collect(Collectors.joining("/"));

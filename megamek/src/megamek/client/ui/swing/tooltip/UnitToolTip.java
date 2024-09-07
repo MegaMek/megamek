@@ -13,6 +13,26 @@
  */
 package megamek.client.ui.swing.tooltip;
 
+import static megamek.client.ui.swing.tooltip.TipUtil.BR;
+import static megamek.client.ui.swing.tooltip.TipUtil.NOBR;
+import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
+import static megamek.client.ui.swing.util.UIUtil.DOT_SPACER;
+import static megamek.client.ui.swing.util.UIUtil.ECM_SIGN;
+import static megamek.client.ui.swing.util.UIUtil.addGray;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.repeat;
+
+import java.awt.Color;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -30,19 +50,6 @@ import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.SwarmAttack;
 import megamek.common.weapons.SwarmWeaponAttack;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
-import static megamek.client.ui.swing.util.UIUtil.*;
 
 public final class UnitToolTip {
 
@@ -164,7 +171,7 @@ public final class UnitToolTip {
 
         // Carried Units
         result += carriedUnits(entity);
-        
+
         // carried cargo
         result += carriedCargo(entity);
 
@@ -478,41 +485,41 @@ public final class UnitToolTip {
                 col2 += intactLocBar(entity.getOArmor(loc), entity.getArmor(loc), armorChar).toString();
             }
 
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 switch (loc) {
-                    case Mech.LOC_HEAD:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                    case Mek.LOC_HEAD:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
                         break;
-                    case Mech.LOC_CT:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc, msg_abbr_gyro).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                    case Mek.LOC_CT:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc, msg_abbr_gyro).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
                         break;
-                    case Mech.LOC_RT:
-                    case Mech.LOC_LT:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                    case Mek.LOC_RT:
+                    case Mek.LOC_LT:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
                         break;
-                    case Mech.LOC_RARM:
-                    case Mech.LOC_LARM:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc, msg_abbr_upperarm).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc, msg_abbr_lowerarm).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc, msg_abbr_hand).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
+                    case Mek.LOC_RARM:
+                    case Mek.LOC_LARM:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, loc, msg_abbr_upperarm).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, loc, msg_abbr_lowerarm).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND, loc, msg_abbr_hand).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
                         break;
-                    case Mech.LOC_RLEG:
-                    case Mech.LOC_LLEG:
-                    case Mech.LOC_CLEG:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
+                    case Mek.LOC_RLEG:
+                    case Mek.LOC_LLEG:
+                    case Mek.LOC_CLEG:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
                         break;
                     default:
                         col3 = "";
@@ -1126,8 +1133,8 @@ public final class UnitToolTip {
     public static HeatDisplayHelper getHeatCapacityForDisplay(Entity e) {
         int heatCap;
 
-        if (e instanceof Mech) {
-            Mech m = (Mech) e;
+        if (e instanceof Mek) {
+            Mek m = (Mek) e;
             heatCap = m.getHeatCapacity(true, false);
         } else if (e instanceof Aero) {
             Aero a = (Aero) e;
@@ -1140,8 +1147,8 @@ public final class UnitToolTip {
         int heatCapWater = e.getHeatCapacityWithWater();
 
         if (e.hasActivatedRadicalHS()) {
-            if (e instanceof Mech) {
-                Mech m = (Mech) e;
+            if (e instanceof Mek) {
+                Mek m = (Mek) e;
                 heatCap += m.getActiveSinks();
                 heatCapWater += m.getActiveSinks();
             } else if (e instanceof Aero) {
@@ -1375,7 +1382,7 @@ public final class UnitToolTip {
             sHeat += " / "+ hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat, GUIP.getUnitToolTipFGColor())) + sHeat + "</FONT>";
 
-            if (entity instanceof Mech && ((Mech) entity).hasActiveTSM()) {
+            if (entity instanceof Mek && ((Mek) entity).hasActiveTSM()) {
                 result += DOT_SPACER;
                 String sTSM = "TSM";
                 result += guiScaledFontHTML(GUIP.getPrecautionColor()) + sTSM + "</FONT>";
@@ -1550,7 +1557,7 @@ public final class UnitToolTip {
             int actuatorHits = 0;
             int legsDestroyed = 0;
 
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
                     for (Mounted m : entity.getMisc()) {
                         if (m.getType().hasFlag(MiscType.F_TRACKS)) {
@@ -1563,13 +1570,13 @@ public final class UnitToolTip {
                     for (int i = 0; i < entity.locations(); i++) {
                         if (entity.locationIsLeg(i)) {
                             if (!entity.isLocationBad(i)) {
-                                if (((Mech) entity).legHasHipCrit(i)) {
+                                if (((Mek) entity).legHasHipCrit(i)) {
                                     hipHits++;
                                     if ((entity.getGame() == null) || (!entity.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE))) {
                                         continue;
                                     }
                                 }
-                                actuatorHits += ((Mech) entity).countLegActuatorCrits(i);
+                                actuatorHits += ((Mek) entity).countLegActuatorCrits(i);
                             }
                             else {
                                 legsDestroyed++;
@@ -1587,7 +1594,7 @@ public final class UnitToolTip {
             int paritalWingDistroyed = 0;
             int partialWingWeaterMod = 0;
 
-            if ((entity instanceof Mech) || (entity instanceof Tank)) {
+            if ((entity instanceof Mek) || (entity instanceof Tank)) {
                 for (Mounted mounted : entity.getMisc()) {
                     if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
                         jumpJet++;
@@ -1603,13 +1610,13 @@ public final class UnitToolTip {
                     }
                     if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
                         int eNum = entity.getEquipmentNum(mounted);
-                        paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
-                        paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
-                        paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
-                        paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
+                        paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
+                        paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);
+                        paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
+                        paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);
 
-                        partialWingWeaterMod = ((Mech) entity).getPartialWingJumpAtmoBonus()
-                                - ((Mech) entity).getPartialWingJumpWeightClassBonus();
+                        partialWingWeaterMod = ((Mek) entity).getPartialWingJumpAtmoBonus()
+                                - ((Mek) entity).getPartialWingJumpWeightClassBonus();
                     }
                 }
 
@@ -1846,23 +1853,23 @@ public final class UnitToolTip {
 
         return new StringBuilder().append(result);
     }
-    
+
     private static StringBuilder carriedCargo(Entity entity) {
     	StringBuilder sb = new StringBuilder();
     	List<ICarryable> cargoList = entity.getDistinctCarriedObjects();
-    	
+
     	if (!cargoList.isEmpty()) {
     		sb.append(guiScaledFontHTML());
     		sb.append(Messages.getString("MissionRole.cargo"));
     		sb.append(":<br/>&nbsp;&nbsp;");
-    		
+
 	    	for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
 	    		sb.append(cargo.toString());
 	    		sb.append("<br/>&nbsp;&nbsp;");
 	    	}
 	    	sb.append("</FONT>");
     	}
-    	
+
     	return sb;
     }
 

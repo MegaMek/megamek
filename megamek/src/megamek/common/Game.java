@@ -1161,16 +1161,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public synchronized void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
-        if (entity instanceof Mech) {
-            ((Mech) entity).setBAGrabBars();
-            ((Mech) entity).setProtomechClampMounts();
+        if (entity instanceof Mek) {
+            ((Mek) entity).setBAGrabBars();
+            ((Mek) entity).setProtomechClampMounts();
         } else if (entity instanceof Tank) {
             ((Tank) entity).setBAGrabBars();
             ((Tank) entity).setTrailerHitches();
         }
 
         // Add magnetic clamp mounts
-        if ((entity instanceof Mech) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
+        if ((entity instanceof Mek) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountMech());
         } else if ((entity instanceof Tank) && !entity.isOmni()
                 && !entity.hasBattleArmorHandles()) {
@@ -1196,13 +1196,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
 
         // And... lets get this straight now.
-        if ((entity instanceof Mech)
+        if ((entity instanceof Mek)
                 && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
-            ((Mech) entity).setAutoEject(true);
-            ((Mech) entity).setCondEjectAmmo(!entity.hasCase() && !entity.hasCASEII());
-            ((Mech) entity).setCondEjectEngine(true);
-            ((Mech) entity).setCondEjectCTDest(true);
-            ((Mech) entity).setCondEjectHeadshot(true);
+            ((Mek) entity).setAutoEject(true);
+            ((Mek) entity).setCondEjectAmmo(!entity.hasCase() && !entity.hasCASEII());
+            ((Mek) entity).setCondEjectEngine(true);
+            ((Mek) entity).setCondEjectCTDest(true);
+            ((Mek) entity).setCondEjectHeadshot(true);
         }
 
         if (genEvent) {
@@ -1974,7 +1974,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         for (Entity entity : inGameTWEntities()) {
             if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
-                    && (entity instanceof Mech)) {
+                    && (entity instanceof Mek)) {
                 remaining++;
             }
         }
@@ -2087,7 +2087,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // Same thing but for meks
         if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
-                && (entity instanceof Mech) && getPhase().isMovement()) {
+                && (entity instanceof Mek) && getPhase().isMovement()) {
             if ((getMechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a mech turn, remove that

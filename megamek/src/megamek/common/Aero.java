@@ -2395,7 +2395,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     public boolean hasArmoredEngine() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_AFT); slot++) {
             CriticalSlot cs = getCritical(LOC_AFT, slot);
-            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }

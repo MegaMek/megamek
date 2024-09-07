@@ -610,7 +610,7 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "BattleArmor");
         } else if (t instanceof Protomech) {
             blk.writeBlockData("UnitType", "ProtoMech");
-        } else if (t instanceof Mech) {
+        } else if (t instanceof Mek) {
             blk.writeBlockData("UnitType", "Mech");
         } else if (t instanceof GunEmplacement) {
             blk.writeBlockData("UnitType", "GunEmplacement");
@@ -757,7 +757,7 @@ public class BLKFile {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
-                if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                if (t.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                     blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
                     blk.writeBlockData("interface_cockpit",
                             String.valueOf(((Protomech) t).hasInterfaceCockpit()));

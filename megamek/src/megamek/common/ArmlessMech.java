@@ -24,7 +24,7 @@ public class ArmlessMech extends BipedMech {
     }
 
     public ArmlessMech() {
-        this(Mech.GYRO_STANDARD, Mech.COCKPIT_STANDARD);
+        this(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD);
     }
 
     public ArmlessMech(int inGyroType, int inCockpitType) {
@@ -47,7 +47,7 @@ public class ArmlessMech extends BipedMech {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head head
      * @param ct center torso
      * @param t right/left torso
@@ -93,6 +93,6 @@ public class ArmlessMech extends BipedMech {
 
     @Override
     public long getEntityType() {
-        return Entity.ETYPE_MECH | Entity.ETYPE_ARMLESS_MECH;
+        return Entity.ETYPE_MEK | Entity.ETYPE_ARMLESS_MEK;
     }
 }

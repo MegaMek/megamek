@@ -33,7 +33,7 @@ public class BattlefieldControlTrigger implements Trigger {
             return twGame.getEntitiesVector().stream()
                     .filter(e -> !e.isOffBoard())
                     .filter(e -> e.getPosition() != null)
-                    .filter(e -> !(e instanceof MechWarrior))
+                    .filter(e -> !(e instanceof MekWarrior))
                     .filter(e -> !(e instanceof TeleMissile))
                     .filter(e -> !(e instanceof GunEmplacement))
                     .map(unit -> game.getPlayer(unit.getOwnerId()).getTeam())

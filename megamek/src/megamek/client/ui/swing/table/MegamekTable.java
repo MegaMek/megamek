@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
 
-public class MegamekTable extends JTable {
+public class MegaMekTable extends JTable {
     private static final long serialVersionUID = 1L;
 
     private static final int KEY_TIMEOUT = 1000;
@@ -21,49 +21,49 @@ public class MegamekTable extends JTable {
      */
     protected int searchColumn;
 
-    public MegamekTable() {
+    public MegaMekTable() {
         super();
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(int numRows, int numColumns) {
+    public MegaMekTable(int numRows, int numColumns) {
         super(numRows, numColumns);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(Object[][] rowData, Object[] columnNames) {
+    public MegaMekTable(Object[][] rowData, Object[] columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(TableModel dm) {
+    public MegaMekTable(TableModel dm) {
         super(dm);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(TableModel dm, int sc) {
+    public MegaMekTable(TableModel dm, int sc) {
         super(dm);
         lastSearch = 0;
         searchColumn = sc;
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(TableModel dm, TableColumnModel cm) {
+    public MegaMekTable(TableModel dm, TableColumnModel cm) {
         super(dm, cm);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(TableModel dm, TableColumnModel cm,
+    public MegaMekTable(TableModel dm, TableColumnModel cm,
             ListSelectionModel sm) {
         super(dm, cm, sm);
         lastSearch = 0;
@@ -71,7 +71,7 @@ public class MegamekTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(Vector<Vector<String>> rowData, Vector<String> columnNames) {
+    public MegaMekTable(Vector<Vector<String>> rowData, Vector<String> columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
         searchColumn = 0;

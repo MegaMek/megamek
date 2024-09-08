@@ -1,49 +1,13 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.Enumeration;
 
-import megamek.client.ui.swing.widget.AeroMapSet;
-import megamek.client.ui.swing.widget.ArmlessMechMapSet;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.BattleArmorMapSet;
-import megamek.client.ui.swing.widget.CapitalFighterMapSet;
-import megamek.client.ui.swing.widget.DisplayMapSet;
-import megamek.client.ui.swing.widget.GunEmplacementMapSet;
-import megamek.client.ui.swing.widget.InfantryMapSet;
-import megamek.client.ui.swing.widget.JumpshipMapSet;
-import megamek.client.ui.swing.widget.LargeSupportTankMapSet;
-import megamek.client.ui.swing.widget.MechMapSet;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.ProtomechMapSet;
-import megamek.client.ui.swing.widget.QuadMapSet;
-import megamek.client.ui.swing.widget.SpheroidMapSet;
-import megamek.client.ui.swing.widget.SquadronMapSet;
-import megamek.client.ui.swing.widget.SuperHeavyTankMapSet;
-import megamek.client.ui.swing.widget.TankMapSet;
-import megamek.client.ui.swing.widget.TripodMechMapSet;
-import megamek.client.ui.swing.widget.VTOLMapSet;
-import megamek.client.ui.swing.widget.WarshipMapSet;
-import megamek.common.Aero;
-import megamek.common.ArmlessMech;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LargeSupportTank;
-import megamek.common.Mek;
-import megamek.common.ProtoMek;
-import megamek.common.QuadMek;
-import megamek.common.SmallCraft;
-import megamek.common.SuperHeavyTank;
-import megamek.common.Tank;
-import megamek.common.TripodMek;
-import megamek.common.VTOL;
-import megamek.common.Warship;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
 
 /**
  * This panel contains the armor readout display.
@@ -51,15 +15,15 @@ import org.apache.logging.log4j.LogManager;
 class ArmorPanel extends PicMap {
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
-    private MechMapSet mech;
+    private MekMapSet mech;
     private InfantryMapSet infantry;
     private BattleArmorMapSet battleArmor;
-    private ProtomechMapSet proto;
+    private ProtoMekMapSet proto;
     private VTOLMapSet vtol;
     private QuadMapSet quad;
-    private TripodMechMapSet tripod;
+    private TripodMekMapSet tripod;
     private GunEmplacementMapSet gunEmplacement;
-    private ArmlessMechMapSet armless;
+    private ArmlessMekMapSet armless;
     private LargeSupportTankMapSet largeSupportTank;
     private SuperHeavyTankMapSet superHeavyTank;
     private AeroMapSet aero;
@@ -99,15 +63,15 @@ class ArmorPanel extends PicMap {
     public void addNotify() {
         super.addNotify();
         tank = new TankMapSet(this, unitDisplay);
-        mech = new MechMapSet(this, unitDisplay);
+        mech = new MekMapSet(this, unitDisplay);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
-        proto = new ProtomechMapSet(this, unitDisplay);
+        proto = new ProtoMekMapSet(this, unitDisplay);
         vtol = new VTOLMapSet(this, unitDisplay);
         quad = new QuadMapSet(this, unitDisplay);
-        tripod = new TripodMechMapSet(this, unitDisplay);
+        tripod = new TripodMekMapSet(this, unitDisplay);
         gunEmplacement = new GunEmplacementMapSet(this);
-        armless = new ArmlessMechMapSet(this, unitDisplay);
+        armless = new ArmlessMekMapSet(this, unitDisplay);
         largeSupportTank = new LargeSupportTankMapSet(this, unitDisplay);
         superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplay);
         aero = new AeroMapSet(this, unitDisplay);

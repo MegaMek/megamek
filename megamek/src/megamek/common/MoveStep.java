@@ -1110,7 +1110,7 @@ public class MoveStep implements Serializable {
                 if (entity.isAero()) {
                     setMp(2);
                 } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    if (entity instanceof LandAirMech
+                    if (entity instanceof LandAirMek
                             && entity.getAltitude() > 0) {
                         setMp(10);
                         setElevation(altitude * 10);
@@ -1917,7 +1917,7 @@ public class MoveStep implements Serializable {
         // return from it
         // only if Aeros are airborne, otherwise they should move like other
         // units
-        if (type == MoveStepType.HOVER && entity instanceof LandAirMech
+        if (type == MoveStepType.HOVER && entity instanceof LandAirMek
                 && entity.getMovementMode() == EntityMovementMode.WIGE
                 && entity.getAltitude() <= 3) {
             if (mpUsed <= cachedEntityState.getWalkMP()) {
@@ -2236,7 +2236,7 @@ public class MoveStep implements Serializable {
         if (type == MoveStepType.EVADE) {
             if (entity.hasHipCrit()
                     || (entity.getMovementMode() == EntityMovementMode.WIGE
-                    && (entity instanceof LandAirMech || entity instanceof ProtoMek)
+                    && (entity instanceof LandAirMek || entity instanceof ProtoMek)
                     && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
@@ -2323,13 +2323,13 @@ public class MoveStep implements Serializable {
         // WiGEs, AirMechs, and glider ProtoMechs have different MP for ground and airborne movement
         if (entity.getMovementMode() == EntityMovementMode.WIGE) {
             if (getClearance() <= 0 && type != MoveStepType.UP) {
-                if (entity instanceof LandAirMech) {
+                if (entity instanceof LandAirMek) {
                     // On the ground or underwater use AirMech walk/run.
                     // Sprint can only be used on the ground, so that is already set.
-                    tmpWalkMP = ((LandAirMech) entity).getAirMechWalkMP();
-                    runMPNoBoost = ((LandAirMech) entity).getAirMechRunMP();
+                    tmpWalkMP = ((LandAirMek) entity).getAirMechWalkMP();
+                    runMPNoBoost = ((LandAirMek) entity).getAirMechRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
-                    MPBoosters mpBoosters = ((LandAirMech) entity).getArmedMPBoosters();
+                    MPBoosters mpBoosters = ((LandAirMek) entity).getArmedMPBoosters();
                     if (!mpBoosters.isNone()) {
                         runMPMax = mpBoosters.calculateRunMP(tmpWalkMP);
                     } else {
@@ -2339,10 +2339,10 @@ public class MoveStep implements Serializable {
                     // Only 1 ground MP for ground effect vehicles and glider ProtoMeks
                     tmpWalkMP = runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = 1;
                 }
-            } else if (entity instanceof LandAirMech) {
+            } else if (entity instanceof LandAirMek) {
                 // LAMs cannot use overdrive and MASC does not affect airborne MP.
-                tmpWalkMP = ((LandAirMech) entity).getAirMechCruiseMP();
-                runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = ((LandAirMech) entity).getAirMechFlankMP();
+                tmpWalkMP = ((LandAirMek) entity).getAirMechCruiseMP();
+                runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = ((LandAirMek) entity).getAirMechFlankMP();
             }
         }
 
@@ -2364,7 +2364,7 @@ public class MoveStep implements Serializable {
             // QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
             // and can switch to track mode while prone then stand.
             if (getEntity().isProne()
-                    && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
+                    && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMek)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             // Illegal LAM conversions due to damage have to be determined by entire path, because
@@ -2564,8 +2564,8 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_VTOL_SPRINT;
         }
 
-        if (entity.isGyroDestroyed() && !((entity instanceof LandAirMech)
-                && (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
+        if (entity.isGyroDestroyed() && !((entity instanceof LandAirMek)
+                && (entity.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) {
             //A prone 'Mek with a destroyed gyro can only change a single hex side, or eject
             if (entity.isProne()) {
                 if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
@@ -2649,9 +2649,9 @@ public class MoveStep implements Serializable {
         }
 
         // Bimodal LAMs cannot spend MP when converting to fighter mode on the ground.
-        if (entity instanceof LandAirMech
-                && ((LandAirMech) entity).getLAMType() == LandAirMech.LAM_BIMODAL
-                && entity.getConversionMode() == LandAirMech.CONV_MODE_MECH
+        if (entity instanceof LandAirMek
+                && ((LandAirMek) entity).getLAMType() == LandAirMek.LAM_BIMODAL
+                && entity.getConversionMode() == LandAirMek.CONV_MODE_MECH
                 && movementMode == EntityMovementMode.AERODYNE
                 && altitude == 0
                 && mp > 0) {
@@ -3310,7 +3310,7 @@ public class MoveStep implements Serializable {
 
         // Assault dropping units cannot move
         if ((entity.isAssaultDropInProgress() || entity.isDropping())
-                && !((entity instanceof LandAirMech)
+                && !((entity instanceof LandAirMek)
                 && (entity.getMovementMode() == EntityMovementMode.WIGE)
                 && (entity.getAltitude() <= 3))) {
             return false;
@@ -4246,9 +4246,9 @@ public class MoveStep implements Serializable {
                 || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
             return game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
         }
-        if (entity instanceof LandAirMech) {
-            return entity.getConversionMode() == LandAirMech.CONV_MODE_MECH
-                    || (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
+        if (entity instanceof LandAirMek) {
+            return entity.getConversionMode() == LandAirMek.CONV_MODE_MECH
+                    || (entity.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH
                     && getClearance() <= 0);
         }
         return entity instanceof Mek;

@@ -1,13 +1,28 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.*;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.HeatEffects;
+import megamek.client.ui.swing.Slider;
 import megamek.client.ui.swing.lobby.LobbyUtility;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.*;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
@@ -15,13 +30,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
@@ -450,7 +458,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             }
 
             // Show jammed weapons.
-            for (Mounted weapon : en.getWeaponList()) {
+            for (Mounted<?> weapon : en.getWeaponList()) {
                 if (weapon.isJammed()) {
                     buff = new StringBuffer(weapon.getName());
                     buff.append(Messages.getString("MechDisplay.isJammed"));
@@ -486,7 +494,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             }
 
             // Show club(s).
-            for (Mounted club : en.getClubs()) {
+            for (Mounted<?> club : en.getClubs()) {
                 carrysR.append(club.getName());
                 carrysR.append("\n");
             }

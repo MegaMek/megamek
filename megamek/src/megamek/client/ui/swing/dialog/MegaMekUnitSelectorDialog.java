@@ -18,13 +18,23 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GetFocusListener;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.Entity;
@@ -35,11 +45,6 @@ import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 

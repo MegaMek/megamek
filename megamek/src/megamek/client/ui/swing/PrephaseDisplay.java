@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,19 +31,20 @@ import java.util.Map;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.common.*;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
+import megamek.common.Entity;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * PrephaseDisplay for revealing hidden units. This occurs before Move and Firing
@@ -112,7 +112,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     // buttons
-    protected Map<PrephaseCommand, MegamekButton> buttons;
+    protected Map<PrephaseCommand, MegaMekButton> buttons;
 
     private int cen = Entity.NONE; // current entity number
 
@@ -189,8 +189,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         PrephaseCommand[] commands = PrephaseCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
@@ -351,7 +351,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
-            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
     }

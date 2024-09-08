@@ -19,23 +19,30 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.util.*;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
@@ -100,7 +107,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    protected Map<DeployCommand,MegamekButton> buttons;
+    protected Map<DeployCommand,MegaMekButton> buttons;
 
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
@@ -143,8 +150,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         DeployCommand[] commands = DeployCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
@@ -226,7 +233,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             setRemoveEnabled(true);
 
             clientgui.getUnitDisplay().displayEntity(ce());
-            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
+            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
             clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
@@ -283,7 +290,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setButtonEnabled(DeployCommand cmd, boolean enabled) {
-        MegamekButton button = buttons.get(cmd);
+        MegaMekButton button = buttons.get(cmd);
         if (button != null) {
             button.setEnabled(enabled);
         }

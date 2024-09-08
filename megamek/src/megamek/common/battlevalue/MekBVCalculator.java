@@ -18,6 +18,15 @@
  */
 package megamek.common.battlevalue;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.EquipmentType.T_STRUCTURE_COMPOSITE;
+import static megamek.common.EquipmentType.T_STRUCTURE_INDUSTRIAL;
+import static megamek.common.EquipmentType.T_STRUCTURE_REINFORCED;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.weapons.autocannons.HVACWeapon;
@@ -29,13 +38,6 @@ import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.EquipmentType.*;
 
 public class MekBVCalculator extends HeatTrackingBVCalculator {
 
@@ -277,7 +279,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         int heatCapacity = entity.getHeatCapacity();
         int mechHeatEfficiency = 6 + heatCapacity;
         String calculation = "6 + " + heatCapacity;
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
             mechHeatEfficiency += 3;
             calculation += " + 3 (LAM)";
         }
@@ -297,8 +299,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
         int moveHeat;
         String moveHeatType = " (Run)";
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            moveHeat = (int) Math.round(((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            moveHeat = (int) Math.round(((LandAirMek) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
         } else if ((mek.getJumpMP(MPCalculationSetting.BV_CALCULATION) > 0)
                 && (entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION)) > entity.getRunHeat())) {
             moveHeat = entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION));
@@ -342,21 +344,21 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected Predicate<Mounted> frontWeaponFilter() {
         return weapon -> countAsOffensiveWeapon(weapon)
-                && !mek.isArm(weapon.getLocation()) && !weapon.isMechTurretMounted()
+                && !mek.isArm(weapon.getLocation()) && !weapon.isMekTurretMounted()
                 && (!weapon.isRearMounted() || isFrontFacingVGL(weapon));
     }
 
     @Override
     protected Predicate<Mounted> rearWeaponFilter() {
         return weapon -> countAsOffensiveWeapon(weapon)
-                && !mek.isArm(weapon.getLocation()) && !weapon.isMechTurretMounted()
+                && !mek.isArm(weapon.getLocation()) && !weapon.isMekTurretMounted()
                 && (weapon.isRearMounted() || isRearFacingVGL(weapon));
     }
 
     @Override
     protected boolean isNominalRear(Mounted weapon) {
         return (switchRearAndFront ^ rearWeaponFilter().test(weapon)) && !mek.isArm(weapon.getLocation())
-                && !weapon.isMechTurretMounted();
+                && !weapon.isMekTurretMounted();
     }
 
     @Override
@@ -488,8 +490,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected int getRunningTMM() {
         int mp = runMP;
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            mp = ((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION);
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            mp = ((LandAirMek) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION);
             if (mp == 0) {
                 return 0;
             } else {
@@ -506,8 +508,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            return runMP + (int) (Math.round(((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            return runMP + (int) (Math.round(((LandAirMek) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
         } else {
             return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
         }

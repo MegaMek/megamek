@@ -22,7 +22,7 @@ package megamek.common;
 /**
  * Represents a Transport Bay (TM p.239) for carrying Meks or LAMs aboard large spacecraft other units.
  */
-public final class MechBay extends Bay {
+public final class MekBay extends Bay {
     private static final long serialVersionUID = 927162989742234173L;
 
     /**
@@ -31,7 +31,7 @@ public final class MechBay extends Bay {
      * @param space The number of Meks this bay can hold
      * @param bayNumber The number of this bay on its unit
      */
-    public MechBay(double space, int doors, int bayNumber) {
+    public MekBay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
@@ -43,8 +43,8 @@ public final class MechBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH);
-        boolean loadableLAM = (unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER);
-        boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMech);
+        boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode() != LandAirMek.CONV_MODE_FIGHTER);
+        boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMek);
         return (getUnused() >= 1) && (doors > loadedThisTurn) && (loadableLAM || loadableQuadVee || loadableOtherMek);
     }
 

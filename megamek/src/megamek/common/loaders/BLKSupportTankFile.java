@@ -13,16 +13,22 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
-import megamek.common.util.BuildingBlock;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.SupportTank;
+import megamek.common.Tank;
+import megamek.common.util.BuildingBlock;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKSupportTankFile extends BLKFile implements IMechLoader {
+public class BLKSupportTankFile extends BLKFile implements IMekLoader {
     public BLKSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
     }

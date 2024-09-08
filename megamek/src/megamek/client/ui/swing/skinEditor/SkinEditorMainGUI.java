@@ -14,19 +14,30 @@
  */
 package megamek.client.ui.swing.skinEditor;
 
-import megamek.client.TimerSingleton;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.*;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.SystemColor;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.TimerSingleton;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Configuration;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener {
     private static final long serialVersionUID = 5625499617779156289L;

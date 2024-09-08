@@ -75,8 +75,8 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             assign("BattleMek", SRCH);
         }
 
-        if (entity instanceof LandAirMech) {
-            LandAirMech lam = (LandAirMech) entity;
+        if (entity instanceof LandAirMek) {
+            LandAirMek lam = (LandAirMek) entity;
             double bombs = entity.countWorkingMisc(MiscType.F_BOMB_BAY);
             int bombValue = ASConverter.roundUp(bombs / 5);
             if (bombValue > 0) {
@@ -84,7 +84,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             }
             assign("LAM Fuel (" + lam.getFuel() + ")", FUEL, (int) Math.round(0.05 * lam.getFuel()));
             var lamMoves = new HashMap<String, Integer>();
-            if (lam.getLAMType() == LandAirMech.LAM_BIMODAL) {
+            if (lam.getLAMType() == LandAirMek.LAM_BIMODAL) {
                 lamMoves.put("a", lam.getCurrentThrust());
                 report.addLine("Bimodal Movement", "BIM");
                 element.getSpecialAbilities().replaceSUA(BIM, lamMoves);

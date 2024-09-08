@@ -15,12 +15,17 @@
 */
 package megamek.common;
 
+import java.util.*;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.BasementType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.enums.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.IlluminationLevel;
@@ -36,9 +41,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
 
 /**
  * The Compute class is designed to provide static methods for 'Meks and other
@@ -2523,9 +2525,9 @@ public class Compute {
         if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             toHit.addModifier(3 / dedicatedGunnerMod, "attacker used UMUs");
-        } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_WALK) {
+        } else if (entity instanceof LandAirMek && movement == EntityMovementType.MOVE_VTOL_WALK) {
             toHit.addModifier(3 / dedicatedGunnerMod, "attacker cruised");
-        } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_RUN) {
+        } else if (entity instanceof LandAirMek && movement == EntityMovementType.MOVE_VTOL_RUN) {
             toHit.addModifier(4 / dedicatedGunnerMod, "attacker flanked");
         } else if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
                 || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
@@ -6036,7 +6038,7 @@ public class Compute {
             return true;
         }
 
-        if (ProtomechPhysicalAttackAction.toHit(game, entityId, target)
+        if (ProtoMekPhysicalAttackAction.toHit(game, entityId, target)
                                          .getValue() != TargetRoll.IMPOSSIBLE) {
             return true;
         }

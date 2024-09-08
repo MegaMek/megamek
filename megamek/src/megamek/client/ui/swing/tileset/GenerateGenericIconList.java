@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
+import megamek.client.ui.swing.tileset.MekTileset.MechEntry;
 import megamek.common.Entity;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
@@ -31,13 +31,13 @@ import megamek.common.MechSummaryCache;
 /**
  * This program will generate a list of all the units that use the default
  * (generic) icons. It ignores non-canon units.
- * 
+ *
  * @author arlith
  */
 public class GenerateGenericIconList implements MechSummaryCache.Listener {
 
     private static MechSummaryCache mechSummaryCache = null;
-    
+
     public static void main(String[] args) {
         GenerateGenericIconList gen = new GenerateGenericIconList();
         System.out.println("Loading Cache...");

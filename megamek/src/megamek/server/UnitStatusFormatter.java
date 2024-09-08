@@ -14,7 +14,15 @@
  */
 package megamek.server;
 
-import megamek.common.*;
+import megamek.common.BattleArmor;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+import megamek.common.Infantry;
+import megamek.common.Mek;
+import megamek.common.Mounted;
+import megamek.common.ProtoMek;
+import megamek.common.Tank;
 import megamek.common.util.StringUtil;
 
 public abstract class UnitStatusFormatter {
@@ -341,8 +349,8 @@ public abstract class UnitStatusFormatter {
     }
 
     public static void main(String[] ARGS) throws Exception {
-        MechSummary ms = MechSummaryCache.getInstance().getMech(ARGS[0]);
-        Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName())
+        MekSummary ms = MekSummaryCache.getInstance().getMech(ARGS[0]);
+        Entity e = new MekFileParser(ms.getSourceFile(), ms.getEntryName())
                 .getEntity();
         System.out.println(format(e));
     }

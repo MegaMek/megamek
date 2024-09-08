@@ -66,7 +66,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
 
-        if (!(ae instanceof LandAirMech) || !ae.isAirborneVTOLorWIGE()) {
+        if (!(ae instanceof LandAirMek) || !ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not airborne airmech");
         }
 

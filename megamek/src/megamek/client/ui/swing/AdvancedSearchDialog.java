@@ -13,13 +13,27 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.table.MegamekTable;
-import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -28,12 +42,20 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
+
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.table.MegaMekTable;
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.EquipmentType;
+import megamek.common.MechSearchFilter;
+import megamek.common.Mek;
+import megamek.common.MiscType;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
+import megamek.common.WeaponType;
+import megamek.common.equipment.ArmorType;
 
 /**
  * JDialog that allows the user to create a unit filter.
@@ -85,13 +107,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
     private JScrollPane scrTableWeapons = new JScrollPane();
-    private MegamekTable tblWeapons;
+    private MegaMekTable tblWeapons;
     private WeaponsTableModel weaponsModel;
     private TableRowSorter<WeaponsTableModel> weaponsSorter;
 
     private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
     private JScrollPane scrTableEquipment = new JScrollPane();
-    private MegamekTable tblEquipment;
+    private MegaMekTable tblEquipment;
     private EquipmentTableModel equipmentModel;
     private TableRowSorter<EquipmentTableModel> equipmentSorter;
 
@@ -128,9 +150,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         public void setSelectionInterval(final int index0, final int index1) {}
     }
 
-    private void toggleText(JList list, int index) {
+    private void toggleText(JList<String> list, int index) {
         ListModel<String> m = list.getModel();
-        DefaultListModel dlm  = new DefaultListModel();
+        DefaultListModel<String> dlm  = new DefaultListModel<>();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
@@ -199,14 +221,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<String> list = (JList<String>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
             }
         });
 
-        DefaultListModel dlmc  = new DefaultListModel();
+        DefaultListModel<String> dlmc  = new DefaultListModel<>();
 
         for (int i = 0; i < Mek.COCKPIT_STRING.length; i++) {
             dlmc.addElement("\u2610 " + Mek.COCKPIT_STRING[i]);
@@ -222,14 +244,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<String> list = (JList<String>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
             }
         });
 
-        DefaultListModel dlmi  = new DefaultListModel();
+        DefaultListModel<String> dlmi  = new DefaultListModel<>();
 
         for (int i = 0; i < EquipmentType.structureNames.length; i++) {
             dlmi.addElement("\u2610 " + EquipmentType.structureNames[i]);
@@ -245,7 +267,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<String> list = (JList<String>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
@@ -291,7 +313,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         //Setup Weapons Table
         weaponsModel = new WeaponsTableModel();
-        tblWeapons = new MegamekTable(weaponsModel,WeaponsTableModel.COL_NAME);
+        tblWeapons = new MegaMekTable(weaponsModel,WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
                 WeaponsTableModel.COL_QTY);
         wpsCol.setCellEditor(new DefaultCellEditor(cboQty));
@@ -308,7 +330,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         //Setup Equipment Table
         equipmentModel = new EquipmentTableModel();
-        tblEquipment = new MegamekTable(equipmentModel,
+        tblEquipment = new MegaMekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
         TableColumn eqCol = tblEquipment.getColumnModel().getColumn(
                 EquipmentTableModel.COL_QTY);
@@ -878,7 +900,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         filterToks.clear();
         btnBack.setEnabled(false);
 
-        DefaultListModel dlmwa  = new DefaultListModel();
+        DefaultListModel<String> dlmwa  = new DefaultListModel<>();
         ListModel<String> m = listArmorType.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -890,7 +912,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         m = listCockpitType.getModel();
 
-        DefaultListModel dlmc  = new DefaultListModel();
+        DefaultListModel<String> dlmc  = new DefaultListModel<>();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
@@ -901,7 +923,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         m = listInternalsType.getModel();
 
-        DefaultListModel dlmi  = new DefaultListModel();
+        DefaultListModel<String> dlmi  = new DefaultListModel<>();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);

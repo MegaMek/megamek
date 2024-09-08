@@ -1206,7 +1206,7 @@ public class BLKFile {
         if (m.isSponsonTurretMounted()) {
             name = name + "(ST)";
         }
-        if (m.isMechTurretMounted()) {
+        if (m.isMekTurretMounted()) {
             name = name + "(T)";
         }
         if (m.isPintleTurretMounted()) {

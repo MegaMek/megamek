@@ -1171,7 +1171,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // Add magnetic clamp mounts
         if ((entity instanceof Mek) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
-            entity.addTransporter(new ClampMountMech());
+            entity.addTransporter(new ClampMountMek());
         } else if ((entity instanceof Tank) && !entity.isOmni()
                 && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountTank());

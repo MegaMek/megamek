@@ -309,14 +309,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
             mpR4.setString(Integer.toString(en.getActiveUMUCount()));
-        } else if (en instanceof LandAirMech
+        } else if (en instanceof LandAirMek
                 && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
-            mpR1.setString(Integer.toString(((LandAirMech) en).getAirMechWalkMP()));
-            mpR2.setString(Integer.toString(((LandAirMech) en).getAirMechRunMP()));
-            mpR3.setString(Integer.toString(((LandAirMech) en).getAirMechCruiseMP()));
-            mpR4.setString(Integer.toString(((LandAirMech) en).getAirMechFlankMP()));
+            mpR1.setString(Integer.toString(((LandAirMek) en).getAirMechWalkMP()));
+            mpR2.setString(Integer.toString(((LandAirMek) en).getAirMechRunMP()));
+            mpR3.setString(Integer.toString(((LandAirMek) en).getAirMechCruiseMP()));
+            mpR4.setString(Integer.toString(((LandAirMek) en).getAirMechFlankMP()));
         } else {
             mpL4.setVisible(false);
             mpR4.setVisible(false);
@@ -367,7 +367,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setString(Messages.getString("MovementType."
                     + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
-        } else if (en instanceof QuadVee || en instanceof LandAirMech
+        } else if (en instanceof QuadVee || en instanceof LandAirMek
                 || (en instanceof Mek && ((Mek) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
@@ -457,7 +457,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
-        } else if (en instanceof LandAirMech
+        } else if (en instanceof LandAirMek
                 && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));
@@ -473,7 +473,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
-            if (en instanceof LandAirMech
+            if (en instanceof LandAirMek
                     && en.getMovementMode() == EntityMovementMode.WIGE) {
                 mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
                 mpL4.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));

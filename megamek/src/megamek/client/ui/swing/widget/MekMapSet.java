@@ -14,6 +14,16 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -24,15 +34,11 @@ import megamek.common.Mek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for PicMap component to
  * represent single mech unit in MechDisplay
  */
-public class MechMapSet implements DisplayMapSet {
+public class MekMapSet implements DisplayMapSet {
     // Because of keeping all areas of single type in one array
     // some index offset values required
     private static final int REAR_AREA_OFFSET = 7;
@@ -152,7 +158,7 @@ public class MechMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMechArmorLargeFontSize());
 
-    public MechMapSet(JComponent c, UnitDisplay unitDisplay) {
+    public MekMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();

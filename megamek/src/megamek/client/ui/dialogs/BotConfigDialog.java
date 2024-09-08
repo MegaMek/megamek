@@ -19,8 +19,49 @@
  */
 package megamek.client.ui.dialogs;
 
+import static megamek.common.Terrains.BLDG_CF;
+import static megamek.common.Terrains.BLDG_ELEV;
+import static megamek.common.Terrains.BRIDGE;
+import static megamek.common.Terrains.BRIDGE_CF;
+import static megamek.common.Terrains.BRIDGE_ELEV;
+import static megamek.common.Terrains.BUILDING;
+import static megamek.common.Terrains.FUEL_TANK;
+import static megamek.common.Terrains.FUEL_TANK_CF;
+import static megamek.common.Terrains.FUEL_TANK_MAGN;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
-import megamek.client.bot.princess.*;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -32,25 +73,13 @@ import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static megamek.common.Terrains.*;
 
 /** A dialog box to configure (Princess) bot properties. */
 public class BotConfigDialog extends AbstractButtonDialog implements ActionListener,
@@ -211,7 +240,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         String name = baseName;
         if (client != null) {
             int counter = 0;
-            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(Player::getName).collect(Collectors.toSet());
+            Set<String> playerNames = client.getGame().getPlayersList().stream().map(Player::getName).collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
                 name = baseName + counter;
@@ -495,7 +524,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // adding ".2" when necessary. But it has to be unique among local bots as otherwise
         // the connection between the client.bots stored name and the server-given name
         // gets lost. It doesn't hurt to check against all players though.
-        boolean playerNameTaken = (client != null) && client.getGame().getPlayersVector().stream()
+        boolean playerNameTaken = (client != null) && client.getGame().getPlayersList().stream()
                 .anyMatch(p -> p.getName().equals(nameField.getText()));
         if (isNewBot && playerNameTaken) {
             JOptionPane.showMessageDialog(getFrame(), Messages.getString("ChatLounge.AlertExistsBot.message"));

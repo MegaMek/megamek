@@ -21,7 +21,7 @@ import megamek.common.util.BuildingBlock;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
+public class BLKSpaceStationFile extends BLKFile implements IMekLoader {
 
     public BLKSpaceStationFile(BuildingBlock bb) {
         dataFile = bb;
@@ -171,7 +171,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
-        
+
         // Affects number of facing changes allowed in a turn. Default to Civilian
         if (dataFile.exists("designtype")) {
             a.setDesignType(dataFile.getDataAsInt("designtype")[0]);

@@ -18,6 +18,24 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
+import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
+import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
+
+import java.awt.Dimension;
+import java.util.*;
+import java.util.Map.Entry;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -29,7 +47,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.dialogs.SBFStatsDialog;
-import megamek.client.ui.swing.CustomMechDialog;
+import megamek.client.ui.swing.CustomMekDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitEditorDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
@@ -41,19 +59,6 @@ import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.util.CollectionUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
-import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
-import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
@@ -293,7 +298,7 @@ public class LobbyActions {
         Client client = clientForCustomization(oneSelected);
         boolean editable = allowCustomization(oneSelected);
 
-        CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
+        CustomMekDialog cmd = new CustomMekDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                 GUIPreferences.getInstance().getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits"));
@@ -305,8 +310,8 @@ public class LobbyActions {
             sendCustomizationUpdate(entities);
         }
 
-        if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
-            Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+        if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
+            Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
             customizeMech(nextEnt);
         }
     }
@@ -329,7 +334,7 @@ public class LobbyActions {
             // display dialog
             List<Entity> entities = new ArrayList<>();
             entities.add(entity);
-            CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, entities, editable);
+            CustomMekDialog cmd = new CustomMekDialog(lobby.getClientgui(), client, entities, editable);
             cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                     GUIPreferences.getInstance().getCustomUnitHeight()));
             cmd.refreshOptions();
@@ -348,8 +353,8 @@ public class LobbyActions {
                 sendCustomizationUpdate(entities);
             }
 
-            if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
-                entity = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
+                entity = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
             } else {
                 doneCustomizing = true;
             }
@@ -380,8 +385,8 @@ public class LobbyActions {
         Set<Entity> updateCandidates = new HashSet<>(entities);
         for (Entity entity : entities) {
             // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
-            if ((entity instanceof LandAirMech)
-                    && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+            if ((entity instanceof LandAirMek)
+                    && entity.getConversionMode() != LandAirMek.CONV_MODE_MECH) {
                 for (Entity loadee : entity.getLoadedUnits()) {
                     entity.unload(loadee);
                     loadee.setTransportId(Entity.NONE);
@@ -543,7 +548,7 @@ public class LobbyActions {
         }
         Set<Entity> updateCandidates = new HashSet<>();
         for (Entity entity: entities) {
-            for (Mounted m: entity.getWeaponList()) {
+            for (Mounted<?> m: entity.getWeaponList()) {
                 if (((WeaponType) m.getType()).hasFlag(WeaponType.F_MG)) {
                     m.setRapidfire(burstOn);
                     updateCandidates.add(entity);
@@ -572,7 +577,7 @@ public class LobbyActions {
         }
         Set<Entity> updateCandidates = new HashSet<>();
         for (Entity entity: entities) {
-            for (Mounted m: entity.getAmmo()) {
+            for (Mounted<?> m: entity.getAmmo()) {
                 // setHotLoad checks the Ammo to see if it can be hotloaded
                 m.setHotLoad(hotLoadOn);
                 // TODO: The following should ideally be part of setHotLoad in Mounted

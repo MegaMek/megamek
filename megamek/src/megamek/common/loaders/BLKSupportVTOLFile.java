@@ -14,15 +14,23 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.util.BuildingBlock;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.SupportVTOL;
+import megamek.common.Tank;
+import megamek.common.VTOL;
+import megamek.common.util.BuildingBlock;
 
 /**
  * @author Andrew Hunter
  * @since June 2, 2005
  */
-public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
+public class BLKSupportVTOLFile extends BLKFile implements IMekLoader {
     public BLKSupportVTOLFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -121,12 +129,12 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         // Set armor tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("armor_tech_rating")) {
             t.setArmorTechRating(dataFile
-                    .getDataAsInt("armor_tech_rating")[0]);            
+                    .getDataAsInt("armor_tech_rating")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
             t.setEngineTechRating(dataFile
-                    .getDataAsInt("engine_tech_rating")[0]);            
+                    .getDataAsInt("engine_tech_rating")[0]);
         }
 
         t.autoSetInternal();

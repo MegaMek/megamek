@@ -18,6 +18,10 @@
  */
 package megamek.client.ui.swing.tileset;
 
+import java.io.File;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
@@ -25,17 +29,13 @@ import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.util.fileUtils.ScaledImageFileFactory;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.File;
-import java.util.Map;
 
 public class MMStaticDirectoryManager {
     //region Variable Declarations
     // Directories
     private static DirectoryItems portraitDirectory;
     private static DirectoryItems camouflageDirectory;
-    private static MechTileset mechTileset;
+    private static MekTileset mechTileset;
 
     // Re-parsing Prevention Variables: They are True at startup and when the specified directory
     // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's
@@ -150,7 +150,7 @@ public class MMStaticDirectoryManager {
         if (parseMechTileset) {
             // Set parseMechTileset to false to avoid parsing repeatedly when something fails
             parseMechTileset = false;
-            mechTileset = new MechTileset(Configuration.unitImagesDir());
+            mechTileset = new MekTileset(Configuration.unitImagesDir());
             try {
                 mechTileset.loadFromFile("mechset.txt");// TODO : Remove inline file path
             } catch (Exception e) {
@@ -186,7 +186,7 @@ public class MMStaticDirectoryManager {
     /**
      * @return a MechTileset object. May be null if the directory cannot be parsed
      */
-    public static @Nullable MechTileset getMechTileset() {
+    public static @Nullable MekTileset getMechTileset() {
         initializeMechTileset();
         return mechTileset;
     }
@@ -224,7 +224,7 @@ public class MMStaticDirectoryManager {
      *
      * @see #getMechTileset()
      */
-    public static MechTileset refreshMechTileset() {
+    public static MekTileset refreshMechTileset() {
         parseMechTileset = true;
         return getMechTileset();
     }

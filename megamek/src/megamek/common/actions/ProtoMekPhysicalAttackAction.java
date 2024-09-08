@@ -23,14 +23,14 @@ import megamek.common.options.OptionsConstants;
 /**
  * The attacking ProtoMech makes its combo physical attack action.
  */
-public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
+public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = 1432011536091665084L;
 
-    public ProtomechPhysicalAttackAction(int entityId, int targetId) {
+    public ProtoMekPhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }
 
-    public ProtomechPhysicalAttackAction(int entityId, int targetType,
+    public ProtoMekPhysicalAttackAction(int entityId, int targetType,
             int targetId) {
         super(entityId, targetType, targetId);
     }

@@ -420,7 +420,7 @@ public class LobbyMekPopupActions implements ActionListener {
     }
 
     public static void resetBombChoices(ClientGUI clientgui, Game game, ArrayList<Entity> el) {
-        ArrayList<Entity> resetBombers = new ArrayList();
+        ArrayList<Entity> resetBombers = new ArrayList<>();
         for (Entity entity: el) {
             if (entity.isBomber() && !entity.isVehicle()) {
                 IBomber bomber = (IBomber) entity;

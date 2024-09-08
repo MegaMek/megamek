@@ -14,11 +14,27 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.event.ListSelectionEvent;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
@@ -31,13 +47,6 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.*;
-import java.util.*;
 
 /**
  * This display is used for when hidden units are taking pointblank shots.
@@ -45,7 +54,7 @@ import java.util.*;
  * @author arlith
  *
  */
-public class PointblankShotDisplay extends FiringDisplay implements ItemListener, ListSelectionListener {
+public class PointblankShotDisplay extends FiringDisplay {
     private static final long serialVersionUID = -58785096133753153L;
 
     /**
@@ -140,7 +149,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     }
 
     // buttons
-    protected Map<FiringCommand, MegamekButton> buttons;
+    protected Map<FiringCommand, MegaMekButton> buttons;
 
     /**
      * Creates and lays out a new pointblank phase display for the specified
@@ -232,11 +241,11 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
+    protected ArrayList<MegaMekButton> getButtonList() {
         if (buttons == null) {
             return new ArrayList<>();
         }
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         int i = 0;
         FiringCommand[] commands = FiringCommand.values();
         CommandComparator comparator = new CommandComparator();

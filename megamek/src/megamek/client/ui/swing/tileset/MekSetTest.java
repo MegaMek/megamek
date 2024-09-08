@@ -18,17 +18,23 @@
  */
 package megamek.client.ui.swing.tileset;
 
-import java.io.*;
+import static megamek.client.ui.swing.tileset.MekTileset.CHASSIS_KEY;
+import static megamek.client.ui.swing.tileset.MekTileset.MODEL_KEY;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
-import org.apache.logging.log4j.LogManager;
-
-import static megamek.client.ui.swing.tileset.MechTileset.*;
 
 /**
  * This class provides a utility to read in the current MechSet and test to make
@@ -36,9 +42,9 @@ import static megamek.client.ui.swing.tileset.MechTileset.*;
  *
  * @author arlith
  */
-public class MechSetTest {
+public class MekSetTest {
 
-    private MechSetTest() { }
+    private MekSetTest() { }
 
     public static class StringCompCaseInsensitive implements Comparator<String> {
         @Override

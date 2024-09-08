@@ -19,11 +19,11 @@
 
 package megamek.client.ui.swing.boardview;
 
+import java.awt.Color;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;
-
-import java.awt.*;
 
 public class MovePathSpriteHandler extends BoardViewSpriteHandler {
 

@@ -13,19 +13,6 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.client.ratgenerator.FactionRecord.TechCategory;
-import megamek.client.ratgenerator.UnitTable.TableEntry;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,6 +25,25 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.client.ratgenerator.UnitTable.TableEntry;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementMode;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
@@ -1156,6 +1162,7 @@ public class RATGenerator {
             LogManager.getLogger().error("", ex);
             return;
         }
+
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
         pw.println("<factions>");
         for (FactionRecord fRec : factionRecs) {

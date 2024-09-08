@@ -14,33 +14,54 @@
  */
 package megamek.common;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
-import megamek.common.weapons.ppc.*;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.zip.ZipFile;
+import megamek.common.weapons.ppc.CLERPPC;
+import megamek.common.weapons.ppc.CLEnhancedPPC;
+import megamek.common.weapons.ppc.CLImprovedPPC;
+import megamek.common.weapons.ppc.ISERPPC;
+import megamek.common.weapons.ppc.ISHeavyPPC;
+import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
+import megamek.common.weapons.ppc.ISLightPPC;
+import megamek.common.weapons.ppc.ISPPC;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 /**
  * Switches between the various type-specific parsers depending on suffix
  */
-public class MechFileParser {
+public class MekFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
     public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; // TODO : Remove inline filename
 
-    public MechFileParser(File f) throws EntityLoadingException {
+    public MekFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
 
-    public MechFileParser(File f, String entryName) throws EntityLoadingException {
+    public MekFileParser(File f, String entryName) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
@@ -69,7 +90,7 @@ public class MechFileParser {
         }
     }
 
-    public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
+    public MekFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
             parse(is, fileName);
         } catch (EntityLoadingException ex) {
@@ -128,7 +149,7 @@ public class MechFileParser {
 
     public void parse(InputStream is, String fileName) throws Exception {
         String lowerName = fileName.toLowerCase();
-        IMechLoader loader;
+        IMekLoader loader;
 
         if (lowerName.endsWith(".mep")) {
             loader = new MepFile(is);
@@ -152,9 +173,9 @@ public class MechFileParser {
                 } else if (sType.equals("BattleArmor")) {
                     loader = new BLKBattleArmorFile(bb);
                 } else if (sType.equals("ProtoMech")) {
-                    loader = new BLKProtoFile(bb);
+                    loader = new BLKProtoMekFile(bb);
                 } else if (sType.equals("Mech")) {
-                    loader = new BLKMechFile(bb);
+                    loader = new BLKMekFile(bb);
                 } else if (sType.equals("VTOL")) {
                     loader = new BLKVTOLFile(bb);
                 } else if (sType.equals("GunEmplacement")) {
@@ -187,7 +208,7 @@ public class MechFileParser {
                     throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }
             } else {
-                loader = new BLKMechFile(bb);
+                loader = new BLKMekFile(bb);
             }
         } else if (lowerName.endsWith(".dbm")) {
             throw new EntityLoadingException(
@@ -198,7 +219,7 @@ public class MechFileParser {
 
         m_entity = loader.getEntity();
 
-        MechFileParser.postLoadInit(m_entity);
+        MekFileParser.postLoadInit(m_entity);
     }
 
     /**
@@ -867,7 +888,7 @@ public class MechFileParser {
             System.out.println("\t.mep    MechEngineer Pro (c) Howling Moon SoftWorks");
             System.out.println("\t.xml    The Drawing Board (c) Blackstone Interactive");
             System.out.println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
-            MechFileParser.getResponse("Press <enter> to exit...");
+            MekFileParser.getResponse("Press <enter> to exit...");
             return;
         }
         for (int i = 0; i < args.length; i++) {
@@ -877,13 +898,13 @@ public class MechFileParser {
                     filename.lastIndexOf("."));
             BufferedWriter out = null;
             try {
-                MechFileParser mfp = new MechFileParser(file);
+                MekFileParser mfp = new MekFileParser(file);
                 Entity e = mfp.getEntity();
                 if (e instanceof Mek) {
                     outFilename += ".mtf";
                     File outFile = new File(outFilename);
                     if (outFile.exists()) {
-                        if (!MechFileParser.getResponse("File already exists, overwrite? ")) {
+                        if (!MekFileParser.getResponse("File already exists, overwrite? ")) {
                             return;
                         }
                     }
@@ -895,7 +916,7 @@ public class MechFileParser {
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                MechFileParser.getResponse("Press <enter> to exit...");
+                MekFileParser.getResponse("Press <enter> to exit...");
             } finally {
                 if (out != null) {
                     try {
@@ -924,7 +945,7 @@ public class MechFileParser {
     public static Entity loadEntity(File f, String entityName) {
         Entity entity = null;
         try {
-            entity = new MechFileParser(f, entityName).getEntity();
+            entity = new MekFileParser(f, entityName).getEntity();
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }

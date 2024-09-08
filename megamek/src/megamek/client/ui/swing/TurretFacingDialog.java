@@ -73,14 +73,14 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET) || turret.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
             if (turret.getLocation() == Mek.LOC_LT) {
                 for (Mounted mount : mech.getEquipment()) {
-                    if ((mount.getLocation() == Mek.LOC_LT) && mount.isMechTurretMounted()) {
+                    if ((mount.getLocation() == Mek.LOC_LT) && mount.isMekTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
                 }
             } else if (turret.getLocation() == Mek.LOC_RT) {
                 for (Mounted mount : mech.getEquipment()) {
-                    if ((mount.getLocation() == Mek.LOC_RT) && mount.isMechTurretMounted()) {
+                    if ((mount.getLocation() == Mek.LOC_RT) && mount.isMekTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
@@ -88,7 +88,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             }
         } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
             for (Mounted mount : mech.getEquipment()) {
-                if ((mount.getLocation() == Mek.LOC_HEAD) && mount.isMechTurretMounted()) {
+                if ((mount.getLocation() == Mek.LOC_HEAD) && mount.isMekTurretMounted()) {
                     turretFacing = mount.getFacing();
                     break;
                 }
@@ -250,7 +250,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                 }
 
                 for (Mounted weapon : mech.getWeaponList()) {
-                    if ((weapon.getLocation() == locToChange) && weapon.isMechTurretMounted()) {
+                    if ((weapon.getLocation() == locToChange) && weapon.isMekTurretMounted()) {
                         weapon.setFacing(facing);
                         clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(weapon), facing);
 

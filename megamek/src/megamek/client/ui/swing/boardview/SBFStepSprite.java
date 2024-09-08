@@ -18,17 +18,21 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Game;
+import megamek.common.MiscType;
+import megamek.common.MoveStep;
+import megamek.common.ToHitData;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public class SBFStepSprite extends Sprite {
 

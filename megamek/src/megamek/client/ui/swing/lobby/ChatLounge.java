@@ -20,6 +20,66 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.client.ui.swing.lobby.LobbyUtility.containsTransportedUnit;
+import static megamek.client.ui.swing.lobby.LobbyUtility.drawMinimapLabel;
+import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
+import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
+import static megamek.client.ui.swing.lobby.LobbyUtility.invalidBoardTip;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isBoardFile;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
+import static megamek.client.ui.swing.lobby.LobbyUtility.mechReadoutAction;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
+import static megamek.client.ui.swing.util.UIUtil.setHighQualityRendering;
+import static megamek.client.ui.swing.util.UIUtil.uiGray;
+import static megamek.common.util.CollectionUtil.theElement;
+import static megamek.common.util.CollectionUtil.union;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -30,7 +90,8 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.*;
+import megamek.client.ui.dialogs.BotConfigDialog;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -43,11 +104,17 @@ import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
+import megamek.common.event.GameCFREvent;
+import megamek.common.event.GameEntityNewEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
@@ -63,44 +130,6 @@ import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardsTagger;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import java.io.*;
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-import static megamek.client.ui.swing.util.UIUtil.*;
-import static megamek.common.util.CollectionUtil.theElement;
-import static megamek.common.util.CollectionUtil.union;
 
 public class ChatLounge extends AbstractPhaseDisplay implements
         ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
@@ -673,7 +702,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /**
      * Sets up the ground map selection panel
      */
-    @SuppressWarnings("rawtypes")
     private void setupMapAssembly() {
         panGroundMap = new JPanel(new GridLayout(1, 1));
         panGroundMap.setBorder(new EmptyBorder(20, 10, 10, 10));
@@ -1325,10 +1353,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /** Refreshes the player info table. */
     private void refreshPlayerTable() {
         // Remember the selected players
-        var selPlayerIds = getselectedPlayers().stream().map(Player::getId).collect(toSet());
+        var selPlayerIds = getSelectedPlayers().stream().map(Player::getId).collect(toSet());
 
         // Empty and refill the player table
-        playerModel.replaceData(game().getPlayersVector());
+        playerModel.replaceData(game().getPlayersList());
 
         // re-select the previously selected players, if possible
         for (int row = 0; row < playerModel.getRowCount(); row++) {
@@ -1724,7 +1752,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(tablePlayers)) {
                 configPlayer();
             } else if (ev.getSource().equals(comboTeam)) {
-                lobbyActions.changeTeam(getselectedPlayers(), comboTeam.getSelectedIndex());
+                lobbyActions.changeTeam(getSelectedPlayers(), comboTeam.getSelectedIndex());
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
             } else if (ev.getSource().equals(butBotSettings)) {
@@ -2180,7 +2208,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         final GameOptions gOpts = game.getOptions();
 
         // enforce exclusive deployment zones in double blind
-        for (Player player: client.getGame().getPlayersVector()) {
+        for (Player player: client.getGame().getPlayersList()) {
             if (!isValidStartPos(game, player)) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"),
                         Messages.getString("ChatLounge.OverlapDeploy.msg"));
@@ -2388,7 +2416,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** Adapts the enabled state of the player config UI items to the player selection. */
     private void refreshPlayerConfig() {
-        var selPlayers = getselectedPlayers();
+        var selPlayers = getSelectedPlayers();
         var hasSelection = !selPlayers.isEmpty();
         var isSinglePlayer = selPlayers.size() == 1;
         var allConfigurable = hasSelection && selPlayers.stream().allMatch(lobbyActions::isSelfOrLocalBot);
@@ -2463,7 +2491,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
             ScalingPopup popup = PlayerTablePopup.playerTablePopup(clientgui,
-                    playerTableActionListener, getselectedPlayers());
+                    playerTableActionListener, getSelectedPlayers());
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -2481,7 +2509,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 break;
             case PlayerTablePopup.PTP_TEAM:
                 int newTeam = Integer.parseInt(st.nextToken());
-                lobbyActions.changeTeam(getselectedPlayers(), newTeam);
+                lobbyActions.changeTeam(getSelectedPlayers(), newTeam);
                 break;
             case PlayerTablePopup.PTP_BOTREMOVE:
                 removeBot();
@@ -2492,7 +2520,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             case PlayerTablePopup.PTP_DEPLOY:
                 int startPos = Integer.parseInt(st.nextToken());
 
-                for (Player player: getselectedPlayers()) {
+                for (Player player: getSelectedPlayers()) {
                     if (lobbyActions.isSelfOrLocalBot(player)) {
                         if (client().isLocalBot(player)) {
                             // must use the bot's own player object:
@@ -2512,7 +2540,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
 
-    private ArrayList<Player> getselectedPlayers() {
+    private ArrayList<Player> getSelectedPlayers() {
         var result = new ArrayList<Player>();
         for (int row: tablePlayers.getSelectedRows()) {
             Player player = playerModel.getPlayerAt(row);
@@ -3609,4 +3637,3 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return clientgui;
     }
 }
-

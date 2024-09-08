@@ -13,13 +13,30 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
@@ -27,11 +44,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.*;
 
 public class PhysicalDisplay extends AttackPhaseDisplay {
     private static final long serialVersionUID = -3274750006768636001L;
@@ -106,7 +118,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     // buttons
-    protected Map<PhysicalCommand, MegamekButton> buttons;
+    protected Map<PhysicalCommand, MegaMekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     Targetable target; // target
@@ -173,8 +185,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         int i = 0;
         PhysicalCommand[] commands = PhysicalCommand.values();
         CommandComparator comparator = new CommandComparator();
@@ -242,7 +254,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         clientgui.getUnitDisplay().displayEntity(entity);
         if (GUIP.getMoveDisplayTabDuringMovePhases()) {
-            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
+            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
         }
 
         clientgui.getBoardView().centerOnHex(entity.getPosition());
@@ -964,14 +976,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * Make a protomech physical attack on the target.
      */
     private void proto() {
-        ToHitData proto = ProtomechPhysicalAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
+        ToHitData proto = ProtoMekPhysicalAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
         String title = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.title",
                 target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.message",
                 proto.getValueAsString(),
                 Compute.oddsAbove(proto.getValue(), ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                 proto.getDesc(),
-                ProtomechPhysicalAttackAction.getDamageFor(ce(), target) + proto.getTableDesc());
+                ProtoMekPhysicalAttackAction.getDamageFor(ce(), target) + proto.getTableDesc());
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
@@ -979,7 +991,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 doSearchlight();
             }
 
-            addAttack(new ProtomechPhysicalAttackAction(currentEntity, target
+            addAttack(new ProtoMekPhysicalAttackAction(currentEntity, target
                     .getTargetType(), target.getId()));
             ready();
         }
@@ -1288,7 +1300,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 setThrashEnabled(thrash.getValue() != TargetRoll.IMPOSSIBLE);
 
                 // make a Protomech physical attack?
-                ToHitData proto = ProtomechPhysicalAttackAction.toHit(clientgui
+                ToHitData proto = ProtoMekPhysicalAttackAction.toHit(clientgui
                         .getClient().getGame(), currentEntity, target);
                 setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);
 

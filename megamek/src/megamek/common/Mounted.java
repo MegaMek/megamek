@@ -36,7 +36,7 @@ import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
- * This describes equipment mounted on a mech.
+ * This describes equipment mounted on a Mek.
  * @author Ben
  * @since April 1, 2002, 1:29 PM
  */
@@ -56,7 +56,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean mechTurretMounted = false; // is this mounted in a mechturret
+    private boolean mekTurretMounted = false; // is this mounted in a mekturret
     private boolean sponsonTurretMounted = false; // is this mounted in a sponsonturret
     private boolean pintleTurretMounted = false; // is this mounted in a pintleturret
     private int facing = -1; // facing for turrets
@@ -347,7 +347,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         // all communications equipment mounteds need to have the same mode at all times
         if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
-            for (Mounted m : entity.getMisc()) {
+            for (Mounted<?> m : entity.getMisc()) {
                 if (!m.equals(this)
                         && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
                     m.setMode(newMode);
@@ -430,7 +430,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (rearMounted) {
             desc.append(" (R)");
         }
-        if (mechTurretMounted) {
+        if (mekTurretMounted) {
             desc.append(" (T)");
         }
         if (sponsonTurretMounted) {
@@ -518,7 +518,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public double getTonnage(RoundWeight defaultRounding) {
         if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_DUMPER)) {
-            Mounted cargo = getLinked();
+            Mounted<?> cargo = getLinked();
             if (cargo != null) {
                 return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
             }
@@ -911,7 +911,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /** Returns true when m is a PPC Capacitor and not destroyed. */
-    private boolean isWorkingCapacitor(Mounted m) {
+    private boolean isWorkingCapacitor(Mounted<?> m) {
         return !m.isDestroyed()
         && m.getType() instanceof MiscType
         && ((MiscType) m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR);
@@ -1443,13 +1443,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return entity;
     }
 
-    public boolean isMechTurretMounted() {
-        return mechTurretMounted;
+    public boolean isMekTurretMounted() {
+        return mekTurretMounted;
     }
 
-    public void setMechTurretMounted(boolean turret) {
-        mechTurretMounted = turret;
-        if (mechTurretMounted) {
+    public void setMekTurretMounted(boolean turret) {
+        mekTurretMounted = turret;
+        if (mekTurretMounted) {
             setFacing(0);
         }
     }
@@ -1661,7 +1661,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         String intro = getType().toString()
                 + " (" + String.join("/", locations)
                 + (rearMounted ? "-R" : "")
-                + (mechTurretMounted ? "-MTu" : "")
+                + (mekTurretMounted ? "-MTu" : "")
                 + (sponsonTurretMounted ? "-STu" : "")
                 + (pintleTurretMounted ? "-PTu" : "")
                 + (isDWPMounted ? "-DWP" : "")

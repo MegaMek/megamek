@@ -45,7 +45,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
@@ -76,7 +76,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private JSplitPane splitA1;
     private JSplitPane splitB1;
     private JSplitPane splitC1;
-    private MechPanelTabStrip tabStrip;
+    private MekPanelTabStrip tabStrip;
     private JPanel displayP;
     private SummaryPanel mPan;
     private PilotPanel pPan;
@@ -132,7 +132,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
         labTitle = new JLabel("Title");
 
-        tabStrip = new MechPanelTabStrip(this);
+        tabStrip = new MekPanelTabStrip(this);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
         Image tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
@@ -295,14 +295,14 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         panC1.removeAll();
         panC2.removeAll();
 
-        displayP.add(MechPanelTabStrip.SUMMARY, mPan);
-        displayP.add(MechPanelTabStrip.PILOT, pPan);
-        displayP.add(MechPanelTabStrip.ARMOR, aPan);
-        displayP.add(MechPanelTabStrip.WEAPONS, wPan);
-        displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
-        displayP.add(MechPanelTabStrip.EXTRAS, ePan);
+        displayP.add(MekPanelTabStrip.SUMMARY, mPan);
+        displayP.add(MekPanelTabStrip.PILOT, pPan);
+        displayP.add(MekPanelTabStrip.ARMOR, aPan);
+        displayP.add(MekPanelTabStrip.WEAPONS, wPan);
+        displayP.add(MekPanelTabStrip.SYSTEMS, sPan);
+        displayP.add(MekPanelTabStrip.EXTRAS, ePan);
 
-        tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
+        tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
 
         displayP.revalidate();
         displayP.repaint();
@@ -426,17 +426,17 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private void registerKeyboardCommands(final UnitDisplay ud,
             final MegaMekController controller) {
         controller.registerCommandAction(KeyCommandBind.UD_GENERAL, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.SUMMARY));
+                () -> showPanel(MekPanelTabStrip.SUMMARY));
         controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.PILOT));
+                () -> showPanel(MekPanelTabStrip.PILOT));
         controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.ARMOR));
+                () -> showPanel(MekPanelTabStrip.ARMOR));
         controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.SYSTEMS));
+                () -> showPanel(MekPanelTabStrip.SYSTEMS));
         controller.registerCommandAction(KeyCommandBind.UD_WEAPONS, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.WEAPONS));
+                () -> showPanel(MekPanelTabStrip.WEAPONS));
         controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.EXTRAS));
+                () -> showPanel(MekPanelTabStrip.EXTRAS));
     }
 
     @Override
@@ -494,18 +494,18 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
             ((CardLayout) displayP.getLayout()).show(displayP, s);
         }
 
-        if (MechPanelTabStrip.SUMMARY.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
-        } else if (MechPanelTabStrip.PILOT.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.PILOT_INDEX);
-        } else if (MechPanelTabStrip.ARMOR.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.ARMOR_INDEX);
-        } else if (MechPanelTabStrip.WEAPONS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.WEAPONS_INDEX);
-        } else if (MechPanelTabStrip.SYSTEMS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
-        } else if (MechPanelTabStrip.EXTRAS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
+        if (MekPanelTabStrip.SUMMARY.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
+        } else if (MekPanelTabStrip.PILOT.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.PILOT_INDEX);
+        } else if (MekPanelTabStrip.ARMOR.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.ARMOR_INDEX);
+        } else if (MekPanelTabStrip.WEAPONS.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.WEAPONS_INDEX);
+        } else if (MekPanelTabStrip.SYSTEMS.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
+        } else if (MekPanelTabStrip.EXTRAS.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.EXTRAS_INDEX);
         }
     }
 
@@ -515,10 +515,10 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      */
     public void showSpecificSystem(int loc) {
         if (GUIP.getUnitDisplayStartTabbed()) {
-            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
+            ((CardLayout) displayP.getLayout()).show(displayP, MekPanelTabStrip.SYSTEMS);
         }
 
-        tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
+        tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
         sPan.selectLocation(loc);
     }
 

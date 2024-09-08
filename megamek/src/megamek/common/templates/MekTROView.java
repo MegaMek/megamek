@@ -27,11 +27,11 @@ import megamek.common.verifier.TestMech;
  * @author Neoancient
  *
  */
-public class MechTROView extends TROView {
+public class MekTROView extends TROView {
 
     private final Mek mech;
 
-    public MechTROView(Mek mech) {
+    public MekTROView(Mek mech) {
         this.mech = mech;
     }
 
@@ -96,17 +96,17 @@ public class MechTROView extends TROView {
             addFixedOmni(mech);
         }
         if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
-            final LandAirMech lam = (LandAirMech) mech;
+            final LandAirMek lam = (LandAirMek) mech;
             final int mode = lam.getConversionMode();
             setModelData("lamConversionMass", testMech.getWeightMisc());
-            if (lam.getLAMType() == LandAirMech.LAM_STANDARD) {
+            if (lam.getLAMType() == LandAirMek.LAM_STANDARD) {
                 setModelData("airmechCruise", lam.getAirMechCruiseMP());
                 setModelData("airmechFlank", lam.getAirMechFlankMP());
             } else {
                 setModelData("airmechCruise", "N/A");
                 setModelData("airmechFlank", "N/A");
             }
-            lam.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+            lam.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
             setModelData("safeThrust", lam.getWalkMP());
             setModelData("maxThrust", lam.getRunMP());
             lam.setConversionMode(mode);

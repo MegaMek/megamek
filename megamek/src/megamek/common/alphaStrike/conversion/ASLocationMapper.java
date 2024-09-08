@@ -18,8 +18,11 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import static megamek.common.MiscType.F_HEAD_TURRET;
+import static megamek.common.MiscType.F_QUAD_TURRET;
+import static megamek.common.MiscType.F_SHOULDER_TURRET;
+
 import megamek.common.*;
-import static megamek.common.MiscType.*;
 
 /**
  * This class provides AlphaStrike conversion utilities for converting all sorts of locations
@@ -55,7 +58,7 @@ public class ASLocationMapper {
     }
 
     public static double damageLocationMultiplier(Entity en, int loc, Mounted mount) {
-        if (locationName(en, loc).startsWith("TUR") && (en instanceof Mek) && mount.isMechTurretMounted()) {
+        if (locationName(en, loc).startsWith("TUR") && (en instanceof Mek) && mount.isMekTurretMounted()) {
             return 1;
         } else if (en instanceof Warship) {
             return getWarShipLocationMultiplier(loc, mount.getLocation());

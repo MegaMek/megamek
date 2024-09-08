@@ -265,7 +265,7 @@ public final class UnitToolTip {
             if (!quirksList.isEmpty()) {
                 sQuirks += quirksList;
             }
-            for (Mounted weapon : entity.getWeaponList()) {
+            for (Mounted<?> weapon : entity.getWeaponList()) {
                 String wpQuirksList = getOptionList(weapon.getQuirks().getGroups(),
                         grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), details);
                 if (!wpQuirksList.isEmpty()) {
@@ -860,7 +860,7 @@ public final class UnitToolTip {
                         String msg_zz = Messages.getString("BoardView1.Tooltip.ZZ");
                         currAmmo.sortString = curWp.getName() + msg_zz; // Sort ammo after the weapons
                         currAmmo.ammoActiveWeaponCount = curWp.isDestroyed() ? 0 : 1;
-                        for (Mounted amounted : entity.getAmmo()) {
+                        for (Mounted<?> amounted : entity.getAmmo()) {
                             boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(curWp, (AmmoType) amounted.getType());
                             if (canSwitchToAmmo && !amounted.isDumping()) {
                                 String msg_antipersonnel = Messages.getString("BoardView1.Tooltip.AntiPersonnel");
@@ -1559,7 +1559,7 @@ public final class UnitToolTip {
 
             if (entity instanceof Mek) {
                 if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
-                    for (Mounted m : entity.getMisc()) {
+                    for (Mounted<?> m : entity.getMisc()) {
                         if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                             if (m.isHit() || entity.isLocationBad(m.getLocation())) {
                                 legsDestroyed++;

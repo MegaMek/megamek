@@ -19,16 +19,21 @@
  */
 package megamek.common.loaders;
 
-import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.common.*;
 
 /**
  * This class represents mtf files which are used to store Meks. The class contains the file reader while the
@@ -37,7 +42,7 @@ import java.util.*;
  * @author Ben
  * @author Simon (Juliez)
  */
-public class MtfFile implements IMechLoader {
+public class MtfFile implements IMekLoader {
 
     private String chassis;
     private String model;
@@ -212,14 +217,14 @@ public class MtfFile implements IMechLoader {
             } else if (chassisConfig.contains("LAM")) {
                 int iLAMType;
                 try {
-                    iLAMType = LandAirMech.getLAMTypeForString(lamType.substring(4));
-                    if (iLAMType == LandAirMech.LAM_UNKNOWN) {
-                        iLAMType = LandAirMech.LAM_STANDARD;
+                    iLAMType = LandAirMek.getLAMTypeForString(lamType.substring(4));
+                    if (iLAMType == LandAirMek.LAM_UNKNOWN) {
+                        iLAMType = LandAirMek.LAM_STANDARD;
                     }
                 } catch (Exception ignored) {
-                    iLAMType = LandAirMech.LAM_STANDARD;
+                    iLAMType = LandAirMek.LAM_STANDARD;
                 }
-                mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
+                mech = new LandAirMek(iGyroType, iCockpitType, iLAMType);
             } else if (chassisConfig.contains("Tripod")) {
                 mech = new TripodMek(iGyroType, iCockpitType);
             } else {
@@ -410,12 +415,12 @@ public class MtfFile implements IMechLoader {
                 parseNoCritEquipment(mech, equipment);
             }
 
-            if (mech instanceof LandAirMech) {
+            if (mech instanceof LandAirMek) {
                 // Set capital fighter stats for LAMs
-                ((LandAirMech) mech).autoSetCapArmor();
-                ((LandAirMech) mech).autoSetFatalThresh();
+                ((LandAirMek) mech).autoSetCapArmor();
+                ((LandAirMek) mech).autoSetFatalThresh();
                 int fuelTankCount = (int) mech.getEquipment().stream().filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
-                ((LandAirMech) mech).setFuel(80 * (1 + fuelTankCount));
+                ((LandAirMek) mech).setFuel(80 * (1 + fuelTankCount));
             }
 
             // add any heat sinks not allocated
@@ -722,10 +727,10 @@ public class MtfFile implements IMechLoader {
                 mech.getCritical(loc, i).setArmored(isArmored);
                 continue;
             } else if (critName.equalsIgnoreCase("Landing Gear")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Avionics")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, true, isArmored));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
                 continue;
             }
             // if the slot's full already, skip it.

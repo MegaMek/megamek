@@ -18,6 +18,32 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static megamek.client.ui.swing.util.UIUtil.WARNING_SIGN;
+import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.uiGreen;
+import static megamek.client.ui.swing.util.UIUtil.uiYellow;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
@@ -27,19 +53,6 @@ import megamek.common.IStartingPositions;
 import megamek.common.Player;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.client.ui.swing.util.UIUtil.*;
 
 class PlayerTable extends JTable {
     private static final long serialVersionUID = 6252953920509362407L;
@@ -157,7 +170,7 @@ class PlayerTable extends JTable {
         }
     }
 
-    class PlayerRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
+    class PlayerRenderer extends DefaultTableCellRenderer {
         private static final long serialVersionUID = 4947299735765324311L;
 
         public PlayerRenderer() {

@@ -21,7 +21,7 @@ import megamek.common.util.BuildingBlock;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKDropshipFile extends BLKFile implements IMechLoader {
+public class BLKDropshipFile extends BLKFile implements IMekLoader {
 
     public BLKDropshipFile(BuildingBlock bb) {
         dataFile = bb;

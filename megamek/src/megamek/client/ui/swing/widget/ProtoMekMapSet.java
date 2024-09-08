@@ -15,6 +15,15 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
@@ -23,15 +32,11 @@ import megamek.common.Entity;
 import megamek.common.ProtoMek;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
  * Class which keeps set of all areas required to represent ProtoMek unit within the
  * MechDisplay.ArmorPanel class.
  */
-public class ProtomechMapSet implements DisplayMapSet {
+public class ProtoMekMapSet implements DisplayMapSet {
 
     private UnitDisplay unitDisplay;
 
@@ -72,7 +77,7 @@ public class ProtomechMapSet implements DisplayMapSet {
     /**
      * This constructor can only be called from the addNotify method
      */
-    public ProtomechMapSet(JComponent c, UnitDisplay unitDisplay) {
+    public ProtoMekMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();

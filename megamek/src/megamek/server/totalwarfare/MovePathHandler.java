@@ -312,7 +312,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             passedThroughFacing.add(entity.getFacing());
             entity.setPassedThroughFacing(passedThroughFacing);
             // We may still need to process any conversions for dropping LAMs
-            if (entity instanceof LandAirMech && md.contains(MovePath.MoveStepType.CONVERT_MODE)) {
+            if (entity instanceof LandAirMek && md.contains(MovePath.MoveStepType.CONVERT_MODE)) {
                 entity.setMovementMode(md.getFinalConversionMode());
                 entity.setConvertingNow(true);
                 r = new Report(1210);
@@ -971,7 +971,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // damage and ProtoMechs always require a roll
                     int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
                     if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
-                        addReport(gameManager.landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
+                        addReport(gameManager.landAirMech((LandAirMek) entity, entity.getPosition(), elevation,
                                 entity.delta_distance));
                     } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                         gameManager.getvPhaseReport().addAll(gameManager.landGliderPM((ProtoMek) entity, entity.getPosition(),
@@ -1045,7 +1045,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // If we've somehow gotten here as an airborne LAM with a destroyed side torso
             // (such as conversion while dropping), crash now.
-            if (entity instanceof LandAirMech
+            if (entity instanceof LandAirMek
                     && (entity.isLocationBad(Mek.LOC_RT) || entity.isLocationBad(Mek.LOC_LT))) {
                 r = new Report(9710);
                 r.subject = entity.getId();
@@ -1294,8 +1294,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else if (step.getType() == MovePath.MoveStepType.DOWN && step.getClearance() == 0) {
                     // If this is the first step, use the Entity's starting elevation
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
-                    if (entity instanceof LandAirMech) {
-                        addReport(gameManager.landAirMech((LandAirMech) entity, step.getPosition(), elevation,
+                    if (entity instanceof LandAirMek) {
+                        addReport(gameManager.landAirMech((LandAirMek) entity, step.getPosition(), elevation,
                                 distance));
                     } else if (entity instanceof ProtoMek) {
                         addReport(gameManager.landGliderPM((ProtoMek) entity, step.getPosition(), elevation,
@@ -1445,15 +1445,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             && !(entity instanceof FighterSquadron) && !getGame().useVectorMove()) {
                         if (!gameManager.doSkillCheckInSpace(entity, rollTarget)) {
                             a.setSI(a.getSI() - 1);
-                            if (entity instanceof LandAirMech) {
+                            if (entity instanceof LandAirMek) {
                                 addReport(gameManager.criticalEntity(entity, Mek.LOC_CT, false, 0, 1));
                             }
                             // check for destruction
                             if (a.getSI() == 0) {
                                 // Lets auto-eject if we can!
-                                if (a instanceof LandAirMech) {
+                                if (a instanceof LandAirMek) {
                                     // LAMs eject if the CT destroyed switch is on
-                                    LandAirMech lam = (LandAirMech) a;
+                                    LandAirMek lam = (LandAirMek) a;
                                     if (lam.isAutoEject()
                                             && (!getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                             || (getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)

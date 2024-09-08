@@ -29,7 +29,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ProtoMek;
 import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestProtomech;
+import megamek.common.verifier.TestProtoMek;
 
 /**
  * Creates a TRO template model for Protomechs.
@@ -37,11 +37,11 @@ import megamek.common.verifier.TestProtomech;
  * @author Neoancient
  *
  */
-public class ProtomechTROView extends TROView {
+public class ProtoMekTROView extends TROView {
 
     private final ProtoMek proto;
 
-    public ProtomechTROView(ProtoMek proto) {
+    public ProtoMekTROView(ProtoMek proto) {
         this.proto = proto;
     }
 
@@ -65,7 +65,7 @@ public class ProtomechTROView extends TROView {
         addFluff();
         setModelData("isGlider", proto.isGlider());
         setModelData("isQuad", proto.isQuad());
-        final TestProtomech testproto = new TestProtomech(proto, verifier.protomechOption, null);
+        final TestProtoMek testproto = new TestProtoMek(proto, verifier.protomechOption, null);
         setModelData("isMass", NumberFormat.getInstance().format(testproto.getWeightStructure() * 1000));
         setModelData("engineRating", proto.getEngine().getRating());
         setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));

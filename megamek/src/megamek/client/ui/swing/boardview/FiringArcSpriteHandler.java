@@ -18,7 +18,13 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import megamek.client.ui.swing.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
@@ -27,8 +33,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.weapons.infantry.InfantryWeapon;
-
-import java.util.*;
 
 /**
  * This BoardViewSpriteHandler handles the sprites for the firing arcs (field of fire) that can be shown for
@@ -295,7 +299,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 facing = firingEntity.getSecondaryFacing();
             }
             // If this is mech with turrets, check to see if the weapon is on a turret.
-            if ((firingEntity instanceof Mek) && (weapon.isMechTurretMounted())) {
+            if ((firingEntity instanceof Mek) && (weapon.isMekTurretMounted())) {
                 // facing is currently adjusted for mek torso twist and facing, adjust for turret facing.
                 facing = (weapon.getFacing() + facing) % 6;
             }

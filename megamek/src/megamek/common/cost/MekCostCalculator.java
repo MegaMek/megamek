@@ -152,9 +152,9 @@ public class MekCostCalculator {
         double weaponCost = CostCalculator.getWeaponsAndEquipmentCost(mek, ignoreAmmo);
         costs[i++] = weaponCost;
 
-        if (mek instanceof LandAirMech) {
+        if (mek instanceof LandAirMek) {
             costs[i++] = (structureCost + weaponCost)
-                    * (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.65 : 0.75);
+                    * (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_BIMODAL ? 0.65 : 0.75);
         } else if (mek instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {

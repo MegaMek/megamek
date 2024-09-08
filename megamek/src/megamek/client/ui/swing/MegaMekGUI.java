@@ -17,6 +17,45 @@
  */
 package megamek.client.ui.swing;
 
+import static megamek.common.Compute.d6;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BaseMultiResolutionImage;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
@@ -38,7 +77,7 @@ import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -53,37 +92,14 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
-import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.IGameManager;
 import megamek.server.Server;
+import megamek.server.sbf.SBFGameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BaseMultiResolutionImage;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.*;
-import java.util.zip.GZIPInputStream;
-
-import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
@@ -208,39 +224,39 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (!skinSpec.fontColors.isEmpty()) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
-        MegamekButton hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"),
+        MegaMekButton hostB = new MegaMekButton(Messages.getString("MegaMek.hostNewGame.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand(ClientGUI.FILE_GAME_NEW);
         hostB.addActionListener(actionListener);
-        MegamekButton scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
+        MegaMekButton scenB = new MegaMekButton(Messages.getString("MegaMek.hostScenario.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand(ClientGUI.FILE_GAME_SCENARIO);
         scenB.addActionListener(actionListener);
-        MegamekButton loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
+        MegaMekButton loadB = new MegaMekButton(Messages.getString("MegaMek.hostSavedGame.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         loadB.setActionCommand(ClientGUI.FILE_GAME_LOAD);
         loadB.addActionListener(actionListener);
-        MegamekButton connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
+        MegaMekButton connectB = new MegaMekButton(Messages.getString("MegaMek.Connect.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
-        MegamekButton connectSBF = new MegamekButton("Connect to SBF",
+        MegaMekButton connectSBF = new MegaMekButton("Connect to SBF",
                 UIComponents.MainMenuButton.getComp(), true);
         connectSBF.setActionCommand(ClientGUI.FILE_GAME_CONNECT_SBF);
         connectSBF.addActionListener(actionListener);
-        MegamekButton botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
+        MegaMekButton botB = new MegaMekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
         botB.addActionListener(actionListener);
-        MegamekButton editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
+        MegaMekButton editB = new MegaMekButton(Messages.getString("MegaMek.MapEditor.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand(ClientGUI.BOARD_NEW);
         editB.addActionListener(actionListener);
-        MegamekButton skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
+        MegaMekButton skinEditB = new MegaMekButton(Messages.getString("MegaMek.SkinEditor.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand(ClientGUI.MAIN_SKIN_NEW);
         skinEditB.addActionListener(actionListener);
-        MegamekButton quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"),
+        MegaMekButton quitB = new MegaMekButton(Messages.getString("MegaMek.Quit.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);

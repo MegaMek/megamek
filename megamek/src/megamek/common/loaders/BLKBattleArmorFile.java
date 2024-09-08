@@ -22,7 +22,7 @@ import megamek.common.util.BuildingBlock;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
+public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
 
     public BLKBattleArmorFile(BuildingBlock bb) {
         dataFile = bb;
@@ -114,11 +114,11 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         }
 
         t.autoSetInternal();
-        
+
         if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         }
-        
+
         if (dataFile.exists("armor_tech")) {
             t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
@@ -180,16 +180,16 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     mountLoc = BattleArmor.MOUNT_LOC_TURRET;
                     saEquip[x] = saEquip[x].replace(":TU", "");
                 }
-                
+
                 boolean dwpMounted = saEquip[x].contains(":DWP");
                 saEquip[x] = saEquip[x].replace(":DWP", "");
-                
+
                 boolean sswMounted = saEquip[x].contains(":SSWM");
                 saEquip[x] = saEquip[x].replace(":SSWM", "");
-                
+
                 boolean apmMounted = saEquip[x].contains(":APM");
                 saEquip[x] = saEquip[x].replace(":APM", "");
-                
+
                 int numShots = 0;
                 if (saEquip[x].contains(":Shots")) {
                     String shotString = saEquip[x].substring(
@@ -209,7 +209,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
 
-                
+
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
@@ -217,7 +217,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted m = t.addEquipment(etype, nLoc, false, 
+                        Mounted m = t.addEquipment(etype, nLoc, false,
                                 mountLoc, dwpMounted);
                         if (numShots != 0 && (m.getType() instanceof AmmoType)) {
                             m.setShotsLeft(numShots);

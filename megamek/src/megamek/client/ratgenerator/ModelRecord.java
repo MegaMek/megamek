@@ -13,8 +13,17 @@
  */
 package megamek.client.ratgenerator;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
-import megamek.common.weapons.*;
+import megamek.common.weapons.LegAttack;
+import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.SwarmAttack;
+import megamek.common.weapons.SwarmWeaponAttack;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
 import megamek.common.weapons.battlearmor.BAMGWeapon;
@@ -37,12 +46,6 @@ import megamek.common.weapons.ppc.CLPlasmaCannon;
 import megamek.common.weapons.ppc.ISPlasmaRifle;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.srms.StreakSRMWeapon;
-
-import org.apache.logging.log4j.LogManager;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Set;
 
 
 /**

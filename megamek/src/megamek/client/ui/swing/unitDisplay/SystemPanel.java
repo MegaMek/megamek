@@ -240,7 +240,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         return en.getCritical(loc, slot);
     }
 
-    private Mounted getSelectedEquipment() {
+    private Mounted<?> getSelectedEquipment() {
         if ((locList.getSelectedIndex() == LOC_ALL_EQUIP)) {
             if (slotList.getSelectedIndex() != -1) {
                 return en.getMisc().get(slotList.getSelectedIndex());
@@ -265,7 +265,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         }
         if ((cs.getMount().getType() instanceof MiscType)
                 && cs.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             while (m.getLinked() != null) {
                 m = m.getLinked();
             }
@@ -352,7 +352,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
 
         // Display all Equipment
         if (loc == LOC_ALL_EQUIP) {
-            for (Mounted m : en.getMisc()) {
+            for (Mounted<?> m : en.getMisc()) {
                 slotModel.addElement(getMountedDisplay(m, loc));
             }
             return;
@@ -360,7 +360,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
 
         // Display all Weapons
         if (loc == LOC_ALL_WEAPS) {
-            for (Mounted m : en.getWeaponList()) {
+            for (Mounted<?> m : en.getWeaponList()) {
                 slotModel.addElement(getMountedDisplay(m, loc));
             }
             return;
@@ -409,11 +409,11 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         onResize();
     }
 
-    private String getMountedDisplay(Mounted m, int loc) {
+    private String getMountedDisplay(Mounted<?> m, int loc) {
         return getMountedDisplay(m, loc, null);
     }
 
-    private String getMountedDisplay(Mounted m, int loc, CriticalSlot cs) {
+    private String getMountedDisplay(Mounted<?> m, int loc, CriticalSlot cs) {
         String hotLoaded = Messages.getString("MechDisplay.isHotLoaded");
         StringBuffer sb = new StringBuffer();
 
@@ -462,7 +462,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
             }
             if (ev.getSource().equals(m_chMode)
                     && (ev.getStateChange() == ItemEvent.SELECTED)) {
-                Mounted m = getSelectedEquipment();
+                Mounted<?> m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
                 if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
@@ -721,7 +721,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 Client client = unitDisplay.getClientGUI().getClient();
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
-                Mounted m = getSelectedEquipment();
+                Mounted<?> m = getSelectedEquipment();
                 boolean carryingBAsOnBack = false;
                 if ((en instanceof Mek)
                         && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)

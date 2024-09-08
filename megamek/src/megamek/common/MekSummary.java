@@ -1,5 +1,5 @@
 /*
- * MechSummary.java - Copyright (C) 2002-2004 Josh Yockey
+ * MekSummary.java - Copyright (C) 2002-2004 Josh Yockey
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -14,24 +14,39 @@
  */
 package megamek.common;
 
-import megamek.client.ui.Base64Image;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.alphaStrike.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.*;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
+import java.awt.Image;
 import java.io.File;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.ui.Base64Image;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.alphaStrike.ASArcSummary;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASSpecialAbilityCollector;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionInfo;
+import megamek.common.options.Quirks;
+
 /**
- * The MechSummary of a unit offers compiled information about the unit without having to load the file.
+ * The MekSummary of a unit offers compiled information about the unit without having to load the file.
  */
-public class MechSummary implements Serializable, ASCardDisplayable {
+public class MekSummary implements Serializable, ASCardDisplayable {
 
     private String name;
     private String chassis;
@@ -179,7 +194,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private UnitRole role = UnitRole.UNDETERMINED;
 
-    public MechSummary() {
+    public MekSummary() {
         armorTypeSet = new HashSet<>();
     }
 
@@ -259,7 +274,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return unitSubType;
     }
 
-    public static String determineETypeName(MechSummary ms) {
+    public static String determineETypeName(MekSummary ms) {
         switch (ms.getUnitType()) {
             case "BattleArmor":
             case "Infantry":
@@ -1292,7 +1307,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        final MechSummary other = (MechSummary) obj;
+        final MekSummary other = (MekSummary) obj;
         // we match on chassis + model + unittype + sourcefile
         return Objects.equals(chassis, other.chassis) && Objects.equals(model, other.model)
                 && Objects.equals(unitType, other.unitType) && Objects.equals(sourceFile, other.sourceFile);
@@ -1314,7 +1329,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for this MechSummary. If the entity cannot be loaded, the error is logged
+     * Loads and returns the entity for this MekSummary. If the entity cannot be loaded, the error is logged
      * and null is returned.
      *
      * @return The loaded entity or null in case of an error
@@ -1330,18 +1345,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     /**
      * Loads and returns the entity for the given full name. If the entity cannot be loaded, the error is logged
-     * and null is returned. This is a shortcut for first loading the MechSummary using
-     * {@link MechSummaryCache#getMech(String)} and then {@link #loadEntity()}.
+     * and null is returned. This is a shortcut for first loading the MekSummary using
+     * {@link MekSummaryCache#getMech(String)} and then {@link #loadEntity()}.
      *
      * @return The loaded entity or null in case of an error
      */
     public static @Nullable Entity loadEntity(String fullName) {
         try {
-            MechSummary ms = MechSummaryCache.getInstance().getMech(fullName);
+            MekSummary ms = MekSummaryCache.getInstance().getMech(fullName);
             if (ms != null) {
                 return new MechFileParser(ms.sourceFile, ms.entryName).getEntity();
             } else {
-                LogManager.getLogger().error("MechSummary entry not found for {}", fullName);
+                LogManager.getLogger().error("MekSummary entry not found for {}", fullName);
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);

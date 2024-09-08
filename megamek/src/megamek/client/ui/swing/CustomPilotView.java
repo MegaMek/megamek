@@ -15,23 +15,37 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.PortraitChooserDialog;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.Infantry;
+import megamek.common.LAMPilot;
+import megamek.common.ProtoMek;
+import megamek.common.Tank;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab.
@@ -72,7 +86,7 @@ public class CustomPilotView extends JPanel {
 
     private Portrait portrait;
 
-    public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
+    public CustomPilotView(CustomMekDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
         setLayout(new GridBagLayout());
         JLabel label;

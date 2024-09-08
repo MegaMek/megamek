@@ -19,26 +19,33 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.common.*;
-import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
-import megamek.common.net.packets.Packet;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.Report;
-import megamek.server.SmokeCloud;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
+import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DodgeAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.*;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.common.options.GameOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.server.SmokeCloud;
 
 /**
  * unit_potential_locations keeps track of all the potential coordinates and

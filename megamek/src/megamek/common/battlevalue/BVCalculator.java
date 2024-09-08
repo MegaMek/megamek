@@ -18,6 +18,18 @@
  */
 package megamek.common.battlevalue;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.AmmoType.T_AMS;
+import static megamek.common.AmmoType.T_APDS;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
@@ -28,12 +40,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.AmmoType.*;
-
-import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Base class for battle value calculators for all units. The subclasses implement overrides
@@ -416,7 +422,7 @@ public abstract class BVCalculator {
     protected String equipmentDescriptor(Mounted mounted) {
         if (mounted.getType() instanceof WeaponType) {
             String descriptor = mounted.getType().getShortName() + " (" + entity.getLocationAbbr(mounted.getLocation()) + ")";
-            if (mounted.isMechTurretMounted()) {
+            if (mounted.isMekTurretMounted()) {
                 descriptor += TURRET;
             }
             if (mounted.isRearMounted() || isRearFacingVGL(mounted)) {

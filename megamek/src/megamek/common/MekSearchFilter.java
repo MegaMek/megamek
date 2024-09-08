@@ -15,23 +15,30 @@
 */
 package megamek.common;
 
-import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.common.util.StringUtil;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.common.util.StringUtil;
+
 /**
  * Class to perform filtering on units. This class stores a list of
- * constraints and for a given <code>MechSummary</code> it can tell whether
- * that <code>MechSummary</code> meets the constraints or not.
+ * constraints and for a given <code>MekSummary</code> it can tell whether
+ * that <code>MekSummary</code> meets the constraints or not.
  *
  * @author JSmyrloglou
  * @author Arlith
  */
-public class MechSearchFilter {
+public class MekSearchFilter {
 
     public enum BoolOp { AND, OR, NOP }
     public String sStartWalk;
@@ -196,7 +203,7 @@ public class MechSearchFilter {
     public ExpressionTree equipmentCriteria;
 
 
-    public MechSearchFilter()
+    public MekSearchFilter()
     {
         isDisabled = true;
         checkEquipment = false;
@@ -209,7 +216,7 @@ public class MechSearchFilter {
      *
      * @param sf The <code>MechSearchFilter</code> to create a copy of.
      */
-    public MechSearchFilter(MechSearchFilter sf) {
+    public MekSearchFilter(MekSearchFilter sf) {
         if (sf != null) {
             isDisabled = sf.isDisabled;
             checkEquipment = sf.checkEquipment;
@@ -343,7 +350,7 @@ public class MechSearchFilter {
         return equipmentCriteria.toString();
     }
 
-    public static boolean isTechMatch(MechSummary mech, int nTechType) {
+    public static boolean isTechMatch(MekSummary mech, int nTechType) {
         return ((nTechType == TechConstants.T_ALL)
                 || (nTechType == mech.getType())
                 || ((nTechType == TechConstants.T_IS_TW_ALL)
@@ -410,7 +417,7 @@ public class MechSearchFilter {
         return list.stream().anyMatch(search::contains);
     }
 
-    public static boolean isMatch(MechSummary mech, MechSearchFilter f) {
+    public static boolean isMatch(MekSummary mech, MekSearchFilter f) {
         if (f == null || f.isDisabled) {
             return true;
         }
@@ -1047,7 +1054,7 @@ public class MechSearchFilter {
 
                 }
 
-                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node.
+                // If we reach this point. It means that the MekSummary didn't have a weapon/equipment that matched the leaf node.
                 // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
                 // a match.
                 if (n.qty == 0) {

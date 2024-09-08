@@ -518,19 +518,19 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         panSystem.add(cockpitCrit, gridBagConstraints);
 
-        if (entity instanceof LandAirMech) {
+        if (entity instanceof LandAirMek) {
             lamAvionicsCrit = new TreeMap<>();
             lamLandingGearCrit = new TreeMap<>();
             for (int loc = 0; loc < entity.locations(); loc++) {
-                int crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, loc);
+                int crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
                 if (crits > 0) {
-                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, loc);
+                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
                     lamAvionicsCrit.put(loc, critPanel);
                 }
-                crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, loc);
+                crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
                 if (crits > 0) {
-                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, loc);
+                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
                     lamLandingGearCrit.put(loc, critPanel);
                 }
@@ -1285,13 +1285,13 @@ public class UnitEditorDialog extends JDialog {
             }
             if (null != lamAvionicsCrit && !lamAvionicsCrit.isEmpty()) {
                 for (int loc : lamAvionicsCrit.keySet()) {
-                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS,
+                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS,
                             loc, lamAvionicsCrit.get(loc).getHits());
                 }
             }
             if (null != lamLandingGearCrit && !lamLandingGearCrit.isEmpty()) {
                 for (int loc : lamLandingGearCrit.keySet()) {
-                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR,
+                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR,
                             loc, lamLandingGearCrit.get(loc).getHits());
                 }
             }

@@ -21,7 +21,7 @@ import megamek.common.verifier.TestEntity;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
+public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
 
     public BLKSmallCraftFile(BuildingBlock bb) {
         dataFile = bb;

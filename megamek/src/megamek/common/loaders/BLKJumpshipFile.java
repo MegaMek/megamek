@@ -21,7 +21,7 @@ import megamek.common.util.BuildingBlock;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKJumpshipFile extends BLKFile implements IMechLoader {
+public class BLKJumpshipFile extends BLKFile implements IMekLoader {
 
     public BLKJumpshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -128,7 +128,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("hpg")) {
             a.setHPG(true);
         }
-        
+
         if (dataFile.exists("sail")) {
             a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
@@ -175,7 +175,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
-        
+
         if (dataFile.exists("designtype")) {
             a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
         } else {

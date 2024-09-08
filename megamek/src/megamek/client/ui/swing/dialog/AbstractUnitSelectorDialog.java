@@ -14,6 +14,39 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
@@ -22,8 +55,14 @@ import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.MechFileParser;
+import megamek.common.MechSearchFilter;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
@@ -31,20 +70,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.sorter.NaturalOrderComparator;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.event.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import java.util.*;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * This is a heavily reworked version of the original MechSelectorDialog which

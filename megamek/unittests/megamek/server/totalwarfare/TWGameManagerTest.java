@@ -62,7 +62,7 @@ class TWGameManagerTest {
 
     @Test
     void testAddControlWithAdvAtmosphericMergesIntoOneRollLAM() {
-        LandAirMech mech = new LandAirMech(LandAirMech.GYRO_STANDARD, LandAirMech.COCKPIT_STANDARD, LandAirMech.LAM_STANDARD);
+        LandAirMek mech = new LandAirMek(LandAirMek.GYRO_STANDARD, LandAirMek.COCKPIT_STANDARD, LandAirMek.LAM_STANDARD);
         game.addEntity(mech);
         Vector<PilotingRollData> rolls = new Vector<>();
         StringBuilder reasons = new StringBuilder();
@@ -76,7 +76,7 @@ class TWGameManagerTest {
 
     @Test
     void testAddControlWithAdvAtmosphericIncludesAllReasonsLAM() {
-        LandAirMech mech = new LandAirMech(LandAirMech.GYRO_STANDARD, LandAirMech.COCKPIT_STANDARD, LandAirMech.LAM_STANDARD);
+        LandAirMek mech = new LandAirMek(LandAirMek.GYRO_STANDARD, LandAirMek.COCKPIT_STANDARD, LandAirMek.LAM_STANDARD);
         game.addEntity(mech);
         Vector<PilotingRollData> rolls = new Vector<>();
         StringBuilder reasons = new StringBuilder();

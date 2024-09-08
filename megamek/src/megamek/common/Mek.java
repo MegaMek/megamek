@@ -531,7 +531,7 @@ public abstract class Mek extends Entity {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             addTransporter(new BattleArmorHandles());
         } else {
-            addTransporter(new ClampMountMech());
+            addTransporter(new ClampMountMek());
         }
     }
 
@@ -4249,7 +4249,7 @@ public abstract class Mek extends Entity {
         sb.append(newLine);
 
         sb.append("Config:");
-        if (this instanceof LandAirMech) {
+        if (this instanceof LandAirMek) {
             sb.append("LAM");
         } else if (this instanceof BipedMek) {
             sb.append("Biped");
@@ -4335,9 +4335,9 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
 
-        if (this instanceof LandAirMech) {
+        if (this instanceof LandAirMek) {
             sb.append(MtfFile.LAM);
-            sb.append(((LandAirMech) this).getLAMTypeString());
+            sb.append(((LandAirMek) this).getLAMTypeString());
             sb.append(newLine);
         } else if (this instanceof QuadVee) {
             sb.append(MtfFile.MOTIVE);
@@ -4586,7 +4586,7 @@ public abstract class Mek extends Entity {
             if (m.isRearMounted()) {
                 toReturn.append(" (R)");
             }
-            if (m.isMechTurretMounted()) {
+            if (m.isMekTurretMounted()) {
                 toReturn.append(" (T)");
             }
             if (m.isOmniPodMounted()) {
@@ -5930,9 +5930,9 @@ public abstract class Mek extends Entity {
         }
 
         if ((getEntityType() & ETYPE_LAND_AIR_MEK) != 0
-                && hasSystem(LandAirMech.LAM_AVIONICS, loc)
+                && hasSystem(LandAirMek.LAM_AVIONICS, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        LandAirMech.LAM_AVIONICS, loc) > 0)) {
+                        LandAirMek.LAM_AVIONICS, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5941,9 +5941,9 @@ public abstract class Mek extends Entity {
         }
 
         if ((getEntityType() & ETYPE_LAND_AIR_MEK) != 0
-                && hasSystem(LandAirMech.LAM_LANDING_GEAR, loc)
+                && hasSystem(LandAirMek.LAM_LANDING_GEAR, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        LandAirMech.LAM_LANDING_GEAR, loc) > 0)) {
+                        LandAirMek.LAM_LANDING_GEAR, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }

@@ -655,8 +655,8 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        if (getEntity() instanceof LandAirMech
-                && !((LandAirMech) getEntity()).canConvertTo(getFinalConversionMode())) {
+        if (getEntity() instanceof LandAirMek
+                && !((LandAirMek) getEntity()).canConvertTo(getFinalConversionMode())) {
             steps.forEach(s -> {
                 if (s.getType() == MoveStepType.CONVERT_MODE) {
                     s.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -1665,8 +1665,8 @@ public class MovePath implements Cloneable, Serializable {
             return false;
         }
         // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
-        if ((getEntity() instanceof LandAirMech)
-                && (((LandAirMech) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)) {
+        if ((getEntity() instanceof LandAirMek)
+                && (((LandAirMek) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMek.CONV_MODE_MECH)) {
             if (getLastStep() != null) {
                 return getLastStep().getClearance() > 0;
             } else {

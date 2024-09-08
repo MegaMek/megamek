@@ -39,7 +39,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * Very cumbersome class that handles set of polygonal areas and labels for
  * PicMap component to represent single mech unit in MechDisplay
  */
-public class TripodMechMapSet implements DisplayMapSet {
+public class TripodMekMapSet implements DisplayMapSet {
 
     // Because of keeping all areas of single type in one array
     // some index offset values required
@@ -165,7 +165,7 @@ public class TripodMechMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMechArmorLargeFontSize());
 
-    public TripodMechMapSet(JComponent c, UnitDisplay unitDisplay) {
+    public TripodMekMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();

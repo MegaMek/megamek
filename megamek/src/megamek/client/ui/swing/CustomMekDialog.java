@@ -13,6 +13,24 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -22,21 +40,17 @@ import megamek.common.*;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.*;
+import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PartialRepairs;
+import megamek.common.options.PilotOptions;
+import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-
-import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.List;
-import java.util.*;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -47,7 +61,7 @@ import java.util.*;
  * @author Ben
  * @since March 18, 2002, 2:56 PM
  */
-public class CustomMechDialog extends AbstractButtonDialog implements ActionListener,
+public class CustomMekDialog extends AbstractButtonDialog implements ActionListener,
         DialogOptionListener, ItemListener {
 
     public static final int DONE = 0;
@@ -144,7 +158,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     private final JPanel panEquip = new JPanel();
     private final List<Entity> entities;
     private boolean okay;
-    private int status = CustomMechDialog.DONE;
+    private int status = CustomMekDialog.DONE;
 
     private final ClientGUI clientgui;
     private final Client client;
@@ -167,14 +181,14 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     /**
      * Creates new CustomMechDialog
      */
-    public CustomMechDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable) {
+    public CustomMekDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable) {
         this(clientgui, client, entities, editable, true);
     }
 
     /**
      * Creates new CustomMechDialog
      */
-    public CustomMechDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable, boolean editableDeployment) {
+    public CustomMekDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable, boolean editableDeployment) {
         super(clientgui.getFrame(), "CustomizeMechDialog", "CustomMechDialog.title");
 
         this.entities = entities;
@@ -430,17 +444,17 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             }
             updateStartingModeOptions();
             choStartingMode.addItemListener(this);
-        } else if (entity instanceof LandAirMech) {
+        } else if (entity instanceof LandAirMek) {
             choStartingMode.removeItemListener(this);
             choStartingMode.removeAllItems();
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeBiped"));
-            if (((LandAirMech) entity).getLAMType() != LandAirMech.LAM_BIMODAL) {
+            if (((LandAirMek) entity).getLAMType() != LandAirMek.LAM_BIMODAL) {
                 choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeAirMech"));
             }
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeFighter"));
-            if (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
+            if (entity.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH) {
                 choStartingMode.setSelectedIndex(1);
-            } else if (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
+            } else if (entity.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER) {
                 choStartingMode.setSelectedIndex(choStartingMode.getItemCount() - 1);
             }
             updateStartingModeOptions();
@@ -627,17 +641,17 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         boolean isGlider = true;
         for (Entity e : entities) {
             isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))
-                    || ((e instanceof LandAirMech)
+                    || ((e instanceof LandAirMek)
                     && (choStartingMode.getSelectedIndex() == 2
-                    || ((LandAirMech) e).getLAMType() == LandAirMech.LAM_BIMODAL
+                    || ((LandAirMek) e).getLAMType() == LandAirMek.LAM_BIMODAL
                     && choStartingMode.getSelectedIndex() == 1));
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
             isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
             isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);
             isQuadVee &= (e instanceof QuadVee);
-            isLAM &= (e instanceof LandAirMech);
-            isAirMech &= (e instanceof LandAirMech)
-                    && (((LandAirMech) e).getLAMType() == LandAirMech.LAM_STANDARD)
+            isLAM &= (e instanceof LandAirMek);
+            isAirMech &= (e instanceof LandAirMek)
+                    && (((LandAirMek) e).getLAMType() == LandAirMek.LAM_STANDARD)
                     && (choStartingMode.getSelectedIndex() == 1);
             isGlider &= (e instanceof ProtoMek) && (e.getMovementMode() == EntityMovementMode.WIGE);
         }
@@ -902,13 +916,13 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                 entity.setConversionMode(choStartingMode.getSelectedIndex());
             } else if (isLAM) {
                 if (choStartingMode.getSelectedIndex() == 2) {
-                    entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+                    entity.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
                 } else if (choStartingMode.getSelectedIndex() == 1) {
-                    entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
-                    entity.setConversionMode(((LandAirMech) entity).getLAMType() == LandAirMech.LAM_BIMODAL ?
-                            LandAirMech.CONV_MODE_FIGHTER : LandAirMech.CONV_MODE_AIRMECH);
+                    entity.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
+                    entity.setConversionMode(((LandAirMek) entity).getLAMType() == LandAirMek.LAM_BIMODAL ?
+                            LandAirMek.CONV_MODE_FIGHTER : LandAirMek.CONV_MODE_AIRMECH);
                 } else {
-                    entity.setConversionMode(LandAirMech.CONV_MODE_MECH);
+                    entity.setConversionMode(LandAirMek.CONV_MODE_MECH);
                 }
             }
 
@@ -986,22 +1000,22 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         if (entities.get(0) instanceof QuadVee) {
             labDeployProne.setEnabled(index == 0);
             chDeployProne.setEnabled(index == 0);
-        } else if (entities.get(0) instanceof LandAirMech) {
+        } else if (entities.get(0) instanceof LandAirMek) {
             int mode = index;
-            if (((LandAirMech) entities.get(0)).getLAMType() == LandAirMech.LAM_BIMODAL
-                    && mode == LandAirMech.CONV_MODE_AIRMECH) {
-                mode = LandAirMech.CONV_MODE_FIGHTER;
+            if (((LandAirMek) entities.get(0)).getLAMType() == LandAirMek.LAM_BIMODAL
+                    && mode == LandAirMek.CONV_MODE_AIRMECH) {
+                mode = LandAirMek.CONV_MODE_FIGHTER;
             }
-            labDeployProne.setEnabled(mode < LandAirMech.CONV_MODE_FIGHTER);
-            chDeployProne.setEnabled(mode < LandAirMech.CONV_MODE_FIGHTER);
-            labDeployHullDown.setEnabled(mode == LandAirMech.CONV_MODE_MECH);
-            chDeployHullDown.setEnabled(mode == LandAirMech.CONV_MODE_MECH);
-            labStartHeight.setEnabled(mode == LandAirMech.CONV_MODE_AIRMECH);
-            fldStartHeight.setEnabled(mode == LandAirMech.CONV_MODE_AIRMECH);
-            labStartVelocity.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
-            fldStartVelocity.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
-            labStartAltitude.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
-            fldStartAltitude.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
+            labDeployProne.setEnabled(mode < LandAirMek.CONV_MODE_FIGHTER);
+            chDeployProne.setEnabled(mode < LandAirMek.CONV_MODE_FIGHTER);
+            labDeployHullDown.setEnabled(mode == LandAirMek.CONV_MODE_MECH);
+            chDeployHullDown.setEnabled(mode == LandAirMek.CONV_MODE_MECH);
+            labStartHeight.setEnabled(mode == LandAirMek.CONV_MODE_AIRMECH);
+            fldStartHeight.setEnabled(mode == LandAirMek.CONV_MODE_AIRMECH);
+            labStartVelocity.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);
+            fldStartVelocity.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);
+            labStartAltitude.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);
+            fldStartAltitude.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);
         }
     }
 
@@ -1069,7 +1083,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         final boolean isVTOL = entities.stream().allMatch(e -> e.getMovementMode().isVTOL());
         final boolean isWiGE = entities.stream().allMatch(e -> (e instanceof Tank) && e.getMovementMode().isWiGE());
         final boolean isQuadVee = entities.stream().allMatch(e -> e instanceof QuadVee);
-        final boolean isLAM = entities.stream().allMatch(e -> e instanceof LandAirMech);
+        final boolean isLAM = entities.stream().allMatch(e -> e instanceof LandAirMek);
         final boolean isGlider = entities.stream().allMatch(e -> (e instanceof ProtoMek) && e.getMovementMode().isWiGE());
         final boolean hasStealth = entities.stream().allMatch(e -> e.hasStealth());
         boolean eligibleForOffBoard = true;
@@ -1161,11 +1175,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
         options = entity.getCrew().getOptions();
         partReps = entity.getPartialRepairs();
-        for (Mounted m : entity.getWeaponList()) {
+        for (Mounted<?> m : entity.getWeaponList()) {
             h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
         }
         // Also need to consider melee weapons
-        for (Mounted m : entity.getMisc()) {
+        for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_CLUB)) {
                 h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
             }

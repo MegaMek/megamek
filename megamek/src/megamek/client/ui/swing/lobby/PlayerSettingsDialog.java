@@ -772,7 +772,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butText[i].append(IStartingPositions.START_LOCATION_NAMES[i]).append("</FONT><BR>");
         }
 
-        for (Player player : client.getGame().getPlayersVector()) {
+        for (Player player : client.getGame().getPlayersList()) {
             int pos = player.getStartingPos();
             if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) {
                 int index = pos > 10 ? pos - 10 : pos;

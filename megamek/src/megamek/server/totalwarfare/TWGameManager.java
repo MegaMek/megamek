@@ -3938,7 +3938,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (curAltitude == nextHex.floor()) {
                     nextElevation = 1;
                     crashedIntoTerrain = false;
-                } else if ((entity instanceof LandAirMech) && (curAltitude + 1 == nextHex.floor())) {
+                } else if ((entity instanceof LandAirMek) && (curAltitude + 1 == nextHex.floor())) {
                     // LAMs in AirMech mode skid across terrain that is two levels higher rather than crashing,
                     // Reset the skid distance for skid damage calculations.
                     nextElevation = 0;
@@ -8604,7 +8604,7 @@ public class TWGameManager extends AbstractGameManager {
         if (roll != null) {
             if (entity.canFall()) {
                 game.addPSR(roll);
-            } else if ((entity instanceof LandAirMech) && entity.isAirborneVTOLorWIGE()) {
+            } else if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(roll);
             }
         }
@@ -11129,7 +11129,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            if ((ae instanceof LandAirMech) && ae.isAirborneVTOLorWIGE()) {
+            if ((ae instanceof LandAirMek) && ae.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed punch attack"));
             }
             return;
@@ -11169,7 +11169,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             addReport(r);
 
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+            if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed punch attack"));
             }
             // If the target is in a building, the building absorbs the damage.
@@ -11393,7 +11393,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            if ((ae instanceof LandAirMech) && ae.isAirborneVTOLorWIGE()) {
+            if ((ae instanceof LandAirMek) && ae.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             } else {
                 game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
@@ -11434,7 +11434,7 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4035);
             r.subject = ae.getId();
             addReport(r);
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+            if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             } else {
                 game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
@@ -11773,7 +11773,7 @@ public class TWGameManager extends AbstractGameManager {
      * Handle a ProtoMech physical attack
      */
     private void resolveProtoAttack(PhysicalResult pr, int lastEntityId) {
-        final ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction) pr.aaa;
+        final ProtoMekPhysicalAttackAction ppaa = (ProtoMekPhysicalAttackAction) pr.aaa;
         final Entity ae = game.getEntity(ppaa.getEntityId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
@@ -12494,7 +12494,7 @@ public class TWGameManager extends AbstractGameManager {
             pr.aaa.setTargetId(ae.getId());
             pr.aaa.setTargetType(Targetable.TYPE_ENTITY);
             resolveClubAttack(pr, ae.getId());
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+            if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a flail/wrecking ball attack"));
             } else {
                 game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a flail/wrecking ball attack"));
@@ -12540,7 +12540,7 @@ public class TWGameManager extends AbstractGameManager {
             r.add(toHit.getDesc());
             addReport(r);
             if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
-                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
                 } else {
                     game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
@@ -12593,7 +12593,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
 
             if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
-                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
                 } else {
                     game.addPSR(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
@@ -12741,7 +12741,7 @@ public class TWGameManager extends AbstractGameManager {
         if (caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)
                 && (ae instanceof SupportTank) && (te instanceof Mek)) {
             // forces a PSR like a charge
-            if (te instanceof LandAirMech && te.isAirborneVTOLorWIGE()) {
+            if (te instanceof LandAirMek && te.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(te.getId(), 2, "was hit by wrecking ball"));
             } else {
                 game.addPSR(new PilotingRollData(te.getId(), 2, "was hit by wrecking ball"));
@@ -12941,14 +12941,14 @@ public class TWGameManager extends AbstractGameManager {
                 if (ae.canFall()) {
                     PilotingRollData pushPRD = getKickPushPSR(ae, ae, te, "was pushed");
                     game.addPSR(pushPRD);
-                } else if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                } else if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(getKickPushPSR(ae, ae, te, "was pushed"));
                 }
 
                 if (te.canFall()) {
                     PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te, "was pushed");
                     game.addPSR(targetPushPRD);
-                } else if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                } else if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(getKickPushPSR(te, ae, te, "was pushed"));
                 }
                 return;
@@ -13234,7 +13234,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+            if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
             }
             return;
@@ -13259,7 +13259,7 @@ public class TWGameManager extends AbstractGameManager {
                 r = new Report(4035);
                 r.subject = ae.getId();
                 addReport(r);
-                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
                 }
                 return;
@@ -14257,8 +14257,8 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     r.choose(true);
                     reports.addElement(r);
-                    if (ae instanceof LandAirMech) {
-                        reports.addAll(landAirMech((LandAirMech) ae, ae.getPosition(), 1, ae.delta_distance));
+                    if (ae instanceof LandAirMek) {
+                        reports.addAll(landAirMech((LandAirMek) ae, ae.getPosition(), 1, ae.delta_distance));
                     }
                 }
                 addReport(reports);
@@ -16112,7 +16112,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
             // Airborne AirMechs that take 20+ damage make a control roll instead of a PSR.
-            if ((entity instanceof LandAirMech) && entity.isAirborneVTOLorWIGE()
+            if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE()
                     && (entity.damageThisPhase >= 20)) {
                 PilotingRollData damPRD = new PilotingRollData(entity.getId());
                 int damMod = entity.damageThisPhase / 20;
@@ -16821,7 +16821,7 @@ public class TWGameManager extends AbstractGameManager {
             // they should get a shot at a recovery roll at the end of all this
             // if they are already out of control
             canRecover = a.isOutControl();
-        } else if (!(e instanceof LandAirMech) || !e.isAirborneVTOLorWIGE()) {
+        } else if (!(e instanceof LandAirMek) || !e.isAirborneVTOLorWIGE()) {
             return vReport;
         }
 
@@ -17100,7 +17100,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         //
-        if (e.isAero() && !(e instanceof LandAirMech)) {
+        if (e.isAero() && !(e instanceof LandAirMek)) {
             // Only ground fire can hit internal bombs
             if (e.getGroundAttackedByThisTurn().isEmpty()) {
                 return vReport;
@@ -17262,7 +17262,7 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.add(r);
         }
         if (en.isAirborneVTOLorWIGE() && !en.getCrew().isActive()) {
-            if (en instanceof LandAirMech) {
+            if (en instanceof LandAirMek) {
                 crashAirMech(en, en.getBasePilotingRoll(), vDesc);
             } else if (en instanceof ProtoMek) {
                 vDesc.addAll(landGliderPM((ProtoMek) en));
@@ -17518,9 +17518,9 @@ public class TWGameManager extends AbstractGameManager {
                         / divisor);
                 if (roll > 9) {
                     // Lets auto-eject if we can!
-                    if (ship instanceof LandAirMech) {
+                    if (ship instanceof LandAirMek) {
                         // LAMs eject if the CT destroyed switch is on
-                        LandAirMech lam = (LandAirMech) ship;
+                        LandAirMek lam = (LandAirMek) ship;
                         if (lam.isAutoEject()
                                 && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                 || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -18175,9 +18175,9 @@ public class TWGameManager extends AbstractGameManager {
                 // check to see if this destroyed the entity
                 if (a.getCapArmor() <= 0) {
                     // Lets auto-eject if we can!
-                    if (a instanceof LandAirMech) {
+                    if (a instanceof LandAirMek) {
                         // LAMs eject if the CT destroyed switch is on
-                        LandAirMech lam = (LandAirMech) a;
+                        LandAirMek lam = (LandAirMek) a;
                         if (lam.isAutoEject()
                                 && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                 || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -19373,7 +19373,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
 
                     // Torso destruction in airborne LAM causes immediate crash.
-                    if ((te instanceof LandAirMech) && !te.isDestroyed() && !te.isDoomed()) {
+                    if ((te instanceof LandAirMek) && !te.isDestroyed() && !te.isDoomed()) {
                         r = new Report(9710);
                         r.subject = te.getId();
                         r.addDesc(te);
@@ -20784,7 +20784,7 @@ public class TWGameManager extends AbstractGameManager {
                     gyroHits++;
                 }
                 // Automatically falls in AirMech mode, which it seems would indicate a crash if airborne.
-                if (gyroHits == 3 && en instanceof LandAirMech && en.isAirborneVTOLorWIGE()) {
+                if (gyroHits == 3 && en instanceof LandAirMek && en.isAirborneVTOLorWIGE()) {
                     crashAirMech(en, new PilotingRollData(en.getId(),
                             TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"), reports);
                     break;
@@ -20828,8 +20828,8 @@ public class TWGameManager extends AbstractGameManager {
                     game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
                 }
                 break;
-            case LandAirMech.LAM_AVIONICS:
-                if (en.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
+            case LandAirMek.LAM_AVIONICS:
+                if (en.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER) {
                     if (en.isPartOfFighterSquadron()) {
                         game.addControlRoll(new PilotingRollData(
                                 en.getTransportId(), 1, "avionics hit"));
@@ -22295,7 +22295,7 @@ public class TWGameManager extends AbstractGameManager {
      *                          if the unit is forced to land due to insufficient movement
      * @param distance  the distance the unit moved in the turn prior to landing
      */
-    Vector<Report> landAirMech(LandAirMech lam, Coords pos, int elevation, int distance) {
+    Vector<Report> landAirMech(LandAirMek lam, Coords pos, int elevation, int distance) {
         Vector<Report> vDesc = new Vector<>();
 
         lam.setPosition(pos);
@@ -28509,10 +28509,10 @@ public class TWGameManager extends AbstractGameManager {
             toHit = kaa.toHit(game);
             damage = KickAttackAction.getDamageFor(ae, kaa.getLeg(),
                     kaa.getTarget(game).isConventionalInfantry());
-        } else if (aaa instanceof ProtomechPhysicalAttackAction) {
-            ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction) aaa;
+        } else if (aaa instanceof ProtoMekPhysicalAttackAction) {
+            ProtoMekPhysicalAttackAction paa = (ProtoMekPhysicalAttackAction) aaa;
             toHit = paa.toHit(game);
-            damage = ProtomechPhysicalAttackAction.getDamageFor(ae, paa.getTarget(game));
+            damage = ProtoMekPhysicalAttackAction.getDamageFor(ae, paa.getTarget(game));
         } else if (aaa instanceof PunchAttackAction) {
             PunchAttackAction paa = (PunchAttackAction) aaa;
             int arm = paa.getArm();
@@ -28641,7 +28641,7 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof ThrashAttackAction) {
             resolveThrashAttack(pr, cen);
             cen = aaa.getEntityId();
-        } else if (aaa instanceof ProtomechPhysicalAttackAction) {
+        } else if (aaa instanceof ProtoMekPhysicalAttackAction) {
             resolveProtoAttack(pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof ClubAttackAction) {
@@ -30156,8 +30156,8 @@ public class TWGameManager extends AbstractGameManager {
 
         PilotingRollData psr;
         // LAMs that convert to fighter mode on the landing turn are processed as crashes
-        if ((entity instanceof LandAirMech)
-                && (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
+        if ((entity instanceof LandAirMek)
+                && (entity.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER)) {
             addReport(processCrash(entity, 0, entity.getPosition()));
             return;
         }

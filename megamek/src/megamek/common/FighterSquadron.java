@@ -355,8 +355,8 @@ public class FighterSquadron extends AeroSpaceFighter {
                     continue;
                 }
                 int loc = mounted.getLocation();
-                if (entity instanceof LandAirMech) {
-                    loc = LandAirMech.getAeroLocation(loc);
+                if (entity instanceof LandAirMek) {
+                    loc = LandAirMek.getAeroLocation(loc);
                 }
                 String key = mounted.getType().getInternalName() + ":" + loc;
                 if (null == groups.get(key)) {

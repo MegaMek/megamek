@@ -39,7 +39,7 @@ import org.apache.logging.log4j.LogManager;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
+import megamek.client.ui.swing.tileset.MekTileset.MechEntry;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.RotateFilter;
@@ -88,7 +88,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     private boolean started = false;
 
     // mech images
-    private MechTileset wreckTileset = new MechTileset(
+    private MekTileset wreckTileset = new MekTileset(
             new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
     private List<EntityImage> mechImageList = new ArrayList<>();
     private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<>();
@@ -341,7 +341,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     /** Retrieves a generic unit image if possible. May still return null! */
-    private @Nullable Image getGenericImage(Entity entity, int secondaryPos, MechTileset tileSet) {
+    private @Nullable Image getGenericImage(Entity entity, int secondaryPos, MekTileset tileSet) {
         MechEntry defaultEntry = tileSet.genericFor(entity, secondaryPos);
         if (defaultEntry.getImage() == null) {
             defaultEntry.loadImage();

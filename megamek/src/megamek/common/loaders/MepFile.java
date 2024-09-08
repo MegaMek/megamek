@@ -20,21 +20,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 
-import megamek.common.BipedMek;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMek;
-import megamek.common.TechConstants;
+import megamek.common.*;
 
 // Known bug! Split-location weapons are not supported.
 
-public class MepFile implements IMechLoader {
+public class MepFile implements IMekLoader {
     String version;
     String name;
 

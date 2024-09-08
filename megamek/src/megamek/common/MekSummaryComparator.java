@@ -1,5 +1,5 @@
 /*
- * MechSummaryComparator.java - Copyright (C) 2002 Josh Yockey
+ * MekSummaryComparator.java - Copyright (C) 2002 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -16,7 +16,7 @@ package megamek.common;
 
 import java.util.Comparator;
 
-public class MechSummaryComparator implements Comparator<MechSummary> {
+public class MekSummaryComparator implements Comparator<MekSummary> {
     public static final int T_CHASSIS = 0;
     public static final int T_MODEL = 1;
     public static final int T_WEIGHT = 2;
@@ -27,12 +27,12 @@ public class MechSummaryComparator implements Comparator<MechSummary> {
 
     private int m_nType;
 
-    public MechSummaryComparator(int nType) {
+    public MekSummaryComparator(int nType) {
         m_nType = nType;
     }
 
     @Override
-    public int compare(MechSummary ms1, MechSummary ms2) {
+    public int compare(MekSummary ms1, MekSummary ms2) {
         switch (m_nType) {
             case T_CHASSIS:
                 return ms1.getChassis().compareTo(ms2.getChassis());

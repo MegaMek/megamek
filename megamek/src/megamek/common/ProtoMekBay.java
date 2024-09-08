@@ -17,13 +17,13 @@ package megamek.common;
  * Represents a volume of space set aside for carrying ProtoMeks aboard large spacecraft and mobile
  * structures
  */
-public final class ProtomechBay extends Bay {
+public final class ProtoMekBay extends Bay {
     private static final long serialVersionUID = 927162989742234173L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected ProtomechBay() {
+    protected ProtoMekBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -36,7 +36,7 @@ public final class ProtomechBay extends Bay {
      * @param space The weight of troops (in tons) this space can carry.
      * @param bayNumber
      */
-    public ProtomechBay(double space, int doors, int bayNumber) {
+    public ProtoMekBay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;

@@ -19,6 +19,31 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_H;
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.*;
+import java.util.List;
+import java.util.Queue;
+import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -33,14 +58,24 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.EntityChoiceDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.util.*;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.ImageCache;
+import megamek.client.ui.swing.util.KeyBindReceiver;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.PhysicalAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
@@ -55,25 +90,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalTheme;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.List;
-import java.util.Queue;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.swing.tileset.HexTileset.HEX_H;
-import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -1377,7 +1393,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * returns the weapon selected in the mech display, or null if none selected
      * or it is not artillery or null if the selected entity is not owned
      */
-    public Mounted getSelectedArtilleryWeapon() {
+    public Mounted<?> getSelectedArtilleryWeapon() {
         // We don't want to display artillery auto-hit/adjusted fire hexes
         // during
         // the artyautohithexes phase. These could be displayed if the player
@@ -1418,7 +1434,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * Display artillery modifier in pretargeted hexes
      */
     private void drawArtilleryHexes(Graphics g) {
-        Mounted weapon = getSelectedArtilleryWeapon();
+        Mounted<?> weapon = getSelectedArtilleryWeapon();
         Rectangle view = g.getClipBounds();
 
         // Compute the origin of the viewing area
@@ -3233,7 +3249,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     // because costs will overlap and we only want the current
                     // facing
                     && (game.useVectorMove()
-                    // A LAM converting from AirMech to Biped uses two convert steps and we
+                    // A LAM converting from AirMek to Biped uses two convert steps and we
                     // only want to show the last.
                     || (step.getType() == MoveStepType.CONVERT_MODE
                     && previousStep.getType() == MoveStepType.CONVERT_MODE)

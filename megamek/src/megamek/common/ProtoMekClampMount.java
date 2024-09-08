@@ -22,7 +22,7 @@ package megamek.common;
  *
  * @author Neoancient
  */
-public class ProtomechClampMount extends BattleArmorHandles {
+public class ProtoMekClampMount extends BattleArmorHandles {
     private static final long serialVersionUID = 3937766099677646981L;
 
     private final boolean rear;
@@ -30,7 +30,7 @@ public class ProtomechClampMount extends BattleArmorHandles {
     private static final String NO_VACANCY_STRING = "A protomech is loaded";
     private static final String HAVE_VACANCY_STRING = "One protomech";
 
-    public ProtomechClampMount(boolean rear) {
+    public ProtoMekClampMount(boolean rear) {
         this.rear = rear;
     }
 

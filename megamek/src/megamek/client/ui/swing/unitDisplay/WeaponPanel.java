@@ -248,7 +248,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 int shotsLeft = 0;
                 int totalShots = 0;
                 EnumSet<AmmoType.Munitions> munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
-                for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                for (Mounted<?> current = mounted.getLinked(); current != null; current = current.getLinked()) {
                     if (((AmmoType) current.getType()).getMunitionType().equals(munition)) {
                         shotsLeft += current.getUsableShotsLeft();
                         totalShots += current.getOriginalShots();
@@ -1152,8 +1152,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             WeaponMounted mounted = entity.getWeaponList().get(i);
 
             // Don't add bomb weapons for LAMs in mech mode except RL and TAG.
-            if ((entity instanceof LandAirMech)
-                    && (entity.getConversionMode() == LandAirMech.CONV_MODE_MECH)
+            if ((entity instanceof LandAirMek)
+                    && (entity.getConversionMode() == LandAirMek.CONV_MODE_MECH)
                     && mounted.getType().hasFlag(WeaponType.F_BOMB_WEAPON)
                     && mounted.getType().getAmmoType() != AmmoType.T_RL_BOMB
                     && !mounted.getType().hasFlag(WeaponType.F_TAG)) {

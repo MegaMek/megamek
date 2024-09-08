@@ -1401,7 +1401,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // LAMs in fighter mode are restricted to only the ammo types that Aeros can use
-        if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
+        if ((ae instanceof LandAirMek) && (ae.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER)
                 && usesAmmo && ammo != null
                 && !((AmmoType) ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
@@ -1409,9 +1409,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // LAMs carrying certain types of bombs that require a weapon have attacks that cannot
         // be used in mech mode.
-        if ((ae instanceof LandAirMech)
+        if ((ae instanceof LandAirMek)
                 && wtype != null
-                && (ae.getConversionMode() == LandAirMech.CONV_MODE_MECH)
+                && (ae.getConversionMode() == LandAirMek.CONV_MODE_MECH)
                 && wtype.hasFlag(WeaponType.F_BOMB_WEAPON)
                 && wtype.getAmmoType() != AmmoType.T_RL_BOMB
                 && !wtype.hasFlag(WeaponType.F_TAG)) {
@@ -1709,7 +1709,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             return Messages.getString("WeaponAttackAction.InvalidDSAtgArc");
                         }
                     // LAMs can't use leg or rear-mounted weapons
-                    } else if (ae instanceof LandAirMech) {
+                    } else if (ae instanceof LandAirMek) {
                         if ((weapon.getLocation() == Mek.LOC_LLEG)
                                 || (weapon.getLocation() == Mek.LOC_RLEG)
                                 || weapon.isRearMounted()) {

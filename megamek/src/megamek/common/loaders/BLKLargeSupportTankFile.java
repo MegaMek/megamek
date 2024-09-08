@@ -14,15 +14,22 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.util.BuildingBlock;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.LargeSupportTank;
+import megamek.common.Tank;
+import megamek.common.util.BuildingBlock;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
+public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
     public BLKLargeSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -121,7 +128,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         for (int x = 0; x < fullArmor.length; x++) {
             t.initializeArmor(fullArmor[x], x);
         }
-        
+
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
@@ -132,12 +139,12 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         // Set armor tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("armor_tech_rating")) {
             t.setArmorTechRating(dataFile
-                    .getDataAsInt("armor_tech_rating")[0]);            
+                    .getDataAsInt("armor_tech_rating")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
             t.setEngineTechRating(dataFile
-                    .getDataAsInt("engine_tech_rating")[0]);            
+                    .getDataAsInt("engine_tech_rating")[0]);
         }
 
         t.autoSetInternal();

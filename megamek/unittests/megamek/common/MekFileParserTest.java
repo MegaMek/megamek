@@ -18,13 +18,14 @@
  */
 package megamek.common;
 
-import megamek.common.equipment.WeaponMounted;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class MechFileParserTest {
+import org.junit.jupiter.api.Test;
+
+import megamek.common.equipment.WeaponMounted;
+
+public class MekFileParserTest {
 
     @Test
     public void splitMGsBetweenMGAs() throws LocationFullException {

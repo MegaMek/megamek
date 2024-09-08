@@ -19,6 +19,26 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -33,20 +53,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.List;
 
 /**
  * Context menu for the board.
@@ -442,7 +450,7 @@ public class MapMenu extends JPopupMenu {
     JMenuItem createCustomMechMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
-            CustomMechDialog med = new CustomMechDialog(gui, client, Collections.singletonList(entity), true, false);
+            CustomMekDialog med = new CustomMekDialog(gui, client, Collections.singletonList(entity), true, false);
             med.refreshOptions();
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
@@ -1012,27 +1020,27 @@ public class MapMenu extends JPopupMenu {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
-        } else if (myEntity instanceof LandAirMech) {
+        } else if (myEntity instanceof LandAirMek) {
             int currentMode = myEntity.getConversionMode();
             JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
-                    currentMode == LandAirMech.CONV_MODE_MECH);
-            item.setEnabled(currentMode == LandAirMech.CONV_MODE_MECH
-                    || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_MECH));
+                    currentMode == LandAirMek.CONV_MODE_MECH);
+            item.setEnabled(currentMode == LandAirMek.CONV_MODE_MECH
+                    || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_MECH));
             menu.add(item);
-            if (((LandAirMech) myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
+            if (((LandAirMek) myEntity).getLAMType() == LandAirMek.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                        currentMode == LandAirMech.CONV_MODE_AIRMECH);
-                item.setEnabled(currentMode == LandAirMech.CONV_MODE_AIRMECH
-                        || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_AIRMECH));
+                        currentMode == LandAirMek.CONV_MODE_AIRMECH);
+                item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIRMECH
+                        || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIRMECH));
                 menu.add(item);
             }
             item = createConvertMenuItem("MovementDisplay.moveModeFighter",
                     MovementDisplay.MoveCommand.MOVE_MODE_AIR,
-                    currentMode == LandAirMech.CONV_MODE_FIGHTER);
-            item.setEnabled(currentMode == LandAirMech.CONV_MODE_FIGHTER
-                    || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_FIGHTER));
+                    currentMode == LandAirMek.CONV_MODE_FIGHTER);
+            item.setEnabled(currentMode == LandAirMek.CONV_MODE_FIGHTER
+                    || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_FIGHTER));
             menu.add(item);
         }
         return menu;

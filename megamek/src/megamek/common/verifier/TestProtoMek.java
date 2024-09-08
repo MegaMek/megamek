@@ -13,20 +13,26 @@
  */
 package megamek.common.verifier;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.ProtoMek;
+import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Neoancient
  */
-public class TestProtomech extends TestEntity {
+public class TestProtoMek extends TestEntity {
 
     /**
      * Minimum tonnage for a ProtoMek
@@ -64,7 +70,7 @@ public class TestProtomech extends TestEntity {
         return proto.getOriginalWalkMP();
     }
 
-    public TestProtomech(ProtoMek proto, TestEntityOption option, String fileString) {
+    public TestProtoMek(ProtoMek proto, TestEntityOption option, String fileString) {
         super(option, proto.getEngine(), null);
         this.proto = proto;
         this.fileString = fileString;
@@ -365,12 +371,12 @@ public class TestProtomech extends TestEntity {
                 return false;
             }
         }
-        if (!TestProtomech.eqRequiresLocation(protomech, eq) && (location != ProtoMek.LOC_BODY)) {
+        if (!TestProtoMek.eqRequiresLocation(protomech, eq) && (location != ProtoMek.LOC_BODY)) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" must be mounted in the body.\n");
             }
             return false;
-        } else if (TestProtomech.maxSlotsByLocation(location, protomech) == 0) {
+        } else if (TestProtoMek.maxSlotsByLocation(location, protomech) == 0) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the ")
                         .append(protomech.getLocationName(location)).append("\n");

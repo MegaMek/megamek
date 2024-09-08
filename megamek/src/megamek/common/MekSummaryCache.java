@@ -36,7 +36,7 @@ import megamek.common.verifier.TestEntity;
  *
  * @author arlith
  */
-public class MechSummaryCache {
+public class MekSummaryCache {
 
     public interface Listener {
         void doneLoading();
@@ -48,16 +48,16 @@ public class MechSummaryCache {
     private static final List<String> SUPPORTED_FILE_EXTENSIONS =
             List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb", ".hmp", ".zip");
 
-    private static MechSummaryCache instance;
+    private static MekSummaryCache instance;
     private static boolean disposeInstance = false;
     private static boolean interrupted = false;
 
     private boolean initialized = false;
     private boolean initializing = false;
 
-    private MechSummary[] data;
-    private final Map<String, MechSummary> nameMap;
-    private final Map<String, MechSummary> fileNameMap;
+    private MekSummary[] data;
+    private final Map<String, MekSummary> nameMap;
+    private final Map<String, MekSummary> fileNameMap;
     private Map<String, String> failedFiles;
     private int cacheCount;
     private int fileCount;
@@ -69,14 +69,14 @@ public class MechSummaryCache {
     private Thread loader;
     private static final Object lock = new Object();
 
-    public static synchronized MechSummaryCache getInstance() {
+    public static synchronized MekSummaryCache getInstance() {
         return getInstance(false);
     }
 
-    public static synchronized MechSummaryCache getInstance(boolean ignoreUnofficial) {
+    public static synchronized MekSummaryCache getInstance(boolean ignoreUnofficial) {
         final boolean ignoringUnofficial = ignoreUnofficial;
         if (instance == null) {
-            instance = new MechSummaryCache();
+            instance = new MekSummaryCache();
         }
         if (!instance.initialized && !instance.initializing) {
             instance.initializing = true;
@@ -147,12 +147,12 @@ public class MechSummaryCache {
         }
     }
 
-    private MechSummaryCache() {
+    private MekSummaryCache() {
         nameMap = new HashMap<>();
         fileNameMap = new HashMap<>();
     }
 
-    public MechSummary[] getAllMechs() {
+    public MekSummary[] getAllMechs() {
         block();
         return data;
     }
@@ -169,7 +169,7 @@ public class MechSummaryCache {
         }
     }
 
-    public MechSummary getMech(String sRef) {
+    public MekSummary getMech(String sRef) {
         block();
         if (nameMap.containsKey(sRef)) {
             return nameMap.get(sRef);
@@ -188,7 +188,7 @@ public class MechSummaryCache {
     }
 
     public void loadMechData(boolean ignoreUnofficial) {
-        Vector<MechSummary> vMechs = new Vector<>();
+        Vector<MekSummary> vMechs = new Vector<>();
         Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
         failedFiles = new HashMap<>();
@@ -217,7 +217,7 @@ public class MechSummaryCache {
                             istream.close();
                             return;
                         }
-                        MechSummary ms = (MechSummary) fin.readObject();
+                        MekSummary ms = (MekSummary) fin.readObject();
                         // Verify that this file still exists and is older than
                         // the cache.
                         File fSource = ms.getSourceFile();
@@ -249,7 +249,7 @@ public class MechSummaryCache {
         done();
     }
 
-    private void checkForChanges(boolean ignoreUnofficial, Vector<MechSummary> vMechs,
+    private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMechs,
                                  Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
@@ -293,15 +293,15 @@ public class MechSummaryCache {
         }
     }
 
-    private void updateData(Vector<MechSummary> vMechs) {
+    private void updateData(Vector<MekSummary> vMechs) {
         // convert to array
-        data = new MechSummary[vMechs.size()];
+        data = new MekSummary[vMechs.size()];
         vMechs.copyInto(data);
         nameMap.clear();
         fileNameMap.clear();
 
         // store map references
-        for (MechSummary element : data) {
+        for (MekSummary element : data) {
             if (interrupted) {
                 done();
                 return;
@@ -354,14 +354,14 @@ public class MechSummaryCache {
         }
     }
 
-    private void saveCache(List<MechSummary> data) {
+    private void saveCache(List<MekSummary> data) {
         loadReport.append("Saving unit cache.\n");
         try (FileOutputStream fos = new FileOutputStream(
                 new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile());
              BufferedOutputStream bos = new BufferedOutputStream(fos);
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(data.size());
-            for (MechSummary element : data) {
+            for (MekSummary element : data) {
                 oos.writeObject(element);
             }
         } catch (Exception ex) {
@@ -373,11 +373,11 @@ public class MechSummaryCache {
     private void refreshCache(long lastCheck, boolean ignoreUnofficial) {
         loadReport = new StringBuffer();
         loadReport.append("Refreshing unit cache:\n");
-        Vector<MechSummary> units = new Vector<>();
+        Vector<MekSummary> units = new Vector<>();
         Set<String> knownFiles = new HashSet<>();
         // Loop through current contents and make sure the file is still there.
         // Note which files are represented so we can skip them if they haven't changed
-        for (MechSummary ms : data) {
+        for (MekSummary ms : data) {
             if (interrupted) {
                 done();
                 return;
@@ -402,8 +402,8 @@ public class MechSummaryCache {
         done();
     }
 
-    private MechSummary getSummary(Entity e, File f, String entry) {
-        MechSummary ms = new MechSummary();
+    private MekSummary getSummary(Entity e, File f, String entry) {
+        MekSummary ms = new MekSummary();
         ms.setName(e.getShortNameRaw());
         ms.setChassis(e.getChassis());
         ms.setClanChassisName(e.getClanChassisName());
@@ -735,7 +735,7 @@ public class MechSummaryCache {
      * @param fDir        The directory to load units from
      * @return            Whether the list of units has changed, requiring rewriting the cache
      */
-    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
+    private boolean loadMechsFromDirectory(Vector<MekSummary> vMechs,
             Set<String> sKnownFiles, long lLastCheck, File fDir,
             boolean ignoreUnofficial) {
         boolean bNeedsUpdate = false;
@@ -787,8 +787,8 @@ public class MechSummaryCache {
                 try {
                     MechFileParser mfp = new MechFileParser(f);
                     Entity e = mfp.getEntity();
-                    MechSummary ms = getSummary(e, f, null);
-                    // if this is unit's MechSummary is already known,
+                    MekSummary ms = getSummary(e, f, null);
+                    // if this is unit's MekSummary is already known,
                     // remove it first, so we don't get duplicates
                     if (sKnownFiles.contains(f.toString())) {
                         vMechs.removeElement(ms);
@@ -822,7 +822,7 @@ public class MechSummaryCache {
         return bNeedsUpdate;
     }
 
-    private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs,
+    private boolean loadMechsFromZipFile(Vector<MekSummary> vMechs,
             Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
         boolean bNeedsUpdate = false;
         ZipFile zFile;
@@ -872,7 +872,7 @@ public class MechSummaryCache {
                 MechFileParser mfp = new MechFileParser(
                         zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
-                MechSummary ms = getSummary(e, fZipFile, zEntry.getName());
+                MekSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMechs.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
@@ -931,7 +931,7 @@ public class MechSummaryCache {
                         lookupName = line.substring(0, index);
                         entryName = line.substring(index + 1);
                         if (!nameMap.containsKey(lookupName)) {
-                            MechSummary ms = nameMap.get(entryName);
+                            MekSummary ms = nameMap.get(entryName);
                             if (null != ms) {
                                 nameMap.put(lookupName, ms);
                             }

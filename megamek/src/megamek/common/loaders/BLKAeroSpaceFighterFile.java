@@ -26,7 +26,7 @@ import megamek.common.verifier.TestEntity;
  *
  * @author taharqa
  */
-public class BLKAeroSpaceFighterFile extends BLKFile implements IMechLoader {
+public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
 
     // armor locatioms
     public static final int NOSE = 0;

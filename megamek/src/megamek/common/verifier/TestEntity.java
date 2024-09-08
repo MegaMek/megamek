@@ -108,7 +108,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
             testEntity = new TestMech((Mek) unit, entityVerifier.mechOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            testEntity = new TestProtomech((ProtoMek) unit, entityVerifier.protomechOption, null);
+            testEntity = new TestProtoMek((ProtoMek) unit, entityVerifier.protomechOption, null);
         } else if (unit.isSupportVehicle()) {
             testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_TANK) && !unit.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
@@ -423,7 +423,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
             return TestAero.eqRequiresLocation(eq, entity.isFighter());
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            return TestProtomech.requiresSlot(eq);
+            return TestProtoMek.requiresSlot(eq);
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             return !TestTank.isBodyEquipment(eq);
         }
@@ -1667,7 +1667,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (entity instanceof Tank) {
             return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
         } else if (entity instanceof ProtoMek) {
-            return TestProtomech.isValidProtomechLocation((ProtoMek) entity, eq, location, buffer);
+            return TestProtoMek.isValidProtomechLocation((ProtoMek) entity, eq, location, buffer);
         } else if (entity.isFighter()) {
             return TestAero.isValidAeroLocation(eq, location, buffer);
         }

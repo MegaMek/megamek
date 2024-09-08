@@ -18,6 +18,31 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static megamek.client.ui.swing.util.UIUtil.menuItem;
+import static megamek.common.util.CollectionUtil.anyOneElement;
+import static megamek.common.util.CollectionUtil.theElement;
+
+import java.awt.FileDialog;
+import java.awt.Image;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.ClientGUI;
@@ -33,22 +58,6 @@ import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.swing.util.UIUtil.menuItem;
-import static megamek.common.util.CollectionUtil.anyOneElement;
-import static megamek.common.util.CollectionUtil.theElement;
 
 /** Creates the Lobby Mek right-click pop-up menu for both the sortable table and the force tree. */
 class LobbyMekPopup {
@@ -632,7 +641,7 @@ class LobbyMekPopup {
         Forces gameForces = game.getForces();
 
         if (!entities.isEmpty()) {
-            for (Player player: game.getPlayersVector()) {
+            for (Player player: game.getPlayersList()) {
                 String command = LMP_ASSIGN + "|" + player.getId() + ":" + foToken(forces) + enToken(entities);
                 menu.add(menuItem(player.getName(), command, enabled, listener));
             }
@@ -645,7 +654,7 @@ class LobbyMekPopup {
             assignMenu.add(fOnlyMenu);
             assignMenu.add(fFullMenu);
             Force force = anyOneElement(forces);
-            for (Player player: game.getPlayersVector()) {
+            for (Player player: game.getPlayersList()) {
                 if (!player.isEnemyOf(gameForces.getOwner(force))) {
                     String command = LMP_FASSIGNONLY + "|" + player.getId() + ":" + foToken(forces) + NOINFO;
                     fOnlyMenu.add(menuItem(player.getName(), command, true, listener));
@@ -853,7 +862,7 @@ class LobbyMekPopup {
      * @return true when the entity has an MG set to rapid fire.
      */
     private static boolean hasRapidFireMG(Entity entity) {
-        for (Mounted m: entity.getWeaponList()) {
+        for (Mounted<?> m: entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && m.isRapidfire()) {
                 return true;
@@ -864,7 +873,7 @@ class LobbyMekPopup {
 
     /** Returns true when the entity has an MG set to normal (non-rapid) fire. */
     private static boolean hasNormalFireMG(Entity entity) {
-        for (Mounted m: entity.getWeaponList()) {
+        for (Mounted<?> m: entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidfire()) {
                 return true;
@@ -875,7 +884,7 @@ class LobbyMekPopup {
 
     /** Returns true when the entity has a weapon with ammo set to hot-loaded. */
     private static boolean hasHotLoaded(Entity entity) {
-        for (Mounted ammo: entity.getAmmo()) {
+        for (Mounted<?> ammo: entity.getAmmo()) {
             AmmoType etype = (AmmoType) ammo.getType();
             if (etype.hasFlag(AmmoType.F_HOTLOAD) && ammo.isHotLoaded()) {
                 return true;
@@ -886,7 +895,7 @@ class LobbyMekPopup {
 
     /** Returns true when the entity has a weapon with ammo set to non-hot-loaded. */
     private static boolean hasNonHotLoaded(Entity entity) {
-        for (Mounted ammo: entity.getAmmo()) {
+        for (Mounted<?> ammo: entity.getAmmo()) {
             AmmoType etype = (AmmoType) ammo.getType();
             if (etype.hasFlag(AmmoType.F_HOTLOAD) && !ammo.isHotLoaded()) {
                 return true;

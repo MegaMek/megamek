@@ -31,7 +31,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Aero;
+import megamek.common.Entity;
+import megamek.common.EntityFluff;
+import megamek.common.EquipmentType;
+import megamek.common.Infantry;
+import megamek.common.Mek;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.templates.TROView;
@@ -44,8 +50,8 @@ import megamek.logging.MMLogger;
  * @author arlith
  * @author Simon (Juliez)
  */
-public final class MechCacheCSVTool {
-    private static final MMLogger logger = MMLogger.create(MechCacheCSVTool.class);
+public final class MekCacheCSVTool {
+    private static final MMLogger logger = MMLogger.create(MekCacheCSVTool.class);
 
     // Excel import works better with the .txt extension instead of .csv
     private static final String FILE_NAME = "Units.txt";
@@ -271,6 +277,6 @@ public final class MechCacheCSVTool {
         }
     }
 
-    private MechCacheCSVTool() {
+    private MekCacheCSVTool() {
     }
 }

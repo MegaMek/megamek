@@ -2340,7 +2340,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 maxAlt = hex.getLevel() - (getHeight() + 1);
                 break;
             case WIGE:
-                if (this instanceof LandAirMech) {
+                if (this instanceof LandAirMek) {
                     if (isAirborne()) {
                         return false;
                     }
@@ -4509,8 +4509,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             if (!game.getBoard().inSpace()
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
-                    && !((this instanceof LandAirMech)
-                    && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
+                    && !((this instanceof LandAirMek)
+                    && (getConversionMode() == LandAirMek.CONV_MODE_MECH))) {
                 if (addedBombAttacks < 1) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(diveBomb, m.getLocation(), false);
@@ -10411,7 +10411,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean hasUnloadedClampMount() {
         for (Transporter t : transports) {
-            if (((t instanceof ClampMountTank) || (t instanceof ClampMountMech))
+            if (((t instanceof ClampMountTank) || (t instanceof ClampMountMek))
                     && (t.getUnused() > 0)) {
                 return true;
             }
@@ -12275,7 +12275,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         for (MiscMounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
-                    && (this instanceof Aero || this instanceof LandAirMech)
+                    && (this instanceof Aero || this instanceof LandAirMek)
                     && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 ArrayList<String> modes = new ArrayList<>();
                 String[] stringArray = {};
@@ -12295,7 +12295,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         modes.add("ECM & ECCM");
                     }
                 } else if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                        && (this instanceof Aero || this instanceof LandAirMech)) {
+                        && (this instanceof Aero || this instanceof LandAirMek)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");

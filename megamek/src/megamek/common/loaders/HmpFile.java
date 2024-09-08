@@ -13,14 +13,21 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Hashtable;
 import java.util.Objects;
 import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.common.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object. Note that this class
@@ -30,7 +37,7 @@ import java.util.Vector;
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  * @author Ryan McConnell (oscarmm) with lots of help from Ian Hamilton.
  */
-public class HmpFile implements IMechLoader {
+public class HmpFile implements IMekLoader {
     private String name;
     private String model;
     private String fluff;

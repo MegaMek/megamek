@@ -13,16 +13,34 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.*;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.TriggerAPPodAction;
+import megamek.common.actions.TriggerBPodAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -32,12 +50,6 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.*;
-import java.util.*;
 
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -159,7 +171,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     // buttons
-    protected Map<TargetingCommand, MegamekButton> buttons;
+    protected Map<TargetingCommand, MegaMekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private Targetable target; // target
@@ -285,8 +297,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         TargetingCommand[] commands = TargetingCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
@@ -766,7 +778,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
-            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         updateTarget();

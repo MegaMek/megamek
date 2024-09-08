@@ -13,13 +13,18 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.common.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object. This class can not
@@ -27,7 +32,7 @@ import java.util.*;
  *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  */
-public class HmvFile implements IMechLoader {
+public class HmvFile implements IMekLoader {
     private String name;
     private String model;
 

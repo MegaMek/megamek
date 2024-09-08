@@ -48,7 +48,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         		}
         	}
         }
-        
+
         boardView.addSprites(currentSprites);
     }
 
@@ -68,7 +68,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         clear();
         game.removeGameListener(this);
     }
-    
+
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
     	setGroundObjectSprites(game.getGroundObjects());

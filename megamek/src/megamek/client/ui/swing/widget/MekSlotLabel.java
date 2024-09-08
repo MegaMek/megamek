@@ -7,10 +7,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 
-public class MechSlotLabel extends PicMap {
+public class MekSlotLabel extends PicMap {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5601930871313914270L;
 
@@ -19,7 +19,7 @@ public class MechSlotLabel extends PicMap {
 
     private BackGroundDrawer bgd = new BackGroundDrawer(null);
 
-    public MechSlotLabel(String s, FontMetrics fm, Image im, Color textColor,
+    public MekSlotLabel(String s, FontMetrics fm, Image im, Color textColor,
             Color bgColor) {
         super();
         PMPicArea pa = new PMPicArea(im);

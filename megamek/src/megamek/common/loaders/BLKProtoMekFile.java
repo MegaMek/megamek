@@ -13,19 +13,27 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Mounted;
+import megamek.common.ProtoMek;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
-import megamek.common.verifier.TestProtomech;
+import megamek.common.verifier.TestProtoMek;
 
 /**
  * This class loads ProtoMek BLK files.
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKProtoFile extends BLKFile implements IMechLoader {
+public class BLKProtoMekFile extends BLKFile implements IMekLoader {
 
-    public BLKProtoFile(BuildingBlock bb) {
+    public BLKProtoMekFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
@@ -62,7 +70,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int engineCode = BLKFile.FUSION;
         int engineFlags = Engine.NORMAL_ENGINE;
         engineFlags |= Engine.CLAN_ENGINE;
-        int engineRating = TestProtomech.calcEngineRating(t);
+        int engineRating = TestProtoMek.calcEngineRating(t);
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {
@@ -185,7 +193,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     Mounted mount;
                     if (ammoIndex > 0) {
                         mount = t.addEquipment(etype, ProtoMek.LOC_BODY, false, shotsCount);
-                    } else if (TestProtomech.requiresSlot(etype)) {
+                    } else if (TestProtoMek.requiresSlot(etype)) {
                         mount = t.addEquipment(etype, nLoc);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)

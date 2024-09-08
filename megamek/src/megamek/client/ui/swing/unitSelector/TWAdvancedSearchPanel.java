@@ -451,7 +451,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
-    private void jlistSetup(JList l) {
+    private void jListSetup(JList<TriStateItem> l) {
         l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         l.setSelectionModel(new NoSelectionModel());
         l.addMouseListener(new MouseAdapter() {
@@ -459,7 +459,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<TriStateItem> list = (JList<TriStateItem>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
@@ -467,8 +467,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         });
     }
 
-    private void loadTriStateItem(List<String> s, JList l, int count) {
-        DefaultListModel dlma = new DefaultListModel();
+    private void loadTriStateItem(List<String> s, JList<TriStateItem> l, int count) {
+        DefaultListModel<TriStateItem> dlma = new DefaultListModel<>();
 
         for (String desc : s) {
             dlma.addElement(new TriStateItem("\u2610", desc));
@@ -476,11 +476,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         l.setModel(dlma);
         l.setVisibleRowCount(count);
-        jlistSetup(l);
+        jListSetup(l);
     }
 
-    private void loadTriStateItem(Map<Integer, String> s, JList l, int count) {
-        DefaultListModel dlma = new DefaultListModel();
+    private void loadTriStateItem(Map<Integer, String> s, JList<TriStateItem> l, int count) {
+        DefaultListModel<TriStateItem> dlma = new DefaultListModel<>();
 
         for (Map.Entry<Integer, String> desc : s.entrySet()) {
             dlma.addElement(new TriStateItem("\u2610", desc.getKey(), desc.getValue()));
@@ -488,7 +488,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         l.setModel(dlma);
         l.setVisibleRowCount(count);
-        jlistSetup(l);
+        jListSetup(l);
     }
 
     private void loadYesNo(JComboBox<String> cb) {
@@ -926,7 +926,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return transportsPanel;
     }
 
-    private void loadTriStateItem(AbstractOptions s, JList l, int count) {
+    private void loadTriStateItem(AbstractOptions s, JList<TriStateItem> l, int count) {
         List<String> qs = new ArrayList<>();
         for (final Enumeration<IOptionGroup> optionGroups = s.getGroups(); optionGroups.hasMoreElements(); ) {
             final IOptionGroup group = optionGroups.nextElement();
@@ -939,7 +939,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         qs = qs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
 
-        DefaultListModel dlm  = new DefaultListModel();
+        DefaultListModel<TriStateItem> dlm  = new DefaultListModel<>();
 
         for (String q : qs) {
             dlm.addElement(new TriStateItem("\u2610", q));
@@ -947,7 +947,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         l.setModel(dlm);
 
         l.setVisibleRowCount(count);
-        jlistSetup(l);
+        jListSetup(l);
     }
 
     private void loadAndOr(JComboBox<String> cb, int index) {
@@ -1813,7 +1813,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
-    private void toggleText(JList list, int index) {
+    private void toggleText(JList<TriStateItem> list, int index) {
         ListModel<TriStateItem> m = list.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -1993,7 +1993,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
-    private void clearTriStateItem(JList l) {
+    private void clearTriStateItem(JList<TriStateItem> l) {
         ListModel<TriStateItem> m = l.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -2215,7 +2215,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
-    private void updateTriStateItemString(List<String> include, List<String> exclude, JList l) {
+    private void updateTriStateItemString(List<String> include, List<String> exclude, JList<TriStateItem> l) {
         ListModel<TriStateItem> m = l.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -2228,7 +2228,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
-    private void updateTriStateItem(List<Integer> include, List<Integer> exclude, JList l) {
+    private void updateTriStateItem(List<Integer> include, List<Integer> exclude, JList<TriStateItem> l) {
         ListModel<TriStateItem> m = l.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {

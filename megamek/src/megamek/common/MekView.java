@@ -380,16 +380,16 @@ public class MechView {
                     + entity.getMovementModeAsString()),
                     entity.getWalkMP() + "/" + entity.getRunMPasString()));
             entity.setConversionMode(originalMode);
-        } else if (entity instanceof LandAirMech) {
-            if (((LandAirMech) entity).getLAMType() == LandAirMech.LAM_STANDARD) {
+        } else if (entity instanceof LandAirMek) {
+            if (((LandAirMek) entity).getLAMType() == LandAirMek.LAM_STANDARD) {
                 sBasic.add(new LabeledElement(Messages.getString("MovementType.AirMech"),
-                        ((LandAirMech) entity).getAirMechWalkMP() + "/"
-                                + ((LandAirMech) entity).getAirMechRunMP() + "/"
-                                + ((LandAirMech) entity).getAirMechCruiseMP() + "/"
-                                + ((LandAirMech) entity).getAirMechFlankMP()));
+                        ((LandAirMek) entity).getAirMechWalkMP() + "/"
+                                + ((LandAirMek) entity).getAirMechRunMP() + "/"
+                                + ((LandAirMek) entity).getAirMechCruiseMP() + "/"
+                                + ((LandAirMek) entity).getAirMechFlankMP()));
             }
 
-            entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+            entity.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
             sBasic.add(new LabeledElement(Messages.getString("MovementType.Fighter"),
                     entity.getWalkMP() + "/" + entity.getRunMP()));
             entity.setConversionMode(originalMode);

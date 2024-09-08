@@ -20,17 +20,22 @@
  */
 package megamek.client.ui.swing.tileset;
 
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.List;
-import java.awt.*;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
@@ -39,7 +44,7 @@ import java.util.Objects;
  *
  * @author Ben
  */
-public class MechTileset {
+public class MekTileset {
 
     public static final String CHASSIS_KEY = "chassis";
     public static final String MODEL_KEY = "exact";
@@ -162,7 +167,7 @@ public class MechTileset {
      *
      * @param dir_path Path to the tileset directory.
      */
-    public MechTileset(File dir_path) {
+    public MekTileset(File dir_path) {
         Objects.requireNonNull(dir_path, "Must provide dir_path");
         dir = dir_path;
     }
@@ -227,11 +232,11 @@ public class MechTileset {
         } else if (entity instanceof QuadVee) {
             return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
                     ? default_quadvee_vehicle : default_quadvee;
-        } else if (entity instanceof LandAirMech) {
+        } else if (entity instanceof LandAirMek) {
             switch (entity.getConversionMode()) {
-                case LandAirMech.CONV_MODE_FIGHTER:
+                case LandAirMek.CONV_MODE_FIGHTER:
                     return default_lam_fighter;
-                case LandAirMech.CONV_MODE_AIRMECH:
+                case LandAirMek.CONV_MODE_AIRMECH:
                     return default_lam_airmech;
                 default:
                     return default_lam_mech;
@@ -366,7 +371,7 @@ public class MechTileset {
                 List<String> tokens = tokenizer.getLineTokens();
                 if (tokenizer.isFinished()) {
                     break;
-                } else if (MechSetTest.isValidLine(tokens)) {
+                } else if (MekSetTest.isValidLine(tokens)) {
                     if (StandardTextfileStreamTokenizer.isValidIncludeLine(tokens)) {
                         try {
                             loadFromFile(tokens.get(1));

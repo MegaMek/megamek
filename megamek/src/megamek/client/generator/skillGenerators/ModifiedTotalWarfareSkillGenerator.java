@@ -23,7 +23,7 @@ import megamek.client.generator.enums.SkillGeneratorType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.Infantry;
-import megamek.common.LandAirMech;
+import megamek.common.LandAirMek;
 import megamek.common.Mek;
 import megamek.common.Tank;
 
@@ -55,7 +55,7 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
         }
 
         // Demands of dual training
-        if (entity instanceof LandAirMech) {
+        if (entity instanceof LandAirMek) {
             bonus -= 2;
         }
 

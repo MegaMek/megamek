@@ -14,15 +14,22 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.util.BuildingBlock;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.Tank;
+import megamek.common.VTOL;
+import megamek.common.util.BuildingBlock;
 
 /**
  * @author Andrew Hunter
  * @since June 2, 2005
  */
-public class BLKVTOLFile extends BLKFile implements IMechLoader {
+public class BLKVTOLFile extends BLKFile implements IMekLoader {
     public BLKVTOLFile(BuildingBlock bb) {
         dataFile = bb;
     }

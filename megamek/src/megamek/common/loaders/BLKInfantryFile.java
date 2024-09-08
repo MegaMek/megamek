@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -23,7 +23,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKInfantryFile extends BLKFile implements IMechLoader {
+public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
@@ -146,7 +146,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 throw new EntityLoadingException("Could not read specialization");
             }
         }
-        
+
         if (dataFile.exists("encumberingarmor")) {
             infantry.setArmorEncumbering(true);
         }
@@ -195,7 +195,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 }
             }
         }
-        
+
         // Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official unit description.
         if (dataFile.exists("augmentation")) {
             String[] augmentations = dataFile.getDataAsString("augmentation");

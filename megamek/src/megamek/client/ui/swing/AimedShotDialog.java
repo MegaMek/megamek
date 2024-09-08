@@ -32,7 +32,6 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.Targetable;
-import megamek.common.annotations.Nullable;
 
 public class AimedShotDialog extends JDialog {
     private static final long serialVersionUID = 6527374019085650613L;

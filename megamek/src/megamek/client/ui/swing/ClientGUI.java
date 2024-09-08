@@ -973,8 +973,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * and a file for salvage
      */
     public void doSaveUnit() {
-        for (Enumeration<Player> iter = getClient().getGame().getPlayers(); iter.hasMoreElements();) {
-            Player p = iter.nextElement();
+        for (Player p : getClient().getGame().getPlayersList()) {
             ArrayList<Entity> l = getClient().getGame().getPlayerEntities(p, false);
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter2 = getClient().getGame().getRetreatedEntities(); iter2.hasMoreElements();) {
@@ -2146,8 +2145,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     private void setWeaponOrderPrefs(boolean prefChange) {
-        for (Iterator<Entity> ents = client.getGame().getEntities(); ents.hasNext();) {
-            Entity entity = ents.next();
+        for (Entity entity : client.getGame().getEntitiesVector()) {
             if ((entity.getOwner().equals(client.getLocalPlayer()))
                     && (!entity.getWeaponSortOrder().isCustom())
                     && ((!entity.isDeployed()) || (prefChange))) {
@@ -2394,7 +2392,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         Entity ae = waa.getEntity(client.getGame());
                         String waaMsg;
                         if (ae != null) {
-                            Mounted weapon = ae.getEquipment(waa.getWeaponId());
+                            Mounted<?> weapon = ae.getEquipment(waa.getWeaponId());
                             waaMsg = weapon.getDesc() + " " + Messages.getString("FROM") + "  " + ae.getDisplayName();
                         } else {
                             waaMsg = Messages.getString("ClientGUI.missilesFromAnUnknownAttacker");
@@ -2422,7 +2420,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         int dist = distIt.next();
                         String waaMsg;
                         if (ae != null) {
-                            Mounted weapon = ae.getEquipment(waa.getWeaponId());
+                            Mounted<?> weapon = ae.getEquipment(waa.getWeaponId());
                             waaMsg = weapon.getDesc() + " " + Messages.getString("FROM") + " "
                                     + ae.getDisplayName() + " (" + Messages.getString("ClientGUI.distance") + " "
                                     + dist + ")";

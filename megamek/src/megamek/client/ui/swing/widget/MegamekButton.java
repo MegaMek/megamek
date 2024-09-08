@@ -36,7 +36,7 @@ import org.apache.logging.log4j.LogManager;
  *
  * @author arlith
  */
-public class MegamekButton extends JButton implements MouseListener {
+public class MegaMekButton extends JButton implements MouseListener {
 
     private static final long serialVersionUID = -3271105050872007863L;
 
@@ -110,7 +110,7 @@ public class MegamekButton extends JButton implements MouseListener {
     * @param component
     *            The name of the SkinSpecification entry
     */
-   public MegamekButton(String text, String component, boolean defaultToPlain) {
+   public MegaMekButton(String text, String component, boolean defaultToPlain) {
        super(text);
        initialize(component, defaultToPlain);
    }
@@ -122,7 +122,7 @@ public class MegamekButton extends JButton implements MouseListener {
      * @param component
      *            The name of the SkinSpecification entry
      */
-    public MegamekButton(String text, String component) {
+    public MegaMekButton(String text, String component) {
         super(text);
         initialize(component);
     }
@@ -133,7 +133,7 @@ public class MegamekButton extends JButton implements MouseListener {
      *
      * @param text
      */
-    public MegamekButton(String text) {
+    public MegaMekButton(String text) {
         super(text);
         initialize(SkinSpecification.UIComponents.DefaultButton.getComp());
     }
@@ -142,7 +142,7 @@ public class MegamekButton extends JButton implements MouseListener {
      * Default constructor with no button text and DefaultButton
      * SkinSpecification.
      */
-    public MegamekButton() {
+    public MegaMekButton() {
         super();
         initialize(SkinSpecification.UIComponents.DefaultButton.getComp());
     }
@@ -331,7 +331,7 @@ public class MegamekButton extends JButton implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        
+
     }
 
     @Override

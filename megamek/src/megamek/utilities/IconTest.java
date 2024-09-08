@@ -21,11 +21,11 @@ package megamek.utilities;
 import java.io.IOException;
 
 import megamek.client.ui.swing.tileset.GenerateGenericIconList;
-import megamek.client.ui.swing.tileset.MechSetTest;
+import megamek.client.ui.swing.tileset.MekSetTest;
 import megamek.logging.MMLogger;
 
 /**
- * Executes both {@link MechSetTest} and {@link GenerateGenericIconList} for a
+ * Executes both {@link MekSetTest} and {@link GenerateGenericIconList} for a
  * combined icon problems result.
  */
 public final class IconTest {
@@ -35,7 +35,7 @@ public final class IconTest {
         logger.info("Executing MechSetTest");
 
         try {
-            MechSetTest.main(new String[0]);
+            MekSetTest.main(new String[0]);
         } catch (final Exception e) {
             logger.error(e, "Error with MechSetTest");
         }

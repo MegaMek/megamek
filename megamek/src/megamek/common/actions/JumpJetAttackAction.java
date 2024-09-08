@@ -106,7 +106,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         // LAM AirMechs can only push when grounded.
-        if ((ae instanceof LandAirMech) && (ae.getConversionMode() != LandAirMech.CONV_MODE_MECH)) {
+        if ((ae instanceof LandAirMek) && (ae.getConversionMode() != LandAirMek.CONV_MODE_MECH)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mech mode");
         }
 

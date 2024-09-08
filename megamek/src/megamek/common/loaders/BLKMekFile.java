@@ -13,18 +13,19 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.util.BuildingBlock;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.List;
 import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.common.*;
+import megamek.common.util.BuildingBlock;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKMechFile extends BLKFile implements IMechLoader {
+public class BLKMekFile extends BLKFile implements IMekLoader {
 
     // armor locatioms
     public static final int HD = 0;
@@ -43,7 +44,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
     public static final int RT = 6;
     public static final int LT = 2;
 
-    public BLKMechFile(BuildingBlock bb) {
+    public BLKMekFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
@@ -135,21 +136,21 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         }
         int[] armor = dataFile.getDataAsInt("Armor");
 
-        mech.initializeArmor(armor[BLKMechFile.HD], Mek.LOC_HEAD);
+        mech.initializeArmor(armor[BLKMekFile.HD], Mek.LOC_HEAD);
 
-        mech.initializeArmor(armor[BLKMechFile.LA], Mek.LOC_LARM);
-        mech.initializeArmor(armor[BLKMechFile.RA], Mek.LOC_RARM);
-        mech.initializeArmor(armor[BLKMechFile.LL], Mek.LOC_LLEG);
-        mech.initializeArmor(armor[BLKMechFile.RL], Mek.LOC_RLEG);
+        mech.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LARM);
+        mech.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RARM);
+        mech.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LLEG);
+        mech.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RLEG);
 
-        mech.initializeArmor(armor[BLKMechFile.CF], Mek.LOC_CT);
-        mech.initializeArmor(armor[BLKMechFile.LF], Mek.LOC_LT);
-        mech.initializeArmor(armor[BLKMechFile.RF], Mek.LOC_RT);
+        mech.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CT);
+        mech.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LT);
+        mech.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RT);
 
         // changed...
-        mech.initializeRearArmor(armor[BLKMechFile.CB], Mek.LOC_CT);
-        mech.initializeRearArmor(armor[BLKMechFile.LB], Mek.LOC_LT);
-        mech.initializeRearArmor(armor[BLKMechFile.RB], Mek.LOC_RT);
+        mech.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CT);
+        mech.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LT);
+        mech.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RT);
 
         mech.recalculateTechAdvancement();
 

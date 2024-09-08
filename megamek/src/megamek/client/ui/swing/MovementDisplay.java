@@ -41,8 +41,8 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirmechRamAttackAction;
@@ -312,7 +312,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     // buttons
-    private Map<MoveCommand, MegamekButton> buttons;
+    private Map<MoveCommand, MegaMekButton> buttons;
 
     // let's keep track of what we're moving, too
     private MovePath cmd; // considering movement data
@@ -490,12 +490,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
         // LAMs may have to skip the next mode due to damage
-        if (ce() instanceof LandAirMech) {
-            if (!((LandAirMech) ce).canConvertTo(nextMode)) {
+        if (ce() instanceof LandAirMek) {
+            if (!((LandAirMek) ce).canConvertTo(nextMode)) {
                 nextMode = ce.nextConversionMode(nextMode);
             }
 
-            if (!((LandAirMech) ce).canConvertTo(nextMode)) {
+            if (!((LandAirMek) ce).canConvertTo(nextMode)) {
                 nextMode = ce.getMovementMode();
             }
         }
@@ -532,7 +532,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * button list appropriate for that unit.
      */
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
+    protected ArrayList<MegaMekButton> getButtonList() {
         final Entity ce = ce();
         int flag = CMD_MECH;
         if (ce != null) {
@@ -550,7 +550,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     flag = CMD_TANK;
                 }
 
-                if (ce instanceof LandAirMech) {
+                if (ce instanceof LandAirMek) {
                     flag |= CMD_CONVERTER;
                 }
             } else if (ce instanceof QuadVee) {
@@ -559,8 +559,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 } else {
                     flag = CMD_TANK | CMD_CONVERTER;
                 }
-            } else if (ce instanceof LandAirMech) {
-                if (ce.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
+            } else if (ce instanceof LandAirMek) {
+                if (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH) {
                     flag = CMD_TANK | CMD_CONVERTER | CMD_AIRMECH;
                 } else {
                     flag = CMD_MECH | CMD_CONVERTER;
@@ -576,7 +576,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return getButtonList(flag);
     }
 
-    private ArrayList<MegamekButton> getButtonList(int flag) {
+    private ArrayList<MegaMekButton> getButtonList(int flag) {
         boolean forwardIni = false;
         GameOptions opts = null;
         if (clientgui != null) {
@@ -587,7 +587,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             opts = game.getOptions();
         }
 
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
 
         int i = 0;
         MoveCommand[] commands = MoveCommand.values(flag, opts, forwardIni);
@@ -680,7 +680,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         computeCFWarningHexes(ce);
     }
 
-    private MegamekButton getBtn(MoveCommand c) {
+    private MegaMekButton getBtn(MoveCommand c) {
         return buttons.get(c);
     }
 
@@ -701,7 +701,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clientgui.getBoardView().redrawEntity(ce);
                 clientgui.setSelectedEntityNum(ce.getId());
                 if (GUIP.getMoveDisplayTabDuringMovePhases()) {
-                    clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
+                    clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
                 }
             }
         });
@@ -874,7 +874,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // if dropping unit only allow turning
         if (!ce.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
-            if (ce instanceof LandAirMech) {
+            if (ce instanceof LandAirMek) {
                 updateConvertModeButton();
                 if (ce.getMovementMode().isWiGE() && (ce.getAltitude() <= 3)) {
                     updateHoverButton();
@@ -1292,7 +1292,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // if dropping unit only allow turning
         if (!ce.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
-            if (ce instanceof LandAirMech) {
+            if (ce instanceof LandAirMek) {
                 updateConvertModeButton();
                 if (ce.getMovementMode().isWiGE() && (ce.getAltitude() <= 3)) {
                     updateHoverButton();
@@ -1573,7 +1573,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // check to see if spheroids will drop an elevation
         if (needNagForOther()) {
             if ((ce() != null)
-                    && ce() instanceof LandAirMech
+                    && ce() instanceof LandAirMek
                     && ce().isAssaultDropInProgress()
                     && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
                 String title = Messages.getString("MovementDisplay.areYouSure");
@@ -2339,8 +2339,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (clientgui.getClient().getGame().getBoard().inSpace()) {
                 return;
             }
-        } else if (!(ce instanceof ProtoMek) && !(ce instanceof LandAirMech
-                && (ce.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH))
+        } else if (!(ce instanceof ProtoMek) && !(ce instanceof LandAirMek
+                && (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH))
                 && (ce.getAltitude() <= 3)) {
             return;
         }
@@ -2668,11 +2668,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (ce instanceof LandAirMech) {
+        if (ce instanceof LandAirMek) {
             boolean canConvert = false;
             for (int i = 0; i < 3; i++) {
                 if (i != ce.getConversionMode()
-                        && ((LandAirMech) ce).canConvertTo(ce.getConversionMode(), i)) {
+                        && ((LandAirMek) ce).canConvertTo(ce.getConversionMode(), i)) {
                     canConvert = true;
                 }
             }
@@ -2692,7 +2692,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if ((ce instanceof LandAirMech) && ce.isGyroDestroyed()) {
+        if ((ce instanceof LandAirMek) && ce.isGyroDestroyed()) {
             setModeConvertEnabled(false);
             return;
         }
@@ -2801,7 +2801,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (ce().isBomber()
-                && ((ce() instanceof LandAirMech)
+                && ((ce() instanceof LandAirMek)
                 || clientgui.getClient().getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS))
                 && ((IBomber) ce()).getBombPoints() > 0) {
@@ -4632,11 +4632,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
             EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
             // LAMs may have to skip the next mode due to damage
-            if (ce instanceof LandAirMech) {
-                if (!((LandAirMech) ce).canConvertTo(nextMode)) {
+            if (ce instanceof LandAirMek) {
+                if (!((LandAirMek) ce).canConvertTo(nextMode)) {
                     nextMode = ce.nextConversionMode(nextMode);
                 }
-                if (!((LandAirMech) ce).canConvertTo(nextMode)) {
+                if (!((LandAirMek) ce).canConvertTo(nextMode)) {
                     nextMode = ce.getMovementMode();
                 }
             }
@@ -4655,12 +4655,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else if ((ce instanceof Mek && ((Mek) ce).hasTracks())
                     || ce instanceof QuadVee) {
                 adjustConvertSteps(EntityMovementMode.TRACKED);
-            } else if (ce instanceof LandAirMech
-                    && ((LandAirMech) ce).getLAMType() == LandAirMech.LAM_STANDARD) {
+            } else if (ce instanceof LandAirMek
+                    && ((LandAirMek) ce).getLAMType() == LandAirMek.LAM_STANDARD) {
                 adjustConvertSteps(EntityMovementMode.WIGE);
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_AIR.getCmd())) {
-            if (ce instanceof LandAirMech) {
+            if (ce instanceof LandAirMek) {
                 adjustConvertSteps(EntityMovementMode.AERODYNE);
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_TURN.getCmd())) {
@@ -5088,7 +5088,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             addStepToMovePath(MoveStepType.ROLL);
         } else if (actionCmd.equals(MoveCommand.MOVE_HOVER.getCmd())) {
             addStepToMovePath(MoveStepType.HOVER);
-            if (ce instanceof LandAirMech
+            if (ce instanceof LandAirMek
                     && ce.getMovementMode() == EntityMovementMode.WIGE
                     && ce.isAirborne()) {
                 gear = GEAR_LAND;

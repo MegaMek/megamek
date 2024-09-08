@@ -638,15 +638,15 @@ public class MULParser {
         } else {
             // Try to find the entity.
             StringBuffer key = new StringBuffer(chassis);
-            MechSummary ms = MechSummaryCache.getInstance().getMech(key.toString());
+            MekSummary ms = MekSummaryCache.getInstance().getMech(key.toString());
             if (!StringUtility.isNullOrBlank(model)) {
                 key.append(" ").append(model);
-                ms = MechSummaryCache.getInstance().getMech(key.toString());
+                ms = MekSummaryCache.getInstance().getMech(key.toString());
                 // That didn't work. Try swapping model and chassis.
                 if (ms == null) {
                     key = new StringBuffer(model);
                     key.append(" ").append(chassis);
-                    ms = MechSummaryCache.getInstance().getMech(key.toString());
+                    ms = MekSummaryCache.getInstance().getMech(key.toString());
                 }
             }
             // We should have found the mech.
@@ -972,8 +972,8 @@ public class MULParser {
         // LAMs have a second set of gunnery and piloting stats, so we create a dummy crew
         // and parse a copy of the attributes with the aero stats altered to their non-aero keys,
         // then copy the results into the aero skills of the LAMPilot.
-        if (entity instanceof LandAirMech) {
-            crew = LAMPilot.convertToLAMPilot((LandAirMech) entity, crew);
+        if (entity instanceof LandAirMek) {
+            crew = LAMPilot.convertToLAMPilot((LandAirMek) entity, crew);
             Crew aeroCrew = new Crew(CrewType.SINGLE);
             Map<String,String> aeroAttributes = new HashMap<>(attributes);
             for (String key : attributes.keySet()) {

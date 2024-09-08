@@ -41,7 +41,7 @@ import megamek.utilities.xml.MMXMLUtility;
  */
 @XmlRootElement(name = "mech")
 @XmlAccessorType(value = XmlAccessType.NONE)
-public class TdbFile implements IMechLoader {
+public class TdbFile implements IMekLoader {
 
     private static final String DOUBLE = "Double";
 

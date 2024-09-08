@@ -21,7 +21,7 @@ package megamek.client.generator.skillGenerators;
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.LandAirMech;
+import megamek.common.LandAirMek;
 import megamek.common.enums.SkillLevel;
 
 public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
@@ -67,7 +67,7 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
                 break;
         }
 
-        if (entity instanceof LandAirMech) {
+        if (entity instanceof LandAirMek) {
             bonus += 3;
         }
 

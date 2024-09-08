@@ -14,12 +14,25 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.util.*;
+
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
@@ -31,13 +44,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.*;
-import java.util.*;
 
 public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
@@ -162,7 +168,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     // buttons
-    private Map<FiringCommand, MegamekButton> buttons;
+    private Map<FiringCommand, MegaMekButton> buttons;
 
     Targetable target; // target
 
@@ -264,7 +270,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             // Avoided using selectEntity(), to avoid centering on active unit
             clientgui.getUnitDisplay().displayEntity(ce());
             if (GUIP.getFireDisplayTabDuringFiringPhases()) {
-                clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+                clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
             }
             clientgui.getUnitDisplay().wPan.selectFirstWeapon();
             target(en_Target);
@@ -321,8 +327,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         int i = 0;
         FiringCommand[] commands = FiringCommand.values();
         CommandComparator comparator = new CommandComparator();
@@ -1460,7 +1466,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getBoardView().redrawEntity(ce());
         clientgui.getUnitDisplay().displayEntity(ce());
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
-            clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.WEAPONS);
+            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
         clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         if (ce().isMakingVTOLGroundAttack()) {

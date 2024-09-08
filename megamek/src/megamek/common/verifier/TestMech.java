@@ -183,9 +183,9 @@ public class TestMech extends TestEntity {
     public double getWeightMisc() {
         // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
         // IO p. 113 (LAM), 134 (QV)
-        if (mech instanceof LandAirMech) {
+        if (mech instanceof LandAirMek) {
             return Math.ceil(mech.getWeight() *
-                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1));
+                    (((LandAirMek) mech).getLAMType() == LandAirMek.LAM_BIMODAL ? 0.15 : 0.1));
         } else if (mech instanceof QuadVee) {
             return Math.ceil(mech.getWeight() * 0.1);
         }
@@ -681,7 +681,7 @@ public class TestMech extends TestEntity {
             buff.append("Jump MP exceeds walk MP without IJJs\n");
             return false;
         }
-        if ((mech instanceof LandAirMech) && mech.getJumpMP(MPCalculationSetting.NO_GRAVITY) < 3) {
+        if ((mech instanceof LandAirMek) && mech.getJumpMP(MPCalculationSetting.NO_GRAVITY) < 3) {
             buff.append("LAMs must have at least 3 jumping MP.\n");
             return false;
         }
@@ -851,7 +851,7 @@ public class TestMech extends TestEntity {
 
             if (misc.hasFlag(MiscType.F_MASC)
                     && misc.hasSubType(MiscType.S_SUPERCHARGER)) {
-                if (mech instanceof LandAirMech) {
+                if (mech instanceof LandAirMek) {
                     buff.append("LAMs may not mount a supercharger\n");
                     illegal = true;
                 }
@@ -1036,7 +1036,7 @@ public class TestMech extends TestEntity {
                 }
             }
 
-            if ((mech instanceof LandAirMech)
+            if ((mech instanceof LandAirMek)
                     && (misc.hasFlag(MiscType.F_MODULAR_ARMOR)
                             || misc.hasFlag(MiscType.F_JUMP_BOOSTER)
                             || misc.hasFlag(MiscType.F_PARTIAL_WING)
@@ -1146,7 +1146,7 @@ public class TestMech extends TestEntity {
             }
         }
 
-        if (mech instanceof LandAirMech) {
+        if (mech instanceof LandAirMek) {
             if (mech.isOmni()) {
                 buff.append("LAMs may not be constructed as omnis\n");
                 illegal = true;
@@ -1415,7 +1415,7 @@ public class TestMech extends TestEntity {
                     illegal = true;
                 }
 
-                if (m.isMechTurretMounted()) {
+                if (m.isMekTurretMounted()) {
                     buff.append("Heavy Gauss cannot be mounted in a turret.\n");
                     illegal = true;
                 }

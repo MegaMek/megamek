@@ -20,7 +20,39 @@
  */
 package megamek.client.ui.swing;
 
+import static java.util.stream.Collectors.toList;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
+
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+
+import org.apache.logging.log4j.LogManager;
+
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -39,25 +71,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /** The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc. */
 public class CommonSettingsDialog extends AbstractButtonDialog implements ItemListener,
@@ -360,19 +373,19 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField unitDisplayMechArmorMediumFontSizeText;
     private JTextField unitDisplayMechArmorSmallFontSizeText;
     private JTextField unitDisplayMechLargeFontSizeText;
-    private JTextField unitDisplayMechMeduimFontSizeText;
+    private JTextField unitDisplayMechMediumFontSizeText;
 
     // Auto Display
-    private JComboBox unitDisplayAutoDisplayReportCombo;
-    private JComboBox unitDisplayAutoDisplayNonReportCombo;
-    private JComboBox miniMapAutoDisplayReportCombo;
-    private JComboBox miniMapAutoDisplayNonReportCombo;
-    private JComboBox miniReportAutoDisplayReportCombo;
-    private JComboBox miniReportAutoDisplayNonReportCombo;
-    private JComboBox playerListAutoDisplayReportCombo;
-    private JComboBox playerListAutoDisplayNonReportCombo;
-    private JComboBox forceDisplayAutoDisplayReportCombo;
-    private JComboBox forceDisplayAutoDisplayNonReportCombo;
+    private JComboBox<String> unitDisplayAutoDisplayReportCombo;
+    private JComboBox<String> unitDisplayAutoDisplayNonReportCombo;
+    private JComboBox<String> miniMapAutoDisplayReportCombo;
+    private JComboBox<String> miniMapAutoDisplayNonReportCombo;
+    private JComboBox<String> miniReportAutoDisplayReportCombo;
+    private JComboBox<String> miniReportAutoDisplayNonReportCombo;
+    private JComboBox<String> playerListAutoDisplayReportCombo;
+    private JComboBox<String> playerListAutoDisplayNonReportCombo;
+    private JComboBox<String> forceDisplayAutoDisplayReportCombo;
+    private JComboBox<String> forceDisplayAutoDisplayNonReportCombo;
     private JCheckBox displayMoveDisplayDuringMovePhases;
     private JCheckBox displayFireDisplayDuringFirePhases;
 
@@ -1327,12 +1340,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(row);
 
         JLabel unitDisplayMechMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechMediumFontSize"));
-        unitDisplayMechMeduimFontSizeText = new JTextField(5);
-        unitDisplayMechMeduimFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
-        unitDisplayMechMeduimFontSizeText.setMaximumSize(new Dimension(150, 40));
+        unitDisplayMechMediumFontSizeText = new JTextField(5);
+        unitDisplayMechMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
+        unitDisplayMechMediumFontSizeText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(unitDisplayMechMediumFontSizeLabel);
-        row.add(unitDisplayMechMeduimFontSizeText);
+        row.add(unitDisplayMechMediumFontSizeText);
         comps.add(row);
 
         return createSettingsPanel(comps);
@@ -2058,7 +2071,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayMechArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorMediumFontSize()));
         unitDisplayMechArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorSmallFontSize()));
         unitDisplayMechLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechLargeFontSize()));
-        unitDisplayMechMeduimFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
+        unitDisplayMechMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
 
 
         csbUnitTooltipFGColor.setColour(GUIP.getUnitToolTipFGColor());
@@ -2534,7 +2547,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             LogManager.getLogger().error("", ex);
         }
         try {
-            GUIP.setUnitDisplayMechMediumFontSize(Integer.parseInt(unitDisplayMechMeduimFontSizeText.getText()));
+            GUIP.setUnitDisplayMechMediumFontSize(Integer.parseInt(unitDisplayMechMediumFontSizeText.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
@@ -2835,8 +2848,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return outer;
     }
 
-    private JComboBox createHideShowComboBox(int i) {
-        JComboBox cb = new JComboBox<>();
+    private JComboBox<String> createHideShowComboBox(int i) {
+        JComboBox<String> cb = new JComboBox<>();
         cb.addItem(Messages.getString("ClientGUI.Hide"));
         cb.addItem(Messages.getString("ClientGUI.Show"));
         cb.addItem(Messages.getString("ClientGUI.Manual"));

@@ -18,6 +18,27 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import java.awt.BasicStroke;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
+import javax.swing.border.EmptyBorder;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.util.IntRangeTextField;
@@ -28,13 +49,6 @@ import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.BattleForceSUA;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This panel shows advanced search filters for AlphaStrike values.

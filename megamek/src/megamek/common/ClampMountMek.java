@@ -21,7 +21,7 @@ package megamek.common;
  * Mechs in the Exchange Phase if any Battle Armor squad equipped with a
  * Magnetic Clamp is on that player's side.
  */
-public class ClampMountMech extends BattleArmorHandles {
+public class ClampMountMek extends BattleArmorHandles {
     private static final long serialVersionUID = -5687854937528642266L;
 
     private static final String NO_VACANCY_STRING = "A BA squad with magnetic clamps is loaded";

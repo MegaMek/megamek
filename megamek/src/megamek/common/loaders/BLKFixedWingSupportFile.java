@@ -15,11 +15,11 @@
 
 package megamek.common.loaders;
 
+import java.util.Objects;
+
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
-
-import java.util.Objects;
 
 /**
  * BLkFile.java
@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * @author taharqa
  */
-public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
+public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
 
     // armor locatioms
     public static final int NOSE = 0;

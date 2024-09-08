@@ -6,15 +6,20 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Polygon;
+import java.awt.Toolkit;
+import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
 
-import java.awt.*;
-import java.util.Objects;
-
-public class MechPanelTabStrip extends PicMap {
+public class MekPanelTabStrip extends PicMap {
     private static final long serialVersionUID = -1282343469769007184L;
     protected static final int NUM_TABS = 6;
     public static final String SUMMARY = "summary";
@@ -39,7 +44,7 @@ public class MechPanelTabStrip extends PicMap {
     private int activeTab = 0;
     UnitDisplay md;
 
-    public MechPanelTabStrip(UnitDisplay md) {
+    public MekPanelTabStrip(UnitDisplay md) {
         super();
         this.md = md;
     }

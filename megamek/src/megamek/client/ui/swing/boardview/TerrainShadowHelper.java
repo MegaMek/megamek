@@ -18,6 +18,32 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Shape;
+import java.awt.Transparency;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageCache;
@@ -26,20 +52,8 @@ import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.ImageUtil;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.util.List;
-import java.util.*;
 
 /**
  * This class calculates the shadow map image used to display terrain shadows in the BoardView.

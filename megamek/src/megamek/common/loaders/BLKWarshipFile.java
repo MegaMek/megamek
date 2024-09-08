@@ -21,7 +21,7 @@ import megamek.common.util.BuildingBlock;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKWarshipFile extends BLKFile implements IMechLoader {
+public class BLKWarshipFile extends BLKFile implements IMekLoader {
 
     public BLKWarshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -191,7 +191,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
-        
+
         //Warships should always be military craft
         if (dataFile.exists("designtype")) {
             a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
@@ -202,11 +202,11 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("overview")) {
             a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
         }
-        
+
         if (dataFile.exists("capabilities")) {
             a.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
         }
-        
+
         if (dataFile.exists("deployment")) {
             a.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
         }
@@ -281,7 +281,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         // set up a new bay type
         boolean newBay;
         double bayDamage = 0;
-        
+
         if (saEquip[0] != null) {
             for (String element : saEquip) {
                 rearMount = false;

@@ -18,21 +18,38 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
-import megamek.common.alphaStrike.*;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.common.weapons.other.CLFussilade;
-
-import java.util.*;
-
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
 import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
 import static megamek.common.MiscType.F_RADICAL_HEATSINK;
-import static megamek.common.alphaStrike.AlphaStrikeElement.*;
+import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.RANGE_BAND_LONG;
+import static megamek.common.alphaStrike.AlphaStrikeElement.RANGE_BAND_MEDIUM;
+import static megamek.common.alphaStrike.AlphaStrikeElement.RANGE_BAND_SHORT;
+import static megamek.common.alphaStrike.AlphaStrikeElement.SHORT_RANGE;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.*;
+import megamek.common.alphaStrike.ASDamage;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASRange;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASTurretSummary;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.weapons.missiles.MissileWeapon;
+import megamek.common.weapons.other.CLFussilade;
 
 public class ASDamageConverter {
 
@@ -1013,7 +1030,7 @@ public class ASDamageConverter {
         if (weapon.isRearMounted()) {
             desc.append(" (R)");
         }
-        if (weapon.isMechTurretMounted()) {
+        if (weapon.isMekTurretMounted()) {
             desc.append(" (T)");
         }
         if (weapon.isSponsonTurretMounted()) {

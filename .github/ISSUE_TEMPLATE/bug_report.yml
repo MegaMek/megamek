@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report an issue with MegaMekLab
+description: Report an issue with MegaMek
 title: "Brief Description"
 labels: [bug]
 body:
@@ -25,7 +25,7 @@ body:
           required: true
         - label: "I've asked on the MegaMek Discord about the error"
           required: true
-        - label: "I've reviewed the BattleTech rules and MegaMekLab documentation, and I've confirmed that something isn't working as intended."
+        - label: "I've reviewed the BattleTech rules and MegaMek documentation, and I've confirmed that something isn't working as intended."
           required: true
         - label: "I've searched the Github tracker and haven't found the issue listed"
           required: true
@@ -90,7 +90,7 @@ body:
       value: |
         ## User Environment
 
-        For the next sections go to the logs folder inside MegaMekLab (usually called 'logs'). Find the MegaMekLab.log file, open it with a text editor. It will look like the image below. Fill the information you find there into the following sections:
+        For the next sections go to the logs folder inside MegaMe (usually called 'logs'). Find the MegaMek.log file, open it with a text editor. It will look like the image below. Fill the information you find there into the following sections:
 
         ![Example Screenshot](https://i.imgur.com/KD8cnvf.png)
 
@@ -120,7 +120,7 @@ body:
     id: megamek-version
     attributes:
       label: MegaMek Suite Version *
-      description: Which version of MegaMekLab are you using? Pick your version from the list. If you select "Free Text," please enter your version in the box below.
+      description: Which version of MegaMek are you using? Pick your version from the list. If you select "Free Text," please enter your version in the box below.
       options:
         - "v0.50.0"
         - "v0.49.19.1"

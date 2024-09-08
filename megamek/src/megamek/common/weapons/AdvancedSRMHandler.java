@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -35,7 +35,7 @@ public class AdvancedSRMHandler extends SRMHandler {
      * @param m
      */
     public AdvancedSRMHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
         nSalvoBonus = 1;
     }

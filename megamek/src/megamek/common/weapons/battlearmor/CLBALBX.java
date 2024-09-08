@@ -24,7 +24,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class CLBALBX extends Weapon {
     private static final long serialVersionUID = 2978911783244524588L;
@@ -65,7 +65,7 @@ public class CLBALBX extends Weapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new BALBXHandler(toHit, waa, game, manager);
     }
 

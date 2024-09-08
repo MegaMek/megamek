@@ -1078,16 +1078,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
-        
+
         // can't fire weapons if loading/unloading cargo
         if (ae.endOfTurnCargoInteraction()) {
         	return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
         }
-        
+
         // can't fire arm/forward facing torso weapons if carrying cargo in hands
         if ((weapon != null)) {
         	int loc = weapon.getLocation();
-        	
+
         	if ((ae instanceof Mech) && !weapon.isRearMounted() && !((Mech) ae).canFireWeapon(loc)) {
         		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         	}
@@ -4063,7 +4063,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (los.getTargetCover() > LosEffects.COVER_NONE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
             }
-            // tanks going Hull Down is different rules then 'Mechs, the
+            // tanks going Hull Down is different rules then 'Meks, the
             // direction the attack comes from matters
             else if ((te instanceof Tank || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
                     && targHex.containsTerrain(Terrains.FORTIFIED)) {
@@ -4705,6 +4705,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = Compute.getLegAttackBaseToHit(ae, te, game);
             if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+            }
+            if (te.isProne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TargetProne"));
+            }
+            if (te.isImmobile()) {
+                toHit.addModifier(-4, Messages.getString("WeaponAttackAction.TargetImmobile"));
             }
             srt.setSpecialResolution(true);
             return toHit;

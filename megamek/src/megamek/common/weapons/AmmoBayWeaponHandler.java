@@ -18,7 +18,7 @@ import megamek.common.AmmoType.Munitions;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -38,7 +38,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * @param m
      */
     public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
     }
 

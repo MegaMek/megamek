@@ -100,7 +100,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_NEXT("moveNext", CMD_NONE),
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO),
         MOVE_WALK("moveWalk", CMD_GROUND),
-        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF),
+        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF | CMD_PROTOMECH),
         MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL),
         MOVE_GET_UP("moveGetUp", CMD_MECH),
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL),
@@ -643,7 +643,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         currentEntity = en;
-        clientgui.setSelectedEntityNum(en);
+
         gear = MovementDisplay.GEAR_LAND;
 
         clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
@@ -697,6 +697,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             @Override
             public void run() {
                 clientgui.getUnitDisplay().displayEntity(ce);
+                clientgui.getBoardView().redrawEntity(ce);
+                clientgui.setSelectedEntityNum(ce.getId());
                 if (GUIP.getMoveDisplayTabDuringMovePhases()) {
                     clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
                 }
@@ -3315,18 +3317,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Get the unit that the player wants to unload. This method will remove the
-     * unit from our local copy of loaded units.
+     * Returns the unit the player wants to unload, unless there is only one, in which case this
+     * is returned directly. Returns null when the player cancels the dialog or there is no unit
+     * to unload.
      *
-     * @return The <code>Entity</code> that the player wants to unload. This
-     * value will not be <code>null</code>.
+     * This method will remove the unit from our local copy of loaded units.
+     *
+     * @return The Entity to unload.
      */
-    private Entity getUnloadedUnit() {
+    private @Nullable Entity getUnloadedUnit() {
         Entity ce = ce();
         Entity choice = null;
-        // Handle error condition.
         if (unloadableUnits.isEmpty()) {
-            LogManager.getLogger().error("MovementDisplay#getUnloadedUnit() called without loaded units.");
+            LogManager.getLogger().error("No loaded units");
         } else if (unloadableUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(
@@ -3346,7 +3349,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return choice;
     }
 
-    private Coords getUnloadPosition(Entity unloaded) {
+    /**
+     * Returns a position to unload a unit into or null if the player cancels the dialog.
+     *
+     * @param unloaded The unit to unload
+     * @return The position to unload to
+     */
+    private @Nullable Coords getUnloadPosition(Entity unloaded) {
         Entity ce = ce();
         // we need to allow the user to select a hex for offloading
         Coords pos = ce.getPosition();
@@ -3385,7 +3394,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         ring.removeAll(toRemove);
 
-        if (ring.size() < 1) {
+        if (ring.isEmpty()) {
             String title = Messages.getString("MovementDisplay.NoPlaceToUnload.title");
             String body = Messages.getString("MovementDisplay.NoPlaceToUnload.message");
             clientgui.doAlertDialog(title, body);
@@ -4416,7 +4425,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = en.getWalkMP();
         } else if ((ce() instanceof Mech) && !(ce() instanceof QuadVee)
                 && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
-            // A non-QuadVee 'Mech that is using tracked movement is limited to walking
+            // A non-QuadVee 'Mek that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
@@ -4496,7 +4505,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = ce().getWalkMP();
         } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
                 && ce().getMovementMode() == EntityMovementMode.TRACKED) {
-            // A non-QuadVee 'Mech that is using tracked movement (or converting to it) is limited to walking
+            // A non-QuadVee 'Mek that is using tracked movement (or converting to it) is limited to walking
             maxMP = ce().getWalkMP();
         } else {
             maxMP = ce().getRunMP();
@@ -4898,26 +4907,27 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_UNLOAD.getCmd())) {
-            // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                if (ce() instanceof SmallCraft || ce().isSupportVehicle()
+                if (!other.isInfantry()
+                        || ce() instanceof SmallCraft
+                        || (ce().isSupportVehicle() && (ce().getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
+                        // FIXME: unclear why towed/towing is checked here:
                         || !ce().getAllTowedUnits().isEmpty()
                         || ce().getTowedBy() != Entity.NONE) {
+                    // unload into adjacent hexes
                     Coords pos = getUnloadPosition(other);
                     if (null != pos) {
-                        // set other's position and end this turn - the
-                        // unloading unit will get
+                        // set other's position and end this turn - the unloading unit will get
                         // another turn for further unloading later
                         addStepToMovePath(MoveStepType.UNLOAD, other, pos);
                         ready();
                     }
                 } else {
-                    // some different handling for small craft/dropship
-                    // unloading
+                    // unload into the same hex
                     addStepToMovePath(MoveStepType.UNLOAD, other);
                 }
-            } // else - Player canceled the unload.
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_PICKUP_CARGO.getCmd())) {
         	processPickupCargoCommand();
         } else if (actionCmd.equals(MoveCommand.MOVE_DROP_CARGO.getCmd())) {

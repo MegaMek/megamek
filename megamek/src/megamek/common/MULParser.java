@@ -13,6 +13,25 @@
  */
 package megamek.common;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
@@ -23,17 +42,6 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.*;
 
 /**
  * Class for reading in and parsing MUL XML files. The MUL xsl is defined in
@@ -613,7 +621,7 @@ public class MULParser {
     private Entity getEntity(String chassis, @Nullable String model) {
         Entity newEntity = null;
 
-        // First check for ejected MechWarriors, vee crews, escape pods and spacecraft crews
+        // First check for ejected MekWarriors, vee crews, escape pods and spacecraft crews
         if (chassis.equals(EjectedCrew.VEE_EJECT_NAME)
                 || chassis.equals(EjectedCrew.SPACE_EJECT_NAME)) {
             return new EjectedCrew();

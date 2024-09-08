@@ -21,7 +21,7 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMech;
 
 /**
- * Creates a TRO template model for BattleMechs, OmniMechs, and IndustrialMechs
+ * Creates a TRO template model for BattleMechs, OmniMechs, and IndustrialMeks
  * of all leg configurations.
  *
  * @author Neoancient

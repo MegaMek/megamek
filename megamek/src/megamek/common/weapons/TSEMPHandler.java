@@ -17,8 +17,7 @@ import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -38,7 +37,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
      * @param g
      * @param m
      */
-    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

@@ -1349,6 +1349,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public int getNextWeaponListIdx() {
+        if (weaponList.getModel().getSize() == 0) {
+            return -1;
+        }
+
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
         if (selected == -1) {
@@ -1379,6 +1383,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public int getPrevWeaponListIdx() {
+        if (weaponList.getModel().getSize() == 0) {
+            return -1;
+        }
+
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
         if (selected == -1) {
@@ -2727,5 +2735,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             tWeaponScroll.revalidate();
             tWeaponScroll.repaint();
         }
+    }
+
+    /**
+     * Updates the Weapon Panel with the information for the given entity.  If the given entity
+     * is `null`, this method will do nothing.
+     * @param entity - The weapon panel will update info based on the {@link Entity} provided.
+     */
+    public void updateForEntity(Entity entity) {
+        if (entity == null) {
+            return;
+        }
+
+        // Takes note of the selected weapon to re-select after the call to `displayMech()`
+        int weaponNum = getSelectedWeaponNum();
+        displayMech(entity);
+        selectWeapon(weaponNum);
     }
 }

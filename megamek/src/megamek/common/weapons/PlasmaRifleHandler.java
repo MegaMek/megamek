@@ -17,7 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -29,7 +29,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @param waa
      * @param m
      */
-    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
 

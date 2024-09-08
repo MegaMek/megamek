@@ -1419,6 +1419,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         if(ce().isBomber()) {
             phaseInternalBombs = ((IBomber)ce()).getUsedInternalBombs();
         }
+
+        clientgui.getUnitDisplay().wPan.updateForEntity(ce());
     }
 
     /**

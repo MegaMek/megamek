@@ -1,15 +1,21 @@
 /*
- * MegaMek - Copyright (C) 2007-2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.server.victory;
 
@@ -22,60 +28,45 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * implements "enemy commander destroyed"
+ * Implements a victory condition that checks if all enemy commanders have been killed.
  */
-public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializable {
-    private static final long serialVersionUID = 2525190210964235691L;
-
-    public EnemyCmdrDestroyedVictory() {
-
-    }
+public class EnemyCmdrDestroyedVictory implements VictoryCondition, Serializable {
 
     @Override
-    public VictoryResult victory(Game game, Map<String, Object> ctx) {
-        VictoryResult vr = new VictoryResult(true);
+    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
+        VictoryResult victoryResult = new VictoryResult(true);
         // check all players/teams for killing enemy commanders
         // score is 1.0 when enemy commanders are dead
-        boolean victory = false;
+        boolean isVictory = false;
         HashSet<Integer> doneTeams = new HashSet<>();
-        for (Player player : game.getPlayersVector()) {
-            boolean killedAll = true;
+
+        for (Player player : game.getPlayersList()) {
             int team = player.getTeam();
             if (team != Player.TEAM_NONE) {
                 if (doneTeams.contains(team)) {
+                    // only consider each team once
                     continue;
                 }
-                // skip if already dealt with this team
                 doneTeams.add(team);
             }
-            for (Player enemyPlayer : game.getPlayersVector()) {
-                if (enemyPlayer.equals(player) ||
-                        (team != Player.TEAM_NONE && team == enemyPlayer.getTeam())) {
-                    continue;
-                }
-                if (game.getLiveCommandersOwnedBy(enemyPlayer) > 0) {
-                    killedAll = false;
-                }
-            }
-            // all enemy commanders are dead
-            if (killedAll) {
+
+            boolean killedAllCommanders = game.getPlayersList().stream()
+                    .filter(p -> p.isEnemyOf(player))
+                    .mapToInt(game::getLiveCommandersOwnedBy).sum() == 0;
+
+            if (killedAllCommanders) {
+                Report r = new Report(7110, Report.PUBLIC);
                 if (team == Player.TEAM_NONE) {
-                    Report r = new Report(7110, Report.PUBLIC);
                     r.add(player.getName());
-                    vr.addPlayerScore(player.getId(), 1);
-                    vr.addReport(r);
+                    victoryResult.setPlayerScore(player.getId(), 1);
                 } else {
-                    Report r = new Report(7110, Report.PUBLIC);
                     r.add("Team " + team);
-                    vr.addTeamScore(team, 1);
-                    vr.addReport(r);
+                    victoryResult.setTeamScore(team, 1);
                 }
-                victory = true;
+                victoryResult.addReport(r);
+                isVictory = true;
             }
         }
-        if (victory) {
-            return vr;
-        }
-        return VictoryResult.noResult();
+        return isVictory ? victoryResult : VictoryResult.noResult();
     }
 }

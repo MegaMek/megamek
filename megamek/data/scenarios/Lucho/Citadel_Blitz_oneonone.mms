@@ -1,5 +1,5 @@
 # A MegaMek scenario file.
-# It is 3057, and Clan Jade Falcon has sent a binary to hit the 
+# It is 3057, and Clan Jade Falcon has sent a binary to hit the
 # firebase protecting the launch facilities. If it falls the spaceport
 # will be left defenseless! written by Lucho. Abril 2008.
 MMSVersion=1
@@ -15,9 +15,9 @@ Location_AFFC=NE
 Location_JadeFalcon=S
 Unit_AFFC_1=Atlas AS7-D,Capitao Nascimento,3,3,S,78,46
 Unit_AFFC_2=Wraith TR1,Tenente Neto,3,4,S,81,48
-Unit_AFFC_3=Archer ARC-4M,MechWarrior Andre,3,4,S,79,48
-Unit_AFFC_4=Warhammer WHM-7S,MechWarrior Fabio,3,4,S,77,48
-Unit_AFFC_5=Marauder MAD-5S,MechWarrior Romerito,3,4,S,83,48
+Unit_AFFC_3=Archer ARC-4M,MekWarrior Andre,3,4,S,79,48
+Unit_AFFC_4=Warhammer WHM-7S,MekWarrior Fabio,3,4,S,77,48
+Unit_AFFC_5=Marauder MAD-5S,MekWarrior Romerito,3,4,S,83,48
 Unit_AFFC_6=Heavy LRM Carrier (Standard),regular,4,6,S,78,41
 Unit_AFFC_7=Heavy LRM Carrier (Standard),regular,4,6,S,78,41
 Unit_AFFC_8=Heavy LRM Carrier (Standard),regular,4,6,S,80,41

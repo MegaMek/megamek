@@ -36,6 +36,8 @@ class TeamLoadoutGeneratorTest {
     static AmmoType mockAC20AmmoType = (AmmoType) EquipmentType.get("ISAC20 Ammo");
     static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
     static AmmoType mockSRM6AmmoType = (AmmoType) EquipmentType.get("IS SRM 6 Ammo");
+    static AmmoType mockMML7LRMAmmoType = (AmmoType) EquipmentType.get("ISMML7 LRM Ammo");
+    static AmmoType mockMML7SRMAmmoType = (AmmoType) EquipmentType.get("ISMML7 SRM Ammo");
 
     @BeforeAll
     static void setUpAll() {
@@ -367,6 +369,38 @@ class TeamLoadoutGeneratorTest {
 
         for (Mounted bin : List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
+        }
+    }
+
+    @Test
+    void testReconfigureBotTeamAllArtemis()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(game);
+        Mech mockMech = createMech("Warhammer", "WHM-6Rb", "Asgard");
+        mockMech.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mech.LOC_RT);
+        Mech mockMech2 = createMech("Valkyrie", "VLK-QW5", "Wobbles");
+        mockMech2.addEquipment(EquipmentType.get("Clan Artemis IV FCS"), Mech.LOC_RT);
+        Mech mockMech3 = createMech("Cougar", "XR", "Sarandon");
+        mockMech3.addEquipment(EquipmentType.get("Clan Artemis V"), Mech.LOC_RT);
+        mockMech.setOwner(player);
+        mockMech2.setOwner(player);
+        mockMech3.setOwner(player);
+        game.setEntity(0, mockMech);
+        game.setEntity(1, mockMech2);
+        game.setEntity(2, mockMech3);
+
+        // Load ammo in 'mechs; locations are for fun
+        Mounted bin1 = mockMech.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+        Mounted bin2 = mockMech2.addEquipment(mockMML7LRMAmmoType, Mech.LOC_LT);
+        Mounted bin3 = mockMech2.addEquipment(mockMML7SRMAmmoType, Mech.LOC_LT);
+        Mounted bin4 = mockMech3.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin5 = mockMech3.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+
+        // Just check that the bins are populated still
+        tlg.reconfigureTeam(team, "IS", "");
+
+        for (Mounted bin : List.of(bin1, bin2, bin3, bin4, bin5)) {
+            assertNotEquals("Standard", ((AmmoType) bin.getType()).getSubMunitionName());
+            assertTrue(((AmmoType) bin.getType()).getSubMunitionName().contains("Artemis"));
         }
     }
 

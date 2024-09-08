@@ -24,7 +24,6 @@ import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Game;
 import megamek.common.Mech;
-import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -34,7 +33,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
 import megamek.common.weapons.ppc.ISPlasmaRifle;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     private static final long serialVersionUID = -4718048077136686433L;
@@ -44,7 +43,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

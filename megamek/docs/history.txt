@@ -1,6 +1,15 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.0-SNAPSHOT (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
+0.50.01-SNAPSHOT
++ PR #5962, #5964, #5966, #5974, #5931: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory)
++ Fix #5960: BA Flamers flagged as illegal on Battle Armor
++ PR #5948: Implemented StratCon specific Skill Generator - megamek support
++ PR #5937: The Cowl quirk armor is now now correctly ignored only when an attack comes from the precise hex row the Mek is looking down
++ PR #5867: Advanced Atmospheric Control Roll Errata
++ PR #5979: MegaMek now has a recent boards list for easier access
++ PR #5889: Various upgrades to MM scenarios; Adapted scenario "Lowering the Boom", folder "Kell Hounds"
+
+0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)
 + PR #5512: Gradle and Github changes for JRE 17 Min
 + Fix #5648: Diacratics and/or name changes causing issues with Force/RAT Generator
@@ -34,7 +43,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5702, #5747: Code internals: MMLogger with Sentry Tracking
 + PR #5746: Tweaked FontHandler logging
 + PR #5751: Add "miss" and "drifted"/"hit" markers for Artillery and Bomb attacks, with concomitant client settings
-+ Data:: Updated markers for Artillery and Bomb attacks
++ Data: Updated markers for Artillery and Bomb attacks
 + Fix #5287: Infernos do not ignite buildings when using "Ignite" target option
 + Fix #5755: Princess no drop bombs -  no boom boom
 + PR #5759: Added Entity Verifier to gradle build
@@ -92,6 +101,25 @@ MEGAMEK VERSION HISTORY:
 + Fix #5614: princess does no pathing during deployment
 + Fix #5885: Fixed Autocannon extra damage option checking
 + PR #5887: Enabled torso/turret twist for artillery
++ FIX #5905: Corrected Board Display Issue During Startup
++ FIX #5625: escape force so that it saves to xml correctly
++ FIX #5890: Update null guards in getElevation
++ FIX #5893: Dismount infantry to same hex except on large SV
++ FIX #5901: check for 0 weapons before determining the next-previous weapon index
++ FIX #5902: redisplay unit when clearing all attacks
++ PR #5919: A simple test that checks canonicity is working as intended
++ PR #5925: Fix to make mech file parser canon check unit testable in IDE
++ PR #5929: Fix ammo auto config for Artemis skipping SRMs and MMLs
++ Fix #5903: null check before dereferencing Coords
++ Fix #5777: Flamers now interact correctly with partial cover when the "BMM Flamers" rule is turned on
++ Fix #5347: Infantry leg attacks now apply prone and immobile modifiers
++ Fix #5895: Mono/bicycles may now correctly enter light woods
++ Fix #5669: Prevent an error with artillery weapons on DropShips
++ Fix #5219: Structure Collapse Warning icon appearing beneath bridges and buildings
++ FIX #5915: Show the Jump button for Protomeks
++ FIX #5930: Fix selected unit label and fov lagging behind
++ PR #5939: Edited Display Name for Transported Personnel Edge Use Option
++ PR #5959: MM side of fix for MHQ 4755: NPE when opfor has no faction code
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
@@ -1043,7 +1071,7 @@ MEGAMEK VERSION HISTORY:
 + PR #3159: Per errata, primary infantry weapons doing more than .6 damage per trooper have been nerfed to .6; infantry burst fire trait added for those
 + Data: Various Unit file fixes
 + Issue #3128: Restore bot ability to unload infantry/BA from transports.
-+ PR #3167: Tripod 'Mech Center Leg Actuator Damage Customization
++ PR #3167: Tripod 'Mek Center Leg Actuator Damage Customization
 + PR #3168: Array bounds protecting Entity::getCritical
 + Issue #3133: Adding before round 1 deployment option
 + PR #3170: Fix NPE preventing loading MULs containing transported units
@@ -1576,7 +1604,7 @@ MEGAMEK VERSION HISTORY:
 + Data: New Sprites
 + Issue #1802 - Kajis Maps and Scenarios Update
 + Data: Missing Archive Sprites
-+ Issue #1830 - Sarath 'Mech - Lacking Quirk
++ Issue #1830 - Sarath 'Mek - Lacking Quirk
 + Issue #1827 - Not every head hit on a quad mech should be a through-armor critical
 + PR #1847 - Restore the bot's ability to use physical attacks against buildings containing gun emplacements
 + Data: Various unit errata Fixes.
@@ -1773,7 +1801,7 @@ v0.46.0-rc.1 (2019-07-23 0300 UTC)
 + MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
 + Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
 + Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
-+ Issue #1400: Fleeing while carrying a non-existent MechWarrior no longer causes a soft-lock
++ Issue #1400: Fleeing while carrying a non-existent MekWarrior no longer causes a soft-lock
 + Data: Corsair fighter once again shows proper sprite
 + Issue #1407: Attacks on transported battle armor no longer cause soft lock
 + PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
@@ -1897,7 +1925,7 @@ v0.45.0 (2018-08-02 0200 UTC)
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: DropShip infantry bay fixes.
-+ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) MechWarrior.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) MekWarrior.
 + Data: New Sprites
 + Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
 + PR #1003: Fix validation failures from configuring ammo.
@@ -2020,7 +2048,7 @@ v0.43.7-RC1 (2018-01-21 22:00 UTC)
 + Issue #862: Fighter Squadron BV
 + Data: New Sprites and adding MWO Canon Mechs(Sun Spider and Roughneck)
 + Issue #859: Game Options Tooltip Exception
-+ Princess will no longer waste firepower targeting solitary MechWarriors in buildings.
++ Princess will no longer waste firepower targeting solitary MekWarriors in buildings.
 + PR#851 Change Default KeyBinds (adds ctrl to overlay and unit label toggles).
 
 v0.43.6 (2017-12-22 10:00 UTC)
@@ -2073,7 +2101,7 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + Data - New Sprites and unit file fixes.
 + Issue #697: Over verbose princess
 + Issue #548: View > Round Report Does Not Allow Copy & Paste of Text
-+ Issue #519: Fuel cells producing heat in BattleMechs
++ Issue #519: Fuel cells producing heat in BattleMeks
 + Issue #727: Sniper and Range Master SPAs now work with Line of Sight range
 + Issue #460: Field of Fire/firing arc sprites not cleared when unit finishes movement
 + Issue #758: Princess doesn't check for ownership when deploying units
@@ -2308,7 +2336,7 @@ v0.41.27 (2016-12-07 03:00 UTC)
 + Issue #411: MM allows illegal terrain combinations in boards
 + Added tooltip entry for spotting; spotters now display who they're spotting
 + Issue #422: Firing solutions now indicates units that are spotted
-+ Issue #395: New MechWarrior minimap icons: circle, or infantry icon w/ dot
++ Issue #395: New MekWarrior minimap icons: circle, or infantry icon w/ dot
 + Issue #423: Squadron Armor tab is empty
 + Issue #367: Building Fires Not Shown On Minimap
 + Bug: Jumping can never be considered "along a road"; fixes some missed PSRs
@@ -2763,7 +2791,7 @@ v0.41.9 (2015-09-14 01:25 UTC)
 + Bug: ejected crews are having isEjected set to false on the turn after ejection
 + additional conditions for Entity.canEscape to handle immobilized units and legged/hipped mechs
 + Bug: some costs reported as -1 when using alternateCost option in MechView
-+ Added MechWarrior pick up external ID to MUL input/output
++ Added MekWarrior pick up external ID to MUL input/output
 + Data: New Sprites
 + Bug: null entities still attempt to be parsed in MULParser
 + Bug: Ghost targets option doesn't work without ECCM
@@ -2914,7 +2942,7 @@ v0.41.5 (2015-08-04 10:10 UTC)
 + Data: New Sprites/Sources Fixes.
 + Bug: Several TacOps laser underwater ranges incorrect.
 + Bug: Unconscious pilots still making shutdown/startup rolls.
-+ Bug: Quad 'Mechs getting arbitrary -2 to shutdown/startup checks.
++ Bug: Quad 'Meks getting arbitrary -2 to shutdown/startup checks.
 + Bug: Damage absorbed by modular armor not counted towards "damage this phase".
 + Bug [#4564]: Secondary Swarm LRM attacks "inherit" attack direction and
     called-shot status from original target.
@@ -3101,9 +3129,9 @@ v0.41.4 (2015-05-31 16:45 UTC)
 + Bug [#4549]: Displacing units off the map can cause "no unit to move" error
 + Changed Entity.getBadCriticals() to count missing slots along with destroyed/
     breached ones.
-+ Bug: Considering physical attacks against headless 'Mechs still on the map
++ Bug: Considering physical attacks against headless 'Meks still on the map
     caused Princess to go into an infinite loop.
-+ Bug: Piloting penalty for head loss on 'Mechs with torso-mounted cockpits not
++ Bug: Piloting penalty for head loss on 'Meks with torso-mounted cockpits not
     applied to same-phase PSRs.
 + Bug: Vehicles with dead crews not counted as destroyed for victory purposes.
     (Partial fix -- works for "last man standing" and BV victories, but not yet
@@ -3139,9 +3167,9 @@ v0.41.4 (2015-05-31 16:45 UTC)
     TacOps vehicle effectiveness in effect
 + Bug: Minefields always triggered upon entering regardless of roll outside
     double blind
-+ Bug: No heat buildup for ICE- and fuel cell-powered BattleMechs getting up
++ Bug: No heat buildup for ICE- and fuel cell-powered BattleMeks getting up
     (only Industrials get heat-free ground movement)
-+ Ruling: Engine stalls for ICE 'Mechs are for Industrials and BattleMechs both
++ Ruling: Engine stalls for ICE 'Meks are for Industrials and BattleMeks both
 + Bug: MechView armored cockpit/engine identification not working as intended
 + Bug [#4563]: Mouse-over info no longer shows the unit��s remaining armor and
     structure points
@@ -3376,7 +3404,7 @@ v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4398]: APMs cannot be selected in UnitDisplay Weapons tab
 + Changes for MegaMekLab Bug 139
 + Changes for MegaMekLab Bug 95
-+ Refactor some class names to change 'Mech' to 'Unit' since they apply to all units9
++ Refactor some class names to change 'Mek' to 'Unit' since they apply to all units9
 + Changes for MegaMekLab Bug 70
 
 v0.39.5 / v0.40.0RC3 (2014-12-25 15:10 UTC)
@@ -3866,7 +3894,7 @@ v0.39.0 (2014-07-02 21:14 UTC)
 + Bug: Team initiative not properly calculated when negative values are present
     (such as for team constant init bonus, or player init bonus, etc)
 + Bug [#4161]: Run MP allowed after moving backwards and failing a fall PSR
-+ Bug [#4144]: 'Mechs landing in rubble without PSR
++ Bug [#4144]: 'Meks landing in rubble without PSR
 + Bug [#4164]: EntityLilstFile prints N/A ammo slots for tanks
 + Bug [#4165]: Issue with reinforcing after done has been selected
 + Bug [#4158]: Issues launching docked Dropships from Warships
@@ -3878,11 +3906,11 @@ v0.39.0 (2014-07-02 21:14 UTC)
     exempt
 + Bug [#4148]: bug in dfa hitting water
 + Bug [#4168]: Careful movement penalties should not apply to jump/VTOL MP
-+ Bug [#4171]: Erroneous "C3 Network Too Big" message with 12 'Mechs networked
-+ Bug [#4172]: Incorrect punch to-hit modifier for 'Mechs built without hands
++ Bug [#4171]: Erroneous "C3 Network Too Big" message with 12 'Meks networked
++ Bug [#4172]: Incorrect punch to-hit modifier for 'Meks built without hands
     and lower arms
 + Bug [#4173]: Incorrect attacker falling damage from successful DFA
-+ Bug [#4174]: Cannot hit the legs of a 'Mech that is standing in depth 1 water
++ Bug [#4174]: Cannot hit the legs of a 'Mek that is standing in depth 1 water
     when the attacker is underwater
 + Bug [#4184]: Move multi options don't keep lances of the same unit type
 + Bug [#4184]: Various "move multi" options do not work together
@@ -3940,7 +3968,7 @@ v0.37.12 (2014-06-03 19:06 UTC)
 + Updated mine clearing report to include dice roll
 + Revised bombing attacks to roll per bomb and scatter by MoF (as per dive
     bombing errata)
-+ Errata: Superheavy 'Mechs can move and fire (i)HGRs safely, no PSR needed
++ Errata: Superheavy 'Meks can move and fire (i)HGRs safely, no PSR needed
 + Bug [4119]: Princess won't shoot Mechwarriors.
 + Data: Unit images and fixes, tech level fixes.
 + Bug [#4123]: Client never receives COMMAND_SERVER_CORRECT_NAME packet
@@ -3956,13 +3984,13 @@ v0.37.12 (2014-06-03 19:06 UTC)
 + Data: New Images.
 + Bug [4119]: FireControl.getTargetableEnemyEntities(2) now only returns targets
     that are within LoS
-+ Bug: Tripod 'Mechs unable to pick up clubs.
-+ Bug: Ejected vehicle crews and MechWarriors treated as purposefully deployed
++ Bug: Tripod 'Meks unable to pick up clubs.
++ Bug: Ejected vehicle crews and MekWarriors treated as purposefully deployed
     TacOps infantry squads despite originally deploying in their respective
     vehicles.
-+ Bug: Squad and MechWarrior to-hit modifiers not applied to all attacks
++ Bug: Squad and MekWarrior to-hit modifiers not applied to all attacks
     (notably not physical ones).
-+ Refactoring: MechWarrior has new superclass EjectedCrew (derived in turn from
++ Refactoring: MekWarrior has new superclass EjectedCrew (derived in turn from
     Infantry) in order to better distinguish between them all.
 + Added a number of null checks to WeaponAttackAction (recent changes caused at
     least one NPE).
@@ -3992,7 +4020,7 @@ v0.37.12 (2014-06-03 19:06 UTC)
     from multiple weapons
 + Bug [#4136]: TacOps Vehicle Crews broken
 + Bug [#4137]: Maneuvering Ace allows fighters to crab walk.
-+ Bug: Narc pods can attach to destroyed 'Mech locations and ProtoMech near-misses.
++ Bug: Narc pods can attach to destroyed 'Mek locations and ProtoMech near-misses.
 + Changed ProtoMech near-miss message to remove explicit reference to "damage".
 + Data: Shadow Hawk 7CS image link fix.
 + Bug: Destroying a location with a Narc/iNarc pod attached negates its benefits
@@ -4196,7 +4224,7 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
     properly supports it
 + Bug: Armored Gloves weren't properly being counted as AP Mounts for purposes
     of BattleArmor validation
-+ Bug [#4051]: Facing when 'Mech skids: ver 0.37.8-Exp
++ Bug [#4051]: Facing when 'Mek skids: ver 0.37.8-Exp
 + Bug [#3950]: Geometric Mean BV Option Not Updating in Unit Selection Dialog
 + Bug [#3950]: Two single die rolls were made for skidding/falling when only
     1 was necessary
@@ -4940,7 +4968,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Added help button for new princess config options.
 + Multiple princess configs can be saved and different princess instances can
     use different configurations.
-+ Start of Tripod 'Mech support
++ Start of Tripod 'Mek support
 + lateral shifts, reduced cost facing changes and PSR bonuses for tripods
 + Bug [#3711]: Tooltip dismiss delay is low for some look and feels:
     client options now has a tooltip dismiss delay setting
@@ -4950,7 +4978,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Potential infinite loop with ChatterBox2 and scrolling
 + Bug: Updated displayables to consume mouse drags
 + Made it so the ChatterBox2 doesn't add characters when control is pressed
-+ Feature [#1174]: Specific Number of 'Mechs Victory Condition
++ Feature [#1174]: Specific Number of 'Meks Victory Condition
 + Feature [#1120]: Allow users to set the maximum amount of external heat
 + Princess bot help button not working
 + Superheavy BV fixes
@@ -4974,7 +5002,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + WeaponHandler#getClusterModifier replaces all the duplicate code in calcNHits
     for various handlers
 + SPA: melee master (AToW)
-+ Bug: Command line verifier broken for 'Mechs (NPE in
++ Bug: Command line verifier broken for 'Meks (NPE in
     TestEntity.printLocations()).
 + Bug [#3916]: firing solutions caused NPE with non-targetable units
 + Bug: tripod facing change cost not working right
@@ -5093,7 +5121,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: [#3956] Bot hangs on Divide By Zero error 0.37-dev
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
-+ Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game
++ Bug [#3892]: Ejected MekWarrior Takes Sprite of a 'mech from previous game
 + Bug: Adjusted Server.saveGame so that the whole XML isn't stored in memory
     and is instead streamed to a file.
 + Change default max heap size to 1024m
@@ -5403,7 +5431,7 @@ v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
-+ Bug 3756: Clan 'Mechs with endo-composite flagged as invalid
++ Bug 3756: Clan 'Meks with endo-composite flagged as invalid
 + Bug 3770: client settings not saving
 + Introduce saving to XML
 + Bug: reactive armor crits should not be hittable
@@ -5541,7 +5569,7 @@ v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug: BA Jump MP not correct for UMU units
 + Data: More Date and unit fixes
 + Bug 3750: Indirect LRM fire from a tank isn't being checked correctly for LOS
-+ Bug: Modifier for motive damage check for charged vehicles taken from *attacker*, not target; ClassCastException if "attacker" was a (skidding) 'Mech.
++ Bug: Modifier for motive damage check for charged vehicles taken from *attacker*, not target; ClassCastException if "attacker" was a (skidding) 'Mek.
 + Bug 3722: Synchronized the copying of the events_to_process LinkedList.
 + Bug: Missing messages for WeaponQuirksInfo.option.fast_reload.displayableName and WeaponQuirksInfo.option.fast_reload.description
 + Bug: sprinting with XXL should cost 9 heat, not 8
@@ -5550,7 +5578,7 @@ v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Fixed some leftover calls to deprecated methods.
 + Keep techlevels per year, to allow tech progression as in recent TROs
 + Bug 3755: Armorless second turret added to vehicles loaded from HMV files.
-+ Added a couple of 'Mech-specific "permanently immobilized" checks (prone with 0 base walking MP / gyro destroyed).
++ Added a couple of 'Mek-specific "permanently immobilized" checks (prone with 0 base walking MP / gyro destroyed).
 + Bug: VTOL rotors not shown in MechView.
 + Removed some more spurious "phantom" locations.
 + Bug: more building basement oddities fixed
@@ -5589,7 +5617,7 @@ v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3708: Vertical cover doesn't protect legs like it should
 + Bug 3705: TacOps partial cover should only effect meks
 + Bug 2916: Building partial cover takes no damage from attacks
-+ Bug: Selection not translating correctly to facing in 'Mech turret rotation dialog.
++ Bug: Selection not translating correctly to facing in 'Mek turret rotation dialog.
 + Right-shoulder turrets now acknowledge heads exist.
 + Fix some errors in Princess' to-hit guesses
 + Bug 3368: Saving games with dedicated hosts
@@ -5607,7 +5635,7 @@ v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug: misc building basement bugfixes
 + Bug: damage from building collapse using wrong table
 + Bug: Units crippled from weapon loss not always recognized as such.
-+ Bug: PSRs resulting from IndustrialMech end-of-turn crits delayed until next turn.
++ Bug: PSRs resulting from IndustrialMek end-of-turn crits delayed until next turn.
 + Data: Clean up of Aerospace Duplicate units and more unit fixes.
 + Bug 3715: Plasma weapon damage vs. buildings
 + Bug 3716: Jumping over buildings causes collapse and fall
@@ -5767,7 +5795,7 @@ v0.35.35 (2013-03-14, 22:49 UTC+1)
 + BA Magnetic clamp always allow BAs to ride as mechanized BA
 + Implemented ProtoMech partial wing
 + Bug 3269: mechs in buildings LOS
-+ Bug 3574: Able to kick standing 'Mech's head while in building
++ Bug 3574: Able to kick standing 'Mek's head while in building
 + Bug 3031: skid into building
 + TM Errata: clan LRM 2 BV changed, Mag Clamp BV changed
 + TM Errata: Aero defensive BV changes
@@ -5820,7 +5848,7 @@ v0.35.35 (2013-03-14, 22:49 UTC+1)
 + Bug 2948: Physical Attacks against VTOLs
 + Bug: +4 for head destruction of torso-mounted cockpit added twice
 + Cleanup resolveMechWarriorPickUp()
-+ Bug: Enemy units ignored elevation when picking up MechWarriors.
++ Bug: Enemy units ignored elevation when picking up MekWarriors.
 + Bug 3575: Mud Takes Priority in Minimap
 + Bug: Next Unit button skipping units
 + Bug 3674: Null armor panel on loading save game
@@ -5850,7 +5878,7 @@ v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug 3611: Minimap does not show fuel tanks
 + armorTonnage double in entity for tracking total armor tonnage in MML
 + fix NPE when determining physical phase eligibility
-+ fix Princess to-hit guess against ejected MechWarriors
++ fix Princess to-hit guess against ejected MekWarriors
 + re-organized static JUMP_* ints in Mech.java for MML purposes
 + ignore .DS_Store when loading units
 + use MML fluff image if one is provided
@@ -5971,7 +5999,7 @@ v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Tank verifier tweaks: Armor limits added, lift/dive equipment weight rounds
     correctly.
 + Flail to-hit modifier changed from +1 to 0 as per TacOps errata.
-+ Bug 3539257: 'Mech arms still functional after side torso breach
++ Bug 3539257: 'Mek arms still functional after side torso breach
 + Bug: HarJel preventing breaches even after armor is gone.
 + Bug: Entering water while dumping ammo would cause the unit to be destroyed
     silently (no report).
@@ -6001,7 +6029,7 @@ v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Bug 3545927: Freeze at end of every turn
 + Bug: Missed changes to MegaMek.java for the C-Bill cost truncated fix.
 + Bug 3546584: bay display error
-+ Bug: Spurious "heat 1 or greater" messages for 'Mechs with torso-mounted
++ Bug: Spurious "heat 1 or greater" messages for 'Meks with torso-mounted
     cockpit and damaged life support even at heat 0.
 + Bug 3549321: Can't create squadrons when single fghter nocap is on
 + Bug: Several cost fixes
@@ -6016,7 +6044,7 @@ v0.35.32 (2012-09-30, 22:09 UTC+2)
     accounted for.
 + FASCAM ammo added to tube artillery.
 + Bug: Engine-internal compact heat sinks doubled up on installation (so, 10
-    specified in file => 20 actually ending up on 'Mech).
+    specified in file => 20 actually ending up on 'Mek).
 + Bug: Engine capacity for compact heat sinks not doubled.
 + Streamlined anti-infantry damage ratings for burst-fire weapons, multiple
     now-obsolete special case handlers deleted.
@@ -6083,7 +6111,7 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug 3535718: Problem with new SVN
 + Bug: Vehicles executing or hit by a successful charge attack not rolling for
     motive system damage as per TW p. 148.
-+ Bug 3535786: 'Mechs deployed on water hexes deploy to surface, not sea bottom.
++ Bug 3535786: 'Meks deployed on water hexes deploy to surface, not sea bottom.
 + New hexset images: cropped_barn.png, orchard.png, pigs1.png, pigs2.png,
     vineyard.png, soybeans.png...
         barn: building:1;bldg_elev:2;bldg_cf:*;fluff:11:7
@@ -6154,12 +6182,12 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
     events.
 + Bug: PSR modifier for blown-off leg applied twice the phase it happens (once
     for the event, once as pre-existing damage).
-+ Bug: Stall check for ICE-powered IndustrialMechs affected by preexisting
++ Bug: Stall check for ICE-powered IndustrialMeks affected by preexisting
     damage.
-+ Bug: Unstall check for ICE-powered IndustrialMechs possibly successful even if
++ Bug: Unstall check for ICE-powered IndustrialMeks possibly successful even if
     pilot dead/unconscious.
 + Bug: Stall/unstall checks failing on roll = target number (should be success).
-+ IndustrialMech End Phase checks (including unstalling) moved to after checking
++ IndustrialMek End Phase checks (including unstalling) moved to after checking
     for pilot wakeup.
 + Bug 3423819: c3 units boarding dropships (fixed both Bot NPEs relating to
     this, however I'm not sure if those were the only NPEs. I didn't get more.)
@@ -6185,7 +6213,7 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Data 2826895: Railway tile pieces for megamek
 + Data two new hexsets with "high quality" images (hq_atmospheric and
     hq_isometric)
-+ Fixed broken image links to Thor (Summoner) 'Mechs in mechset.txt.
++ Fixed broken image links to Thor (Summoner) 'Meks in mechset.txt.
 + Data 2832395: Lunar/Mars Building and Tunnel Tiles (added under the lunar
     tileset)
 + Data: new "Lunar Sample 16x17.board" to show off the new Lunar/Mars buildings
@@ -6278,7 +6306,7 @@ v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug: When using the unofficial Manual Shutdown option & the skip ineligible
     during movement option, manually shutdown
     mechs are skipped and can never be restarted.
-+ Bug: 'Mechs would remain standing after "leg blown off" critical hit.
++ Bug: 'Meks would remain standing after "leg blown off" critical hit.
 + Bug 3455841: Artillery from grounded spheroid dropships (Requires use of
     individual weapons option)
 + Bug: Bold bleeds when indirect fire misses from a unit outside of LOS while
@@ -6357,7 +6385,7 @@ v0.35.28 (2012-22-02, 23:07 UTC+1)
 + pass frame rather than clientgui to AdvancedSearchDialog so other programs can
     use
 + Bug: Princess bot NPE with aeros that fly off the map
-+ Bug 3474185: Princess bot NPE with ejected MechWarriors
++ Bug 3474185: Princess bot NPE with ejected MekWarriors
 + Bug 3474591: NPE in deployment
 + changed external ids to strings to allow for UUIDs, but kept integer get and
     set methods for compatability
@@ -6557,7 +6585,7 @@ v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Added Electrical Discharge ProtoMech armor
 + Set working directory in startup.sh
 + Fixed NPE in Princess bot firing calculations
-+ Added Xotl's 'Mech and Vehicle RATs.  Thanks Netzilla and Xotl!
++ Added Xotl's 'Mek and Vehicle RATs.  Thanks Netzilla and Xotl!
 + Updated contributors.txt
 + Added combat/support vehicle distinction to inferno resolution
 + Hardened armor TAC penalty now applied to inferno hits on vehicles
@@ -8187,7 +8215,7 @@ v0.33.39 (2009-01-28, UTC+1)
 + Fix ConcurrentModificationException on Server closing
 + Bug: Mech Magshot Gauss had wrong tech level
 + Removed Mech Clan Magshot Gauss, it does not exist
-+ Primitive BattleMech construction
++ Primitive BattleMek construction
 + Added Dervish DV-1S from Jihad Secrets: Blake Documents
 + Added Fluid Guns. Only construction data, no rules
 + fixed verifier tonnage rounding
@@ -8254,7 +8282,7 @@ v0.33.38 (2009-01-15, 19:51 UTC+1)
 + Bug: sorting of weapons wrong in BV calculation when BV difference is < 1
 + Bug: BAR armor not working quite right
 + Bug: non-mechs can't shoot
-+ IndustrialMechs get +2 on the determining critical hits roll and 4 crits on a
++ IndustrialMeks get +2 on the determining critical hits roll and 4 crits on a
     result of 14
 + MOUNTWIDTHMIN and MOUNTWIDTHMAX not correctly loading from XML files
 + RFE: Defensive Equipment BV printed out in list for BV Calculations
@@ -9021,7 +9049,7 @@ v0.33.24 (2008-05-09, 22:36 GMT+2)
 + Added Hiryo WiGEs from Jihad Hotspots: 3072
 + Bug: WiGE costs for moving up/down hills wrong
 + Bug: WiGEs should be able to go down as many levels as they want
-+ Bug 1959563: 'Mechs misreported as unsalvageable
++ Bug 1959563: 'Meks misreported as unsalvageable
 + Bug 1960001: Vulcan VT-6C - no Light Machine Gun Ammo
 + WiGEs can spend 2 MPs to stay at current flight level when moving over a down-
     wards level change
@@ -9453,7 +9481,7 @@ v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Bug: when changing a game option that possibly changed BV (like force-size
    mod), BV displayed in the chatlounge didn't change
 + Skidding Bug: Hex just entered counted for distance.
-+ Bug 1751666: Made the option apply only to 'Mechs as per suggestion of
++ Bug 1751666: Made the option apply only to 'Meks as per suggestion of
     initial submitter.
 + Enhancement: Show both base BV as well as BV modified by force modifier for
     each player.
@@ -9491,7 +9519,7 @@ v0.33.9 (2007-09-02, 17:47 GMT+2)
 + Added several new server commands, most are intended to enable megamek to be
     useable by visually impaired people, but some of them (ruler forinstance)
     should be useful to normal users too.
-+ ejected MechWarriors don't need to make consciousness rolls now
++ ejected MekWarriors don't need to make consciousness rolls now
 + Bug 1771542: MASC bug
 + Fixed a null pointer server crash releated to the camo image in swing. Note
    that the camo image is still behaving very odd.
@@ -9577,7 +9605,7 @@ v0.33.6 (2007-05-26, 20:00 GMT +2)
 + Bug: Meks could skid into wall hexes.
 + Bug: Meks that fell while on a wall fell to the bottom of the wall hex
 + Correct weight on Clan Machine Gun Array
-+ Added the rest of the RS:PPU 'Mechs.
++ Added the rest of the RS:PPU 'Meks.
 + Corrected tech on CLIJJ
 + Patch #1705501: Bot ammo/color can be changed in chat lounge.
 + Bug 1706879: Megamek thread problems when changing teams
@@ -9627,8 +9655,8 @@ v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Bug 1695464: C3 Master not in equipment list of advanced search.
 + Bug: rear punches to quad mechs now do hit rear locations instead of front
    locations.
-+ Added a couple more RS:PPU 'Mechs
-+ Corrected RS:PPU 'Mechs to be level 2 rather than 3
++ Added a couple more RS:PPU 'Meks
++ Corrected RS:PPU 'Meks to be level 2 rather than 3
 + Added House rule that Mechwarriors on the field only have 1 hex vis in double
   blind games
 + Corrected internal structure points for meks<=20t (they missed 1 point in the
@@ -9678,7 +9706,7 @@ v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Updated rules for skids and sideslips
 + Bug 1598114: changed improved jumpjets to level 2
 + Bug 1598576: fragmentation/flechette ammo now does x2 damage to woods
-+ Bug 1598976: 'Mech with Torso-Mounted Cockpit destroyed by head blown off
++ Bug 1598976: 'Mek with Torso-Mounted Cockpit destroyed by head blown off
     critical.
 + Bug: fireproof armour not preventing inferno explosion
 + Bug 1591093: no units to move error when swarming infantry knocked off in
@@ -9761,7 +9789,7 @@ v0.33.2 (2006-11-12 21:32 GMT+9)
 + Bug 1589704: AMS still fires on missile attacks that miss
 + AMS are no longer allowed to be switched off.
 + Data 1589921: added some more RS:PPU mechs
-+ Changed a couple of RS:PPU 'Mechs to level 2
++ Changed a couple of RS:PPU 'Meks to level 2
 + Changed light & heavy FF from level 3 to level 2
 + Bug #1585497: Check for partial cover when hitting with infernos
 + Bug 1593129: Clan BA blocking CT weapons
@@ -10129,8 +10157,8 @@ v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Bug 1451767: building damage report missing linebreak
 + Bug 1535114: Loads weapons wrong in some cases with spaces in crit list.
 + Bug 1537164: Fixed multiple Charge NPEs against building.
-+ Bug 1495133: 'Mechs now height 0 if in the same hex as a building.
-+ Bug 1474146: C3i 'Mechs now correctly interact with ECM.
++ Bug 1495133: 'Meks now height 0 if in the same hex as a building.
++ Bug 1474146: C3i 'Meks now correctly interact with ECM.
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect
@@ -10319,7 +10347,7 @@ v0.31.6 (2006-03-12, 16:48 GMT)
 + Patch 1446780: S7 Vibroblades
 + Patch 1446679: S7 Lance
 + Patch 1447385: Heavy Duty Gyro
-+ Patch 1436052: unofficial Super-Heavy 'Mech IS Values
++ Patch 1436052: unofficial Super-Heavy 'Mek IS Values
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

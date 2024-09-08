@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -94,12 +95,85 @@ public class EntityTest {
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/mechs/3050U/Exterminator EXT-4A.mtf");
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;
             computedWeight = (int) e.getWeight();
             assertEquals(expectedWeight, computedWeight);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Verify that if a unit's name appears in the list of canon unit names, it is canon
+     */
+    @Test
+    public void testCanon() {
+        File f;
+        MechFileParser mfp;
+        Entity e;
+        Vector<String> unitNames = new Vector<>();
+        unitNames.add("Exterminator EXT-4A");
+        MechFileParser.setCanonUnitNames(unitNames);
+
+        // Test 1/1
+        try {
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Verify that if a unit's name does _not_ appear in the list of canon unit names, it is not canon
+     */
+    @Test
+    public void testForceCanonicityFailure() {
+        File f;
+        MechFileParser mfp;
+        Entity e;
+        Vector<String> unitNames = new Vector<>();
+        unitNames.add("Beheadanator BHD-999.666Z");
+        MechFileParser.setCanonUnitNames(unitNames);
+
+        try {
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertFalse(e.isCanon());
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+
+    /**
+     * Verify that if a unit's name does appear in the _file_ listing canon unit names, it is canon
+     */
+    @Test
+    public void testCanonUnitInCanonUnitListFile() {
+        File f;
+        MechFileParser mfp;
+        Entity e;
+        File oulDir = new File("testresources/megamek/common/units/");
+        MechFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
+
+        try {
+            // MTF file check
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+            // BLK file check
+            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
         } catch (Exception ex) {
             fail(ex.getMessage());
         }
@@ -118,7 +192,7 @@ public class EntityTest {
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/vehicles/3050U/Kanga Medium Hovertank.blk");
+            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             Tank t = (Tank) e;

@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class PrototypeRLHandler extends RLHandler {
     private static final long serialVersionUID = 7072803119488613781L;
@@ -27,7 +27,7 @@ public class PrototypeRLHandler extends RLHandler {
      * @param g
      * @param m
      */
-    public PrototypeRLHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public PrototypeRLHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         nSalvoBonus = -1;
     }

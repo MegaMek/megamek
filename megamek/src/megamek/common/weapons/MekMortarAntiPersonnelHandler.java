@@ -23,8 +23,7 @@ import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author arlith
@@ -41,7 +40,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
      * @param m
      */
     public MekMortarAntiPersonnelHandler(ToHitData t, WeaponAttackAction w,
-            Game g, GameManager m) {
+            Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

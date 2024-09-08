@@ -17,7 +17,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.options.OptionsConstants;
 
 /**
- * @author Sebastian Brocks This class describes a MechWarrior that has ejected
+ * @author Sebastian Brocks This class describes a MekWarrior that has ejected
  *         from its ride.
  */
 
@@ -27,9 +27,9 @@ public class MechWarrior extends EjectedCrew {
     private int pickedUpById = Entity.NONE;
     private String pickedUpByExternalId = "-1";
     private boolean landed = true;
-    
+
     /**
-     * Create a new MechWarrior
+     * Create a new MekWarrior
      *
      * @param originalRide the <code>Entity</code> that was this MW's original
      *            ride
@@ -38,7 +38,7 @@ public class MechWarrior extends EjectedCrew {
         super(originalRide);
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
-    
+
     public MechWarrior(Crew crew, Player owner, Game game) {
         super(crew, owner, game);
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
@@ -51,7 +51,7 @@ public class MechWarrior extends EjectedCrew {
         super();
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -70,7 +70,7 @@ public class MechWarrior extends EjectedCrew {
     public int getPickedUpByExternalId() {
         return Integer.parseInt(pickedUpByExternalId);
     }
-    
+
     public String getPickedUpByExternalIdAsString() {
         return pickedUpByExternalId;
     }
@@ -81,7 +81,7 @@ public class MechWarrior extends EjectedCrew {
     public void setPickedUpByExternalId(String pickedUpByExternalId) {
         this.pickedUpByExternalId = pickedUpByExternalId;
     }
-    
+
     public void setPickedUpByExternalId(int pickedUpByExternalId) {
         this.pickedUpByExternalId = Integer.toString(pickedUpByExternalId);
     }
@@ -122,7 +122,7 @@ public class MechWarrior extends EjectedCrew {
     public boolean isCrippled() {
         return true; //Ejected mechwarriors should always attempt to flee according to Forced Withdrawal.
     }
-    
+
     @Override
     //Aero pilots have parachutes and can thus survive being airborne
     public boolean doomedInAtmosphere() {
@@ -133,7 +133,7 @@ public class MechWarrior extends EjectedCrew {
     public long getEntityType() {
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
     }
-    
+
     @Override
     public boolean canSpot() {
         return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);

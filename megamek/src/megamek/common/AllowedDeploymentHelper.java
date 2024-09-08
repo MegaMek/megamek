@@ -39,9 +39,10 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     public List<ElevationOption> findAllowedElevations() {
         if (board.inSpace()) {
             throw new IllegalStateException("Cannot find allowed deployment elevations in space!");
-        } else if (entity.isLocationProhibited(coords)) {
-            return Collections.emptyList();
         }
+//        else if (entity.isHexProhibited(board, coords)) {
+//            return Collections.emptyList();
+//        }
 
         List<ElevationOption> result = new ArrayList<>();
         if (entity.isAero()) {

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static megamek.common.Terrains.*;
+
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
  * @since Jun 1, 2005
@@ -104,9 +106,51 @@ public class VTOL extends Tank implements IBomber {
         return UNLIMITED_JUMP_DOWN;
     }
 
+//    @Override
+//    public boolean isHexProhibited(Board board, Coords coords) {
+//        Hex hex = board.getHex(coords);
+//        return super.isHexProhibited(board, coords)
+//                || (hex.getLevel() >= 500)
+//                || (hex.containsTerrain(BUILDING) && hex.terrainLevel(BLDG_ELEV) >= 500)
+//                || (hex.containsTerrain(INDUSTRIAL) && hex.terrainLevel(INDUSTRIAL) >= 500);
+//    }
+
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
+    public boolean isLocationProhibited(Coords c, int elevation) {
         Hex hex = game.getBoard().getHex(c);
+
+        if (hex.containsAnyTerrainOf(IMPASSABLE, SPACE)) {
+            return true;
+        }
+
+        if (elevation < 0) {
+            return true;
+        }
+
+        if (elevation == 0) {
+            if (hex.hasDepth1WaterOrDeeper()) {
+                if (!hasFlotationHull()) {
+                    return true;
+                }
+            }
+        }
+
+        if (elevation > 0) {
+            if (hex.containsTerrain(Terrains.BUILDING) && (elevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+                return true;
+            }
+
+            if (hex.containsTerrain(INDUSTRIAL) && (elevation <= hex.terrainLevel(INDUSTRIAL))) {
+                return true;
+            }
+        }
+
+        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (elevation <= hex.vegetationCeiling())) {
+            return true;
+        }
+
+        //TODO: Industrial, Bridge
+
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
@@ -115,26 +159,18 @@ public class VTOL extends Tank implements IBomber {
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation)
                     && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Can't deploy on the surface of water
-            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+            if (hex.containsTerrain(Terrains.WATER) && (elevation == 0)) {
                 return true;
             }
             // Airborne units can't deploy hidden
-            if (currElevation > 0) {
+            if (elevation > 0) {
                 return true;
             }
-        }
-
-        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-            return true;
-        }
-
-        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
-            return true;
         }
 
         return false;

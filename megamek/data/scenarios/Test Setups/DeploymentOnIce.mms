@@ -8,17 +8,17 @@ factions:
 - name: Test Player
 
   units:
-  - fullname: Locust LCT-1M
-  - fullname: Vedette Medium Tank
-  - fullname: Mauna Kea Command Vessel
-  - fullname: Moray Heavy Attack Submarine
+#  - fullname: Locust LCT-1M
+#  - fullname: Vedette Medium Tank
+#  - fullname: Mauna Kea Command Vessel
+#  - fullname: Moray Heavy Attack Submarine
   - fullname: Cavalry Attack Helicopter
-  - fullname: Ahab AHB-443
-  - fullname: Cephalus U
-  - fullname: Undine Battle Armor (Sqd5)
-  - fullname: Frogmen Blue Water Marine Response Teams (Frogmen)
-  - fullname: Silverback Coastal Cutter
-  - fullname: Bandit Hovercraft G
-  - fullname: Invader Jumpship (2631) (LF)
+#  - fullname: Ahab AHB-443
+#  - fullname: Cephalus U
+#  - fullname: Undine Battle Armor (Sqd5)
+#  - fullname: Frogmen Blue Water Marine Response Teams (Frogmen)
+#  - fullname: Silverback Coastal Cutter
+#  - fullname: Bandit Hovercraft G
+#  - fullname: Invader Jumpship (2631) (LF)
 
 

@@ -3201,21 +3201,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-//    /**
-//     * Returns true if the given hex is entirely prohibited to this unit, regardless of elevation (only
-//     * counting elevations that the unit can actually be at).
-//     * Examples are impassable terrain, a deep water hex to a tank (without sealing etc) or a heavy woods
-//     * hex (without roads) to a hover tank.
-//     * This information is used for deployment and movement.
-//     */
-//    public boolean isHexProhibited(Board board, Coords coords) {
-//        Hex hex = game.getBoard().getHex(coords);
-//        return hex.containsTerrain(Terrains.IMPASSABLE)
-//                || (board.inSpace() && doomedInSpace())
-//                || (board.onGround() && doomedOnGround()
-//                || (board.inAtmosphere() && doomedInAtmosphere()));
-//    }
-
     /**
      * Returns true if the specified hex contains some sort of prohibited
      * terrain.

@@ -119,7 +119,7 @@ public class VTOL extends Tank implements IBomber {
     public boolean isLocationProhibited(Coords c, int elevation) {
         Hex hex = game.getBoard().getHex(c);
 
-        if (hex.containsAnyTerrainOf(IMPASSABLE, SPACE)) {
+        if (hex.containsAnyTerrainOf(IMPASSABLE, SPACE, SKY)) {
             return true;
         }
 
@@ -127,47 +127,32 @@ public class VTOL extends Tank implements IBomber {
             return true;
         }
 
-        if (elevation == 0) {
-            if (hex.hasDepth1WaterOrDeeper()) {
-                if (!hasFlotationHull()) {
-                    return true;
-                }
-            }
+        if ((elevation == 0) && hex.hasDepth1WaterOrDeeper() && !hex.containsTerrain(ICE) && !hasFlotationHull()) {
+            return true;
         }
 
-        if (elevation > 0) {
-            if (hex.containsTerrain(Terrains.BUILDING) && (elevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
-                return true;
-            }
+        if (hex.containsTerrain(Terrains.BUILDING) && (elevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            return true;
+        }
 
-            if (hex.containsTerrain(INDUSTRIAL) && (elevation <= hex.terrainLevel(INDUSTRIAL))) {
-                return true;
-            }
+        if (hex.containsTerrain(INDUSTRIAL) && (elevation <= hex.terrainLevel(INDUSTRIAL))) {
+            return true;
         }
 
         if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (elevation <= hex.vegetationCeiling())) {
             return true;
         }
 
-        //TODO: Industrial, Bridge
-
-        // Additional restrictions for hidden units
         if (isHidden()) {
-            // Can't deploy in paved hexes
-            if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+            if (hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) {
                 return true;
             }
-            // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation)
-                    && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
-            // Can't deploy on the surface of water
             if (hex.containsTerrain(Terrains.WATER) && (elevation == 0)) {
                 return true;
             }
-            // Airborne units can't deploy hidden
             if (elevation > 0) {
                 return true;
             }

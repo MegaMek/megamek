@@ -108,6 +108,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
     private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
+    private ElevationOption lastDeploymentOption = null;
 
     private final ClientGUI clientgui;
 
@@ -159,6 +160,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /** Selects an entity for deployment. */
     public void selectEntity(int en) {
         lastHexDeploymentOptions.clear();
+        lastDeploymentOption = null;
 
         // hmm, sometimes this gets called when there's no ready entities?
         if (clientgui.getClient().getGame().getEntity(en) == null) {
@@ -527,16 +529,25 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 finalElevation = elevationOptions.get(0).elevation();
                 lastHexDeploymentOptions.clear();
                 lastHexDeploymentOptions.addAll(elevationOptions);
+                lastDeploymentOption = elevationOptions.get(0);
             } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
                 // When the player clicks the same hex again, always ask for the elevation
                 finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
             } else {
                 var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
                 DialogResult result = dlg.showDialog();
-                if (result == DialogResult.CONFIRMED && dlg.getFirstChoice() != null) {
-                    finalElevation = dlg.getFirstChoice().elevation();
+                if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
+                    if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
+                        finalElevation = showHighElevationChoiceDialog();
+                        if ((finalElevation == -1) || entity.isLocationProhibited(coords, finalElevation)) {
+                            return;
+                        }
+                    } else {
+                        finalElevation = dlg.getFirstChoice().elevation();
+                    }
                     lastHexDeploymentOptions.clear();
                     lastHexDeploymentOptions.addAll(elevationOptions);
+                    lastDeploymentOption = dlg.getFirstChoice();
                 } else {
                     return;
                 }
@@ -627,13 +638,25 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    private int showHighElevationChoiceDialog() {
+        String msg = "Choose an elevation:";
+        String input = JOptionPane.showInputDialog(clientgui.frame, msg);
+        try {
+            return Integer.parseInt(input);
+        } catch (Exception ex) {
+            return -1;
+        }
+    }
+
     /**
      * @return True when the last chosen elevation can be re-used without asking again. This is true
-     * when the options for the current hex have no option that the previous hex didn't.
+     * when the options for the current hex have no option that the previous hex didn't and the previous
+     * deployment option is available in the new hex.
      */
     private boolean useLastDeployElevation(List<ElevationOption> currentOptions) {
         return currentOptions.size() <= lastHexDeploymentOptions.size()
-                && lastHexDeploymentOptions.containsAll(currentOptions);
+                && lastHexDeploymentOptions.containsAll(currentOptions)
+                && currentOptions.contains(lastDeploymentOption);
 
     }
 

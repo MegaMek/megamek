@@ -40,9 +40,6 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         if (board.inSpace()) {
             throw new IllegalStateException("Cannot find allowed deployment elevations in space!");
         }
-//        else if (entity.isHexProhibited(board, coords)) {
-//            return Collections.emptyList();
-//        }
 
         List<ElevationOption> result = new ArrayList<>();
         if (entity.isAero()) {
@@ -50,6 +47,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         } else {
             result.addAll(allowedGroundElevations());
         }
+        Collections.sort(result);
         return result;
     }
 
@@ -85,7 +83,12 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         }
 
         if (entity.getMovementMode().isVTOL()) {
-            result.addAll(findAllowedVTOLElevations());
+            List<ElevationOption> vtolElevations = findAllowedVTOLElevations();
+            // remove VTOL elevations that are already present (= where the VTOl can land)
+            for (ElevationOption elevationOption : result) {
+                vtolElevations.removeIf(o -> (o.elevation() == elevationOption.elevation()));
+            }
+            result.addAll(vtolElevations);
         }
 
         //TODO: test stacking violations
@@ -159,18 +162,17 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> findAllowedElevationsWithBuildings() {
         List<ElevationOption> result = new ArrayList<>();
-        if ((entity instanceof VTOL) || entity.getMovementMode().isWiGE()) {
-            return result;
-        }
-
         int height = hex.terrainLevel(Terrains.BLDG_ELEV);
-        if (Compute.stackingViolation(game, entity, 0, coords, null, entity.climbMode()) == null) {
-            result.add((new ElevationOption(0, ON_GROUND)));
-        }
+        if (!(entity instanceof VTOL) && !entity.getMovementMode().isWiGE()) {
 
-        for (int elevation = 1; elevation < height; elevation++) {
-            if (Compute.stackingViolation(game, entity, elevation, coords, null, entity.climbMode()) == null) {
-                result.add((new ElevationOption(elevation, BUILDING_FLOOR)));
+            if (Compute.stackingViolation(game, entity, 0, coords, null, entity.climbMode()) == null) {
+                result.add((new ElevationOption(0, ON_GROUND)));
+            }
+
+            for (int elevation = 1; elevation < height; elevation++) {
+                if (Compute.stackingViolation(game, entity, elevation, coords, null, entity.climbMode()) == null) {
+                    result.add((new ElevationOption(elevation, BUILDING_FLOOR)));
+                }
             }
         }
 

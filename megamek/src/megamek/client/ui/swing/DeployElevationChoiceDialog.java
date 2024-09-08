@@ -50,10 +50,10 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<ElevationO
                 ? Messages.getString("DeploymentDisplay.altitude")
                 : Messages.getString("DeploymentDisplay.elevation");
         String elevationText = elevationAltitude + elevationOption.elevation();
-        String text = "<HTML><HEAD>" + styles() + "</HEAD><BODY><CENTER>"
-                + spanCSS("description", description) + "<BR>"
-                + spanCSS("elevation", elevationText)
-                + "</BODY></HTML>";
+        String text = "<HTML><HEAD>" + styles() + "</HEAD><BODY><CENTER>" + spanCSS("description", description);
+        if (elevationOption.type() != DeploymentElevationType.ELEVATIONS_ABOVE) {
+            text += "<BR>" + spanCSS("elevation", elevationText) + "</BODY></HTML>";
+        }
         button.setText(text);
     }
 

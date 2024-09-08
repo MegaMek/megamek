@@ -28,7 +28,7 @@ import java.util.Objects;
  * @param elevation The elevation or altitude in the hex
  * @param type the DeploymentElevationType (on the ground, on a bridge, ...)
  */
-public record ElevationOption(int elevation, DeploymentElevationType type) {
+public record ElevationOption(int elevation, DeploymentElevationType type) implements Comparable<ElevationOption> {
 
     @Override
     public boolean equals(Object o) {
@@ -44,5 +44,15 @@ public record ElevationOption(int elevation, DeploymentElevationType type) {
     @Override
     public int hashCode() {
         return Objects.hash(elevation, type);
+    }
+
+    @Override
+    public int compareTo(ElevationOption other) {
+        return Integer.compare(this.elevation, other.elevation);
+    }
+
+    @Override
+    public String toString() {
+        return "Elevation: " + elevation + " (" + type + ")";
     }
 }

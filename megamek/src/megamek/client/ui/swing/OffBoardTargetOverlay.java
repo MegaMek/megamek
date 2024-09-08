@@ -21,6 +21,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,10 +88,15 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if (selectedArtilleryWeapon == null) {
             return false;
         }
+        // Bay weapons cannot fire homing artillery rounds (currently)
+        // TODO: revisit when aero errata is implemented
+        if (selectedArtilleryWeapon.getType() instanceof BayWeapon) {
+            return false;
+        }
 
         // the artillery weapon needs to be using non-homing ammo
         Mounted ammo = selectedArtilleryWeapon.getLinked();
-        if (ammo.isHomingAmmoInHomingMode()) {
+        if (!(ammo == null) && ammo.isHomingAmmoInHomingMode()) {
             return false;
         }
 
@@ -111,7 +117,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) &&
                     (entity.getOffBoardDirection() == direction) &&
-                        (targetingPhaseDisplay.ce() != null && 
+                        (targetingPhaseDisplay.ce() != null &&
                         		targetingPhaseDisplay.ce().isOffBoard() ||
                         weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
                 return true;

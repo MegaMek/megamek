@@ -1,4 +1,4 @@
-# 
+#
 #  A MegaMek Scenario file
 #
 #
@@ -30,20 +30,20 @@ Maps=RANDOM,RANDOM
 # path is specified relative to the scenario file
 # This is one way to set victory conditions
 GameOptionsFile=Example_options.xml
-# The Game Options can be fixed. In this case the Game Options Dialog shown before the 
-# scenario starts is skipped. 
+# The Game Options can be fixed. In this case the Game Options Dialog shown before the
+# scenario starts is skipped.
 FixedGameOptions=true
 
 # Planetary Conditions ------------------------------------------
-# Planetary Conditions can be fixed. In this case the Planetary Conditions Dialog shown before the 
-# scenario starts is skipped. 
+# Planetary Conditions can be fixed. In this case the Planetary Conditions Dialog shown before the
+# scenario starts is skipped.
 FixedPlanetaryConditions=true
 # Temperature: Only integer values are allowed
 PlanetaryConditionsTemperature=-14
 PlanetaryConditionsGravity=1.12
 # Light: Default = Daylight; 1 = Dusk; 2 = Full Moon Night; 3 = Moonless Night; 4 = Pitch Black
 PlanetaryConditionsLight=1
-# Weather: Default = None; 1/2/3/4 = Light/Moderate/Heavy/Gusting Rain; 5 = Downpour; 
+# Weather: Default = None; 1/2/3/4 = Light/Moderate/Heavy/Gusting Rain; 5 = Downpour;
 # 6/7/9 Light/Moderate/Heavy Snow; 8 = Snow Flurries; 10 = Sleet; 11 = Blizzard;
 # 12 = Ice Storm; Anything else resolves to default.
 PlanetaryConditionsWeather=13
@@ -71,9 +71,9 @@ PlanetaryConditionsAllowTerrainChanges=false
 
 # Faction (= Player) list ---------------------------------------
 # A scenario can be set to single player style. In this case the first player is
-# the human player and all other players are Princess bots. This will skip the 
+# the human player and all other players are Princess bots. This will skip the
 # Player/Camo assignment dialog and the "Host game" dialog and directly connect
-# to a localhost Server and use the correct player name. 
+# to a localhost Server and use the correct player name.
 SinglePlayer=true
 # The player name used to log into the server MUST match this name to play as
 # that faction.  Player names can *not* include spaces.
@@ -107,8 +107,8 @@ Camo_PlayerB=Clans/Burrock/,Clan Burrock.jpg
 
 # Mechlist for each faction -------------------------------------------------
 #
-# Units are constructed as Unit_<faction name>_<#>, where the faction name 
-# matches the one listed in the Faction property and the # is a sequential 
+# Units are constructed as Unit_<faction name>_<#>, where the faction name
+# matches the one listed in the Faction property and the # is a sequential
 # numbering starting at 1.  If there is a gap in the numbering, any units after
 # the gap will be ignored.
 #
@@ -147,8 +147,8 @@ Unit_PlayerA_1_Camo=Clans/Wolf/,Alpha Galaxy.jpg
 
 # To initially damage units, you can use a unit armor property, which specifies
 # armor and internal values.  Values above the unit's nominal value for that
-# location will be ignored.  
-# Armor is specified in this order: 
+# location will be ignored.
+# Armor is specified in this order:
 # H,CT,CTR,RT,RTR,LT,LTR,RA,LA,RL,LL,HI,CTI,RTI,LTI,RAI,LAI,RLI,LLI
 # Here's an example:
 #
@@ -163,7 +163,7 @@ Unit_PlayerA_1_Camo=Clans/Wolf/,Alpha Galaxy.jpg
 # Unit_PlayerB_1_Damage=5
 
 # Advanced Dammage Modification
-# 
+#
 # Mech Locations
 # 	HEAD=0,CT=1,RT=2,LT=3,RARM=4,LARM=5,RLEG=6,LLEG=7
 # Example for Mechs:
@@ -178,14 +178,14 @@ Unit_PlayerA_1_Camo=Clans/Wolf/,Alpha Galaxy.jpg
 #	Men = 0 (Will set the number of men in the platoon)
 #
 # Battle Armor
-#      Unit#=0(First Unit Number) to Armor 
+#      Unit#=0(First Unit Number) to Armor
 #      EG Unit_Kurita_3_DamageSpecific=N2:1,N3:0
 #          Will set unit 3 to have 1 Armor Remaning
 #          while unit 4 Destroyed
 #
 # Proto Mechs
 #      Head=0,Torso =1,RARM=2,LARM=3,LEGS=4,Main Gun=5
-#      
+#
 Unit_Kurita_1_DamageSpecific=I1:10,N2:2
 Unit_Kurita_2_DamageSpecific=N0:1
 Unit_Kurita_4_DamageSpecific=N2:1,N2:2
@@ -195,7 +195,7 @@ Unit_Kurita_5_DamageSpecific=N4:1,N1:1
 
 # Critical Hits
 # eg Unit_Kurita_1_CritHit=1:8
-# This does a crit hit on location 1 slot 8.  
+# This does a crit hit on location 1 slot 8.
 #
 # Mech Crit Hits
 # 	HEAD=0,CT=1,RT=2,LT=3,RARM=4,LARM=5,RLEG=6,LLEG=7
@@ -208,7 +208,7 @@ Unit_Kurita_5_DamageSpecific=N4:1,N1:1
 # 	2 = Main weapon jams for 1 turn
 # 	3 = Engine Destroyed Immobile
 # 	4 = Crew killed (tank dead)
-# 	5 = Fuel Tank/Engine Shielding (tank dead) 
+# 	5 = Fuel Tank/Engine Shielding (tank dead)
 # 	6 = Power Plant Hit (tank dead)
 #
 # Proto Mechs
@@ -228,22 +228,22 @@ Unit_Kurita_6_CritHit=2:10
 # Set Ammo Ammount(Only Works for Mechs)
 #
 # Note will not be able to specifiy a value larger then Inital Ammout
-# 
+#
 # Loc and Slots are the same as Crit Locations
 #
 # For a Mech this would
 # Unit_Kurita_6_SetAmmoTo=2:11-3
 # Would set Ammo at Slot 2:11 to 3 points
-# 
+#
 Unit_Kurita_6_SetAmmoTo=2:11-1
 
-# Set Ammo type (works only for 'Mechs, too)
+# Set Ammo type (works only for 'Meks, too)
 #
 # Loc and Slots work the same as for critical locations and ammo ammout
 #
-# Ammo name is the unique string used in the 'Mech files themselves.
+# Ammo name is the unique string used in the 'Mek files themselves.
 # Errors will be logged to the normal log file and the ammo replaced
-# by the standard defined for the 'Mech. The same will happen for ammo
+# by the standard defined for the 'Mek. The same will happen for ammo
 # which is illegal according to the specified game rules.
 Unit_PlayerA_2_SetAmmoType=3:1-ISAC20 Flak Ammo
 
@@ -254,4 +254,3 @@ Unit_PlayerA_2_SetAmmoType=3:1-ISAC20 Flak Ammo
 # to be anything between 0 and 10. Altitude 0 means the unit deploys landed.
 #
 # Unit_Kurita_666_Altitude=3
-

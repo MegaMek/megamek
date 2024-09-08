@@ -40,7 +40,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
         final int[] skills = super.generateRandomSkills(entity, clanPilot, forceClan);
 
         // Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
-        // Infantry Anti-'Mech skill should be one higher unless foot
+        // Infantry Anti-'Mek skill should be one higher unless foot
         if (entity.isConventionalInfantry() && !entity.getMovementMode().isLegInfantry()) {
             skills[1]++;
         }
@@ -52,7 +52,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
 
         // Now lets handle clan pilots
         if (getType().isClan() || (forceClan && clanPilot)) {
-            // 'Mechs and Battle Armour are better (but not ProtoMechs),
+            // 'Meks and Battle Armour are better (but not ProtoMechs),
             // Tanks are worse, while Gunnery is worse for Infantry, Conventional Fighters
             // and Small Craft
             if ((entity instanceof Mech) || (entity instanceof BattleArmor)) {
@@ -66,11 +66,11 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
                 skills[0]++;
             }
         }
-        
+
         //And finally, The Society, per WoRS p. 3
-        
+
         if (getType().isSociety()) {
-            // 'Mechs are Veteran with a -1 modifier to skills (simulated by dropping Piloting by 1).
+            // 'Meks are Veteran with a -1 modifier to skills (simulated by dropping Piloting by 1).
             // Tanks are Regular with the same -1 modifier.
             // Infantry and ProtoMechs are both Regular.
             // Aerospace Fighters are Veteran.

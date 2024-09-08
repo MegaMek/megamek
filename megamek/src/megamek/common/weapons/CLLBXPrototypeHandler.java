@@ -16,11 +16,10 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.*;
-import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -36,7 +35,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
      * @param m
      */
     public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g,
-                                 GameManager m) {
+                                 TWGameManager m) {
         super(t, w, g, m);
     }
 

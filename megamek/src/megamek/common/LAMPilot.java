@@ -13,16 +13,16 @@
  */
 package megamek.common;
 
-import megamek.client.generator.RandomNameGenerator;
-import megamek.common.enums.Gender;
-import megamek.common.util.CrewSkillSummaryUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.client.generator.RandomNameGenerator;
+import megamek.common.enums.Gender;
+import megamek.common.util.CrewSkillSummaryUtil;
+
 /**
- * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes,
+ * Crew class for LAMs which tracks separate skills for 'Mek and Fighter modes,
  * and chooses the correct one based on the LAM's current movement mode.
  *
  * @author Neoancient

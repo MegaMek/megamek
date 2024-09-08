@@ -22,7 +22,7 @@ import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -37,7 +37,7 @@ public class BPodHandler extends AmmoWeaponHandler {
      * @param g
      * @param m
      */
-    public BPodHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public BPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

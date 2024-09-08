@@ -20,7 +20,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * This is my attempt to get weapon bays treated as normal weapons rather than the current hack in
@@ -42,7 +42,7 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, GameManager manager) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
@@ -58,7 +58,7 @@ public abstract class BayWeapon extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new BayWeaponHandler(toHit, waa, game, manager);
     }
 

@@ -25,7 +25,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -39,7 +39,7 @@ public class PrototypeGaussHandler extends GRHandler {
      * @param w
      * @param g
      */
-    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

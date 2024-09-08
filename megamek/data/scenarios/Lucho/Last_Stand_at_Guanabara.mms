@@ -3,7 +3,7 @@
 # a raid in the Lyran Alliance.Control of the world falls to the
 # remains of the battered remains of the lyran defenders and a
 # falcon unit hungry for glory.
-  
+
 MMSVersion=1
 Name=Last Stand at Guanabara
 Description=Clan Jade Falcon stages a raid on a lyran world
@@ -16,9 +16,9 @@ Factions=LAAF,JadeFalcon
 Location_LAAF=E
 Location_JadeFalcon=S
 Unit_LAAF_1=Atlas AS7-D,Kommandant Nascimento,3,3,S,56,31
-Unit_LAAF_2=Archer ARC-4M,MechWarrior Andre,4,5,S,58,30
-Unit_LAAF_3=Warhammer WHM-7S,MechWarrior Fabio,3,4,SW,54,32
-Unit_LAAF_4=Marauder MAD-5S,MechWarrior Romerito,3,4,S,55,33
+Unit_LAAF_2=Archer ARC-4M,MekWarrior Andre,4,5,S,58,30
+Unit_LAAF_3=Warhammer WHM-7S,MekWarrior Fabio,3,4,SW,54,32
+Unit_LAAF_4=Marauder MAD-5S,MekWarrior Romerito,3,4,S,55,33
 Unit_LAAF_5=Drillson Heavy Hover Tank (Standard),regular,4,4,SW,71,39
 Unit_LAAF_6=Drillson Heavy Hover Tank (Standard),regular,4,4,SW,72,39
 Unit_LAAF_7=Drillson Heavy Hover Tank (Standard),regular,4,4,SW,73,40

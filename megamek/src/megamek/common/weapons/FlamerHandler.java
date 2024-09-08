@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -27,7 +27,7 @@ import java.util.Vector;
 public class FlamerHandler extends WeaponHandler {
     private static final long serialVersionUID = -7348456582587703751L;
 
-    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -44,7 +44,9 @@ public class FlamerHandler extends WeaponHandler {
         if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             
-            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (bmmFlamerDamage && entityTarget.tracksHeat() &&
+                    !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                            Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {

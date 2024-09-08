@@ -2,7 +2,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.Player;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -10,9 +10,9 @@ import megamek.server.Server;
  */
 public class ListEntitiesCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public ListEntitiesCommand(Server server, GameManager gameManager) {
+    public ListEntitiesCommand(Server server, TWGameManager gameManager) {
         super(server, "listEntities",
                 "Show the ids of all entities owned by this player. Usage: /listEntities");
         this.gameManager = gameManager;

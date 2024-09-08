@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * This class allows for dynamic Geysers to be added to maps which will go off
@@ -32,7 +33,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
      * 
      * @param gameManager the game manager for which this runs.
      */
-    public GeyserProcessor(GameManager gameManager) {
+    public GeyserProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 

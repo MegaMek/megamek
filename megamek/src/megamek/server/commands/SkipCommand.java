@@ -13,9 +13,8 @@
  */
 package megamek.server.commands;
 
-import megamek.common.Game;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * Skips the current player's turn, if possible.
@@ -25,10 +24,10 @@ import megamek.server.Server;
  */
 public class SkipCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
     /** Creates a new instance of SkipCommand */
-    public SkipCommand(Server server, GameManager gameManager) {
+    public SkipCommand(Server server, TWGameManager gameManager) {
         super(server, "skip",
                 "Skips the current turn, if possible.  Usage: /skip");
         this.gameManager = gameManager;

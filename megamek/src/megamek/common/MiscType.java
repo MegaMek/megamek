@@ -722,7 +722,7 @@ public class MiscType extends EquipmentType {
                 return 2.0 * .250;
             }
         } else if (hasFlag(F_JUMP_BOOSTER)) {
-            // This is the 'Mech mechanical jump booster. The BA jump booster has the same flag but
+            // This is the 'Mek mechanical jump booster. The BA jump booster has the same flag but
             // has a fixed weight so doesn't get to this point.
             return defaultRounding.round((entity.getWeight() * entity.getOriginalJumpMP()) * 0.05, entity);
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {
@@ -1537,7 +1537,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCombine());
         EquipmentType.addType(MiscType.createBackhoe());
         EquipmentType.addType(MiscType.createPileDriver());
-        EquipmentType.addType(MiscType.createArmoredCowl());
         EquipmentType.addType(MiscType.createNullSignatureSystem());
         EquipmentType.addType(MiscType.createVoidSignatureSystem());
         EquipmentType.addType(MiscType.createChameleonLightPolarizationShield());
@@ -3485,7 +3484,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // BattleMech Melee Weapons
+    // BattleMek Melee Weapons
     public static MiscType createChainWhip() {
         MiscType misc = new MiscType();
 
@@ -4293,7 +4292,7 @@ public class MiscType extends EquipmentType {
 
     // TODO - Damage Interupt Circuit - IO pg 39
     // Maybe the helmets should be quirks?
-    // TODO - SLDF Advanced Neurohelmet (MechWarrior) - IO pg 40
+    // TODO - SLDF Advanced Neurohelmet (MekWarrior) - IO pg 40
     // TODO - SLDF Advanced Neurohelmet (Fighter Pilot) - IO pg 40
     // TODO - Virtual Reality Piloting Pod - IO pg 70
 
@@ -8638,27 +8637,6 @@ public class MiscType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    // Battle Armor Tech
-
-    public static MiscType createArmoredCowl() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Armored Cowl";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.cost = 10000;
-        misc.flags = misc.flags.or(F_COWL).or(F_MECH_EQUIPMENT);
-        misc.bv = 10;
-        // Making this up based on the Strat Ops Quirk
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2439);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_E, RATING_X });
         return misc;
     }
 

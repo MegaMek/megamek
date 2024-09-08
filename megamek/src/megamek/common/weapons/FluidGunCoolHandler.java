@@ -17,8 +17,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -32,7 +31,7 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public FluidGunCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public FluidGunCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

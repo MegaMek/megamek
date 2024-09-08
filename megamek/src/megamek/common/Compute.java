@@ -41,7 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import java.util.*;
 
 /**
- * The Compute class is designed to provide static methods for 'Mechs and other
+ * The Compute class is designed to provide static methods for 'Meks and other
  * entities moving, firing, etc.
  */
 public class Compute {

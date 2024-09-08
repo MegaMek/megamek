@@ -57,10 +57,8 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 // new round
                 gameManager.rollInitiative();
 
-                if (!game().shouldDeployThisRound()) {
-                    gameManager.incrementAndSendGameRound();
-                    gameManager.getAutoSaveService().performRollingAutosave();
-                }
+                gameManager.incrementAndSendGameRound();
+                gameManager.getAutoSaveService().performRollingAutosave();
 
                 gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
                 gameManager.initiativeHelper.writeInitiativeReport();

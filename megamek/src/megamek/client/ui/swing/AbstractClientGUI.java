@@ -22,9 +22,11 @@ import megamek.client.IClient;
 import megamek.client.commands.ClientCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -187,4 +189,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
         return "Unknown Client Command.";
     }
 
+    protected void showScriptedMessage(GameScriptedMessageEvent event) {
+        new MMNarrativeStoryDialog(frame, event).setVisible(true);
+    }
 }

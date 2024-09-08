@@ -1299,21 +1299,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
     }
 
-    /**
-     * Resets this game.
-     */
+    @Override
     public synchronized void reset() {
+        super.reset();
         uuid = UUID.randomUUID();
 
-        currentRound = -1;
-
-        inGameObjects.clear();
         entityPosLookup.clear();
-
         vOutOfGame.removeAllElements();
-
         turnVector.clear();
-        turnIndex = 0;
 
         clearActions();
         resetCharges();
@@ -1333,8 +1326,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         victoryTeam = Player.TEAM_NONE;
         lastEntityId = 0;
         planetaryConditions = new PlanetaryConditions();
-        forces = new Forces(this);
-        groundObjects = new HashMap<>();
     }
 
     private void removeArtyAutoHitHexes() {
@@ -2996,8 +2987,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     public boolean gameTimerIsExpired() {
-        return ((getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)) && (getRoundCount() == getOptions()
-                .intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT)));
+        return getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)
+                && (getRoundCount() == getOptions().intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
     }
 
     /**

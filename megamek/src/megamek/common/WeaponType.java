@@ -918,6 +918,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISVariableSpeedPulseLaserSmall());
         EquipmentType.addType(new ISVariableSpeedPulseLaserLarge());
         EquipmentType.addType(new ISBinaryLaserCannon());
+        EquipmentType.addType(new ISLBinaryLaserCannon());
         EquipmentType.addType(new ISBombastLaser());
         EquipmentType.addType(new CLERLaserLarge());
         EquipmentType.addType(new CLHeavyLaserLarge());

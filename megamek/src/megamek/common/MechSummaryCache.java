@@ -15,19 +15,20 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.ASUnitType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.TestEntity;
 
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
@@ -470,7 +471,7 @@ public class MechSummaryCache {
             } else if (e.isOmni()) {
                 ms.setUnitSubType("Omni");
             } else {
-                ms.setUnitSubType("BattleMech");
+                ms.setUnitSubType("BattleMek");
             }
         } else {
             ms.setUnitSubType(e.getMovementModeAsString());

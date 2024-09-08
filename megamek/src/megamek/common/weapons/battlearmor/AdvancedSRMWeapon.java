@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AdvancedSRMHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.srms.SRMWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -39,7 +39,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new AdvancedSRMHandler(toHit, waa, game, manager);
     }
 

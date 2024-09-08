@@ -20,7 +20,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.Player;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -30,9 +30,9 @@ import megamek.server.Server;
  */
 public class TraitorCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public TraitorCommand(Server server, GameManager gameManager) {
+    public TraitorCommand(Server server, TWGameManager gameManager) {
         super(server,
                 "traitor",
                 "Switches a player's entity to another player during the end phase. "

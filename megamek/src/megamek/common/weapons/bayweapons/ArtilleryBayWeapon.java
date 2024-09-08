@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.*;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -55,7 +55,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-                                              WeaponAttackAction waa, Game game, GameManager manager) {
+                                              WeaponAttackAction waa, Game game, TWGameManager manager) {
         Entity ae = game.getEntity(waa.getEntityId());
         boolean useHoming = false;
         for (WeaponMounted bayW : ((WeaponMounted) ae.getEquipment(waa.getWeaponId())).getBayWeapons()) {

@@ -16,7 +16,7 @@ FUTURE AMMENDMENTS (game developers)
 15) Find a way to have scenarios load saved unit list.
 
 GENERAL RULES
-Clan units play by clan honor rules.  
+Clan units play by clan honor rules.
 Once a clan unit picks an opponent, no other clan units may attack that unit. If the clan units are outnumbered, they may choose to take on more than one opponent at a time.  If there are more clanners then Strikers, the extra clanners will sit back and wait for the engaged clanners to die, unless fired upon.
 Clan units must not initiate physical attacks.
 Clan units do not retreat to Inner Sphere units unless otherwise stated in the scenario.
@@ -41,7 +41,7 @@ Strikers Air Support
 Cadet Katiara Kylie (Gunnery 4, Piloting 3), Banshee BSE-X2
 
 Deployment
-The Striker 'Mechs set up within six hexes of the north end of the canyon.  They must have no line of sight to the Clan 'Mechs. See Special Rules about Kylie's Banshee.
+The Striker 'Meks set up within six hexes of the north end of the canyon.  They must have no line of sight to the Clan 'Meks. See Special Rules about Kylie's Banshee.
 
 DEFENDER
 BlackVision
@@ -66,7 +66,7 @@ The Banshee strafes the clan mechs just before the beginning of Turn 1.  The Str
 
 MEGAMEK ADJUSTMENTS
 The map setup called for in the scenario is currently impossible to setup in MegaMek.  This required a shift in all directions 90 degrees clockwise (West is now North, East is now South).
-While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the clan mechs, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills both 'Mechs before start of game (if that ever happens, let me know).
+While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the clan mechs, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills both 'Meks before start of game (if that ever happens, let me know).
 
 **********1st Somerset Strikers Scenario #2 - DUSTBALL SHOWDOWN (EPISODE 2), pg. 103**********
 
@@ -94,7 +94,7 @@ Mechwarrior Korthan (Gunnery 3, Piloting 4), Summoner M
 Mechwarrior Damil (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
 
 Deployment
-The Cluster Command Star sets up first, on the west mapsheet in the hexes numbered 0113-0117.  Alpha Talon does not enter the map until the beginning of Turn 3, at which point the 'Mechs are placed on hexes 0113-0117 of the west mapsheet.
+The Cluster Command Star sets up first, on the west mapsheet in the hexes numbered 0113-0117.  Alpha Talon does not enter the map until the beginning of Turn 3, at which point the 'Meks are placed on hexes 0113-0117 of the west mapsheet.
 
 DEFENDER
 1stSomersetStrikers
@@ -112,23 +112,23 @@ Deployment
 The Strikers set up second and may start anywhere on the east mapsheet facing and direction.  Val's Centurion does not begin play on the map.  During the Movement Phase of Turn 3, he enters play from any hex along the north or east edge of the map.  See Special Rules about Kylie's Banshee.
 
 VICTORY CONDITIONS
-The attackers win a decisive victory if they destroy or drive off all the defending 'Mechs before the FedCom troops arrive.
-The defenders win a decisive victory if they destroy four or more Clan 'Mechs while losing none of their own.  They win a marginal victory if none of their 'Mechs are destroyed.  Note that Striker 'Mechs exiting the map off the east edge are not considered destroyed, but "driven off" by the Clans.
+The attackers win a decisive victory if they destroy or drive off all the defending 'Meks before the FedCom troops arrive.
+The defenders win a decisive victory if they destroy four or more Clan 'Meks while losing none of their own.  They win a marginal victory if none of their 'Meks are destroyed.  Note that Striker 'Meks exiting the map off the east edge are not considered destroyed, but "driven off" by the Clans.
 
 SPECIAL RULES
 Set the temperature to 60 degrees Celsius in the Game Options.
 The scenario is over at the end of Turn 6 when the FedCom troops land.
-All Clan 'Mechs start play with 13 heat points, including the Clan 'Mechs starting on Turn 3.
+All Clan 'Meks start play with 13 heat points, including the Clan 'Meks starting on Turn 3.
 The Clan forces must stay on the map.  The Strikers can only exit the east edge.
-The Banshee Strafes the Clan 'Mechs just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Mechs and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly east of the target.
+The Banshee Strafes the Clan 'Meks just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Meks and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly east of the target.
 
 MEGAMEK ADJUSTMENTS
 Since the scenario system cannot currently delay the deployment of units, the second star will fill hexes 0108 through 0112, face south, and wait for the first star to move out of the way and attain their place by Turn 3.  They will not fire nor be fired upon until Turn 3.  As for the Val's Centurion, he will be placed anywhere along the east or north edge, and can move prior to Turn 3 as long as he stays within the east or north edge.  He will not engage nor be engaged by the enemy until Turn 3.
-Because all 'Mechs will be on the board from the beginning, this will effect the turn rotations.  Use the following sequence until round 3:
+Because all 'Meks will be on the board from the beginning, this will effect the turn rotations.  Use the following sequence until round 3:
 If attacker wins the initiative; 1stSomersetStrikers(Centurion), BlackVision(Alpha Talon), BlackVision(Alpha Talon), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star)
 If defender wins the initiative; BlackVision(Alpha Talon), BlackVision(Alpha Talon), 1stSomersetStrikers(Centurion), BlackVision(Alpha Talon), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star), 1stSomersetStrikers
-To reflect the fact that all Clan 'Mechs are supposed to start of with 13 heat points on their scale, the first star during the first round and the second star during the third round will not use 13 heat points worth of their heatsinks, regardless of the 'Mechs capabilities to overheat without consequence.  If the 'Mech does not have 13 heatsinks available to start with (6.5 if Double Heatsinks), the mech may not move or fire.  After that round, nothing's stopping you from cooking your 'Mech as you see fit.
-While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the Clan 'Mechs, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Mechs before start of game (if that ever happens, let me know).
+To reflect the fact that all Clan 'Meks are supposed to start of with 13 heat points on their scale, the first star during the first round and the second star during the third round will not use 13 heat points worth of their heatsinks, regardless of the 'Meks capabilities to overheat without consequence.  If the 'Mek does not have 13 heatsinks available to start with (6.5 if Double Heatsinks), the mech may not move or fire.  After that round, nothing's stopping you from cooking your 'Mek as you see fit.
+While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the Clan 'Meks, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Meks before start of game (if that ever happens, let me know).
 
 **********1st Somerset Strikers Scenario #3 - THE TAKING OF WOTAN (EPISODE 3), pg. 104**********
 
@@ -142,7 +142,7 @@ Place Medium Elevation 2 buildings in the following six hexes: 0727, 0729, 0731,
 ATTACKER
 FalconsClaws
 
-Falcon's Claws, Command Star: 
+Falcon's Claws, Command Star:
 Star Colonel Nicolai Malthus (Gunnery 1, Piloting 2), Summoner M
 Mechwarrior Douglas (Gunnery 3, Piloting 4), Timber Wolf Prime
 Mechwarrior Jala (Gunnery 3, Piloting 4), Timber Wolf Prime
@@ -168,11 +168,11 @@ Mechwarrior John Kerouac (Gunnery 6, Piloting 6), Wolfhound WLF-1
 Mechwarrior Cedric Quentin (Gunnery 6, Piloting 6), Wolfhound WLF-1
 
 Deployment
-The defenders set up first.  The 'Mechs of the Recon Lance may start anywhere between rows XX15 and XX20 (hex numbers ending with 15 through 20).  The Command Lance begins in any hexes along the south edge of the map (hex numbers ending in 34).  All of the defending 'Mechs begin the scenario facing north.
+The defenders set up first.  The 'Meks of the Recon Lance may start anywhere between rows XX15 and XX20 (hex numbers ending with 15 through 20).  The Command Lance begins in any hexes along the south edge of the map (hex numbers ending in 34).  All of the defending 'Meks begin the scenario facing north.
 
 VICTORY CONDITIONS
-The attackers win a decisive victory if they destroy all of the defending 'Mechs without losing any of their own.  They win a marginal victory if they destroy all defending 'Mechs.
-The defenders win a decisive victory if they destroy all of the attackers.  They win a marginal victory if they destroy three or more of the attacking 'Mechs.
+The attackers win a decisive victory if they destroy all of the defending 'Meks without losing any of their own.  They win a marginal victory if they destroy all defending 'Meks.
+The defenders win a decisive victory if they destroy all of the attackers.  They win a marginal victory if they destroy three or more of the attacking 'Meks.
 
 SPECIAL RULES
 Defending units cannot retreat.  The defenders must add a +1 to-hit modifier to all attacks and subtract 2 from all Initiative rolls.
@@ -217,8 +217,8 @@ Deployment
 Place the Centurion in Hex 0818 facing north.  Place the Axman in Hex 0719 facing southwest.  Place the Mauler in Hex 0819 facing south.
 
 VICTORY CONDITIONS
-The attackers win a decisive victory if Kristen Redmond destroys all of the defending 'Mechs without aid from the other 'Mechs in her Star.  The attackers win a marginal victory if they destroy all of the defending 'Mechs.
-The defenders win a decisive victory if all three 'Mechs escape off the south edge of the mapsheet.  They win a marginal victory if one or two mechs escape off the south edge.
+The attackers win a decisive victory if Kristen Redmond destroys all of the defending 'Meks without aid from the other 'Meks in her Star.  The attackers win a marginal victory if they destroy all of the defending 'Meks.
+The defenders win a decisive victory if all three 'Meks escape off the south edge of the mapsheet.  They win a marginal victory if one or two mechs escape off the south edge.
 
 SPECIAL RULES
 Kristen Redmond says she alone will deal with all three Strikers.  No other mech may fire its weapons or move closer to the defenders than Kristen.  This restriction is lifted if Kristen's Mad Dog is destroyed or disabled.  The Mad Dog is considered disabled if all of its weapons, both arms, or one or both legs are destroyed; if it shuts down due to overheating; or if Kristen fails a Consciousness roll.
@@ -266,7 +266,7 @@ The team with the last surviving unit left on the mapsheet wins a decisive victo
 SPECIAL RULES
 Each armored trooper is deployed as a separate unit.
 If the players wish to use the rules for Hostile Environments, treat all the River hexes as Clear swampy terrain (see p. 91 BattleTech Compendium; Rules of Warfare).
-The entire battlefield is covered with a thick fog.  As a result, attacks against standing 'Mechs suffer a +1 to-hit modifier, while attacks against prone 'Mechs and infantry suffer a +2 to-hit modifier.  Clan EI neural implants reduce these penalties by 1.  These modifiers do not apply to a target in a hex adjacent to the attacker.
+The entire battlefield is covered with a thick fog.  As a result, attacks against standing 'Meks suffer a +1 to-hit modifier, while attacks against prone 'Meks and infantry suffer a +2 to-hit modifier.  Clan EI neural implants reduce these penalties by 1.  These modifiers do not apply to a target in a hex adjacent to the attacker.
 
 MEGAMEK ADJUSTMENTS
 The map setup called for in the scenario is currently impossible to setup in MegaMek.  To compensate, all directions are shifted 90 degrees clockwise (West is now North, East is now South).
@@ -299,7 +299,7 @@ Mechwarrior Elston (Gunnery 3, Piloting 4), Timber Wolf Prime
 Mechwarrior Althea (Gunnery 3, Piloting 4), Timber Wolf Prime
 
 Deployment
-The Clans set up second.  Place Malthus's Summoner in Hex 1412.  The other 'Mechs of his Star may be placed in any Level 0 hexes within two hexes of the Summoner.  Set up Redmond's Star in the following five hexes: 0109,0110,0111,0209, and 0210.
+The Clans set up second.  Place Malthus's Summoner in Hex 1412.  The other 'Meks of his Star may be placed in any Level 0 hexes within two hexes of the Summoner.  Set up Redmond's Star in the following five hexes: 0109,0110,0111,0209, and 0210.
 
 DEFENDER
 1stSomersetStrikers
@@ -311,7 +311,7 @@ Captain Valten Ryder (Gunnery 4, Piloting 3), Bushwacker BSW-X1
 Ernest (Patch) McGuire (Gunnery 7, Driving 7) Packrat Mobile Tactical Operations Center
 
 Deployment
-The Strikers set up first.  Place Adam's Axman in Hex 2006.  The other Striker 'Mechs may be set up in any Level 0 hex within two hexes of the Axman.  The Packrat (Gnat, see below) may begin play in any Level 0 hex on the east half of the map (hexes 17XX through 32XX), and need not be placed until after all Clan units have been deployed.
+The Strikers set up first.  Place Adam's Axman in Hex 2006.  The other Striker 'Meks may be set up in any Level 0 hex within two hexes of the Axman.  The Packrat (Gnat, see below) may begin play in any Level 0 hex on the east half of the map (hexes 17XX through 32XX), and need not be placed until after all Clan units have been deployed.
 
 VICTORY CONDITIONS
 Malthus's Star wins a decisive victory if all of the Strikers' mechs are destroyed without the cooperation of Redmond's Star.  They win a marginal victory if the Strikers are destroyed after the two Clan Stars join forces (see Special Rules, below).
@@ -371,9 +371,9 @@ Deployment
 Place the four rebel mechs in the following hexes: 1407, 1410, 1507, and 1511.
 
 VICTORY CONDITIONS
-The Strikers win a decisive victory if all of their 'Mechs manage to exit the map off the west edge.  They win a marginal victory if Franklin's Hatamoto-Chi exits the west edge of the map and a combined total of five or more ISF and rebel 'Mechs are destroyed.
-The ISF wins a decisive victory if they destroy the Hatamoto-Chi and all the rebel 'Mechs.  They win a marginal victory if they accomplish one or the other of these objectives.
-The rebels win a decisive victory if Franklin's Hatamoto-Chi exits the west edge of the map and all the ISF 'Mechs are destroyed.  However, this is reduced to marginal if the Strikers achieve a decisive victory.
+The Strikers win a decisive victory if all of their 'Meks manage to exit the map off the west edge.  They win a marginal victory if Franklin's Hatamoto-Chi exits the west edge of the map and a combined total of five or more ISF and rebel 'Meks are destroyed.
+The ISF wins a decisive victory if they destroy the Hatamoto-Chi and all the rebel 'Meks.  They win a marginal victory if they accomplish one or the other of these objectives.
+The rebels win a decisive victory if Franklin's Hatamoto-Chi exits the west edge of the map and all the ISF 'Meks are destroyed.  However, this is reduced to marginal if the Strikers achieve a decisive victory.
 
 SPECIAL RULES
 This should be played by three players: the Strikers, the ISF, and the rebels.
@@ -382,7 +382,7 @@ The Banshee Strafes the rebel mechs just before the beginning of Turn 1.  The St
 MEGAMEK ADJUSTMENTS
 Recommend playing this scenario with Double-Blind option set to true (unless using bot as a player).
 To reflect the initiative bonus of a Tactical Operation Center, The Awesome has a Tactical Genius pilot advantage (though whether or not it works is uncertain).
-While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that 3 out of 8 medium lasers from the Banshee made there marks, one to an ISF 'Mech and two to the rebel 'Mechs, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Mechs before start of game (if that ever happens, let me know).
+While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that 3 out of 8 medium lasers from the Banshee made there marks, one to an ISF 'Mek and two to the rebel 'Meks, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Meks before start of game (if that ever happens, let me know).
 
 **********1st Somerset Strikers Scenario #8 - THE LIBERATION OF SOMERSET MILITARY ACADEMY (EPISODE 12), pg. 110**********
 
@@ -438,7 +438,7 @@ VICTORY CONDITIONS
 The Strikers must destroy all of the Clan forces to retake Somerset Military Academy and proceed to the second part of the scenario (see Malthus Attacks, scenario 9).  If they fail, the Clans maintain control of Somerset.
 
 SPECIAL RULES
-The Banshee Strafes the Clan 'Mechs just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Mechs and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
+The Banshee Strafes the Clan 'Meks just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Meks and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
 The Strikers benefit from an ecstatic level of morale during this scenario.  Apply +1 to all to-hit, piloting, and Initiative rolls.  Note that this bonus allows the Strikers to roll a 13, making otherwise impossible shots possible.  This bonus is lost if Adam's Mech is destroyed.
 
 MEGAMEK ADJUSTMENTS
@@ -446,7 +446,7 @@ The map setup called for in the scenario is currently impossible to setup in Meg
 To reflect the morale bonus of the attackers, I have adjusted the attackers' Piloting & Gunnery Skills.  Though this bonus should be void at the loss of the Awesome, the Awesome will most likely make or break this scenario in order to proceed to the next scenario, thus it will most likely be in effect the entire game if the Strikers are to win. (A good clanner should like the challenge).
 Clan Enhanced Imaging neural implants are not incorporated into MegaMek.
 To reflect the initiative bonus of a Tactical Operation Center, The Awesome has a Tactical Genius pilot advantage (though whether or not it works is uncertain).
-While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that 6 out of 8 medium lasers from the Banshee made there marks, one to each Clan 'Mech, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Mechs before start of game (if that ever happens, let me know).
+While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that 6 out of 8 medium lasers from the Banshee made there marks, one to each Clan 'Mek, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Meks before start of game (if that ever happens, let me know).
 
 **********1st Somerset Strikers Scenario #9 - MALTHUS ATTACKS (EPISODE 13), pg. 111**********
 
@@ -489,11 +489,11 @@ All units begin this scenario in the same positions they occupied at the end of 
 
 VICTORY CONDITIONS
 The Strikers must destroy all of the Clan forces to take a back Somerset and win a decisive victory.
-The Clan forces win a decisive victory if they destroy all of the Strikers' units.  They win a marginal victory if Adam Steiner is killed (the pilot dies, not merely destroying his 'Mech).
-At any time during the battle, either player can call for a Trial of Possession for Somerset.  Both players must agree to the trial, and the winner will win the scenario.  This trial must be a single combat between Malthus and Adam; no other units from either side may interfere, and Rachel must leave Adam's 'Mech, eliminating the TOC bonuses.  If either Malthus's or Adam's 'Mech is destroyed before a trial can be called, no trial can take place and so standard victory conditions apply.
+The Clan forces win a decisive victory if they destroy all of the Strikers' units.  They win a marginal victory if Adam Steiner is killed (the pilot dies, not merely destroying his 'Mek).
+At any time during the battle, either player can call for a Trial of Possession for Somerset.  Both players must agree to the trial, and the winner will win the scenario.  This trial must be a single combat between Malthus and Adam; no other units from either side may interfere, and Rachel must leave Adam's 'Mek, eliminating the TOC bonuses.  If either Malthus's or Adam's 'Mek is destroyed before a trial can be called, no trial can take place and so standard victory conditions apply.
 
 SPECIAL RULES
-The Banshee Strafes the Clan 'Mechs just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Mechs and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
+The Banshee Strafes the Clan 'Meks just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Meks and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
 The Strikers benefit from an ecstatic level of morale during this scenario.  Apply +1 to all to-hit, piloting, and Initiative rolls.  Note that this bonus allows the Strikers to roll a 13, making otherwise impossible shots possible.  This bonus is lost if Adam's Mech is destroyed.
 Malthus is bent on destroying Adam, but he thinks that Adam is piloting the Axman.  Malthus will attack only the Axman until it is destroyed or the pilot ejects.  After that, Malthus will take on the Awesome.
 

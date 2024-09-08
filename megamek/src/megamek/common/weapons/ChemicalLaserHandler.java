@@ -29,7 +29,7 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class ChemicalLaserHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2304364403526293671L;
@@ -39,7 +39,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

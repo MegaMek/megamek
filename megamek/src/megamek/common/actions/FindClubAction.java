@@ -50,7 +50,7 @@ public class FindClubAction extends AbstractEntityAction {
         }
         final Hex hex = game.getBoard().getHex(entity.getPosition());
 
-        // Only biped and tripod 'Mechs qualify at all.
+        // Only biped and tripod 'Meks qualify at all.
         if (!(entity instanceof BipedMech || entity instanceof TripodMech)) {
             return false;
         }

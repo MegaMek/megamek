@@ -19,7 +19,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -38,7 +38,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @param m
      */
     public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }

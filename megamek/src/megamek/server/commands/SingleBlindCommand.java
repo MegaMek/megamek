@@ -20,8 +20,8 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * Allows a bot to see all units via /singleblind command. Toggle. Does not work on human players.
@@ -31,9 +31,9 @@ import megamek.server.Server;
  */
 public class SingleBlindCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public SingleBlindCommand(Server server, GameManager gameManager) {
+    public SingleBlindCommand(Server server, TWGameManager gameManager) {
         super(server, "singleblind",
                 "Allows a BOT player to see all in double blind game. Usage: /singleblind <password> <player id#>. For a list of player id #s, use the /who command (default is yourself)");
         this.gameManager = gameManager;

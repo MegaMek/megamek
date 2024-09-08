@@ -24,12 +24,12 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class TAGHandler extends WeaponHandler {
     private static final long serialVersionUID = -967656770476044773L;
 
-    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

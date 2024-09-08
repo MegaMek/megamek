@@ -13,8 +13,21 @@
  */
 package megamek.client.bot.princess;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
+import megamek.common.actions.RepairWeaponMalfunctionAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.SpotAction;
+import megamek.common.actions.UnjamTurretAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.equipment.AmmoMounted;
@@ -28,12 +41,6 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
 
 /**
  * FireControl selects which weapons a unit wants to fire and at whom Pay
@@ -76,7 +83,7 @@ public class FireControl {
     static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1, "target prone and at range");
     static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2, "target prone and adjacent");
     static final TargetRollModifier TH_TAR_BA = new TargetRollModifier(1, "battle armor target");
-    static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected MechWarrior target");
+    static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected MekWarrior target");
     static final TargetRollModifier TH_TAR_INF = new TargetRollModifier(1, "infantry target");
     static final TargetRollModifier TH_ANTI_AIR = new TargetRollModifier(-2, "anti-aircraft quirk");
     static final TargetRollModifier TH_INDUSTRIAL = new TargetRollModifier(1, "industrial cockpit without advanced fire control");

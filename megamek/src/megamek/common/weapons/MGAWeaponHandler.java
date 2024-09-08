@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -34,7 +34,7 @@ public class MGAWeaponHandler extends MGHandler {
      * @param w
      * @param g
      */
-    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,7 @@ public class ACTracerHandler extends ACWeaponHandler {
      * @param g
      * @param m
      */
-    public ACTracerHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ACTracerHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

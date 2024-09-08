@@ -1,9 +1,21 @@
 package megamek.client.bot.princess;
 
-import megamek.common.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
+
+import megamek.common.Coords;
+import megamek.common.EjectedCrew;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.GunEmplacement;
+import megamek.common.MovePath;
+import megamek.common.MoveStep;
 
 /**
  * Tracks activity of units on the map. Board positions that are frequently occupied by units get
@@ -348,7 +360,7 @@ public class HeatMap {
 
     /**
      * Adjusts the trackers using the current position of each provided entity that matches the team
-     * this heat map is tracking. Filters out gun emplacements and ejected MechWarriors/vehicle
+     * this heat map is tracking. Filters out gun emplacements and ejected MekWarriors/vehicle
      * crews, as well as functional units with a dead pilot/crew.
      * @param tracked  list of entities to process
      */
@@ -379,7 +391,7 @@ public class HeatMap {
 
     /**
      * Updates the trackers using a specific movement path. Filters out gun emplacements and ejected
-     * MechWarriors/vehicle crews. Because this information is only available for entities under
+     * MekWarriors/vehicle crews. Because this information is only available for entities under
      * direct Princess control, this is normally limited to tracking friendly entities.
      * @param detailedMove  {@link MovePath} object, which includes an entity reference and Coords
      *                      for the positions moved through
@@ -678,7 +690,7 @@ public class HeatMap {
     /**
      * Determines if a particular entity is valid for tracking i.e. it is a ground unit, deployed,
      * on map, not hidden, and either considered a friendly unit or an enemy unit that is detected
-     * visually or through sensors. Ejected MechWarriors and vehicle crews, gun emplacements, and
+     * visually or through sensors. Ejected MekWarriors and vehicle crews, gun emplacements, and
      * entities with dead crews ('carcass') are rejected.
      * @param testEntity  entity to check
      * @return            true, if entity is valid for tracking

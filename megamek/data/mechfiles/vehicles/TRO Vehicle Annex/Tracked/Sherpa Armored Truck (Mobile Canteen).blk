@@ -1,0 +1,118 @@
+#Saved from version 0.50.1-SNAPSHOT on 2024-09-05
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Sherpa Armored Truck
+</Name>
+
+<Model>
+(Mobile Canteen)
+</Model>
+
+<mul id:>
+5049
+</mul id:>
+
+<year>
+2430
+</year>
+
+<originalBuildYear>
+2430
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+cargobay:1.0:1:1::-1:0
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+51
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+7
+6
+6
+6
+6
+</armor>
+
+<Body Equipment>
+Basic Fire Control
+IS Ammo MG - Full
+Armored Chassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+FieldKitchen
+</Right Equipment>
+
+<Left Equipment>
+FieldKitchen
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+</Turret Equipment>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+
+<fuel>
+1.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

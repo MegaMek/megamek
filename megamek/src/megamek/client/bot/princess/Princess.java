@@ -13,7 +13,15 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.MegaMek;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.Level;
+
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
@@ -27,7 +35,12 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.AimingMode;
@@ -46,14 +59,6 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
-import org.apache.logging.log4j.Level;
-
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger logger = MMLogger.create(Princess.class);
@@ -1961,7 +1966,7 @@ public class Princess extends BotClient {
     /**
      * Loops through the list of entities controlled by this Princess instance
      * and decides which should be moved first.
-     * Immobile units and ejected MechWarriors / crews will be moved first.
+     * Immobile units and ejected MekWarriors / crews will be moved first.
      * After that, each unit is given an index// This unit should have already
      * moved due to the isImmobilized check. via the
      * {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest
@@ -1971,7 +1976,7 @@ public class Princess extends BotClient {
      */
     Entity getEntityToMove() {
 
-        // first move useless units: immobile units, ejected MechWarrior, etc
+        // first move useless units: immobile units, ejected MekWarrior, etc
         Entity movingEntity = null;
         final List<Entity> myEntities = getEntitiesOwned();
         double highestIndex = -Double.MAX_VALUE;
@@ -1992,7 +1997,7 @@ public class Princess extends BotClient {
                 continue;
             }
 
-            // Move immobile units & ejected MechWarriors immediately.
+            // Move immobile units & ejected MekWarriors immediately.
             if (isImmobilized(entity) && !(entity instanceof Infantry)) {
                 msg.append("is immobile.");
                 movingEntity = entity;

@@ -13,15 +13,24 @@
  */
 package megamek.client.bot.princess;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.bot.PhysicalOption;
-import megamek.common.*;
+import megamek.common.BipedMech;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Mech;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
-import org.apache.logging.log4j.LogManager;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -213,7 +222,7 @@ public class PhysicalInfo {
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
             while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)
-                    // Need to account for still-active 'Mechs with destroyed
+                    // Need to account for still-active 'Meks with destroyed
                     // heads so as not to spin into an endless loop.
                     && (hitLoc != Mech.LOC_HEAD)) {
                 if (hitLoc > 7) {

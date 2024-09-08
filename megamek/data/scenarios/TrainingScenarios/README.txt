@@ -88,7 +88,7 @@ Mapboards= Width 1, Height 2, Maps battletech, battletech.
 
 DEFENDER
 Defender Unit=
-Lone MechWarrior (Gunnery 4, Piloting 5), BattleMaster BLR-1G
+Lone MekWarrior (Gunnery 4, Piloting 5), BattleMaster BLR-1G
 The defender has sustained damage.  Remove 13 points from the center torso, 10 pts each side torso, 8 points each arm, and 5 points each leg.
 
 Deployment
@@ -96,9 +96,9 @@ The defender sets up within 3 hexes of the North edge.
 
 ATTACKER
 Attacker Units=
-MechWarrior Light (Gunnery 3, Piloting 5), Locust LCT-1V
-MechWarrior Medium (Gunnery 4, Piloting 4), Phoenix Hawk PXH-1
-MechWarrior Heavy (Gunnery 3, Piloting 4), Rifleman RFL-3N
+MekWarrior Light (Gunnery 3, Piloting 5), Locust LCT-1V
+MekWarrior Medium (Gunnery 4, Piloting 4), Phoenix Hawk PXH-1
+MekWarrior Heavy (Gunnery 3, Piloting 4), Rifleman RFL-3N
 
 Deployment
 Rifleman must start off within 3 hexes of the South edge.  The Locust & Phoenix Hawk must start in any of the six hexrows XX15 through XX20
@@ -124,16 +124,16 @@ Mapboards= Width 1, Height 2, Maps rotate:battletech, rotate:battletech.
 
 DEFENDER
 Defender Units=
-MechWarrior (Gunnery 3, Piloting 5), Archer ARC-2R
-MechWarrior (Gunnery 4, Piloting 4), Warhammer WHM-6R
+MekWarrior (Gunnery 3, Piloting 5), Archer ARC-2R
+MekWarrior (Gunnery 4, Piloting 4), Warhammer WHM-6R
 
 Deployment
 The Archer must start within 3 hexes of the North edge, while the Warhammer must start within 3 hexes of the South edge.
 
 ATTACKER
 Attacker Units=
-MechWarrior (Gunnery 3, Piloting 5), Marauder MAD-3R
-MechWarrior (Gunnery 4, Piloting 4), Shadow Hawk SHD-2H
+MekWarrior (Gunnery 3, Piloting 5), Marauder MAD-3R
+MekWarrior (Gunnery 4, Piloting 4), Shadow Hawk SHD-2H
 
 Deployment
 The Marauder & Shadow Hawk must start in any of the six hexrows XX15 through XX20.

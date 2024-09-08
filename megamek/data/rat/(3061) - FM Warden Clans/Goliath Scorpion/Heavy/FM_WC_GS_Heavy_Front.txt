@@ -1,4 +1,4 @@
-Warden Clan Front-Line Heavy Mechs (Goliath Scorpion),
+Warden Clan Front-Line Heavy Meks (Goliath Scorpion),
 Night Gyr A,1
 Vulture (Mad Dog) Prime,2
 Cauldron-Born (Ebon Jaguar) B,3

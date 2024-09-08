@@ -51,7 +51,7 @@ public class SBFRecordSheet implements Printable {
             new MegaMekFile(Configuration.miscImagesDir(), FILENAME_BT_LOGO).toString());
     private final static Image CGL_LOGO = ImageUtil.loadImageFromFile(
             new MegaMekFile(Configuration.miscImagesDir(), FILENAME_CGL_LOGO).toString());
-    private static final String COPYRIGHT1 = "(C) 2021 The Topps Company, Inc. BattleTech, 'Mech and BattleMech "
+    private static final String COPYRIGHT1 = "(C) 2024 The Topps Company, Inc. BattleTech, 'Mech and BattleMech "
             + "are trademarks of the Topps Company, Inc. All rights reserved.";
     private static final String COPYRIGHT2 = "Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of "
             + "InMediaRes Production, LLC. Permission to photocopy for personal use.";

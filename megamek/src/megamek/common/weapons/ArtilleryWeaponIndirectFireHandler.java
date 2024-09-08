@@ -22,7 +22,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;
@@ -44,7 +44,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         super();
     }
 
-    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         if (w.getEntity(g) instanceof BattleArmor) {
             shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiverTroopers();

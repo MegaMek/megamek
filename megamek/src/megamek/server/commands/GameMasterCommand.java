@@ -19,8 +19,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -56,7 +55,7 @@ public class GameMasterCommand extends ServerCommand {
             return;
         }
 
-        GameManager gameManager = (GameManager) server.getGameManager();
+        TWGameManager gameManager = (TWGameManager) server.getGameManager();
         if (player.getGameMaster()) {
             // toggling off game master requires no vote
             gameManager.setGameMaster(player, false);

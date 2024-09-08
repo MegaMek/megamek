@@ -27,15 +27,15 @@ import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.enums.GamePhase;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
-import megamek.common.jacksonadapters.BoardDeserializer;
-import megamek.common.jacksonadapters.CarryableDeserializer;
-import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.jacksonadapters.*;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
+import megamek.server.scriptedevent.GameEndTriggeredEvent;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -46,11 +46,18 @@ import java.util.stream.Collectors;
 public class ScenarioV2 implements Scenario {
 
     private static final String DEPLOY = "deploy";
+    private static final String DEPLOY_EDGE = "edge";
+    private static final String DEPLOY_OFFSET = "offset";
+    private static final String DEPLOY_WIDTH = "width";
     private static final String MAP = "map";
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
+    private static final String MESSAGES = "messages";
+    private static final String END = "end";
+    private static final String TRIGGER = "trigger";
+    private static final String VICTORY = "victory";
 
     private final JsonNode node;
     private final File scenariofile;
@@ -110,6 +117,9 @@ public class ScenarioV2 implements Scenario {
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
         parsePlayers(game);
+        parseMessages(game);
+        parseGameEndEvents(game);
+
         game.setupTeams();
 
         game.setBoard(0, createBoard());
@@ -117,8 +127,7 @@ public class ScenarioV2 implements Scenario {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
         }
 
-        if (game instanceof Game) {
-            Game twGame = (Game) game;
+        if (game instanceof Game twGame) {
             twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
@@ -139,6 +148,27 @@ public class ScenarioV2 implements Scenario {
             conditions.determineWind();
             plGame.setPlanetaryConditions(conditions);
         }
+    }
+
+    private void parseGameEndEvents(IGame game) {
+        if (node.has(END)) {
+            node.get(END).iterator().forEachRemaining(n -> parseGameEndEvent(game, n));
+        }
+    }
+
+    private void parseGameEndEvent(IGame game, JsonNode node) {
+        game.addScriptedEvent(new GameEndTriggeredEvent(TriggerDeserializer.parseNode(node.get(TRIGGER))));
+
+    }
+
+    private void parseMessages(IGame game) {
+        if (node.has(MESSAGES)) {
+            node.get(MESSAGES).iterator().forEachRemaining(n -> parseMessage(game, n));
+        }
+    }
+
+    private void parseMessage(IGame game, JsonNode node) {
+        game.addScriptedEvent(MessageDeserializer.parse(node, scenarioDirectory()));
     }
 
     private void parsePlayers(IGame game) throws ScenarioLoaderException, IOException {
@@ -166,15 +196,34 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
-    private IGame selectGameType() {
-        switch (getGameType()) {
-            case AS:
-                return new ASGame();
-            case SBF:
-                return new SBFGame();
-            default:
-                return new Game();
+    private void parseDeployment(JsonNode playerNode, Player player) {
+        String edge = "Any";
+        if (playerNode.has(DEPLOY)) {
+            if (!playerNode.get(DEPLOY).isContainerNode()) {
+                edge = playerNode.get(DEPLOY).textValue();
+            } else {
+                JsonNode deployNode = playerNode.get(DEPLOY);
+                if (deployNode.has(DEPLOY_EDGE)) {
+                    edge = deployNode.get(DEPLOY_EDGE).textValue();
+                }
+                if (deployNode.has(DEPLOY_OFFSET)) {
+                    player.setStartOffset(deployNode.get(DEPLOY_OFFSET).intValue());
+                }
+                if (deployNode.has(DEPLOY_WIDTH)) {
+                    player.setStartWidth(deployNode.get(DEPLOY_WIDTH).intValue());
+                }
+            }
         }
+        int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, edge), 0);
+        player.setStartingPos(dir);
+    }
+
+    private IGame selectGameType() {
+        return switch (getGameType()) {
+            case AS -> new ASGame();
+            case SBF -> new SBFGame();
+            default -> new Game();
+        };
     }
 
     @Override
@@ -203,9 +252,8 @@ public class ScenarioV2 implements Scenario {
             // scenario players start out as ghosts to be logged into
             player.setGhost(true);
 
-            String loc = playerNode.has(DEPLOY) ? playerNode.get(DEPLOY).textValue() : "Any";
-            int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
-            player.setStartingPos(dir);
+            parseDeployment(playerNode, player);
+            parseVictories(game, playerNode);
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();
@@ -241,23 +289,47 @@ public class ScenarioV2 implements Scenario {
 
             if (playerNode.has(UNITS)) {
                 JsonNode unitsNode = playerNode.get(UNITS);
-                if (game instanceof Game) {
+                if (game instanceof Game twGame) {
                     List<Entity> units = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
                             .filter(o -> o instanceof Entity)
                             .map(o -> (Entity) o)
                             .collect(Collectors.toList());
                     int entityId = Math.max(smallestFreeUnitID(units), game.getNextEntityId());
+                    Map<Integer, Integer> forceMapping = new HashMap<>();
                     for (Entity unit : units) {
                         unit.setOwner(player);
                         if (unit.getId() == Entity.NONE) {
                             unit.setId(entityId);
                             entityId++;
                         }
-                        ((Game) game).addEntity(unit);
+                        twGame.addEntity(unit);
                         // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
                         // they're not on a space map.
                         if (unit.isLargeCraft() && !unit.isAirborne()) {
                             unit.setAltitude(0);
+                        }
+                        // Map parsed force strings to real Forces
+                        if (!unit.getForceString().isBlank()) {
+                            List<Force> forceList = Forces.parseForceString(unit);
+                            int realId = Force.NO_FORCE;
+                            boolean topLevel = true;
+
+                            for (Force force: forceList) {
+                                if (!forceMapping.containsKey(force.getId())) {
+                                    if (topLevel) {
+                                        realId = game.getForces().addTopLevelForce(force, unit.getOwner());
+                                    } else {
+                                        Force parent = game.getForces().getForce(realId);
+                                        realId = game.getForces().addSubForce(force, parent);
+                                    }
+                                    forceMapping.put(force.getId(), realId);
+                                } else {
+                                    realId = forceMapping.get(force.getId());
+                                }
+                                topLevel = false;
+                            }
+                            unit.setForceString("");
+                            game.getForces().addEntity(unit, realId);
                         }
                     }
                 } else if (game instanceof SBFGame) {
@@ -281,6 +353,16 @@ public class ScenarioV2 implements Scenario {
         }
 
         return result;
+    }
+
+    private void parseVictories(IGame game, JsonNode playerNode) {
+        if (playerNode.has(VICTORY)) {
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n));
+        }
+    }
+
+    private void parseVictory(IGame game, JsonNode node) {
+        game.addScriptedEvent(VictoryDeserializer.parse(node));
     }
 
     private int smallestFreeUnitID(List<? extends InGameObject> units) {

@@ -65,6 +65,16 @@ public interface IGameManager {
     void sendCurrentInfo(int connId);
 
     /**
+     * Sends the given packet to all connections (all connected Clients = players).
+     */
+    void send(Packet packet);
+
+    /**
+     * Sends the given packet to the given connection (= player ID).
+     */
+    void send(int connId, Packet p);
+
+    /**
      * Saves the game server-side. Will announce the save (or error) in chat.
      *
      * @param fileName The filename to use

@@ -119,6 +119,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
     public static final String BOARD_OPEN = "fileBoardOpen";
+    public static final String BOARD_RECENT = "recent";
     public static final String BOARD_SAVE = "fileBoardSave";
     public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
     public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
@@ -2317,6 +2318,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             if (curPanel instanceof ChatLounge) {
                 ChatLounge cl = (ChatLounge) curPanel;
                 cl.updateMapSettings(getClient().getMapSettings());
+            }
+        }
+
+        @Override
+        public void gameScriptedEvent(GameScriptedEvent event) {
+            if (event instanceof GameScriptedMessageEvent) {
+                showScriptedMessage((GameScriptedMessageEvent) event);
             }
         }
 

@@ -30,7 +30,7 @@ public class CLLRM4 extends LRMWeapon {
         tonnage = 0.8;
         criticals = 0;
         bv = 46;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);

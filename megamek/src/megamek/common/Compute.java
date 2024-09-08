@@ -414,7 +414,7 @@ public class Compute {
             return null;
         }
 
-        boolean isMech = (entering instanceof Mek)
+        boolean isMek = (entering instanceof Mek)
                 || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
                 || (entering instanceof Dropship)
@@ -493,7 +493,7 @@ public class Compute {
                     // Unless grappled (but chain whip grapples don't count)
                     // grounded small craft are treated as mechs for purposes
                     // of stacking
-                    if (isMech
+                    if (isMek
                             && (((inHex instanceof Mek) && (inHex
                                     .getGrappled() != entering.getId() || inHex
                                     .isChainWhipGrappled())) || (inHex instanceof SmallCraft))) {
@@ -543,14 +543,14 @@ public class Compute {
      * does not return true if the enemy unit is currenly making a DFA.
      */
     public static boolean isEnemyIn(Game game, Entity entity, Coords coords,
-                                    boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
+                                    boolean onlyMeks, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Entity inHex : game.getEntitiesVector(coords)) {
             int inHexAlt = inHex.getAltitude();
             boolean crewOnGround = (inHex instanceof EjectedCrew) && (inHexAlt == 0);
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
-            if ((!onlyMechs || (inHex instanceof Mek))
+            if ((!onlyMeks || (inHex instanceof Mek))
                 && !(ignoreInfantry && (inHex instanceof Infantry))
                 && inHex.isEnemyOf(entity) && !inHex.isMakingDfa()
                 && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)
@@ -667,7 +667,7 @@ public class Compute {
                 && srcHex.hasCliffTopTowards(destHex)
                 && (stepHeight == -1 || stepHeight == -2);
 
-        // Mechs and Vehicles moving down a cliff
+        // Meks and Vehicles moving down a cliff
         // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
         if ((mechAffectedByCliff || vehicleAffectedByCliff)
                 && !quadveeVehMode
@@ -676,7 +676,7 @@ public class Compute {
             return true;
         }
 
-        // Mechs moving up a cliff
+        // Meks moving up a cliff
         if (mechAffectedByCliff
                 && !quadveeVehMode
                 && isUpCliff
@@ -2473,7 +2473,7 @@ public class Compute {
 
         // current target is secondary
 
-        // Stealthed Mechs can't be secondary targets (TW, pg. 142)
+        // Stealthed Meks can't be secondary targets (TW, pg. 142)
         if (((target instanceof Tank) || (target instanceof Mek) || (target instanceof Aero))
                 && ((Entity) target).isStealthActive()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -5710,7 +5710,7 @@ public class Compute {
     /**
      * This assembles attack roll modifiers for infantry swarm and leg attacks.
      */
-    private static ToHitData getAntiMechMods(ToHitData data, Infantry attacker,
+    private static ToHitData getAntiMekMods(ToHitData data, Infantry attacker,
                                              Entity defender) {
         if (attacker == null) {
             data.addModifier(TargetRoll.IMPOSSIBLE, "Unknown attacker");
@@ -5834,7 +5834,7 @@ public class Compute {
         }
         // Can only attack a Mek's legs.
         else if (!(defender instanceof Mek)) {
-            reason = "Defender is not a Mech.";
+            reason = "Defender is not a Mek.";
         }
 
         // Can't attack if flying
@@ -5890,7 +5890,7 @@ public class Compute {
         if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
-        toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,
+        toReturn = Compute.getAntiMekMods(toReturn, (Infantry) attacker,
                 defender);
         return toReturn;
     }
@@ -5930,7 +5930,7 @@ public class Compute {
         }
         // Can only swarm a Mek.
         else if (!(defender instanceof Mek) && !(defender instanceof Tank)) {
-            reason = "Defender is not a Mech or vehicle.";
+            reason = "Defender is not a Mek or vehicle.";
         }
         // Can't swarm a friendly Mek. See
         // http://www.classicbattletech.com/w3t/showflat
@@ -5977,7 +5977,7 @@ public class Compute {
         if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
-        toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,
+        toReturn = Compute.getAntiMekMods(toReturn, (Infantry) attacker,
                                            defender);
 
         // If the attacker has assault claws, give a -1 modifier.

@@ -61,7 +61,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
         }
 
-        // LAM AirMechs can only grapple when grounded.
+        // LAM AirMeks can only grapple when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot grapple while airborne");
         }

@@ -20,7 +20,7 @@ package megamek.common;
 
 /**
  * This interface is for classes that represent combat units with battlefield roles (Sniper, Juggernaut,
- * Dogfighter...). Implemented by ASCardDisplayable (= MechSummary and AlphaStrikeElement) and Entity. Implementing
+ * Dogfighter...). Implemented by ASCardDisplayable (= MekSummary and AlphaStrikeElement) and Entity. Implementing
  * classes should make sure not to use null as a UnitRole, but at least UNDETERMINED.
  */
 public interface CombatRole {

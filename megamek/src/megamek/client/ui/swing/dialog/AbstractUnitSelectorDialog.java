@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
+ * MekSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
  * Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
  * Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
  * This program is free software; you can redistribute it and/or modify it
@@ -98,7 +98,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private JButton buttonAdvancedSearch;
     private JButton buttonResetSearch;
-    private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MechSelectorDialog.TogglePV"));
+    private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MekSelectorDialog.TogglePV"));
     protected JList<String> listTechLevel = new JList<>();
     private JLabel lblCount;
     /**
@@ -154,7 +154,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
-        super(frame, Messages.getString("MechSelectorDialog.title"), true);
+        super(frame, Messages.getString("MekSelectorDialog.title"), true);
         setName("UnitSelectorDialog");
         this.frame = frame;
         this.unitLoadingDialog = unitLoadingDialog;
@@ -273,20 +273,20 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         panelFilterButtons = new JPanel(new GridBagLayout());
 
-        JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
-        labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
+        JLabel labelType = new JLabel(Messages.getString("MekSelectorDialog.m_labelType"));
+        labelType.setToolTipText(Messages.getString("MekSelectorDialog.m_labelType.ToolTip"));
         gridBagConstraintsWest.insets = new Insets(5, 0, 0, 0);
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
-        listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
+        listTechLevel.setToolTipText(Messages.getString("MekSelectorDialog.m_labelType.ToolTip"));
         techLevelScroll = new JScrollPane(listTechLevel);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
 
-        JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
+        JLabel labelWeight = new JLabel(Messages.getString("MekSelectorDialog.m_labelWeightClass"));
         labelWeight.setName("labelWeight");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 1;
@@ -296,7 +296,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
-        weightModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        weightModel.addElement(Messages.getString("MekSelectorDialog.All"));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
         comboWeight.addActionListener(this);
@@ -304,7 +304,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 1;
         panelFilterButtons.add(comboWeight, gridBagConstraintsWest);
 
-        JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
+        JLabel labelUnitType = new JLabel(Messages.getString("MekSelectorDialog.m_labelUnitType"));
         labelUnitType.setName("labelUnitType");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -314,11 +314,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(labelUnitType, gridBagConstraints);
 
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.SupportVee"));
+        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setName("comboUnitType");
         comboUnitType.addActionListener(this);
@@ -326,7 +326,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
-        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
+        JLabel labelFilter = new JLabel(Messages.getString("MekSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 3;
@@ -358,7 +358,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         /** Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI **/
 
-        JLabel lblGun = new JLabel(Messages.getString("MechSelectorDialog.m_labelGunnery"));
+        JLabel lblGun = new JLabel(Messages.getString("MekSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 4;
@@ -391,7 +391,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
         };
 
-        JLabel lblPilot = new JLabel(Messages.getString("MechSelectorDialog.m_labelPiloting"));
+        JLabel lblPilot = new JLabel(Messages.getString("MekSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 5;
@@ -445,14 +445,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
-        buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
+        buttonAdvancedSearch = new JButton(Messages.getString("MekSelectorDialog.AdvSearch"));
         buttonAdvancedSearch.setName("buttonAdvancedSearch");
         buttonAdvancedSearch.addActionListener(this);
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonAdvancedSearch, gridBagConstraintsWest);
 
-        buttonResetSearch = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+        buttonResetSearch = new JButton(Messages.getString("MekSelectorDialog.Reset"));
         buttonResetSearch.setName("buttonResetSearch");
         buttonResetSearch.addActionListener(this);
         buttonResetSearch.setEnabled(false);
@@ -634,7 +634,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
-        final boolean checkSupportVee = Messages.getString("MechSelectorDialog.SupportVee")
+        final boolean checkSupportVee = Messages.getString("MekSelectorDialog.SupportVee")
                 .equals(comboUnitType.getSelectedItem());
         // If current expression doesn't parse, don't update.
         try {
@@ -678,7 +678,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
-        String msg_unitcount = Messages.getString("MechSelectorDialog.UnitCount");
+        String msg_unitcount = Messages.getString("MekSelectorDialog.UnitCount");
         lblCount.setText(String.format(" %s %d", msg_unitcount, sorter.getViewRowCount()));
     }
 

@@ -39,7 +39,7 @@ public class UnitDisplayDialog extends JDialog {
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
-        this.setTitle(Messages.getString("ClientGUI.MechDisplay"));
+        this.setTitle(Messages.getString("ClientGUI.MekDisplay"));
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());

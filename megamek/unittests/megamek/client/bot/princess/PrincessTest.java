@@ -112,58 +112,58 @@ public class PrincessTest {
                 nullable(Game.class))).thenReturn(10.0);
 
         // Test a 6/9/6 regular mech.
-        Entity mockMech = mock(BipedMek.class);
-        when(mockMech.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
-        when(mockMech.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
-        when(mockMech.isProne()).thenReturn(false);
-        when(mockMech.isCommander()).thenReturn(false);
-        when(mockMech.isMilitary()).thenReturn(true);
-        when(mockMech.isStealthActive()).thenReturn(false);
-        when(mockMech.isStealthOn()).thenReturn(false);
-        when(mockMech.isVoidSigActive()).thenReturn(false);
-        when(mockMech.isVoidSigOn()).thenReturn(false);
-        double actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        Entity mockMek = mock(BipedMek.class);
+        when(mockMek.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
+        when(mockMek.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
+        when(mockMek.isProne()).thenReturn(false);
+        when(mockMek.isCommander()).thenReturn(false);
+        when(mockMek.isMilitary()).thenReturn(true);
+        when(mockMek.isStealthActive()).thenReturn(false);
+        when(mockMek.isStealthOn()).thenReturn(false);
+        when(mockMek.isVoidSigActive()).thenReturn(false);
+        when(mockMek.isVoidSigOn()).thenReturn(false);
+        double actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(1.111, actual, TOLERANCE);
 
         // Make the mech prone.
-        when(mockMech.isProne()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isProne()).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(1.222, actual, TOLERANCE);
 
         // Make the mech flee.
-        when(mockMech.isProne()).thenReturn(false);
-        when(mockPrincess.isFallingBack(eq(mockMech))).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isProne()).thenReturn(false);
+        when(mockPrincess.isFallingBack(eq(mockMek))).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(2.222, actual, TOLERANCE);
 
         // Make the mech a commander.
-        when(mockPrincess.isFallingBack(eq(mockMech))).thenReturn(false);
-        when(mockMech.isCommander()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockPrincess.isFallingBack(eq(mockMek))).thenReturn(false);
+        when(mockMek.isCommander()).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(0.555, actual, TOLERANCE);
 
         // Make it a civilian mech.
-        when(mockMech.isCommander()).thenReturn(false);
-        when(mockMech.isMilitary()).thenReturn(false);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isCommander()).thenReturn(false);
+        when(mockMek.isMilitary()).thenReturn(false);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(5.555, actual, TOLERANCE);
 
         // Make it stealthy;
-        when(mockMech.isMilitary()).thenReturn(true);
-        when(mockMech.isStealthActive()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isMilitary()).thenReturn(true);
+        when(mockMek.isStealthActive()).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(0.37, actual, TOLERANCE);
-        when(mockMech.isStealthActive()).thenReturn(false);
-        when(mockMech.isStealthOn()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isStealthActive()).thenReturn(false);
+        when(mockMek.isStealthOn()).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(0.37, actual, TOLERANCE);
-        when(mockMech.isStealthOn()).thenReturn(false);
-        when(mockMech.isVoidSigActive()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isStealthOn()).thenReturn(false);
+        when(mockMek.isVoidSigActive()).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(0.37, actual, TOLERANCE);
-        when(mockMech.isVoidSigActive()).thenReturn(false);
-        when(mockMech.isVoidSigOn()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
+        when(mockMek.isVoidSigActive()).thenReturn(false);
+        when(mockMek.isVoidSigOn()).thenReturn(true);
+        actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(0.37, actual, TOLERANCE);
 
         // Test a BA unit.
@@ -216,12 +216,12 @@ public class PrincessTest {
 
         Coords mockCoords = mock(Coords.class);
 
-        Entity mockMech = mock(BipedMek.class);
-        when(mockMech.getRunMP()).thenReturn(6);
-        when(mockMech.isOffBoard()).thenReturn(false);
-        when(mockMech.getPosition()).thenReturn(mockCoords);
-        when(mockMech.isSelectableThisTurn()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(eq(mockMech), any(StringBuilder.class))).thenReturn(1.111);
+        Entity mockMek = mock(BipedMek.class);
+        when(mockMek.getRunMP()).thenReturn(6);
+        when(mockMek.isOffBoard()).thenReturn(false);
+        when(mockMek.getPosition()).thenReturn(mockCoords);
+        when(mockMek.isSelectableThisTurn()).thenReturn(true);
+        when(mockPrincess.calculateMoveIndex(eq(mockMek), any(StringBuilder.class))).thenReturn(1.111);
 
         Entity mockBA = mock(BattleArmor.class);
         when(mockBA.getRunMP()).thenReturn(3);
@@ -237,18 +237,18 @@ public class PrincessTest {
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockTank), any(StringBuilder.class))).thenReturn(2.5);
 
-        Entity mockEjectedMechwarrior = mock(MekWarrior.class);
-        when(mockEjectedMechwarrior.getRunMP()).thenReturn(1);
-        when(mockEjectedMechwarrior.isOffBoard()).thenReturn(false);
-        when(mockEjectedMechwarrior.getPosition()).thenReturn(mockCoords);
-        when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
+        Entity mockEjectedMekwarrior = mock(MekWarrior.class);
+        when(mockEjectedMekwarrior.getRunMP()).thenReturn(1);
+        when(mockEjectedMekwarrior.isOffBoard()).thenReturn(false);
+        when(mockEjectedMekwarrior.getPosition()).thenReturn(mockCoords);
+        when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(true);
 
-        Entity mockImmobileMech = mock(BipedMek.class);
-        when(mockImmobileMech.getRunMP()).thenReturn(0);
-        when(mockImmobileMech.isOffBoard()).thenReturn(false);
-        when(mockImmobileMech.getPosition()).thenReturn(mockCoords);
-        when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
-        when(mockImmobileMech.isImmobile()).thenReturn(true);
+        Entity mockImmobileMek = mock(BipedMek.class);
+        when(mockImmobileMek.getRunMP()).thenReturn(0);
+        when(mockImmobileMek.isOffBoard()).thenReturn(false);
+        when(mockImmobileMek.getPosition()).thenReturn(mockCoords);
+        when(mockImmobileMek.isSelectableThisTurn()).thenReturn(true);
+        when(mockImmobileMek.isImmobile()).thenReturn(true);
 
         Entity mockOffBoardArty = mock(Tank.class);
         when(mockOffBoardArty.getRunMP()).thenReturn(6);
@@ -273,7 +273,7 @@ public class PrincessTest {
         when(mockPrincess.getGame()).thenReturn(mockGame);
 
         List<Entity> testEntityList = new ArrayList<>();
-        testEntityList.add(mockMech);
+        testEntityList.add(mockMek);
         testEntityList.add(mockBA);
         testEntityList.add(mockTank);
         when(mockPrincess.getEntitiesOwned()).thenReturn(testEntityList);
@@ -291,87 +291,87 @@ public class PrincessTest {
         assertEquals(mockTank, pickedEntity);
 
         // Add the immobilized mech, which should be picked as the next to move.
-        testEntityList.add(mockImmobileMech);
+        testEntityList.add(mockImmobileMek);
         pickedEntity = mockPrincess.getEntityToMove();
-        assertEquals(mockImmobileMech, pickedEntity);
+        assertEquals(mockImmobileMek, pickedEntity);
 
         // Replace the immobilized mech with the ejected mechwarrior, which should now be the next to move.
-        testEntityList.remove(mockImmobileMech);
-        testEntityList.add(mockEjectedMechwarrior);
+        testEntityList.remove(mockImmobileMek);
+        testEntityList.add(mockEjectedMekwarrior);
         pickedEntity = mockPrincess.getEntityToMove();
-        assertEquals(mockEjectedMechwarrior, pickedEntity);
+        assertEquals(mockEjectedMekwarrior, pickedEntity);
 
         // Test a list that contains a unit with a move index of 0.
         when(mockBA.isSelectableThisTurn()).thenReturn(false);
         when(mockTank.isSelectableThisTurn()).thenReturn(false);
-        when(mockImmobileMech.isSelectableThisTurn()).thenReturn(false);
-        when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(false);
-        when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(0.0);
+        when(mockImmobileMek.isSelectableThisTurn()).thenReturn(false);
+        when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(false);
+        when(mockPrincess.calculateMoveIndex(mockMek, new StringBuilder())).thenReturn(0.0);
         pickedEntity = mockPrincess.getEntityToMove();
-        assertEquals(mockMech, pickedEntity);
+        assertEquals(mockMek, pickedEntity);
         when(mockBA.isSelectableThisTurn()).thenReturn(true);
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
-        when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
-        when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(1.111);
+        when(mockImmobileMek.isSelectableThisTurn()).thenReturn(true);
+        when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(true);
+        when(mockPrincess.calculateMoveIndex(mockMek, new StringBuilder())).thenReturn(1.111);
 
         // Test a list where everyone has moved except one unit with the lowest possible move index.
         when(mockBA.isSelectableThisTurn()).thenReturn(false);
         when(mockTank.isSelectableThisTurn()).thenReturn(false);
-        when(mockImmobileMech.isSelectableThisTurn()).thenReturn(false);
-        when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(false);
-        when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(Double.MIN_VALUE);
+        when(mockImmobileMek.isSelectableThisTurn()).thenReturn(false);
+        when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(false);
+        when(mockPrincess.calculateMoveIndex(mockMek, new StringBuilder())).thenReturn(Double.MIN_VALUE);
         pickedEntity = mockPrincess.getEntityToMove();
-        assertEquals(mockMech, pickedEntity);
+        assertEquals(mockMek, pickedEntity);
         when(mockBA.isSelectableThisTurn()).thenReturn(true);
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
-        when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
-        when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(1.111);
+        when(mockImmobileMek.isSelectableThisTurn()).thenReturn(true);
+        when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(true);
+        when(mockPrincess.calculateMoveIndex(mockMek, new StringBuilder())).thenReturn(1.111);
     }
 
     @Test
     public void testWantsToFallBack() {
-        Entity mockMech = mock(BipedMek.class);
-        when(mockMech.isCrippled()).thenReturn(false);
+        Entity mockMek = mock(BipedMek.class);
+        when(mockMek.isCrippled()).thenReturn(false);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenCallRealMethod();
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
         when(mockPrincess.getFallBack()).thenReturn(false);
         when(mockPrincess.getFleeBoard()).thenReturn(false);
-        // Forced Withdrawal Enabled, Mech Undamaged, Fall Back disabled, Flee Board disabled
+        // Forced Withdrawal Enabled, Mek Undamaged, Fall Back disabled, Flee Board disabled
         // Should Not Fall Back
-        assertFalse(mockPrincess.wantsToFallBack(mockMech));
+        assertFalse(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getFallBack()).thenReturn(true);
         // Fall Back Enabled
         // Should Fall Back
-        assertTrue(mockPrincess.wantsToFallBack(mockMech));
+        assertTrue(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getFallBack()).thenReturn(false);
         when(mockPrincess.getFleeBoard()).thenReturn(true);
         // Fall Back Disabled, Flee Board Enabled (Should Never Happen)
         // Should Not Fall Back
-        assertFalse(mockPrincess.wantsToFallBack(mockMech));
+        assertFalse(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getFleeBoard()).thenReturn(false);
-        when(mockMech.isCrippled()).thenReturn(true);
-        // Fall Back and Flee Board Disabled, Mech Crippled, Forced Withdrawal Enabled
+        when(mockMek.isCrippled()).thenReturn(true);
+        // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Enabled
         // Should Fall Back
-        assertTrue(mockPrincess.wantsToFallBack(mockMech));
+        assertTrue(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getForcedWithdrawal()).thenReturn(false);
-        // Fall Back and Flee Board Disabled, Mech Crippled, Forced Withdrawal Disabled
+        // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Disabled
         // Should Not Fall Back
-        assertFalse(mockPrincess.wantsToFallBack(mockMech));
+        assertFalse(mockPrincess.wantsToFallBack(mockMek));
     }
 
     @Test
     public void testIsFallingBack() {
-        Entity mockMech = mock(BipedMek.class);
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isCrippled(anyBoolean())).thenReturn(false);
-        when(mockMech.getId()).thenReturn(1);
+        Entity mockMek = mock(BipedMek.class);
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isCrippled(anyBoolean())).thenReturn(false);
+        when(mockMek.getId()).thenReturn(1);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(false);
         when(mockPrincess.isFallingBack(any(Entity.class))).thenCallRealMethod();
@@ -382,15 +382,15 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // A normal undamaged mech.
-        assertFalse(mockPrincess.isFallingBack(mockMech));
+        assertFalse(mockPrincess.isFallingBack(mockMek));
 
         // A mobile mech that wants to fall back (for any reason).
-        when(mockMech.isCrippled(anyBoolean())).thenReturn(true);
-        assertTrue(mockPrincess.isFallingBack(mockMech));
+        when(mockMek.isCrippled(anyBoolean())).thenReturn(true);
+        assertTrue(mockPrincess.isFallingBack(mockMek));
 
         // A mech whose bot is set for a destination edge
         when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NEAREST);
-        assertTrue(mockPrincess.isFallingBack(mockMech));
+        assertTrue(mockPrincess.isFallingBack(mockMek));
     }
 
     @Test
@@ -401,8 +401,8 @@ public class PrincessTest {
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
         // Unit is capable of fleeing.
-        Entity mockMech = mock(BipedMek.class);
-        when(mockMech.canFlee()).thenReturn(true);
+        Entity mockMek = mock(BipedMek.class);
+        when(mockMek.canFlee()).thenReturn(true);
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
@@ -412,44 +412,44 @@ public class PrincessTest {
 
         // Mock objects so we don't have nulls.
         Coords mockCoords = mock(Coords.class);
-        when(mockMech.getPosition()).thenReturn(mockCoords);
+        when(mockMek.getPosition()).thenReturn(mockCoords);
         when(mockPrincess.getHomeEdge(any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Game mockGame = mock(Game.class);
         when(mockPrincess.getGame()).thenReturn(mockGame);
 
         // In its current state, the entity does not need to flee the board.
-        assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Now the unit is falling back, but it should not flee the board unless fleeBoard is enabled
         // or the unit is crippled and forcedWithdrawal is enabled
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(true);
-        assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Even a crippled mech should not fall back unless fleeBoard or forcedWithdrawal is enabled
-        when(mockMech.isCrippled()).thenReturn(true);
-        assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        when(mockMek.isCrippled()).thenReturn(true);
+        assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Enabling forcedWithdrawal should cause fleeing, because mech is crippled
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
-        assertTrue(mockPrincess.mustFleeBoard(mockMech));
+        assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // But forcedWithdrawal without a crippled mech should not flee
-        when(mockMech.isCrippled()).thenReturn(false);
-        assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        when(mockMek.isCrippled()).thenReturn(false);
+        assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // If fleeBoard is true, all units falling back should flee
         when(mockPrincess.getFleeBoard()).thenReturn(true);
-        assertTrue(mockPrincess.mustFleeBoard(mockMech));
+        assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // Make the unit incapable of fleeing.
-        when(mockMech.canFlee()).thenReturn(false);
-        assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        when(mockMek.canFlee()).thenReturn(false);
+        assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // The unit can flee, but is no longer on the board edge.
-        when(mockMech.canFlee()).thenReturn(true);
+        when(mockMek.canFlee()).thenReturn(true);
         when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class),
                 any(Game.class))).thenReturn(1);
-        assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        assertFalse(mockPrincess.mustFleeBoard(mockMek));
     }
 
     @Test
@@ -479,37 +479,37 @@ public class PrincessTest {
         Coords mockPriorPosition = mock(Coords.class);
 
         // Test a fully mobile mech.
-        Mek mockMech = mock(BipedMek.class);
-        when(mockMech.getRunMP()).thenReturn(6);
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isShutDown()).thenReturn(false);
-        when(mockMech.isProne()).thenReturn(false);
-        when(mockMech.isStuck()).thenReturn(false);
-        when(mockMech.isStalled()).thenReturn(false);
-        when(mockMech.cannotStandUpFromHullDown()).thenReturn(false);
-        when(mockMech.checkGetUp(any(MoveStep.class), any(EntityMovementType.class))).thenReturn(mockPilotingRollData);
-        when(mockMech.getPosition()).thenReturn(mockPosition);
-        when(mockMech.getPriorPosition()).thenReturn(mockPriorPosition);
-        when(mockMech.checkBogDown(any(MoveStep.class), any(EntityMovementType.class), eq(mockHex),
+        Mek mockMek = mock(BipedMek.class);
+        when(mockMek.getRunMP()).thenReturn(6);
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isShutDown()).thenReturn(false);
+        when(mockMek.isProne()).thenReturn(false);
+        when(mockMek.isStuck()).thenReturn(false);
+        when(mockMek.isStalled()).thenReturn(false);
+        when(mockMek.cannotStandUpFromHullDown()).thenReturn(false);
+        when(mockMek.checkGetUp(any(MoveStep.class), any(EntityMovementType.class))).thenReturn(mockPilotingRollData);
+        when(mockMek.getPosition()).thenReturn(mockPosition);
+        when(mockMek.getPriorPosition()).thenReturn(mockPriorPosition);
+        when(mockMek.checkBogDown(any(MoveStep.class), any(EntityMovementType.class), eq(mockHex),
                 eq(mockPriorPosition), eq(mockPosition), anyInt(), anyBoolean()))
                .thenReturn(mockPilotingRollData);
-        assertFalse(mockPrincess.isImmobilized(mockMech));
+        assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test a shutdown mech.
-        when(mockMech.isImmobile()).thenReturn(true);
-        when(mockMech.isShutDown()).thenReturn(true);
-        assertFalse(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(true);
+        when(mockMek.isShutDown()).thenReturn(true);
+        assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test an immobile mech that is not shut down.
-        when(mockMech.isImmobile()).thenReturn(true);
-        when(mockMech.isShutDown()).thenReturn(false);
-        assertTrue(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(true);
+        when(mockMek.isShutDown()).thenReturn(false);
+        assertTrue(mockPrincess.isImmobilized(mockMek));
 
         // Test a mech with move 0.
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.getRunMP()).thenReturn(0);
-        assertTrue(mockPrincess.isImmobilized(mockMech));
-        when(mockMech.getRunMP()).thenReturn(6);
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.getRunMP()).thenReturn(0);
+        assertTrue(mockPrincess.isImmobilized(mockMek));
+        when(mockMek.getRunMP()).thenReturn(6);
 
         // Test a tank that is not immobile.
         Tank mockTank = mock(Tank.class);
@@ -519,42 +519,42 @@ public class PrincessTest {
         assertFalse(mockPrincess.isImmobilized(mockTank));
 
         // Test a prone mech that cannot stand up.
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isShutDown()).thenReturn(false);
-        when(mockMech.isProne()).thenReturn(true);
-        when(mockMech.cannotStandUpFromHullDown()).thenReturn(true);
-        assertTrue(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isShutDown()).thenReturn(false);
+        when(mockMek.isProne()).thenReturn(true);
+        when(mockMek.cannotStandUpFromHullDown()).thenReturn(true);
+        assertTrue(mockPrincess.isImmobilized(mockMek));
 
         // Test a prone mech whose chance to stand up is better than our fall tolerance threshold.
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isShutDown()).thenReturn(false);
-        when(mockMech.isProne()).thenReturn(true);
-        when(mockMech.cannotStandUpFromHullDown()).thenReturn(false);
-        assertFalse(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isShutDown()).thenReturn(false);
+        when(mockMek.isProne()).thenReturn(true);
+        when(mockMek.cannotStandUpFromHullDown()).thenReturn(false);
+        assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test a prone mech whose chance to stand up is worse than our fall tolerance threshold.
         when(mockPilotingRollData.getValue()).thenReturn(12);
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isShutDown()).thenReturn(false);
-        when(mockMech.isProne()).thenReturn(true);
-        when(mockMech.cannotStandUpFromHullDown()).thenReturn(false);
-        assertTrue(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isShutDown()).thenReturn(false);
+        when(mockMek.isProne()).thenReturn(true);
+        when(mockMek.cannotStandUpFromHullDown()).thenReturn(false);
+        assertTrue(mockPrincess.isImmobilized(mockMek));
 
         // Test a stuck mech whose chance to get unstuck is better than our fall tolerance threshold.
         when(mockPilotingRollData.getValue()).thenReturn(7);
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isShutDown()).thenReturn(false);
-        when(mockMech.isProne()).thenReturn(false);
-        when(mockMech.isStuck()).thenReturn(true);
-        assertFalse(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isShutDown()).thenReturn(false);
+        when(mockMek.isProne()).thenReturn(false);
+        when(mockMek.isStuck()).thenReturn(true);
+        assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test a stuck mech whose chance to get unstuck is worse than our fall tolerance threshold.
         when(mockPilotingRollData.getValue()).thenReturn(12);
-        when(mockMech.isImmobile()).thenReturn(false);
-        when(mockMech.isShutDown()).thenReturn(false);
-        when(mockMech.isProne()).thenReturn(false);
-        when(mockMech.isStuck()).thenReturn(true);
-        assertTrue(mockPrincess.isImmobilized(mockMech));
+        when(mockMek.isImmobile()).thenReturn(false);
+        when(mockMek.isShutDown()).thenReturn(false);
+        when(mockMek.isProne()).thenReturn(false);
+        when(mockMek.isStuck()).thenReturn(true);
+        assertTrue(mockPrincess.isImmobilized(mockMek));
     }
 
     @Test

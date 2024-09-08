@@ -18,12 +18,17 @@
  */
 package megamek.server.trigger;
 
-import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.common.Game;
+import megamek.common.GunEmplacement;
+import megamek.common.IGame;
+import megamek.common.MekWarrior;
+import megamek.common.TeleMissile;
 
 /**
  * This trigger reacts when only units of a single team remain alive and on board (this trigger
- * disregards undeployed units, offboard units, TeleMissiles, GunEmplacements and MechWarriors!).
+ * disregards undeployed units, offboard units, TeleMissiles, GunEmplacements and MekWarriors!).
  */
 public class BattlefieldControlTrigger implements Trigger {
 

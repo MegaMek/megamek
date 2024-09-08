@@ -18,16 +18,17 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import org.apache.logging.log4j.LogManager;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 final class ASArmStrConverter {
 
-    /** Mech Structure, AlphaStrike Companion, p.98 */
+    /** Mek Structure, AlphaStrike Companion, p.98 */
     private final static int[][] AS_MECH_STRUCTURE = new int[][] {
             { 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15 },
             { 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 7, 8, 8, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20 },
@@ -279,7 +280,7 @@ final class ASArmStrConverter {
             }
         }
         report.addLine("Unknown Engine", "");
-        LogManager.getLogger().error("Mech Engine type cannot be converted!");
+        LogManager.getLogger().error("Mek Engine type cannot be converted!");
         return -1;
     }
 

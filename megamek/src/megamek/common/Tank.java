@@ -2090,7 +2090,7 @@ public class Tank extends Entity {
         // Perform the superclass' action.
         super.setOmni(omni);
 
-        // Add BattleArmorHandles to OmniMechs.
+        // Add BattleArmorHandles to OmniMeks.
         if (omni && !hasBattleArmorHandles()) {
             addTransporter(new BattleArmorHandlesTank());
         }

@@ -177,7 +177,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             // Can't charge infantry.
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is infantry");
         } else if (te instanceof ProtoMek) {
-            // Can't charge ProtoMechs.
+            // Can't charge ProtoMeks.
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is ProtoM<ech");
         }
 

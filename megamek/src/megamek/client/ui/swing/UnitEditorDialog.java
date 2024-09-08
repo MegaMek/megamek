@@ -1,5 +1,5 @@
 /*
- * MechEditor.java - Copyright (C) 2013 Jay Lawson
+ * MekEditor.java - Copyright (C) 2013 Jay Lawson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -369,7 +369,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.setBorder(BorderFactory.createTitledBorder(Messages.getString("UnitEditorDialog.system")));
 
         if (entity instanceof Mek) {
-            setupMechSystemPanel();
+            setupMekSystemPanel();
         } else if (entity instanceof VTOL) {
             setupVtolSystemPanel();
         } else if (entity instanceof Tank) {
@@ -381,7 +381,7 @@ public class UnitEditorDialog extends JDialog {
         }
     }
 
-    private void setupMechSystemPanel() {
+    private void setupMekSystemPanel() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         /*
          * For the moment, I am going to cap out the number of hits at what the

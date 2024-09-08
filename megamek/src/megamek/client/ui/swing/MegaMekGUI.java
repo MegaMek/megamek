@@ -1098,7 +1098,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     unitLoadingDialog.setVisible(true);
                 }
                 MainMenuUnitBrowserDialog unitSelectorDialog = new MainMenuUnitBrowserDialog(frame, unitLoadingDialog);
-                new Thread(unitSelectorDialog, "Mech Selector Dialog").start();
+                new Thread(unitSelectorDialog, "Mek Selector Dialog").start();
                 unitSelectorDialog.setVisible(true);
                 break;
         }

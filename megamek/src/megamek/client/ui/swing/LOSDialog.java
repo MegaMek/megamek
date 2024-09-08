@@ -73,16 +73,16 @@ public class LOSDialog extends AbstractButtonDialog {
 
     @Override
     protected Container createCenterPane() {
-        toggles1[0] = new JToggleButton(Messages.getString("LOSDialog.Mech"));
-        toggles1[1] = new JToggleButton(Messages.getString("LOSDialog.NonMech"));
+        toggles1[0] = new JToggleButton(Messages.getString("LOSDialog.Mek"));
+        toggles1[1] = new JToggleButton(Messages.getString("LOSDialog.NonMek"));
         var firstButtonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         firstButtonsPanel.add(toggles1[0]);
         firstButtonsPanel.add(toggles1[1]);
         var firstLinePanel = new UIUtil.FixedYPanel();
         firstLinePanel.add(firstButtonsPanel);
 
-        toggles2[0] = new JToggleButton(Messages.getString("LOSDialog.Mech"));
-        toggles2[1] = new JToggleButton(Messages.getString("LOSDialog.NonMech"));
+        toggles2[0] = new JToggleButton(Messages.getString("LOSDialog.Mek"));
+        toggles2[1] = new JToggleButton(Messages.getString("LOSDialog.NonMek"));
         var secondButtonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         secondButtonsPanel.add(toggles2[0]);
         secondButtonsPanel.add(toggles2[1]);

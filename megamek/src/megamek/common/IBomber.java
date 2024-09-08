@@ -27,7 +27,7 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * Common interface for all entities capable of carrying bombs and making bomb attacks, includig Aero,
- * LandAirMech, and VTOL.
+ * LandAirMek, and VTOL.
  *
  * @author Neoancient
  */

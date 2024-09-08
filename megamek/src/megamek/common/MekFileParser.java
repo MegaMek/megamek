@@ -1,5 +1,5 @@
 /*
- * MechFileParser.java - Copyright (C) 2002-2004 Josh Yockey
+ * MekFileParser.java - Copyright (C) 2002-2004 Josh Yockey
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -172,9 +172,9 @@ public class MekFileParser {
                     loader = new BLKInfantryFile(bb);
                 } else if (sType.equals("BattleArmor")) {
                     loader = new BLKBattleArmorFile(bb);
-                } else if (sType.equals("ProtoMech")) {
+                } else if (sType.equals("ProtoMek")) {
                     loader = new BLKProtoMekFile(bb);
-                } else if (sType.equals("Mech")) {
+                } else if (sType.equals("Mek")) {
                     loader = new BLKMekFile(bb);
                 } else if (sType.equals("VTOL")) {
                     loader = new BLKVTOLFile(bb);
@@ -224,7 +224,7 @@ public class MekFileParser {
 
     /**
      * File-format agnostic location to do post-load initialization on a unit.
-     * Automatically add BattleArmorHandles to all OmniMechs.
+     * Automatically add BattleArmorHandles to all OmniMeks.
      */
     public static void postLoadInit(Entity ent) throws EntityLoadingException {
         try {
@@ -401,7 +401,7 @@ public class MekFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite for " + ent.getShortName() + ".  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                            "Unable to find an ECM Suite for " + ent.getShortName() + ".  Meks with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
             // Link PPC Capacitor to PPC it its location.

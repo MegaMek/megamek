@@ -20,17 +20,18 @@
  */
 package megamek.client.ui.swing.util;
 
+import java.awt.Image;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+
 import megamek.common.BTObject;
 import megamek.common.Configuration;
 import megamek.common.Mek;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also
@@ -44,7 +45,7 @@ public final class FluffImageHelper {
     public static final String DIR_NAME_FIGHTER = "Fighter";
     public static final String DIR_NAME_INFANTRY = "Infantry";
     public static final String DIR_NAME_JUMPSHIP = "JumpShip";
-    public static final String DIR_NAME_MECH = "Mech";
+    public static final String DIR_NAME_MECH = "Mek";
     public static final String DIR_NAME_PROTOMEK = "ProtoMek";
     public static final String DIR_NAME_SMALLCRAFT = "Small Craft";
     public static final String DIR_NAME_SPACESTATION = "Space Station";

@@ -358,7 +358,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private JPanel autoConfigSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.autoConfig");
-        result.setToolTipText(Messages.getString("CustomMechDialog.acfPanelDesc"));
+        result.setToolTipText(Messages.getString("CustomMekDialog.acfPanelDesc"));
         Content panContent = new Content(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -367,27 +367,27 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         // Set up auto-configuration controls for player
         panContent.add(labelAutoconfig, gbc);
         panContent.add(cmbFaction, gbc);
-        cmbFaction.setToolTipText(Messages.getString("CustomMechDialog.acfFactionChooser"));
+        cmbFaction.setToolTipText(Messages.getString("CustomMekDialog.acfFactionChooser"));
         cmbFaction.setRenderer(factionCbRenderer);
         updateFactionChoice(getFactionFromCode(team.getFaction(), year));
         panContent.add(butAutoconfigure, gbc);
         butAutoconfigure.addActionListener(listener);
-        butAutoconfigure.setToolTipText(Messages.getString("CustomMechDialog.acfExecuteConfig"));
+        butAutoconfigure.setToolTipText(Messages.getString("CustomMekDialog.acfExecuteConfig"));
         panContent.add(butRandomize, gbc);
         butRandomize.addActionListener(listener);
-        butRandomize.setToolTipText(Messages.getString("CustomMechDialog.acfRandomizer"));
+        butRandomize.setToolTipText(Messages.getString("CustomMekDialog.acfRandomizer"));
         panContent.add(chkTrulyRandom, gbc);
-        chkTrulyRandom.setToolTipText(Messages.getString("CustomMechDialog.acfTrulyRandom"));
+        chkTrulyRandom.setToolTipText(Messages.getString("CustomMekDialog.acfTrulyRandom"));
         panContent.add(chkBanNukes, gbc);
-        chkBanNukes.setToolTipText(Messages.getString("CustomMechDialog.acfBanNukes"));
+        chkBanNukes.setToolTipText(Messages.getString("CustomMekDialog.acfBanNukes"));
         panContent.add(butSaveADF, gbc);
-        butSaveADF.setToolTipText(Messages.getString("CustomMechDialog.acfSaveADF"));
+        butSaveADF.setToolTipText(Messages.getString("CustomMekDialog.acfSaveADF"));
         butSaveADF.addActionListener(listener);
         panContent.add(butLoadADF, gbc);
-        butLoadADF.setToolTipText(Messages.getString("CustomMechDialog.acfLoadADF"));
+        butLoadADF.setToolTipText(Messages.getString("CustomMekDialog.acfLoadADF"));
         butLoadADF.addActionListener(listener);
         panContent.add(butRestoreMT, gbc);
-        butRestoreMT.setToolTipText(Messages.getString("CustomMechDialog.acfRestoreMunitionTree"));
+        butRestoreMT.setToolTipText(Messages.getString("CustomMekDialog.acfRestoreMunitionTree"));
         butRestoreMT.addActionListener(listener);
         butRestoreMT.setEnabled(false);
         return result;
@@ -541,10 +541,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         GridBagLayout gbl = new GridBagLayout();
         JPanel result = new JPanel(gbl);
 
-        JLabel lblOffset = new JLabel(Messages.getString("CustomMechDialog.labDeploymentOffset"));
-        lblOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
-        JLabel lblWidth = new JLabel(Messages.getString("CustomMechDialog.labDeploymentWidth"));
-        lblWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
+        JLabel lblOffset = new JLabel(Messages.getString("CustomMekDialog.labDeploymentOffset"));
+        lblOffset.setToolTipText(Messages.getString("CustomMekDialog.labDeploymentOffsetTip"));
+        JLabel lblWidth = new JLabel(Messages.getString("CustomMekDialog.labDeploymentWidth"));
+        lblWidth.setToolTipText(Messages.getString("CustomMekDialog.labDeploymentWidthTip"));
 
         txtOffset.setColumns(4);
         txtWidth.setColumns(4);
@@ -554,19 +554,19 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
 
-        result.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
+        result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnyNW")), GBC.std());
         result.add(spinStartingAnyNWx, GBC.std());
         result.add(spinStartingAnyNWy, GBC.eol());
-        result.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
+        result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnySE")), GBC.std());
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
 
-        JButton btnUseRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentUseRuler"));
-        btnUseRuler.setToolTipText(Messages.getString("CustomMechDialog.BtnDeploymentUseRulerTip"));
+        JButton btnUseRuler = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentUseRuler"));
+        btnUseRuler.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentUseRulerTip"));
         btnUseRuler.addActionListener(e -> useRuler());
         result.add(btnUseRuler, GBC.std());
-        JButton btnApply = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentApply"));
-        btnApply.setToolTipText(Messages.getString("CustomMechDialog.BtnDeploymentApplyTip"));
+        JButton btnApply = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentApply"));
+        btnApply.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentApplyTip"));
         btnApply.addActionListener(e -> apply());
         result.add(btnApply, GBC.eol());
 

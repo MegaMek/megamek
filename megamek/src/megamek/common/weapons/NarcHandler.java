@@ -200,7 +200,7 @@ public class NarcHandler extends MissileWeaponHandler {
             }
         }
 
-        // Now the same check for ProtoMechs. We've already covered near-misses
+        // Now the same check for ProtoMeks. We've already covered near-misses
         // above, so here we only have to worry about the actual hits left over.
         if (entityTarget instanceof ProtoMek) {
             while (!narcCanAttachTo(entityTarget, hit.getLocation())

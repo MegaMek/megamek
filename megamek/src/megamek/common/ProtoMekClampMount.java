@@ -14,7 +14,7 @@
 package megamek.common;
 
 /**
- * Represents a section of a Mech torso where a protomech equipped with the magnetic clamp system
+ * Represents a section of a Mek torso where a protomech equipped with the magnetic clamp system
  * can attach itself for transport. A mech has two of these, one front and one rear. An ultraheavy
  * protomech can only be carried on the front mount, and if carried this way the rear cannot be
  * used. The two mounts are not aware of each other and it is the responsibility of the code that

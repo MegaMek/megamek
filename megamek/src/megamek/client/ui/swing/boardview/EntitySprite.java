@@ -18,6 +18,11 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -26,11 +31,6 @@ import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an
@@ -140,7 +140,7 @@ class EntitySprite extends Sprite {
      * Returns a shortened unit name string, mostly for vehicles. Words contained
      * in the removableNameStrings list are taken away from the end of the name
      * until something is encountered that is not contained in that list.
-     * On Mech names this will typically have no effect.
+     * On Mek names this will typically have no effect.
      */
     private static String reduceVehicleName(Entity entity) {
         if (!entity.isVehicle()) {

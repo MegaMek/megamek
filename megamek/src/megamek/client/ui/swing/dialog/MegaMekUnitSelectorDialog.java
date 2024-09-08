@@ -80,11 +80,11 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel panelButtons = new JPanel(new GridBagLayout());
 
-        buttonSelect = new JButton(Messages.getString("MechSelectorDialog.m_bPick"));
+        buttonSelect = new JButton(Messages.getString("MekSelectorDialog.m_bPick"));
         buttonSelect.addActionListener(this);
         panelButtons.add(buttonSelect, gbc);
 
-        buttonSelectClose = new JButton(Messages.getString("MechSelectorDialog.m_bPickClose"));
+        buttonSelectClose = new JButton(Messages.getString("MekSelectorDialog.m_bPickClose"));
         buttonSelectClose.addActionListener(this);
         panelButtons.add(buttonSelectClose, gbc);
 
@@ -92,13 +92,13 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         buttonClose.addActionListener(this);
         panelButtons.add(buttonClose, gbc);
 
-        JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
+        JLabel labelPlayer = new JLabel(Messages.getString("MekSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
         panelButtons.add(labelPlayer, gbc);
 
         panelButtons.add(comboPlayer, gbc);
 
-        buttonShowBV = new JButton(Messages.getString("MechSelectorDialog.BV"));
+        buttonShowBV = new JButton(Messages.getString("MekSelectorDialog.BV"));
         buttonShowBV.addActionListener(this);
         panelButtons.add(buttonShowBV, gbc);
 

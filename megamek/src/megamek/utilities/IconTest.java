@@ -32,12 +32,12 @@ public final class IconTest {
     private static final MMLogger logger = MMLogger.create(IconTest.class);
 
     public static void main(final String[] args) throws IOException {
-        logger.info("Executing MechSetTest");
+        logger.info("Executing MekSetTest");
 
         try {
             MekSetTest.main(new String[0]);
         } catch (final Exception e) {
-            logger.error(e, "Error with MechSetTest");
+            logger.error(e, "Error with MekSetTest");
         }
 
         logger.info("\nExecuting GenerateGenericIconList");

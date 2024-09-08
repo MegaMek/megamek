@@ -148,10 +148,10 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         if ((grappleSide != Entity.GRAPPLE_BOTH) && (ae instanceof Mek)) {
             Mek attacker = (Mek) ae;
-            Mek teMech = (te instanceof Mek) ? (Mek) te : null;
+            Mek teMek = (te instanceof Mek) ? (Mek) te : null;
             if (attacker.hasActiveTSM(false)
-                    && ((teMech == null) || !teMech.hasActiveTSM(false)
-                            || teMech.hasActiveTSM(false))) {
+                    && ((teMek == null) || !teMek.hasActiveTSM(false)
+                            || teMek.hasActiveTSM(false))) {
                 toHit.addModifier(-2, "TSM Active Bonus");
             }
         }
@@ -192,7 +192,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
         }
 
-        // LAM AirMechs can only grapple when grounded.
+        // LAM AirMeks can only grapple when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot grapple while airborne");
         }
@@ -225,7 +225,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if ((!(ae instanceof BipedMek) && !(ae instanceof ProtoMek))
                 || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only biped mechs can grapple 'Meks and ProtoMechs");
+                    "Only biped mechs can grapple 'Meks and ProtoMeks");
         }
 
         Entity te = (Entity) target;

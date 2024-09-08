@@ -14,14 +14,24 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.weapons.infantry.InfantryWeapon;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
+import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.EquipmentTypeLookup;
+import megamek.common.LocationFullException;
+import megamek.common.Mounted;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Panel that allows splitting ammo between standard and inferno for light and medium weapons
@@ -105,7 +115,7 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
-            add(new JLabel(String.format(Messages.getString("CustomMechDialog.formatSmSVAmmoShots"),
+            add(new JLabel(String.format(Messages.getString("CustomMekDialog.formatSmSVAmmoShots"),
                     shotsPerClip, (int) weapon.getSize())), gbc);
 
             gbc.gridx = 0;

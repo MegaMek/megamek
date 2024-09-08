@@ -383,10 +383,10 @@ public class EntityImage {
         final int colour = colourCamouflage ? PlayerColour.parseFromString(getCamouflage().getFilename()).getHex() : -1;
 
         // Prepare the images for access
-        int[] pMech = new int[IMG_SIZE];
+        int[] pMek = new int[IMG_SIZE];
         int[] pCamo = new int[IMG_SIZE];
         try {
-            grabImagePixels(image, pMech);
+            grabImagePixels(image, pMek);
             if (!colourCamouflage && hasCamouflage) {
                 grabImagePixels(getCamouflage().getImage(), pCamo);
             }
@@ -398,7 +398,7 @@ public class EntityImage {
         if (hasCamouflage) {
             // Overlay the camo or color
             for (int i = 0; i < IMG_SIZE; i++) {
-                int pixel = pMech[i];
+                int pixel = pMek[i];
                 int alpha = (pixel >> 24) & 0xff;
                 int red = (pixel >> 16) & 0xff;
                 int green = (pixel >> 8) & 0xff;
@@ -439,11 +439,11 @@ public class EntityImage {
                     int red2 = red1 * blue / 255;
                     int green2 = green1 * blue / 255;
                     int blue2 = blue1 * blue / 255;
-                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
+                    pMek[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
                 }
             }
         }
-        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH);
+        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMek, 0, IMG_WIDTH);
         Image result = Toolkit.getDefaultToolkit().createImage(producer);
         return ImageUtil.createAcceleratedImage(result);
     }

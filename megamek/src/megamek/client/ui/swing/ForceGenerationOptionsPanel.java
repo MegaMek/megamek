@@ -737,11 +737,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     panMotive.add(createSubtypeCheck("leg", true));
                     panMotive.add(createSubtypeCheck("jump", true));
                     panMotive.add(createSubtypeCheck("motorized", true));
-                    panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.hover"),
+                    panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mek.hover"),
                             "hover", true));
-                    panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.tracked"),
+                    panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mek.tracked"),
                             "tracked", true));
-                    panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.wheeled"),
+                    panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mek.wheeled"),
                             "wheeled", true));
                     break;
                 case UnitType.BATTLE_ARMOR:
@@ -939,7 +939,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private static final long serialVersionUID = 1439149790457737700L;
 
         private JRadioButton bSimpleFormation = new JRadioButton(Messages.getString("RandomArmyDialog.simpleFormation"));
-        private JRadioButton bMechBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
+        private JRadioButton bMekBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
         private JRadioButton bAirLance = new JRadioButton(Messages.getString("RandomArmyDialog.airLance"));
         private JRadioButton bOtherUnitType = new JRadioButton(Messages.getString("RandomArmyDialog.otherUnitType"));
         private JComboBox<String> cbOtherUnitType = new JComboBox<>();
@@ -1045,8 +1045,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.fill = GridBagConstraints.NONE;
             c.weightx = 0.0;
             c.weighty = 0.0;
-            panOtherOptions.add(bMechBA, c);
-            btnGroup.add(bMechBA);
+            panOtherOptions.add(bMekBA, c);
+            btnGroup.add(bMekBA);
 
             c.gridy++;
             c.gridwidth = 2;
@@ -1130,7 +1130,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
 
         public boolean mechBA() {
-            return bMechBA.isSelected();
+            return bMekBA.isSelected();
         }
 
         public boolean airLance() {

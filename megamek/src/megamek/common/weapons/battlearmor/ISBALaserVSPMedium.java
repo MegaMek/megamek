@@ -53,7 +53,7 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
         maxRange = RANGE_SHORT;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        // Tech Progression Missing in IO. Confirmed with Herb uses the same as the Mech Weapon.
+        // Tech Progression Missing in IO. Confirmed with Herb uses the same as the Mek Weapon.
         rulesRefs = "321, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

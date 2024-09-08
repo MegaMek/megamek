@@ -768,7 +768,7 @@ public class TdbFile implements IMekLoader {
     }
 
     /**
-     * JAXB translator for the TDB location constants to Mech.LOC_* constants.
+     * JAXB translator for the TDB location constants to Mek.LOC_* constants.
      */
     private static class LocationAdapter extends XmlAdapter<String, Integer> {
 

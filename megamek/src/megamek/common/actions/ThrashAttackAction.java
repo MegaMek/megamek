@@ -80,7 +80,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can thrash at infantry");
         }
 
-        // Mech must be prone.
+        // Mek must be prone.
         if (!ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only prone mechs can thrash at infantry");
         }
@@ -126,7 +126,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
-        // The Mech can't have fired a weapon this round.
+        // The Mek can't have fired a weapon this round.
         for (int loop = 0; loop < ae.locations(); loop++) {
             if (ae.weaponFiredFrom(loop)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -134,11 +134,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
             }
         }
 
-        // Mech must have at least one working arm or leg.
+        // Mek must have at least one working arm or leg.
         if (ae.isLocationBad(Mek.LOC_RARM) && ae.isLocationBad(Mek.LOC_LARM)
                 && ae.isLocationBad(Mek.LOC_RLEG)
                 && ae.isLocationBad(Mek.LOC_LLEG)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Mech has no arms or legs to thrash");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Mek has no arms or legs to thrash");
         }
 
         // If the attack isn't impossible, it's automatically successful.

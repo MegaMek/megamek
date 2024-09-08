@@ -172,7 +172,7 @@ public class ASAdvancedSearchPanel extends JPanel {
     JToggleButton unitRoleTransport = new JToggleButton(UnitRole.TRANSPORT.toString());
     JToggleButton unitRoleNone = new JToggleButton(UnitRole.NONE.toString());
 
-    private final JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
+    private final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
 
     public ASAdvancedSearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

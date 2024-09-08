@@ -13,15 +13,16 @@
  */
 package megamek.common.preference;
 
-import megamek.MMConstants;
-import megamek.common.MovePath;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.MMConstants;
+import megamek.common.MovePath;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     //region Variable Declarations
@@ -35,7 +36,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
     public static final String LOG_DIRECTORY = "LogDirectory";
-    public static final String MECH_DIRECTORY = "MechDirectory";
+    public static final String MECH_DIRECTORY = "MekDirectory";
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
@@ -123,7 +124,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public boolean useGPinUnitSelection() {
         return store.getBoolean(USE_GP_IN_UNIT_SELECTION);
     }
-    
+
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
     }
@@ -164,7 +165,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(LOG_DIRECTORY);
     }
 
-    public String getMechDirectory() {
+    public String getMekDirectory() {
         return store.getString(MECH_DIRECTORY);
     }
 
@@ -233,7 +234,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public void setUseGpInUnitSelection(boolean state) {
         store.setValue(USE_GP_IN_UNIT_SELECTION, state);
     }
-    
+
     public void setGenerateNames(boolean state) {
         store.setValue(GENERATE_NAMES, state);
     }

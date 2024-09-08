@@ -933,7 +933,7 @@ public class ASDamageConverter {
     }
 
     /**
-     * Returns the total generated heat (weapons and movement) for a Mech for the purpose of finding OV / OVL values.
+     * Returns the total generated heat (weapons and movement) for a Mek for the purpose of finding OV / OVL values.
      * If onlyRear is true, rear-facing weapons are included, otherwise only front-facing weapons are included!
      * If onlyLongRange is true, only weapons with an L damage value are included.
      */

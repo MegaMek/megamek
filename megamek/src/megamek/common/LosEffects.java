@@ -13,13 +13,13 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
@@ -42,8 +42,8 @@ public class LosEffects {
         public boolean lowAltitude = false;
         public boolean targetEntity = true;
         public boolean targetInfantry;
-        public boolean targetIsMech;
-        public boolean attackerIsMech;
+        public boolean targetIsMek;
+        public boolean attackerIsMek;
         public boolean attOffBoard;
         public Coords attackPos;
         public Coords targetPos;
@@ -357,8 +357,8 @@ public class LosEffects {
             // Assume LOS is from Alt 1 above c1 to Alt 1 above c2, due to Low Altitude LOS calc differences from ground.
             ai.attackHeight = (ae == null) ? 1 : ae.getAltitude();
             ai.targetHeight = (te == null) ? 1 : te.getAltitude();
-            ai.attackerIsMech = false;
-            ai.targetIsMech = false;
+            ai.attackerIsMek = false;
+            ai.targetIsMek = false;
             ai.attLowAlt = true;
             ai.targetLowAlt = true;
             ai.lowAltitude = true;
@@ -367,8 +367,8 @@ public class LosEffects {
         } else if (game.getBoard().onGround()) {
             ai.attackHeight = mechInFirst ? 1 : 0;
             ai.targetHeight = mechInSecond ? 1 : 0;
-            ai.attackerIsMech = mechInFirst;
-            ai.targetIsMech = mechInSecond;
+            ai.attackerIsMek = mechInFirst;
+            ai.targetIsMek = mechInSecond;
             ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
             ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
         }
@@ -483,16 +483,16 @@ public class LosEffects {
         final int targetHeightAdjustment = game.hasRooftopGunEmplacement(targetHex.getCoords()) ? 1 : 0;
 
         final AttackInfo ai = new AttackInfo();
-        ai.attackerIsMech = attacker instanceof Mek;
+        ai.attackerIsMek = attacker instanceof Mek;
         ai.attackPos = attackerPosition;
         ai.attackerId = attacker.getId();
         ai.targetPos = targetPosition;
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         if (ai.targetEntity) {
             ai.targetId = ((Entity) target).getId();
-            ai.targetIsMech = target instanceof Mek;
+            ai.targetIsMek = target instanceof Mek;
         } else {
-            ai.targetIsMech = false;
+            ai.targetIsMek = false;
         }
 
         // Adjust units' altitudes for low-altitude map LOS caclulations
@@ -612,8 +612,8 @@ public class LosEffects {
 
         // Should not need to check unit types; only Aeros or acting Aeros can be up here currently.
         final AttackInfo ai = new AttackInfo();
-        ai.attackerIsMech = false;
-        ai.targetIsMech = false;
+        ai.attackerIsMek = false;
+        ai.targetIsMek = false;
         ai.targetInfantry = false;
 
         ai.attackPos = attackerPosition;
@@ -988,7 +988,7 @@ public class LosEffects {
 
             // Check for advanced cover, only 'mechs can get partial cover
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER) &&
-                    ai.targetIsMech) {
+                    ai.targetIsMek) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
                 if (leftLos.targetCover == COVER_HORIZONTAL &&
@@ -1059,7 +1059,7 @@ public class LosEffects {
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER) &&
-                    ai.attackerIsMech) {
+                    ai.attackerIsMek) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
                 if (leftLos.attackerCover == COVER_HORIZONTAL &&
@@ -1420,7 +1420,7 @@ public class LosEffects {
         // Partial Cover related code
         boolean potentialCover = false;
         // check for target partial cover
-        if (targetAdjc && ai.targetIsMech) {
+        if (targetAdjc && ai.targetIsMek) {
             if (los.blocked && partialCover) {
                 los.targetCover = COVER_FULL;
                 potentialCover = true;
@@ -1432,7 +1432,7 @@ public class LosEffects {
             }
         }
         // check for attacker partial (horizontal) cover
-        if (attackerAdjc && ai.attackerIsMech) {
+        if (attackerAdjc && ai.attackerIsMek) {
             if (los.blocked && partialCover) {
                 los.attackerCover = COVER_FULL;
                 potentialCover = true;

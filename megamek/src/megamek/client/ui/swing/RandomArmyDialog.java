@@ -166,7 +166,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private JLabel m_labYear = new JLabel(Messages
             .getString("RandomArmyDialog.Year"));
     private JLabel m_labMeks = new JLabel(Messages
-            .getString("RandomArmyDialog.Mechs"));
+            .getString("RandomArmyDialog.Meks"));
     private JLabel m_labVees = new JLabel(Messages
             .getString("RandomArmyDialog.Vees"));
     private JLabel m_labBA = new JLabel(Messages

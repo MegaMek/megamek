@@ -37,7 +37,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
 
 /**
- * This class provides a utility to read in the current MechSet and test to make
+ * This class provides a utility to read in the current MekSet and test to make
  * sure all images are accessible
  *
  * @author arlith

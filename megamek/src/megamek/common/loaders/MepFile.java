@@ -169,7 +169,7 @@ public class MepFile implements IMekLoader {
 
             mech.setWeight(Integer.decode(tonnage.trim()));
             mech.setYear(Integer.parseInt(techYear.trim()));
-            mech.setOmni("OmniMech".equals(chassisType.trim()));
+            mech.setOmni("OmniMek".equals(chassisType.trim()));
 
             // TODO : this ought to be a better test
             if ("InnerSphere".equals(innerSphere.trim())) {

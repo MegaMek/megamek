@@ -1014,7 +1014,7 @@ public class MapMenu extends JPopupMenu {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE, false));
         } else if (myEntity instanceof QuadVee) {
-            menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeMek",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_MEK));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
@@ -1022,7 +1022,7 @@ public class MapMenu extends JPopupMenu {
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
         } else if (myEntity instanceof LandAirMek) {
             int currentMode = myEntity.getConversionMode();
-            JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
+            JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMek",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
                     currentMode == LandAirMek.CONV_MODE_MEK);
             item.setEnabled(currentMode == LandAirMek.CONV_MODE_MEK

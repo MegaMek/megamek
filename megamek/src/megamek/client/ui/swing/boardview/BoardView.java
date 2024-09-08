@@ -33,6 +33,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -3614,12 +3615,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
                 le = LosEffects.calculateLos(game, ai);
                 message.append(Messages.getString("BoardView1.Attacker",
-                        mechInFirst ? Messages.getString("BoardView1.Mech")
-                                : Messages.getString("BoardView1.NonMech"),
+                        mechInFirst ? Messages.getString("BoardView1.Mek")
+                                : Messages.getString("BoardView1.NonMek"),
                         c1.getBoardNum()));
                 message.append(Messages.getString("BoardView1.Target",
-                        mechInSecond ? Messages.getString("BoardView1.Mech")
-                                : Messages.getString("BoardView1.NonMech"),
+                        mechInSecond ? Messages.getString("BoardView1.Mek")
+                                : Messages.getString("BoardView1.NonMek"),
                         c2.getBoardNum()));
             } else {
                 le = LosEffects.calculateLOS(game, ae, te);

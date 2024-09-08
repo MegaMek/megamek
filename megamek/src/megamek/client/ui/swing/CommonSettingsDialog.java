@@ -1303,7 +1303,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        JLabel unitDisplayMekArmorLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorLargeFontSize"));
+        JLabel unitDisplayMekArmorLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMekArmorLargeFontSize"));
         unitDisplayMekArmorLargeFontSizeText = new JTextField(5);
         unitDisplayMekArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorLargeFontSize()));
         unitDisplayMekArmorLargeFontSizeText.setMaximumSize(new Dimension(150, 40));
@@ -1312,7 +1312,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayMekArmorLargeFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMekArmorMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorMediumFontSize"));
+        JLabel unitDisplayMekArmorMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMekArmorMediumFontSize"));
         unitDisplayMekArmorMediumFontSizeText = new JTextField(5);
         unitDisplayMekArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorMediumFontSize()));
         unitDisplayMekArmorMediumFontSizeText.setMaximumSize(new Dimension(150, 40));
@@ -1321,7 +1321,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayMekArmorMediumFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMekArmorSmallFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorSmallFontSize"));
+        JLabel unitDisplayMekArmorSmallFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMekArmorSmallFontSize"));
         unitDisplayMekArmorSmallFontSizeText = new JTextField(5);
         unitDisplayMekArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorSmallFontSize()));
         unitDisplayMekArmorSmallFontSizeText.setMaximumSize(new Dimension(150, 40));
@@ -1330,7 +1330,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayMekArmorSmallFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMekLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechLargeFontSize"));
+        JLabel unitDisplayMekLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMekLargeFontSize"));
         unitDisplayMekLargeFontSizeText = new JTextField(5);
         unitDisplayMekLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekLargeFontSize()));
         unitDisplayMekLargeFontSizeText.setMaximumSize(new Dimension(150, 40));
@@ -1339,7 +1339,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayMekLargeFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMekMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechMediumFontSize"));
+        JLabel unitDisplayMekMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMekMediumFontSize"));
         unitDisplayMekMediumFontSizeText = new JTextField(5);
         unitDisplayMekMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekMediumFontSize()));
         unitDisplayMekMediumFontSizeText.setMaximumSize(new Dimension(150, 40));

@@ -190,7 +190,7 @@ public class EntityListFile {
      *            - the <code>Entity</code> whose location state is needed
      */
     public static String getLocString(Entity entity, int indentLvl) {
-        boolean isMech = entity instanceof Mek;
+        boolean isMek = entity instanceof Mek;
         boolean isNonSmallCraftAero = (entity instanceof Aero) && !(entity instanceof SmallCraft);
         boolean haveSlot = false;
         StringBuilder output = new StringBuilder();
@@ -281,8 +281,8 @@ public class EntityListFile {
                 // Did we get a slot?
                 if (null == slot) {
 
-                    // Nope. Record missing actuators on Biped Mechs.
-                    if (isMech
+                    // Nope. Record missing actuators on Biped Meks.
+                    if (isMek
                             && !entity.entityIsQuad()
                             && ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM))
                             && ((loop == 2) || (loop == 3))) {
@@ -311,10 +311,10 @@ public class EntityListFile {
                         continue;
                     }
 
-                    // Destroyed locations on Mechs that contain slots
+                    // Destroyed locations on Meks that contain slots
                     // that are missing but not hit or destroyed must
                     // have been blown off.
-                    if (!isDestroyed && isMech && slot.isMissing()
+                    if (!isDestroyed && isMek && slot.isMissing()
                             && !slot.isHit() && !slot.isDestroyed()) {
                         thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),

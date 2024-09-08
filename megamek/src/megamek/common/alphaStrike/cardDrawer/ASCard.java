@@ -18,6 +18,20 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
+import static java.awt.Color.WHITE;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.time.LocalDate;
+import java.util.Locale;
+
+import javax.swing.ImageIcon;
+
 import megamek.MMConstants;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.StringDrawer;
@@ -29,14 +43,6 @@ import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.time.LocalDate;
-import java.util.Locale;
-
-import static java.awt.Color.WHITE;
 
 /**
  * This class represents the (graphical) card of an AlphaStrike element as available on the MUL. The unit cards have a
@@ -107,7 +113,7 @@ public class ASCard {
     protected int fluffHeight = 512; //318;
 
     /**
-     * Creates an ASCard for the given AlphaStrike unit (either an AlphaStrikeElement or a MechSummary)
+     * Creates an ASCard for the given AlphaStrike unit (either an AlphaStrikeElement or a MekSummary)
      * which can be used to display a typical AlphaStrike
      * element card. The element can be null in which case the card
      * will contain a message instead of the element's values; the card image will still have the correct size.

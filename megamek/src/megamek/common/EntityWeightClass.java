@@ -20,7 +20,7 @@ package megamek.common;
  */
 public class EntityWeightClass {
 
-    // BA, Mech / Vee / Generic Weights
+    // BA, Mek / Vee / Generic Weights
     public static final int WEIGHT_ULTRA_LIGHT = 0; // Also used for BA "PAL" - Not yet truly implemented for mechs
     public static final int WEIGHT_LIGHT = 1; // Conventional Fighters (50t max weight) always return this.
     public static final int WEIGHT_MEDIUM = 2;
@@ -89,7 +89,7 @@ public class EntityWeightClass {
             return vehicleWeightLimits;
         } else {
             // Sad... and means we've not implemented yet!
-            // Default to Mechs. Blech.
+            // Default to Meks. Blech.
             return mechWeightLimits;
         }
     }
@@ -417,7 +417,7 @@ public class EntityWeightClass {
     /**
      * Get the weight class name given a weight class define and a unitType.
      * The unitType is a string that matches the unit type returned from a
-     * MechSummary.
+     * MekSummary.
      *
      * @param wClass
      * @param unitType

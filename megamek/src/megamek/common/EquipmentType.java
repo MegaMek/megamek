@@ -43,7 +43,7 @@ public class EquipmentType implements ITechnology {
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
     /**
-     * Default value for support vehicle slot cost. Those that differ from `Mechs
+     * Default value for support vehicle slot cost. Those that differ from `Meks
      * are assigned a value >= 0
      */
     private static final int MECH_SLOT_COST = -1;

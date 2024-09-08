@@ -161,7 +161,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
                 equipName = equipName.substring(4);
             }
 
-            // ProtoMech Ammo comes in non-standard amounts.
+            // ProtoMek Ammo comes in non-standard amounts.
             int ammoIndex = equipName.lastIndexOf(" (");
             int shotsCount = 0;
             if (ammoIndex > 0) {

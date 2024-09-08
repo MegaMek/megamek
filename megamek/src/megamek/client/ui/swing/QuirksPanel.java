@@ -29,7 +29,6 @@ import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.Mounted;
-import megamek.common.VTOL;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
@@ -126,7 +125,7 @@ public class QuirksPanel extends JPanel {
         for (final Object newVar : quirkComps) {
             DialogOptionComponent comp = (DialogOptionComponent) newVar;
             option = comp.getOption();
-            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) {
+            if ((comp.getValue() == Messages.getString("CustomMekDialog.None"))) {
                 entity.getQuirks().getOption(option.getName()).setValue("None");
             } else if (option.getName().equals("internal_bomb")) {
                 // Need to set the quirk, and only then force re-computing bomb bay space for Aero-derived units
@@ -146,7 +145,7 @@ public class QuirksPanel extends JPanel {
             for (final Object newVar : wpnQuirkComps) {
                 DialogOptionComponent comp = (DialogOptionComponent) newVar;
                 option = comp.getOption();
-                if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) {
+                if ((comp.getValue() == Messages.getString("CustomMekDialog.None"))) {
                     m.getQuirks().getOption(option.getName()).setValue("None");
                 } else {
                     m.getQuirks().getOption(option.getName()).setValue(comp.getValue());

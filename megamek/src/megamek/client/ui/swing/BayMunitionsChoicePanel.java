@@ -13,20 +13,40 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.Game;
+import megamek.common.LocationFullException;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
+import megamek.common.WeaponType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Neoancient
@@ -163,10 +183,10 @@ public class BayMunitionsChoicePanel extends JPanel {
                 spn.setName(atype.getInternalName());
                 spn.addChangeListener(this);
                 if (atype.getTonnage(entity) > 1) {
-                    spn.setToolTipText(String.format(Messages.getString("CustomMechDialog.formatMissileTonnage"),
+                    spn.setToolTipText(String.format(Messages.getString("CustomMekDialog.formatMissileTonnage"),
                             atype.getName(), atype.getTonnage(entity)));
                 } else {
-                    spn.setToolTipText(String.format(Messages.getString("CustomMechDialog.formatShotsPerTon"),
+                    spn.setToolTipText(String.format(Messages.getString("CustomMekDialog.formatShotsPerTon"),
                             atype.getName(), atype.getShots()));
                 }
                 spinners.add(spn);
@@ -240,31 +260,31 @@ public class BayMunitionsChoicePanel extends JPanel {
                 );
                 if (atype.getMunitionType().stream().noneMatch(artemisCapable::contains)) {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
-                            ? "CustomMechDialog.LRM" : "CustomMechDialog.SRM");
+                            ? "CustomMekDialog.LRM" : "CustomMekDialog.SRM");
                 } else {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
-                            ? "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis");
+                            ? "CustomMekDialog.LRMArtemis" : "CustomMekDialog.SRMArtemis");
                 }
             }
 
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE) ? "-T" : "";
                 if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-                    return Messages.getString("CustomMechDialog.Peacemaker") + tele;
+                    return Messages.getString("CustomMekDialog.Peacemaker") + tele;
                 } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-                    return Messages.getString("CustomMechDialog.SantaAnna") + tele;
+                    return Messages.getString("CustomMekDialog.SantaAnna") + tele;
                 } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-                    return Messages.getString("CustomMechDialog.KillerWhale") + tele;
+                    return Messages.getString("CustomMekDialog.KillerWhale") + tele;
                 } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                    return Messages.getString("CustomMechDialog.WhiteShark") + tele;
+                    return Messages.getString("CustomMekDialog.WhiteShark") + tele;
                 } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                    return Messages.getString("CustomMechDialog.Barracuda") + tele;
+                    return Messages.getString("CustomMekDialog.Barracuda") + tele;
                 }
             }
 
             if ((atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
-                return Messages.getString("CustomMechDialog.Artemis");
+                return Messages.getString("CustomMekDialog.Artemis");
             }
 
             // ATM munitions
@@ -280,12 +300,12 @@ public class BayMunitionsChoicePanel extends JPanel {
                         || atype.getAmmoType() == AmmoType.T_THUMPER
                         || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
-                        return Messages.getString("CustomMechDialog.StandardMunition");
+                        return Messages.getString("CustomMekDialog.StandardMunition");
                     }
                     return atype.getShortName();
                 }
             }
-            return Messages.getString("CustomMechDialog.StandardMunition");
+            return Messages.getString("CustomMekDialog.StandardMunition");
         }
 
         private void recalcMaxValues() {
@@ -303,7 +323,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                 ((SpinnerNumberModel) spinners.get(i).getModel()).setMaximum(max);
                 spinners.get(i).addChangeListener(this);
             }
-            lblTonnage.setText(String.format(Messages.getString("CustomMechDialog.formatAmmoTonnage"),
+            lblTonnage.setText(String.format(Messages.getString("CustomMekDialog.formatAmmoTonnage"),
                     tonnage - remaining, tonnage));
         }
 

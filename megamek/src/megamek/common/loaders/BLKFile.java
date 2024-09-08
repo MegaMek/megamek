@@ -609,9 +609,9 @@ public class BLKFile {
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");
         } else if (t instanceof ProtoMek) {
-            blk.writeBlockData("UnitType", "ProtoMech");
+            blk.writeBlockData("UnitType", "ProtoMek");
         } else if (t instanceof Mek) {
-            blk.writeBlockData("UnitType", "Mech");
+            blk.writeBlockData("UnitType", "Mek");
         } else if (t instanceof GunEmplacement) {
             blk.writeBlockData("UnitType", "GunEmplacement");
         } else if (t instanceof LargeSupportTank) {
@@ -1236,7 +1236,7 @@ public class BLKFile {
         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
             name += ":TU";
         }
-        // For BattleArmor and ProtoMechs, we need to save how many shots are in this
+        // For BattleArmor and ProtoMeks, we need to save how many shots are in this
         // location but they have different formats, yay!
         if ((m.getEntity() instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";

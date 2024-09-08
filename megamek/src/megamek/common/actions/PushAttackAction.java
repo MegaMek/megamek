@@ -125,7 +125,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        // LAM AirMechs can only push when grounded.
+        // LAM AirMeks can only push when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push while airborne");
         }

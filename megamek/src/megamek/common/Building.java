@@ -15,11 +15,19 @@
 */
 package megamek.common;
 
-import megamek.common.enums.BasementType;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Vector;
+
 import org.apache.logging.log4j.LogManager;
 
-import java.io.Serializable;
-import java.util.*;
+import megamek.common.enums.BasementType;
 
 /**
  * This class represents a single, possibly multi-hex building on the board.
@@ -28,7 +36,7 @@ import java.util.*;
  *
  * Rewrite Notes:
  * TODO : 1) Migrate Magic Numbers to Enums
- * TODO : 2) Offboard Gun Emplacements: Revisit with a required rules query (CustomMechDialog - 22-Feb-2022)
+ * TODO : 2) Offboard Gun Emplacements: Revisit with a required rules query (CustomMekDialog - 22-Feb-2022)
  *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
@@ -39,19 +47,19 @@ public class Building implements Serializable {
      * Generic flag for uninitialized values.
      */
     protected static final int UNKNOWN = -1;
-    
+
     // The Building Types
     public static final int LIGHT = 1;
     public static final int MEDIUM = 2;
     public static final int HEAVY = 3;
     public static final int HARDENED = 4;
     public static final int WALL = 5;
-    
+
     /**
      * The Building Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
      */
     private int type = Building.UNKNOWN;
-    
+
     // The Building Classes
     public static final int STANDARD = 0;
     public static final int HANGAR = 1;
@@ -59,12 +67,12 @@ public class Building implements Serializable {
     public static final int GUN_EMPLACEMENT = 3;
     // TODO: leaving out Castles Brian until issues with damage scaling are resolved
     // public static final int CASTLE_BRIAN = 3;
-    
+
     /**
      * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
      */
     private int bldgClass = Building.STANDARD;
-    
+
     /**
      * The ID of this building.
      */
@@ -89,14 +97,14 @@ public class Building implements Serializable {
      * immediately updates this value.
      */
     private Map<Coords, Integer> currentCF = new HashMap<>();
-    
+
     /**
      * The construction factor of the building hexes at the start of this attack
      * phase. Damage that is received during the phase is applied at the end of
      * the phase.
      */
     private Map<Coords, Integer> phaseCF = new HashMap<>();
-    
+
     /**
      * The current armor of the building hexes.
      */
@@ -368,7 +376,7 @@ public class Building implements Serializable {
     public Enumeration<Coords> getCoords() {
         return coordinates.elements();
     }
-    
+
     /** Returns a list of this Building's coords. The list is unmodifiable. */
     public List<Coords> getCoordsList() {
         return Collections.unmodifiableList(coordinates);
@@ -609,7 +617,7 @@ public class Building implements Serializable {
     public int hashCode() {
         return id;
     }
-    
+
     /** Returns a string representation of the given building type, e.g. "Hardened". */
     public static String typeName(int type) {
         switch (type) {
@@ -625,7 +633,7 @@ public class Building implements Serializable {
                 return "Unknown";
         }
     }
-    
+
     /** Returns a string representation of the given building class, e.g. "Hangar". */
     public static String className(int bldgClass) {
         switch (bldgClass) {

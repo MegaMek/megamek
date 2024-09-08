@@ -88,10 +88,10 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private JLabel heightLabel2;
     private JTextField height2 = new JTextField();
 
-    private JCheckBox cboIsMech1 =
-        new JCheckBox(Messages.getString("Ruler.isMech"));
-    private JCheckBox cboIsMech2 =
-        new JCheckBox(Messages.getString("Ruler.isMech"));
+    private JCheckBox cboIsMek1 =
+        new JCheckBox(Messages.getString("Ruler.isMek"));
+    private JCheckBox cboIsMek2 =
+        new JCheckBox(Messages.getString("Ruler.isMek"));
 
     public Ruler(JFrame f, Client c, BoardView b, Game g) {
         super(f, Messages.getString("Ruler.title"), false);
@@ -150,7 +150,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             }
         });
         height1.setColumns(5);
-        cboIsMech1.addItemListener(e -> checkBoxSelectionChanged());
+        cboIsMek1.addItemListener(e -> checkBoxSelectionChanged());
 
         heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT);
         heightLabel2.setForeground(endColor);
@@ -162,7 +162,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             }
         });
         height2.setColumns(5);
-        cboIsMech2.addItemListener(e -> checkBoxSelectionChanged());
+        cboIsMek2.addItemListener(e -> checkBoxSelectionChanged());
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -177,8 +177,8 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         gridBagLayout1.setConstraints(height1, c);
         panelMain.add(height1);
         c.gridx = 2;
-        gridBagLayout1.setConstraints(cboIsMech1, c);
-        panelMain.add(cboIsMech1);
+        gridBagLayout1.setConstraints(cboIsMek1, c);
+        panelMain.add(cboIsMek1);
 
         c.gridx = 0;
         c.gridy = 1;
@@ -190,8 +190,8 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         gridBagLayout1.setConstraints(height2, c);
         panelMain.add(height2);
         c.gridx = 2;
-        gridBagLayout1.setConstraints(cboIsMech2, c);
-        panelMain.add(cboIsMech2);
+        gridBagLayout1.setConstraints(cboIsMek2, c);
+        panelMain.add(cboIsMek2);
 
         c.gridx = 0;
         c.gridy = 2;
@@ -296,13 +296,13 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
 
     private void addPoint(Coords c) {
         int absHeight = Integer.MIN_VALUE;
-        boolean isMech = false;
+        boolean isMek = false;
         boolean entFound = false;
         for (Entity ent : game.getEntitiesVector(c)) {
             int trAbsheight = ent.relHeight();
             if (trAbsheight > absHeight) {
                 absHeight = trAbsheight;
-                isMech = ent instanceof Mek;
+                isMek = ent instanceof Mek;
                 entFound = true;
             }
         }
@@ -310,7 +310,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             start = c;
             if (entFound) {
                 height1.setText(absHeight+"");
-                cboIsMech1.setSelected(isMech);
+                cboIsMek1.setSelected(isMek);
             }
         } else if (start.equals(c)) {
             clear();
@@ -320,7 +320,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             distance = start.distance(end);
             if (entFound) {
                 height2.setText(absHeight+"");
-                cboIsMech2.setSelected(isMech);
+                cboIsMek2.setSelected(isMek);
             }
             setText();
             setVisible(true);
@@ -349,12 +349,12 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         ToHitData thd;
         if (flip) {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(start, end, h1, h2, cboIsMech1.isSelected(),
-                            cboIsMech2.isSelected())).losModifiers(game);
+                    buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
+                            cboIsMek2.isSelected())).losModifiers(game);
         } else {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(end, start, h2, h1, cboIsMech2.isSelected(),
-                            cboIsMech1.isSelected())).losModifiers(game);
+                    buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
+                            cboIsMek1.isSelected())).losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = ";
@@ -363,12 +363,12 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
 
         if (flip) {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(end, start, h2, h1, cboIsMech2.isSelected(),
-                            cboIsMech1.isSelected())).losModifiers(game);
+                    buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
+                            cboIsMek1.isSelected())).losModifiers(game);
         } else {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(start, end, h1, h2, cboIsMech1.isSelected(),
-                            cboIsMech2.isSelected())).losModifiers(game);
+                    buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
+                            cboIsMek2.isSelected())).losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = ";
@@ -394,14 +394,14 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
      * @return
      */
     private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
-            int h2, boolean attackerIsMech, boolean targetIsMech) {
+            int h2, boolean attackerIsMek, boolean targetIsMek) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
         ai.attackHeight = h1;
         ai.targetHeight = h2;
-        ai.attackerIsMech = attackerIsMech;
-        ai.targetIsMech = targetIsMech;
+        ai.attackerIsMek = attackerIsMek;
+        ai.targetIsMek = targetIsMek;
         ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + h1;
         ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + h2;
         return ai;

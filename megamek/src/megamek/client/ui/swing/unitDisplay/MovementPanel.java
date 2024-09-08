@@ -1,12 +1,12 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.Rectangle;
+import java.util.Enumeration;
+
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.GeneralInfoMapSet;
 import megamek.client.ui.swing.widget.PicMap;
 import megamek.common.Entity;
-
-import java.awt.*;
-import java.util.Enumeration;
 
 /**
  * The movement panel contains all the buttons, readouts and gizmos relating
@@ -51,7 +51,7 @@ class MovementPanel extends PicMap {
     /**
      * updates fields for the specified mech
      */
-    public void displayMech(Entity en) {
+    public void displayMek(Entity en) {
         gi.setEntity(en);
         onResize();
         update();

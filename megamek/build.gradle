@@ -359,7 +359,7 @@ task mechCacheCSVTool(type: JavaExec, dependsOn: jar) {
     description = 'Icon Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.utilities.MechCacheCSVTool'
+    mainClass = 'megamek.utilities.MekCacheCSVTool'
 }
 
 task nameChangesValidator(type: JavaExec, dependsOn: jar) {

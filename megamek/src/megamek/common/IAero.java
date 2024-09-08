@@ -15,14 +15,20 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
 
 /**
- * Methods shared by Aero and LandAirMech
+ * Methods shared by Aero and LandAirMek
  *
  * @author Neoancient
  *
@@ -260,7 +266,7 @@ public interface IAero {
     double getFuelTonnage();
 
     /*
-     * Default methods that are implemented the same for Aero and LandAirMech
+     * Default methods that are implemented the same for Aero and LandAirMek
      */
 
     default PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {

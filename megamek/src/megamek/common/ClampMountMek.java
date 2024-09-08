@@ -15,10 +15,10 @@
 package megamek.common;
 
 /**
- * Represents the space on an standard Mech (i.e. one that is not an OmniMech)
+ * Represents the space on an standard Mek (i.e. one that is not an OmniMek)
  * used by Battle Armor squads equipped with Magnetic Clamps to attach themselves
  * for transport. This transporter gets assigned to all of a player's standard
- * Mechs in the Exchange Phase if any Battle Armor squad equipped with a
+ * Meks in the Exchange Phase if any Battle Armor squad equipped with a
  * Magnetic Clamp is on that player's side.
  */
 public class ClampMountMek extends BattleArmorHandles {
@@ -44,6 +44,6 @@ public class ClampMountMek extends BattleArmorHandles {
 
     @Override
     public String toString() {
-        return "ClampMountMech - troopers:" + carriedUnit;
+        return "ClampMountMek - troopers:" + carriedUnit;
     }
 }

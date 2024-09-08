@@ -13,17 +13,17 @@
  */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * Represents a set of handles on an OmniMech used by Battle Armor units
+ * Represents a set of handles on an OmniMek used by Battle Armor units
  * equipped with Boarding Claws to attach themselves for transport. This is
- * standard equipment on OmniMechs.
+ * standard equipment on OmniMeks.
  *
- * @see MechFileParser#postLoadInit
+ * @see MekFileParser#postLoadInit
  */
 class BattleArmorHandles implements Transporter {
     private static final long serialVersionUID = -7149931565043762975L;
@@ -44,7 +44,7 @@ class BattleArmorHandles implements Transporter {
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMech.");
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMek.");
         }
 
         // Assign the unit as our carried troopers.

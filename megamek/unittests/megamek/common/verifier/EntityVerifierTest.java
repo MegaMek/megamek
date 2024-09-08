@@ -43,7 +43,7 @@ public class EntityVerifierTest {
 
         assertNotNull(result.aeroOption);
         assertNotNull(result.baOption);
-        assertNotNull(result.mechOption);
+        assertNotNull(result.mekOption);
         assertNotNull(result.tankOption);
 
         assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingEngine());

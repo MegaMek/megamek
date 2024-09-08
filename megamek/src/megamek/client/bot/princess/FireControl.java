@@ -3509,7 +3509,7 @@ public class FireControl {
      */
     @Nullable
     public FindClubAction getFindClubAction(Entity shooter) {
-        if (FindClubAction.canMechFindClub(shooter.getGame(), shooter.getId())) {
+        if (FindClubAction.canMekFindClub(shooter.getGame(), shooter.getId())) {
             FindClubAction findClubAction = new FindClubAction(shooter.getId());
             return findClubAction;
         }

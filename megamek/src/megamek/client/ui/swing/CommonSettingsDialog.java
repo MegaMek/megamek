@@ -369,11 +369,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField unitTooltipArmorMiniCapArmorCharText;
     private JTextField unitTooltipArmorMiniFontSizeModText;
     private JTextField unitTooltipArmorMiniUnitsPerBlockText;
-    private JTextField unitDisplayMechArmorLargeFontSizeText;
-    private JTextField unitDisplayMechArmorMediumFontSizeText;
-    private JTextField unitDisplayMechArmorSmallFontSizeText;
-    private JTextField unitDisplayMechLargeFontSizeText;
-    private JTextField unitDisplayMechMediumFontSizeText;
+    private JTextField unitDisplayMekArmorLargeFontSizeText;
+    private JTextField unitDisplayMekArmorMediumFontSizeText;
+    private JTextField unitDisplayMekArmorSmallFontSizeText;
+    private JTextField unitDisplayMekLargeFontSizeText;
+    private JTextField unitDisplayMekMediumFontSizeText;
 
     // Auto Display
     private JComboBox<String> unitDisplayAutoDisplayReportCombo;
@@ -1303,49 +1303,49 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        JLabel unitDisplayMechArmorLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorLargeFontSize"));
-        unitDisplayMechArmorLargeFontSizeText = new JTextField(5);
-        unitDisplayMechArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorLargeFontSize()));
-        unitDisplayMechArmorLargeFontSizeText.setMaximumSize(new Dimension(150, 40));
+        JLabel unitDisplayMekArmorLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorLargeFontSize"));
+        unitDisplayMekArmorLargeFontSizeText = new JTextField(5);
+        unitDisplayMekArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorLargeFontSize()));
+        unitDisplayMekArmorLargeFontSizeText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        row.add(unitDisplayMechArmorLargeFontSizeLabel);
-        row.add(unitDisplayMechArmorLargeFontSizeText);
+        row.add(unitDisplayMekArmorLargeFontSizeLabel);
+        row.add(unitDisplayMekArmorLargeFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMechArmorMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorMediumFontSize"));
-        unitDisplayMechArmorMediumFontSizeText = new JTextField(5);
-        unitDisplayMechArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorMediumFontSize()));
-        unitDisplayMechArmorMediumFontSizeText.setMaximumSize(new Dimension(150, 40));
+        JLabel unitDisplayMekArmorMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorMediumFontSize"));
+        unitDisplayMekArmorMediumFontSizeText = new JTextField(5);
+        unitDisplayMekArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorMediumFontSize()));
+        unitDisplayMekArmorMediumFontSizeText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        row.add(unitDisplayMechArmorMediumFontSizeLabel);
-        row.add(unitDisplayMechArmorMediumFontSizeText);
+        row.add(unitDisplayMekArmorMediumFontSizeLabel);
+        row.add(unitDisplayMekArmorMediumFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMechArmorSmallFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorSmallFontSize"));
-        unitDisplayMechArmorSmallFontSizeText = new JTextField(5);
-        unitDisplayMechArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorSmallFontSize()));
-        unitDisplayMechArmorSmallFontSizeText.setMaximumSize(new Dimension(150, 40));
+        JLabel unitDisplayMekArmorSmallFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechArmorSmallFontSize"));
+        unitDisplayMekArmorSmallFontSizeText = new JTextField(5);
+        unitDisplayMekArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorSmallFontSize()));
+        unitDisplayMekArmorSmallFontSizeText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        row.add(unitDisplayMechArmorSmallFontSizeLabel);
-        row.add(unitDisplayMechArmorSmallFontSizeText);
+        row.add(unitDisplayMekArmorSmallFontSizeLabel);
+        row.add(unitDisplayMekArmorSmallFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMechLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechLargeFontSize"));
-        unitDisplayMechLargeFontSizeText = new JTextField(5);
-        unitDisplayMechLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechLargeFontSize()));
-        unitDisplayMechLargeFontSizeText.setMaximumSize(new Dimension(150, 40));
+        JLabel unitDisplayMekLargeFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechLargeFontSize"));
+        unitDisplayMekLargeFontSizeText = new JTextField(5);
+        unitDisplayMekLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekLargeFontSize()));
+        unitDisplayMekLargeFontSizeText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        row.add(unitDisplayMechLargeFontSizeLabel);
-        row.add(unitDisplayMechLargeFontSizeText);
+        row.add(unitDisplayMekLargeFontSizeLabel);
+        row.add(unitDisplayMekLargeFontSizeText);
         comps.add(row);
 
-        JLabel unitDisplayMechMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechMediumFontSize"));
-        unitDisplayMechMediumFontSizeText = new JTextField(5);
-        unitDisplayMechMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
-        unitDisplayMechMediumFontSizeText.setMaximumSize(new Dimension(150, 40));
+        JLabel unitDisplayMekMediumFontSizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayMechMediumFontSize"));
+        unitDisplayMekMediumFontSizeText = new JTextField(5);
+        unitDisplayMekMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekMediumFontSize()));
+        unitDisplayMekMediumFontSizeText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        row.add(unitDisplayMechMediumFontSizeLabel);
-        row.add(unitDisplayMechMediumFontSizeText);
+        row.add(unitDisplayMekMediumFontSizeLabel);
+        row.add(unitDisplayMekMediumFontSizeText);
         comps.add(row);
 
         return createSettingsPanel(comps);
@@ -2067,11 +2067,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipSeenbyCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
         unitDisplayWeaponListHeightText.setText(String.format("%d", GUIP.getUnitDisplayWeaponListHeight()));
 
-        unitDisplayMechArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorLargeFontSize()));
-        unitDisplayMechArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorMediumFontSize()));
-        unitDisplayMechArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorSmallFontSize()));
-        unitDisplayMechLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechLargeFontSize()));
-        unitDisplayMechMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
+        unitDisplayMekArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorLargeFontSize()));
+        unitDisplayMekArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorMediumFontSize()));
+        unitDisplayMekArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorSmallFontSize()));
+        unitDisplayMekLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekLargeFontSize()));
+        unitDisplayMekMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekMediumFontSize()));
 
 
         csbUnitTooltipFGColor.setColour(GUIP.getUnitToolTipFGColor());
@@ -2527,27 +2527,27 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         }
 
         try {
-            GUIP.setUnitDisplayMechArmorLargeFontSize(Integer.parseInt(unitDisplayMechArmorLargeFontSizeText.getText()));
+            GUIP.setUnitDisplayMekArmorLargeFontSize(Integer.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
         try {
-            GUIP.setUnitDisplayMechArmorMediumFontSize(Integer.parseInt(unitDisplayMechArmorMediumFontSizeText.getText()));
+            GUIP.setUnitDisplayMekArmorMediumFontSize(Integer.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
         try {
-            GUIP.setUnitDisplayMechArmorSmallFontSize(Integer.parseInt(unitDisplayMechArmorSmallFontSizeText.getText()));
+            GUIP.setUnitDisplayMekArmorSmallFontSize(Integer.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
         try {
-            GUIP.setUnitDisplayMechLargeFontSize(Integer.parseInt(unitDisplayMechLargeFontSizeText.getText()));
+            GUIP.setUnitDisplayMekLargeFontSize(Integer.parseInt(unitDisplayMekLargeFontSizeText.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
         try {
-            GUIP.setUnitDisplayMechMediumFontSize(Integer.parseInt(unitDisplayMechMediumFontSizeText.getText()));
+            GUIP.setUnitDisplayMekMediumFontSize(Integer.parseInt(unitDisplayMekMediumFontSizeText.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }

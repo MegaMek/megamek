@@ -39,7 +39,7 @@ import org.apache.logging.log4j.LogManager;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.tileset.MekTileset.MechEntry;
+import megamek.client.ui.swing.tileset.MekTileset.MekEntry;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.RotateFilter;
@@ -337,12 +337,12 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     private @Nullable Image getGenericImage(Entity entity, int secondaryPos) {
-        return getGenericImage(entity, secondaryPos, MMStaticDirectoryManager.getMechTileset());
+        return getGenericImage(entity, secondaryPos, MMStaticDirectoryManager.getMekTileset());
     }
 
     /** Retrieves a generic unit image if possible. May still return null! */
     private @Nullable Image getGenericImage(Entity entity, int secondaryPos, MekTileset tileSet) {
-        MechEntry defaultEntry = tileSet.genericFor(entity, secondaryPos);
+        MekEntry defaultEntry = tileSet.genericFor(entity, secondaryPos);
         if (defaultEntry.getImage() == null) {
             defaultEntry.loadImage();
         }
@@ -528,7 +528,7 @@ public class TilesetManager implements IPreferenceChangeListener {
      *  Loads a preview image of the unit into the BufferedPanel.
      */
     public Image loadPreviewImage(Entity entity, Camouflage camouflage) {
-        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
+        Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
         EntityImage entityImage = EntityImage.createIcon(base, camouflage, entity);
         entityImage.loadFacings();
         return entityImage.getFacing(entity.getFacing());
@@ -538,7 +538,7 @@ public class TilesetManager implements IPreferenceChangeListener {
      * Load a single entity image
      */
     public synchronized void loadImage(Entity entity, int secondaryPos) {
-        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, secondaryPos);
+        Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity, secondaryPos);
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         Player player = entity.getOwner();

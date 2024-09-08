@@ -42,7 +42,7 @@ public final class MekBay extends Bay {
 
     @Override
     public boolean canLoad(Entity unit) {
-        boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH);
+        boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MEK);
         boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode() != LandAirMek.CONV_MODE_FIGHTER);
         boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMek);
         return (getUnused() >= 1) && (doors > loadedThisTurn) && (loadableLAM || loadableQuadVee || loadableOtherMek);
@@ -50,14 +50,14 @@ public final class MekBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        return "Mech " + numDoorsString() + " - "
+        return "Mek " + numDoorsString() + " - "
                 + String.format("%1$,.0f", getUnused())
                 + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override
     public String getType() {
-        return "Mech";
+        return "Mek";
     }
 
     @Override
@@ -72,7 +72,7 @@ public final class MekBay extends Bay {
 
     @Override
     public String toString() {
-        String bayType = "mechbay";
+        String bayType = "mekbay";
         return this.bayString(
                 bayType,
                 totalSpace,
@@ -90,7 +90,7 @@ public final class MekBay extends Bay {
 
     @Override
     public TechAdvancement getTechAdvancement() {
-        return MechBay.techAdvancement();
+        return MekBay.techAdvancement();
     }
 
     @Override

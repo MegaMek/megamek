@@ -19,27 +19,38 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.ComponentOrientation;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.Entity;
-import megamek.common.MechView;
+import megamek.common.MekView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 
 /**
  * @author Jay Lawson
  * @since November 2, 2009
  */
-public class MechViewPanel extends JPanel {
+public class MekViewPanel extends JPanel {
 
     private static final long serialVersionUID = 2438490306644271135L;
 
@@ -50,11 +61,11 @@ public class MechViewPanel extends JPanel {
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
 
-    public MechViewPanel() {
+    public MekViewPanel() {
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT, true);
     }
 
-    public MechViewPanel(int width, int height, boolean noBorder) {
+    public MekViewPanel(int width, int height, boolean noBorder) {
         Report.setupStylesheet(txtMek);
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
@@ -94,32 +105,32 @@ public class MechViewPanel extends JPanel {
         addMouseWheelListener(wheelForwarder);
     }
 
-    public void setMech(Entity entity, MechView mechView) {
-        txtMek.setText(mechView.getMechReadout());
+    public void setMek(Entity entity, MekView mekView) {
+        txtMek.setText(mekView.getMekReadout());
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMech(Entity entity, MechView mechView, String fontName) {
-        txtMek.setText(mechView.getMechReadout(fontName));
+    public void setMek(Entity entity, MekView mekView, String fontName) {
+        txtMek.setText(mekView.getMekReadout(fontName));
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMech(Entity entity, TROView troView) {
+    public void setMek(Entity entity, TROView troView) {
         txtMek.setText(troView.processTemplate());
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMech(Entity entity, boolean useAlternateCost) {
-        MechView mechView = new MechView(entity, false, useAlternateCost);
-        setMech(entity, mechView);
+    public void setMek(Entity entity, boolean useAlternateCost) {
+        MekView mekView = new MekView(entity, false, useAlternateCost);
+        setMek(entity, mekView);
     }
 
-    public void setMech(Entity entity, String fontName) {
-        MechView mechView = new MechView(entity, false, false);
-        setMech(entity, mechView, fontName);
+    public void setMek(Entity entity, String fontName) {
+        MekView mekView = new MekView(entity, false, false);
+        setMek(entity, mekView, fontName);
     }
 
     private void setFluffImage(Entity entity) {
@@ -128,7 +139,7 @@ public class MechViewPanel extends JPanel {
         if (null != image) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {
                 image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
-            }          
+            }
             lblMek.setIcon(new ImageIcon(image));
         } else {
             lblMek.setIcon(null);
@@ -140,9 +151,9 @@ public class MechViewPanel extends JPanel {
         lblMek.setIcon(null);
     }
 
-    /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */ 
+    /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */
     MouseWheelListener wheelForwarder = e -> {
-        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MechViewPanel.this, e, scrMek);
+        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MekViewPanel.this, e, scrMek);
         for (MouseWheelListener listener : scrMek.getMouseWheelListeners()) {
             listener.mouseWheelMoved(converted);
         }

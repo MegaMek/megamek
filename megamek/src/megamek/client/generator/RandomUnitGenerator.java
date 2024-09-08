@@ -45,8 +45,8 @@ import java.util.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 
 import megamek.common.Configuration;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 
 /**
  * This class sets up a random unit generator that can then
@@ -148,7 +148,7 @@ public class RandomUnitGenerator implements Serializable {
         initRatTree();
 
         // Give the MSC some time to initialize
-        MechSummaryCache msc = MechSummaryCache.getInstance();
+        MekSummaryCache msc = MekSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
         while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
@@ -186,7 +186,7 @@ public class RandomUnitGenerator implements Serializable {
         rats.put(ratName, ratEntry);
     }
 
-    private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
+    private void readRat(InputStream is, RatTreeNode node, String fileName, MekSummaryCache msc) throws IOException {
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
              BufferedReader reader = new BufferedReader(isr)) {
             int lineNumber = 0;
@@ -232,7 +232,7 @@ public class RandomUnitGenerator implements Serializable {
                     }
 
                     // The @ symbol denotes a reference to another RAT rather than a unit.
-                    if (!name.startsWith("@") && (null == msc.getMech(name))) {
+                    if (!name.startsWith("@") && (null == msc.getMek(name))) {
                         LogManager.getLogger().error(String.format(
                                 "The unit %s could not be found in the %s RAT (%s)",
                                 name, key, fileName));
@@ -288,11 +288,11 @@ public class RandomUnitGenerator implements Serializable {
         Collections.sort(node.children);
     }
 
-    private void loadRatsFromDirectory(File dir, MechSummaryCache msc) {
+    private void loadRatsFromDirectory(File dir, MekSummaryCache msc) {
         loadRatsFromDirectory(dir, msc, ratTree);
     }
 
-    private void loadRatsFromDirectory(File dir, MechSummaryCache msc, RatTreeNode node) {
+    private void loadRatsFromDirectory(File dir, MekSummaryCache msc, RatTreeNode node) {
         if (interrupted) {
             return;
         }
@@ -367,7 +367,7 @@ public class RandomUnitGenerator implements Serializable {
      *
      * @return - a string giving the name
      */
-    public ArrayList<MechSummary> generate(int numRolls, String ratName) {
+    public ArrayList<MekSummary> generate(int numRolls, String ratName) {
         return generate(numRolls, ratName, null);
     }
 
@@ -379,8 +379,8 @@ public class RandomUnitGenerator implements Serializable {
      * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
      * @return - a list of units determined by the random rolls
      */
-    public ArrayList<MechSummary> generate(int numRolls, String ratName, Predicate<MechSummary> filter) {
-        ArrayList<MechSummary> units = new ArrayList<>();
+    public ArrayList<MekSummary> generate(int numRolls, String ratName, Predicate<MekSummary> filter) {
+        ArrayList<MekSummary> units = new ArrayList<>();
 
         try {
             int retryCount = 0;
@@ -402,10 +402,10 @@ public class RandomUnitGenerator implements Serializable {
                 if (filter != null) {
                     RatEntry filtered = new RatEntry();
                     float totalWeight = 0.0f;
-                    MechSummaryCache msc = MechSummaryCache.getInstance();
+                    MekSummaryCache msc = MekSummaryCache.getInstance();
                     for (int i = 0; i < re.getUnits().size(); i++) {
                         if (!re.getUnits().get(i).startsWith("@")) {
-                            MechSummary ms = msc.getMech(re.getUnits().get(i));
+                            MekSummary ms = msc.getMek(re.getUnits().get(i));
                             if (ms == null || !filter.test(ms)) {
                                 continue;
                             }
@@ -435,7 +435,7 @@ public class RandomUnitGenerator implements Serializable {
                             continue;
                         }
 
-                        MechSummary unit = getMechByName(name);
+                        MekSummary unit = getMekByName(name);
                         if (null != unit) {
                             units.add(unit);
                         }
@@ -448,19 +448,19 @@ public class RandomUnitGenerator implements Serializable {
         return units;
     }
 
-    protected MechSummary getMechByName(String name) {
-        return MechSummaryCache.getInstance().getMech(name);
+    protected MekSummary getMekByName(String name) {
+        return MekSummaryCache.getInstance().getMek(name);
     }
 
     protected double getRandom() {
         return Math.random();
     }
 
-    public ArrayList<MechSummary> generate(int numRolls) {
+    public ArrayList<MekSummary> generate(int numRolls) {
         return generate(numRolls, getChosenRAT(), null);
     }
 
-    public ArrayList<MechSummary> generate(int numRolls, Predicate<MechSummary> filter) {
+    public ArrayList<MekSummary> generate(int numRolls, Predicate<MekSummary> filter) {
         return generate(numRolls, getChosenRAT(), filter);
     }
 

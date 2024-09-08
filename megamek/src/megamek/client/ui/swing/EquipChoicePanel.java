@@ -88,39 +88,39 @@ public class EquipChoicePanel extends JPanel {
     private JPanel panBombs = new JPanel();
 
     private JLabel labAutoEject = new JLabel(
-            Messages.getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labAutoEject"), SwingConstants.RIGHT);
     private JCheckBox chAutoEject = new JCheckBox();
 
     private JLabel labCondEjectAmmo = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Ammo"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labConditional_Ejection_Ammo"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectAmmo = new JCheckBox();
 
     private JLabel labCondEjectEngine = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectEngine = new JCheckBox();
 
     private JLabel labCondEjectCTDest = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectCTDest = new JCheckBox();
 
     private JLabel labCondEjectHeadshot = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectHeadshot = new JCheckBox();
 
     private JLabel labCondEjectFuel = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectFuel = new JCheckBox();
 
     private JLabel labCondEjectSIDest = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectSIDest = new JCheckBox();
 
     private JLabel labSearchlight = new JLabel(
-            Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labSearchlight"), SwingConstants.RIGHT);
     private JCheckBox chSearchlight = new JCheckBox();
 
     private JLabel labC3 = new JLabel(
-            Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT);
+            Messages.getString("CustomMekDialog.labC3"), SwingConstants.RIGHT);
     private JComboBox<String> choC3 = new JComboBox<>();
 
     ClientGUI clientgui;
@@ -137,29 +137,29 @@ public class EquipChoicePanel extends JPanel {
         // **EQUIPMENT TAB**//
         // Auto-eject checkbox and conditional ejections.
         if (entity instanceof Mek) {
-            Mek mech = (Mek) entity;
+            Mek mek = (Mek) entity;
 
-            if (mech.hasEjectSeat()) {
+            if (mek.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
-                chAutoEject.setSelected(!mech.isAutoEject());
+                chAutoEject.setSelected(!mek.isAutoEject());
             }
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && mech.hasEjectSeat()) {
+                    && mek.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
-                chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
+                chCondEjectAmmo.setSelected(mek.isCondEjectAmmo());
                 add(labCondEjectEngine, GBC.std());
                 add(chCondEjectEngine, GBC.eol());
-                chCondEjectEngine.setSelected(mech.isCondEjectEngine());
+                chCondEjectEngine.setSelected(mek.isCondEjectEngine());
                 add(labCondEjectCTDest, GBC.std());
                 add(chCondEjectCTDest, GBC.eol());
-                chCondEjectCTDest.setSelected(mech.isCondEjectCTDest());
+                chCondEjectCTDest.setSelected(mek.isCondEjectCTDest());
                 add(labCondEjectHeadshot, GBC.std());
                 add(chCondEjectHeadshot, GBC.eol());
-                chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
+                chCondEjectHeadshot.setSelected(mek.isCondEjectHeadshot());
             }
         } else if (entity.isFighter()) {
             Aero aero = (Aero) entity;
@@ -196,7 +196,7 @@ public class EquipChoicePanel extends JPanel {
         if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
             setupAPMounts();
             panAPMounts.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMechDialog.APMountPanelTitle"),
+                    Messages.getString("CustomMekDialog.APMountPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
 
             add(panAPMounts,GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -204,7 +204,7 @@ public class EquipChoicePanel extends JPanel {
 
         if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {
             panMEAdaptors.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMechDialog.MEAPanelTitle"),
+                    Messages.getString("CustomMekDialog.MEAPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             // We need to determine how much weight is free, so the user can
             //  pick legal combinations of manipulators
@@ -221,7 +221,7 @@ public class EquipChoicePanel extends JPanel {
                     maxTrooperWeight = trooperWeight;
                 }
             }
-            String freeWeight = Messages.getString("CustomMechDialog.freeWeight")
+            String freeWeight = Messages.getString("CustomMekDialog.freeWeight")
                     + String.format(": %1$.3f/%2$.3f", maxTrooperWeight, ba.getTrooperWeight());
 
             setupMEAdaptors(freeWeight);
@@ -233,14 +233,14 @@ public class EquipChoicePanel extends JPanel {
                 .hasFieldWeapon()) || (entity instanceof BattleArmor)) {
             setupMunitions();
             panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMechDialog.MunitionsPanelTitle"),
+                    Messages.getString("CustomMekDialog.MunitionsPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panMunitions,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
 
             setupWeaponAmmoChoice();
             panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMechDialog.WeaponSelectionTitle"),
+                    Messages.getString("CustomMekDialog.WeaponSelectionTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -297,7 +297,7 @@ public class EquipChoicePanel extends JPanel {
         //Autoejection Options
         boolean autoEject = chAutoEject.isSelected();
         boolean condEjectAmmo = chCondEjectAmmo.isSelected();
-        //Mechs and LAMs Only
+        //Meks and LAMs Only
         boolean condEjectEngine = chCondEjectEngine.isSelected();
         boolean condEjectCTDest = chCondEjectCTDest.isSelected();
         boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
@@ -306,12 +306,12 @@ public class EquipChoicePanel extends JPanel {
         boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
         if (entity instanceof Mek) {
-            Mek mech = (Mek) entity;
-            mech.setAutoEject(!autoEject);
-            mech.setCondEjectAmmo(condEjectAmmo);
-            mech.setCondEjectEngine(condEjectEngine);
-            mech.setCondEjectCTDest(condEjectCTDest);
-            mech.setCondEjectHeadshot(condEjectHeadshot);
+            Mek mek = (Mek) entity;
+            mek.setAutoEject(!autoEject);
+            mek.setCondEjectAmmo(condEjectAmmo);
+            mek.setCondEjectEngine(condEjectEngine);
+            mek.setCondEjectCTDest(condEjectCTDest);
+            mek.setCondEjectHeadshot(condEjectHeadshot);
         } else if (entity.isFighter()) {
             Aero aero = (Aero) entity;
             aero.setAutoEject(!autoEject);
@@ -377,10 +377,10 @@ public class EquipChoicePanel extends JPanel {
                     && ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
                 entity.setC3Master(chosen, true);
             } else if (entity.getC3MasterId() != chosen.getId()) {
-                String message = Messages.getString("CustomMechDialog.NetworkTooBig.message",
+                String message = Messages.getString("CustomMekDialog.NetworkTooBig.message",
                         entity.getShortName(), chosen.getShortName(), entC3nodeCount,
                         choC3nodeCount, Entity.MAX_C3_NODES);
-                clientgui.doAlertDialog(Messages.getString("CustomMechDialog.NetworkTooBig.title"),
+                clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"),
                         message);
                 refreshC3();
             }
@@ -659,7 +659,7 @@ public class EquipChoicePanel extends JPanel {
                 }
 
                 // Only Protos can use Proto-specific ammo
-                if (atCheck.hasFlag(AmmoType.F_PROTOMECH)
+                if (atCheck.hasFlag(AmmoType.F_PROTOMEK)
                         && !(entity instanceof ProtoMek)) {
                     continue;
                 }
@@ -668,7 +668,7 @@ public class EquipChoicePanel extends JPanel {
                 // use proto-specific machine gun ammo
                 if ((entity instanceof ProtoMek)
                         && atCheck.hasFlag(AmmoType.F_MG)
-                        && !atCheck.hasFlag(AmmoType.F_PROTOMECH)) {
+                        && !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
                     continue;
                 }
 
@@ -726,8 +726,8 @@ public class EquipChoicePanel extends JPanel {
             MineChoicePanel(MiscMounted m) {
                 m_mounted = m;
                 m_choice = new JComboBox<>();
-                m_choice.addItem(Messages.getString("CustomMechDialog.Conventional"));
-                m_choice.addItem(Messages.getString("CustomMechDialog.Vibrabomb"));
+                m_choice.addItem(Messages.getString("CustomMekDialog.Conventional"));
+                m_choice.addItem(Messages.getString("CustomMekDialog.Vibrabomb"));
                 int loc;
                 loc = m.getLocation();
                 String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
@@ -979,11 +979,11 @@ public class EquipChoicePanel extends JPanel {
 
             private AmmoMounted m_mounted;
 
-            JLabel labDump = new JLabel(Messages.getString("CustomMechDialog.labDump"));
+            JLabel labDump = new JLabel(Messages.getString("CustomMekDialog.labDump"));
 
             JCheckBox chDump = new JCheckBox();
 
-            JLabel labHotLoad = new JLabel(Messages.getString("CustomMechDialog.switchToHotLoading"));
+            JLabel labHotLoad = new JLabel(Messages.getString("CustomMekDialog.switchToHotLoading"));
 
             JCheckBox chHotLoad = new JCheckBox();
 
@@ -1283,7 +1283,7 @@ public class EquipChoicePanel extends JPanel {
             RapidfireMGPanel(Mounted m) {
                 m_mounted = m;
                 int loc = m.getLocation();
-                String sDesc = Messages.getString("CustomMechDialog.switchToRapidFire",
+                String sDesc = Messages.getString("CustomMekDialog.switchToRapidFire",
                         entity.getLocationAbbr(loc));
                 JLabel labRapid = new JLabel(sDesc);
                 GridBagLayout g = new GridBagLayout();
@@ -1308,15 +1308,15 @@ public class EquipChoicePanel extends JPanel {
         private static final long serialVersionUID = -909995917737642853L;
 
         private Infantry inf;
-        JLabel labArmor = new JLabel(Messages.getString("CustomMechDialog.labInfantryArmor"));
-        JLabel labDivisor = new JLabel(Messages.getString("CustomMechDialog.labDamageDivisor"));
-        JLabel labEncumber = new JLabel(Messages.getString("CustomMechDialog.labEncumber"));
-        JLabel labSpaceSuit = new JLabel(Messages.getString("CustomMechDialog.labSpaceSuit"));
-        JLabel labDEST = new JLabel(Messages.getString("CustomMechDialog.labDEST"));
-        JLabel labSneakCamo = new JLabel(Messages.getString("CustomMechDialog.labSneakCamo"));
-        JLabel labSneakIR = new JLabel(Messages.getString("CustomMechDialog.labSneakIR"));
-        JLabel labSneakECM = new JLabel(Messages.getString("CustomMechDialog.labSneakECM"));
-        JLabel labSpec = new JLabel(Messages.getString("CustomMechDialog.labInfSpec"));
+        JLabel labArmor = new JLabel(Messages.getString("CustomMekDialog.labInfantryArmor"));
+        JLabel labDivisor = new JLabel(Messages.getString("CustomMekDialog.labDamageDivisor"));
+        JLabel labEncumber = new JLabel(Messages.getString("CustomMekDialog.labEncumber"));
+        JLabel labSpaceSuit = new JLabel(Messages.getString("CustomMekDialog.labSpaceSuit"));
+        JLabel labDEST = new JLabel(Messages.getString("CustomMekDialog.labDEST"));
+        JLabel labSneakCamo = new JLabel(Messages.getString("CustomMekDialog.labSneakCamo"));
+        JLabel labSneakIR = new JLabel(Messages.getString("CustomMekDialog.labSneakIR"));
+        JLabel labSneakECM = new JLabel(Messages.getString("CustomMekDialog.labSneakECM"));
+        JLabel labSpec = new JLabel(Messages.getString("CustomMekDialog.labInfSpec"));
         private JComboBox<String> cbArmorKit = new JComboBox<>();
         private JTextField fldDivisor = new JTextField(3);
         JCheckBox chEncumber = new JCheckBox();
@@ -1378,7 +1378,7 @@ public class EquipChoicePanel extends JPanel {
             }
             armorKits.sort(Comparator.comparing(EquipmentType::getName));
 
-            cbArmorKit.addItem(Messages.getString("CustomMechDialog.Custom"));
+            cbArmorKit.addItem(Messages.getString("CustomMekDialog.Custom"));
             armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
             EquipmentType kit = inf.getArmorKit();
             if (kit == null) {
@@ -1512,7 +1512,7 @@ public class EquipChoicePanel extends JPanel {
         entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
 
         if (entity.hasC3i() || entity.hasNavalC3()) {
-            choC3.addItem(Messages.getString("CustomMechDialog.CreateNewNetwork"));
+            choC3.addItem(Messages.getString("CustomMekDialog.CreateNewNetwork"));
             if (entity.getC3Master() == null) {
                 choC3.setSelectedIndex(listIndex);
             }
@@ -1521,14 +1521,14 @@ public class EquipChoicePanel extends JPanel {
             int mNodes = entity.calculateFreeC3MNodes();
             int sNodes = entity.calculateFreeC3Nodes();
 
-            choC3.addItem(Messages.getString("CustomMechDialog.setCompanyMaster", mNodes, sNodes));
+            choC3.addItem(Messages.getString("CustomMekDialog.setCompanyMaster", mNodes, sNodes));
 
             if (entity.C3MasterIs(entity)) {
                 choC3.setSelectedIndex(listIndex);
             }
             entityCorrespondance[listIndex++] = entity.getId();
 
-            choC3.addItem(Messages.getString("CustomMechDialog.setIndependentMaster", sNodes));
+            choC3.addItem(Messages.getString("CustomMekDialog.setIndependentMaster", sNodes));
             if (entity.getC3Master() == null) {
                 choC3.setSelectedIndex(listIndex);
             }
@@ -1537,13 +1537,13 @@ public class EquipChoicePanel extends JPanel {
         } else if (entity.hasC3M()) {
             int nodes = entity.calculateFreeC3Nodes();
 
-            choC3.addItem(Messages.getString("CustomMechDialog.setCompanyMaster1", nodes));
+            choC3.addItem(Messages.getString("CustomMekDialog.setCompanyMaster1", nodes));
             if (entity.C3MasterIs(entity)) {
                 choC3.setSelectedIndex(listIndex);
             }
             entityCorrespondance[listIndex++] = entity.getId();
 
-            choC3.addItem(Messages.getString("CustomMechDialog.setIndependentMaster", nodes));
+            choC3.addItem(Messages.getString("CustomMekDialog.setIndependentMaster", nodes));
             if (entity.getC3Master() == null) {
                 choC3.setSelectedIndex(listIndex);
             }
@@ -1589,18 +1589,18 @@ public class EquipChoicePanel extends JPanel {
             }
             if (e.hasC3i() || e.hasNavalC3()) {
                 if (entity.onSameC3NetworkAs(e)) {
-                    choC3.addItem(Messages.getString("CustomMechDialog.join1",
+                    choC3.addItem(Messages.getString("CustomMekDialog.join1",
                             e.getDisplayName(), e.getC3NetId(), nodes - 1));
                     choC3.setSelectedIndex(listIndex);
                 } else {
-                    choC3.addItem(Messages.getString("CustomMechDialog.join2",
+                    choC3.addItem(Messages.getString("CustomMekDialog.join2",
                             e.getDisplayName(), e.getC3NetId(), nodes));
                 }
                 entityCorrespondance[listIndex++] = e.getId();
             } else if (e.C3MasterIs(e) && e.hasC3MM()) {
                 // Company masters with 2 computers can have
                 // *both* sub-masters AND slave units.
-                choC3.addItem(Messages.getString("CustomMechDialog.connect2",
+                choC3.addItem(Messages.getString("CustomMekDialog.connect2",
                         e.getDisplayName(), e.getC3NetId(), nodes));
                 entityCorrespondance[listIndex] = e.getId();
                 if (entity.C3MasterIs(e)) {
@@ -1612,12 +1612,12 @@ public class EquipChoicePanel extends JPanel {
                 // not main masters likewise, if we're a master unit, we can
                 // only connect to main master units, not sub-masters.
             } else if (entity.C3MasterIs(e)) {
-                choC3.addItem(Messages.getString("CustomMechDialog.connect1",
+                choC3.addItem(Messages.getString("CustomMekDialog.connect1",
                         e.getDisplayName(), e.getC3NetId(), nodes - 1));
                 choC3.setSelectedIndex(listIndex);
                 entityCorrespondance[listIndex++] = e.getId();
             } else {
-                choC3.addItem(Messages.getString("CustomMechDialog.connect2",
+                choC3.addItem(Messages.getString("CustomMekDialog.connect2",
                         e.getDisplayName(), e.getC3NetId(), nodes));
                 entityCorrespondance[listIndex++] = e.getId();
             }

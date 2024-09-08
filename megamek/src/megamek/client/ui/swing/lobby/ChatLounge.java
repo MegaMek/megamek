@@ -29,7 +29,7 @@ import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
 import static megamek.client.ui.swing.lobby.LobbyUtility.invalidBoardTip;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isBoardFile;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.lobby.LobbyUtility.mechReadoutAction;
+import static megamek.client.ui.swing.lobby.LobbyUtility.mekReadoutAction;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
 import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
@@ -56,7 +56,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -286,7 +285,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private static final String CL_ACTIONCOMMAND_LOADLIST =  "load_list";
     private static final String CL_ACTIONCOMMAND_SAVELIST =  "save_list";
-    private static final String CL_ACTIONCOMMAND_LOADMECH = "load_mech";
+    private static final String CL_ACTIONCOMMAND_LOADMEK = "load_mek";
     private static final String CL_ACTIONCOMMAND_ADDBOT = "add_bot";
     private static final String CL_ACTIONCOMMAND_REMOVEBOT = "remove_bot";
     private static final String CL_ACTIONCOMMAND_BOTCONFIG = "BOTCONFIG";
@@ -340,7 +339,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         GUIP.addPreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
-        MechSummaryCache.getInstance().addListener(mechSummaryCacheListener);
+        MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
@@ -441,7 +440,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         Player player = getSelectedClient().getLocalPlayer();
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
-        List<Entity> playerEntities = game().getPlayerEntities(player, false);
+        java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
         if (!playerEntities.isEmpty()) {
             ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
         }
@@ -510,7 +509,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
-    private MechSummaryCache.Listener mechSummaryCacheListener = () -> {
+    private MekSummaryCache.Listener mekSummaryCacheListener = () -> {
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);
@@ -548,15 +547,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         RandomNameGenerator.getInstance();
         RandomCallsignGenerator.getInstance();
 
-        MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
-        boolean mscLoaded = mechSummaryCache.isInitialized();
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        boolean mscLoaded = mekSummaryCache.isInitialized();
 
         butLoadList.setActionCommand(CL_ACTIONCOMMAND_LOADLIST);
         butLoadList.setEnabled(mscLoaded);
         butSaveList.setActionCommand(CL_ACTIONCOMMAND_SAVELIST);
         butSaveList.setEnabled(false);
         butAdd.setEnabled(mscLoaded);
-        butAdd.setActionCommand(CL_ACTIONCOMMAND_LOADMECH);
+        butAdd.setActionCommand(CL_ACTIONCOMMAND_LOADMEK);
         butArmy.setEnabled(mscLoaded);
 
         panUnitInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.unitSetup")));
@@ -891,19 +890,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * The search string is split at ";" and search results for the tokens
      * are ANDed.
      */
-    protected List<String> getSearchedItems(String searchString) {
+    protected java.util.List<String> getSearchedItems(String searchString) {
         String lowerCaseSearchString = searchString.toLowerCase();
         String[] searchStrings = lowerCaseSearchString.split(";");
-        List<String> result = mapSettings.getBoardsAvailableVector();
+        java.util.List<String> result = mapSettings.getBoardsAvailableVector();
         for (String token : searchStrings) {
-            List<String> byFilename = mapSettings.getBoardsAvailableVector().stream()
+            java.util.List<String> byFilename = mapSettings.getBoardsAvailableVector().stream()
                     .filter(b -> b.toLowerCase().contains(token) && isBoardFile(b))
                     .collect(Collectors.toList());
-            List<String> byTags = boardTags.entrySet().stream()
+            java.util.List<String> byTags = boardTags.entrySet().stream()
                     .filter(e -> e.getValue().contains(token))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
-            List<String> tokenResult = CollectionUtil.union(byFilename, byTags);
+            java.util.List<String> tokenResult = CollectionUtil.union(byFilename, byTags);
             result = result.stream().filter(tokenResult::contains).collect(toList());
         }
         return result;
@@ -1020,7 +1019,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         lisBoardsAvailable.setFixedCellHeight(-1);
         lisBoardsAvailable.setFixedCellWidth(-1);
-        List<String> availBoards = new ArrayList<>();
+        java.util.List<String> availBoards = new ArrayList<>();
         availBoards.add(MapSettings.BOARD_GENERATED);
         availBoards.addAll(mapSettings.getBoardsAvailableVector());
         refreshBoardTags();
@@ -1039,7 +1038,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /**
      * Refreshes the list of available maps with the given list of boards.
      */
-    private void refreshBoardsAvailable(List<String> boardList) {
+    private void refreshBoardsAvailable(java.util.List<String> boardList) {
         lisBoardsAvailable.removeListSelectionListener(this);
         // Replace the data model (adding the elements one by one to the existing model
         // in Java 8 style is sluggish because of event firing)
@@ -1226,7 +1225,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public Board getPossibleGameBoard(boolean onlyFixedBoards) {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
+        java.util.List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
 
@@ -1241,7 +1240,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 boolean flipBoard = false;
 
                 if (name.startsWith(MapSettings.BOARD_SURPRISE)) {
-                    List<String> boardList = extractSurpriseMaps(name);
+                    java.util.List<String> boardList = extractSurpriseMaps(name);
                     int rnd = (int) (Math.random() * boardList.size());
                     name = boardList.get(rnd);
                 } else if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
@@ -1280,7 +1279,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     private void refreshMekTable() {
-        List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).collect(toList());
+        java.util.List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).collect(toList());
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
         allEntities.sort(activeSorter);
@@ -1446,7 +1445,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         getLocalClient(carried).sendLoadEntity(carried.getId(), carrierId, bayNumber);
         // TODO: it would probably be a good idea
-        // to disable some settings for loaded units in customMechDialog
+        // to disable some settings for loaded units in customMekDialog
     }
 
     /**
@@ -1541,7 +1540,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * or its teammates.
      */
     void sendUpdates(Collection<Entity> entities) {
-        List<Player> owners = entities.stream().map(Entity::getOwner).distinct().collect(toList());
+        java.util.List<Player> owners = entities.stream().map(Entity::getOwner).distinct().collect(toList());
         for (Player owner: owners) {
             client().sendUpdateEntity(new ArrayList<>(
                     entities.stream().filter(e -> e.getOwner().equals(owner)).collect(toList())));
@@ -1629,13 +1628,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /**
-     * Pop up the dialog to load a mech
+     * Pop up the dialog to load a mek
      */
     private void addUnit() {
         Client c = getSelectedClient();
-        clientgui.getMechSelectorDialog().updateOptionValues();
-        clientgui.getMechSelectorDialog().setPlayerFromClient(c);
-        clientgui.getMechSelectorDialog().setVisible(true);
+        clientgui.getMekSelectorDialog().updateOptionValues();
+        clientgui.getMekSelectorDialog().setPlayerFromClient(c);
+        clientgui.getMekSelectorDialog().setVisible(true);
     }
 
     private void createArmy() {
@@ -2218,7 +2217,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         // Make sure player has a commander if Commander killed victory is on
         if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-            List<String> players = new ArrayList<>();
+            java.util.List<String> players = new ArrayList<>();
             if ((game.getLiveCommandersOwnedBy(localPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(localPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
@@ -2278,7 +2277,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         clientgui.getBoardView().removeBoardViewListener(this);
         GUIP.removePreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
-        MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
+        MekSummaryCache.getInstance().removeListener(mekSummaryCacheListener);
 
         if (loader != null) {
             loader.cancel(true);
@@ -2557,20 +2556,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (mekTable.getSelectedRowCount() == 0) {
                 return;
             }
-            List<Entity> entities = getSelectedEntities();
+            java.util.List<Entity> entities = getSelectedEntities();
             int code = evt.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 evt.consume();
                 lobbyActions.delete(new ArrayList<>(), entities, true);
             } else if (code == KeyEvent.VK_SPACE) {
                 evt.consume();
-                LobbyUtility.mechReadoutAction(entities, canSeeAll(entities), false, getClientgui().getFrame());
+                LobbyUtility.mekReadoutAction(entities, canSeeAll(entities), false, getClientgui().getFrame());
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
                 if (entities.size() == 1) {
-                    lobbyActions.customizeMech(entities.get(0));
+                    lobbyActions.customizeMek(entities.get(0));
                 } else if (canConfigureMultipleDeployment(entities)) {
-                    lobbyActions.customizeMechs(entities);
+                    lobbyActions.customizeMeks(entities);
                 }
             }
         }
@@ -2578,7 +2577,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** Copies the selected units, if any, from the displayed Unit Table / Force Tree to the clipboard. */
     public void copyToClipboard() {
-        List<Entity> entities = isForceView() ? getTreeSelectedEntities() : getSelectedEntities();
+        java.util.List<Entity> entities = isForceView() ? getTreeSelectedEntities() : getSelectedEntities();
         StringSelection stringSelection = new StringSelection(clipboardString(entities));
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
@@ -2590,7 +2589,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Transferable contents = clipboard.getContents(null);
         boolean hasTransferableText = (contents != null) &&
                 contents.isDataFlavorSupported(DataFlavor.stringFlavor);
-        List<Entity> newEntities = new ArrayList<>();
+        java.util.List<Entity> newEntities = new ArrayList<>();
         if (hasTransferableText) {
             try {
                 String result = (String) contents.getTransferData(DataFlavor.stringFlavor);
@@ -2600,7 +2599,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     String[] tokens = line.split("\t");
                     if (tokens.length >= 2) {
                         String unitName = (tokens[0] + " " + tokens[1]).trim();
-                        MechSummary ms = MechSummaryCache.getInstance().getMech(unitName);
+                        MekSummary ms = MekSummaryCache.getInstance().getMek(unitName);
                         if (ms != null) {
                             Entity newEntity = ms.loadEntity();
                             if (newEntity != null) {
@@ -2649,9 +2648,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** Returns a list of entities selected in the ForceTree. May be empty, but not null. */
-    private List<Entity> getTreeSelectedEntities() {
+    private java.util.List<Entity> getTreeSelectedEntities() {
         TreePath[] selection = mekForceTree.getSelectionPaths();
-        List<Entity> entities = new ArrayList<>();
+        java.util.List<Entity> entities = new ArrayList<>();
         if (selection != null) {
             for (TreePath path: selection) {
                 if (path != null) {
@@ -2666,9 +2665,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** Returns a list of forces selected in the ForceTree. May be empty, but not null. */
-    private List<Force> getTreeSelectedForces() {
+    private java.util.List<Force> getTreeSelectedForces() {
         TreePath[] selection = mekForceTree.getSelectionPaths();
-        List<Force> selForces = new ArrayList<>();
+        java.util.List<Force> selForces = new ArrayList<>();
         if (selection != null) {
             for (TreePath path: selection) {
                 if (path != null) {
@@ -2687,18 +2686,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void keyPressed(KeyEvent e) {
-            List<Entity> selEntities = getTreeSelectedEntities();
-            List<Force> selForces = getTreeSelectedForces();
+            java.util.List<Entity> selEntities = getTreeSelectedEntities();
+            java.util.List<Force> selForces = getTreeSelectedForces();
             boolean onlyOneEntity = (selEntities.size() == 1) && selForces.isEmpty();
             int code = e.getKeyCode();
 
             if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                mechReadoutAction(selEntities, canSeeAll(selEntities), false, getClientgui().getFrame());
+                mekReadoutAction(selEntities, canSeeAll(selEntities), false, getClientgui().getFrame());
 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();
-                lobbyActions.customizeMech(selEntities.get(0));
+                lobbyActions.customizeMek(selEntities.get(0));
 
             } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
@@ -2785,7 +2784,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (lisBoardsAvailable.isSelectionEmpty()) {
                 return;
             }
-            List<String> boards = lisBoardsAvailable.getSelectedValuesList();
+            java.util.List<String> boards = lisBoardsAvailable.getSelectedValuesList();
             int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
             boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
             popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
@@ -2802,7 +2801,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 TreePath path = mekForceTree.getPathForRow(row);
                 if (path != null && path.getLastPathComponent() instanceof Entity) {
                     Entity entity = (Entity) path.getLastPathComponent();
-                    lobbyActions.customizeMech(entity);
+                    lobbyActions.customizeMek(entity);
                 }
             }
         }
@@ -2823,8 +2822,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
             TreePath[] selection = mekForceTree.getSelectionPaths();
-            List<Entity> entities = new ArrayList<>();
-            List<Force> selForces = new ArrayList<>();
+            java.util.List<Entity> entities = new ArrayList<>();
+            java.util.List<Force> selForces = new ArrayList<>();
 
             if (selection != null) {
                 for (TreePath path: selection) {
@@ -2851,7 +2850,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 int row = mekTable.rowAtPoint(e.getPoint());
                 InGameObject entity = mekModel.getEntityAt(row);
                 if ((entity instanceof Entity) && isEditable((Entity) entity)) {
-                    lobbyActions.customizeMech((Entity) entity);
+                    lobbyActions.customizeMek((Entity) entity);
                 }
             }
         }
@@ -2887,7 +2886,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (mekTable.getSelectedRowCount() == 0) {
                 return;
             }
-            List<Entity> entities = getSelectedEntities();
+            java.util.List<Entity> entities = getSelectedEntities();
             ScalingPopup popup = LobbyMekPopup.getPopup(entities, new ArrayList<>(), new LobbyMekPopupActions(ChatLounge.this), ChatLounge.this);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
@@ -2907,7 +2906,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
 
         Forces forces = game().getForces();
-        List<Integer> expandedForces = new ArrayList<>();
+        java.util.List<Integer> expandedForces = new ArrayList<>();
         for (int i = 0; i < mekForceTree.getRowCount(); i++) {
             TreePath currPath = mekForceTree.getPathForRow(i);
             if (mekForceTree.isExpanded(currPath)) {
@@ -2953,7 +2952,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return null;
             }
             int forceId = ((Force) outdatedEntry).getId();
-            List<Force> chain = forces.forceChain(forces.getForce(forceId));
+            java.util.List<Force> chain = forces.forceChain(forces.getForce(forceId));
             Object[] pathObjs = new Object[chain.size() + 1];
             int index = 0;
             pathObjs[index++] = mekForceTreeModel.getRoot();
@@ -2966,7 +2965,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (game().getEntity(entityId) == null) {
                 return null;
             }
-            List<Force> chain = forces.forceChain(game().getEntity(entityId));
+            java.util.List<Force> chain = forces.forceChain(game().getEntity(entityId));
             Object[] pathObjs = new Object[chain.size() + 2];
             int index = 0;
             pathObjs[index++] = mekForceTreeModel.getRoot();
@@ -3223,7 +3222,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void changeMekTableSorter(MouseEvent e) {
         int col = mekTable.columnAtPoint(e.getPoint());
         MekTableSorter previousSorter = activeSorter;
-        List<MekTableSorter> sorters;
+        java.util.List<MekTableSorter> sorters;
 
         // find the right list of sorters (or do nothing, if the column is not sortable)
         if (col == MekTableModel.COL_UNIT) {
@@ -3243,7 +3242,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** Selects the next allowed sorter in the given list of sorters. */
-    private void nextSorter(List<MekTableSorter> sorters) {
+    private void nextSorter(java.util.List<MekTableSorter> sorters) {
         // Set the next sorter as active, if this column was already sorted, or
         // the first sorter otherwise
         int index = sorters.indexOf(activeSorter);
@@ -3272,7 +3271,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Returns a list of the selected entities in the Mek table.
      * The list may be empty but not null.
      */
-    private List<Entity> getSelectedEntities() {
+    private java.util.List<Entity> getSelectedEntities() {
         ArrayList<Entity> result = new ArrayList<>();
         int[] rows = mekTable.getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
@@ -3317,7 +3316,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         private Image prepareImage(String boardName) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + CL_KEY_FILEEXTENTION_BOARD).getFile();
             Board board;
-            List<String> errors = new ArrayList<>();
+            java.util.List<String> errors = new ArrayList<>();
             if (boardFile.exists()) {
                 board = new Board();
                 try (InputStream is = new FileInputStream(boardFile)) {

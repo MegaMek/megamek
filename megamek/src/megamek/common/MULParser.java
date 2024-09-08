@@ -638,18 +638,18 @@ public class MULParser {
         } else {
             // Try to find the entity.
             StringBuffer key = new StringBuffer(chassis);
-            MekSummary ms = MekSummaryCache.getInstance().getMech(key.toString());
+            MekSummary ms = MekSummaryCache.getInstance().getMek(key.toString());
             if (!StringUtility.isNullOrBlank(model)) {
                 key.append(" ").append(model);
-                ms = MekSummaryCache.getInstance().getMech(key.toString());
+                ms = MekSummaryCache.getInstance().getMek(key.toString());
                 // That didn't work. Try swapping model and chassis.
                 if (ms == null) {
                     key = new StringBuffer(model);
                     key.append(" ").append(chassis);
-                    ms = MekSummaryCache.getInstance().getMech(key.toString());
+                    ms = MekSummaryCache.getInstance().getMek(key.toString());
                 }
             }
-            // We should have found the mech.
+            // We should have found the mek.
             if (ms == null) {
                 warning.append("Could not find Entity with chassis: ").append(chassis);
                 if (!StringUtility.isNullOrBlank(model)) {
@@ -657,12 +657,12 @@ public class MULParser {
                 }
                 warning.append(".\n");
             } else {
-                // Try to load the new mech.
+                // Try to load the new mek.
                 try {
-                    newEntity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    newEntity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 } catch (Exception ex) {
                     LogManager.getLogger().error("", ex);
-                    warning.append("Unable to load mech: ")
+                    warning.append("Unable to load mek: ")
                             .append(ms.getSourceFile()).append(": ")
                             .append(ms.getEntryName()).append(": ")
                             .append(ex.getMessage());
@@ -1639,7 +1639,7 @@ public class MULParser {
             if (index.equals(VALUE_NA)) {
                 indexVal = IArmorState.ARMOR_NA;
 
-                // Protomechs only have system slots,
+                // Protomeks only have system slots,
                 // so we have to handle the ammo specially.
                 if (entity instanceof ProtoMek || entity instanceof GunEmplacement) {
                     // Get the saved ammo load.

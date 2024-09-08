@@ -114,7 +114,7 @@ public final class ProtoMekBay extends Bay {
 
     @Override
     public TechAdvancement getTechAdvancement() {
-        return ProtomechBay.techAdvancement();
+        return ProtoMekBay.techAdvancement();
     }
 
     @Override

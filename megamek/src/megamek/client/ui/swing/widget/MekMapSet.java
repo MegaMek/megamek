@@ -36,7 +36,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for PicMap component to
- * represent single mech unit in MechDisplay
+ * represent single mek unit in MekDisplay
  */
 public class MekMapSet implements DisplayMapSet {
     // Because of keeping all areas of single type in one array
@@ -46,7 +46,7 @@ public class MekMapSet implements DisplayMapSet {
 
     private UnitDisplay unitDisplay;
 
-    // Array of polygonal areas - parts of mech body.
+    // Array of polygonal areas - parts of mek body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[19];
     // Array of fixed labels - short names of body parts
     private PMSimpleLabel[] labels = new PMSimpleLabel[20];
@@ -154,9 +154,9 @@ public class MekMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorSmallFontSize());
+            GUIP.getUnitDisplayMekArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorLargeFontSize());
+            GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     public MekMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -246,47 +246,47 @@ public class MekMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[Mek.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_H"),
+        labels[Mek.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_H"),
                 fm, Color.black, 62, 6);
-        labels[Mek.LOC_LARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LA"),
+        labels[Mek.LOC_LARM] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LA"),
                 fm, Color.black, 14, 59);
-        labels[Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
+        labels[Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LT"),
                 fm, Color.black, 41, 52);
-        labels[Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CT"),
+        labels[Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_CT"),
                 fm, Color.black, 62, 42);
-        labels[Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
+        labels[Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_RT"),
                 fm, Color.black, 84, 52);
-        labels[Mek.LOC_RARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RA"),
+        labels[Mek.LOC_RARM] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_RA"),
                 fm, Color.black, 109, 59);
-        labels[Mek.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LL"),
+        labels[Mek.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LL"),
                 fm, Color.black, 36, 92);
-        labels[Mek.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RL"),
+        labels[Mek.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_RL"),
                 fm, Color.black, 90, 92);
         // Labels for Back view
-        labels[REAR_AREA_OFFSET + Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
+        labels[REAR_AREA_OFFSET + Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LT"),
                 fm, Color.black, 133, 39);
-        labels[REAR_AREA_OFFSET + Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CT"),
+        labels[REAR_AREA_OFFSET + Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_CT"),
                 fm, Color.black, 156, 25);
-        labels[REAR_AREA_OFFSET + Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
+        labels[REAR_AREA_OFFSET + Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_RT"),
                 fm, Color.black, 178, 39);
         // Labels for Internal Structure
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_H"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_H"),
                 fm, Color.black, 63, 130);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LA"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LARM] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LA"),
                 fm, Color.black, 14, 174);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LT"),
                 fm, Color.black, 42, 166);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.L_CT"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.L_CT"),
                 fm, Color.black, 63, 168);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_RT"),
                 fm, Color.black, 85, 166);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RARM] = WidgetUtils.createLabel(Messages.getString("MechMapSet.L_RA"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RARM] = WidgetUtils.createLabel(Messages.getString("MekMapSet.L_RA"),
                 fm, Color.black, 111, 174);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LL"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_LL"),
                 fm, Color.black, 33, 210);
-        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RL"),
+        labels[INT_STRUCTURE_OFFSET + Mek.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MekMapSet.l_RL"),
                 fm, Color.black, 93, 210);
-        labels[19] = WidgetUtils.createLabel(Messages.getString("MechMapSet.BARRating"),
+        labels[19] = WidgetUtils.createLabel(Messages.getString("MekMapSet.BARRating"),
                 fm, Color.white, 65, 343);
 
         // Value labels for all parts of mek
@@ -374,7 +374,7 @@ public class MekMapSet implements DisplayMapSet {
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMekOutline()).toString());
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER | BackGroundDrawer.HALIGN_CENTER;
         BackGroundDrawer bgd = new BackGroundDrawer(tile, b);

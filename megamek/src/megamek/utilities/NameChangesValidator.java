@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Configuration;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**
@@ -52,11 +52,11 @@ public class NameChangesValidator {
 
     private static final String STRING_FINISHED = "Finished.";
 
-    private MechSummaryCache mechSummaryCache = null;
+    private MekSummaryCache mekSummaryCache = null;
     private int errors;
-    private final File lookupNames = new File(Configuration.unitsDir(), MechSummaryCache.FILENAME_LOOKUP);
+    private final File lookupNames = new File(Configuration.unitsDir(), MekSummaryCache.FILENAME_LOOKUP);
     private final File lookupNamesHidden = new File(Configuration.unitsDir(),
-            MechSummaryCache.FILENAME_LOOKUP + ".xxx");
+            MekSummaryCache.FILENAME_LOOKUP + ".xxx");
 
     public static void main(String... args) {
         NameChangesValidator validator = new NameChangesValidator();
@@ -127,8 +127,8 @@ public class NameChangesValidator {
         if (lookupNames.renameTo(lookupNamesHidden) && lookupNamesHidden.exists()) {
             logger.info("Loading Unit Cache...");
 
-            mechSummaryCache = MechSummaryCache.getInstance(true);
-            mechSummaryCache.getAllMechs();
+            mekSummaryCache = MekSummaryCache.getInstance(true);
+            mekSummaryCache.getAllMeks();
             logger.info("Rename successful. Testing lookup names...");
 
             List<String> lines = loadFile(lookupNamesHidden);
@@ -136,7 +136,7 @@ public class NameChangesValidator {
                 int index = line.indexOf('|');
                 if (index > 0) {
                     String lookupName = line.substring(0, index);
-                    if (mechSummaryCache.getMech(lookupName) != null) {
+                    if (mekSummaryCache.getMek(lookupName) != null) {
                         message = String.format("Lookup name (left side) is an existing unit in line: %s", line);
                         logger.info(message);
                         errors++;
@@ -161,14 +161,14 @@ public class NameChangesValidator {
         if (lookupNames.exists()) {
             logger.info("Testing actual names...");
             logger.info("Reloading Unit Cache...");
-            mechSummaryCache.loadMechData(true);
-            mechSummaryCache.getAllMechs();
+            mekSummaryCache.loadMekData(true);
+            mekSummaryCache.getAllMeks();
             List<String> lines = loadFile(lookupNames);
             for (String line : lines) {
                 int index = line.indexOf('|');
                 if (index > 0) {
                     String entryName = line.substring(index + 1);
-                    if (mechSummaryCache.getMech(entryName) == null) {
+                    if (mekSummaryCache.getMek(entryName) == null) {
                         String message = String.format("Actual name (right side) not found in line: %s", line);
                         logger.error(message);
                         errors++;
@@ -177,7 +177,7 @@ public class NameChangesValidator {
 
             }
         } else {
-            String message = String.format("Cannot find the name-changes file %s", MechSummaryCache.FILENAME_LOOKUP);
+            String message = String.format("Cannot find the name-changes file %s", MekSummaryCache.FILENAME_LOOKUP);
             logger.error(message);
             System.exit(64);
         }

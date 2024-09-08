@@ -18,13 +18,19 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.HashMap;
 
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.Entity;
+import megamek.common.LandAirMek;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Mek;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.QuadVee;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
@@ -89,7 +95,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
                 report.addLine("Bimodal Movement", "BIM");
                 element.getSpecialAbilities().replaceSUA(BIM, lamMoves);
             } else {
-                lamMoves.put("g", lam.getAirMechCruiseMP(MPCalculationSetting.AS_CONVERSION) * 2);
+                lamMoves.put("g", lam.getAirMekCruiseMP(MPCalculationSetting.AS_CONVERSION) * 2);
                 lamMoves.put("a", lam.getCurrentThrust());
                 report.addLine("LAM Movement", "LAM");
                 element.getSpecialAbilities().replaceSUA(LAM, lamMoves);

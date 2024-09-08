@@ -81,7 +81,7 @@ public class GameTurn extends AbstractPlayerTurn {
                 && !(useValidNonInfantryCheck && game.getPhase().isMovement()
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
                 || ((entity instanceof ProtoMek) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
-                && game.checkForValidNonInfantryAndOrProtomechs(playerId()));
+                && game.checkForValidNonInfantryAndOrProtoMeks(playerId()));
     }
 
     @Override

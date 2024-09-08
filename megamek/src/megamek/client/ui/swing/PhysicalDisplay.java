@@ -408,7 +408,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (ce() != null) {
-            clientgui.getUnitDisplay().wPan.displayMech(ce());
+            clientgui.getUnitDisplay().wPan.displayMek(ce());
         }
         updateTarget();
 
@@ -977,9 +977,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      */
     private void proto() {
         ToHitData proto = ProtoMekPhysicalAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
-        String title = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.title",
+        String title = Messages.getString("PhysicalDisplay.ProtoMekAttackDialog.title",
                 target.getDisplayName());
-        String message = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.message",
+        String message = Messages.getString("PhysicalDisplay.ProtoMekAttackDialog.message",
                 proto.getValueAsString(),
                 Compute.oddsAbove(proto.getValue(), ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                 proto.getDesc(),

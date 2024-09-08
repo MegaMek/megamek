@@ -18,6 +18,10 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
@@ -26,9 +30,6 @@ import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Objects;
 
 /**
  * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics
@@ -42,10 +43,10 @@ public final class ASConverter {
     //TODO: LG, SLG, VLG support vehicles, MS
 
     /**
-     *  Performs Alpha Strike conversion for the MechSummaryCache (without trying to get a clean unit first,
+     *  Performs Alpha Strike conversion for the MekSummaryCache (without trying to get a clean unit first,
      *  without storing a conversion report and without considering pilot skill).
      */
-    public static AlphaStrikeElement convertForMechCache(Entity entity) {
+    public static AlphaStrikeElement convertForMekCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
     }
 
@@ -189,7 +190,7 @@ public final class ASConverter {
     public static boolean canConvert(@Nullable Entity entity) {
         return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
                 || (entity instanceof EscapePods) || (entity instanceof EjectedCrew)
-                || (entity instanceof ArmlessMech) || (entity instanceof GunEmplacement));
+                || (entity instanceof ArmlessMek) || (entity instanceof GunEmplacement));
     }
 
     /**
@@ -229,8 +230,8 @@ public final class ASConverter {
     /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
     private static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
-            MechSummary ms = MechSummaryCache.getInstance().getMech(entity.getShortNameRaw());
-            return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            MekSummary ms = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
+            return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

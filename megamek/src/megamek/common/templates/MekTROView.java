@@ -18,10 +18,10 @@ import java.util.StringJoiner;
 
 import megamek.common.*;
 import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestMek;
 
 /**
- * Creates a TRO template model for BattleMechs, OmniMechs, and IndustrialMeks
+ * Creates a TRO template model for BattleMeks, OmniMeks, and IndustrialMeks
  * of all leg configurations.
  *
  * @author Neoancient
@@ -29,92 +29,92 @@ import megamek.common.verifier.TestMech;
  */
 public class MekTROView extends TROView {
 
-    private final Mek mech;
+    private final Mek mek;
 
-    public MekTROView(Mek mech) {
-        this.mech = mech;
+    public MekTROView(Mek mek) {
+        this.mek = mek;
     }
 
     @Override
     protected String getTemplateFileName(boolean html) {
         if (html) {
-            return "mech.ftlh";
+            return "mek.ftlh";
         }
-        return "mech.ftl";
+        return "mek.ftl";
     }
 
     @Override
     protected void initModel(EntityVerifier verifier) {
         setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
                 new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
-        addBasicData(mech);
+        addBasicData(mek);
         addArmorAndStructure();
-        final int nameWidth = addEquipment(mech);
+        final int nameWidth = addEquipment(mek);
         setModelData("formatEquipmentRow",
                 new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 10, 8 },
                         new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
                                 Justification.CENTER, Justification.CENTER }));
         addFluff();
-        mech.setConversionMode(0);
-        setModelData("isOmni", mech.isOmni());
-        setModelData("isQuad", mech.hasETypeFlag(Entity.ETYPE_QUAD_MEK));
-        setModelData("isTripod", mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK));
-        final TestMech testMech = new TestMech(mech, verifier.mechOption, null);
-        setModelData("structureName", mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD ? ""
-                : EquipmentType.getStructureTypeName(mech.getStructureType()));
-        setModelData("isMass", NumberFormat.getInstance().format(testMech.getWeightStructure()));
-        setModelData("engineName", stripNotes(mech.getEngine().getEngineName()));
-        setModelData("engineMass", NumberFormat.getInstance().format(testMech.getWeightEngine()));
-        setModelData("walkMP", mech.getWalkMP());
-        setModelData("runMP", mech.getRunMPasString());
-        setModelData("jumpMP", mech.getJumpMP());
-        setModelData("hsType", mech.getHeatSinkTypeName());
+        mek.setConversionMode(0);
+        setModelData("isOmni", mek.isOmni());
+        setModelData("isQuad", mek.hasETypeFlag(Entity.ETYPE_QUAD_MEK));
+        setModelData("isTripod", mek.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK));
+        final TestMek testMek = new TestMek(mek, verifier.mekOption, null);
+        setModelData("structureName", mek.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD ? ""
+                : EquipmentType.getStructureTypeName(mek.getStructureType()));
+        setModelData("isMass", NumberFormat.getInstance().format(testMek.getWeightStructure()));
+        setModelData("engineName", stripNotes(mek.getEngine().getEngineName()));
+        setModelData("engineMass", NumberFormat.getInstance().format(testMek.getWeightEngine()));
+        setModelData("walkMP", mek.getWalkMP());
+        setModelData("runMP", mek.getRunMPasString());
+        setModelData("jumpMP", mek.getJumpMP());
+        setModelData("hsType", mek.getHeatSinkTypeName());
         setModelData("hsCount",
-                mech.hasDoubleHeatSinks() ? mech.heatSinks() + " [" + (mech.heatSinks() * 2) + "]" : mech.heatSinks());
-        setModelData("hsMass", NumberFormat.getInstance().format(testMech.getWeightHeatSinks()));
-        if (mech.getGyroType() == Mek.GYRO_STANDARD) {
-            setModelData("gyroType", mech.getRawSystemName(Mek.SYSTEM_GYRO));
+                mek.hasDoubleHeatSinks() ? mek.heatSinks() + " [" + (mek.heatSinks() * 2) + "]" : mek.heatSinks());
+        setModelData("hsMass", NumberFormat.getInstance().format(testMek.getWeightHeatSinks()));
+        if (mek.getGyroType() == Mek.GYRO_STANDARD) {
+            setModelData("gyroType", mek.getRawSystemName(Mek.SYSTEM_GYRO));
         } else {
-            setModelData("gyroType", Mek.getGyroDisplayString(mech.getGyroType()));
+            setModelData("gyroType", Mek.getGyroDisplayString(mek.getGyroType()));
         }
-        setModelData("gyroMass", NumberFormat.getInstance().format(testMech.getWeightGyro()));
-        if ((mech.getCockpitType() == Mek.COCKPIT_STANDARD) || (mech.getCockpitType() == Mek.COCKPIT_INDUSTRIAL)) {
-            setModelData("cockpitType", mech.getRawSystemName(Mek.SYSTEM_COCKPIT));
+        setModelData("gyroMass", NumberFormat.getInstance().format(testMek.getWeightGyro()));
+        if ((mek.getCockpitType() == Mek.COCKPIT_STANDARD) || (mek.getCockpitType() == Mek.COCKPIT_INDUSTRIAL)) {
+            setModelData("cockpitType", mek.getRawSystemName(Mek.SYSTEM_COCKPIT));
         } else {
-            setModelData("cockpitType", Mek.getCockpitDisplayString(mech.getCockpitType()));
+            setModelData("cockpitType", Mek.getCockpitDisplayString(mek.getCockpitType()));
         }
-        setModelData("cockpitMass", NumberFormat.getInstance().format(testMech.getWeightCockpit()));
-        final String atName = formatArmorType(mech, true);
+        setModelData("cockpitMass", NumberFormat.getInstance().format(testMek.getWeightCockpit()));
+        final String atName = formatArmorType(mek, true);
         if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
         } else {
             setModelData("armorType", "");
         }
-        setModelData("armorFactor", mech.getTotalOArmor());
-        setModelData("armorMass", NumberFormat.getInstance().format(testMech.getWeightArmor()));
-        if (mech.isOmni()) {
-            addFixedOmni(mech);
+        setModelData("armorFactor", mek.getTotalOArmor());
+        setModelData("armorMass", NumberFormat.getInstance().format(testMek.getWeightArmor()));
+        if (mek.isOmni()) {
+            addFixedOmni(mek);
         }
-        if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
-            final LandAirMek lam = (LandAirMek) mech;
+        if (mek.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
+            final LandAirMek lam = (LandAirMek) mek;
             final int mode = lam.getConversionMode();
-            setModelData("lamConversionMass", testMech.getWeightMisc());
+            setModelData("lamConversionMass", testMek.getWeightMisc());
             if (lam.getLAMType() == LandAirMek.LAM_STANDARD) {
-                setModelData("airmechCruise", lam.getAirMechCruiseMP());
-                setModelData("airmechFlank", lam.getAirMechFlankMP());
+                setModelData("airmekCruise", lam.getAirMekCruiseMP());
+                setModelData("airmekFlank", lam.getAirMekFlankMP());
             } else {
-                setModelData("airmechCruise", "N/A");
-                setModelData("airmechFlank", "N/A");
+                setModelData("airmekCruise", "N/A");
+                setModelData("airmekFlank", "N/A");
             }
             lam.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
             setModelData("safeThrust", lam.getWalkMP());
             setModelData("maxThrust", lam.getRunMP());
             lam.setConversionMode(mode);
-        } else if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
-            final QuadVee qv = (QuadVee) mech;
+        } else if (mek.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
+            final QuadVee qv = (QuadVee) mek;
             final int mode = qv.getConversionMode();
             qv.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
-            setModelData("qvConversionMass", testMech.getWeightMisc());
+            setModelData("qvConversionMass", testMek.getWeightMisc());
             setModelData("qvType", Messages.getString("MovementType." + qv.getMovementModeAsString()));
             setModelData("qvCruise", qv.getWalkMP());
             setModelData("qvFlank", qv.getRunMPasString());
@@ -127,52 +127,52 @@ public class MekTROView extends TROView {
     private String countArmActuators(int location) {
         final StringJoiner sj = new StringJoiner(", ");
         for (int act = Mek.ACTUATOR_SHOULDER; act <= Mek.ACTUATOR_HAND; act++) {
-            if (mech.hasSystem(act, location)) {
-                sj.add(mech.getRawSystemName(act));
+            if (mek.hasSystem(act, location)) {
+                sj.add(mek.getRawSystemName(act));
             }
         }
         return sj.toString();
     }
 
     protected void addFluff() {
-        addMechVeeAeroFluff(mech);
+        addMekVeeAeroFluff(mek);
         setModelData("chassisDesc",
-                formatSystemFluff(EntityFluff.System.CHASSIS, mech.getFluff(), this::formatChassisDesc));
-        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mech.getFluff(), this::formatJJDesc));
-        setModelData("jumpCapacity", mech.getJumpMP() * 30);
+                formatSystemFluff(EntityFluff.System.CHASSIS, mek.getFluff(), this::formatChassisDesc));
+        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mek.getFluff(), this::formatJJDesc));
+        setModelData("jumpCapacity", mek.getJumpMP() * 30);
     }
 
-    private static final int[][] MECH_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT },
+    private static final int[][] MEK_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT },
             { Mek.LOC_RARM, Mek.LOC_LARM }, { Mek.LOC_RLEG, Mek.LOC_CLEG, Mek.LOC_LLEG } };
 
-    private static final int[][] MECH_ARMOR_LOCS_REAR = { { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT } };
+    private static final int[][] MEK_ARMOR_LOCS_REAR = { { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
-                addArmorStructureEntries(mech, Entity::getOInternal, MECH_ARMOR_LOCS));
-        setModelData("armorValues", addArmorStructureEntries(mech, Entity::getOArmor, MECH_ARMOR_LOCS));
+                addArmorStructureEntries(mek, Entity::getOInternal, MEK_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(mek, Entity::getOArmor, MEK_ARMOR_LOCS));
         setModelData("rearArmorValues",
-                addArmorStructureEntries(mech, (en, loc) -> en.getOArmor(loc, true), MECH_ARMOR_LOCS_REAR));
-        if (mech.hasPatchworkArmor()) {
-            setModelData("patchworkByLoc", addPatchworkATs(mech, MECH_ARMOR_LOCS));
+                addArmorStructureEntries(mek, (en, loc) -> en.getOArmor(loc, true), MEK_ARMOR_LOCS_REAR));
+        if (mek.hasPatchworkArmor()) {
+            setModelData("patchworkByLoc", addPatchworkATs(mek, MEK_ARMOR_LOCS));
         }
     }
 
     private String formatChassisDesc() {
-        String chassisDesc = EquipmentType.getStructureTypeName(mech.getStructureType());
-        if (mech.isIndustrial()) {
+        String chassisDesc = EquipmentType.getStructureTypeName(mek.getStructureType());
+        if (mek.isIndustrial()) {
             chassisDesc += Messages.getString("TROView.chassisIndustrial");
         }
-        if (mech.isSuperHeavy()) {
+        if (mek.isSuperHeavy()) {
             chassisDesc += Messages.getString("TROView.chassisSuperheavy");
         }
-        if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
+        if (mek.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
             chassisDesc += Messages.getString("TROView.chassisQuadVee");
-        } else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MEK)) {
+        } else if (mek.hasETypeFlag(Entity.ETYPE_QUAD_MEK)) {
             chassisDesc += Messages.getString("TROView.chassisQuad");
-        } else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK)) {
+        } else if (mek.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK)) {
             chassisDesc += Messages.getString("TROView.chassisTripod");
-        } else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
+        } else if (mek.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
             chassisDesc += Messages.getString("TROView.chassisLAM");
         } else {
             chassisDesc += Messages.getString("TROView.chassisBiped");
@@ -181,7 +181,7 @@ public class MekTROView extends TROView {
     }
 
     private String formatJJDesc() {
-        switch (mech.getJumpType()) {
+        switch (mek.getJumpType()) {
             case Mek.JUMP_STANDARD:
                 return Messages.getString("TROView.jjStandard");
             case Mek.JUMP_IMPROVED:

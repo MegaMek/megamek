@@ -493,7 +493,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             }
 
             for (SetAmmoTo sa : sap.ammoSetTo) {
-                // Only can be done against Mechs
+                // Only can be done against Meks
                 if (sap.entity instanceof Mek) {
                     if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
                         // Get the piece of equipment and check to make sure it
@@ -700,12 +700,12 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         try {
             String[] parts = s.split(SEPARATOR_COMMA, -1);
             int i;
-            MechSummary ms = MechSummaryCache.getInstance().getMech(parts[0]);
+            MekSummary ms = MekSummaryCache.getInstance().getMek(parts[0]);
             if (ms == null) {
                 throw new ScenarioLoaderException("ScenarioLoaderException.missingRequiredEntity", parts[0]);
             }
             LogManager.getLogger().debug(String.format("Loading %s", ms.getName()));
-            Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            Entity e = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
             // The following section is used to determine if part 4 of the string includes gender or not
             // The regex is used to match a number that might be negative. As the direction is never
@@ -783,8 +783,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     private void parseAutoEject(Entity entity, String eject) {
         if (entity instanceof Mek) {
-            Mek mech = (Mek) entity;
-            mech.setAutoEject(Boolean.parseBoolean(eject));
+            Mek mek = (Mek) entity;
+            mek.setAutoEject(Boolean.parseBoolean(eject));
         }
     }
 

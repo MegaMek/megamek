@@ -41,7 +41,7 @@ public class CLBALaserSmall extends LaserWeapon {
         waterExtremeRange = 4;
         tonnage = 0.2;
         criticals = 1;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON)
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         bv = 9;
         cost = 11250;

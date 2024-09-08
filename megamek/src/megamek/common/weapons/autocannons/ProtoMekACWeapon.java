@@ -18,10 +18,10 @@ import megamek.common.AmmoType;
 /**
  * @since Sep 25, 2004
  */
-public abstract class ProtoMechACWeapon extends ACWeapon {
+public abstract class ProtoMekACWeapon extends ACWeapon {
     private static final long serialVersionUID = 5955226813134596666L;
 
-    public ProtoMechACWeapon() {
+    public ProtoMekACWeapon() {
         super();
         ammoType = AmmoType.T_PAC;
         explosive = false;

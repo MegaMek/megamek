@@ -38,8 +38,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
 
 /**
- * MechTileset is a misleading name, as this matches any unit, not just mechs
- * with the appropriate image. It requires mechset.txt (in the unit images directory), the
+ * MekTileset is a misleading name, as this matches any unit, not just Meks
+ * with the appropriate image. It requires mekset.txt (in the unit images directory), the
  * format of which is explained in that file.
  *
  * @author Ben
@@ -54,12 +54,12 @@ public class MekTileset {
     private static final String MEDIUM_STRING = "default_medium";
     private static final String HEAVY_STRING = "default_heavy";
     private static final String ASSAULT_STRING = "default_assault";
-    private static final String SUPER_HEAVY_MECH_STRING = "default_super_heavy_mech";
+    private static final String SUPER_HEAVY_MEK_STRING = "default_super_heavy_mek";
     private static final String QUAD_STRING = "default_quad";
     private static final String QUADVEE_STRING = "default_quadvee";
     private static final String QUADVEE_VEHICLE_STRING = "default_quadvee_vehicle";
-    private static final String LAM_MECH_STRING = "default_lam_mech";
-    private static final String LAM_AIRMECH_STRING = "default_lam_airmech";
+    private static final String LAM_MEK_STRING = "default_lam_mek";
+    private static final String LAM_AIRMEK_STRING = "default_lam_airmek";
     private static final String LAM_FIGHTER_STRING = "default_lam_fighter";
     private static final String TRIPOD_STRING = "default_tripod";
     private static final String TRACKED_STRING = "default_tracked";
@@ -103,67 +103,67 @@ public class MekTileset {
     private static final String TELE_MISSILE_STRING = "default_tele_missile";
     private static final String UNKNOWN_STRING = "default_unknown";
 
-    private MechEntry default_ultra_light;
-    private MechEntry default_light;
-    private MechEntry default_medium;
-    private MechEntry default_heavy;
-    private MechEntry default_assault;
-    private MechEntry default_super_heavy_mech;
-    private MechEntry default_quad;
-    private MechEntry default_quadvee;
-    private MechEntry default_quadvee_vehicle;
-    private MechEntry default_lam_mech;
-    private MechEntry default_lam_airmech;
-    private MechEntry default_lam_fighter;
-    private MechEntry default_tripod;
-    private MechEntry default_tracked;
-    private MechEntry default_tracked_heavy;
-    private MechEntry default_tracked_assault;
-    private MechEntry default_wheeled;
-    private MechEntry default_wheeled_heavy;
-    private MechEntry default_hover;
-    private MechEntry default_naval;
-    private MechEntry default_submarine;
-    private MechEntry default_hydrofoil;
-    private MechEntry default_vtol;
-    private MechEntry default_inf;
-    private MechEntry default_ba;
-    private MechEntry default_proto;
-    private MechEntry default_gun_emplacement;
-    private MechEntry default_wige;
-    private MechEntry default_aero;
-    private MechEntry default_small_craft_aero;
-    private MechEntry default_small_craft_sphere;
-    private MechEntry default_dropship_aero;
-    private MechEntry default_dropship_aero_0;
-    private MechEntry default_dropship_aero_1;
-    private MechEntry default_dropship_aero_2;
-    private MechEntry default_dropship_aero_3;
-    private MechEntry default_dropship_aero_4;
-    private MechEntry default_dropship_aero_5;
-    private MechEntry default_dropship_aero_6;
-    private MechEntry default_dropship_sphere;
-    private MechEntry default_dropship_sphere_0;
-    private MechEntry default_dropship_sphere_1;
-    private MechEntry default_dropship_sphere_2;
-    private MechEntry default_dropship_sphere_3;
-    private MechEntry default_dropship_sphere_4;
-    private MechEntry default_dropship_sphere_5;
-    private MechEntry default_dropship_sphere_6;
-    private MechEntry default_jumpship;
-    private MechEntry default_warship;
-    private MechEntry default_space_station;
-    private MechEntry default_fighter_squadron;
-    private MechEntry default_tele_missile;
-    private MechEntry default_unknown;
+    private MekEntry default_ultra_light;
+    private MekEntry default_light;
+    private MekEntry default_medium;
+    private MekEntry default_heavy;
+    private MekEntry default_assault;
+    private MekEntry default_super_heavy_mek;
+    private MekEntry default_quad;
+    private MekEntry default_quadvee;
+    private MekEntry default_quadvee_vehicle;
+    private MekEntry default_lam_mek;
+    private MekEntry default_lam_airmek;
+    private MekEntry default_lam_fighter;
+    private MekEntry default_tripod;
+    private MekEntry default_tracked;
+    private MekEntry default_tracked_heavy;
+    private MekEntry default_tracked_assault;
+    private MekEntry default_wheeled;
+    private MekEntry default_wheeled_heavy;
+    private MekEntry default_hover;
+    private MekEntry default_naval;
+    private MekEntry default_submarine;
+    private MekEntry default_hydrofoil;
+    private MekEntry default_vtol;
+    private MekEntry default_inf;
+    private MekEntry default_ba;
+    private MekEntry default_proto;
+    private MekEntry default_gun_emplacement;
+    private MekEntry default_wige;
+    private MekEntry default_aero;
+    private MekEntry default_small_craft_aero;
+    private MekEntry default_small_craft_sphere;
+    private MekEntry default_dropship_aero;
+    private MekEntry default_dropship_aero_0;
+    private MekEntry default_dropship_aero_1;
+    private MekEntry default_dropship_aero_2;
+    private MekEntry default_dropship_aero_3;
+    private MekEntry default_dropship_aero_4;
+    private MekEntry default_dropship_aero_5;
+    private MekEntry default_dropship_aero_6;
+    private MekEntry default_dropship_sphere;
+    private MekEntry default_dropship_sphere_0;
+    private MekEntry default_dropship_sphere_1;
+    private MekEntry default_dropship_sphere_2;
+    private MekEntry default_dropship_sphere_3;
+    private MekEntry default_dropship_sphere_4;
+    private MekEntry default_dropship_sphere_5;
+    private MekEntry default_dropship_sphere_6;
+    private MekEntry default_jumpship;
+    private MekEntry default_warship;
+    private MekEntry default_space_station;
+    private MekEntry default_fighter_squadron;
+    private MekEntry default_tele_missile;
+    private MekEntry default_unknown;
 
-    private final HashMap<String, MechEntry> exact = new HashMap<>();
-    private final HashMap<String, MechEntry> chassis = new HashMap<>();
+    private final HashMap<String, MekEntry> exact = new HashMap<>();
+    private final HashMap<String, MekEntry> chassis = new HashMap<>();
 
     private final File dir;
 
     /**
-     * Creates new MechTileset.
+     * Creates new MekTileset.
      *
      * @param dir_path Path to the tileset directory.
      */
@@ -182,11 +182,11 @@ public class MekTileset {
             return entity.getIcon();
         }
 
-        MechEntry entry = entryFor(entity, secondaryPos);
+        MekEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
             LogManager.getLogger().warn("Entry is null, please make sure that there is a default entry for "
-                    + entity.getShortNameRaw() + " in both mechset.txt and wreckset.txt. Defaulting to "
+                    + entity.getShortNameRaw() + " in both mekset.txt and wreckset.txt. Defaulting to "
                     + LIGHT_STRING);
             entry = default_light;
         }
@@ -198,9 +198,9 @@ public class MekTileset {
     }
 
     /**
-     * Returns the MechEntry corresponding to the entity
+     * Returns the MekEntry corresponding to the entity
      */
-    public MechEntry entryFor(Entity entity, int secondaryPos) {
+    public MekEntry entryFor(Entity entity, int secondaryPos) {
         //Some entities (QuadVees, LAMs) use different sprites depending on mode.
         String mode = entity.getTilesetModeString().toUpperCase();
 
@@ -220,7 +220,7 @@ public class MekTileset {
         return genericFor(entity, secondaryPos);
     }
 
-    public MechEntry genericFor(Entity entity, int secondaryPos) {
+    public MekEntry genericFor(Entity entity, int secondaryPos) {
         if (entity instanceof BattleArmor) {
             return default_ba;
         } else if (entity instanceof Infantry) {
@@ -236,10 +236,10 @@ public class MekTileset {
             switch (entity.getConversionMode()) {
                 case LandAirMek.CONV_MODE_FIGHTER:
                     return default_lam_fighter;
-                case LandAirMek.CONV_MODE_AIRMECH:
-                    return default_lam_airmech;
+                case LandAirMek.CONV_MODE_AIRMEK:
+                    return default_lam_airmek;
                 default:
-                    return default_lam_mech;
+                    return default_lam_mek;
             }
         } else if (entity instanceof Mek) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
@@ -255,7 +255,7 @@ public class MekTileset {
                     case EntityWeightClass.WEIGHT_HEAVY:
                         return default_heavy;
                     case EntityWeightClass.WEIGHT_SUPER_HEAVY:
-                        return default_super_heavy_mech;
+                        return default_super_heavy_mek;
                     case EntityWeightClass.WEIGHT_ASSAULT:
                     default:
                         return default_assault;
@@ -379,9 +379,9 @@ public class MekTileset {
                             LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.get(0).equals(CHASSIS_KEY)) {
-                        chassis.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
+                        chassis.put(tokens.get(1).toUpperCase(), new MekEntry(tokens.get(2)));
                     } else {
-                        exact.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
+                        exact.put(tokens.get(1).toUpperCase(), new MekEntry(tokens.get(2)));
                     }
                 } else {
                     LogManager.getLogger().warn("Malformed line in {}: {}", filename, tokens.toString());
@@ -394,12 +394,12 @@ public class MekTileset {
         default_medium = exact.get(MEDIUM_STRING.toUpperCase());
         default_heavy = exact.get(HEAVY_STRING.toUpperCase());
         default_assault = exact.get(ASSAULT_STRING.toUpperCase());
-        default_super_heavy_mech = exact.get(SUPER_HEAVY_MECH_STRING.toUpperCase());
+        default_super_heavy_mek = exact.get(SUPER_HEAVY_MEK_STRING.toUpperCase());
         default_quad = exact.get(QUAD_STRING.toUpperCase());
         default_quadvee = exact.get(QUADVEE_STRING.toUpperCase());
         default_quadvee_vehicle = exact.get(QUADVEE_VEHICLE_STRING.toUpperCase());
-        default_lam_mech = exact.get(LAM_MECH_STRING.toUpperCase());
-        default_lam_airmech = exact.get(LAM_AIRMECH_STRING.toUpperCase());
+        default_lam_mek = exact.get(LAM_MEK_STRING.toUpperCase());
+        default_lam_airmek = exact.get(LAM_AIRMEK_STRING.toUpperCase());
         default_lam_fighter = exact.get(LAM_FIGHTER_STRING.toUpperCase());
         default_tripod = exact.get(TRIPOD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
@@ -450,14 +450,14 @@ public class MekTileset {
     }
 
     /**
-     * Stores the name, image file name, and image (once loaded) for a mech or
+     * Stores the name, image file name, and image (once loaded) for a mek or
      * other entity
      */
-    public class MechEntry {
+    public class MekEntry {
         private String imageFile;
         private Image image;
 
-        public MechEntry(String imageFile) {
+        public MekEntry(String imageFile) {
             this.imageFile = imageFile;
             image = null;
         }

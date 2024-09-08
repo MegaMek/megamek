@@ -14,30 +14,21 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
@@ -50,7 +41,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
-import megamek.common.MechSummary;
+import megamek.common.MekSummary;
 import megamek.common.UnitType;
 
 /**
@@ -446,7 +437,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
     }
 
-    public void updateGeneratedUnits(List<MechSummary> list) {
+    public void updateGeneratedUnits(List<MekSummary> list) {
         panUnitTypeOptions.updateGeneratedUnits(list);
     }
 
@@ -496,7 +487,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             return new ArrayList<>();
         }
 
-        public abstract void updateGeneratedUnits(List<MechSummary> list);
+        public abstract void updateGeneratedUnits(List<MekSummary> list);
     }
 
     public class RATGenUnitTypeOptions extends UnitTypeOptions {
@@ -551,7 +542,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
 
         @Override
-        public void updateGeneratedUnits(List<MechSummary> list) {
+        public void updateGeneratedUnits(List<MekSummary> list) {
 
         }
     }
@@ -938,7 +929,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
 
         @Override
-        public void updateGeneratedUnits(List<MechSummary> list) {
+        public void updateGeneratedUnits(List<MekSummary> list) {
             currentCard().setGeneratedUnits(list);
         }
     }
@@ -957,7 +948,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private JComboBox<String> cbNetwork = new JComboBox<>();
         private Map<String, Integer> networkOptions = new LinkedHashMap<>();
         private JTextArea txtNoFormation = new JTextArea();
-        private List<MechSummary> generatedUnits = null;
+        private List<MekSummary> generatedUnits = null;
 
         public FormationTypesCard(boolean groundUnit) {
             setLayout(new GridBagLayout());
@@ -1218,7 +1209,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             afd.setVisible(true);
         }
 
-        public void setGeneratedUnits(List<MechSummary> list) {
+        public void setGeneratedUnits(List<MekSummary> list) {
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());
         }
@@ -1228,4 +1219,3 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
     }
 }
-

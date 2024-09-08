@@ -21,16 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.LargeSupportTank;
-import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import megamek.common.*;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -115,7 +106,7 @@ public class SupportVeeTROView extends TROView {
     }
 
     private void addFluff() {
-        addMechVeeAeroFluff(tank);
+        addMekVeeAeroFluff(tank);
     }
 
     private static final int[][] TANK_ARMOR_LOCS = { { Tank.LOC_FRONT }, { Tank.LOC_RIGHT, Tank.LOC_LEFT },

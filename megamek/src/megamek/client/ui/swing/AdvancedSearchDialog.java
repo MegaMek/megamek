@@ -49,8 +49,8 @@ import megamek.client.ui.swing.table.MegaMekTable;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EquipmentType;
-import megamek.common.MechSearchFilter;
 import megamek.common.Mek;
+import megamek.common.MekSearchFilter;
 import megamek.common.MiscType;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
@@ -67,66 +67,66 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         KeyListener, ListSelectionListener {
     private static final long serialVersionUID = 1L;
     private boolean isCanceled = true;
-    public MechSearchFilter mechFilter = null;
+    public MekSearchFilter mekFilter = null;
     private Vector<TWAdvancedSearchPanel.FilterTokens> filterToks;
     private JButton btnOkay = new JButton(Messages.getString("Okay"));
     private JButton btnCancel = new JButton(Messages.getString("Cancel"));
 
     private JButton btnLeftParen = new JButton("(");
     private JButton btnRightParen = new JButton(")");
-    private JButton btnAdd = new JButton(Messages.getString("MechSelectorDialog.Search.add"));
-    private JButton btnAnd = new JButton(Messages.getString("MechSelectorDialog.Search.and"));
-    private JButton btnOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
-    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+    private JButton btnAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
+    private JButton btnAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
+    private JButton btnOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
+    private JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
     private JButton btnBack = new JButton("Back");
 
-    private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
+    private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
     private JTextArea  txtEqExp = new JTextArea("");
     private JScrollPane expScroller = new JScrollPane(txtEqExp,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-    private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
+    private JLabel lblWalk = new JLabel(Messages.getString("MekSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
     private JTextField tEndWalk = new JTextField(4);
 
-    private JLabel lblJump = new JLabel(Messages.getString("MechSelectorDialog.Search.Jump"));
+    private JLabel lblJump = new JLabel(Messages.getString("MekSelectorDialog.Search.Jump"));
     private JTextField tStartJump = new JTextField(4);
     private JTextField tEndJump = new JTextField(4);
 
-    private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
+    private JLabel lblArmor = new JLabel(Messages.getString("MekSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
 
-    private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
-    private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
-    private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
-    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
+    private JLabel lblTableFilters = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilters"));
+    private JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
+    private JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
+    private JLabel lblTechLevel = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
     private JComboBox<String> cboUnitType = new JComboBox<>();
     private JComboBox<String> cboTechClass = new JComboBox<>();
     private JComboBox<String> cboTechLevel = new JComboBox<>();
 
-    private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
+    private JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
     private JScrollPane scrTableWeapons = new JScrollPane();
     private MegaMekTable tblWeapons;
     private WeaponsTableModel weaponsModel;
     private TableRowSorter<WeaponsTableModel> weaponsSorter;
 
-    private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
+    private JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
     private JScrollPane scrTableEquipment = new JScrollPane();
     private MegaMekTable tblEquipment;
     private EquipmentTableModel equipmentModel;
     private TableRowSorter<EquipmentTableModel> equipmentSorter;
 
-    private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
+    private JLabel lblYear = new JLabel(Messages.getString("MekSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
-    private JLabel lblCockpitType  = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
+    private JLabel lblCockpitType  = new JLabel(Messages.getString("MekSelectorDialog.Search.CockpitType"));
     private JList<String> listCockpitType  = new JList<>(new DefaultListModel<String>());
     private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
-    private JLabel lblArmorType  = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
+    private JLabel lblArmorType  = new JLabel(Messages.getString("MekSelectorDialog.Search.ArmorType"));
     private JList<String> listArmorType  = new JList<>(new DefaultListModel<String>());
     private JScrollPane spArmorType = new JScrollPane(listArmorType);
-    private JLabel lblInternalsType  = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
+    private JLabel lblInternalsType  = new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType"));
     private JList<String> listInternalsType  = new JList<>(new DefaultListModel<String>());
     private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
     private JComboBox<String> cboQty = new JComboBox<>();
@@ -199,11 +199,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         btnBack.setEnabled(false);
         btnAdd.setEnabled(false);
 
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Any"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor25"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor50"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor75"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor90"));
 
         DefaultListModel<String> dlma  = new DefaultListModel<>();
 
@@ -281,14 +281,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         //Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.MEK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.TANK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.BATTLE_ARMOR));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.INFANTRY));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.PROTOMEK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AEROSPACEFIGHTER));
-        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.setSelectedItem(Messages.getString("MekSelectorDialog.All"));
 
         cboUnitType.setModel(unitTypeModel);
         cboUnitType.addActionListener(this);
@@ -620,9 +620,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         if (ev.getSource().equals(btnOkay)) {
             isCanceled = false;
             try {
-                mechFilter.createFilterExpressionFromTokens(filterToks);
+                mekFilter.createFilterExpressionFromTokens(filterToks);
                 setVisible(false);
-            } catch (MechSearchFilter.FilterParsingException e) {
+            } catch (MekSearchFilter.FilterParsingException e) {
                 JOptionPane.showMessageDialog(this,
                         "Error parsing filter expression!\n\n" + e.msg,
                         "Filter Expression Parsing Error",
@@ -683,13 +683,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             btnLeftParen.setEnabled(false);
             btnRightParen.setEnabled(false);
         } else if (ev.getSource().equals(btnAnd)) {
-            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.AND));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MekSearchFilter.BoolOp.AND));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
         } else if (ev.getSource().equals(btnOr)) {
-            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.OR));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MekSearchFilter.BoolOp.OR));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
@@ -777,8 +777,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 }
                 break;
             case UnitType.MEK:
-                if (eq.hasFlag(WeaponType.F_MECH_WEAPON)
-                        || eq.hasFlag(MiscType.F_MECH_EQUIPMENT)) {
+                if (eq.hasFlag(WeaponType.F_MEK_WEAPON)
+                        || eq.hasFlag(MiscType.F_MEK_EQUIPMENT)) {
                     return true;
                 }
                 break;
@@ -790,7 +790,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 break;
             case UnitType.PROTOMEK:
                 if (eq.hasFlag(WeaponType.F_PROTO_WEAPON)
-                        || eq.hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
+                        || eq.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
                     return true;
                 }
                 break;
@@ -859,13 +859,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      *
      * @return Return the filter that was created with this dialog.
      */
-    public MechSearchFilter showDialog() {
+    public MekSearchFilter showDialog() {
         //We need to save a copy since the user can alter the filter state
         // and then click on the cancel button.  We want to make sure the
         // original filter state is saved.
-        MechSearchFilter currFilter = mechFilter;
-        mechFilter = new MechSearchFilter(currFilter);
-        txtEqExp.setText(mechFilter.getEquipmentExpression());
+        MekSearchFilter currFilter = mekFilter;
+        mekFilter = new MekSearchFilter(currFilter);
+        txtEqExp.setText(mekFilter.getEquipmentExpression());
         if ((filterToks == null) || filterToks.isEmpty()
                 || (filterToks.lastElement() instanceof TWAdvancedSearchPanel.OperationFT)) {
             disableOperationButtons();
@@ -876,12 +876,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
         setVisible(true);
         if (isCanceled) {
-            mechFilter = currFilter;
+            mekFilter = currFilter;
         } else {
-            updateMechSearchFilter();
+            updateMekSearchFilter();
         }
 
-        return mechFilter;
+        return mekFilter;
     }
 
     /**
@@ -896,7 +896,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
-        mechFilter = null;
+        mekFilter = null;
         filterToks.clear();
         btnBack.setEnabled(false);
 
@@ -963,26 +963,26 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     }
 
 
-    public MechSearchFilter getMechSearchFilter()
+    public MekSearchFilter getMekSearchFilter()
     {
-        return mechFilter;
+        return mekFilter;
     }
 
     /**
      * Update the search fields that aren't automatically updated.
      */
-    protected void updateMechSearchFilter() {
-        mechFilter.isDisabled = false;
-        mechFilter.sStartWalk = tStartWalk.getText();
-        mechFilter.sEndWalk = tEndWalk.getText();
+    protected void updateMekSearchFilter() {
+        mekFilter.isDisabled = false;
+        mekFilter.sStartWalk = tStartWalk.getText();
+        mekFilter.sEndWalk = tEndWalk.getText();
 
-        mechFilter.sStartJump = tStartJump.getText();
-        mechFilter.sEndJump = tEndJump.getText();
+        mekFilter.sStartJump = tStartJump.getText();
+        mekFilter.sEndJump = tEndJump.getText();
 
-        mechFilter.iArmor = cArmor.getSelectedIndex();
+        mekFilter.iArmor = cArmor.getSelectedIndex();
 
-        mechFilter.sStartYear = tStartYear.getText();
-        mechFilter.sEndYear = tEndYear.getText();
+        mekFilter.sStartYear = tStartYear.getText();
+        mekFilter.sEndYear = tEndYear.getText();
 
 
         ListModel<String> m = listArmorType.getModel();
@@ -990,9 +990,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
             if (ms.contains("\u2611")) {
-                mechFilter.armorType.add(i);
+                mekFilter.armorType.add(i);
             } else if (ms.contains("\u2612")) {
-                mechFilter.armorTypeExclude.add(i);
+                mekFilter.armorTypeExclude.add(i);
             }
         }
 
@@ -1001,9 +1001,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
             if (ms.contains("\u2611")) {
-                mechFilter.cockpitType.add(i);
+                mekFilter.cockpitType.add(i);
             } else if (ms.contains("\u2612")) {
-                mechFilter.cockpitTypeExclude.add(i);
+                mekFilter.cockpitTypeExclude.add(i);
             }
         }
 
@@ -1012,9 +1012,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
             if (ms.contains("\u2611")) {
-                mechFilter.internalsType.add(i);
+                mekFilter.internalsType.add(i);
             } else if (ms.contains("\u2612")) {
-                mechFilter.internalsTypeExclude.add(i);
+                mekFilter.internalsTypeExclude.add(i);
             }
         }
     }
@@ -1393,17 +1393,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      *
      */
     public class OperationFT extends FilterTokens {
-        public MechSearchFilter.BoolOp op;
+        public MekSearchFilter.BoolOp op;
 
-        public OperationFT(MechSearchFilter.BoolOp o) {
+        public OperationFT(MekSearchFilter.BoolOp o) {
             op = o;
         }
 
         @Override
         public String toString() {
-            if (op == MechSearchFilter.BoolOp.AND) {
+            if (op == MekSearchFilter.BoolOp.AND) {
                 return "And";
-            } else if (op == MechSearchFilter.BoolOp.OR) {
+            } else if (op == MekSearchFilter.BoolOp.OR) {
                 return "Or";
             } else {
                 return "";

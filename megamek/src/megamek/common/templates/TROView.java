@@ -220,7 +220,7 @@ public class TROView {
         return sj.toString().isBlank() ? altText.get() : sj.toString();
     }
 
-    protected void addMechVeeAeroFluff(Entity entity) {
+    protected void addMekVeeAeroFluff(Entity entity) {
         addEntityFluff(entity);
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
                 + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
@@ -317,7 +317,7 @@ public class TROView {
      * Convenience method to format armor and structure values, consolidating
      * right/left values into a single entry. In most cases the right and left armor
      * values are the same, in which case only a single value is used. If the values
-     * do not match they are both (or all, in the case of tripod mech legs) given
+     * do not match they are both (or all, in the case of tripod mek legs) given
      * separated by slashes.
      *
      * @param entity
@@ -568,7 +568,7 @@ public class TROView {
                     }
 
                     if (fixedWeight.containsKey(entry.getKey())) {
-                        // Not valid for mech systems
+                        // Not valid for mek systems
                         row.put("tonnage", fixedWeight.get(entry.getKey()));
                         fixedTonnage += fixedWeight.get(entry.getKey());
                     } else {
@@ -617,7 +617,7 @@ public class TROView {
 
     /**
      * Used to determine whether system crits should be shown when detailing fixed
-     * equipment in an omni unit. By default this is false, but mechs override it to
+     * equipment in an omni unit. By default this is false, but meks override it to
      * show some systems.
      *
      * @param entity
@@ -634,7 +634,7 @@ public class TROView {
 
     /**
      * Used to show the name of fixed system critical slots in an omni unit. This is
-     * only used for Mechs, and returns a default value of "Unknown System" for
+     * only used for Meks, and returns a default value of "Unknown System" for
      * other units.
      *
      * @param entity

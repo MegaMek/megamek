@@ -334,7 +334,7 @@ public class HmpFile implements IMekLoader {
             fluff += new String(buffer);
             fluffSize += new String(buffer).length();
 
-            fluff += "\n\rFamous Mechs and Warriors:\n\r";
+            fluff += "\n\rFamous Meks and Warriors:\n\r";
             buffer = new byte[readUnsignedShort(dis)];
             dis.read(buffer);
             fluff += new String(buffer);
@@ -415,7 +415,7 @@ public class HmpFile implements IMekLoader {
             if ((chassisType == ChassisType.QUADRAPED_OMNI) || (chassisType == ChassisType.QUADRAPED)) {
                 mech = new QuadMek(gyroType, cockpitType);
             } else if (chassisType == ChassisType.ARMLESS) {
-                mech = new ArmlessMech(gyroType, cockpitType);
+                mech = new ArmlessMek(gyroType, cockpitType);
             } else {
                 mech = new BipedMek(gyroType, cockpitType);
             }

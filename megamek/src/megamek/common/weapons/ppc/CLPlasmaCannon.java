@@ -45,7 +45,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         extremeRange = 24;
         tonnage = 3.0;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_PROTO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);
         bv = 170;
         cost = 320000;
@@ -67,7 +67,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

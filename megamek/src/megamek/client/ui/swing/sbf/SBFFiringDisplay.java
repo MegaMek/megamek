@@ -35,7 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.SBFClientGUI;
 import megamek.client.ui.swing.SBFTargetDialog;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.BTObject;
 import megamek.common.BoardLocation;
 import megamek.common.InGameObject;
@@ -98,7 +98,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     private int firingUnit = BTObject.NONE;
     private final SBFTargetDialog targetDialog;
 
-    private final Map<FiringCommand, MegamekButton> buttons = new HashMap<>();
+    private final Map<FiringCommand, MegaMekButton> buttons = new HashMap<>();
 
     public SBFFiringDisplay(SBFClientGUI cg) {
         super(cg);
@@ -152,7 +152,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     }
 
     @Override
-    protected List<MegamekButton> getButtonList() {
+    protected List<MegaMekButton> getButtonList() {
         return new ArrayList<>(buttons.values());
     }
 

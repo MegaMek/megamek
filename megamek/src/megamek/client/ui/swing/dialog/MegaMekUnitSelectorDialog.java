@@ -38,7 +38,7 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.Entity;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummaryCache;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.enums.Gender;
@@ -199,7 +199,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // instance (loading a saved game without a cache).  In these cases,
         // we don't care about the failed loads.
         if (mscInstance.isInitialized()) {
-            final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
+            final Map<String, String> hFailedFiles = MekSummaryCache.getInstance().getFailedFiles();
             if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
                 // self-showing dialog
                 new UnitFailureDialog(frame, hFailedFiles);

@@ -18,14 +18,35 @@
  */
 package megamek.client;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Entity;
+import megamek.common.GameLog;
+import megamek.common.InGameObject;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummaryCache;
+import megamek.common.Player;
+import megamek.common.UnitNameTracker;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.force.Force;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -35,10 +56,6 @@ import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.util.*;
 
 public abstract class AbstractClient implements IClient {
 
@@ -462,15 +479,15 @@ public abstract class AbstractClient implements IClient {
                 break;
             case DEPLOYMENT:
                 // free some memory that's only needed in lounge
-                MechFileParser.dispose();
+                MekFileParser.dispose();
                 // We must do this last, as the name and unit generators can create
                 // a new instance if they are running
-                MechSummaryCache.dispose();
+                MekSummaryCache.dispose();
                 break;
             case LOUNGE:
                 iconCache.clear();
-                MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
-                if (MechSummaryCache.getInstance().isInitialized()) {
+                MekSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
+                if (MekSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();
                 }
                 synchronized (unitNameTracker) {

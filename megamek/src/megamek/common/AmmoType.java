@@ -186,10 +186,10 @@ public class AmmoType extends EquipmentType {
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
     public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
-    public static final BigInteger F_PROTOMECH = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
+    public static final BigInteger F_PROTOMEK = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
     public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo can be hotloaded
 
-    // BA can't jump or make antimech until dumped
+    // BA can't jump or make antimek until dumped
     public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4);
 
     public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
@@ -7051,7 +7051,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 8.33;
         ammo.bv = 0.016;
@@ -7077,7 +7077,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 16.67;
         ammo.bv = 0.033;
@@ -7103,7 +7103,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 24.99;
         ammo.bv = 0.05;
@@ -7129,7 +7129,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 33.32;
         ammo.bv = 0.067;
@@ -7155,7 +7155,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 49.98;
         ammo.bv = 0.1;
@@ -7181,7 +7181,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 58.31;
         ammo.bv = 0.117;
@@ -7207,7 +7207,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 66.64;
         ammo.bv = 0.133;
@@ -7233,7 +7233,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 74.97;
         ammo.bv = 0.15;
@@ -7259,7 +7259,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 91.63;
         ammo.bv = 0.183;
@@ -7285,7 +7285,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 99.96;
         ammo.bv = 0.2;
@@ -7311,7 +7311,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 108.29;
         ammo.bv = 0.216;
@@ -7337,7 +7337,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 116.62;
         ammo.bv = 0.233;
@@ -7363,7 +7363,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 133.28;
         ammo.bv = 0.266;
@@ -7389,7 +7389,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 141.61;
         ammo.bv = 0.283;
@@ -7415,7 +7415,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 149.94;
         ammo.bv = 0.3;
@@ -7441,7 +7441,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 158.27;
         ammo.bv = 0.316;
@@ -7474,7 +7474,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.02;
         ammo.kgPerShot = 8.33;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7502,7 +7502,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.kgPerShot = 16.66;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7530,7 +7530,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.kgPerShot = 24.99;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7558,7 +7558,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.kgPerShot = 33.32;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7586,7 +7586,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 9;
         ammo.kgPerShot = 49.98;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7614,7 +7614,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 10;
         ammo.kgPerShot = 58.31;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7642,7 +7642,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.kgPerShot = 66.64;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7670,7 +7670,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 12;
         ammo.kgPerShot = 74.97;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7698,7 +7698,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 91.63;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7726,7 +7726,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 99.96;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7754,7 +7754,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 20;
         ammo.kgPerShot = 108.29;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7782,7 +7782,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.kgPerShot = 116.62;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7810,7 +7810,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 133.28;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7838,7 +7838,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 141.61;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7866,7 +7866,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 149.94;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7894,7 +7894,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 158.27;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8095,7 +8095,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 2;
         ammo.kgPerShot = 10;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8146,7 +8146,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.kgPerShot = 30;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8197,7 +8197,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.kgPerShot = 50;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8593,7 +8593,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    // Clan ProtoMech Streak Launchers
+    // Clan ProtoMek Streak Launchers
     private static AmmoType createCLStreakSRM1Ammo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Streak SRM 1 Ammo";
@@ -8608,7 +8608,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.kgPerShot = 10;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * SRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "230, TM";
@@ -8634,7 +8634,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.kgPerShot = 30;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * SRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "230, TM";
@@ -8660,7 +8660,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 13;
         ammo.kgPerShot = 50;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * SRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "230, TM";
@@ -9145,7 +9145,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9173,7 +9173,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.kgPerShot = 16.66;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9201,7 +9201,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.kgPerShot = 24.99;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9229,7 +9229,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.kgPerShot = 33.32;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9282,7 +9282,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 9;
         ammo.kgPerShot = 49.98;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9310,7 +9310,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 10;
         ammo.kgPerShot = 58.31;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9338,7 +9338,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.kgPerShot = 66.64;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9366,7 +9366,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 12;
         ammo.kgPerShot = 74.97;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9419,7 +9419,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 91.63;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9447,7 +9447,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 99.96;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9475,7 +9475,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 20;
         ammo.kgPerShot = 108.29;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9503,7 +9503,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.kgPerShot = 116.62;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9556,7 +9556,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 133.28;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9584,7 +9584,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 141.61;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9612,7 +9612,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 149.94;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9640,7 +9640,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 158.27;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9693,7 +9693,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = "231, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -9743,7 +9743,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 4;
         ammo.kgPerShot = 30;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = "231, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -9793,7 +9793,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 50;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = "231, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -12000,11 +12000,11 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
         ammo.shots = 100;
         ammo.kgPerShot = 10;
         ammo.bv = 1;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But MG
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But MG
         // Tech Base and Avail Ratings.
         ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -12024,11 +12024,11 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But MG
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But MG
         // Tech Base and Avail Ratings.
         ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -12049,11 +12049,11 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But MG
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But MG
         // Tech Base and Avail Ratings.
         ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)

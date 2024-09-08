@@ -34,7 +34,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent ProtoMek unit within the
- * MechDisplay.ArmorPanel class.
+ * MekDisplay.ArmorPanel class.
  */
 public class ProtoMekMapSet implements DisplayMapSet {
 
@@ -72,7 +72,7 @@ public class ProtoMekMapSet implements DisplayMapSet {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorLargeFontSize());
+            GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     /**
      * This constructor can only be called from the addNotify method

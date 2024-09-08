@@ -53,9 +53,9 @@ public enum BayType implements ITechnologyDelegator {
     BATTLEARMOR_CS (BayType.CATEGORY_INFANTRY, 12.0, 1.0, 6, 15000, e ->
         e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR), BattleArmorBay.techAdvancement()),
     MECH (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000,
-            e -> e.hasETypeFlag(Entity.ETYPE_MEK), MechBay.techAdvancement()),
+            e -> e.hasETypeFlag(Entity.ETYPE_MEK), MekBay.techAdvancement()),
     FIGHTER (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000, Entity::isFighter, ASFBay.techAdvancement()),
-    PROTOMECH (BayType.CATEGORY_NON_INFANTRY, 50.0, 5.0, 6, 10000, e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK), ProtomechBay.techAdvancement()),
+    PROTOMECH (BayType.CATEGORY_NON_INFANTRY, 50.0, 5.0, 6, 10000, e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK), ProtoMekBay.techAdvancement()),
     SMALL_CRAFT (BayType.CATEGORY_NON_INFANTRY, 200.0, 1.0, 5, 20000, e -> e.hasETypeFlag(Entity.ETYPE_AERO)
             && (e.getWeight() <= 200.0), SmallCraftBay.techAdvancement()),
     VEHICLE_LIGHT (BayType.CATEGORY_NON_INFANTRY, 50.0, 1.0, 5, 10000, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
@@ -201,11 +201,11 @@ public enum BayType implements ITechnologyDelegator {
             } else {
                 return BATTLEARMOR_IS;
             }
-        } else if (bay instanceof MechBay) {
+        } else if (bay instanceof MekBay) {
             return MECH;
         } else if (bay instanceof ASFBay) {
             return FIGHTER;
-        } else if (bay instanceof ProtomechBay) {
+        } else if (bay instanceof ProtoMekBay) {
             return PROTOMECH;
         } else if (bay instanceof SmallCraftBay) {
             return SMALL_CRAFT;

@@ -349,7 +349,7 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                LobbyUtility.mechReadout(selectedEntity, 0, false, gui.getFrame());
+                LobbyUtility.mekReadout(selectedEntity, 0, false, gui.getFrame());
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
             }
@@ -435,7 +435,7 @@ public class MapMenu extends JPopupMenu {
             var entities = client.getGame().getEntitiesVector(coords);
             for (Entity entity : entities ) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
-                cfgMenu.add(createCustomMechMenuItem(entity));
+                cfgMenu.add(createCustomMekMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
                 menu.add(dmgMenu);
@@ -447,7 +447,7 @@ public class MapMenu extends JPopupMenu {
         }
     }
 
-    JMenuItem createCustomMechMenuItem(Entity entity) {
+    JMenuItem createCustomMekMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
             CustomMekDialog med = new CustomMekDialog(gui, client, Collections.singletonList(entity), true, false);
@@ -1016,7 +1016,7 @@ public class MapMenu extends JPopupMenu {
         } else if (myEntity instanceof QuadVee) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
-                    myEntity.getConversionMode() == QuadVee.CONV_MODE_MECH));
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_MEK));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
@@ -1024,16 +1024,16 @@ public class MapMenu extends JPopupMenu {
             int currentMode = myEntity.getConversionMode();
             JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
-                    currentMode == LandAirMek.CONV_MODE_MECH);
-            item.setEnabled(currentMode == LandAirMek.CONV_MODE_MECH
-                    || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_MECH));
+                    currentMode == LandAirMek.CONV_MODE_MEK);
+            item.setEnabled(currentMode == LandAirMek.CONV_MODE_MEK
+                    || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_MEK));
             menu.add(item);
             if (((LandAirMek) myEntity).getLAMType() == LandAirMek.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                        currentMode == LandAirMek.CONV_MODE_AIRMECH);
-                item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIRMECH
-                        || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIRMECH));
+                        currentMode == LandAirMek.CONV_MODE_AIRMEK);
+                item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIRMEK
+                        || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIRMEK));
                 menu.add(item);
             }
             item = createConvertMenuItem("MovementDisplay.moveModeFighter",
@@ -1072,7 +1072,7 @@ public class MapMenu extends JPopupMenu {
             return menu;
         }
 
-        // VTOLs/AirMechs making strafing or bombing attacks already declared the target hex(es)
+        // VTOLs/AirMeks making strafing or bombing attacks already declared the target hex(es)
         // in the movement phase and cannot change them.
         if (myEntity.isMakingVTOLGroundAttack()) {
             menu.setEnabled(false);
@@ -1327,10 +1327,10 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem createRotateTurretJMenuItem(final Mek mech, final Mounted turret) {
+    private JMenuItem createRotateTurretJMenuItem(final Mek mek, final Mounted turret) {
         String turretString;
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
-            turretString = "Rotate Shoulder Turret (" + mech.getLocationAbbr(turret.getLocation()) + ")";
+            turretString = "Rotate Shoulder Turret (" + mek.getLocationAbbr(turret.getLocation()) + ")";
         } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
             turretString = "Rotate Head Turret";
         } else {
@@ -1338,7 +1338,7 @@ public class MapMenu extends JPopupMenu {
         }
         JMenuItem item = new JMenuItem(turretString);
         item.addActionListener(evt -> {
-            TurretFacingDialog tfe = new TurretFacingDialog(gui.frame, mech, turret, gui);
+            TurretFacingDialog tfe = new TurretFacingDialog(gui.frame, mek, turret, gui);
             tfe.setVisible(true);
         });
         return item;

@@ -60,7 +60,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public abstract boolean isTank();
 
-    public abstract boolean isMech();
+    public abstract boolean isMek();
 
     public abstract boolean isAero();
 
@@ -68,7 +68,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public abstract boolean isAdvancedAerospace();
 
-    public abstract boolean isProtomech();
+    public abstract boolean isProtoMek();
 
     public abstract double getWeightControls();
 
@@ -106,9 +106,9 @@ public abstract class TestEntity implements TestEntityOption {
         TestEntity testEntity = null;
 
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
-            testEntity = new TestMech((Mek) unit, entityVerifier.mechOption, null);
+            testEntity = new TestMek((Mek) unit, entityVerifier.mekOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            testEntity = new TestProtoMek((ProtoMek) unit, entityVerifier.protomechOption, null);
+            testEntity = new TestProtoMek((ProtoMek) unit, entityVerifier.protomekOption, null);
         } else if (unit.isSupportVehicle()) {
             testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_TANK) && !unit.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
@@ -331,7 +331,7 @@ public abstract class TestEntity implements TestEntityOption {
      * Filters all armor according to given tech constraints
      *
      * @param etype         The entity type bit mask
-     * @param industrial    For mechs; industrial mechs can only use certain armor types
+     * @param industrial    For meks; industrial meks can only use certain armor types
      *                      unless allowing experimental rules
      * @param primitive     Whether the unit is primitive/retrotech
      * @param movementMode  For vehicles; hardened armor is illegal for some movement modes
@@ -353,7 +353,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if ((etype & Entity.ETYPE_TANK) != 0) {
             return TestTank.legalArmorsFor(movementMode, techManager);
         } else if ((etype & Entity.ETYPE_MEK) != 0) {
-            return TestMech.legalArmorsFor(etype, industrial, techManager);
+            return TestMek.legalArmorsFor(etype, industrial, techManager);
         } else {
             return Collections.emptyList();
         }
@@ -361,17 +361,17 @@ public abstract class TestEntity implements TestEntityOption {
 
     public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {
         if ((entitytype & Entity.ETYPE_MEK) != 0) {
-            return TestMech.MechJumpJets.allJJs(industrial);
+            return TestMek.MekJumpJets.allJJs(industrial);
         } else if ((entitytype & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entitytype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.BAMotiveSystems.allSystems();
         } else if ((entitytype & Entity.ETYPE_PROTOMEK) != 0) {
-            // Until we have a TestProtomech
+            // Until we have a TestProtomek
             return Arrays.asList(new EquipmentType[] {
-                EquipmentType.get(EquipmentTypeLookup.PROTOMECH_JUMP_JET),
+                EquipmentType.get(EquipmentTypeLookup.PROTOMEK_JUMP_JET),
                 EquipmentType.get(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM),
-                EquipmentType.get(EquipmentTypeLookup.PROTOMECH_UMU)});
+                EquipmentType.get(EquipmentTypeLookup.PROTOMEK_UMU)});
         } else {
             return Collections.emptyList();
         }
@@ -733,7 +733,7 @@ public abstract class TestEntity implements TestEntityOption {
                     sb.append(j).append(". -Empty-");
                     sb.append("\n");
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
-                    if (isMech()) {
+                    if (isMek()) {
                         sb.append(j).append(". ")
                                 .append(((Mek) getEntity()).getSystemName(slot.getIndex()))
                                 .append("\n");
@@ -856,7 +856,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     /**
      * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
-     * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
+     * protomeks). This is a total of energy weapons that don't use ammo and some other miscellaneous
      * equipment.
      *
      * @return The number of heat sinks required in construction
@@ -867,7 +867,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     /**
      * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
-     * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
+     * protomeks). This is a total of energy weapons that don't use ammo and some other miscellaneous
      * equipment.
      *
      * @return The number of heat sinks required in construction
@@ -1406,7 +1406,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
                 if (getEntity() instanceof ProtoMek) {
                     illegal = true;
-                    buff.append("ProtoMech can't mount light fluid suction system\n");
+                    buff.append("ProtoMek can't mount light fluid suction system\n");
                 }
             }
             if (m.getType().hasFlag(MiscType.F_VOIDSIG)
@@ -1531,7 +1531,7 @@ public abstract class TestEntity implements TestEntityOption {
             illegal = true;
         }
         if (!(getEntity() instanceof Mek) && (hasHarjelII || hasHarjelIII)) {
-            buff.append("Cannot mount HarJel repair system on non-Mech\n");
+            buff.append("Cannot mount HarJel repair system on non-Mek\n");
             illegal = true;
         }
         if (networks > 1) {
@@ -1663,11 +1663,11 @@ public abstract class TestEntity implements TestEntityOption {
     public static boolean isValidLocation(Entity entity, EquipmentType eq, int location,
                                           @Nullable StringBuffer buffer) {
         if (entity instanceof Mek) {
-            return TestMech.isValidMechLocation((Mek) entity, eq, location, buffer);
+            return TestMek.isValidMekLocation((Mek) entity, eq, location, buffer);
         } else if (entity instanceof Tank) {
             return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
         } else if (entity instanceof ProtoMek) {
-            return TestProtoMek.isValidProtomechLocation((ProtoMek) entity, eq, location, buffer);
+            return TestProtoMek.isValidProtoMekLocation((ProtoMek) entity, eq, location, buffer);
         } else if (entity.isFighter()) {
             return TestAero.isValidAeroLocation(eq, location, buffer);
         }

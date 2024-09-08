@@ -13,7 +13,22 @@
  */
 package megamek.common;
 
-import jakarta.xml.bind.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.apache.logging.log4j.LogManager;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -21,17 +36,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.util.BuildingTemplate;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * MapSettings.java
@@ -70,8 +74,8 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
 
-    private List<String> boardsSelected = new ArrayList<>();
-    private List<String> boardsAvailable = new ArrayList<>();
+    private ArrayList<String> boardsSelected = new ArrayList<>();
+    private ArrayList<String> boardsAvailable = new ArrayList<>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
     /**
@@ -149,7 +153,7 @@ public class MapSettings implements Serializable {
     /** probability for ultra woods, Range 0..100 */
     @XmlElement(name = "JUNGLEULTRAPROB")
     private int probUltraJungle = 0;
-    
+
     /** how much foliage at least */
     @XmlElement(name = "FOLIAGEMINSPOTS")
     private int minFoliageSpots = 0;
@@ -395,7 +399,7 @@ public class MapSettings implements Serializable {
 
     /**
      * Creates and returns a new default instance of MapSettings.
-     * 
+     *
      * @return a MapSettings with default settings values
      */
     public static MapSettings getInstance() {
@@ -416,7 +420,7 @@ public class MapSettings implements Serializable {
     /**
      * Creates and returns a new instance of MapSettings with default values
      * loaded from the given input stream.
-     * 
+     *
      * @param is
      *            the input stream that contains an XML representation of the
      *            map settings
@@ -600,16 +604,16 @@ public class MapSettings implements Serializable {
     public int getMapHeight() {
         return mapHeight;
     }
-    
+
     public BoardDimensions getBoardSize() {
-        return new BoardDimensions(boardWidth, boardHeight);  
+        return new BoardDimensions(boardWidth, boardHeight);
     }
 
     public void setMapSize(int newWidth, int newHeight) {
         if ((mapWidth <= 0) || (mapHeight <= 0)) {
             throw new IllegalArgumentException("Map width and height must be at least 1!");
         }
-        
+
         // If the map size doesn't correspond to the size of boardsselected, correct
         // that first to be safe, as the changes below are always relative changes.
         // This happens with MapSettings construction
@@ -617,16 +621,16 @@ public class MapSettings implements Serializable {
             boardsSelected.clear();
             boardsSelected.addAll(Collections.nCopies(mapWidth * mapHeight, null));
         }
-        
+
         // Change in height
         if (newHeight > mapHeight) {
             boardsSelected.addAll(Collections.nCopies(mapWidth * newHeight - boardsSelected.size(), null));
         } else if (newHeight < mapHeight) {
             boardsSelected.subList(mapWidth * newHeight, boardsSelected.size()).clear();
         }
-        
+
         mapHeight = newHeight;
-        
+
         // Change in width
         if (newWidth > mapWidth) {
             // Add empty boards at the end of each row
@@ -639,7 +643,7 @@ public class MapSettings implements Serializable {
                 boardsSelected.subList(mapWidth * row + newWidth, mapWidth * (row + 1)).clear();
             }
         }
-        
+
         mapWidth = newWidth;
     }
 
@@ -670,9 +674,9 @@ public class MapSettings implements Serializable {
     public void setBoardBuildings(ArrayList<BuildingTemplate> buildings) {
         boardBuildings = buildings;
     }
-    
+
     /**
-     * Replaces all "Surprise..." boards with a random one of the chosen boards 
+     * Replaces all "Surprise..." boards with a random one of the chosen boards
      * (which are appended after the "Surprise" string in the board name.)
      */
     public void chooseSurpriseBoards() {
@@ -684,8 +688,8 @@ public class MapSettings implements Serializable {
             }
         }
     }
-    
-    
+
+
 
     /**
      * Replaces the specified type of board with random boards
@@ -741,7 +745,7 @@ public class MapSettings implements Serializable {
             String boardName = boardsSelected.get(i);
             if (boardName != null) {
                 boardName = boardName.replace(Board.BOARD_REQUEST_ROTATION, "");
-                
+
                 if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();
@@ -753,9 +757,9 @@ public class MapSettings implements Serializable {
                     if (remainingBoards.isEmpty()) {
                         boardsSelected.set(i, null);
                     } else if (remainingBoards.size() == 1) {
-                        boardsSelected.set(i, remainingBoards.get(0));   
+                        boardsSelected.set(i, remainingBoards.get(0));
                     } else {
-                        String remBoards = String.join("\n", boards); 
+                        String remBoards = String.join("\n", boards);
                         boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
                     }
                 } else {
@@ -767,7 +771,7 @@ public class MapSettings implements Serializable {
         }
     }
 
-    public List<String> getBoardsAvailableVector() {
+    public ArrayList<String> getBoardsAvailableVector() {
         return boardsAvailable;
     }
 
@@ -1204,7 +1208,7 @@ public class MapSettings implements Serializable {
     public int getProbHeavyJungle() { return probHeavyJungle; }
 
     public int getProbUltraJungle() { return probUltraJungle; }
-    
+
     public int getMinFoliageSpots() {
         return minFoliageSpots;
     }
@@ -1600,7 +1604,7 @@ public class MapSettings implements Serializable {
         probHeavyJungle = probHeavy;
         probUltraJungle = probUltra;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */

@@ -26,10 +26,10 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.MechView;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.MekView;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -235,10 +235,10 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
-            MechSummary ms = MechSummaryCache.getInstance().getMech(filename);
+            MekSummary ms = MekSummaryCache.getInstance().getMek(filename);
             if (ms == null) {
-                MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
-                for (MechSummary unit : units) {
+                MekSummary[] units = MekSummaryCache.getInstance().getAllMeks();
+                for (MekSummary unit : units) {
                     if (unit.getSourceFile().getName().equalsIgnoreCase(filename)) {
                         ms = unit;
                         break;
@@ -251,10 +251,10 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         new IOException());
             } else {
                 try {
-                    Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     LogManager.getLogger().info("Validating Entity: " + entity.getShortNameRaw());
-                    MechView mechView = new MechView(entity, false);
-                    StringBuffer sb = new StringBuffer(mechView.getMechReadout());
+                    MekView mekView = new MekView(entity, false);
+                    StringBuffer sb = new StringBuffer(mekView.getMekReadout());
                     TestEntity testEntity = TestEntity.getEntityVerifier(entity);
 
                     if (testEntity != null) {
@@ -298,9 +298,9 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 bw.write("Front Arc\tLeft Arc\tRight Arc\tRear Arc");
                 bw.newLine();
 
-                MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
-                for (MechSummary unit : units) {
-                    Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+                MekSummary[] units = MekSummaryCache.getInstance().getAllMeks();
+                for (MekSummary unit : units) {
+                    Entity entity = new MekFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
                     if (ASConverter.canConvert(entity)) {
                         AlphaStrikeElement element = ASConverter.convert(entity);
                         bw.write(element.getMulId() + "");
@@ -376,7 +376,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         String filename;
         if ((getTokenType() == TOK_LITERAL) || officialUnitList) {
             if (officialUnitList) {
-                filename = MechFileParser.FILENAME_OFFICIAL_UNITS;
+                filename = MekFileParser.FILENAME_OFFICIAL_UNITS;
             } else {
                 filename = getTokenValue();
             }
@@ -408,8 +408,8 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 }
                 bw.newLine();
 
-                MechSummary[] units = MechSummaryCache.getInstance(officialUnitList).getAllMechs();
-                for (MechSummary unit : units) {
+                MekSummary[] units = MekSummaryCache.getInstance(officialUnitList).getAllMeks();
+                for (MekSummary unit : units) {
                     String unitType = unit.getUnitType();
                     if (unitType.equalsIgnoreCase("mek")) {
                         unitType = "'Mek";

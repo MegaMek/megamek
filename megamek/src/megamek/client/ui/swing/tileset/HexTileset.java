@@ -20,18 +20,38 @@
  */
 package megamek.client.ui.swing.tileset;
 
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.common.*;
-import megamek.common.event.*;
+import megamek.common.Board;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.IGame;
+import megamek.common.Terrain;
+import megamek.common.Terrains;
+import megamek.common.event.BoardEvent;
+import megamek.common.event.BoardListener;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.io.*;
-import java.util.List;
-import java.util.*;
 
 /**
  * Matches each hex with an appropriate image.
@@ -46,10 +66,10 @@ public class HexTileset implements BoardListener {
     public static final int HEX_H = 72;
 
     public static final String TRANSPARENT_THEME = "transparent";
-    
-    private final ArrayList<HexEntry> bases = new ArrayList<>();
-    private final ArrayList<HexEntry> supers = new ArrayList<>();
-    private final ArrayList<HexEntry> orthos = new ArrayList<>();
+
+    private final List<HexEntry> bases = new ArrayList<>();
+    private final List<HexEntry> supers = new ArrayList<>();
+    private final List<HexEntry> orthos = new ArrayList<>();
     private final Set<String> themes = new TreeSet<>();
     private ImageCache<Hex, Image> basesCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> supersCache = new ImageCache<>();
@@ -76,7 +96,7 @@ public class HexTileset implements BoardListener {
         supersCache = new ImageCache<>();
         orthosCache = new ImageCache<>();
     }
-    
+
     /**
      * This assigns images to a hex based on the best matches it can find.
      * <p>
@@ -122,10 +142,12 @@ public class HexTileset implements BoardListener {
     @SuppressWarnings("unchecked")
     public synchronized List<Image> getOrtho(Hex hex) {
         List<Image> o = orthosCache.get(hex);
+
         if (o == null) {
             Object[] pair = assignMatch(hex);
             return (List<Image>) pair[2];
         }
+
         return o;
     }
 
@@ -295,11 +317,11 @@ public class HexTileset implements BoardListener {
         r.close();
         themes.add(TRANSPARENT_THEME);
         long endTime = System.currentTimeMillis();
-        
-        String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images", 
+
+        String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images",
                 bases.size(), supers.size(), orthos.size());
         LogManager.getLogger().debug(loadInfo);
-        
+
         if (incDepth == 0) {
             LogManager.getLogger().info("HexTileset " + filename + " loaded in " + (endTime - startTime) + "ms.");
         }
@@ -319,13 +341,13 @@ public class HexTileset implements BoardListener {
      */
     private double orthoMatch(Hex org, Hex com) {
         // exact elevation
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST) 
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST)
                 && (org.getLevel() != com.getLevel())) {
             return 0;
         }
-        
-        // greater than elevation (e.g. >4), the "-100" to allow >-3 
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100) 
+
+        // greater than elevation (e.g. >4), the "-100" to allow >-3
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100)
                 && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
             return 0;
         }
@@ -367,13 +389,13 @@ public class HexTileset implements BoardListener {
      */
     private double superMatch(Hex org, Hex com) {
         // exact elevation
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST) 
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST)
                 && (org.getLevel() != com.getLevel())) {
             return 0;
         }
-        
-        // greater than elevation (e.g. >4), the "-100" to allow >-3 
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100) 
+
+        // greater than elevation (e.g. >4), the "-100" to allow >-3
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100)
                 && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
             return 0;
         }
@@ -422,7 +444,7 @@ public class HexTileset implements BoardListener {
             elevation = 1.0;
         } else if (com.getLevel() >= Terrain.ATLEAST - 100) {
             if (org.getLevel() >= com.getLevel() - Terrain.ATLEAST) {
-                elevation = 1.0;    
+                elevation = 1.0;
             } else {
                 elevation = 1.01 / (Math.abs(org.getLevel() - com.getLevel() - Terrain.ATLEAST) + 1.01);
             }
@@ -450,7 +472,7 @@ public class HexTileset implements BoardListener {
                 thisMatch = 1.0;
             } else if (cTerr.getLevel() >= Terrain.ATLEAST - 100) {
                 if (oTerr.getLevel() >= com.getLevel() - Terrain.ATLEAST) {
-                    thisMatch = 1.0;    
+                    thisMatch = 1.0;
                 } else {
                     thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel() - Terrain.ATLEAST) + 1.0);
                 }
@@ -532,11 +554,11 @@ public class HexTileset implements BoardListener {
             return "HexTileset: " + hex.toString();
         }
     }
-    
+
     // The Board and Game listeners
     // The HexTileSet caches images with the hex object as key. Therefore it
-    // must listen to Board events to clear changed (but not replaced) 
-    // hexes from the cache. 
+    // must listen to Board events to clear changed (but not replaced)
+    // hexes from the cache.
     // It must listen to Game events to catch when a board is entirely replaced
     // to be able to register itself to the new board.
     private final GameListener gameListener = new GameListenerAdapter() {
@@ -553,12 +575,12 @@ public class HexTileset implements BoardListener {
         }
 
     };
-    
+
     private void replacedBoard(GameBoardNewEvent e) {
         e.getOldBoard().removeBoardListener(this);
         e.getNewBoard().addBoardListener(this);
     }
-    
+
     @Override
     public void boardNewBoard(BoardEvent b) {
         clearAllHexes();

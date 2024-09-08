@@ -79,17 +79,17 @@ public class BayDataTest {
     }
 
     @Test
-    public void identifyMechBay() {
-        Bay bay = new MechBay(1, 1, 0);
+    public void identifyMekBay() {
+        Bay bay = new MekBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.MECH);
+        assertEquals(BayData.getBayType(bay), BayData.MEK);
     }
 
     @Test
-    public void identifyProtomechBay() {
-        Bay bay = new ProtomechBay(1, 1, 0);
+    public void identifyProtoMekBay() {
+        Bay bay = new ProtoMekBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.PROTOMECH);
+        assertEquals(BayData.getBayType(bay), BayData.PROTOMEK);
     }
 
     @Test
@@ -212,14 +212,14 @@ public class BayDataTest {
     }
 
     @Test
-    public void cargoBayLegalForMech() {
+    public void cargoBayLegalForMek() {
         Entity entity = createEntity(Entity.ETYPE_MEK);
 
         assertTrue(BayData.CARGO.isLegalFor(entity));
     }
 
     @Test
-    public void livestockBayIllegalForMech() {
+    public void livestockBayIllegalForMek() {
         Entity entity = createEntity(Entity.ETYPE_MEK);
 
         assertFalse(BayData.LIVESTOCK_CARGO.isLegalFor(entity));

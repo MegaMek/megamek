@@ -33,7 +33,7 @@ import megamek.common.DropshuttleBay;
 import megamek.common.InfantryBay;
 import megamek.common.InfantryBay.PlatoonType;
 import megamek.common.Jumpship;
-import megamek.common.MechBay;
+import megamek.common.MekBay;
 import megamek.common.NavalRepairFacility;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 
@@ -75,7 +75,7 @@ class BLKFileTest {
     void parseBayDataFixesDuplicateBayNumber() {
         final double SIZE = 2.0;
         final int DOORS = 1;
-        Bay bay = new MechBay(SIZE, DOORS, 1);
+        Bay bay = new MekBay(SIZE, DOORS, 1);
         HashSet<Integer> bayNums = new HashSet<>();
         bayNums.add(0);
         bayNums.add(1);

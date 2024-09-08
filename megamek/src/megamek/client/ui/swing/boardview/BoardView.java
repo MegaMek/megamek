@@ -33,8 +33,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
-import java.util.List;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -65,7 +63,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.MegamekBorder;
+import megamek.client.ui.swing.widget.MegaMekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -187,7 +185,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * if the Entity has no secondary positions, the first element will be the
      * ID and the second element will be -1.
      */
-    private Map<List<Integer>, EntitySprite> entitySpriteIds = new HashMap<>();
+    private Map<ArrayList<Integer>, EntitySprite> entitySpriteIds = new HashMap<>();
     /**
      * A Map that maps an Entity ID and a secondary position to a Sprite. Note
      * that the key is a List where the first entry will be the Entity ID and
@@ -195,7 +193,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * if the Entity has no secondary positions, the first element will be the
      * ID and the second element will be -1.
      */
-    private Map<List<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<>();
+    private Map<ArrayList<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<>();
 
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
@@ -277,7 +275,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private long moveWait = 0;
 
     // moving entity sprites
-    private List<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
+    private ArrayList<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
     private HashMap<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<>();
     private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
 
@@ -1081,7 +1079,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     @SuppressWarnings("unused")
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
-        List<Coords> donut = coords.allAtDistance(radius);
+        ArrayList<Coords> donut = coords.allAtDistance(radius);
 
         for (Coords donutCoords : donut) {
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
@@ -1293,17 +1291,17 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        List<Player> players = game.getPlayersList();
+        java.util.List<Player> players = game.getPlayersList();
         final GameOptions gOpts = game.getOptions();
 
         if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
-            players = players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList());
+            players = new ArrayList<>(players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList()));
         }
 
         if (game.getPhase().isLounge() && !localPlayer.isGameMaster()
                 && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                 || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) {
-            players = players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList());
+            players = new ArrayList<>(players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList()));
         }
 
         Board board = game.getBoard();
@@ -1889,7 +1887,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // have to be drawn before the shadow map, otherwise the supers are
         // drawn after. Unfortunately the supers images
         // themselves can't be checked for roads.
-        List<Image> supers = tileManager.supersFor(hex);
+        java.util.List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
         if (hex.containsTerrain(Terrains.ROAD)
                 || hex.containsTerrain(Terrains.WATER)
@@ -1963,7 +1961,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Orthos = bridges
-        List<Image> orthos = tileManager.orthoFor(hex);
+        java.util.List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
             for (Image image : orthos) {
                 if (animatedImages.contains(image.hashCode())) {
@@ -2624,7 +2622,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing, int elevation) {
         Integer entityId = entity.getId();
-        List<Integer> spriteKey = getIdAndLoc(entityId, -1);
+        ArrayList<Integer> spriteKey = getIdAndLoc(entityId, -1);
         EntitySprite sprite = entitySpriteIds.get(spriteKey);
         IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
         // We can ignore secondary locations for now, as we don't have moving
@@ -2632,8 +2630,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         PriorityQueue<EntitySprite> newSprites;
         PriorityQueue<IsometricSprite> isoSprites;
-        HashMap<List<Integer>, EntitySprite> newSpriteIds;
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds;
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds;
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds;
 
         // Remove sprite for Entity, so it's not displayed while moving
         if (sprite != null) {
@@ -2661,7 +2659,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         MovingEntitySprite mSprite = movingEntitySpriteIds.get(entityId);
-        List<MovingEntitySprite> newMovingSprites = new ArrayList<>(movingEntitySprites);
+        ArrayList<MovingEntitySprite> newMovingSprites = new ArrayList<>(movingEntitySprites);
         HashMap<Integer, MovingEntitySprite> newMovingSpriteIds = new HashMap<>(movingEntitySpriteIds);
         // Remove any old movement sprite
         if (mSprite != null) {
@@ -2701,8 +2699,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param secondaryLoc the secondary loc index, or -1 for Entities without secondary positions
      * @return
      */
-    private List<Integer> getIdAndLoc(Integer entityId, int secondaryLoc) {
-        List<Integer> idLoc = new ArrayList<>(2);
+    private ArrayList<Integer> getIdAndLoc(Integer entityId, int secondaryLoc) {
+        ArrayList<Integer> idLoc = new ArrayList<>(2);
         idLoc.add(entityId);
         idLoc.add(secondaryLoc);
         return idLoc;
@@ -2767,9 +2765,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Create a copy of the sprite list
         Queue<EntitySprite> newSprites = new PriorityQueue<>(entitySprites);
-        HashMap<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(entitySpriteIds);
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<>(entitySpriteIds);
         Queue<IsometricSprite> isoSprites = new PriorityQueue<>(isometricSprites);
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
         // Remove the sprites we are going to update
         EntitySprite sprite = entitySpriteIds.get(getIdAndLoc(entityId, -1));
@@ -2891,8 +2889,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         numEntities = Math.max(1, numEntities);
         Queue<EntitySprite> newSprites = new PriorityQueue<>(numEntities);
         Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(numEntities);
-        Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(numEntities);
-        Map<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(numEntities);
+        Map<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<>(numEntities);
+        Map<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(numEntities);
 
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
@@ -3285,7 +3283,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
         if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
-            List<MoveStep> fpiSteps = new Vector<MoveStep>();
+            ArrayList<MoveStep> fpiSteps = new ArrayList<MoveStep>();
 
             // Cloning the current movement path because we don't want to change it's state.
             MovePath fpiPath = md.clone();
@@ -3371,8 +3369,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param c the given coords
      * @return any entities flying over the given coords
      */
-    public List<Entity> getEntitiesFlyingOver(Coords c) {
-        List<Entity> entities = new ArrayList<>();
+    public ArrayList<Entity> getEntitiesFlyingOver(Coords c) {
+        ArrayList<Entity> entities = new ArrayList<>();
         for (FlyOverSprite fsprite : flyOverSprites) {
             // Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
             if (fsprite.getEntity().getPassedThrough().contains(c) && !fsprite.getEntity().isSpaceborne()) {
@@ -3608,8 +3606,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             StringBuffer message = new StringBuffer();
             LosEffects le;
             if ((ae == null) || (te == null)) {
-                boolean mechInFirst = GUIP.getMechInFirst();
-                boolean mechInSecond = GUIP.getMechInSecond();
+                boolean mechInFirst = GUIP.getMekInFirst();
+                boolean mechInSecond = GUIP.getMekInSecond();
 
                 LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
                         game, ae, te, c1, c2, mechInFirst, mechInSecond);
@@ -4385,7 +4383,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         Map<Coords, Color> newECCMCenters = new HashMap<>();
 
         // Compute info about all E(C)CM on the board
-        final List<ECMInfo> allEcmInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
+        final ArrayList<ECMInfo> allEcmInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
 
         // First, mark the sources of E(C)CM
         // Used for highlighting hexes and tooltips
@@ -4569,8 +4567,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         Entity choice = null;
 
         // Get the available choices.
-        List<Entity> entities = game.getEntitiesVector(pos);
-
+        java.util.List<Entity> entities = game.getEntitiesVector(pos);
 
         // Do we have a single choice?
         if (entities.size() == 1) {
@@ -4667,7 +4664,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
             }
         };
-        scrollpane.setBorder(new MegamekBorder(bvSkinSpec));
+        scrollpane.setBorder(new MegaMekBorder(bvSkinSpec));
         scrollpane.setLayout(new ScrollPaneLayout());
         // we need to use the simple scroll mode because otherwise the
         // IDisplayables that are drawn in fixed positions in the viewport
@@ -5098,15 +5095,15 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return fovHighlightingAndDarkening;
     }
 
-    List<WreckSprite> getWreckSprites() {
+    ArrayList<WreckSprite> getWreckSprites() {
         return wreckSprites;
     }
 
-    List<IsometricWreckSprite> getIsoWreckSprites() {
+    ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
         return isometricWreckSprites;
     }
 
-    List<AttackSprite> getAttackSprites() {
+    ArrayList<AttackSprite> getAttackSprites() {
         return attackSprites;
     }
 

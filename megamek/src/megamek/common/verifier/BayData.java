@@ -19,16 +19,16 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
 /**
- * Construction data used by transport bays for mechs, vees, and aerospace units.
+ * Construction data used by transport bays for meks, vees, and aerospace units.
  *
  * @author Neoancient
  *
  */
 public enum BayData {
-    MECH ("Mech", 150.0, 2, MechBay.techAdvancement(),
-            (size, num) -> new MechBay(size, 1, num)),
-    PROTOMECH ("Protomech", 10.0, 6, ProtomechBay.techAdvancement(),
-            (size, num) -> new ProtomechBay(size, 1, num)),
+    MEK ("Mek", 150.0, 2, MekBay.techAdvancement(),
+            (size, num) -> new MekBay(size, 1, num)),
+    PROTOMEK ("Protomek", 10.0, 6, ProtoMekBay.techAdvancement(),
+            (size, num) -> new ProtoMekBay(size, 1, num)),
     VEHICLE_HEAVY ("Heavy Vehicle", 100.0, 8, HeavyVehicleBay.techAdvancement(),
             (size, num) -> new HeavyVehicleBay(size, 1, num)),
     VEHICLE_LIGHT ("Light Vehicle", 50.0, 5, LightVehicleBay.techAdvancement(),
@@ -41,7 +41,7 @@ public enum BayData {
             (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.JUMP)),
     INFANTRY_MOTORIZED ("Infantry (Motorized)", 7.0, 0, InfantryBay.techAdvancement(),
             (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MOTORIZED)),
-    INFANTRY_MECHANIZED ("Infantry (Mech. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
+    INFANTRY_MECHANIZED ("Infantry (Mek. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
             (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MECHANIZED)),
     IS_BATTLE_ARMOR ("BattleArmor (IS)", 8.0, 6, BattleArmorBay.techAdvancement(),
             (size, num) -> new BattleArmorBay(size, 1, num, false, false)),
@@ -150,10 +150,10 @@ public enum BayData {
      *            (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
-        if (bay instanceof MechBay) {
-            return MECH;
-        } else if (bay instanceof ProtomechBay) {
-            return PROTOMECH;
+        if (bay instanceof MekBay) {
+            return MEK;
+        } else if (bay instanceof ProtoMekBay) {
+            return PROTOMEK;
         } else if (bay instanceof HeavyVehicleBay) {
             return VEHICLE_HEAVY;
         } else if (bay instanceof LightVehicleBay) {
@@ -234,7 +234,7 @@ public enum BayData {
      */
     public boolean isLegalFor(Entity en) {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by
-        // industrial but not battlemechs.
+        // industrial but not battlemeks.
         if (en.hasETypeFlag(Entity.ETYPE_MEK)) {
             return isCargoBay() && (this != LIVESTOCK_CARGO);
         } else if ((this == DROPSHUTTLE)

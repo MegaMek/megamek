@@ -851,11 +851,11 @@ public class MtfFile implements IMekLoader {
                             m = Mounted.createMounted(mech, etype);
                             m.setFoundCrits(1);
                             m.setArmored(isArmored);
-                            m.setMechTurretMounted(isTurreted);
+                            m.setMekTurretMounted(isTurreted);
                             vSplitWeapons.add(m);
                         }
                         m.setArmored(isArmored);
-                        m.setMechTurretMounted(isTurreted);
+                        m.setMekTurretMounted(isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {

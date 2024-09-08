@@ -1,7 +1,27 @@
 package megamek.client.ui.swing.boardview;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.ComputeECM;
+import megamek.common.Coords;
+import megamek.common.ECMInfo;
+import megamek.common.Entity;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.MoveStep;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -9,11 +29,6 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.preference.IPreferenceChangeListener;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.util.List;
-import java.util.*;
 
 /**
  * A helper class for highlighting and darkening hexes.
@@ -334,7 +349,7 @@ class FovHighlightingAndDarkening {
 //        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
                 this.boardView1.game, this.boardView1.getSelectedEntity(), null, src, dest,
-                guip.getMechInFirst(), guip.getMechInSecond()
+                guip.getMekInFirst(), guip.getMekInSecond()
         );
         //ai.attackPos = src;
         //ai.targetPos = dest;
@@ -372,7 +387,7 @@ class FovHighlightingAndDarkening {
         if ((ai.targetHeight == Integer.MIN_VALUE)
                 && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
             // Current hack for more-correct shading on low-alt maps
-            ai.targetHeight = (ai.lowAltitude) ? 1 : (guip.getMechInSecond()) ? 1 : 0;
+            ai.targetHeight = (ai.lowAltitude) ? 1 : (guip.getMekInSecond()) ? 1 : 0;
             ai.targetAbsHeight = dstHex.getLevel() + ai.targetHeight;
         }
         return LosEffects.calculateLos(boardView1.game, ai);

@@ -14,6 +14,13 @@
  */
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
@@ -31,9 +38,6 @@ import megamek.common.weapons.missiles.MRMWeapon;
 import megamek.common.weapons.missiles.RLWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
-
-import java.util.*;
-import java.util.function.Function;
 
 /**
  * Class for testing and validating instantiations for Conventional Fighters and
@@ -343,7 +347,7 @@ public class TestAero extends TestEntity {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
 
@@ -363,7 +367,7 @@ public class TestAero extends TestEntity {
     }
 
     @Override
-    public boolean isProtomech() {
+    public boolean isProtoMek() {
         return false;
     }
 

@@ -441,7 +441,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             // only twist if crew conscious
             setTwistEnabled(!ce().getAlreadyTwisted() && ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
-            setFindClubEnabled(FindClubAction.canMechFindClub(clientgui.getClient().getGame(), en));
+            setFindClubEnabled(FindClubAction.canMekFindClub(clientgui.getClient().getGame(), en));
             setFlipArmsEnabled(!ce().getAlreadyTwisted() && ce().canFlipArms());
             updateSearchlight();
             updateClearTurret();
@@ -614,7 +614,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
         clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
@@ -639,7 +639,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getClient().sendCalledShotChange(currentEntity, wn);
 
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
         clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
@@ -1303,7 +1303,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
         Mounted nextMounted = ce().getEquipment(nextWeapon);
         if (!mounted.getType().hasFlag(WeaponType.F_VGL) && (nextMounted != null)
                 && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
@@ -1324,7 +1324,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getUnitDisplay().wPan.selectNextWeapon();
 
         if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMech(ce());
+            clientgui.getUnitDisplay().wPan.displayMek(ce());
         }
 
         updateTarget();
@@ -1341,7 +1341,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getUnitDisplay().wPan.selectPrevWeapon();
 
         if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMech(ce());
+            clientgui.getUnitDisplay().wPan.displayMek(ce());
         }
 
         updateTarget();
@@ -1449,7 +1449,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 decrementInternalBombs(waa);
                 removeAttack(o);
-                clientgui.getUnitDisplay().wPan.displayMech(ce());
+                clientgui.getUnitDisplay().wPan.displayMek(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.getBoardView().refreshAttacks();
             }
@@ -1573,7 +1573,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false);
-                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
+                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
                 } else {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false);

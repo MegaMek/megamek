@@ -1319,7 +1319,7 @@ public class BLKFile {
                             break;
                         case "mechbay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            e.addTransporter(new MekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;
                         case "lightvehiclebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1355,7 +1355,7 @@ public class BLKFile {
                         case "protomechbay":
                             // Backward compatibility
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                            e.addTransporter(new ProtoMekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
                                     isPod);
                             break;
                         case "dropshuttlebay":

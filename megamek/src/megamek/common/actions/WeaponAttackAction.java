@@ -735,7 +735,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
         }
 
-        // TODO: mech making DFA could be higher if DFA target hex is higher
+        // TODO: mek making DFA could be higher if DFA target hex is higher
         // BMRr pg. 43, "attacking unit is considered to be in the air
         // above the hex, standing on an elevation 1 level higher than
         // the target hex or the elevation of the hex the attacker is
@@ -1130,7 +1130,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae instanceof Tank && ((Tank) ae).getStunnedTurns() > 0) {
             return Messages.getString("WeaponAttackAction.CrewStunned");
         }
-        // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like mechs...)
+        // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like meks...)
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS)
                 && (ae instanceof Tank) && ae.isUnjammingRAC()
                 && (ae.getCrew().getSize() == 1)) {
@@ -1158,7 +1158,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         // Are the sensors operational?
-        // Battlemech sensors are destroyed after 2 hits, unless they have a torso-mounted cockpit
+        // Battlemek sensors are destroyed after 2 hits, unless they have a torso-mounted cockpit
         int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
         if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
             sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
@@ -1171,7 +1171,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (sensorHits >= Tank.CRIT_SENSOR) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
-        // Industrialmechs and other unit types have destroyed sensors with 2 or more hits
+        // Industrialmeks and other unit types have destroyed sensors with 2 or more hits
         } else if ((sensorHits > 1)
                 || ((ae instanceof Mek) && (((Mek) ae).isIndustrial() && (sensorHits == 1)))) {
             return Messages.getString("WeaponAttackAction.SensorsDestroyed");
@@ -1383,7 +1383,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Hull Down
 
-        // Hull down mechs cannot fire any leg weapons
+        // Hull down meks cannot fire any leg weapons
         if (ae.isHullDown() && weapon != null) {
             if (((ae instanceof BipedMek)
                     && ((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)))
@@ -1408,14 +1408,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // LAMs carrying certain types of bombs that require a weapon have attacks that cannot
-        // be used in mech mode.
+        // be used in mek mode.
         if ((ae instanceof LandAirMek)
                 && wtype != null
-                && (ae.getConversionMode() == LandAirMek.CONV_MODE_MECH)
+                && (ae.getConversionMode() == LandAirMek.CONV_MODE_MEK)
                 && wtype.hasFlag(WeaponType.F_BOMB_WEAPON)
                 && wtype.getAmmoType() != AmmoType.T_RL_BOMB
                 && !wtype.hasFlag(WeaponType.F_TAG)) {
-            return Messages.getString("WeaponAttackAction.NoBombInMechMode");
+            return Messages.getString("WeaponAttackAction.NoBombInMekMode");
         }
 
         // limit large craft to zero net heat and to heat by arc
@@ -1547,7 +1547,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        // Protomechs can't fire energy weapons while charging EDP armor
+        // Protomeks can't fire energy weapons while charging EDP armor
         if ((ae instanceof ProtoMek) && ((ProtoMek) ae).isEDPCharging()
                 && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
             return Messages.getString("WeaponAttackAction.ChargingEDP");
@@ -2237,7 +2237,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Conventional Infantry Attacks
 
             if (isAttackerInfantry && !(ae instanceof BattleArmor)) {
-                // 0 MP infantry units: move or shoot, except for anti-mech attacks,
+                // 0 MP infantry units: move or shoot, except for anti-mek attacks,
                 // those are handled above
                 if ((ae.getMovementMode() == EntityMovementMode.INF_LEG) && (ae.getWalkMP() == 0)
                         && (ae.moved != EntityMovementType.MOVE_NONE)) {
@@ -2377,7 +2377,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.NoIndirectSRM");
             }
 
-            // Can't fire anything but Mech Mortars and Artillery Cannons indirectly without a spotter
+            // Can't fire anything but Mek Mortars and Artillery Cannons indirectly without a spotter
             // unless the attack has the Oblique Attacker SPA
             if (isIndirect) {
                 if ((spotter == null) && !(wtype instanceof ArtilleryCannonWeapon)
@@ -2463,7 +2463,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            // Protomech can fire MGA only into front arc, TW page 137
+            // Protomek can fire MGA only into front arc, TW page 137
             if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)
                     && wtype.hasFlag(WeaponType.F_MGA) && (ae instanceof ProtoMek)) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
@@ -2529,7 +2529,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            // Protomechs cannot fire arm weapons and main gun in the same turn
+            // Protomeks cannot fire arm weapons and main gun in the same turn
             if ((ae instanceof ProtoMek)
                     && ((weapon.getLocation() == ProtoMek.LOC_MAINGUN)
                     || (weapon.getLocation() == ProtoMek.LOC_RARM)
@@ -2705,7 +2705,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * during its turn Also, only this unit can make that particular attack.
      */
     private static boolean isOnlyAttack(Game game, Entity attacker, String attackType, Entity target) {
-        // mechs can only be the target of one leg or swarm attack
+        // meks can only be the target of one leg or swarm attack
         for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
@@ -3124,7 +3124,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        // And if this is a Mech Mortar
+        // And if this is a Mek Mortar
         if (wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)) {
             if (isIndirect) {
                 // +2 penalty if there's no spotting entity
@@ -3297,7 +3297,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition
      * Attacker has damaged sensors?  You'll find that here.
-     * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
+     * Defender's a superheavy mek?  Using a weapon with a TH penalty?  Those are in other methods.
      *
      * @param game The current {@link Game}
      * @param ae The Entity making this attack
@@ -3565,7 +3565,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition,
      * if the attacker is an aero
      * Attacker has damaged sensors?  You'll find that here.
-     * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
+     * Defender's a superheavy mek?  Using a weapon with a TH penalty?  Those are in other methods.
      *
      * @param game The current {@link Game}
      * @param ae The Entity making this attack
@@ -3913,7 +3913,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the attacker's crew/pilot
      * Pilot wounded?  Has an SPA?  You'll find that here.
-     * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
+     * Defender's a superheavy mek?  Using a weapon with a TH penalty?  Those are in other methods.
      *
      * @param game The current {@link Game}
      * @param ae The Entity making this attack
@@ -4252,9 +4252,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Unit-specific modifiers
 
-        // -1 to hit a SuperHeavy mech
+        // -1 to hit a SuperHeavy mek
         if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMek"));
         }
 
         // large support tanks get a -1 per TW
@@ -4601,7 +4601,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // the idea here is that we're in a building that provides partial cover
-        // if the unit involved is tall (at least 2 levels, e.g. mech or superheavy vehicle)
+        // if the unit involved is tall (at least 2 levels, e.g. mek or superheavy vehicle)
         // and its height above the hex ceiling (i.e building roof) is 1
         // the height determination takes being prone into account
         return targetHex.containsTerrain(Terrains.BUILDING) &&
@@ -4714,7 +4714,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             toHit = Compute.getLegAttackBaseToHit(ae, te, game);
             if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMek"));
             }
             if (te.isProne()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TargetProne"));
@@ -4736,7 +4736,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeVehicle"));
             }
             if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMek"));
             }
             if (te.isProne()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TargetProne"));
@@ -4745,7 +4745,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(-4, Messages.getString("WeaponAttackAction.TargetImmobile"));
             }
 
-            // If the defender carries mechanized BA, they can fight off the
+            // If the defender carries mekanized BA, they can fight off the
             // swarm
             for (Entity e : te.getExternalUnits()) {
                 if (e instanceof BattleArmor) {
@@ -4889,7 +4889,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
             // target in partial water - depth 1 for most units
             int partialWaterLevel = 1;
-            // Depth 2 for superheavy mechs
+            // Depth 2 for superheavy meks
             if (target != null && (target instanceof Mek) && ((Mek) target).isSuperHeavy()) {
                 partialWaterLevel = 2;
             }

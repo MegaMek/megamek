@@ -515,7 +515,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
         clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
@@ -666,7 +666,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
         clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
         updateTarget();
         setDisengageEnabled(false);
@@ -681,7 +681,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
         int weaponId = clientgui.getUnitDisplay().wPan.selectNextWeapon();
         if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMech(ce());
+            clientgui.getUnitDisplay().wPan.displayMek(ce());
         }
 
         if (weaponId == -1) {
@@ -702,7 +702,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
         int weaponId = clientgui.getUnitDisplay().wPan.selectPrevWeapon();
         if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMech(ce());
+            clientgui.getUnitDisplay().wPan.displayMek(ce());
         }
 
         if (weaponId == -1) {
@@ -761,7 +761,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 removeAttack(o);
                 setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
-                clientgui.getUnitDisplay().wPan.displayMech(ce());
+                clientgui.getUnitDisplay().wPan.displayMek(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.getBoardView().refreshAttacks();
             }

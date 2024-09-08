@@ -19,12 +19,12 @@ import megamek.common.SimpleTechLevel;
  * @author Jason Tighe
  * @since Oct 2, 2004
  */
-public class CLProtoMechAC2 extends ProtoMechACWeapon {
+public class CLProtoMekAC2 extends ProtoMekACWeapon {
     private static final long serialVersionUID = 4371171653960292873L;
 
-    public CLProtoMechAC2() {
+    public CLProtoMekAC2() {
         super();
-        
+
         name = "ProtoMech AC/2";
         setInternalName("CLProtoMechAC2");
         addLookupName("Clan ProtoMech AC/2");

@@ -69,7 +69,7 @@ public class ModelRecord extends AbstractUnitRecord {
     public static final int NETWORK_BOOSTED_SLAVE = NETWORK_C3_SLAVE | NETWORK_BOOSTED;
     public static final int NETWORK_BOOSTED_MASTER = NETWORK_C3_MASTER | NETWORK_BOOSTED;
 
-    private MechSummary mechSummary;
+    private MekSummary mekSummary;
 
     private boolean primitive;
     private boolean retrotech;
@@ -112,16 +112,16 @@ public class ModelRecord extends AbstractUnitRecord {
         networkMask = NETWORK_NONE;
     }
 
-    public ModelRecord(MechSummary unitData) {
+    public ModelRecord(MekSummary unitData) {
         this(unitData.getFullChassis(), unitData.getModel());
-        mechSummary = unitData;
+        mekSummary = unitData;
         introYear = unitData.getYear();
 
         analyzeModel(unitData);
     }
 
     public String getModel() {
-        return mechSummary.getModel();
+        return mekSummary.getModel();
     }
 
     public int getWeightClass() {
@@ -132,11 +132,11 @@ public class ModelRecord extends AbstractUnitRecord {
         return movementMode;
     }
 
-    public boolean isQuadMech() {
+    public boolean isQuadMek() {
         return isQuad;
     }
 
-    public boolean isTripodMech () {
+    public boolean isTripodMek () {
         return isTripod;
     }
 
@@ -240,7 +240,7 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public boolean getJump() {
-        return mechSummary.getJumpMp() > 0;
+        return mekSummary.getJumpMp() > 0;
     }
 
     /**
@@ -283,8 +283,8 @@ public class ModelRecord extends AbstractUnitRecord {
         return robotDrone;
     }
 
-    public MechSummary getMechSummary() {
-        return mechSummary;
+    public MekSummary getMekSummary() {
+        return mekSummary;
     }
 
     public void addRoles(String newRoles) {
@@ -337,7 +337,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
     @Override
     public String getKey() {
-        return mechSummary.getName();
+        return mekSummary.getName();
     }
 
     public boolean canDoMechanizedBA() {
@@ -366,7 +366,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * data
      * @param unitData   Data for unit
      */
-    private void analyzeModel (MechSummary unitData) {
+    private void analyzeModel (MekSummary unitData) {
 
         // Basic unit type and movement
         unitType = parseUnitType(unitData.getUnitType());
@@ -464,7 +464,7 @@ public class ModelRecord extends AbstractUnitRecord {
             //is that there is a null equipment name.
             if (null == unitData.getEquipmentNames().get(i)) {
                 LogManager.getLogger().error(
-                        "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
+                        "RATGenerator ModelRecord encountered null equipment name in MekSummary for "
                                 + unitData.getName() + ", index " + i);
                 continue;
             }
@@ -480,15 +480,15 @@ public class ModelRecord extends AbstractUnitRecord {
 
             if (eq instanceof WeaponType) {
 
-                // Flag units that are capable of making anti-Mech attacks. Don't bother making
+                // Flag units that are capable of making anti-Mek attacks. Don't bother making
                 // any other tests for these.
                 if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
-                    boolean isAntiMechAttack = eq instanceof SwarmAttack ||
+                    boolean isAntiMekAttack = eq instanceof SwarmAttack ||
                             eq instanceof SwarmWeaponAttack ||
                             eq instanceof LegAttack ||
                             eq instanceof StopSwarmAttack;
-                    canAntiMek = canAntiMek || isAntiMechAttack;
-                    if (isAntiMechAttack) {
+                    canAntiMek = canAntiMek || isAntiMekAttack;
+                    if (isAntiMekAttack) {
                         continue;
                     }
                 }
@@ -591,7 +591,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
-                // DropShips, and other space craft. Also skip anti-Mech attacks.
+                // DropShips, and other space craft. Also skip anti-Mek attacks.
                 if (unitType < UnitType.SMALL_CRAFT) {
                     shortRangeBV += getShortRangeModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
@@ -636,7 +636,7 @@ public class ModelRecord extends AbstractUnitRecord {
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_VIBROCLAW)) {
                     apRating += 2;
-                } else if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE)) {
+                } else if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE)) {
                     shortRangeBV += 2.5;
                     totalWeaponBV += 2.5;
                 } else if (eq.hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
@@ -687,7 +687,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param unitData   Unit data
      * @return   true if unit has primitive tech and no advanced tech
      */
-    private boolean isUnitPrimitive (MechSummary unitData) {
+    private boolean isUnitPrimitive (MekSummary unitData) {
 
         boolean hasPrimitive = false;
 
@@ -785,7 +785,7 @@ public class ModelRecord extends AbstractUnitRecord {
      * @param unitData   Unit data
      * @return     true if unit contains primitive basic equipment
      */
-    private boolean unitHasPrimitiveTech(MechSummary unitData) {
+    private boolean unitHasPrimitiveTech(MekSummary unitData) {
 
         // Some unit types will not be built with primitive technology
         if (unitType == UnitType.INFANTRY ||
@@ -840,7 +840,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *                   FF armor
      * @return           true if unit has at least one piece of basic technology
      */
-    private boolean unitHasLostech (MechSummary unitData, boolean starLeagueOnly) {
+    private boolean unitHasLostech (MekSummary unitData, boolean starLeagueOnly) {
 
         // Some units are always considered advanced
         if (unitType == UnitType.BATTLE_ARMOR ||

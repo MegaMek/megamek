@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.tileset.MekTileset.MechEntry;
+import megamek.client.ui.swing.tileset.MekTileset.MekEntry;
 import megamek.common.Entity;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 
 /**
  * This program will generate a list of all the units that use the default
@@ -34,14 +34,14 @@ import megamek.common.MechSummaryCache;
  *
  * @author arlith
  */
-public class GenerateGenericIconList implements MechSummaryCache.Listener {
+public class GenerateGenericIconList implements MekSummaryCache.Listener {
 
-    private static MechSummaryCache mechSummaryCache = null;
+    private static MekSummaryCache mechSummaryCache = null;
 
     public static void main(String[] args) {
         GenerateGenericIconList gen = new GenerateGenericIconList();
         System.out.println("Loading Cache...");
-        mechSummaryCache = MechSummaryCache.getInstance(true);
+        mechSummaryCache = MekSummaryCache.getInstance(true);
         mechSummaryCache.addListener(gen);
     }
 
@@ -49,7 +49,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
     public void doneLoading() {
         Map<String, List<String>> chassisUsing = new HashMap<>();
         Map<String, List<String>> genericsUsing = new HashMap<>();
-        for (MechSummary mechSummary : mechSummaryCache.getAllMechs()) {
+        for (MekSummary mechSummary : mechSummaryCache.getAllMeks()) {
             if (!mechSummary.isCanon()) {
                 continue;
             }
@@ -58,15 +58,15 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                 System.out.println("Couldn't load entity for: " + mechSummary);
                 continue;
             }
-            if (MMStaticDirectoryManager.getMechTileset().hasOnlyChassisMatch(entity) && !entity.getModel().isBlank()) {
+            if (MMStaticDirectoryManager.getMekTileset().hasOnlyChassisMatch(entity) && !entity.getModel().isBlank()) {
                 String name = entity.getChassis() + " " + entity.getModel();
                 String type = getTypeName(entity);
                 List<String> names = chassisUsing.computeIfAbsent(type, k -> new ArrayList<>());
                 names.add(name);
                 continue;
             }
-            MechEntry entry = MMStaticDirectoryManager.getMechTileset().entryFor(entity, -1);
-            MechEntry defaultEntry = MMStaticDirectoryManager.getMechTileset().genericFor(entity, -1);
+            MekEntry entry = MMStaticDirectoryManager.getMekTileset().entryFor(entity, -1);
+            MekEntry defaultEntry = MMStaticDirectoryManager.getMekTileset().genericFor(entity, -1);
             if (entry == null) {
                 System.out.println("Found no entry for: " + entity);
             } else if (defaultEntry == null) {

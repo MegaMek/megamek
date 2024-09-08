@@ -14,18 +14,18 @@
  */
 package megamek.common.verifier;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
-
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Class for testing and validating instantiations for Small Craft and Dropships.
@@ -277,7 +277,7 @@ public class TestSmallCraft extends TestAero {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
 

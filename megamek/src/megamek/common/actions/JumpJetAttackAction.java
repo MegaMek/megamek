@@ -47,7 +47,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * Damage that the specified mech does with a JJ attack
+     * Damage that the specified mek does with a JJ attack
      */
     public static int getDamageFor(Entity entity, int leg) {
         if (leg == BOTH) {
@@ -105,9 +105,9 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        // LAM AirMechs can only push when grounded.
-        if ((ae instanceof LandAirMek) && (ae.getConversionMode() != LandAirMek.CONV_MODE_MECH)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mech mode");
+        // LAM AirMeks can only push when grounded.
+        if ((ae instanceof LandAirMek) && (ae.getConversionMode() != LandAirMek.CONV_MODE_MEK)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mek mode");
         }
 
         Hex attHex = game.getBoard().getHex(ae.getPosition());
@@ -134,14 +134,14 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
         }
 
-        // non-mechs can't kick
+        // non-meks can't kick
         if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
         }
 
         if (leg == BOTH && !ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only prone mechs can attack with both legs");
+                    "Only prone meks can attack with both legs");
         }
 
         // check if legs are present & working

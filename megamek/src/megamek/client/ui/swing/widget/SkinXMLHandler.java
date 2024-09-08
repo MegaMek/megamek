@@ -16,24 +16,31 @@
 */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import java.awt.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This class reads in an XML file that specifies different aspects of the visual skin for MegaMek.
@@ -127,7 +134,7 @@ public class SkinXMLHandler {
     public static final String TopRightCorner = "tr_corner";
     public static final String BottomRightCorner = "br_corner";
 
-    public static final String MechOutline = "mech_outline";
+    public static final String MekOutline = "mek_outline";
 
     private static Map<String, SkinSpecification> skinSpecs;
 
@@ -504,9 +511,9 @@ public class SkinXMLHandler {
                     .getTextContent());
         }
 
-        if (border.getElementsByTagName(MechOutline).getLength() > 0) {
-            udSpec.setMechOutline(border
-                    .getElementsByTagName(MechOutline).item(0)
+        if (border.getElementsByTagName(MekOutline).getLength() > 0) {
+            udSpec.setMekOutline(border
+                    .getElementsByTagName(MekOutline).item(0)
                     .getTextContent());
         }
     }
@@ -646,9 +653,9 @@ public class SkinXMLHandler {
         out.write(udSpec.getBottomRightCorner());
         out.write("</" + BottomRightCorner + ">\n");
 
-        out.write("\t\t\t<" + MechOutline + ">");
-        out.write(udSpec.getMechOutline());
-        out.write("</" + MechOutline + ">\n");
+        out.write("\t\t\t<" + MekOutline + ">");
+        out.write(udSpec.getMekOutline());
+        out.write("</" + MekOutline + ">\n");
 
         // Close UI_ELEMENT tag
         out.write("\t</" + UI_ELEMENT + ">\n\n");

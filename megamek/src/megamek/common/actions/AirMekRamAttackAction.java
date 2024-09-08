@@ -13,26 +13,26 @@
  */
 package megamek.common.actions;
 
+import java.util.Enumeration;
+
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
-import java.util.Enumeration;
-
 /**
- * Ram attack by an airborne LAM in airmech mode. This is treated like a charge in the movement path,
+ * Ram attack by an airborne LAM in airmek mode. This is treated like a charge in the movement path,
  * but has significant difference in the way damage is calculated and in the final locations.
  *
  * @author Neoancient
  */
-public class AirmechRamAttackAction extends DisplacementAttackAction {
+public class AirMekRamAttackAction extends DisplacementAttackAction {
     private static final long serialVersionUID = 5110608317218688433L;
 
-    public AirmechRamAttackAction(Entity attacker, Targetable target) {
+    public AirMekRamAttackAction(Entity attacker, Targetable target) {
         this(attacker.getId(), target.getTargetType(), target.getId(), target.getPosition());
     }
 
-    public AirmechRamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+    public AirMekRamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
         super(entityId, targetType, targetId, targetPos);
     }
 
@@ -67,7 +67,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         }
 
         if (!(ae instanceof LandAirMek) || !ae.isAirborneVTOLorWIGE()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not airborne airmech");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not airborne airmek");
         }
 
         int targetId = Entity.NONE;
@@ -131,10 +131,10 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
                     "Target is infantry.");
         }
 
-        // Cannot target protomech
+        // Cannot target protomek
         if (te instanceof ProtoMek) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is protomech.");
+                    "Target is protomek.");
         }
 
         // check range
@@ -166,7 +166,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
                                  "Target must be within 1 elevation level");
         }
 
-        // can't attack mech making a different displacement attack
+        // can't attack mek making a different displacement attack
         if (te.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Target is already making a charge/DFA attack");
@@ -265,7 +265,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         // determine hit direction
         toHit.setSideTable(te.sideTable(src));
 
-        // all rams resolved against full-body table, against mechs in water partial cover
+        // all rams resolved against full-body table, against meks in water partial cover
         if ((targHex.terrainLevel(Terrains.WATER) == te.height())
             && (te.getElevation() == -1) && (te.height() > 0)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
@@ -364,11 +364,11 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * Damage that an airmech does with a successful ram. Assumes that
+     * Damage that an airmek does with a successful ram. Assumes that
      * delta_distance is correct.
      */
     public static int getDamageFor(Entity entity) {
-        return AirmechRamAttackAction.getDamageFor(entity, entity.delta_distance);
+        return AirMekRamAttackAction.getDamageFor(entity, entity.delta_distance);
     }
 
     public static int getDamageFor(Entity entity, int hexesMoved) {
@@ -383,7 +383,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageTakenBy(Entity entity, Targetable target) {
-        return AirmechRamAttackAction.getDamageTakenBy(entity, target, entity.delta_distance);
+        return AirMekRamAttackAction.getDamageTakenBy(entity, target, entity.delta_distance);
     }
 
     public static int getDamageTakenBy(Entity entity, Targetable target, int distance) {

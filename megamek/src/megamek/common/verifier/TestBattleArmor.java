@@ -14,14 +14,18 @@
  */
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
-
-import java.util.*;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -230,7 +234,7 @@ public class TestBattleArmor extends TestEntity {
     public static boolean isMountLegal(BattleArmor ba, Mounted newMount,
             int loc, int trooper) {
         int numUsedCrits = 0;
-        int numAntiMechWeapons = 0;
+        int numAntiMekWeapons = 0;
         int numAntiPersonnelWeapons = 0;
         if ((ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
                 && ((loc == BattleArmor.MOUNT_LOC_LARM) || (loc == BattleArmor.MOUNT_LOC_RARM))) {
@@ -256,7 +260,7 @@ public class TestBattleArmor extends TestEntity {
 
                 if ((m.getType() instanceof WeaponType)
                         && !(m.getType() instanceof InfantryWeapon)) {
-                    numAntiMechWeapons++;
+                    numAntiMekWeapons++;
                 }
                 if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                     numAntiPersonnelWeapons++;
@@ -282,7 +286,7 @@ public class TestBattleArmor extends TestEntity {
 
                     if ((m.getType() instanceof WeaponType)
                             && !(m.getType() instanceof InfantryWeapon)) {
-                        numAntiMechWeapons++;
+                        numAntiMekWeapons++;
                     }
                     if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                         numAntiPersonnelWeapons++;
@@ -301,8 +305,8 @@ public class TestBattleArmor extends TestEntity {
         if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
             if (newMount.getType() instanceof WeaponType) {
-                if ((numAntiMechWeapons + 1) <=
-                        ba.getNumAllowedAntiMechWeapons(loc)) {
+                if ((numAntiMekWeapons + 1) <=
+                        ba.getNumAllowedAntiMekWeapons(loc)) {
                     return true;
                 } else {
                     return false;
@@ -378,7 +382,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
 
@@ -398,7 +402,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public boolean isProtomech() {
+    public boolean isProtoMek() {
         return false;
     }
 
@@ -869,12 +873,12 @@ public class TestBattleArmor extends TestEntity {
                     continue;
                 }
                 if (numAMWeapons[t][loc] >
-                        ba.getNumAllowedAntiMechWeapons(loc)) {
+                        ba.getNumAllowedAntiMekWeapons(loc)) {
                     buff.append(BattleArmor.getBaMountLocAbbr(loc) + " of "
                             + ba.getLocationAbbr(t) + " has "
                             + numAMWeapons[t][loc]
-                            + " anti-mech weapons, but only "
-                            + ba.getNumAllowedAntiMechWeapons(loc)
+                            + " anti-mek weapons, but only "
+                            + ba.getNumAllowedAntiMekWeapons(loc)
                             + " are allowed!\n");
                     correct = false;
                 }

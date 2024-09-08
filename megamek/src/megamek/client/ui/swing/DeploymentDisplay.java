@@ -765,8 +765,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     } else if (other.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                         bayChoices = new ArrayList<>();
                         for (Transporter t : ce().getTransports()) {
-                            if ((t instanceof ProtomechClampMount) && t.canLoad(other)) {
-                                bayChoices.add(((ProtomechClampMount) t).isRear() ? 1 : 0);
+                            if ((t instanceof ProtoMekClampMount) && t.canLoad(other)) {
+                                bayChoices.add(((ProtoMekClampMount) t).isRear() ? 1 : 0);
                             }
                         }
                         if (bayChoices.size() > 1) {

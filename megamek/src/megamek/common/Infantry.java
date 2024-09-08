@@ -19,6 +19,16 @@
  */
 package megamek.common;
 
+import static java.util.stream.Collectors.toList;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
@@ -31,12 +41,6 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import java.text.NumberFormat;
-import java.util.*;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * This class represents Conventional Infantry (with BattleArmor as a subclass).
@@ -135,7 +139,7 @@ public class Infantry extends Entity {
     public static final String SWARM_WEAPON_MEK = "SwarmWeaponMek";
     public static final String STOP_SWARM = "StopSwarm";
 
-    public static final int ANTI_MECH_SKILL_NO_GEAR = 8;
+    public static final int ANTI_MEK_SKILL_NO_GEAR = 8;
 
     @Override
     public String[] getLocationAbbrs() {
@@ -1034,7 +1038,7 @@ public class Infantry extends Entity {
             case HOVER:
             case WHEELED:
             case TRACKED:
-            case SUBMARINE: // FIXME: there is no cost shown for mech. scuba in tac ops
+            case SUBMARINE: // FIXME: there is no cost shown for mek. scuba in tac ops
                 cost += 17888 * 2.2;
                 break;
             case VTOL:
@@ -1171,7 +1175,7 @@ public class Infantry extends Entity {
      */
     @SuppressWarnings("unused") // used in MHQ
     public int getAntiMekSkill() {
-        return (getCrew() == null) ? (hasAntiMekGear() ? 5 : ANTI_MECH_SKILL_NO_GEAR) : getCrew().getPiloting();
+        return (getCrew() == null) ? (hasAntiMekGear() ? 5 : ANTI_MEK_SKILL_NO_GEAR) : getCrew().getPiloting();
     }
 
     /**

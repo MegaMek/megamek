@@ -176,7 +176,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // set visible on middle of screen
         frame.setLocationRelativeTo(null);
         // init the cache
-        MechSummaryCache.getInstance();
+        MekSummaryCache.getInstance();
 
         // Show the window.
         frame.setVisible(show);
@@ -571,10 +571,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
-        MechFileParser.dispose();
+        MekFileParser.dispose();
         // We must do this last, as the name and unit generators can create
         // a new instance if they are running
-        MechSummaryCache.dispose();
+        MekSummaryCache.dispose();
 
         launch(gui.getFrame());
     }
@@ -1094,7 +1094,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 break;
             case ClientGUI.FILE_UNITS_BROWSE:
                 UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-                if (!MechSummaryCache.getInstance().isInitialized()) {
+                if (!MekSummaryCache.getInstance().isInitialized()) {
                     unitLoadingDialog.setVisible(true);
                 }
                 MainMenuUnitBrowserDialog unitSelectorDialog = new MainMenuUnitBrowserDialog(frame, unitLoadingDialog);

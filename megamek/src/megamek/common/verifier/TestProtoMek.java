@@ -87,7 +87,7 @@ public class TestProtoMek extends TestEntity {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
 
@@ -107,7 +107,7 @@ public class TestProtoMek extends TestEntity {
     }
 
     @Override
-    public boolean isProtomech() {
+    public boolean isProtoMek() {
         return true;
     }
 
@@ -288,7 +288,7 @@ public class TestProtoMek extends TestEntity {
                 buff.append(mount).append(" is not a legal ProtoMek weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
-                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
+                    && !mount.getType().hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
                 buff.append(mount).append(" is not legal ProtoMek equipment.\n");
                 illegal = true;
             }
@@ -300,7 +300,7 @@ public class TestProtoMek extends TestEntity {
                 }
             }
 
-            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMECH_MELEE)) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMEK_MELEE)) {
                 meleeWeapons++;
                 if (meleeWeapons == 2) {
                     buff.append("Cannot mount multiple melee weapons.\n");
@@ -310,14 +310,14 @@ public class TestProtoMek extends TestEntity {
                     buff.append(mount.getType().getName() + "can only be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
-                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON) && proto.isQuad()) {
+                if (mount.getType().hasSubType(MiscType.S_PROTOMEK_WEAPON) && proto.isQuad()) {
                     buff.append(mount.getType().getName() + "cannot be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
             }
         }
         ArmorType armor = ArmorType.forEntity(proto);
-        if (!armor.hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
+        if (!armor.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
             buff.append("Does not have legal armor type.\n");
             illegal = true;
         } else {
@@ -346,16 +346,16 @@ public class TestProtoMek extends TestEntity {
     }
 
     /**
-     * @param protomech  The ProtoMek
+     * @param protoMek  The ProtoMek
      * @param eq         The equipment
      * @param location   A location index on the Entity
      * @param buffer    If non-null and the location is invalid, will be appended with an explanation
      * @return           Whether the equipment can be mounted in the location on the ProtoMek
      */
-    public static boolean isValidProtomechLocation(ProtoMek protomech, EquipmentType eq, int location,
+    public static boolean isValidProtoMekLocation(ProtoMek protoMek, EquipmentType eq, int location,
                                                    @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)
+            if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
                     && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
@@ -363,7 +363,7 @@ public class TestProtoMek extends TestEntity {
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
-                    || (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
+                    || (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
                     && (location != ProtoMek.LOC_TORSO)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
@@ -371,15 +371,15 @@ public class TestProtoMek extends TestEntity {
                 return false;
             }
         }
-        if (!TestProtoMek.eqRequiresLocation(protomech, eq) && (location != ProtoMek.LOC_BODY)) {
+        if (!TestProtoMek.eqRequiresLocation(protoMek, eq) && (location != ProtoMek.LOC_BODY)) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" must be mounted in the body.\n");
             }
             return false;
-        } else if (TestProtoMek.maxSlotsByLocation(location, protomech) == 0) {
+        } else if (TestProtoMek.maxSlotsByLocation(location, protoMek) == 0) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the ")
-                        .append(protomech.getLocationName(location)).append("\n");
+                        .append(protoMek.getLocationName(location)).append("\n");
             }
             return false;
         }
@@ -406,7 +406,7 @@ public class TestProtoMek extends TestEntity {
     }
 
     /**
-     * Checks whether the protomech meets the minimum MP requirements for the configuration.
+     * Checks whether the protoMek meets the minimum MP requirements for the configuration.
      *
      * @param buffer A buffer for error messages
      * @return       Whether the MP is legal.
@@ -436,7 +436,7 @@ public class TestProtoMek extends TestEntity {
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
-        buff.append("Protomech: ").append(proto.getDisplayName()).append("\n");
+        buff.append("Protomek: ").append(proto.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
         buff.append("Intro year: ").append(proto.getYear()).append("\n");
@@ -592,8 +592,8 @@ public class TestProtoMek extends TestEntity {
     /**
      * The maximum total weight that can be mounted in a given location.
      *
-     * @param loc   The Protomech location
-     * @param proto The Protomech
+     * @param loc   The Protomek location
+     * @param proto The Protomek
      * @return      The weight limit for that location, in tons.
      */
     public static double maxWeightByLocation(int loc, ProtoMek proto) {
@@ -603,9 +603,9 @@ public class TestProtoMek extends TestEntity {
     /**
      * The maximum total weight that can be mounted in a given location.
      *
-     * @param loc   The Protomech location
-     * @param quad  Whether the protomech is a quad
-     * @param ultra Whether the protomech is ultraheavy
+     * @param loc   The Protomek location
+     * @param quad  Whether the protoMek is a quad
+     * @param ultra Whether the protoMek is ultraheavy
      * @return      The weight limit for that location, in tons.
      */
     public static double maxWeightByLocation(int loc, boolean quad, boolean ultra) {
@@ -636,7 +636,7 @@ public class TestProtoMek extends TestEntity {
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
      *
-     * @param proto   The protomech
+     * @param proto   The protoMek
      * @return        The maximum total number of armor points
      */
     public static int maxArmorFactor(ProtoMek proto) {
@@ -646,8 +646,8 @@ public class TestProtoMek extends TestEntity {
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
      *
-     * @param weight  The weight of the protomech in tons
-     * @param mainGun Whether the protomech has a main gun location
+     * @param weight  The weight of the protoMek in tons
+     * @param mainGun Whether the protoMek has a main gun location
      * @return        The maximum total number of armor points
      */
     public static int maxArmorFactor(double weight, boolean mainGun) {
@@ -661,7 +661,7 @@ public class TestProtoMek extends TestEntity {
     /**
      * Determine the maximum amount of armor in a location based on unit weight.
      *
-     * @param proto   The protomech
+     * @param proto   The protoMek
      * @param location The location index
      * @return        The maximum total number of armor points
      */

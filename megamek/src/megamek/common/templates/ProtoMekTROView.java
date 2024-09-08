@@ -32,7 +32,7 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtoMek;
 
 /**
- * Creates a TRO template model for Protomechs.
+ * Creates a TRO template model for Protomeks.
  *
  * @author Neoancient
  *
@@ -48,9 +48,9 @@ public class ProtoMekTROView extends TROView {
     @Override
     protected String getTemplateFileName(boolean html) {
         if (html) {
-            return "protomech.ftlh";
+            return "protomek.ftlh";
         }
-        return "protomech.ftl";
+        return "protomek.ftl";
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ProtoMekTROView extends TROView {
         addFluff();
         setModelData("isGlider", proto.isGlider());
         setModelData("isQuad", proto.isQuad());
-        final TestProtoMek testproto = new TestProtoMek(proto, verifier.protomechOption, null);
+        final TestProtoMek testproto = new TestProtoMek(proto, verifier.protomekOption, null);
         setModelData("isMass", NumberFormat.getInstance().format(testproto.getWeightStructure() * 1000));
         setModelData("engineRating", proto.getEngine().getRating());
         setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
@@ -97,7 +97,7 @@ public class ProtoMekTROView extends TROView {
     }
 
     private void addFluff() {
-        addMechVeeAeroFluff(proto);
+        addMekVeeAeroFluff(proto);
         if (proto.getOriginalJumpMP() > 0) {
             setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS, proto.getFluff(), () -> ""));
         }

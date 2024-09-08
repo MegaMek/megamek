@@ -27,8 +27,8 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.MegaMekBorder;
 import megamek.client.ui.swing.widget.MegaMekButton;
-import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.common.event.*;
@@ -77,7 +77,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     protected AbstractPhaseDisplay(IClientGUI cg, String panelSkin, String buttonSkin) {
         super(panelSkin, 0);
         clientgui = Objects.requireNonNull(cg);
-        setBorder(new MegamekBorder(panelSkin));
+        setBorder(new MegaMekBorder(panelSkin));
 
         butDone = new MegaMekButton("DONE", buttonSkin);
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";

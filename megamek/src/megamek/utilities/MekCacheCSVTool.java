@@ -31,20 +31,14 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.TechConstants;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.templates.TROView;
 import megamek.logging.MMLogger;
 
 /**
- * This class provides a utility to read in all the /data/mechfiles and print
+ * This class provides a utility to read in all the /data/mekfiles and print
  * that data out into a CSV format.
  *
  * @author arlith
@@ -74,14 +68,14 @@ public final class MekCacheCSVTool {
 
         try (PrintWriter pw = new PrintWriter(FILE_NAME);
                 BufferedWriter bw = new BufferedWriter(pw)) {
-            MechSummaryCache cache = MechSummaryCache.getInstance(true);
-            MechSummary[] units = cache.getAllMechs();
+            MekSummaryCache cache = MekSummaryCache.getInstance(true);
+            MekSummary[] units = cache.getAllMeks();
 
             StringBuilder csvLine = new StringBuilder();
             csvLine.append(String.join(DELIM, HEADERS)).append("\n");
             bw.write(csvLine.toString());
 
-            for (MechSummary unit : units) {
+            for (MekSummary unit : units) {
                 if (!includeGunEmplacement && unit.getUnitType().equals("Gun Emplacement")) {
                     continue;
                 }
@@ -271,7 +265,7 @@ public final class MekCacheCSVTool {
 
     public static @Nullable Entity loadEntity(File f, String entityName) {
         try {
-            return new MechFileParser(f, entityName).getEntity();
+            return new MekFileParser(f, entityName).getEntity();
         } catch (megamek.common.loaders.EntityLoadingException e) {
             return null;
         }

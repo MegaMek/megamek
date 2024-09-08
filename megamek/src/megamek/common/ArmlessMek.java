@@ -15,19 +15,19 @@
  */
 package megamek.common;
 
-public class ArmlessMech extends BipedMek {
+public class ArmlessMek extends BipedMek {
     private static final long serialVersionUID = 1333922747670982513L;
 
-    public ArmlessMech(String inGyroType, String inCockpitType) {
+    public ArmlessMek(String inGyroType, String inCockpitType) {
         this(getGyroTypeForString(inGyroType),
                 getCockpitTypeForString(inCockpitType));
     }
 
-    public ArmlessMech() {
+    public ArmlessMek() {
         this(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD);
     }
 
-    public ArmlessMech(int inGyroType, int inCockpitType) {
+    public ArmlessMek(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
 
         for (int i = 0; i < 4; i++) {
@@ -78,7 +78,7 @@ public class ArmlessMech extends BipedMek {
     @Override
     public PilotingRollData checkGetUp(MoveStep step, EntityMovementType moveType) {
         PilotingRollData roll = super.checkGetUp(step, moveType);
-        roll.addModifier(4, "armless Mech");
+        roll.addModifier(4, "armless Mek");
         return roll;
     }
 

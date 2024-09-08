@@ -207,7 +207,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_CONFIGURE_ALL:
-                lobby.lobbyActions.customizeMechs(entities);
+                lobby.lobbyActions.customizeMeks(entities);
                 break;
 
             case LMP_DELETE:
@@ -280,15 +280,15 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_VIEW:
-                LobbyUtility.mechReadoutAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
+                LobbyUtility.mekReadoutAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
                 break;
 
             case LMP_BV:
-                LobbyUtility.mechBVAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
+                LobbyUtility.mekBVAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
                 break;
 
             case LMP_COST:
-                LobbyUtility.mechCostAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
+                LobbyUtility.mekCostAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
                 break;
 
             case LMP_DAMAGE:
@@ -486,7 +486,7 @@ public class LobbyMekPopupActions implements ActionListener {
     private void singleEntityAction(String command, Entity entity, String info) {
         switch (command) {
             case LMP_CONFIGURE:
-                lobby.lobbyActions.customizeMech(entity);
+                lobby.lobbyActions.customizeMek(entity);
                 break;
 
 

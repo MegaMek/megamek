@@ -43,7 +43,7 @@ public class FindClubAction extends AbstractEntityAction {
      * @param game The current {@link Game}
      * @return whether an entity can find a club in its current location
      */
-    public static boolean canMechFindClub(Game game, int entityId) {
+    public static boolean canMekFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
         if ((null == entity) || null == (entity.getPosition())) {
             return false;

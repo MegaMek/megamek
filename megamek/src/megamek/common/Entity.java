@@ -3836,7 +3836,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         Mounted<?> mounted = Mounted.createMounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBaMountLoc(baMountLoc);
-        mounted.setMechTurretMounted(isTurreted);
+        mounted.setMekTurretMounted(isTurreted);
         mounted.setSponsonTurretMounted(isSponsonTurreted);
         mounted.setPintleTurretMounted(isPintleTurreted);
         mounted.setOmniPodMounted(isOmniPodded);
@@ -4510,7 +4510,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (!game.getBoard().inSpace()
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMek)
-                    && (getConversionMode() == LandAirMek.CONV_MODE_MECH))) {
+                    && (getConversionMode() == LandAirMek.CONV_MODE_MEK))) {
                 if (addedBombAttacks < 1) {
                     try {
                         WeaponMounted bomb = (WeaponMounted) addEquipment(diveBomb, m.getLocation(), false);
@@ -8433,7 +8433,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     || unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 for (Transporter t : transports) {
                     // ProtoMekClampMount is a subclass of BattleArmorHandles so we need to check it first
-                    if (t instanceof ProtomechClampMount) {
+                    if (t instanceof ProtoMekClampMount) {
                         hasExternalProtos |= t.getUnused() == 0;
                         hasExternalUltraheavy |= t.getLoadedUnits().stream()
                                 .anyMatch(e -> e.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
@@ -11265,7 +11265,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         boolean targetIsTank = (this instanceof Tank)
                 || (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS) && (this instanceof QuadMek));
+                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) && (this instanceof QuadMek));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;
@@ -12827,7 +12827,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP) && !getCrew().isDead()
                 && !getCrew().isUnconscious()) {
             return 2;
-        } else if (hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MECH) && !getCrew().isDead()
+        } else if (hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK) && !getCrew().isDead()
                 && !getCrew().isUnconscious()) {
             return 1;
         }
@@ -16065,7 +16065,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns true when this unit has an embedded icon, i.e. an icon stored in the unit file rather than
-     * found by the mechset. Currently returns false when a mode-specific icon is needed (LAMs/QVs)
+     * found by the mekset. Currently returns false when a mode-specific icon is needed (LAMs/QVs)
      *
      * @return True when this unit has an embedded icon
      */

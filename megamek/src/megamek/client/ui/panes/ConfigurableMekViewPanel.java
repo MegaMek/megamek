@@ -18,35 +18,41 @@
  */
 package megamek.client.ui.panes;
 
-import megamek.MMConstants;
-import megamek.client.ui.Messages;
-import megamek.client.ui.WrapLayout;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.MechViewPanel;
-import megamek.client.ui.swing.util.FontHandler;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Entity;
-import megamek.common.MechView;
-import megamek.common.ViewFormatting;
-import megamek.common.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.WrapLayout;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.MekViewPanel;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Entity;
+import megamek.common.MekView;
+import megamek.common.ViewFormatting;
+import megamek.common.annotations.Nullable;
+
 /**
- * This class wraps the MechView / MechViewPanel and gives it a toolbar to choose font, open the MUL
+ * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL
  * and copy the contents.
  */
-public class ConfigurableMechViewPanel extends JPanel {
+public class ConfigurableMekViewPanel extends JPanel {
 
     private final JComboBox<String> fontChooser;
     private final JButton copyHtmlButton = new JButton(Messages.getString("CMVPanel.copyHTML"));
     private final JButton copyTextButton = new JButton(Messages.getString("CMVPanel.copyText"));
     private final JButton mulButton = new JButton(Messages.getString("CMVPanel.MUL"));
-    private final MechViewPanel mechViewPanel = new MechViewPanel();
+    private final MekViewPanel mekViewPanel = new MekViewPanel();
     private int mulId;
     private Entity entity;
 
@@ -55,7 +61,7 @@ public class ConfigurableMechViewPanel extends JPanel {
      *
      * @param entity The Entity to display
      */
-    public ConfigurableMechViewPanel(@Nullable Entity entity) {
+    public ConfigurableMekViewPanel(@Nullable Entity entity) {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         fontChooser = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
@@ -81,12 +87,12 @@ public class ConfigurableMechViewPanel extends JPanel {
         chooserLine.add(mulButton);
 
         add(chooserLine);
-        add(mechViewPanel);
+        add(mekViewPanel);
         setEntity(entity);
     }
 
     /** Construct a new panel without a unit to display. */
-    public ConfigurableMechViewPanel() {
+    public ConfigurableMekViewPanel() {
         this(null);
     }
 
@@ -102,9 +108,9 @@ public class ConfigurableMechViewPanel extends JPanel {
         copyTextButton.setEnabled(entity != null);
         copyHtmlButton.setEnabled(entity != null);
         if (entity != null) {
-            mechViewPanel.setMech(entity, GUIPreferences.getInstance().getSummaryFont());
+            mekViewPanel.setMek(entity, GUIPreferences.getInstance().getSummaryFont());
         } else {
-            mechViewPanel.reset();
+            mekViewPanel.reset();
         }
     }
 
@@ -113,23 +119,23 @@ public class ConfigurableMechViewPanel extends JPanel {
         if (entity != null) {
             String selectedItem = (String) fontChooser.getSelectedItem();
             if ((selectedItem == null) || selectedItem.isBlank()) {
-                mechViewPanel.setMech(entity, MMConstants.FONT_SANS_SERIF);
+                mekViewPanel.setMek(entity, MMConstants.FONT_SANS_SERIF);
                 GUIPreferences.getInstance().setSummaryFont("");
             } else {
-                mechViewPanel.setMech(entity, selectedItem);
+                mekViewPanel.setMek(entity, selectedItem);
                 GUIPreferences.getInstance().setSummaryFont(selectedItem);
             }
         }
     }
 
     public void reset() {
-        mechViewPanel.reset();
+        mekViewPanel.reset();
     }
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            MechView mechView = new MechView(entity, false, false, formatting);
-            StringSelection stringSelection = new StringSelection(mechView.getMechReadout());
+            MekView mekView = new MekView(entity, false, false, formatting);
+            StringSelection stringSelection = new StringSelection(mekView.getMekReadout());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
         }

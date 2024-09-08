@@ -15,6 +15,14 @@
  */
 package megamek.common;
 
+import static java.util.stream.Collectors.toList;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -25,7 +33,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.event.*;
-import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -35,13 +42,6 @@ import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -1959,7 +1959,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param playerId the player's Id
      * @return number of 'Meks <code>playerId</code> has not selected yet this turn
      */
-    public int getMechsLeft(int playerId) {
+    public int getMeksLeft(int playerId) {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
@@ -2002,7 +2002,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         if (turnVector.isEmpty()) {
             return;
         }
-        // If the game option "move multiple infantry per mech" is selected,
+        // If the game option "move multiple infantry per mek" is selected,
         // then we might not need to remove a turn at all.
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
@@ -2041,8 +2041,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                         if (nextTurn instanceof EntityClassTurn) {
                             EntityClassTurn ect =
                                     (EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(EntityClassTurn.CLASS_PROTOMECH)
-                                    && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMECH)) {
+                            if (ect.isValidClass(EntityClassTurn.CLASS_PROTOMEK)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMEK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2079,18 +2079,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // Same thing but for meks
         if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
                 && (entity instanceof Mek) && getPhase().isMovement()) {
-            if ((getMechsLeft(entity.getOwnerId()) % getOptions()
+            if ((getMeksLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
-                // exception, if the _next_ turn is a mech turn, remove that
-                // contrived, but may come up e.g. one mech accidentally kills another
+                // exception, if the _next_ turn is a mek turn, remove that
+                // contrived, but may come up e.g. one mek accidentally kills another
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                         if (nextTurn instanceof EntityClassTurn) {
                             EntityClassTurn ect =
                                     (EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(EntityClassTurn.CLASS_MECH)
-                                    && !ect.isValidClass(~EntityClassTurn.CLASS_MECH)) {
+                            if (ect.isValidClass(EntityClassTurn.CLASS_MEK)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_MEK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2795,12 +2795,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Returns true if the player has any valid units this turn that are not
-     * infantry, not protomechs, or not either of those. This method is
+     * infantry, not protomeks, or not either of those. This method is
      * utitilized by the "A players Infantry moves after that players other
-     * units", and "A players Protomechs move after that players other units"
+     * units", and "A players Protomeks move after that players other units"
      * options.
      */
-    public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
+    public boolean checkForValidNonInfantryAndOrProtoMeks(int playerId) {
         Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
                 .iterator();
         while (iter.hasNext()) {

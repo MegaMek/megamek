@@ -33,7 +33,7 @@ public class CLFussilade extends CLIATMWeapon {
         addLookupName("Fussilade");
         flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
                 .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT)
-                .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON)
+                .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON)
                 .andNot(F_TANK_WEAPON);
         rackSize = 3;
         minimumRange = 4;

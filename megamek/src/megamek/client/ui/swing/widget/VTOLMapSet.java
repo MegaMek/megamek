@@ -14,6 +14,15 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -24,16 +33,12 @@ import megamek.common.SupportVTOL;
 import megamek.common.VTOL;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
  * Class which keeps set of all areas required to represent VTOL unit in
- * MechDisplay.ArmorPanel class.
+ * MekDisplay.ArmorPanel class.
  */
 public class VTOLMapSet implements DisplayMapSet {
-    
+
     public static final int LABEL_NONE          = 0;
     public static final int LABEL_CHIN_TU_ARMOR = 1;
     public static final int LABEL_FRONT_ARMOR   = 2;
@@ -57,7 +62,7 @@ public class VTOLMapSet implements DisplayMapSet {
     public static final int LABEL_BAR_RATING    = 18;
 
     UnitDisplay unitDisplay;
-    
+
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
     private PMSimpleLabel[] labels = new PMSimpleLabel[25];
@@ -115,9 +120,9 @@ public class VTOLMapSet implements DisplayMapSet {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorSmallFontSize());
+            GUIP.getUnitDisplayMekArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorLargeFontSize());
+            GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     public VTOLMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -148,14 +153,14 @@ public class VTOLMapSet implements DisplayMapSet {
         int armor = 1;
         int originalArmor = 1;
         int location = 0;
-        
+
         // Cycle through the labels
         for (int i = LABEL_NONE+1; i < LABEL_LOC_NUMBER; i++) {
             // Only draw Chin Turret if it is present
             if ((i == LABEL_CHIN_TU_ARMOR || i == LABEL_CHIN_TU_IS) && vtol.hasNoTurret()) {
                 continue;
             }
-            
+
             switch (i) {
                 case LABEL_CHIN_TU_ARMOR:
                 case LABEL_CHIN_TU_IS:
@@ -248,7 +253,7 @@ public class VTOLMapSet implements DisplayMapSet {
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
         int mod = 1;
-        
+
         // Labels for Front view
         labels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.chinTurretArmor"),
                 fm, Color.black, 68, -37);

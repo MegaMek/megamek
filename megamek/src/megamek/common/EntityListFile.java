@@ -104,7 +104,7 @@ public class EntityListFile {
                 output.append("\" " + MULParser.ATTR_IS_REAR + "=\"true");
             }
 
-            if (mount.isMechTurretMounted()) {
+            if (mount.isMekTurretMounted()) {
                 output.append("\" " + MULParser.ATTR_IS_TURRETED + "=\"true");
             }
 

@@ -18,6 +18,27 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
@@ -32,15 +53,6 @@ import megamek.common.force.Force;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import java.awt.*;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class provides static helper functions for the Lobby aka ChatLounge.
@@ -486,7 +498,7 @@ public class LobbyUtility {
             } catch (NumberFormatException e){
             }
 
-            MechSummary ms = null;
+            MekSummary ms = null;
 
             if (utm instanceof RandomArmyDialog.UnitTableModel) {
                 ms = ((RandomArmyDialog.UnitTableModel) utm).getUnitAt(id);
@@ -498,7 +510,7 @@ public class LobbyUtility {
 
             if (ms != null) {
                 try {
-                    Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    Entity e = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     e.setId(id);
                     result.add(e);
                 } catch (EntityLoadingException ex) {
@@ -530,7 +542,7 @@ public class LobbyUtility {
      * Shows the unit summaries for the given units, but not for hidden units (blind drop)
      * and not for more than 10 units at a time (because that's likely a misclick).
      */
-    public static void mechReadoutAction(Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+    public static void mekReadoutAction(Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(frame);
         } else if (!canSeeAll) {
@@ -539,7 +551,7 @@ public class LobbyUtility {
             int index = 0;
 
             for (Entity entity : entities) {
-                mechReadout(entity, index++, modal, frame);
+                mekReadout(entity, index++, modal, frame);
             }
         }
     }
@@ -548,7 +560,7 @@ public class LobbyUtility {
      * Shows the unit summary for the given unit. Moves the dialog a bit depending on index
      * so that multiple dialogs dont appear exactly on top of each other.
      */
-    public static void mechReadout(Entity entity, int index, boolean modal, JFrame frame) {
+    public static void mekReadout(Entity entity, int index, boolean modal, JFrame frame) {
         final EntityReadoutDialog dialog = new EntityReadoutDialog(frame, entity);
         dialog.setModal(modal);
         dialog.setVisible(true);
@@ -561,7 +573,7 @@ public class LobbyUtility {
      *
      * @param entities The units to the bv report for
      */
-    public static void mechBVAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+    public static void mekBVAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(frame);
         } else if (!canSeeAll) {
@@ -579,7 +591,7 @@ public class LobbyUtility {
      *
      * @param entities The units to the cost report for
      */
-    public static void mechCostAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+    public static void mekCostAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(frame);
         } else if (!canSeeAll) {

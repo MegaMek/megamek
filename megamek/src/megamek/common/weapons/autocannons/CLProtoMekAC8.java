@@ -19,37 +19,37 @@ import megamek.common.SimpleTechLevel;
  * @author Jason Tighe
  * @since Oct 2, 2004
  */
-public class CLProtoMechAC4 extends ProtoMechACWeapon {
+public class CLProtoMekAC8 extends ProtoMekACWeapon {
     private static final long serialVersionUID = 4371171653960292873L;
 
-    public CLProtoMechAC4() {
+    public CLProtoMekAC8() {
         super();
 
-        name = "ProtoMech AC/4";
-        setInternalName("CLProtoMechAC4");
-        addLookupName("Clan ProtoMech AC/4");
-        heat = 1;
-        damage = 4;
-        rackSize = 4;
+        name = "ProtoMech AC/8";
+        setInternalName("CLProtoMechAC8");
+        addLookupName("Clan ProtoMech AC/8");
+        heat = 2;
+        damage = 8;
+        rackSize = 8;
         minimumRange = 0;
-        shortRange = 5;
-        mediumRange = 10;
-        longRange = 15;
-        extremeRange = 20;
-        tonnage = 4.5;
-        criticals = 3;
-        bv = 49;
-        cost = 133000;
-        shortAV = 4;
-        medAV = 4;
-        longAV = 4;
-        maxRange = RANGE_MED;
+        shortRange = 3;
+        mediumRange = 7;
+        longRange = 10;
+        extremeRange = 14;
+        tonnage = 5.5;
+        criticals = 4;
+        bv = 66;
+        cost = 175000;
+        shortAV = 8;
+        medAV = 8;
+        longAV = 8;
+        maxRange = RANGE_SHORT;
         explosionDamage = damage;
         rulesRefs = "286, TO";
-        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setClanAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(DATE_NONE, 3070, 3073, DATE_NONE,DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
                 .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

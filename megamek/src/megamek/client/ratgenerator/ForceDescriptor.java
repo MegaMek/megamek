@@ -14,13 +14,21 @@
 */
 package megamek.client.ratgenerator;
 
-import megamek.client.ratgenerator.Ruleset.ProgressListener;
-import megamek.common.*;
-import megamek.common.loaders.EntityLoadingException;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.ratgenerator.Ruleset.ProgressListener;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.UnitType;
+import megamek.common.loaders.EntityLoadingException;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.
@@ -343,13 +351,13 @@ public class ForceDescriptor {
         }
         // Check for amount of C3 equipment generated and if certain thresholds are met regenerate the unit
         // with a valid network.
-        List<MechSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
+        List<MekSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
         if (networkMask == ModelRecord.NETWORK_NONE) {
             int c3m = 0;
             int c3s = 0;
             int c3i = 0;
             int nova = 0;
-            for (MechSummary ms : unitList) {
+            for (MekSummary ms : unitList) {
                 ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
                 int mask = mRec == null? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
 
@@ -387,7 +395,7 @@ public class ForceDescriptor {
                 }
             }
             if (networkMask != ModelRecord.NETWORK_NONE) {
-                List<MechSummary> netList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
+                List<MekSummary> netList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
                 // Attempt to create the type of network indicated. If no unit can be created that fits the
                 // criteria, fall back on the unit that was originally generated.
                 if (!netList.isEmpty()) {
@@ -657,7 +665,7 @@ public class ForceDescriptor {
                         }
                     } else if (ut == UnitType.TANK && Compute.d6(2) >= target - 6) {
                         if (useWeights) {
-                            switch (baseModel.getMechSummary().getUnitSubType()) {
+                            switch (baseModel.getMekSummary().getUnitSubType()) {
                                 case "Hover":
                                     if (weights.contains(EntityWeightClass.WEIGHT_HEAVY)) {
                                         break;
@@ -782,7 +790,7 @@ public class ForceDescriptor {
                 UnitTable table = UnitTable.findTable(fd.getFactionRec(), fd.getUnitType(),
                         fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,
                         fd.getMovementModes(), fd.getRoles(), roleStrictness);
-                MechSummary ms = null;
+                MekSummary ms = null;
                 if (!fd.getModels().isEmpty()) {
                     ms = table.generateUnit(u -> fd.getModels().contains(u.getName()));
                 } else if (!fd.getChassis().isEmpty()) {
@@ -814,10 +822,10 @@ public class ForceDescriptor {
 
     public void loadEntities(Ruleset.ProgressListener l, double progress) {
         if (element) {
-            MechSummary ms = MechSummaryCache.getInstance().getMech(getModelName());
+            MekSummary ms = MekSummaryCache.getInstance().getMek(getModelName());
             if (ms != null) {
                 try {
-                    entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     entity.setCrew(getCo().createCrew(entity.defaultCrewType()));
                     entity.setExternalIdAsString(UUID.randomUUID().toString());
                     String forceString = getForceString();
@@ -1106,7 +1114,7 @@ public class ForceDescriptor {
             return null;
         }
         TransportCalculator tp = new TransportCalculator(this);
-        List<MechSummary> dropships = tp.calcDropships(getDropshipPct());
+        List<MekSummary> dropships = tp.calcDropships(getDropshipPct());
         ForceDescriptor transports = createChild(subforces.size() + attached.size());
         transports.setUnitType(null);
         transports.setName("Transport");
@@ -1114,9 +1122,9 @@ public class ForceDescriptor {
         transports.setEschelon(3);
         transports.setCoRank(35);
 
-        List<MechSummary> shipList = tp.calcJumpships(getJumpshipPct(), dropships.size());
+        List<MekSummary> shipList = tp.calcJumpShips(getJumpshipPct(), dropships.size());
         shipList.addAll(dropships);
-        for (MechSummary ms : shipList) {
+        for (MekSummary ms : shipList) {
             ForceDescriptor sub = transports.createChild(transports.getSubforces().size());
             sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
             sub.setEschelon(1);

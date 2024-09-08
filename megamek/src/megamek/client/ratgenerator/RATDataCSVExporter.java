@@ -18,12 +18,6 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.client.ui.Messages;
-import megamek.common.UnitType;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +27,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.ui.Messages;
+import megamek.common.UnitType;
 
 /**
  * This class provides export for MM's RAT data to an excel-optimized CSV file for exchanging data with the MUL team.
@@ -140,9 +142,9 @@ public class RATDataCSVExporter {
         csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
         csvLine.append("Model Data").append(DELIMITER);
-        csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
+        csvLine.append(record.getMekSummary().getMulId()).append(DELIMITER);
         csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
-        csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
+        csvLine.append(record.getMekSummary().getYear()).append(DELIMITER);
         csvLine.append("TBD").append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);
     }

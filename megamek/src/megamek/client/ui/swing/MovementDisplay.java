@@ -45,7 +45,7 @@ import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.AirmechRamAttackAction;
+import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
@@ -69,23 +69,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     // Defines for the different flags
     public static final int CMD_NONE = 0;
-    public static final int CMD_MECH = 1;
+    public static final int CMD_MEK = 1;
     public static final int CMD_TANK = 1 << 1;
     public static final int CMD_VTOL = 1 << 2;
     public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
     public static final int CMD_CONVERTER = 1 << 6;
-    public static final int CMD_AIRMECH = 1 << 7;
+    public static final int CMD_AIRMEK = 1 << 7;
     // Command used only in menus and has no associated button
     public static final int CMD_NO_BUTTON = 1 << 8;
-    public static final int CMD_PROTOMECH = 1 << 9;
+    public static final int CMD_PROTOMEK = 1 << 9;
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
-    public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_PROTOMECH;
-    public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_PROTOMECH;
-    public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMECH;
-    public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMECH;
+    public static final int CMD_GROUND = CMD_MEK | CMD_TANK | CMD_VTOL | CMD_INF | CMD_PROTOMEK;
+    public static final int CMD_NON_VECTORED = CMD_MEK | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_PROTOMEK;
+    public static final int CMD_ALL = CMD_MEK | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMEK;
+    public static final int CMD_NON_INF = CMD_MEK | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMEK;
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
@@ -101,17 +101,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_NEXT("moveNext", CMD_NONE),
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO),
         MOVE_WALK("moveWalk", CMD_GROUND),
-        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF | CMD_PROTOMECH),
-        MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL),
-        MOVE_GET_UP("moveGetUp", CMD_MECH),
+        MOVE_JUMP("moveJump", CMD_MEK | CMD_TANK | CMD_INF | CMD_PROTOMEK),
+        MOVE_BACK_UP("moveBackUp", CMD_MEK | CMD_TANK | CMD_VTOL),
+        MOVE_GET_UP("moveGetUp", CMD_MEK),
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL),
-        MOVE_CHARGE("moveCharge", CMD_MECH | CMD_TANK),
-        MOVE_DFA("moveDFA", CMD_MECH),
-        MOVE_GO_PRONE("moveGoProne", CMD_MECH),
+        MOVE_CHARGE("moveCharge", CMD_MEK | CMD_TANK),
+        MOVE_DFA("moveDFA", CMD_MEK),
+        MOVE_GO_PRONE("moveGoProne", CMD_MEK),
         MOVE_FLEE("moveFlee", CMD_ALL),
         MOVE_EJECT("moveEject", CMD_ALL),
-        MOVE_LOAD("moveLoad", CMD_MECH | CMD_TANK | CMD_VTOL),
-        MOVE_UNLOAD("moveUnload", CMD_MECH | CMD_TANK | CMD_VTOL),
+        MOVE_LOAD("moveLoad", CMD_MEK | CMD_TANK | CMD_VTOL),
+        MOVE_UNLOAD("moveUnload", CMD_MEK | CMD_TANK | CMD_VTOL),
         MOVE_MOUNT("moveMount", CMD_GROUND),
         MOVE_TOW("moveTow", CMD_TANK),
         MOVE_DISCONNECT("moveDisconnect", CMD_TANK),
@@ -122,11 +122,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_LOWER_ELEVATION("moveLowerElevation", CMD_NON_VECTORED),
         MOVE_SEARCHLIGHT("moveSearchlight", CMD_GROUND),
         MOVE_LAY_MINE("moveLayMine", CMD_TANK | CMD_INF),
-        MOVE_HULL_DOWN("moveHullDown", CMD_MECH | CMD_TANK),
-        MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF),
-        MOVE_SWIM("moveSwim", CMD_MECH),
+        MOVE_HULL_DOWN("moveHullDown", CMD_MEK | CMD_TANK),
+        MOVE_CLIMB_MODE("moveClimbMode", CMD_MEK | CMD_TANK | CMD_INF),
+        MOVE_SWIM("moveSwim", CMD_MEK),
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL),
-        MOVE_BRACE("moveBrace", CMD_MECH),
+        MOVE_BRACE("moveBrace", CMD_MEK),
         MOVE_CHAFF("moveChaff", CMD_NON_INF),
         // Convert command for a single button, which can cycle through modes because MovePath state is available
         MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER),
@@ -134,9 +134,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_MODE_LEG("moveModeLeg", CMD_NO_BUTTON),
         MOVE_MODE_VEE("moveModeVee", CMD_NO_BUTTON),
         MOVE_MODE_AIR("moveModeAir", CMD_NO_BUTTON),
-        MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL),
+        MOVE_RECKLESS("moveReckless", CMD_MEK | CMD_TANK | CMD_VTOL),
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE),
-        MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL),
+        MOVE_EVADE("MoveEvade", CMD_MEK | CMD_TANK | CMD_VTOL),
         MOVE_BOOTLEGGER("moveBootlegger", CMD_TANK | CMD_VTOL),
         MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF),
         MOVE_STARTUP("moveStartup", CMD_NON_INF),
@@ -148,7 +148,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_CALL_SUPPORT("moveCallSuport", CMD_INF),
         // VTOL attacks, declared in the movement phase
         MOVE_STRAFE("moveStrafe", CMD_VTOL),
-        MOVE_BOMB("moveBomb", CMD_VTOL | CMD_AIRMECH),
+        MOVE_BOMB("moveBomb", CMD_VTOL | CMD_AIRMEK),
         // Aero Movement
         MOVE_ACC("MoveAccelerate", CMD_AERO),
         MOVE_DEC("MoveDecelerate", CMD_AERO),
@@ -161,8 +161,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_RECOVER("MoveRecover", CMD_AERO_BOTH),
         MOVE_DROP("MoveDrop", CMD_AERO_BOTH),
         MOVE_DUMP("MoveDump", CMD_AERO_BOTH),
-        MOVE_RAM("MoveRam", CMD_AERO_BOTH | CMD_AIRMECH),
-        MOVE_HOVER("MoveHover", CMD_AERO | CMD_AIRMECH),
+        MOVE_RAM("MoveRam", CMD_AERO_BOTH | CMD_AIRMEK),
+        MOVE_HOVER("MoveHover", CMD_AERO | CMD_AIRMEK),
         MOVE_MANEUVER("MoveManeuver", CMD_AERO_BOTH),
         MOVE_JOIN("MoveJoin", CMD_AERO_BOTH),
         MOVE_FLY_OFF("MoveOff", CMD_AERO_BOTH),
@@ -182,8 +182,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_LONGEST_WALK("MoveLongestWalk", CMD_NONE),
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE),
-        MOVE_PICKUP_CARGO("movePickupCargo", CMD_MECH | CMD_PROTOMECH),
-        MOVE_DROP_CARGO("moveDropCargo", CMD_MECH | CMD_PROTOMECH),
+        MOVE_PICKUP_CARGO("movePickupCargo", CMD_MEK | CMD_PROTOMEK),
+        MOVE_DROP_CARGO("moveDropCargo", CMD_MEK | CMD_PROTOMEK),
         MOVE_MORE("MoveMore", CMD_NONE);
 
         /**
@@ -317,7 +317,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     // let's keep track of what we're moving, too
     private MovePath cmd; // considering movement data
 
-    // what "gear" is our mech in?
+    // what "gear" is our mek in?
     private int gear;
 
     // is the shift key held?
@@ -534,7 +534,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     @Override
     protected ArrayList<MegaMekButton> getButtonList() {
         final Entity ce = ce();
-        int flag = CMD_MECH;
+        int flag = CMD_MEK;
         if (ce != null) {
             if (ce instanceof Infantry) {
                 flag = CMD_INF;
@@ -554,23 +554,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     flag |= CMD_CONVERTER;
                 }
             } else if (ce instanceof QuadVee) {
-                if (ce.getConversionMode() == QuadVee.CONV_MODE_MECH) {
-                    flag = CMD_MECH | CMD_CONVERTER;
+                if (ce.getConversionMode() == QuadVee.CONV_MODE_MEK) {
+                    flag = CMD_MEK | CMD_CONVERTER;
                 } else {
                     flag = CMD_TANK | CMD_CONVERTER;
                 }
             } else if (ce instanceof LandAirMek) {
-                if (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH) {
-                    flag = CMD_TANK | CMD_CONVERTER | CMD_AIRMECH;
+                if (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK) {
+                    flag = CMD_TANK | CMD_CONVERTER | CMD_AIRMEK;
                 } else {
-                    flag = CMD_MECH | CMD_CONVERTER;
+                    flag = CMD_MEK | CMD_CONVERTER;
                 }
             } else if ((ce instanceof Mek) && ((Mek) ce).hasTracks()) {
-                flag = CMD_MECH | CMD_CONVERTER;
+                flag = CMD_MEK | CMD_CONVERTER;
             } else if ((ce instanceof ProtoMek) && ce.getMovementMode().isWiGE()) {
-                flag = CMD_PROTOMECH | CMD_MECH | CMD_AIRMECH;
+                flag = CMD_PROTOMEK | CMD_MEK | CMD_AIRMEK;
             } else if (ce instanceof ProtoMek) {
-            	flag = CMD_PROTOMECH;
+            	flag = CMD_PROTOMEK;
             }
         }
         return getButtonList(flag);
@@ -734,7 +734,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LogManager.getLogger().error("Cannot update buttons based on a null entity");
             return;
         }
-        boolean isMech = (ce instanceof Mek);
+        boolean isMEK = (ce instanceof Mek);
         boolean isInfantry = (ce instanceof Infantry);
         boolean isTank = (ce instanceof Tank);
         boolean isAero = ce.isAero();
@@ -866,7 +866,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             setEjectEnabled(hasLegalHex);
         } else {
-            setEjectEnabled(((isMech && (((Mek) ce).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)) || isAero)
+            setEjectEnabled(((isMEK && (((Mek) ce).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)) || isAero)
                     && ce.isActive()
                     && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
@@ -1969,7 +1969,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // check if it's a valid charge
                 ToHitData toHit = null;
                 if (ce.isAirborneVTOLorWIGE()) {
-                    toHit = new AirmechRamAttackAction(currentEntity,
+                    toHit = new AirMekRamAttackAction(currentEntity,
                             target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 } else {
@@ -1983,8 +1983,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     int toDefender = 0;
                     int toAttacker = 0;
                     if (ce.isAirborneVTOLorWIGE()) {
-                        toAttacker = AirmechRamAttackAction.getDamageTakenBy(ce, target, cmd.getHexesMoved());
-                        toDefender = AirmechRamAttackAction.getDamageFor(ce, cmd.getHexesMoved());
+                        toAttacker = AirMekRamAttackAction.getDamageTakenBy(ce, target, cmd.getHexesMoved());
+                        toDefender = AirMekRamAttackAction.getDamageFor(ce, cmd.getHexesMoved());
                     } else {
                         toDefender = ChargeAttackAction.getDamageFor(
                                 ce, clientgui.getClient().getGame().getOptions()
@@ -2148,24 +2148,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        boolean isMech = ce instanceof Mek;
+        boolean isMek = ce instanceof Mek;
 
         if (cmd.getFinalProne()) {
             setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
             setGoProneEnabled(false);
             setHullDownEnabled(true);
         } else if (cmd.getFinalHullDown()) {
-            if (isMech) {
+            if (isMek) {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck()
                         && !((Mek) ce).cannotStandUpFromHullDown());
             } else {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
             }
-            setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
+            setGoProneEnabled(!ce.isImmobile() && isMek && !ce.isStuck());
             setHullDownEnabled(false);
         } else {
             setGetUpEnabled(false);
-            setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
+            setGoProneEnabled(!ce.isImmobile() && isMek && !ce.isStuck()
                     && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
             if (!(ce instanceof Tank) && !(ce instanceof QuadVee
                     && ce.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
@@ -2234,7 +2234,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd.getFinalCoords()));
             return;
         }
-        // WiGEs (and LAMs and glider protomechs) cannot go up if they've used ground movement.
+        // WiGEs (and LAMs and glider protomeks) cannot go up if they've used ground movement.
         if (ce.getMovementMode().isWiGE() && !ce.isAirborneVTOLorWIGE() && (cmd.getMpUsed() > 0)
                 && !cmd.contains(MoveStepType.UP)) {
             setRaiseEnabled(false);
@@ -2340,7 +2340,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
         } else if (!(ce instanceof ProtoMek) && !(ce instanceof LandAirMek
-                && (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH))
+                && (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK))
                 && (ce.getAltitude() <= 3)) {
             return;
         }
@@ -3097,9 +3097,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 bayChoices = new ArrayList<>();
                 for (Transporter t : ce().getTransports()) {
-                    if ((t instanceof ProtomechClampMount)
+                    if ((t instanceof ProtoMekClampMount)
                             && t.canLoad(choice)) {
-                        bayChoices.add(((ProtomechClampMount) t).isRear() ? 1 : 0);
+                        bayChoices.add(((ProtoMekClampMount) t).isRear() ? 1 : 0);
                     }
                 }
                 if (bayChoices.size() > 1) {

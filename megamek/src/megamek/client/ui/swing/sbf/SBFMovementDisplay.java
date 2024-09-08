@@ -35,7 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.SBFClientGUI;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.BTObject;
 import megamek.common.BoardLocation;
 import megamek.common.Coords;
@@ -93,7 +93,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         }
     }
 
-    private final Map<MoveCommand, MegamekButton> buttons = new HashMap<>();
+    private final Map<MoveCommand, MegaMekButton> buttons = new HashMap<>();
 
     private SBFMovePath plannedMovement;
 
@@ -143,7 +143,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     @Override
-    protected List<MegamekButton> getButtonList() {
+    protected List<MegaMekButton> getButtonList() {
         return new ArrayList<>(buttons.values());
     }
 

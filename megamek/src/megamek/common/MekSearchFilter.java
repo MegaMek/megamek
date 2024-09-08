@@ -86,12 +86,12 @@ public class MekSearchFilter {
     public String sEndSmallCraftDoors;
     public String sStartSmallCraftUnits;
     public String sEndSmallCraftUnits;
-    public String sStartMechBays;
-    public String sEndMechBays;
-    public String sStartMechDoors;
-    public String sEndMechDoors;
-    public String sStartMechUnits;
-    public String sEndMechUnits;
+    public String sStartMekBays;
+    public String sEndMekBays;
+    public String sStartMekDoors;
+    public String sEndMekDoors;
+    public String sStartMekUnits;
+    public String sEndMekUnits;
     public String sStartHeavyVehicleBays;
     public String sEndHeavyVehicleBays;
     public String sStartHeavyVehicleDoors;
@@ -104,12 +104,12 @@ public class MekSearchFilter {
     public String sEndLightVehicleDoors;
     public String sStartLightVehicleUnits;
     public String sEndLightVehicleUnits;
-    public String sStartProtomechBays;
-    public String sEndProtomechBays;
-    public String sStartProtomechDoors;
-    public String sEndProtomechDoors;
-    public String sStartProtomechUnits;
-    public String sEndProtomechUnits;
+    public String sStartProtomekBays;
+    public String sEndProtomekBays;
+    public String sStartProtomekDoors;
+    public String sEndProtomekDoors;
+    public String sStartProtomekUnits;
+    public String sEndProtomekUnits;
     public String sStartBattleArmorBays;
     public String sEndBattleArmorBays;
     public String sStartBattleArmorDoors;
@@ -175,9 +175,9 @@ public class MekSearchFilter {
     public List<String> weaponQuirkType = new ArrayList<>();
     public List<String> weaponQuirkTypeExclude = new ArrayList<>();
     public boolean checkEquipment;
-    public int filterMech;
-    public int filterBipedMech;
-    public int filterProtomech;
+    public int filterMek;
+    public int filterBipedMek;
+    public int filterProtomek;
     public int filterLAM;
     public int filterTripod;
     public int filterQuad;
@@ -214,7 +214,7 @@ public class MekSearchFilter {
      * Deep copy constructor. New instantiations of all state variables are
      * created.
      *
-     * @param sf The <code>MechSearchFilter</code> to create a copy of.
+     * @param sf The <code>MekSearchFilter</code> to create a copy of.
      */
     public MekSearchFilter(MekSearchFilter sf) {
         if (sf != null) {
@@ -350,27 +350,27 @@ public class MekSearchFilter {
         return equipmentCriteria.toString();
     }
 
-    public static boolean isTechMatch(MekSummary mech, int nTechType) {
+    public static boolean isTechMatch(MekSummary mek, int nTechType) {
         return ((nTechType == TechConstants.T_ALL)
-                || (nTechType == mech.getType())
+                || (nTechType == mek.getType())
                 || ((nTechType == TechConstants.T_IS_TW_ALL)
-                && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
+                && ((mek.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                || (mek.getType() == TechConstants.T_INTRO_BOXSET)))
                 || ((nTechType == TechConstants.T_TW_ALL)
-                && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                || (mech.getType() <= TechConstants.T_INTRO_BOXSET)
-                || (mech.getType() <= TechConstants.T_CLAN_TW)))
+                && ((mek.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                || (mek.getType() <= TechConstants.T_INTRO_BOXSET)
+                || (mek.getType() <= TechConstants.T_CLAN_TW)))
                 || ((nTechType == TechConstants.T_ALL_IS)
-                && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                || (mech.getType() == TechConstants.T_INTRO_BOXSET)
-                || (mech.getType() == TechConstants.T_IS_ADVANCED)
-                || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL)
-                || (mech.getType() == TechConstants.T_IS_UNOFFICIAL)))
+                && ((mek.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                || (mek.getType() == TechConstants.T_INTRO_BOXSET)
+                || (mek.getType() == TechConstants.T_IS_ADVANCED)
+                || (mek.getType() == TechConstants.T_IS_EXPERIMENTAL)
+                || (mek.getType() == TechConstants.T_IS_UNOFFICIAL)))
                 || ((nTechType == TechConstants.T_ALL_CLAN)
-                && ((mech.getType() == TechConstants.T_CLAN_TW)
-                || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
-                || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
-                || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))));
+                && ((mek.getType() == TechConstants.T_CLAN_TW)
+                || (mek.getType() == TechConstants.T_CLAN_ADVANCED)
+                || (mek.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
+                || (mek.getType() == TechConstants.T_CLAN_UNOFFICIAL))));
 
     }
 
@@ -417,7 +417,7 @@ public class MekSearchFilter {
         return list.stream().anyMatch(search::contains);
     }
 
-    public static boolean isMatch(MekSummary mech, MekSearchFilter f) {
+    public static boolean isMatch(MekSummary mek, MekSearchFilter f) {
         if (f == null || f.isDisabled) {
             return true;
         }
@@ -425,8 +425,8 @@ public class MekSearchFilter {
         // Check armor criteria
         int sel = f.iArmor;
         if (sel > 0) {
-            int armor = mech.getTotalArmor();
-            int maxArmor = mech.getTotalInternal() * 2 + 3;
+            int armor = mek.getTotalArmor();
+            int maxArmor = mek.getTotalInternal() * 2 + 3;
             if (sel == 1) {
                 if (armor < (maxArmor * .25)) {
                     return false;
@@ -446,374 +446,374 @@ public class MekSearchFilter {
             }
         }
 
-        List<String> eqNames = mech.getEquipmentNames();
-        List<Integer> qty = mech.getEquipmentQuantities();
+        List<String> eqNames = mek.getEquipmentNames();
+        List<Integer> qty = mek.getEquipmentQuantities();
         //Evaluate the expression tree, if there's not a match, return false
         if (f.checkEquipment && !f.evaluate(eqNames, qty)) {
             return false;
         }
 
-        if ((!f.source.isEmpty()) && (!mech.getSource().contains(f.source))) {
+        if ((!f.source.isEmpty()) && (!mek.getSource().contains(f.source))) {
             return false;
         }
 
-        if ((!f.mulid.isEmpty()) && (mech.getMulId() != StringUtil.toInt(f.mulid, -2))) {
+        if ((!f.mulid.isEmpty()) && (mek.getMulId() != StringUtil.toInt(f.mulid, -2))) {
             return false;
         }
 
-        if (!isMatch(f.iInvalid, mech.getInvalid())) {
+        if (!isMatch(f.iInvalid, mek.getInvalid())) {
             return false;
         }
 
-        if (!isMatch(f.iFailedToLoadEquipment, mech.getFailedToLoadEquipment())) {
+        if (!isMatch(f.iFailedToLoadEquipment, mek.getFailedToLoadEquipment())) {
             return false;
         }
 
-        if (!isMatch(f.iOmni, mech.getOmni())) {
+        if (!isMatch(f.iOmni, mek.getOmni())) {
             return false;
         }
 
-        if (!isMatch(f.iMilitary, mech.getMilitary())) {
+        if (!isMatch(f.iMilitary, mek.getMilitary())) {
             return false;
         }
 
-        if (!isMatch(f.iIndustrial, mech.isIndustrialMek())) {
+        if (!isMatch(f.iIndustrial, mek.isIndustrialMek())) {
             return false;
         }
 
-        if (!isMatch(f.iMountedInfantry, mech.getMountedInfantry())) {
+        if (!isMatch(f.iMountedInfantry, mek.getMountedInfantry())) {
             return false;
         }
 
-        if (!isMatch(f.iWaterOnly, (mech.hasWaterMovement() && !mech.hasAirMovement() && !mech.hasGroundMovement()))) {
+        if (!isMatch(f.iWaterOnly, (mek.hasWaterMovement() && !mek.hasAirMovement() && !mek.hasGroundMovement()))) {
             return false;
         }
 
-        if (!isMatch(f.iDoomedOnGround, mech.isDoomedOnGround())) {
+        if (!isMatch(f.iDoomedOnGround, mek.isDoomedOnGround())) {
             return false;
         }
 
-        if (!isMatch(f.iDoomedInAtmosphere, mech.isDoomedInAtmosphere())) {
+        if (!isMatch(f.iDoomedInAtmosphere, mek.isDoomedInAtmosphere())) {
             return false;
         }
 
-        if (!isMatch(f.iDoomedInSpace, mech.isDoomedInSpace())) {
+        if (!isMatch(f.iDoomedInSpace, mek.isDoomedInSpace())) {
             return false;
         }
 
-        if (!isMatch(f.iDoomedInExtremeTemp, mech.isDoomedInExtremeTemp())) {
+        if (!isMatch(f.iDoomedInExtremeTemp, mek.isDoomedInExtremeTemp())) {
             return false;
         }
 
-        if (!isMatch(f.iDoomedInVacuum, mech.isDoomedInVacuum())) {
+        if (!isMatch(f.iDoomedInVacuum, mek.isDoomedInVacuum())) {
             return false;
         }
 
-        if (!isMatch(f.iSupportVehicle, mech.isSupportVehicle())) {
+        if (!isMatch(f.iSupportVehicle, mek.isSupportVehicle())) {
             return false;
         }
 
-        if (!isMatch(f.iOfficial, (mech.getMulId() != -1))) {
+        if (!isMatch(f.iOfficial, (mek.getMulId() != -1))) {
             return false;
         }
 
-        if (!isMatch(f.iCanon, mech.isCanon())) {
+        if (!isMatch(f.iCanon, mek.isCanon())) {
             return false;
         }
 
-        if (!isMatch(f.iPatchwork, mech.isPatchwork())) {
+        if (!isMatch(f.iPatchwork, mek.isPatchwork())) {
             return false;
         }
 
         String msg_clan = Messages.getString("Engine.Clan");
-        if (!isMatch(f.iClanEngine, mech.getEngineName().contains(msg_clan))) {
+        if (!isMatch(f.iClanEngine, mek.getEngineName().contains(msg_clan))) {
             return false;
         }
 
         //Check walk criteria
-        if (!isBetween(mech.getWalkMp(), f.sStartWalk, f.sEndWalk)) {
+        if (!isBetween(mek.getWalkMp(), f.sStartWalk, f.sEndWalk)) {
             return false;
         }
 
         // Check jump criteria
-        if (!isBetween(mech.getJumpMp(), f.sStartJump, f.sEndJump)) {
+        if (!isBetween(mek.getJumpMp(), f.sStartJump, f.sEndJump)) {
             return false;
         }
 
         // Check year criteria
-        if (!isBetween(mech.getYear(), f.sStartYear, f.sEndYear)) {
+        if (!isBetween(mek.getYear(), f.sStartYear, f.sEndYear)) {
             return false;
         }
 
         // Check Tonnage criteria
-        if (!isBetween((int) mech.getTons(), f.sStartTons, f.sEndTons)) {
+        if (!isBetween((int) mek.getTons(), f.sStartTons, f.sEndTons)) {
             return false;
         }
 
         // Check BV criteria
-        if (!isBetween(mech.getBV(), f.sStartBV, f.sEndBV)) {
+        if (!isBetween(mek.getBV(), f.sStartBV, f.sEndBV)) {
             return false;
         }
 
-        if (!isBetween(mech.getTankTurrets(), f.sStartTankTurrets, f.sEndTankTurrets)) {
+        if (!isBetween(mek.getTankTurrets(), f.sStartTankTurrets, f.sEndTankTurrets)) {
             return false;
         }
 
-        if (!isBetween(mech.getLowerArms(), f.sStartLowerArms, f.sEndLowerArms)) {
+        if (!isBetween(mek.getLowerArms(), f.sStartLowerArms, f.sEndLowerArms)) {
             return false;
         }
 
-        if (!isBetween(mech.getHands(), f.sStartHands, f.sEndHands)) {
+        if (!isBetween(mek.getHands(), f.sStartHands, f.sEndHands)) {
             return false;
         }
 
-        if (!isBetween(mech.getTroopCarryingSpace(), f.sStartTroopSpace, f.sEndTroopSpace)) {
+        if (!isBetween(mek.getTroopCarryingSpace(), f.sStartTroopSpace, f.sEndTroopSpace)) {
             return false;
         }
 
-        if (!isBetween(mech.getASFBays(), f.sStartASFBays, f.sEndASFBays)) {
+        if (!isBetween(mek.getASFBays(), f.sStartASFBays, f.sEndASFBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getASFDoors(), f.sStartASFDoors, f.sEndASFDoors)) {
+        if (!isBetween(mek.getASFDoors(), f.sStartASFDoors, f.sEndASFDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getASFUnits(), f.sStartASFUnits, f.sEndASFUnits)) {
+        if (!isBetween(mek.getASFUnits(), f.sStartASFUnits, f.sEndASFUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getSmallCraftBays(), f.sStartSmallCraftBays, f.sEndSmallCraftBays)) {
+        if (!isBetween(mek.getSmallCraftBays(), f.sStartSmallCraftBays, f.sEndSmallCraftBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getSmallCraftDoors(), f.sStartSmallCraftDoors, f.sEndSmallCraftDoors)) {
+        if (!isBetween(mek.getSmallCraftDoors(), f.sStartSmallCraftDoors, f.sEndSmallCraftDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getSmallCraftUnits(), f.sStartSmallCraftUnits, f.sEndSmallCraftUnits)) {
+        if (!isBetween(mek.getSmallCraftUnits(), f.sStartSmallCraftUnits, f.sEndSmallCraftUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getMechBays(), f.sStartMechBays, f.sEndMechBays)) {
+        if (!isBetween(mek.getMekBays(), f.sStartMekBays, f.sEndMekBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getMechDoors(), f.sStartMechDoors, f.sEndMechDoors)) {
+        if (!isBetween(mek.getMekDoors(), f.sStartMekDoors, f.sEndMekDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getMechUnits(), f.sStartMechUnits, f.sEndMechUnits)) {
+        if (!isBetween(mek.getMekUnits(), f.sStartMekUnits, f.sEndMekUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getHeavyVehicleBays(), f.sStartHeavyVehicleBays, f.sEndHeavyVehicleBays)) {
+        if (!isBetween(mek.getHeavyVehicleBays(), f.sStartHeavyVehicleBays, f.sEndHeavyVehicleBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getHeavyVehicleDoors(), f.sStartHeavyVehicleDoors, f.sEndHeavyVehicleDoors)) {
+        if (!isBetween(mek.getHeavyVehicleDoors(), f.sStartHeavyVehicleDoors, f.sEndHeavyVehicleDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getHeavyVehicleUnits(), f.sStartHeavyVehicleUnits, f.sEndHeavyVehicleUnits)) {
+        if (!isBetween(mek.getHeavyVehicleUnits(), f.sStartHeavyVehicleUnits, f.sEndHeavyVehicleUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getLightVehicleBays(), f.sStartLightVehicleBays, f.sEndLightVehicleBays)) {
+        if (!isBetween(mek.getLightVehicleBays(), f.sStartLightVehicleBays, f.sEndLightVehicleBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getLightVehicleDoors(), f.sStartLightVehicleDoors, f.sEndLightVehicleDoors)) {
+        if (!isBetween(mek.getLightVehicleDoors(), f.sStartLightVehicleDoors, f.sEndLightVehicleDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getLightVehicleUnits(), f.sStartLightVehicleUnits, f.sEndLightVehicleUnits)) {
+        if (!isBetween(mek.getLightVehicleUnits(), f.sStartLightVehicleUnits, f.sEndLightVehicleUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getProtoMecheBays(), f.sStartProtomechBays, f.sEndProtomechBays)) {
+        if (!isBetween(mek.getProtoMekBays(), f.sStartProtomekBays, f.sEndProtomekBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getProtoMechDoors(), f.sStartProtomechDoors, f.sEndProtomechDoors)) {
+        if (!isBetween(mek.getProtoMekDoors(), f.sStartProtomekDoors, f.sEndProtomekDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getProtoMechUnits(), f.sStartProtomechUnits, f.sEndProtomechUnits)) {
+        if (!isBetween(mek.getProtoMekUnits(), f.sStartProtomekUnits, f.sEndProtomekUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getBattleArmorBays(), f.sStartBattleArmorBays, f.sEndBattleArmorBays)) {
+        if (!isBetween(mek.getBattleArmorBays(), f.sStartBattleArmorBays, f.sEndBattleArmorBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getBattleArmorDoors(), f.sStartBattleArmorDoors, f.sEndBattleArmorDoors)) {
+        if (!isBetween(mek.getBattleArmorDoors(), f.sStartBattleArmorDoors, f.sEndBattleArmorDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getBattleArmorUnits(), f.sStartBattleArmorUnits, f.sEndBattleArmorUnits)) {
+        if (!isBetween(mek.getBattleArmorUnits(), f.sStartBattleArmorUnits, f.sEndBattleArmorUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getInfantryBays(), f.sStartInfantryBays, f.sEndInfantryBays)) {
+        if (!isBetween(mek.getInfantryBays(), f.sStartInfantryBays, f.sEndInfantryBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getInfantryDoors(), f.sStartInfantryDoors, f.sEndInfantryDoors)) {
+        if (!isBetween(mek.getInfantryDoors(), f.sStartInfantryDoors, f.sEndInfantryDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getInfantryUnits(), f.sStartInfantryUnits, f.sEndInfantryUnits)) {
+        if (!isBetween(mek.getInfantryUnits(), f.sStartInfantryUnits, f.sEndInfantryUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
+        if (!isBetween(mek.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
+        if (!isBetween(mek.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
+        if (!isBetween(mek.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getDropshuttleBays(), f.sStartDropshuttleBays, f.sEndDropshuttleBays)) {
+        if (!isBetween(mek.getDropshuttleBays(), f.sStartDropshuttleBays, f.sEndDropshuttleBays)) {
             return false;
         }
 
-        if (!isBetween(mech.getDropshuttleDoors(), f.sStartDropshuttleDoors, f.sEndDropshuttleDoors)) {
+        if (!isBetween(mek.getDropshuttleDoors(), f.sStartDropshuttleDoors, f.sEndDropshuttleDoors)) {
             return false;
         }
 
-        if (!isBetween(mech.getDropshuttelUnits(), f.sStartDropshuttleUnits, f.sEndDropshuttleUnits)) {
+        if (!isBetween(mek.getDropshuttelUnits(), f.sStartDropshuttleUnits, f.sEndDropshuttleUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getDockingCollars(), f.sStartDockingCollars, f.sEndDockingCollars)) {
+        if (!isBetween(mek.getDockingCollars(), f.sStartDockingCollars, f.sEndDockingCollars)) {
             return false;
         }
 
-        if (!isBetween(mech.getBattleArmorHandles(), f.sStartBattleArmorHandles, f.sEndBattleArmorHandles)) {
+        if (!isBetween(mek.getBattleArmorHandles(), f.sStartBattleArmorHandles, f.sEndBattleArmorHandles)) {
             return false;
         }
 
-        if (!isBetween(mech.getCargoBayUnits(), f.sStartCargoBayUnits, f.sEndCargoBayUnits)) {
+        if (!isBetween(mek.getCargoBayUnits(), f.sStartCargoBayUnits, f.sEndCargoBayUnits)) {
             return false;
         }
 
-        if (!isBetween(mech.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
+        if (!isBetween(mek.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
             return false;
         }
 
-        if ((!f.internalsType.isEmpty()) && (!f.internalsType.contains(mech.getInternalsType()))) {
+        if ((!f.internalsType.isEmpty()) && (!f.internalsType.contains(mek.getInternalsType()))) {
             return false;
         }
 
-        if (f.internalsTypeExclude.contains(mech.getInternalsType())) {
+        if (f.internalsTypeExclude.contains(mek.getInternalsType())) {
             return false;
         }
 
-        if ((!f.cockpitType.isEmpty()) && (!f.cockpitType.contains(mech.getCockpitType()))) {
+        if ((!f.cockpitType.isEmpty()) && (!f.cockpitType.contains(mek.getCockpitType()))) {
             return false;
         }
 
-        if (f.cockpitTypeExclude.contains(mech.getCockpitType())) {
+        if (f.cockpitTypeExclude.contains(mek.getCockpitType())) {
             return false;
         }
 
-        if ((!f.armorType.isEmpty()) && (!anyMatch(f.armorType, mech.getArmorType()))) {
+        if ((!f.armorType.isEmpty()) && (!anyMatch(f.armorType, mek.getArmorType()))) {
             return false;
         }
 
-        if ((!f.armorTypeExclude.isEmpty()) && (anyMatch(f.armorTypeExclude, mech.getArmorType()))) {
+        if ((!f.armorTypeExclude.isEmpty()) && (anyMatch(f.armorTypeExclude, mek.getArmorType()))) {
             return false;
         }
 
-        if ((!f.engineType.isEmpty()) && (!anyMatch(f.engineType, mech.getEngineType()))) {
+        if ((!f.engineType.isEmpty()) && (!anyMatch(f.engineType, mek.getEngineType()))) {
             return false;
         }
 
-        if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mech.getEngineType()))) {
+        if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mek.getEngineType()))) {
             return false;
         }
 
-        if ((!f.gyroType.isEmpty()) && (!anyMatch(f.gyroType, mech.getGyroType()))) {
+        if ((!f.gyroType.isEmpty()) && (!anyMatch(f.gyroType, mek.getGyroType()))) {
             return false;
         }
 
-        if ((!f.gyroTypeExclude.isEmpty()) && (anyMatch(f.gyroTypeExclude, mech.getGyroType()))) {
+        if ((!f.gyroTypeExclude.isEmpty()) && (anyMatch(f.gyroTypeExclude, mek.getGyroType()))) {
             return false;
         }
 
-        if ((!f.techLevel.isEmpty()) && (!anyMatch(f.techLevel, mech.getTechLevelCode()))) {
+        if ((!f.techLevel.isEmpty()) && (!anyMatch(f.techLevel, mek.getTechLevelCode()))) {
             return false;
         }
 
-        if ((!f.techLevelExclude.isEmpty()) && (anyMatch(f.techLevelExclude, mech.getTechLevelCode()))) {
+        if ((!f.techLevelExclude.isEmpty()) && (anyMatch(f.techLevelExclude, mek.getTechLevelCode()))) {
             return false;
         }
 
-        if ((!f.techBase.isEmpty()) && (!anyMatch(f.techBase, mech.getTechBase()))) {
+        if ((!f.techBase.isEmpty()) && (!anyMatch(f.techBase, mek.getTechBase()))) {
             return false;
         }
 
-        if ((!f.techBaseExclude.isEmpty()) && (anyMatch(f.techBaseExclude, mech.getTechBase()))) {
+        if ((!f.techBaseExclude.isEmpty()) && (anyMatch(f.techBaseExclude, mek.getTechBase()))) {
             return false;
         }
 
         if (f.quirkInclude == 0) {
-            if ((!f.quirkType.isEmpty()) && (!allMatch(f.quirkType, mech.getQuirkNames()))) {
+            if ((!f.quirkType.isEmpty()) && (!allMatch(f.quirkType, mek.getQuirkNames()))) {
                 return false;
             }
         } else {
-            if ((!f.quirkType.isEmpty()) && (!anyMatch(f.quirkType, mech.getQuirkNames()))) {
+            if ((!f.quirkType.isEmpty()) && (!anyMatch(f.quirkType, mek.getQuirkNames()))) {
                 return false;
             }
         }
 
         if (f.quirkExclude == 0) {
-            if ((!f.quirkTypeExclude.isEmpty()) && (allMatch(f.quirkTypeExclude, mech.getQuirkNames()))) {
+            if ((!f.quirkTypeExclude.isEmpty()) && (allMatch(f.quirkTypeExclude, mek.getQuirkNames()))) {
                 return false;
             }
         } else {
-            if ((!f.quirkTypeExclude.isEmpty()) && (anyMatch(f.quirkTypeExclude, mech.getQuirkNames()))) {
+            if ((!f.quirkTypeExclude.isEmpty()) && (anyMatch(f.quirkTypeExclude, mek.getQuirkNames()))) {
                 return false;
             }
         }
 
         if (f.weaponQuirkInclude == 0) {
-            if ((!f.weaponQuirkType.isEmpty()) && (!allMatch(f.weaponQuirkType, mech.getWeaponQuirkNames()))) {
+            if ((!f.weaponQuirkType.isEmpty()) && (!allMatch(f.weaponQuirkType, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         } else {
-            if ((!f.weaponQuirkType.isEmpty()) && (!anyMatch(f.weaponQuirkType, mech.getWeaponQuirkNames()))) {
+            if ((!f.weaponQuirkType.isEmpty()) && (!anyMatch(f.weaponQuirkType, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         }
 
         if (f.weaponQuirkInclude == 0) {
-            if ((!f.weaponQuirkTypeExclude.isEmpty()) && (allMatch(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames()))) {
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) && (allMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         } else {
-            if ((!f.weaponQuirkTypeExclude.isEmpty()) && (anyMatch(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames()))) {
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) && (anyMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         }
 
-        long entityType = mech.getEntityType();
+        long entityType = mek.getEntityType();
 
         long entityTypes = 0;
 
-        if (f.filterMech == 1) {
+        if (f.filterMek == 1) {
             entityTypes = entityTypes | Entity.ETYPE_MEK;
         }
-        if (f.filterBipedMech == 1) {
+        if (f.filterBipedMek == 1) {
             entityTypes = entityTypes | Entity.ETYPE_BIPED_MEK;
         }
-        if (f.filterProtomech == 1) {
+        if (f.filterProtomek == 1) {
             entityTypes = entityTypes | Entity.ETYPE_PROTOMEK;
         }
         if (f.filterLAM == 1) {
@@ -889,13 +889,13 @@ public class MekSearchFilter {
 
         entityTypes = 0;
 
-        if (f.filterMech == 2) {
+        if (f.filterMek == 2) {
             entityTypes = entityTypes | Entity.ETYPE_MEK;
         }
-        if (f.filterBipedMech == 2) {
+        if (f.filterBipedMek == 2) {
             entityTypes = entityTypes | Entity.ETYPE_BIPED_MEK;
         }
-        if (f.filterProtomech == 2) {
+        if (f.filterProtomek == 2) {
             entityTypes = entityTypes | Entity.ETYPE_PROTOMEK;
         }
         if (f.filterLAM == 2) {
@@ -1055,7 +1055,7 @@ public class MekSearchFilter {
                 }
 
                 // If we reach this point. It means that the MekSummary didn't have a weapon/equipment that matched the leaf node.
-                // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
+                // If the leaf quantity is 0, that means that the mek is a match. If the leaf quantity is non-zero, that means the mek isn't
                 // a match.
                 if (n.qty == 0) {
                     return true;

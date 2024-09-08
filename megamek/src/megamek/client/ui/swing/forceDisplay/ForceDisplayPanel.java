@@ -1,17 +1,34 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.client.ui.swing.forceDisplay;
+
+import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.ToolTipManager;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.apache.logging.log4j.LogManager;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -26,17 +43,6 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Shows force display
@@ -182,7 +188,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         item.addActionListener(evt -> {
             try {
                 Entity entity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                LobbyUtility.mechReadout(entity, 0, false, clientgui.getFrame());
+                LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
             }

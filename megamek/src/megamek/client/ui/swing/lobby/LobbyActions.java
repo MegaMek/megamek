@@ -286,7 +286,7 @@ public class LobbyActions {
      *
      * @param entities the units to configure
      */
-    public void customizeMechs(Collection<Entity> entities) {
+    public void customizeMeks(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
             return;
         }
@@ -312,7 +312,7 @@ public class LobbyActions {
 
         if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
             Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
-            customizeMech(nextEnt);
+            customizeMek(nextEnt);
         }
     }
 
@@ -321,7 +321,7 @@ public class LobbyActions {
      *
      * @param entity the unit to configure
      */
-    public void customizeMech(Entity entity) {
+    public void customizeMek(Entity entity) {
         if (!validateUpdate(List.of(entity))) {
             return;
         }
@@ -384,9 +384,9 @@ public class LobbyActions {
     private void sendCustomizationUpdate(Collection<Entity> entities) {
         Set<Entity> updateCandidates = new HashSet<>(entities);
         for (Entity entity : entities) {
-            // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+            // If a LAM with mechanized BA was changed to non-mek mode, unload the BA.
             if ((entity instanceof LandAirMek)
-                    && entity.getConversionMode() != LandAirMek.CONV_MODE_MECH) {
+                    && entity.getConversionMode() != LandAirMek.CONV_MODE_MEK) {
                 for (Entity loadee : entity.getLoadedUnits()) {
                     entity.unload(loadee);
                     loadee.setTransportId(Entity.NONE);

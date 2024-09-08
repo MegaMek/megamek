@@ -260,12 +260,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
             // MG rapidfire
             if (mounted.isRapidfire()) {
-                wn.append(Messages.getString("MechDisplay.rapidFire"));
+                wn.append(Messages.getString("MekDisplay.rapidFire"));
             }
 
             // Hotloaded Missile Launchers
             if (mounted.isHotLoaded()) {
-                wn.append(Messages.getString("MechDisplay.isHotLoaded"));
+                wn.append(Messages.getString("MekDisplay.isHotLoaded"));
             }
 
             // Fire Mode - lots of things have variable modes
@@ -492,7 +492,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private void createWeaponList(JPanel parent) {
         wSortOrder = new JLabel(
-                Messages.getString("MechDisplay.WeaponSortOrder.label"),
+                Messages.getString("MekDisplay.WeaponSortOrder.label"),
                 SwingConstants.LEFT);
         setupLabel(wSortOrder);
 
@@ -524,11 +524,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // adding Ammo choice + label
-        wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT);
+        wAmmo = new JLabel(Messages.getString("MekDisplay.Ammo"), SwingConstants.LEFT);
         setupLabel(wAmmo);
         m_chAmmo = new JComboBox<>();
 
-        wBayWeapon = new JLabel(Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT);
+        wBayWeapon = new JLabel(Messages.getString("MekDisplay.Weapon"), SwingConstants.LEFT);
         setupLabel(wBayWeapon);
         m_chBayWeapon = new JComboBox<>();
 
@@ -554,13 +554,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private void createWeaponDisplay(JPanel parent) {
         // Adding weapon display labels
-        wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER);
+        wNameL = new JLabel(Messages.getString("MekDisplay.Name"), SwingConstants.CENTER);
         setupLabel(wNameL);
-        wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER);
+        wHeatL = new JLabel(Messages.getString("MekDisplay.Heat"), SwingConstants.CENTER);
         setupLabel(wHeatL);
-        wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER);
+        wDamL = new JLabel(Messages.getString("MekDisplay.Damage"), SwingConstants.CENTER);
         setupLabel(wDamL);
-        wArcHeatL = new JLabel(Messages.getString("MechDisplay.ArcHeat"), SwingConstants.CENTER);
+        wArcHeatL = new JLabel(Messages.getString("MekDisplay.ArcHeat"), SwingConstants.CENTER);
         setupLabel(wArcHeatL);
 
         wNameR = new JLabel("", SwingConstants.CENTER);
@@ -575,7 +575,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wArcHeatR = new JLabel("--", SwingConstants.CENTER);
         setupLabel(wArcHeatR);
 
-        wDamageTrooperL = new JLabel(Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER);
+        wDamageTrooperL = new JLabel(Messages.getString("MekDisplay.DamageTrooper"), SwingConstants.CENTER);
         setupLabel(wDamageTrooperL);
 
         wDamageTrooperR = new JLabel("---", SwingConstants.CENTER);
@@ -610,18 +610,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private void createRangeDisplay(JPanel parent) {
         // Adding range labels
-        wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER);
+        wMinL = new JLabel(Messages.getString("MekDisplay.Min"), SwingConstants.CENTER);
         setupLabel(wMinL);
-        wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER);
+        wShortL = new JLabel(Messages.getString("MekDisplay.Short"), SwingConstants.CENTER);
         setupLabel(wShortL);
 
-        wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER);
+        wMedL = new JLabel(Messages.getString("MekDisplay.Med"), SwingConstants.CENTER);
         setupLabel(wMedL);
 
-        wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER);
+        wLongL = new JLabel(Messages.getString("MekDisplay.Long"), SwingConstants.CENTER);
         setupLabel(wLongL);
 
-        wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER);
+        wExtL = new JLabel(Messages.getString("MekDisplay.Ext"), SwingConstants.CENTER);
         setupLabel(wExtL);
 
         wMinR = new JLabel("---", SwingConstants.CENTER);
@@ -639,7 +639,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wExtR = new JLabel("---", SwingConstants.CENTER);
         setupLabel(wExtR);
 
-        wAVL = new JLabel(Messages.getString("MechDisplay.AV"), SwingConstants.CENTER);
+        wAVL = new JLabel(Messages.getString("MekDisplay.AV"), SwingConstants.CENTER);
         setupLabel(wAVL);
 
         wShortAVR = new JLabel("---", SwingConstants.CENTER);
@@ -839,13 +839,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         JPanel pTargetInfo = new JPanel(new GridBagLayout());
         pTargetInfo.setOpaque(true);
 
-        wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.LEFT);
+        wRangeL = new JLabel(Messages.getString("MekDisplay.Range"), SwingConstants.LEFT);
         setupLabel(wRangeL);
 
         wRangeR = new JLabel("---", SwingConstants.CENTER);
         setupLabel(wRangeR);
 
-        currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
+        currentHeatBuildupL = new JLabel(Messages.getString("MekDisplay.HeatBuildup"), SwingConstants.RIGHT);
         setupLabel(currentHeatBuildupL);
 
         currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
@@ -954,7 +954,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String txt = "";
 
         if (target == null) {
-            txt = Messages.getString("MechDisplay.NoTarget");
+            txt = Messages.getString("MekDisplay.NoTarget");
         } else {
             txt = UnitToolTip.getTargetTipDetail(target, client);
         }
@@ -1044,7 +1044,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * <p>
      * fix the ammo when it's added
      */
-    public void displayMech(Entity en) {
+    public void displayMek(Entity en) {
         removeListeners();
 
         // Grab a copy of the game.
@@ -1153,7 +1153,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
             // Don't add bomb weapons for LAMs in mech mode except RL and TAG.
             if ((entity instanceof LandAirMek)
-                    && (entity.getConversionMode() == LandAirMek.CONV_MODE_MECH)
+                    && (entity.getConversionMode() == LandAirMek.CONV_MODE_MEK)
                     && mounted.getType().hasFlag(WeaponType.F_BOMB_WEAPON)
                     && mounted.getType().getAmmoType() != AmmoType.T_RL_BOMB
                     && !mounted.getType().hasFlag(WeaponType.F_TAG)) {
@@ -1219,7 +1219,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String sheatOverCapacity = "";
         if (heatOverCapacity > 0) {
             heatText += "*"; // overheat indication
-            String msg_over = Messages.getString("MechDisplay.over");
+            String msg_over = Messages.getString("MekDisplay.over");
             sheatOverCapacity = " " + heatOverCapacity + " " + msg_over;
         }
 
@@ -1793,14 +1793,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
             if (wtype instanceof HAGWeapon) {
-                wDamR.setText(Messages.getString("MechDisplay.Variable"));
+                wDamR.setText(Messages.getString("MekDisplay.Variable"));
             } else {
-                wDamR.setText(Messages.getString("MechDisplay.Missile"));
+                wDamR.setText(Messages.getString("MekDisplay.Missile"));
             }
         } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-            wDamR.setText(Messages.getString("MechDisplay.Variable"));
+            wDamR.setText(Messages.getString("MekDisplay.Variable"));
         } else if (wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-            wDamR.setText(Messages.getString("MechDisplay.Special"));
+            wDamR.setText(Messages.getString("MekDisplay.Special"));
         } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
             StringBuilder damage = new StringBuilder();
             int artyDamage = wtype.getRackSize();
@@ -1926,9 +1926,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (aerospaceAttack) {
             // change damage report to a statement of standard or capital
             if (wtype.isCapital()) {
-                wDamR.setText(Messages.getString("MechDisplay.CapitalD"));
+                wDamR.setText(Messages.getString("MekDisplay.CapitalD"));
             } else {
-                wDamR.setText(Messages.getString("MechDisplay.StandardD"));
+                wDamR.setText(Messages.getString("MekDisplay.StandardD"));
             }
 
             // if this is a weapons bay, then I need to compile it to get
@@ -2057,14 +2057,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // send event to other parts of the UI which care
         unitDisplay.getClientGUI().showSensorRanges(entity);
-        unitDisplay.processMechDisplayEvent(new MekDisplayEvent(this, entity, mounted));
+        unitDisplay.processMekDisplayEvent(new MekDisplayEvent(this, entity, mounted));
         onResize();
         addListeners();
     }
 
     private String formatAmmo(Mounted<?> m) {
         StringBuffer sb = new StringBuffer(64);
-        int ammoIndex = m.getDesc().indexOf(Messages.getString("MechDisplay.0"));
+        int ammoIndex = m.getDesc().indexOf(Messages.getString("MekDisplay.0"));
         int loc = m.getLocation();
         if (!m.getEntity().equals(entity)) {
             sb.append("[TR] ");
@@ -2078,7 +2078,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             sb.append(m.getDesc().substring(ammoIndex + 4));
         }
         if (m.isHotLoaded()) {
-            sb.append(Messages.getString("MechDisplay.isHotLoaded"));
+            sb.append(Messages.getString("MekDisplay.isHotLoaded"));
         }
         return sb.toString();
     }
@@ -2664,7 +2664,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     .isHotLoaded())
                     || ((oldAmmo != null) && oldAmmo.isHotLoaded() && !mAmmo
                     .isHotLoaded())) {
-                displayMech(entity);
+                displayMek(entity);
                 weaponList.setSelectedIndex(n);
                 weaponList.ensureIndexIsVisible(n);
                 displaySelected();
@@ -2765,9 +2765,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return;
         }
 
-        // Takes note of the selected weapon to re-select after the call to `displayMech()`
+        // Takes note of the selected weapon to re-select after the call to `displayMek()`
         int weaponNum = getSelectedWeaponNum();
-        displayMech(entity);
+        displayMek(entity);
         selectWeapon(weaponNum);
     }
 }

@@ -19,11 +19,11 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
-public class MechTaserHandler extends AmmoWeaponHandler {
+public class MekTaserHandler extends AmmoWeaponHandler {
 
     private static final long serialVersionUID = 1308895663099714573L;
 
-    protected MechTaserHandler() {
+    protected MekTaserHandler() {
         // deserialization only
     }
 
@@ -32,7 +32,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public MechTaserHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MekTaserHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

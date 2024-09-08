@@ -1,7 +1,7 @@
 package megamek.client.generator;
 
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.containers.MunitionTree;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -126,16 +126,16 @@ class MunitionTreeTest {
     @Test
     @Disabled("Runtime is > 20 seconds")
     void testPopulateAllPossibleUnits() {
-        MechSummaryCache instance = MechSummaryCache.getInstance(true);
+        MekSummaryCache instance = MekSummaryCache.getInstance(true);
         // Make sure no units failed loading
         assertTrue(instance.getFailedFiles().isEmpty());
         // Sanity check to make sure the loader thread didn't fail outright
-        // assertTrue(instance.getAllMechs().length > 100);
+        // assertTrue(instance.getAllMeks().length > 100);
 
         MunitionTree mt = new MunitionTree();
 
         // Populates one entry for each _specific_ chassis and model; this will not create an "any" entry for a given Chassis
-        for (MechSummary unit: instance.getAllMechs()) {
+        for (MekSummary unit: instance.getAllMeks()) {
             mt.insertImperative(unit.getFullChassis(), unit.getModel(), "any", "Machine Gun", "Standard");
         }
 

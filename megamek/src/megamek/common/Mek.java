@@ -539,16 +539,16 @@ public abstract class Mek extends Entity {
         boolean front = false;
         boolean rear = false;
         for (Transporter t: getTransports()) {
-            if (t instanceof ProtomechClampMount) {
-                front |= !((ProtomechClampMount) t).isRear();
-                rear |= ((ProtomechClampMount) t).isRear();
+            if (t instanceof ProtoMekClampMount) {
+                front |= !((ProtoMekClampMount) t).isRear();
+                rear |= ((ProtoMekClampMount) t).isRear();
             }
         }
         if (!front) {
-            addTransporter(new ProtomechClampMount(false));
+            addTransporter(new ProtoMekClampMount(false));
         }
         if (!rear) {
-            addTransporter(new ProtomechClampMount(true));
+            addTransporter(new ProtoMekClampMount(true));
         }
     }
 
@@ -557,10 +557,10 @@ public abstract class Mek extends Entity {
         if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             boolean rear = bayNumber > 0;
             for (Transporter t : getTransports()) {
-                if ((t instanceof ProtomechClampMount)
+                if ((t instanceof ProtoMekClampMount)
                         && t.canLoad(unit)
                         && (!checkElev || (unit.getElevation() == getElevation()))
-                        && (((ProtomechClampMount) t).isRear() == rear)) {
+                        && (((ProtoMekClampMount) t).isRear() == rear)) {
                     t.load(unit);
                     unit.setTargetBay(-1);
                     return;
@@ -2057,13 +2057,13 @@ public abstract class Mek extends Entity {
                         return new HitData(Mek.LOC_LT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_RT, true);
                         }
                         return new HitData(Mek.LOC_RT);
@@ -2106,13 +2106,13 @@ public abstract class Mek extends Entity {
                         return new HitData(Mek.LOC_RT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_LT, true);
                         }
                         return new HitData(Mek.LOC_LT);
@@ -2133,7 +2133,7 @@ public abstract class Mek extends Entity {
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 if (game.getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)
+                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)
                         && isProne()) {
                     switch (roll) {
                         case 2:

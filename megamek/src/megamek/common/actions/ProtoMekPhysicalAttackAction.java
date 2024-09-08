@@ -21,7 +21,7 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
- * The attacking ProtoMech makes its combo physical attack action.
+ * The attacking ProtoMek makes its combo physical attack action.
  */
 public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = 1432011536091665084L;
@@ -36,7 +36,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Damage a ProtoMech does with its Combo-physicalattack.
+     * Damage a ProtoMek does with its Combo-physicalattack.
      */
     public static int getDamageFor(Entity entity, Targetable target) {
         int toReturn;
@@ -48,10 +48,10 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
             toReturn = 3;
         }
 
-        // ProtoMech weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
-        if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE, MiscType.S_PROTO_QMS)) {
+        // ProtoMek weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
+        if (entity.hasWorkingMisc(MiscType.F_PROTOMEK_MELEE, MiscType.S_PROTO_QMS)) {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0) * 2;
-        } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
+        } else if (entity.hasWorkingMisc(MiscType.F_PROTOMEK_MELEE)) {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0);
         }
 
@@ -127,7 +127,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
                     "You can't target yourself");
         }
 
-        // non-protos can't make protomech-physicalattacks
+        // non-protos can't make protomek-physicalattacks
         if (!(ae instanceof ProtoMek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
         }
@@ -153,7 +153,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
 
-        // can't physically attack mechs making dfa attacks
+        // can't physically attack meks making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a DFA attack");
         }
@@ -202,7 +202,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         // te can be null for this
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        // Standing 'mechs use kick table
+        // Standing 'meks use kick table
         if ((te instanceof Mek) && !te.isProne()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
         } // Everything else uses the standard table, which is default
@@ -214,6 +214,6 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
     @Override
     public String toSummaryString(final Game game) {
         final String roll = this.toHit(game).getValueAsString();
-        return Messages.getString("BoardView1.ProtomechPhysicalAttackAction", roll);
+        return Messages.getString("BoardView1.ProtomekPhysicalAttackAction", roll);
     }
 }

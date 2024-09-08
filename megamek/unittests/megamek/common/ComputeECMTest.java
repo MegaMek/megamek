@@ -66,12 +66,12 @@ public class ComputeECMTest {
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
 
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity archer;
 
         try {
-            f = new File("data/mechfiles/mechs/3039u/Archer ARC-2R.mtf");
-            mfp  = new MechFileParser(f);
+            f = new File("data/mekfiles/meks/3039u/Archer ARC-2R.mtf");
+            mfp  = new MekFileParser(f);
             archer = mfp.getEntity();
         } catch (Exception exc) {
             fail(exc.getMessage());

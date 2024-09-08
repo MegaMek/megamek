@@ -571,7 +571,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        unitDisplay.addMechDisplayListener(this);
+        unitDisplay.addMekDisplayListener(this);
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
@@ -600,7 +600,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         cb2.setChatterBox(cb);
         client.changePhase(GamePhase.UNKNOWN);
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        if (!MechSummaryCache.getInstance().isInitialized()) {
+        if (!MekSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
         mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
@@ -841,7 +841,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 ignoreHotKeys = false;
                 break;
             case FILE_REFRESH_CACHE:
-                MechSummaryCache.refreshUnitData(false);
+                MekSummaryCache.refreshUnitData(false);
                 new Thread(mechSelectorDialog, Messages.getString("ClientGUI.mechSelectorDialog")).start();
                 break;
             case VIEW_CLIENT_SETTINGS:
@@ -1111,7 +1111,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return gameOptionsDialog;
     }
 
-    public MegaMekUnitSelectorDialog getMechSelectorDialog() {
+    public MegaMekUnitSelectorDialog getMekSelectorDialog() {
         return mechSelectorDialog;
     }
 
@@ -2103,11 +2103,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * used in the LOS tool.
      */
     private void showLOSSettingDialog() {
-        LOSDialog ld = new LOSDialog(frame, GUIP.getMechInFirst(), GUIP.getMechInSecond());
+        LOSDialog ld = new LOSDialog(frame, GUIP.getMekInFirst(), GUIP.getMekInSecond());
         ignoreHotKeys = true;
         if (ld.showDialog().isConfirmed()) {
-            GUIP.setMechInFirst(ld.getMechInFirst());
-            GUIP.setMechInSecond(ld.getMechInSecond());
+            GUIP.setMekInFirst(ld.getMekInFirst());
+            GUIP.setMekInSecond(ld.getMekInSecond());
         }
         ignoreHotKeys = false;
     }

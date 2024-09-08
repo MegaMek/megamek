@@ -14,15 +14,7 @@
  */
 package megamek.server;
 
-import megamek.common.BattleArmor;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 
 public abstract class UnitStatusFormatter {
@@ -125,7 +117,7 @@ public abstract class UnitStatusFormatter {
 
     private static String formatArmor(Entity e) {
         if (e instanceof Mek) {
-            return formatArmorMech((Mek) e);
+            return formatArmorMek((Mek) e);
         } else if (e instanceof GunEmplacement) {
             return formatArmorGunEmplacement((GunEmplacement) e);
         } else if (e instanceof Tank) {
@@ -135,7 +127,7 @@ public abstract class UnitStatusFormatter {
         } else if (e instanceof Infantry) {
             return formatArmorInfantry((Infantry) e);
         } else if (e instanceof ProtoMek) {
-            return formatArmorProtomech((ProtoMek) e);
+            return formatArmorProtoMek((ProtoMek) e);
         } else {
             return "";
         }
@@ -181,7 +173,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatArmorMech(Mek m) {
+    private static String formatArmorMek(Mek m) {
         StringBuilder sb = new StringBuilder(1024);
         sb.append("         FRONT                REAR                INTERNAL\n");
 
@@ -272,7 +264,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatArmorProtomech(ProtoMek m) {
+    private static String formatArmorProtoMek(ProtoMek m) {
         StringBuilder sb = new StringBuilder(1024);
         sb.append("         FRONT                INTERNAL\n");
 
@@ -349,7 +341,7 @@ public abstract class UnitStatusFormatter {
     }
 
     public static void main(String[] ARGS) throws Exception {
-        MekSummary ms = MekSummaryCache.getInstance().getMech(ARGS[0]);
+        MekSummary ms = MekSummaryCache.getInstance().getMek(ARGS[0]);
         Entity e = new MekFileParser(ms.getSourceFile(), ms.getEntryName())
                 .getEntity();
         System.out.println(format(e));

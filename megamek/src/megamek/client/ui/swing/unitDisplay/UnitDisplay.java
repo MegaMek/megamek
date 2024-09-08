@@ -471,12 +471,12 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
             labTitle.setText(enName);
         }
 
-        mPan.displayMech(currentlyDisplaying);
-        pPan.displayMech(currentlyDisplaying);
-        aPan.displayMech(currentlyDisplaying);
-        wPan.displayMech(currentlyDisplaying);
-        sPan.displayMech(currentlyDisplaying);
-        ePan.displayMech(currentlyDisplaying);
+        mPan.displayMek(currentlyDisplaying);
+        pPan.displayMek(currentlyDisplaying);
+        aPan.displayMek(currentlyDisplaying);
+        wPan.displayMek(currentlyDisplaying);
+        sPan.displayMek(currentlyDisplaying);
+        ePan.displayMek(currentlyDisplaying);
     }
 
     /**
@@ -528,7 +528,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      *
      * @param listener the listener.
      */
-    public void addMechDisplayListener(MekDisplayListener listener) {
+    public void addMekDisplayListener(MekDisplayListener listener) {
         eventListeners.add(listener);
     }
 
@@ -537,7 +537,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      *
      * @param event the mech display event.
      */
-    void processMechDisplayEvent(MekDisplayEvent event) {
+    void processMekDisplayEvent(MekDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
             MekDisplayListener lis = eventListeners.get(i);
             switch (event.getType()) {
@@ -545,7 +545,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
                     lis.weaponSelected(event);
                     break;
                 default:
-                    LogManager.getLogger().error("Received unknown event " + event.getType() + " in processMechDisplayEvent");
+                    LogManager.getLogger().error("Received unknown event " + event.getType() + " in processMekDisplayEvent");
                     break;
             }
         }

@@ -13,6 +13,12 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.cost.BattleArmorCostCalculator;
@@ -26,10 +32,6 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import java.text.NumberFormat;
-import java.util.*;
 
 /**
  * This class represents a squad or point of battle armor equipped infantry,
@@ -1794,15 +1796,15 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * Returns the number of allowed anti-mech weapons the supplied location
-     * can mount.  The body can mount a set number of anti-mech weapons and a
+     * Returns the number of allowed anti-mek weapons the supplied location
+     * can mount.  The body can mount a set number of anti-mek weapons and a
      * set number of anti-personnel, however for the arms can mount 2 AP or
      * 1 AP and 1 AM.
      *
      * @param loc
      * @return
      */
-    public int getNumAllowedAntiMechWeapons(int loc) {
+    public int getNumAllowedAntiMekWeapons(int loc) {
         if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)) {
             return 1;
         } else if ((loc == MOUNT_LOC_BODY) || (loc == MOUNT_LOC_TURRET)) {
@@ -1818,7 +1820,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Returns the number of allowed anti-personnel weapons the location can
-     * mount. The body can mount a set number of anti-mech weapons and a set
+     * mount. The body can mount a set number of anti-mek weapons and a set
      * number of anti-personnel, however the arms can mount 2 AP or 1 AP and 1
      * AM.
      *
@@ -1827,15 +1829,15 @@ public class BattleArmor extends Infantry {
      */
     public int getNumAllowedAntiPersonnelWeapons(int loc, int trooper) {
         if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)) {
-            boolean hasAntiMech = false;
+            boolean hasAntiMek = false;
             for (Mounted m : getWeaponList()) {
                 if (!m.getType().hasFlag(WeaponType.F_INFANTRY)
                         && (m.getBaMountLoc() == loc)
                         && ((m.getLocation() == LOC_SQUAD) || (m.getLocation() == trooper))) {
-                    hasAntiMech = true;
+                    hasAntiMek = true;
                 }
             }
-            if (hasAntiMech) {
+            if (hasAntiMek) {
                 return 1;
             } else {
                 return 2;

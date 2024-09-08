@@ -38,8 +38,8 @@ import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ratgenerator.UnitTable.TableEntry;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -645,7 +645,7 @@ public class RATGenerator {
         for (ModelRecord mRec : unitWeights.keySet()) {
             int wt = (int) (unitWeights.get(mRec) * adj + 0.5);
             if (wt > 0) {
-                retVal.add(new TableEntry(wt, mRec.getMechSummary()));
+                retVal.add(new TableEntry(wt, mRec.getMekSummary()));
             }
         }
         return retVal;
@@ -824,7 +824,7 @@ public class RATGenerator {
 
     private synchronized void initialize(File dir) {
         // Give the MSC some time to initialize
-        MechSummaryCache msc = MechSummaryCache.getInstance();
+        MekSummaryCache msc = MekSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
         while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
@@ -939,7 +939,7 @@ public class RATGenerator {
             LogManager.getLogger().error("Unable to read RAT generator file for era " + era);
             return;
         }
-        while (!MechSummaryCache.getInstance().isInitialized()) {
+        while (!MekSummaryCache.getInstance().isInitialized()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ignored) {
@@ -1000,7 +1000,7 @@ public class RATGenerator {
      * Used for editing.
      */
     public void initRemainingUnits() {
-        for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
+        for (MekSummary ms : MekSummaryCache.getInstance().getAllMeks()) {
             if (models.containsKey(ms.getName())) {
                 continue;
             }
@@ -1070,7 +1070,7 @@ public class RATGenerator {
         ModelRecord mr = models.get(modelKey);
         if (mr == null) {
             newEntry = true;
-            MechSummary ms = MechSummaryCache.getInstance().getMech(modelKey);
+            MekSummary ms = MekSummaryCache.getInstance().getMek(modelKey);
             if (ms != null) {
                 mr = new ModelRecord(ms);
                 mr.setOmni(cr.isOmni());

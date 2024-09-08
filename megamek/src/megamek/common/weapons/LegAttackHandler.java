@@ -98,7 +98,7 @@ public class LegAttackHandler extends WeaponHandler {
         if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
             critMod -= 2;
         }
-        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MECH)) {
+        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MEK)) {
             critMod += 1;
         }
         vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));

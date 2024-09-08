@@ -31,7 +31,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 
 /**
- * Cache of the Mech summary information. Implemented as Singleton so a client
+ * Cache of the Mek summary information. Implemented as Singleton so a client
  * and server running in the same process can share it
  *
  * @author arlith
@@ -82,7 +82,7 @@ public class MekSummaryCache {
             instance.initializing = true;
             interrupted = false;
             disposeInstance = false;
-            instance.loader = new Thread(() -> instance.loadMechData(ignoringUnofficial), "Mech Cache Loader");
+            instance.loader = new Thread(() -> instance.loadMekData(ignoringUnofficial), "Mek Cache Loader");
             instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
             instance.loader.start();
         }
@@ -105,7 +105,7 @@ public class MekSummaryCache {
         long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
 
         instance.loader = new Thread(() -> instance.refreshCache(lastModified, ignoreUnofficial),
-                "Mech Cache Loader");
+                "Mek Cache Loader");
         instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
         instance.loader.start();
     }
@@ -152,7 +152,7 @@ public class MekSummaryCache {
         fileNameMap = new HashMap<>();
     }
 
-    public MekSummary[] getAllMechs() {
+    public MekSummary[] getAllMeks() {
         block();
         return data;
     }
@@ -169,7 +169,7 @@ public class MekSummaryCache {
         }
     }
 
-    public MekSummary getMech(String sRef) {
+    public MekSummary getMek(String sRef) {
         block();
         if (nameMap.containsKey(sRef)) {
             return nameMap.get(sRef);
@@ -183,12 +183,12 @@ public class MekSummaryCache {
     }
 
     @SuppressWarnings("unused") // Used in MHQ
-    public void loadMechData() {
-        loadMechData(false);
+    public void loadMekData() {
+        loadMekData(false);
     }
 
-    public void loadMechData(boolean ignoreUnofficial) {
-        Vector<MekSummary> vMechs = new Vector<>();
+    public void loadMekData(boolean ignoreUnofficial) {
+        Vector<MekSummary> vMeks = new Vector<>();
         Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
         failedFiles = new HashMap<>();
@@ -222,7 +222,7 @@ public class MekSummaryCache {
                         // the cache.
                         File fSource = ms.getSourceFile();
                         if (fSource.exists()) {
-                            vMechs.addElement(ms);
+                            vMeks.addElement(ms);
                             if (null == ms.getEntryName()) {
                                 sKnownFiles.add(fSource.toString());
                             } else {
@@ -241,18 +241,18 @@ public class MekSummaryCache {
             }
         }
 
-        checkForChanges(ignoreUnofficial, vMechs, sKnownFiles, lLastCheck);
-        updateData(vMechs);
+        checkForChanges(ignoreUnofficial, vMeks, sKnownFiles, lLastCheck);
+        updateData(vMeks);
         addLookupNames();
         logReport();
 
         done();
     }
 
-    private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMechs,
+    private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMeks,
                                  Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
-        boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
+        boolean bNeedsUpdate = loadMeksFromDirectory(vMeks, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
 
         // Official units are in the internal dir, not in the user dirs or story arcs dir
@@ -260,14 +260,14 @@ public class MekSummaryCache {
             // load units from the MM internal user data dir
             File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
             if (userDataUnits.isDirectory()) {
-                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, false);
+                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits, false);
             }
 
             // load units from the external user data dir
             String userDir = PreferenceManager.getClientPreferences().getUserDir();
             File userDataUnits2 = new File(userDir, "");
             if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
-                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, false);
+                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits2, false);
             }
 
             // load units from story arcs
@@ -279,7 +279,7 @@ public class MekSummaryCache {
                         if (file.isDirectory()) {
                             File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
                             if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
-                                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
+                                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
                             }
                         }
                     }
@@ -289,14 +289,14 @@ public class MekSummaryCache {
 
         // save updated cache back to disk
         if (bNeedsUpdate) {
-            saveCache(vMechs);
+            saveCache(vMeks);
         }
     }
 
-    private void updateData(Vector<MekSummary> vMechs) {
+    private void updateData(Vector<MekSummary> vMeks) {
         // convert to array
-        data = new MekSummary[vMechs.size()];
-        vMechs.copyInto(data);
+        data = new MekSummary[vMeks.size()];
+        vMeks.copyInto(data);
         nameMap.clear();
         fileNameMap.clear();
 
@@ -613,9 +613,9 @@ public class MekSummaryCache {
             if (t instanceof DockingCollar) {
                 dc++;
             }
-            if (t instanceof MechBay) {
+            if (t instanceof MekBay) {
                 mBays++;
-                mDoors += ((MechBay) t).getCurrentDoors();
+                mDoors += ((MekBay) t).getCurrentDoors();
                 mUnits += t.getUnused();
             }
             if (t instanceof HeavyVehicleBay) {
@@ -628,9 +628,9 @@ public class MekSummaryCache {
                 lvDoors += ((LightVehicleBay) t).getCurrentDoors();
                 lvUnits += t.getUnused();
             }
-            if (t instanceof ProtomechBay) {
+            if (t instanceof ProtoMekBay) {
                 pmBays++;
-                pmDoors += ((ProtomechBay) t).getCurrentDoors();
+                pmDoors += ((ProtoMekBay) t).getCurrentDoors();
                 pmUnits += t.getUnused();
             }
             if (t instanceof BattleArmorBay) {
@@ -670,18 +670,18 @@ public class MekSummaryCache {
         ms.setSmallCraftDoors(scDoors);
         ms.setSmallCraftUnits(scUnits);
         ms.setDockingCollars(dc);
-        ms.setMechBays(mBays);
-        ms.setMechDoors(mDoors);
-        ms.setMechUnits(mUnits);
+        ms.setMekBays(mBays);
+        ms.setMekDoors(mDoors);
+        ms.setMekUnits(mUnits);
         ms.setHeavyVehicleBays(hvBays);
         ms.setHeavyVehicleDoors(hvDoors);
         ms.setHeavyVehicleUnits(hvUnits);
         ms.setLightVehicleBays(lvBays);
         ms.setLightVehicleDoors(lvDoors);
         ms.setLightVehicleUnits(lvUnits);
-        ms.setProtoMecheBays(pmBays);
-        ms.setProtoMechDoors(pmDoors);
-        ms.setProtoMechUnits(pmUnits);
+        ms.setProtoMekBays(pmBays);
+        ms.setProtoMekDoors(pmDoors);
+        ms.setProtoMekUnits(pmUnits);
         ms.setBattleArmorBays(baBays);
         ms.setBattleArmorDoors(baDoors);
         ms.setBattleArmorUnits(baUnits);
@@ -699,7 +699,7 @@ public class MekSummaryCache {
         ms.setNavalRepairFacilities(nrf);
 
         if (ASConverter.canConvert(e)) {
-            AlphaStrikeElement element = ASConverter.convertForMechCache(e);
+            AlphaStrikeElement element = ASConverter.convertForMekCache(e);
             ms.setAsUnitType(element.getASUnitType());
             ms.setSize(element.getSize());
             ms.setTmm(element.getTMM());
@@ -729,13 +729,13 @@ public class MekSummaryCache {
      * Loading a complete {@link Entity} object for each summary is a bear and should be
      * changed, but it lets me use the existing parsers
      *
-     * @param vMechs      List to add units to as they are loaded
+     * @param vMeks      List to add units to as they are loaded
      * @param sKnownFiles Files that have been processed so far and can be skipped
      * @param lLastCheck  The timestamp of the last time the cache was updated
      * @param fDir        The directory to load units from
      * @return            Whether the list of units has changed, requiring rewriting the cache
      */
-    private boolean loadMechsFromDirectory(Vector<MekSummary> vMechs,
+    private boolean loadMeksFromDirectory(Vector<MekSummary> vMeks,
             Set<String> sKnownFiles, long lLastCheck, File fDir,
             boolean ignoreUnofficial) {
         boolean bNeedsUpdate = false;
@@ -756,11 +756,11 @@ public class MekSummaryCache {
                 }
                 if (f.isDirectory()) {
                     if (f.getName().equalsIgnoreCase("unsupported")) {
-                        // Mechs in this directory are ignored because
+                        // Meks in this directory are ignored because
                         // they have features not implemented in MM yet.
                         continue;
                     } else if (f.getName().equalsIgnoreCase("unofficial") && ignoreUnofficial) {
-                        // Mechs in this directory are ignored because
+                        // Meks in this directory are ignored because
                         // they are unofficial and we don't want those right
                         // now.
                         continue;
@@ -770,7 +770,7 @@ public class MekSummaryCache {
                         continue;
                     }
                     // recursion is fun
-                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f, ignoreUnofficial);
+                    bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, f, ignoreUnofficial);
                     continue;
                 }
                 String lowerCaseName = f.getName().toLowerCase();
@@ -778,22 +778,22 @@ public class MekSummaryCache {
                     continue;
                 }
                 if (lowerCaseName.endsWith(".zip")) {
-                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
+                    bNeedsUpdate |= loadMeksFromZipFile(vMeks, sKnownFiles, lLastCheck, f);
                     continue;
                 }
                 if ((f.lastModified() < lLastCheck) && sKnownFiles.contains(f.toString())) {
                     continue;
                 }
                 try {
-                    MechFileParser mfp = new MechFileParser(f);
+                    MekFileParser mfp = new MekFileParser(f);
                     Entity e = mfp.getEntity();
                     MekSummary ms = getSummary(e, f, null);
                     // if this is unit's MekSummary is already known,
                     // remove it first, so we don't get duplicates
                     if (sKnownFiles.contains(f.toString())) {
-                        vMechs.removeElement(ms);
+                        vMeks.removeElement(ms);
                     }
-                    vMechs.addElement(ms);
+                    vMeks.addElement(ms);
                     sKnownFiles.add(f.toString());
                     bNeedsUpdate = true;
                     thisDirectoriesFileCount++;
@@ -822,7 +822,7 @@ public class MekSummaryCache {
         return bNeedsUpdate;
     }
 
-    private boolean loadMechsFromZipFile(Vector<MekSummary> vMechs,
+    private boolean loadMeksFromZipFile(Vector<MekSummary> vMeks,
             Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
         boolean bNeedsUpdate = false;
         ZipFile zFile;
@@ -869,11 +869,11 @@ public class MekSummaryCache {
             }
 
             try {
-                MechFileParser mfp = new MechFileParser(
+                MekFileParser mfp = new MekFileParser(
                         zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
                 MekSummary ms = getSummary(e, fZipFile, zEntry.getName());
-                vMechs.addElement(ms);
+                vMeks.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
                 thisZipFileCount++;

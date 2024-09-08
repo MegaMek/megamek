@@ -28,8 +28,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_BATTLE_FIST_LA = "battle_fists_la";
     public static final String QUIRK_POS_BATTLE_FIST_RA = "battle_fists_ra";
     public static final String QUIRK_POS_COMBAT_COMPUTER = "combat_computer";
-    public static final String QUIRK_POS_COMMAND_MECH = "command_mech";
-    public static final String QUIRK_POS_COMPACT = "compact_mech";
+    public static final String QUIRK_POS_COMMAND_MEK = "command_mek";
+    public static final String QUIRK_POS_COMPACT = "compact_mek";
     public static final String QUIRK_POS_COWL = "cowl";
     // TODO - Code directional torso mount for play
     public static final String QUIRK_POS_DIRECTIONAL_TORSO_MOUNT = "directional_torso_mount";
@@ -223,7 +223,7 @@ public class OptionsConstants {
     // EDGE
     public static final String EDGE = "edge";
     // different edge triggers
-    // Mech Triggers
+    // Mek Triggers
     public static final String EDGE_WHEN_HEADHIT = "edge_when_headhit";
     public static final String EDGE_WHEN_TAC = "edge_when_tac";
     public static final String EDGE_WHEN_KO = "edge_when_ko";
@@ -411,7 +411,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
 
     public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
-    public static final String ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS = "tacops_advanced_mech_hit_locations";
+    public static final String ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS = "tacops_advanced_mek_hit_locations";
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE = "tacops_coolant_failure";
     public static final String ADVCOMBAT_TACOPS_BA_VS_BA = "tacops_ba_vs_ba";
     public static final String ADVCOMBAT_NO_TAC = "no_tac";

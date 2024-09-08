@@ -13,20 +13,24 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
-import megamek.client.ui.swing.lobby.LobbyUtility;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.SkillLevel;
-import org.apache.logging.log4j.LogManager;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -37,11 +41,26 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.Client;
+import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ratgenerator.RATGenerator;
+import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Entity;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.Player;
+import megamek.common.UnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.SkillLevel;
 
 /**
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
@@ -72,7 +91,7 @@ public class ForceGeneratorViewUi implements ActionListener {
     static final String FGV_VIEW = "FGV_VIEW";
 
     ClientGUI clientGui;
-    protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
+    protected static MekSummaryCache mscInstance = MekSummaryCache.getInstance();
 
     public ForceGeneratorViewUi(ClientGUI gui) {
         clientGui = gui;
@@ -413,15 +432,15 @@ public class ForceGeneratorViewUi implements ActionListener {
         if (command.equals(FGV_VIEW)) {
             // The entities list may be empty
             Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-            LobbyUtility.mechReadoutAction(entities, true, true, clientGui.getFrame());
+            LobbyUtility.mekReadoutAction(entities, true, true, clientGui.getFrame());
         } else if (command.equals(FGV_BV)) {
             // The entities list may be empty
             Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-            LobbyUtility.mechBVAction(entities, true, true, clientGui.getFrame());
+            LobbyUtility.mekBVAction(entities, true, true, clientGui.getFrame());
         } else if (command.equals(FGV_COST)) {
             // The entities list may be empty
             Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-            LobbyUtility.mechCostAction(entities, true, true, clientGui.getFrame());
+            LobbyUtility.mekCostAction(entities, true, true, clientGui.getFrame());
         }
     }
 
@@ -672,9 +691,9 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
         }
 
-        public MechSummary getUnitAt(int row) {
+        public MekSummary getUnitAt(int row) {
             Entity e = entities.get(row);
-            MechSummary ms = mscInstance.getMech(e.getShortNameRaw());
+            MekSummary ms = mscInstance.getMek(e.getShortNameRaw());
 
             return ms;
         }

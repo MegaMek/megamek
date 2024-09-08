@@ -356,8 +356,8 @@ class LobbyMekPopup {
             Transporter front = null;
             Transporter rear = null;
             for (Transporter t : loader.getTransports()) {
-                if (t instanceof ProtomechClampMount) {
-                    if (((ProtomechClampMount) t).isRear()) {
+                if (t instanceof ProtoMekClampMount) {
+                    if (((ProtoMekClampMount) t).isRear()) {
                         rear = t;
                     } else {
                         front = t;
@@ -823,7 +823,7 @@ class LobbyMekPopup {
         }
 
         // Get the Sprite
-        final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
+        final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
         final Image sprite = EntityImage.createLobbyIcon(base, camouflage, entity).loadPreviewImage(showDamage);
 
         // Export to File

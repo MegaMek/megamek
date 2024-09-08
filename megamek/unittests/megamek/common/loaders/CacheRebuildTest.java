@@ -18,8 +18,8 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -37,19 +37,19 @@ public class CacheRebuildTest {
     @Test
     @Order(1)
     public void testCacheRebuild() {
-        File cacheFile = new File(MechSummaryCache.getUnitCacheDir(), MechSummaryCache.FILENAME_UNITS_CACHE);
+        File cacheFile = new File(MekSummaryCache.getUnitCacheDir(), MekSummaryCache.FILENAME_UNITS_CACHE);
         if (cacheFile.exists()) {
             assertTrue(cacheFile.delete(), "Couldn't delete cache");
         }
 
-        MechSummaryCache cache = MechSummaryCache.getInstance(true);
+        MekSummaryCache cache = MekSummaryCache.getInstance(true);
 
-        MechSummaryCache.refreshUnitData(true);
+        MekSummaryCache.refreshUnitData(true);
 
         // Make sure no units failed loading
         assertTrue(cache.getFailedFiles().isEmpty());
         // Sanity check to make sure the loader thread didn't fail outright
-        assertTrue(cache.getAllMechs().length > 9000);
+        assertTrue(cache.getAllMeks().length > 9000);
     }
 
     /**
@@ -59,10 +59,10 @@ public class CacheRebuildTest {
     @Order(2)
     @Disabled("Behaves unpredictably and detects several units as being invalid when they show as valid in the full program.")
     public void testInvalidCanonUnits() {
-        MechSummaryCache cache = MechSummaryCache.getInstance(true);
+        MekSummaryCache cache = MekSummaryCache.getInstance(true);
 
         boolean hasInvalidUnits = false;
-        for (MechSummary ms : cache.getAllMechs()) {
+        for (MekSummary ms : cache.getAllMeks()) {
             // Ideally we would have no invalid canon units, but since we do, skip those units.
             // This allows the test to prevent any *new* invalid units from being added.
             // If any of these units are corrected to become valid, they should be removed from the KNOWN_INVALID_UNITS list.

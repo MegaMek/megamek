@@ -14,6 +14,11 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+import java.util.*;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
@@ -22,10 +27,6 @@ import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Holds movement path for an entity.
@@ -617,9 +618,9 @@ public class MovePath implements Cloneable, Serializable {
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload/disconnect, or go prone.
         Coords pos = getEntity().getPosition();
-        boolean isMech = getEntity() instanceof Mek;
+        boolean isMek = getEntity() instanceof Mek;
         int elev = getEntity().getElevation();
-        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMech, elev)) {
+        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev)) {
             // There is an enemy, can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;
@@ -681,7 +682,7 @@ public class MovePath implements Cloneable, Serializable {
 
             if (getEntity().isConvertingNow() && !this.contains(MoveStepType.CONVERT_MODE)) {
                 getEntity().setConvertingNow(false);
-                // Mechs using tracks have the movement mode set at the beginning of the turn, so
+                // Meks using tracks have the movement mode set at the beginning of the turn, so
                 // it will need to be reset.
                 if (getEntity() instanceof Mek && ((Mek) getEntity()).hasTracks()) {
                     getEntity().toggleConversionMode();
@@ -734,12 +735,12 @@ public class MovePath implements Cloneable, Serializable {
      * position to execute a brace?
      */
     public boolean isValidPositionForBrace(Coords coords, int facing) {
-        // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomech
+        // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomek
         if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
             return false;
         }
 
-        // for mechs, the check is complicated - you have to be directly in front of a hex with either
+        // for meks, the check is complicated - you have to be directly in front of a hex with either
         // a) level 1 level higher than your hex level
         // b) building/bridge ceiling 1 level higher than your hex level (?)
         if (getEntity() instanceof Mek) {
@@ -834,7 +835,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * @return the final coordinates if a mech were to perform all the steps in this path, or
+     * @return the final coordinates if a mek were to perform all the steps in this path, or
      * null if there's an issue with determining the coords
      */
     public @Nullable Coords getFinalCoords() {
@@ -862,7 +863,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Returns the final facing if a mech were to perform all the steps in this
+     * Returns the final facing if a mek were to perform all the steps in this
      * path.
      */
     public int getFinalFacing() {
@@ -991,7 +992,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * If the path contains mode conversions, this will determine the movement mode at the end
-     * of movement. Note that LAMs converting from AirMech to Biped mode require two convert commands.
+     * of movement. Note that LAMs converting from AirMek to Biped mode require two convert commands.
      *
      * @return The movement mode resulting from any mode conversions in the path.
      */
@@ -1650,8 +1651,8 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Airborne WiGEs that move less than five hexes (four for glider protomech) in a movement phase must
-     * land unless it has taken off in the same phase, jumped, or it is a LAM or glider ProtoMech that is using hover
+     * Airborne WiGEs that move less than five hexes (four for glider protomek) in a movement phase must
+     * land unless it has taken off in the same phase, jumped, or it is a LAM or glider ProtoMek that is using hover
      * movement.
      *
      * @param includeMovePathHexes  Whether to include the hexes plotted in this MovePath in the total distance
@@ -1664,9 +1665,9 @@ public class MovePath implements Cloneable, Serializable {
                 || getEntity().isAirborne()) {
             return false;
         }
-        // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
+        // A LAM converting from AirMek to Mek mode automatically lands at the end of movement.
         if ((getEntity() instanceof LandAirMek)
-                && (((LandAirMek) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMek.CONV_MODE_MECH)) {
+                && (((LandAirMek) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMek.CONV_MODE_MEK)) {
             if (getLastStep() != null) {
                 return getLastStep().getClearance() > 0;
             } else {

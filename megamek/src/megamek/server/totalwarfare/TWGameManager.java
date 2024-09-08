@@ -1261,7 +1261,7 @@ public class TWGameManager extends AbstractGameManager {
     private void endCurrentTurn(Entity entityUsed) {
         // Enforce "inf_move_multi" and "protos_move_multi" options.
         // The "isNormalTurn" flag is checking to see if any non-Infantry
-        // or non-ProtoMech units can move during the current turn.
+        // or non-ProtoMek units can move during the current turn.
         boolean turnsChanged = false;
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
@@ -1305,11 +1305,11 @@ public class TWGameManager extends AbstractGameManager {
         if (infMoveMulti && infMoved) {
             multiMask = EntityClassTurn.CLASS_INFANTRY;
         } else if (protosMoveMulti && protosMoved) {
-            multiMask = EntityClassTurn.CLASS_PROTOMECH;
+            multiMask = EntityClassTurn.CLASS_PROTOMEK;
         } else if (tanksMoveMulti && tanksMoved) {
             multiMask = EntityClassTurn.CLASS_TANK;
         } else if (meksMoveMulti && meksMoved) {
-            multiMask = EntityClassTurn.CLASS_MECH;
+            multiMask = EntityClassTurn.CLASS_MEK;
         }
 
         // In certain cases, a new SpecificEntityTurn could have been added for
@@ -1334,14 +1334,14 @@ public class TWGameManager extends AbstractGameManager {
         //  This determines if we should add more multi-turns
         boolean isMultiTurn = turn.isMultiTurn();
 
-        // Unless overridden by the "protos_move_multi" option, all ProtoMechs
+        // Unless overridden by the "protos_move_multi" option, all ProtoMeks
         // in a unit declare fire, and they don't mix with infantry.
         if (protosMoved && !protosMoveMulti && !isMultiTurn) {
             // What's the unit number and ID of the entity used?
             final short movingUnit = entityUsed.getUnitNumber();
             final int movingId = entityUsed.getId();
 
-            // How many other ProtoMechs are in the unit that can fire?
+            // How many other ProtoMeks are in the unit that can fire?
             int protoTurns = game.getSelectedEntityCount(new EntitySelector() {
                 private final int ownerId = playerId;
 
@@ -1359,7 +1359,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             });
 
-            // Add the correct number of turns for the ProtoMech unit number.
+            // Add the correct number of turns for the ProtoMek unit number.
             for (int i = 0; i < protoTurns; i++) {
                 GameTurn newTurn = new UnitNumberTurn(playerId, movingUnit);
                 newTurn.setMultiTurn(true);
@@ -1415,7 +1415,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (meksMoved && meksMoveMulti && !isMultiTurn) {
-            int remaining = game.getMechsLeft(playerId);
+            int remaining = game.getMeksLeft(playerId);
             if (usedEntityNotDone) {
                 remaining--;
             }
@@ -2080,7 +2080,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns true if victory conditions have been met. Victory conditions are
-     * when there is only one player left with mechs or only one team. will also
+     * when there is only one player left with meks or only one team. will also
      * add some reports to reporting
      */
     public boolean victory() {
@@ -2316,7 +2316,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (protosMoveEven) {
-            evenMask += EntityClassTurn.CLASS_PROTOMECH;
+            evenMask += EntityClassTurn.CLASS_PROTOMEK;
         }
         // Reset all of the Players' turn category counts
         for (Enumeration<Player> loop = game.getPlayers(); loop.hasMoreElements(); ) {
@@ -2331,10 +2331,10 @@ public class TWGameManager extends AbstractGameManager {
             player.resetSmallCraftTurns();
             player.resetAeroTurns();
 
-            // Add turns for ProtoMechs weapons declaration.
+            // Add turns for ProtoMeks weapons declaration.
             if (protosMoveByPoint) {
 
-                // How many ProtoMechs does the player have?
+                // How many ProtoMeks does the player have?
                 Iterator<Entity> playerProtos = game.getSelectedEntities(new EntitySelector() {
                     private final int ownerId = player.getId();
 
@@ -2370,7 +2370,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Go through all entities, and update the turn categories of the
         // entity's player. The teams get their totals from their players.
-        // N.B. ProtoMechs declare weapons fire based on their point.
+        // N.B. ProtoMeks declare weapons fire based on their point.
         for (Iterator<Entity> loop = game.getEntities(); loop.hasNext(); ) {
             final Entity entity = loop.next();
             if (entity.isSelectableThisTurn()) {
@@ -2406,7 +2406,7 @@ public class TWGameManager extends AbstractGameManager {
                         if (protosMoveEven) {
                             player.incrementEvenTurns();
                         } else if (protosMoveMulti) {
-                            player.incrementMultiTurns(EntityClassTurn.CLASS_PROTOMECH);
+                            player.incrementMultiTurns(EntityClassTurn.CLASS_PROTOMEK);
                         } else {
                             player.incrementOtherTurns();
                         }
@@ -2414,7 +2414,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else if ((entity instanceof Tank) && !(entity instanceof GunEmplacement) && tankMoveByLance) {
                     player.incrementMultiTurns(EntityClassTurn.CLASS_TANK);
                 } else if ((entity instanceof Mek) && mekMoveByLance) {
-                    player.incrementMultiTurns(EntityClassTurn.CLASS_MECH);
+                    player.incrementMultiTurns(EntityClassTurn.CLASS_MEK);
                 } else {
                     player.incrementOtherTurns();
                 }
@@ -2506,11 +2506,11 @@ public class TWGameManager extends AbstractGameManager {
                 player = (Player) withinTeamTurns.nextNormalElement();
 
                 // If we've added all "normal" turns, allocate turns
-                // for the infantry and/or ProtoMechs moving even.
+                // for the infantry and/or ProtoMeks moving even.
                 if (numTurn >= team_order.getTotalTurns()) {
                     turn = new EntityClassTurn(player.getId(), evenMask);
                 }
-                // If either Infantry or ProtoMechs move even, only allow
+                // If either Infantry or ProtoMeks move even, only allow
                 // the other classes to move during the "normal" turn.
                 else if (infMoveEven || protosMoveEven) {
                     int newMask = evenMask;
@@ -2890,7 +2890,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     public void loadUnit(Entity loader, Entity unit, int bayNumber) {
-        // ProtoMechs share a single turn for a Point. When loading one we don't remove its turn
+        // ProtoMeks share a single turn for a Point. When loading one we don't remove its turn
         // unless it's the last unit in the Point to act.
         int remainingProtos = 0;
         if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
@@ -3939,7 +3939,7 @@ public class TWGameManager extends AbstractGameManager {
                     nextElevation = 1;
                     crashedIntoTerrain = false;
                 } else if ((entity instanceof LandAirMek) && (curAltitude + 1 == nextHex.floor())) {
-                    // LAMs in AirMech mode skid across terrain that is two levels higher rather than crashing,
+                    // LAMs in AirMek mode skid across terrain that is two levels higher rather than crashing,
                     // Reset the skid distance for skid damage calculations.
                     nextElevation = 0;
                     skidDistance = 0;
@@ -4189,7 +4189,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
 
-                    // Mechs and vehicles get charged,
+                    // Meks and vehicles get charged,
                     // but need to make a to-hit roll
                     if ((target instanceof Mek) || (target instanceof Tank)
                             || (target instanceof Aero)) {
@@ -4259,7 +4259,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
 
                         // if we don't do this here,
-                        // we can have a mech without a leg
+                        // we can have a mek without a leg
                         // standing on the field and moving
                         // as if it still had his leg after
                         // getting skid-charged.
@@ -4347,7 +4347,7 @@ public class TWGameManager extends AbstractGameManager {
                 // damage, then apply charge damage to the
                 // building and displace the entity inside.
                 // ASSUMPTION: you don't charge the building
-                // if Tanks or Mechs were charged.
+                // if Tanks or Meks were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity, game
                                 .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                         entity.delta_distance);
@@ -4375,7 +4375,7 @@ public class TWGameManager extends AbstractGameManager {
                 // equal to the building being charged.
                 // ASSUMPTION: infantry take no damage from the
                 // building absorbing damage from
-                // Tanks and Mechs being charged.
+                // Tanks and Meks being charged.
                 addReport(damageInfantryIn(bldg, chargeDamage, nextPos));
 
                 // If a building still stands, then end the skid,
@@ -4540,15 +4540,15 @@ public class TWGameManager extends AbstractGameManager {
             target = Compute.stackingViolation(game, entity.getId(), curPos, entity.climbMode());
         }
 
-        // Mechs suffer damage for every hex skidded.
+        // Meks suffer damage for every hex skidded.
         // For QuadVees in vehicle mode, apply
         // damage only if flipping.
-        boolean mechDamage = ((entity instanceof Mek)
+        boolean mekDamage = ((entity instanceof Mek)
                 && !((entity.getMovementMode() == EntityMovementMode.WIGE) && (entity.getElevation() > 0)));
         if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
-            mechDamage = flip;
+            mekDamage = flip;
         }
-        if (mechDamage) {
+        if (mekDamage) {
             // Calculate one half falling damage times skid length.
             int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
 
@@ -5034,7 +5034,7 @@ public class TWGameManager extends AbstractGameManager {
                         .isAirborneVTOLorWIGE()) || (victim.getAltitude() > 0)) {
                     continue;
                 }
-                // if the crasher is a DropShip and the victim is not a mech,
+                // if the crasher is a DropShip and the victim is not a mek,
                 // then it is automatically destroyed
                 if ((entity instanceof Dropship) && !(victim instanceof Mek)) {
                     vReport.addAll(destroyEntity(victim, "hit by crashing DropShip"));
@@ -5164,7 +5164,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 // ack! automatic death! Tanks
                 // suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
+                // TODO : a Mek suffers a Head Blown Off crit.
                 vPhaseReport.addAll(destroyEntity(entity,
                         "impossible displacement", entity instanceof Mek,
                         entity instanceof Mek));
@@ -5293,8 +5293,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Handle any picked up MekWarriors
-        for (Integer mechWarriorId : entity.getPickedUpMekWarriors()) {
-            Entity mw = game.getEntity(mechWarriorId);
+        for (Integer mekWarriorId : entity.getPickedUpMekWarriors()) {
+            Entity mw = game.getEntity(mekWarriorId);
 
             if (mw == null) {
                 continue;
@@ -5539,7 +5539,7 @@ public class TWGameManager extends AbstractGameManager {
             if (superchargerFailure) {
                 addReport(vReport);
                 // If this is supercharger failure we need to damage the supercharger as well as
-                // the additional criticals. For mechs this requires the additional step of finding
+                // the additional criticals. For meks this requires the additional step of finding
                 // the slot and marking it as hit so it can't absorb future damage.
                 Mounted supercharger = entity.getSuperCharger();
                 if ((null != supercharger) && supercharger.curMode().equals("Armed")) {
@@ -5599,7 +5599,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param rider         The <code>Entity</code> possibly being forced off.
      * @param curPos        The coordinates of the hex where the conversion starts.
      * @param curFacing     The carrier's facing when conversion starts.
-     * @param automatic     Whether the infantry falls automatically. If false, an anti-mech roll is made
+     * @param automatic     Whether the infantry falls automatically. If false, an anti-mek roll is made
      *                      to see whether it stays mounted.
      * @param infDamage     If true, the infantry takes falling damage, +1D6 for conventional.
      * @param carrierDamage If true, the carrier takes damage from converting while carrying infantry.
@@ -6753,7 +6753,7 @@ public class TWGameManager extends AbstractGameManager {
                             r.add(te.getLocationName(hit));
                             vPhaseReport.add(r);
                             te.destroyLocation(hit.getLocation());
-                            // Handle ProtoMech pilot damage
+                            // Handle ProtoMek pilot damage
                             // due to location destruction
                             int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
                                     - ((ProtoMek) te).getPilotDamageTaken(hit.getLocation());
@@ -7343,8 +7343,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         boolean boom = false;
-        // Only mechs can set off vibrabombs. QuadVees should only be able to set off a
-        // vibrabomb in Mech mode. Those that are converting to or from Mech mode should
+        // Only meks can set off vibrabombs. QuadVees should only be able to set off a
+        // vibrabomb in Mek mode. Those that are converting to or from Mek mode should
         // are using leg movement and should be able to set them off.
         if (!(entity instanceof Mek) || (entity instanceof QuadVee
                 && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
@@ -7365,7 +7365,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // Mech weighing 10 tons or less can't set off the bomb
+            // Mek weighing 10 tons or less can't set off the bomb
             if (mass <= (mf.getSetting() - 10)) {
                 continue;
             }
@@ -7390,7 +7390,7 @@ public class TWGameManager extends AbstractGameManager {
                 explodeVibrabomb(mf, vMineReport, excludeEntityID);
             }
 
-            // Hack; when moving, the Mech isn't in the hex during
+            // Hack; when moving, the Mek isn't in the hex during
             // the movement.
             if (!displaced && (actualDistance == 0)) {
                 // report getting hit by vibrabomb
@@ -7662,7 +7662,7 @@ public class TWGameManager extends AbstractGameManager {
     void checkForWashedInfernos(Entity entity, Coords coords) {
         Hex hex = game.getBoard().getHex(coords);
         int waterLevel = hex.terrainLevel(Terrains.WATER);
-        // Mech on fire with infernos can wash them off.
+        // Mek on fire with infernos can wash them off.
         if (!(entity instanceof Mek) || !entity.infernos.isStillBurning()) {
             return;
         }
@@ -7673,7 +7673,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Washes off an inferno from a mech and adds it to the (water) hex.
+     * Washes off an inferno from a mek and adds it to the (water) hex.
      *
      * @param entity The <code>Entity</code> that is taking a bath
      * @param coords The <code>Coords</code> the entity is at
@@ -8318,7 +8318,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
         // check entity in target hex
         Entity affaTarget = game.getAffaTarget(dest, entity);
-        // falling mech falls
+        // falling mek falls
         r = new Report(2205);
         r.subject = entity.getId();
         r.addDesc(entity);
@@ -8424,7 +8424,7 @@ public class TWGameManager extends AbstractGameManager {
                         } else {
                             // ack! automatic death! Tanks
                             // suffer an ammo/power plant hit.
-                            // TODO : a Mech suffers a Head Blown Off crit.
+                            // TODO : a Mek suffers a Head Blown Off crit.
                             vPhaseReport.addAll(destroyEntity(violation, "impossible displacement",
                                     violation instanceof Mek, violation instanceof Mek));
                         }
@@ -8451,7 +8451,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 // ack! automatic death! Tanks
                 // suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
+                // TODO : a Mek suffers a Head Blown Off crit.
                 vPhaseReport.addAll(destroyEntity(entity,
                         "impossible displacement", entity instanceof Mek, entity instanceof Mek));
             }
@@ -8591,7 +8591,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // mechs that were stuck will automatically fall in their new hex
+        // meks that were stuck will automatically fall in their new hex
         if (wasStuck && entity.canFall()) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
@@ -8625,7 +8625,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
-        // Falling into water instantly destroys most non-mechs
+        // Falling into water instantly destroys most non-meks
         else if ((waterDepth > 0)
                 && !(entity instanceof Mek)
                 && !(entity instanceof ProtoMek)
@@ -8816,7 +8816,7 @@ public class TWGameManager extends AbstractGameManager {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));
             int stuckroll = Compute.d6(2);
-            // A DFA-ing mech is "displaced" into the target hex. Since it
+            // A DFA-ing mek is "displaced" into the target hex. Since it
             // must be jumping, it will automatically be bogged down
             if (stuckroll < roll.getValue() || entity.isMakingDfa()) {
                 entity.setStuck(true);
@@ -9335,7 +9335,7 @@ public class TWGameManager extends AbstractGameManager {
                 game.addAction(ea);
             }
 
-            // Anti-mech and pointblank attacks from
+            // Anti-mek and pointblank attacks from
             // hiding may allow the target to respond.
             if (ea instanceof WeaponAttackAction) {
                 final WeaponAttackAction waa = (WeaponAttackAction) ea;
@@ -10153,12 +10153,12 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.add(r);
 
                     if (e instanceof Mek) {
-                        Mek mech = (Mek) e;
-                        if (mech.isAutoEject()
+                        Mek mek = (Mek) e;
+                        if (mek.isAutoEject()
                                 && (!game.getOptions().booleanOption(
                                 OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                 .getOptions().booleanOption(
-                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && mek
                                 .isCondEjectEngine()))) {
                             vDesc.addAll(ejectEntity(e, true));
                         }
@@ -10973,8 +10973,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Cleans up the attack declarations for the physical phase by removing all
-     * attacks past the first for any one mech. Also clears out attacks by dead
-     * or disabled mechs.
+     * attacks past the first for any one mek. Also clears out attacks by dead
+     * or disabled meks.
      */
     private void cleanupPhysicalAttacks() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
@@ -11044,7 +11044,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Apply damage to mech for zweihandering (melee attack with both hands) as per pg. 82,
+     * Apply damage to mek for zweihandering (melee attack with both hands) as per pg. 82,
      * Campaign Operations 2nd Printing
      *
      * @param ae the attacking entity
@@ -11088,7 +11088,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage : pr.damageRight;
-        // LAMs in airmech mode do half damage if airborne.
+        // LAMs in airmek mode do half damage if airborne.
         if (ae.isAirborneVTOLorWIGE()) {
             damage = (int) Math.ceil(damage * 0.5);
         }
@@ -11320,7 +11320,7 @@ public class TWGameManager extends AbstractGameManager {
 
         addNewLines();
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((target instanceof Mek) && ((Mek) target).isIndustrial()) {
             ((Mek) target).setCheckForCrit(true);
         }
@@ -11354,7 +11354,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
-        // LAMs in airmech mode do half damage if airborne.
+        // LAMs in airmek mode do half damage if airborne.
         if (ae.isAirborneVTOLorWIGE()) {
             damage = (int) Math.ceil(damage * 0.5);
         }
@@ -11557,7 +11557,7 @@ public class TWGameManager extends AbstractGameManager {
             game.addPSR(kickPRD);
         }
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((te instanceof Mek) && ((Mek) te).isIndustrial()) {
             ((Mek) te).setCheckForCrit(true);
         }
@@ -11763,14 +11763,14 @@ public class TWGameManager extends AbstractGameManager {
 
         addNewLines();
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((target instanceof Mek) && ((Mek) target).isIndustrial()) {
             ((Mek) target).setCheckForCrit(true);
         }
     }
 
     /**
-     * Handle a ProtoMech physical attack
+     * Handle a ProtoMek physical attack
      */
     private void resolveProtoAttack(PhysicalResult pr, int lastEntityId) {
         final ProtoMekPhysicalAttackAction ppaa = (ProtoMekPhysicalAttackAction) pr.aaa;
@@ -12013,7 +12013,7 @@ public class TWGameManager extends AbstractGameManager {
 
         addNewLines();
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((target instanceof Mek) && ((Mek) target).isIndustrial()) {
             ((Mek) target).setCheckForCrit(true);
         }
@@ -12094,7 +12094,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
             addReport(damageEntity(ae, hit, damage));
             addNewLines();
-            // if this is an industrial mech, it needs to check for crits
+            // if this is an industrial mek, it needs to check for crits
             // at the end of turn
             if ((ae instanceof Mek) && ((Mek) ae).isIndustrial()) {
                 ((Mek) ae).setCheckForCrit(true);
@@ -12414,7 +12414,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(caa.getEntityId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
-        // LAMs in airmech mode do half damage if airborne.
+        // LAMs in airmek mode do half damage if airborne.
         if (ae.isAirborneVTOLorWIGE()) {
             damage = (int) Math.ceil(damage * 0.5);
         }
@@ -12715,7 +12715,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of
+        // On a roll of 10+ a lance hitting a mek/Vehicle can cause 1 point of
         // internal damage
         if (caa.getClub().getType().hasSubType(MiscType.S_LANCE)
                 && (te.getArmor(hit) > 0)
@@ -12748,7 +12748,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // Chain whips can entangle 'Mek and ProtoMech limbs. This
+        // Chain whips can entangle 'Mek and ProtoMek limbs. This
         // implementation assumes that in order to do so the limb must still
         // have some structure left, so if the whip hits and destroys a
         // location in the same attack no special effects take place.
@@ -12857,7 +12857,7 @@ public class TWGameManager extends AbstractGameManager {
 
         addNewLines();
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((target instanceof Mek) && ((Mek) target).isIndustrial()) {
             ((Mek) target).setCheckForCrit(true);
         }
@@ -13012,7 +13012,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((te instanceof Mek) && ((Mek) te).isIndustrial()) {
             ((Mek) te).setCheckForCrit(true);
         }
@@ -13086,7 +13086,7 @@ public class TWGameManager extends AbstractGameManager {
         r.subject = ae.getId();
         addReport(r);
         addNewLines();
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((te instanceof Mek) && ((Mek) te).isIndustrial()) {
             ((Mek) te).setCheckForCrit(true);
         }
@@ -13195,7 +13195,7 @@ public class TWGameManager extends AbstractGameManager {
         addReport(r);
         addNewLines();
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((te instanceof Mek) && ((Mek) te).isIndustrial()) {
             ((Mek) te).setCheckForCrit(true);
         }
@@ -13465,7 +13465,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        // target fell down, only for attacking Mechs, though
+        // target fell down, only for attacking Meks, though
         if ((te != null) && (te.isProne()) && (ae instanceof Mek)) {
             r = new Report(4205);
             r.subject = ae.getId();
@@ -13570,10 +13570,10 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle an Airmech ram attack
+     * Handle an Airmek ram attack
      */
-    private void resolveAirmechRamAttack(PhysicalResult pr, int lastEntityId) {
-        final AirmechRamAttackAction caa = (AirmechRamAttackAction) pr.aaa;
+    private void resolveAirMekRamAttack(PhysicalResult pr, int lastEntityId) {
+        final AirMekRamAttackAction caa = (AirMekRamAttackAction) pr.aaa;
         final Entity ae = game.getEntity(caa.getEntityId());
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
@@ -13714,7 +13714,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // Apply damage to the attacker.
-            int toAttacker = AirmechRamAttackAction.getDamageTakenBy(ae, target, ae.delta_distance);
+            int toAttacker = AirMekRamAttackAction.getDamageTakenBy(ae, target, ae.delta_distance);
             HitData hit = new HitData(Mek.LOC_CT);
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE,
@@ -14058,12 +14058,12 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction,
-                                     boolean glancing, boolean throughFront, boolean airmechRam) {
+                                     boolean glancing, boolean throughFront, boolean airMekRam) {
         // we hit...
 
         PilotingRollData chargePSR = null;
         // If we're upright, we may fall down.
-        if (!ae.isProne() && !airmechRam) {
+        if (!ae.isProne() && !airMekRam) {
             chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
         }
 
@@ -14073,9 +14073,9 @@ public class TWGameManager extends AbstractGameManager {
         // Damage to Attacker
         int damageTaken;
 
-        if (airmechRam) {
-            damage = AirmechRamAttackAction.getDamageFor(ae);
-            damageTaken = AirmechRamAttackAction.getDamageTakenBy(ae, te);
+        if (airMekRam) {
+            damage = AirMekRamAttackAction.getDamageFor(ae);
+            damageTaken = AirMekRamAttackAction.getDamageTakenBy(ae, te);
         } else {
             damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
@@ -14135,8 +14135,8 @@ public class TWGameManager extends AbstractGameManager {
         while (damageTaken > 0) {
             int cluster;
             HitData hit;
-            // An airmech ramming attack does all damage to attacker's CT
-            if (airmechRam) {
+            // An airmek ramming attack does all damage to attacker's CT
+            if (airMekRam) {
                 cluster = damageTaken;
                 hit = new HitData(Mek.LOC_CT);
             } else {
@@ -14193,8 +14193,8 @@ public class TWGameManager extends AbstractGameManager {
         // track any additional damage to the attacker due to the target having spikes
         while (damage > 0) {
             int cluster = Math.min(5, damage);
-            // Airmech ramming attacks do all damage to a single location
-            if (airmechRam) {
+            // Airmek ramming attacks do all damage to a single location
+            if (airMekRam) {
                 cluster = damage;
             }
             damage -= cluster;
@@ -14232,7 +14232,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        if (airmechRam) {
+        if (airMekRam) {
             if (!ae.isDoomed()) {
                 PilotingRollData controlRoll = ae.getBasePilotingRoll();
                 Vector<Report> reports = new Vector<>();
@@ -14253,12 +14253,12 @@ public class TWGameManager extends AbstractGameManager {
                 if (diceRoll.getIntValue() < controlRoll.getValue()) {
                     r.choose(false);
                     reports.add(r);
-                    crashAirMech(ae, controlRoll, reports);
+                    crashAirMek(ae, controlRoll, reports);
                 } else {
                     r.choose(true);
                     reports.addElement(r);
                     if (ae instanceof LandAirMek) {
-                        reports.addAll(landAirMech((LandAirMek) ae, ae.getPosition(), 1, ae.delta_distance));
+                        reports.addAll(landAirMek((LandAirMek) ae, ae.getPosition(), 1, ae.delta_distance));
                     }
                 }
                 addReport(reports);
@@ -14278,7 +14278,7 @@ public class TWGameManager extends AbstractGameManager {
             addNewLines();
         }
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((te instanceof Mek) && ((Mek) te).isIndustrial()) {
             ((Mek) te).setCheckForCrit(true);
         }
@@ -14615,7 +14615,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 // attacker destroyed
                 // Tanks suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
+                // TODO : a Mek suffers a Head Blown Off crit.
                 addReport(destroyEntity(ae, "impossible displacement",
                         ae instanceof Mek, ae instanceof Mek));
             }
@@ -14691,7 +14691,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 // ack! automatic death! Tanks
                 // suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
+                // TODO : a Mek suffers a Head Blown Off crit.
                 addReport(destroyEntity(te, "impossible displacement",
                         te instanceof Mek, te instanceof Mek));
             }
@@ -14750,7 +14750,7 @@ public class TWGameManager extends AbstractGameManager {
         // entity isn't DFAing any more
         ae.setDisplacementAttack(null);
 
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
+        // if the target is an industrial mek, it needs to check for crits at the end of turn
         if ((target instanceof Mek) && ((Mek) target).isIndustrial()) {
             ((Mek) target).setCheckForCrit(true);
         }
@@ -14799,7 +14799,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Each mech sinks the amount of heat appropriate to its current heat
+     * Each mek sinks the amount of heat appropriate to its current heat
      * capacity.
      */
     void resolveHeat() {
@@ -14836,7 +14836,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (entity instanceof Aero) {
                     radicalHSBonus = ((Aero) entity).getHeatSinks();
                 } else {
-                    LogManager.getLogger().error("Radical heat sinks mounted on non-mech, non-aero Entity!");
+                    LogManager.getLogger().error("Radical heat sinks mounted on non-mek, non-aero Entity!");
                 }
 
                 // RHS activation report
@@ -14909,7 +14909,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // heat doesn't matter for non-mechs
+            // heat doesn't matter for non-meks
             if (!(entity instanceof Mek)) {
                 entity.heat = 0;
                 entity.heatBuildup = 0;
@@ -14944,7 +14944,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // Only Mechs after this point
+            // Only Meks after this point
 
             // Meks gain heat from inferno hits.
             if (entity.infernos.isStillBurning()) {
@@ -14956,7 +14956,7 @@ public class TWGameManager extends AbstractGameManager {
                 heatEffectsReports.add(r);
             }
 
-            // should we even bother for this mech?
+            // should we even bother for this mek?
             if (entity.isDestroyed() || entity.isDoomed() || entity.getCrew().isDoomed()
                     || entity.getCrew().isDead()) {
                 continue;
@@ -15031,7 +15031,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // Check the mech for vibroblades if so then check to see if any
+            // Check the mek for vibroblades if so then check to see if any
             // are active and what heat they will produce.
             if (entity.hasVibroblades()) {
                 int vibroHeat;
@@ -15385,7 +15385,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(diceRoll);
                 }
                 if (rollValue >= boom) {
-                    // mech is ok
+                    // mek is ok
                     r.choose(true);
                     addReport(r);
                 } else {
@@ -15396,7 +15396,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // heat effects: mechwarrior damage
+            // heat effects: mekwarrior damage
             // N.B. The pilot may already be dead.
             int lifeSupportCritCount;
             boolean torsoMountedCockpit = ((Mek) entity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
@@ -15423,23 +15423,23 @@ public class TWGameManager extends AbstractGameManager {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
                 if ((damageHeat >= 47) && mtHeat) {
-                    // mechwarrior takes 5 damage
+                    // mekwarrior takes 5 damage
                     heatLimitDesc = 47;
                     damageToCrew = 5;
                 } else if ((damageHeat >= 39) && mtHeat) {
-                    // mechwarrior takes 4 damage
+                    // mekwarrior takes 4 damage
                     heatLimitDesc = 39;
                     damageToCrew = 4;
                 } else if ((damageHeat >= 32) && mtHeat) {
-                    // mechwarrior takes 3 damage
+                    // mekwarrior takes 3 damage
                     heatLimitDesc = 32;
                     damageToCrew = 3;
                 } else if (damageHeat >= 25) {
-                    // mechwarrior takes 2 damage
+                    // mekwarrior takes 2 damage
                     heatLimitDesc = 25;
                     damageToCrew = 2;
                 } else if (damageHeat >= 15) {
-                    // mechwarrior takes 1 damage
+                    // mekwarrior takes 1 damage
                     heatLimitDesc = 15;
                     damageToCrew = 1;
                 }
@@ -15619,20 +15619,20 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity e : game.getEntitiesVector()) {
             if ((e instanceof Mek) && e.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
                     && (e.heat > 13)) {
-                Mek mech = (Mek) e;
+                Mek mek = (Mek) e;
                 Vector<Report> vDesc = new Vector<>();
                 HashMap<Integer, List<CriticalSlot>> crits = new HashMap<>();
-                if (!(mech.doRISCEmergencyCoolantCheckFor(vDesc, crits))) {
-                    mech.heat -= 6 + mech.getCoolantSystemMOS();
+                if (!(mek.doRISCEmergencyCoolantCheckFor(vDesc, crits))) {
+                    mek.heat -= 6 + mek.getCoolantSystemMOS();
                     Report r = new Report(5027);
-                    r.add(6 + mech.getCoolantSystemMOS());
+                    r.add(6 + mek.getCoolantSystemMOS());
                     vDesc.add(r);
                 }
                 addReport(vDesc);
                 for (Integer loc : crits.keySet()) {
                     List<CriticalSlot> lcs = crits.get(loc);
                     for (CriticalSlot cs : lcs) {
-                        addReport(applyCriticalHit(mech, loc, cs, true, 0, false));
+                        addReport(applyCriticalHit(mek, loc, cs, true, 0, false));
                     }
                 }
             }
@@ -15640,7 +15640,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /*
-     * Resolve HarJel II/III repairs for Mechs so equipped.
+     * Resolve HarJel II/III repairs for Meks so equipped.
      */
     void resolveHarJelRepairs() {
         Report r;
@@ -15847,7 +15847,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(entity.getLocationName(hit));
                     addReport(r);
                     entity.destroyLocation(hit.getLocation());
-                    // Handle ProtoMech pilot damage due to location destruction
+                    // Handle ProtoMek pilot damage due to location destruction
                     int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
                             - ((ProtoMek) entity).getPilotDamageTaken(hit.getLocation());
                     if (hits > 0) {
@@ -15873,7 +15873,7 @@ public class TWGameManager extends AbstractGameManager {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
-        // Only applies to Mechs.
+        // Only applies to Meks.
         if (!(entity instanceof Mek)) {
             return;
         }
@@ -15896,7 +15896,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
 
-            // Only applies to Mechs.
+            // Only applies to Meks.
             if (!(entity instanceof Mek)) {
                 continue;
             }
@@ -16111,7 +16111,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
             }
-            // Airborne AirMechs that take 20+ damage make a control roll instead of a PSR.
+            // Airborne AirMeks that take 20+ damage make a control roll instead of a PSR.
             if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE()
                     && (entity.damageThisPhase >= 20)) {
                 PilotingRollData damPRD = new PilotingRollData(entity.getId());
@@ -16123,7 +16123,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Checks to see if any non-mech units are standing in fire. Called at the end of the movement
+     * Checks to see if any non-mek units are standing in fire. Called at the end of the movement
      * phase
      */
     public void checkForFlamingDamage() {
@@ -16300,35 +16300,35 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * industrial mechs might need to check for critical damage
+     * industrial meks might need to check for critical damage
      */
     private void checkForIndustrialCrit() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if ((entity instanceof Mek) && ((Mek) entity).isIndustrial()) {
-                Mek mech = (Mek) entity;
+                Mek mek = (Mek) entity;
                 // should we check for critical damage?
-                if (mech.isCheckForCrit()) {
+                if (mek.isCheckForCrit()) {
                     Report r = new Report(5530);
-                    r.addDesc(mech);
-                    r.subject = mech.getId();
+                    r.addDesc(mek);
+                    r.subject = mek.getId();
                     r.newlines = 0;
                     vPhaseReport.add(r);
                     // for being hit by a physical weapon
-                    if (mech.getLevelsFallen() == 0) {
+                    if (mek.getLevelsFallen() == 0) {
                         r = new Report(5531);
-                        r.subject = mech.getId();
+                        r.subject = mek.getId();
                         // or for falling
                     } else {
                         r = new Report(5532);
-                        r.subject = mech.getId();
-                        r.add(mech.getLevelsFallen());
+                        r.subject = mek.getId();
+                        r.add(mek.getLevelsFallen());
                     }
                     vPhaseReport.add(r);
-                    HitData newHit = mech.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                    vPhaseReport.addAll(criticalEntity(mech,
+                    HitData newHit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    vPhaseReport.addAll(criticalEntity(mek,
                             newHit.getLocation(), newHit.isRear(),
-                            mech.getLevelsFallen(), 0));
+                            mek.getLevelsFallen(), 0));
                 }
             }
         }
@@ -16419,7 +16419,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolves and reports all piloting skill rolls for a single mech.
+     * Resolves and reports all piloting skill rolls for a single mek.
      */
     Vector<Report> resolvePilotingRolls(Entity entity) {
         return resolvePilotingRolls(entity, false, entity.getPosition(),
@@ -16442,7 +16442,7 @@ public class TWGameManager extends AbstractGameManager {
 
         Report r;
 
-        // first, do extreme gravity PSR, because non-mechs do these, too
+        // first, do extreme gravity PSR, because non-meks do these, too
         PilotingRollData rollTarget = null;
         for (Enumeration<PilotingRollData> i = game.getExtremeGravityPSRs(); i.hasMoreElements(); ) {
             final PilotingRollData roll = i.nextElement();
@@ -16544,19 +16544,19 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // Glider ProtoMechs without sufficient movement to stay airborne make forced landings.
+        // Glider ProtoMeks without sufficient movement to stay airborne make forced landings.
         if ((entity instanceof ProtoMek) && ((ProtoMek) entity).isGlider()
                 && entity.isAirborneVTOLorWIGE() && (entity.getRunMP() < 4)) {
             vPhaseReport.addAll(landGliderPM((ProtoMek) entity, entity.getPosition(), entity.getElevation(),
                     entity.delta_distance));
         }
 
-        // non mechs and prone mechs can now return
+        // non meks and prone meks can now return
         if (!entity.canFall() || (entity.isHullDown() && entity.canGoHullDown())) {
             return vPhaseReport;
         }
 
-        // Mechs with UMU float and don't have to roll???
+        // Meks with UMU float and don't have to roll???
         if (entity instanceof Mek) {
             Hex hex = game.getBoard().getHex(dest);
             int water = hex.terrainLevel(Terrains.WATER);
@@ -16564,7 +16564,7 @@ public class TWGameManager extends AbstractGameManager {
                     && ((entity.getElevation() < 0) || ((entity.getElevation() == 0)
                     && (hex.terrainLevel(Terrains.BRIDGE_ELEV) != 0) && !hex.containsTerrain(Terrains.ICE)))
                     && !entity.isMakingDfa() && !entity.isDropping()) {
-                // mech is floating in water....
+                // mek is floating in water....
                 if (entity.hasUMU()) {
                     return vPhaseReport;
                 }
@@ -16800,7 +16800,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmech mode.
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmek mode.
      */
     private Vector<Report> resolveControl(Entity e) {
         Vector<Report> vReport = new Vector<>();
@@ -16970,7 +16970,7 @@ public class TWGameManager extends AbstractGameManager {
                                 Hex hex = game.getBoard().getHex(e.getPosition());
                                 int elevation = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                                 if (e.getElevation() - loss <= elevation) {
-                                    crashAirMech(e, target, vReport);
+                                    crashAirMek(e, target, vReport);
                                 } else {
                                     e.setElevation(e.getElevation() - loss);
                                 }
@@ -17090,7 +17090,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmech mode.
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmek mode.
      */
     private Vector<Report> resolveInternalBombHit(Entity e) {
         Vector<Report> vReport = new Vector<>();
@@ -17263,7 +17263,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         if (en.isAirborneVTOLorWIGE() && !en.getCrew().isActive()) {
             if (en instanceof LandAirMek) {
-                crashAirMech(en, en.getBasePilotingRoll(), vDesc);
+                crashAirMek(en, en.getBasePilotingRoll(), vDesc);
             } else if (en instanceof ProtoMek) {
                 vDesc.addAll(landGliderPM((ProtoMek) en));
             }
@@ -17402,7 +17402,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity e = i.next();
 
-            // only unconscious pilots of mechs and protos, ASF and Small Craft
+            // only unconscious pilots of meks and protos, ASF and Small Craft
             // and MekWarriors can roll to wake up
             if (e.isTargetable()
                     && ((e instanceof Mek) || (e instanceof ProtoMek)
@@ -17799,10 +17799,10 @@ public class TWGameManager extends AbstractGameManager {
         boolean autoEject = false;
         if (ammoExplosion) {
             if (te instanceof Mek) {
-                Mek mech = (Mek) te;
-                if (mech.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                Mek mek = (Mek) te;
+                if (mek.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                        && mech.isCondEjectAmmo()))) {
+                        && mek.isCondEjectAmmo()))) {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
                 }
@@ -17862,7 +17862,7 @@ public class TWGameManager extends AbstractGameManager {
         // Find out if Human TRO plays a part it crit bonus
         Entity ae = game.getEntity(hit.getAttackerId());
         if ((ae != null) && !areaSatArty) {
-            if ((te instanceof Mek) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MECH)) {
+            if ((te instanceof Mek) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
                 critBonus += 1;
             } else if ((te instanceof Aero) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
                 critBonus += 1;
@@ -17875,7 +17875,7 @@ public class TWGameManager extends AbstractGameManager {
 
         HitData nextHit = null;
 
-        // Some "hits" on a ProtoMech are actually misses.
+        // Some "hits" on a ProtoMek are actually misses.
         if ((te instanceof ProtoMek) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
             ProtoMek proto = (ProtoMek) te;
             r = new Report(6035);
@@ -18201,7 +18201,7 @@ public class TWGameManager extends AbstractGameManager {
                         creditKill(te, game.getEntity(hit.getAttackerId()));
                     }
                 }
-                // check for aero crits from natural 12 or threshold; LAMs take damage as mechs
+                // check for aero crits from natural 12 or threshold; LAMs take damage as meks
                 if (te instanceof Aero) {
                     checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh,
                             critSI, ammoExplosion, nukeS2S);
@@ -18278,7 +18278,7 @@ public class TWGameManager extends AbstractGameManager {
                 damage = damageNew;
             }
 
-            // Destroy searchlights on 7+ (torso hits on mechs)
+            // Destroy searchlights on 7+ (torso hits on meks)
             if (te.hasSearchlight()) {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
@@ -18400,7 +18400,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
 
-                // is this a mech/tank dumping ammo being hit in the rear torso?
+                // is this a mek/tank dumping ammo being hit in the rear torso?
                 if (((te instanceof Mek) && hit.isRear() && bTorso)
                         || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
                         : Tank.LOC_REAR)))) {
@@ -18967,7 +18967,7 @@ public class TWGameManager extends AbstractGameManager {
                     if ((te.getInternal(hit) > damage) && (damage > 0)) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
-                        // Triggers a critical hit on Vehicles and Mechs.
+                        // Triggers a critical hit on Vehicles and Meks.
                         if (!isPlatoon && !isBattleArmor) {
                             crits++;
                         }
@@ -18988,14 +18988,14 @@ public class TWGameManager extends AbstractGameManager {
                         r.add(te.getInternal(hit));
                         vDesc.addElement(r);
                     } else if (damage > 0) {
-                        // Triggers a critical hit on Vehicles and Mechs.
+                        // Triggers a critical hit on Vehicles and Meks.
                         if (!isPlatoon && !isBattleArmor) {
                             crits++;
                         }
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
 
-                        // Handle ProtoMech pilot damage
+                        // Handle ProtoMek pilot damage
                         // due to location destruction
                         if (te instanceof ProtoMek) {
                             int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
@@ -19186,13 +19186,13 @@ public class TWGameManager extends AbstractGameManager {
                                     && !te.getCrew().isDead() && !te.getCrew().isDoomed()
                                     && game.getOptions().booleanOption(
                                     OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
-                                Mek mech = (Mek) te;
-                                if (mech.isAutoEject()
+                                Mek mek = (Mek) te;
+                                if (mek.isAutoEject()
                                         && (!game.getOptions().booleanOption(
                                         OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                         || (game.getOptions().booleanOption(
                                         OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                                        && mech.isCondEjectHeadshot()))) {
+                                        && mek.isCondEjectHeadshot()))) {
                                     autoEject = true;
                                     vDesc.addAll(ejectEntity(te, true, true));
                                 }
@@ -19200,15 +19200,15 @@ public class TWGameManager extends AbstractGameManager {
 
                             if ((te instanceof Mek) && (hit.getLocation() == Mek.LOC_CT)
                                     && !te.getCrew().isDead() && !te.getCrew().isDoomed()) {
-                                Mek mech = (Mek) te;
-                                if (mech.isAutoEject()
+                                Mek mek = (Mek) te;
+                                if (mek.isAutoEject()
                                         && game.getOptions().booleanOption(
                                         OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                                        && mech.isCondEjectCTDest()) {
-                                    if (mech.getCrew().getHits() < 5) {
+                                        && mek.isCondEjectCTDest()) {
+                                    if (mek.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
-                                        mech.setDoomed(false);
-                                        mech.setDoomed(true);
+                                        mek.setDoomed(false);
+                                        mek.setDoomed(true);
                                     }
                                     autoEject = true;
                                     vDesc.addAll(ejectEntity(te, true));
@@ -19379,7 +19379,7 @@ public class TWGameManager extends AbstractGameManager {
                         r.addDesc(te);
                         if (te.isAirborneVTOLorWIGE()) {
                             vDesc.add(r);
-                            crashAirMech(te, new PilotingRollData(te.getId(), TargetRoll.AUTOMATIC_FAIL,
+                            crashAirMek(te, new PilotingRollData(te.getId(), TargetRoll.AUTOMATIC_FAIL,
                                     "side torso destroyed"), vDesc);
                         } else if (te.isAirborne() && te.isAero()) {
                             vDesc.add(r);
@@ -19418,7 +19418,7 @@ public class TWGameManager extends AbstractGameManager {
                 damageIS = false;
             }
         }
-        // Mechs using EI implants take pilot damage each time a hit
+        // Meks using EI implants take pilot damage each time a hit
         // inflicts IS damage
         if (tookInternalDamage
                 && ((te instanceof Mek) || (te instanceof ProtoMek))
@@ -19503,7 +19503,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Apply damage to an Entity carrying external Battle Armor or ProtoMech
+     * Apply damage to an Entity carrying external Battle Armor or ProtoMek
      * when a location with a trooper present is hit.
      *
      * @param te             The carrying Entity
@@ -19611,7 +19611,7 @@ public class TWGameManager extends AbstractGameManager {
             r.addDesc(passenger);
             vDesc.addElement(r);
             int facing = te.getFacing();
-            // We're going to assume that it's mounted facing the mech
+            // We're going to assume that it's mounted facing the mek
             Coords position = te.getPosition();
             if (!hit.isRear()) {
                 facing = (facing + 3) % 6;
@@ -19665,7 +19665,7 @@ public class TWGameManager extends AbstractGameManager {
             hitsPerRound = 1;
         }
 
-        // Non mechs and mechs that already rolled are safe
+        // Non meks and meks that already rolled are safe
         if (en.rolledForEngineExplosion || !(en instanceof Mek)) {
             return false;
         }
@@ -19728,7 +19728,7 @@ public class TWGameManager extends AbstractGameManager {
             // kill the crew
             en.getCrew().setDoomed(true);
 
-            // This is a hack so MM.NET marks the mech as not salvageable
+            // This is a hack so MM.NET marks the mek as not salvageable
             en.destroyLocation(Mek.LOC_CT);
 
             // ICE explosions don't hurt anyone else, but fusion do
@@ -19740,12 +19740,12 @@ public class TWGameManager extends AbstractGameManager {
                 r.indent(2);
                 vDesc.add(r);
 
-                Mek mech = (Mek) en;
-                if (mech.isAutoEject() && (!game.getOptions().booleanOption(
+                Mek mek = (Mek) en;
+                if (mek.isAutoEject() && (!game.getOptions().booleanOption(
                         OptionsConstants.RPG_CONDITIONAL_EJECTION)
                         || (game.getOptions().booleanOption(
                         OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                        && mech.isCondEjectEngine()))) {
+                        && mek.isCondEjectEngine()))) {
                     vDesc.addAll(ejectEntity(en, true));
                 }
 
@@ -20528,7 +20528,7 @@ public class TWGameManager extends AbstractGameManager {
      *                         not be <code>null</code>.
      * @param loc              the <code>int</code> location of critical hit. This value may
      *                         be <code>Entity.NONE</code> for hits to <code>Tank</code>s and
-     *                         for hits to a <code>Protomech</code> torso weapon.
+     *                         for hits to a <code>Protomek</code> torso weapon.
      * @param cs               the <code>CriticalSlot</code> being damaged. This value may
      *                         not be <code>null</code>. For critical hits on a
      *                         <code>Tank</code>, the index of the slot should be the index
@@ -20536,7 +20536,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param secondaryEffects the <code>boolean</code> flag that indicates whether to allow
      *                         critical hits to cause secondary effects (such as triggering
      *                         an ammo explosion, sending hovercraft to watery graves, or
-     *                         damaging ProtoMech torso weapons). This value is normally
+     *                         damaging ProtoMek torso weapons). This value is normally
      *                         <code>true</code>, but it will be <code>false</code> when the
      *                         hit is being applied from a saved game or scenario.
      * @param damageCaused     the amount of damage causing this critical.
@@ -20566,9 +20566,9 @@ public class TWGameManager extends AbstractGameManager {
             // Handle critical hits on system slots.
             cs.setHit(true);
             if (en instanceof ProtoMek) {
-                vDesc.addAll(applyProtomechCritical((ProtoMek) en, loc, cs, secondaryEffects, damageCaused, isCapital));
+                vDesc.addAll(applyProtoMekCritical((ProtoMek) en, loc, cs, secondaryEffects, damageCaused, isCapital));
             } else {
-                vDesc.addAll(applyMechSystemCritical(en, loc, cs));
+                vDesc.addAll(applyMekSystemCritical(en, loc, cs));
             }
         } else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
             vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
@@ -20605,7 +20605,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param secondaryEffects the <code>boolean</code> flag that indicates whether to allow
      *                         critical hits to cause secondary effects (such as triggering
      *                         an ammo explosion, sending hovercraft to watery graves, or
-     *                         damaging ProtoMech torso weapons). This value is normally
+     *                         damaging ProtoMek torso weapons). This value is normally
      *                         <code>true</code>, but it will be <code>false</code> when the
      *                         hit is being applied from a saved game or scenario.
      */
@@ -20698,7 +20698,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Apply a single critical hit to a Mech system.
+     * Apply a single critical hit to a Mek system.
      *
      * @param en   the <code>Entity</code> that is being damaged. This value may
      *             not be <code>null</code>.
@@ -20706,7 +20706,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param cs   the <code>CriticalSlot</code> being damaged. This value may
      *             not be <code>null</code>.
      */
-    private Vector<Report> applyMechSystemCritical(Entity en, int loc, CriticalSlot cs) {
+    private Vector<Report> applyMekSystemCritical(Entity en, int loc, CriticalSlot cs) {
         Vector<Report> reports = new Vector<>();
         Report r;
         r = new Report(6225);
@@ -20783,13 +20783,13 @@ public class TWGameManager extends AbstractGameManager {
                 if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
                     gyroHits++;
                 }
-                // Automatically falls in AirMech mode, which it seems would indicate a crash if airborne.
+                // Automatically falls in AirMek mode, which it seems would indicate a crash if airborne.
                 if (gyroHits == 3 && en instanceof LandAirMek && en.isAirborneVTOLorWIGE()) {
-                    crashAirMech(en, new PilotingRollData(en.getId(),
+                    crashAirMek(en, new PilotingRollData(en.getId(),
                             TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"), reports);
                     break;
                 }
-                //No PSR for Mechs in non-leg mode
+                //No PSR for Meks in non-leg mode
                 if (!en.canFall(true)) {
                     break;
                 }
@@ -20847,24 +20847,24 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Apply a single critical hit to a ProtoMech.
+     * Apply a single critical hit to a ProtoMek.
      *
-     * @param pm               the <code>Protomech</code> that is being damaged. This value may
+     * @param pm               the <code>Protomek</code> that is being damaged. This value may
      *                         not be <code>null</code>.
      * @param loc              the <code>int</code> location of critical hit. This value may
-     *                         be <code>Entity.NONE</code> for hits to a <code>Protomech</code>
+     *                         be <code>Entity.NONE</code> for hits to a <code>Protomek</code>
      *                         torso weapon.
      * @param cs               the <code>CriticalSlot</code> being damaged. This value may
      *                         not be <code>null</code>.
      * @param secondaryEffects the <code>boolean</code> flag that indicates whether to allow
      *                         critical hits to cause secondary effects (such as damaging
-     *                         ProtoMech torso weapons). This value is normally
+     *                         ProtoMek torso weapons). This value is normally
      *                         <code>true</code>, but it will be <code>false</code> when the
      *                         hit is being applied from a saved game or scenario.
      * @param damageCaused     the amount of damage causing this critical.
      * @param isCapital        whether it was capital scale damage that caused critical
      */
-    private Vector<Report> applyProtomechCritical(ProtoMek pm, int loc, CriticalSlot cs,
+    private Vector<Report> applyProtoMekCritical(ProtoMek pm, int loc, CriticalSlot cs,
                                                   boolean secondaryEffects, int damageCaused,
                                                   boolean isCapital) {
         Vector<Report> reports = new Vector<>();
@@ -21068,7 +21068,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Shaded hits cause pilot damage.
         if (pm.shaded(loc, numHit)) {
-            // Destroyed ProtoMech sections have
+            // Destroyed ProtoMek sections have
             // already damaged the pilot.
             int pHits = ProtoMek.POSSIBLE_PILOT_DAMAGE[loc]
                     - pm.getPilotDamageTaken(loc);
@@ -21904,7 +21904,7 @@ public class TWGameManager extends AbstractGameManager {
      *                         not be <code>null</code>.
      * @param loc              the <code>int</code> location of critical hit. This value may
      *                         be <code>Entity.NONE</code> for hits to <code>Tank</code>s and
-     *                         for hits to a <code>Protomech</code> torso weapon.
+     *                         for hits to a <code>Protomek</code> torso weapon.
      * @param cs               the <code>CriticalSlot</code> being damaged. This value may
      *                         not be <code>null</code>. The index of the slot should be the index
      *                         of the critical hit table.
@@ -22286,7 +22286,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Makes any roll required when an AirMech lands and resolve any damage or
+     * Makes any roll required when an AirMek lands and resolve any damage or
      * skidding resulting from a failed roll. Updates final position and elevation.
      *
      * @param lam       the landing LAM
@@ -22295,7 +22295,7 @@ public class TWGameManager extends AbstractGameManager {
      *                          if the unit is forced to land due to insufficient movement
      * @param distance  the distance the unit moved in the turn prior to landing
      */
-    Vector<Report> landAirMech(LandAirMek lam, Coords pos, int elevation, int distance) {
+    Vector<Report> landAirMek(LandAirMek lam, Coords pos, int elevation, int distance) {
         Vector<Report> vDesc = new Vector<>();
 
         lam.setPosition(pos);
@@ -22305,26 +22305,26 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             lam.setElevation(0);
         }
-        PilotingRollData psr = lam.checkAirMechLanding();
+        PilotingRollData psr = lam.checkAirMekLanding();
         if (psr.getValue() != TargetRoll.CHECK_FALSE
                 && (0 > doSkillCheckWhileMoving(lam, elevation, pos, pos, psr, false))) {
-            crashAirMech(lam, pos, elevation, distance, psr, vDesc);
+            crashAirMek(lam, pos, elevation, distance, psr, vDesc);
         }
         return vDesc;
     }
 
-    boolean crashAirMech(Entity en, PilotingRollData psr, Vector<Report> vDesc) {
-        return crashAirMech(en, en.getPosition(), en.getElevation(), en.delta_distance, psr, vDesc);
+    boolean crashAirMek(Entity en, PilotingRollData psr, Vector<Report> vDesc) {
+        return crashAirMek(en, en.getPosition(), en.getElevation(), en.delta_distance, psr, vDesc);
     }
 
-    private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
+    private boolean crashAirMek(Entity en, Coords pos, int elevation, int distance,
                                  PilotingRollData psr, Vector<Report> vDesc) {
         MoveStep step = new MoveStep(null, MovePath.MoveStepType.DOWN);
         step.setFromEntity(en, game);
-        return crashAirMech(en, pos, elevation, distance, psr, step, vDesc);
+        return crashAirMek(en, pos, elevation, distance, psr, step, vDesc);
     }
 
-    private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
+    private boolean crashAirMek(Entity en, Coords pos, int elevation, int distance,
                                  PilotingRollData psr, MoveStep lastStep, Vector<Report> vDesc) {
         vDesc.addAll(doEntityFallsInto(en, elevation, pos, pos, psr, true, 0));
         return en.isDoomed()
@@ -22332,20 +22332,20 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Makes the landing roll required for a glider ProtoMech and resolves any damage
+     * Makes the landing roll required for a glider ProtoMek and resolves any damage
      * resulting from a failed roll. Updates final position and elevation.
      *
-     * @param en    the landing glider ProtoMech
+     * @param en    the landing glider ProtoMek
      */
     private Vector<Report> landGliderPM(ProtoMek en) {
         return landGliderPM(en, en.getPosition(), en.getElevation(), en.delta_distance);
     }
 
     /**
-     * Makes the landing roll required for a glider ProtoMech and resolves any damage
+     * Makes the landing roll required for a glider ProtoMek and resolves any damage
      * resulting from a failed roll. Updates final position and elevation.
      *
-     * @param en    the landing glider ProtoMech
+     * @param en    the landing glider ProtoMek
      * @param pos   the <code>Coords</code> of the landing hex
      * @param startElevation    the elevation from which the landing is attempted (usually 1, but may be higher
      *                          if the unit is forced to land due to insufficient movement
@@ -22935,7 +22935,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Rolls and resolves critical hits on mechs or vehicles. if rollNumber is
+     * Rolls and resolves critical hits on meks or vehicles. if rollNumber is
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
@@ -22945,7 +22945,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Rolls and resolves critical hits on mechs or vehicles. if rollNumber is
+     * Rolls and resolves critical hits on meks or vehicles. if rollNumber is
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
@@ -23205,7 +23205,7 @@ public class TWGameManager extends AbstractGameManager {
                     r = new Report(6710);
                     r.subject = en.getId();
                     if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
-                        // Pretty sure that only 'mechs have system crits,
+                        // Pretty sure that only 'meks have system crits,
                         // but just in case....
                         if (en instanceof Mek) {
                             r.add(((Mek) en).getSystemName(slot.getIndex()));
@@ -23459,7 +23459,7 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
         if (entity instanceof Mek) {
-            Mek mech = (Mek) entity;
+            Mek mek = (Mek) entity;
             // equipment and crits will be marked in applyDamage?
 
             // equipment marked missing
@@ -23527,8 +23527,8 @@ public class TWGameManager extends AbstractGameManager {
 
             // Did the hull breach destroy the engine?
             int hitsToDestroy = 3;
-            if (mech.isSuperHeavy() && mech.hasEngine()
-                    && (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
+            if (mek.isSuperHeavy() && mek.hasEngine()
+                    && (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
                 hitsToDestroy = 2;
             }
             if ((entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_LT)
@@ -23643,11 +23643,11 @@ public class TWGameManager extends AbstractGameManager {
             // Kill any picked up MekWarriors
             Enumeration<Integer> iter = entity.getPickedUpMekWarriors().elements();
             while (iter.hasMoreElements()) {
-                int mechWarriorId = iter.nextElement();
-                Entity mw = game.getEntity(mechWarriorId);
+                int mekWarriorId = iter.nextElement();
+                Entity mw = game.getEntity(mekWarriorId);
 
-                // in some situations, a "picked up" mechwarrior won't actually exist
-                // probably this is brought about by picking up a mechwarrior in a previous MekHQ scenario
+                // in some situations, a "picked up" mekwarrior won't actually exist
+                // probably this is brought about by picking up a mekwarrior in a previous MekHQ scenario
                 // then having the same unit get blown up in a subsequent scenario
                 // in that case, we simply move on
                 if (mw == null) {
@@ -23823,7 +23823,7 @@ public class TWGameManager extends AbstractGameManager {
                 entityUpdate(swarmedId);
             }
 
-            // If in a grapple, release both mechs
+            // If in a grapple, release both meks
             if (entity.getGrappled() != Entity.NONE) {
                 int grappler = entity.getGrappled();
                 entity.setGrappled(Entity.NONE, false);
@@ -23894,7 +23894,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Makes a piece of equipment on a mech explode! POW! This expects either
+     * Makes a piece of equipment on a mek explode! POW! This expects either
      * ammo, or an explosive weapon. Returns a vector of Report objects.
      */
     private Vector<Report> explodeEquipment(Entity en, int loc, int slot) {
@@ -23914,7 +23914,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Makes a piece of equipment on a mech explode! POW! This expects either
+     * Makes a piece of equipment on a mek explode! POW! This expects either
      * ammo, or an explosive weapon. Returns a vector of Report objects.
      * Possible to override 'is explosive' check
      */
@@ -24121,7 +24121,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Makes one slot of ammo, determined by certain rules, explode on a mech.
+     * Makes one slot of ammo, determined by certain rules, explode on a mek.
      */
     public Vector<Report> explodeAmmoFromHeat(Entity entity) {
         int damage = 0;
@@ -24196,7 +24196,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Makes a mech fall.
+     * Makes a mek fall.
      *
      * @param entity
      *            The Entity that is falling. It is expected that the Entity's
@@ -24326,7 +24326,7 @@ public class TWGameManager extends AbstractGameManager {
                 newElevation = newElevation - damageHeight;
 
                 handlingBasement = true;
-                // May have to adjust hit table for 'mechs
+                // May have to adjust hit table for 'meks
                 if (entity instanceof Mek) {
                     switch (basement) {
                         case TWO_DEEP_FEET:
@@ -24348,7 +24348,7 @@ public class TWGameManager extends AbstractGameManager {
         if (entity instanceof ProtoMek) {
             damageTable = ToHitData.HIT_SPECIAL_PROTO;
         }
-        // Falling into water instantly destroys most non-mechs
+        // Falling into water instantly destroys most non-meks
         if ((waterDepth > 0)
                 && !(entity instanceof Mek)
                 && !(entity instanceof ProtoMek)
@@ -24362,14 +24362,14 @@ public class TWGameManager extends AbstractGameManager {
             return vPhaseReport;
         }
 
-        // set how deep the mech has fallen
+        // set how deep the mek has fallen
         if (entity instanceof Mek) {
-            Mek mech = (Mek) entity;
-            mech.setLevelsFallen(damageHeight + waterDepth + 1);
-            // an industrial mech now needs to check for a crit at the end of
+            Mek mek = (Mek) entity;
+            mek.setLevelsFallen(damageHeight + waterDepth + 1);
+            // an industrial mek now needs to check for a crit at the end of
             // the turn
-            if (mech.isIndustrial()) {
-                mech.setCheckForCrit(true);
+            if (mek.isIndustrial()) {
+                mek.setCheckForCrit(true);
             }
         }
 
@@ -24457,13 +24457,13 @@ public class TWGameManager extends AbstractGameManager {
         final int swarmerId = entity.getSwarmAttackerId();
 
         // Positioning must be prior to damage for proper handling of breaches
-        // Only Mechs can fall prone.
+        // Only Meks can fall prone.
         if (entity instanceof Mek) {
             entity.setProne(true);
         }
         entity.setPosition(fallPos);
         entity.setElevation(newElevation);
-        // Only 'mechs change facing when they fall
+        // Only 'meks change facing when they fall
         if (entity instanceof Mek) {
             entity.setFacing((entity.getFacing() + (facing)) % 6);
             entity.setSecondaryFacing(entity.getFacing());
@@ -24524,7 +24524,7 @@ public class TWGameManager extends AbstractGameManager {
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false,
                 -waterDepth));
 
-        // only mechs should roll to avoid pilot damage
+        // only meks should roll to avoid pilot damage
         // vehicles may fall due to sideslips
         if (entity instanceof Mek) {
             vPhaseReport.addAll(checkPilotAvoidFallDamage(entity, fallHeight, roll));
@@ -24576,7 +24576,7 @@ public class TWGameManager extends AbstractGameManager {
         // fallen, it'd be cruel to make it fail some more!
         game.resetPSRs(entity);
 
-        // if there is a minefield in this hex, then the mech may set it off
+        // if there is a minefield in this hex, then the mek may set it off
         if (game.containsMinefield(fallPos)
                 && enterMinefield(entity, fallPos, newElevation, true,
                 vPhaseReport, 12)) {
@@ -24676,7 +24676,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * The mech falls into an unoccupied hex from the given height above
+     * The mek falls into an unoccupied hex from the given height above
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
                                         int height, PilotingRollData roll) {
@@ -24685,7 +24685,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * The mech falls down in place
+     * The mek falls down in place
      */
     private Vector<Report> doEntityFall(Entity entity, PilotingRollData roll) {
         boolean fallToSurface = false;
@@ -25744,9 +25744,9 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // If we're adding a ProtoMech, calculate it's unit number.
+            // If we're adding a ProtoMek, calculate it's unit number.
             if (entity instanceof ProtoMek) {
-                // How many ProtoMechs does the player already have?
+                // How many ProtoMeks does the player already have?
                 int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
                     private final int ownerId = entity.getOwnerId();
 
@@ -25756,7 +25756,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 });
 
-                // According to page 54 of the BMRr, ProtoMechs must be
+                // According to page 54 of the BMRr, ProtoMeks must be
                 // deployed in full Points of five, unless circumstances have
                 // reduced the number to less than that.
                 entity.setUnitNumber((short) (numPlayerProtos / 5));
@@ -26360,10 +26360,10 @@ public class TWGameManager extends AbstractGameManager {
 
                 affectedForces.addAll(game.getForces().removeEntityFromForces(entity));
 
-                // If we're deleting a ProtoMech, recalculate unit numbers.
+                // If we're deleting a ProtoMek, recalculate unit numbers.
                 if (entity instanceof ProtoMek) {
 
-                    // How many ProtoMechs does the player have (include this one)?
+                    // How many ProtoMeks does the player have (include this one)?
                     int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
@@ -26373,17 +26373,17 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     });
 
-                    // According to page 54 of the BMRr, ProtoMechs must be
+                    // According to page 54 of the BMRr, ProtoMeks must be
                     // deployed in full Points of five, unless "losses" have
                     // reduced the number to less than that.
                     final char oldMax = (char) (Math.ceil(numPlayerProtos / 5.0) - 1);
                     char newMax = (char) (Math.ceil((numPlayerProtos - 1) / 5.0) - 1);
                     short deletedUnitNum = entity.getUnitNumber();
 
-                    // Do we have to update a ProtoMech from the last unit?
+                    // Do we have to update a ProtoMek from the last unit?
                     if ((oldMax != deletedUnitNum) && (oldMax != newMax)) {
 
-                        // Yup. Find a ProtoMech from the last unit, and
+                        // Yup. Find a ProtoMek from the last unit, and
                         // set it's unit number to the deleted entity.
                         Iterator<Entity> lastUnit =
                                 game.getSelectedEntities(new EntitySelector() {
@@ -26402,7 +26402,7 @@ public class TWGameManager extends AbstractGameManager {
                         lastUnitMember.setUnitNumber(deletedUnitNum);
                         entityUpdate(lastUnitMember.getId());
                     } // End update-unit-number
-                } // End added-ProtoMech
+                } // End added-ProtoMek
 
                 if (!getGame().getPhase().isDeployment()) {
                     // if a unit is removed during deployment just keep going
@@ -26873,7 +26873,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Makes one slot of inferno ammo, determined by certain rules, explode on a
-     * mech.
+     * mek.
      *
      * @param entity
      *            The <code>Entity</code> that should suffer an inferno ammo
@@ -27084,7 +27084,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Determine the results of an entity moving through a wall of a building
-     * after having moved a certain distance. This gets called when a Mech or a
+     * after having moved a certain distance. This gets called when a Mek or a
      * Tank enters a building, leaves a building, or travels from one hex to
      * another inside a multi-hex building.
      *
@@ -28470,10 +28470,10 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 damage = 0;
             }
-        } else if (aaa instanceof AirmechRamAttackAction) {
-            AirmechRamAttackAction raa = (AirmechRamAttackAction) aaa;
+        } else if (aaa instanceof AirMekRamAttackAction) {
+            AirMekRamAttackAction raa = (AirMekRamAttackAction) aaa;
             toHit = raa.toHit(game);
-            damage = AirmechRamAttackAction.getDamageFor(ae);
+            damage = AirMekRamAttackAction.getDamageFor(ae);
         } else if (aaa instanceof ClubAttackAction) {
             ClubAttackAction caa = (ClubAttackAction) aaa;
             toHit = caa.toHit(game);
@@ -28653,8 +28653,8 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof ChargeAttackAction) {
             resolveChargeAttack(pr, cen);
             cen = aaa.getEntityId();
-        } else if (aaa instanceof AirmechRamAttackAction) {
-            resolveAirmechRamAttack(pr, cen);
+        } else if (aaa instanceof AirMekRamAttackAction) {
+            resolveAirMekRamAttack(pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof DfaAttackAction) {
             resolveDfaAttack(pr, cen);
@@ -28770,7 +28770,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Damage the inner structure of a mech's leg / a tank's front. This only
+     * Damage the inner structure of a mek's leg / a tank's front. This only
      * happens when the Entity fails an extreme Gravity PSR.
      *
      * @param entity The <code>Entity</code> to damage.
@@ -28999,12 +28999,12 @@ public class TWGameManager extends AbstractGameManager {
             // ejection damages the cockpit
             // kind of irrelevant in stand-alone games, but important for MekHQ
             if (entity instanceof Mek) {
-                Mek mech = (Mek) entity;
-                // in case of mechs with 'full head ejection', the head is treated as blown off
-                if (mech.hasFullHeadEject()) {
+                Mek mek = (Mek) entity;
+                // in case of meks with 'full head ejection', the head is treated as blown off
+                if (mek.hasFullHeadEject()) {
                     entity.destroyLocation(Mek.LOC_HEAD, true);
                 } else {
-                    for (CriticalSlot slot : (mech.getCockpit())) {
+                    for (CriticalSlot slot : (mek.getCockpit())) {
                         slot.setDestroyed(true);
                     }
                 }
@@ -29338,7 +29338,7 @@ public class TWGameManager extends AbstractGameManager {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // Per SO p26, fighters can eject as per TO rules on 196 with some exceptions
         if (entity.isProne()) {
-            rollTarget.addModifier(5, "Mech is prone");
+            rollTarget.addModifier(5, "Mek is prone");
         }
         if (entity.getCrew().isUnconscious(crewPos)) {
             rollTarget.addModifier(3, "pilot unconscious");
@@ -30272,7 +30272,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     // ack! automatic death! Tanks
                     // suffer an ammo/power plant hit.
-                    // TODO : a Mech suffers a Head Blown Off crit.
+                    // TODO : a Mek suffers a Head Blown Off crit.
                     vPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
                             entity instanceof Mek, entity instanceof Mek));
                 }
@@ -30307,8 +30307,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         Report r;
-        boolean isMech = en instanceof Mek;
-        if (isMech) {
+        boolean isMek = en instanceof Mek;
+        if (isMek) {
             r = new Report(2405);
         } else {
             r = new Report(2400);
@@ -30316,7 +30316,7 @@ public class TWGameManager extends AbstractGameManager {
         r.addDesc(en);
         r.subject = en.getId();
         addReport(r);
-        if (isMech) {
+        if (isMek) {
             HitData h;
             for (int i = 0; i < en.locations(); i++) {
                 if (eruption || en.locationIsLeg(i) || en.isProne()) {

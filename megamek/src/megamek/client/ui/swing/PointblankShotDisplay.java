@@ -603,7 +603,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
         Mounted nextMounted = ce().getEquipment(nextWeapon);
         if (!mounted.getType().hasFlag(WeaponType.F_VGL) && (nextMounted != null)
                 && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
@@ -675,7 +675,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true,
                             WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
-                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
+                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
 
                 } else {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,

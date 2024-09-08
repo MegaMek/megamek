@@ -1186,7 +1186,7 @@ public abstract class BVCalculator {
     public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
         if (entity.getCrew() == null) {
             if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-                return bvSkillMultiplier(4, Infantry.ANTI_MECH_SKILL_NO_GEAR);
+                return bvSkillMultiplier(4, Infantry.ANTI_MEK_SKILL_NO_GEAR);
             } else {
                 return bvSkillMultiplier(4, 5);
             }
@@ -1198,11 +1198,11 @@ public abstract class BVCalculator {
                 || (entity instanceof ProtoMek)) {
             piloting = 5;
         } else if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-            piloting = Infantry.ANTI_MECH_SKILL_NO_GEAR;
+            piloting = Infantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (entity.getCrew() instanceof LAMPilot) {
             LAMPilot lamPilot = (LAMPilot) entity.getCrew();
-            gunnery = (lamPilot.getGunneryMech() + lamPilot.getGunneryAero()) / 2;
-            piloting = (lamPilot.getPilotingMech() + lamPilot.getPilotingAero()) / 2;
+            gunnery = (lamPilot.getGunneryMek() + lamPilot.getGunneryAero()) / 2;
+            piloting = (lamPilot.getPilotingMek() + lamPilot.getPilotingAero()) / 2;
         }
         double skillMultiplier = bvSkillMultiplier(gunnery, piloting);
         if (skillMultiplier != 1) {
@@ -1218,13 +1218,13 @@ public abstract class BVCalculator {
             pilotModifiers.add("Comm. Implant");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
@@ -1237,7 +1237,7 @@ public abstract class BVCalculator {
             pilotModifiers.add("Sensory Implants");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI)
-                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
             piloting = Math.max(0, piloting - 3);
             gunnery = Math.max(0, gunnery - 2);
             pilotModifiers.add("Proto DNI");

@@ -21,14 +21,16 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * A subclass of JButton that supports specifying the look and feel of the
@@ -168,7 +170,7 @@ public class MegaMekButton extends JButton implements MouseListener {
     private void initialize(String component, boolean defaultToPlain) {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
         if (!skinSpec.noBorder) {
-            setBorder(new MegamekBorder(skinSpec));
+            setBorder(new MegaMekBorder(skinSpec));
         }
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;

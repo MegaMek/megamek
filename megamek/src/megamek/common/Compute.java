@@ -3940,7 +3940,7 @@ public class Compute {
                 .getLocTurret2())) {
             facing = ((Tank) ae).getDualTurretFacing();
         }
-        if (ae.getEquipment(weaponId).isMechTurretMounted()) {
+        if (ae.getEquipment(weaponId).isMekTurretMounted()) {
             facing = ae.getSecondaryFacing()
                      + (ae.getEquipment(weaponId).getFacing() % 6);
         }

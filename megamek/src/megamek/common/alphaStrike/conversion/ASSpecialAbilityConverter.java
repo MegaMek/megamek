@@ -18,6 +18,20 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.MiscType.*;
+import static megamek.common.alphaStrike.ASUnitType.BA;
+import static megamek.common.alphaStrike.ASUnitType.BM;
+import static megamek.common.alphaStrike.ASUnitType.CI;
+import static megamek.common.alphaStrike.ASUnitType.CV;
+import static megamek.common.alphaStrike.ASUnitType.IM;
+import static megamek.common.alphaStrike.ASUnitType.MS;
+import static megamek.common.alphaStrike.ASUnitType.PM;
+import static megamek.common.alphaStrike.ASUnitType.SV;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+
+import java.util.Arrays;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -25,13 +39,6 @@ import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
-
-import java.util.Arrays;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.MiscType.*;
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASSpecialAbilityConverter {
 
@@ -443,13 +450,13 @@ public class ASSpecialAbilityConverter {
                 assign("Infantry Bay", IT, ((InfantryBay) t).getCapacity());
             } else if (t instanceof TroopSpace) {
                 assign("Troop Space", IT, t.getUnused());
-            } else if (t instanceof MechBay) {
-                assign("Mek Bay", MT, (int) ((MechBay) t).getCapacity());
-                assign("Mek Bay", MTxD, ((MechBay) t).getDoors());
+            } else if (t instanceof MekBay) {
+                assign("Mek Bay", MT, (int) ((MekBay) t).getCapacity());
+                assign("Mek Bay", MTxD, ((MekBay) t).getDoors());
                 processMFB(t);
-            } else if (t instanceof ProtomechBay) {
-                assign("ProtoMek Bay", PT, (int) ((ProtomechBay) t).getCapacity());
-                assign("ProtoMek Bay", PTxD, ((ProtomechBay) t).getDoors());
+            } else if (t instanceof ProtoMekBay) {
+                assign("ProtoMek Bay", PT, (int) ((ProtoMekBay) t).getCapacity());
+                assign("ProtoMek Bay", PTxD, ((ProtoMekBay) t).getDoors());
                 processMFB(t);
             } else if (t instanceof SmallCraftBay) {
                 assign("SmallCraft Bay", ST, (int) ((SmallCraftBay) t).getCapacity());

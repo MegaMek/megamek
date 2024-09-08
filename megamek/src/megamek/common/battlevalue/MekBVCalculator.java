@@ -118,8 +118,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     continue;
                 }
                 if (entity.isClan()) {
-                    // Clan mechs only count ammo in ct, legs or head (per BMRr).
-                    // Also count ammo in side torsos if mech has xxl engine
+                    // Clan meks only count ammo in ct, legs or head (per BMRr).
+                    // Also count ammo in side torsos if mek has xxl engine
                     // (extrapolated from rule intent - not covered in rules)
                     if (((loc != Mek.LOC_CT) && (loc != Mek.LOC_RLEG) && (loc != Mek.LOC_LLEG))
                             && !(((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) && entity.hasEngine() &&
@@ -277,10 +277,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected int heatEfficiency() {
         int heatCapacity = entity.getHeatCapacity();
-        int mechHeatEfficiency = 6 + heatCapacity;
+        int mekHeatEfficiency = 6 + heatCapacity;
         String calculation = "6 + " + heatCapacity;
         if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
-            mechHeatEfficiency += 3;
+            mekHeatEfficiency += 3;
             calculation += " + 3 (LAM)";
         }
 
@@ -288,19 +288,19 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 .filter(t -> t == AmmoType.T_COOLANT_POD).count();
         if (coolantPods > 0) {
             int coolantPodBonus = (int) Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5d);
-            mechHeatEfficiency += coolantPodBonus;
+            mekHeatEfficiency += coolantPodBonus;
             calculation += " + " + coolantPodBonus + " (Cool. Pods)";
         }
 
         if (entity.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-            mechHeatEfficiency += 4;
+            mekHeatEfficiency += 4;
             calculation += " + 4 (ECS)";
         }
 
         int moveHeat;
         String moveHeatType = " (Run)";
         if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
-            moveHeat = (int) Math.round(((LandAirMek) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
+            moveHeat = (int) Math.round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
         } else if ((mek.getJumpMP(MPCalculationSetting.BV_CALCULATION) > 0)
                 && (entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION)) > entity.getRunHeat())) {
             moveHeat = entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION));
@@ -313,32 +313,32 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 moveHeat = entity.getRunHeat();
             }
         }
-        mechHeatEfficiency -= moveHeat;
+        mekHeatEfficiency -= moveHeat;
         calculation += " - " + moveHeat + moveHeatType;
 
         if (entity.hasStealth()) {
-            mechHeatEfficiency -= 10;
+            mekHeatEfficiency -= 10;
             calculation += " - 10 (Stealth)";
         }
         if (mek.hasChameleonShield()) {
-            mechHeatEfficiency -= 6;
+            mekHeatEfficiency -= 6;
             calculation += " - 6 (Chameleon)";
         }
         if (mek.hasNullSig()) {
-            mechHeatEfficiency -= 10;
+            mekHeatEfficiency -= 10;
             calculation += " - 10 (Null Sig.)";
         }
         if (mek.hasVoidSig()) {
-            mechHeatEfficiency -= 10;
+            mekHeatEfficiency -= 10;
             calculation += " - 10 (Void Sig.)";
         }
         if (mek.hasEngine() && (mek.getEngineHits() > 0)
                 && (mek.getEngine().isFusion() || mek.getEngine().isFission())) {
-            mechHeatEfficiency -= mek.getEngineHits() * 5;
+            mekHeatEfficiency -= mek.getEngineHits() * 5;
             calculation += " - " + mek.getEngineHits() * 5 + " (Engine Hits)";
         }
-        bvReport.addLine("Heat Efficiency:", calculation + " = " + mechHeatEfficiency, "");
-        return mechHeatEfficiency;
+        bvReport.addLine("Heat Efficiency:", calculation + " = " + mekHeatEfficiency, "");
+        return mekHeatEfficiency;
     }
 
     @Override
@@ -491,7 +491,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     protected int getRunningTMM() {
         int mp = runMP;
         if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
-            mp = ((LandAirMek) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION);
+            mp = ((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION);
             if (mp == 0) {
                 return 0;
             } else {
@@ -509,7 +509,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected int offensiveSpeedFactorMP() {
         if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
-            return runMP + (int) (Math.round(((LandAirMek) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
+            return runMP + (int) (Math.round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
         } else {
             return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
         }

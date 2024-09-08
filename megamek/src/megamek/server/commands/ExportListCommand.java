@@ -53,7 +53,7 @@ public class ExportListCommand extends ServerCommand {
         try {
             PrintWriter pw1 = new PrintWriter(new FileWriter(path));
 
-            MekSummary[] msums = MekSummaryCache.getInstance().getAllMechs();
+            MekSummary[] msums = MekSummaryCache.getInstance().getAllMeks();
 
             for (MekSummary ms1 : msums) {
                 pw1.println(ms1.getChassis() + ", " + ms1.getModel() + ", "

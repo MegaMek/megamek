@@ -14,6 +14,11 @@
  */
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
@@ -21,8 +26,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
-
-import java.util.*;
 
 /**
  * @author Reinhard Vicinus
@@ -116,7 +119,7 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
 
@@ -129,14 +132,14 @@ public class TestTank extends TestEntity {
     public boolean isSmallCraft() {
         return false;
     }
-    
+
     @Override
     public boolean isAdvancedAerospace() {
         return false;
     }
 
     @Override
-    public boolean isProtomech() {
+    public boolean isProtoMek() {
         return false;
     }
 
@@ -579,7 +582,7 @@ public class TestTank extends TestEntity {
         printFailedEquipment(buff);
         return buff;
     }
-    
+
     public StringBuffer printSlotCalculation() {
         StringBuffer buff = new StringBuffer();
         buff.append("Available slots: ").append(tank.getTotalSlots()).append("\n");
@@ -595,7 +598,7 @@ public class TestTank extends TestEntity {
             } else if (tank.getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
                 engineSlots--;
             }
-            
+
             if (tank.getEngine().getEngineType() == Engine.LARGE_ENGINE) {
                 engineSlots++;
             }
@@ -681,7 +684,7 @@ public class TestTank extends TestEntity {
                 buff.append(StringUtil.makeLength("Transport Bay", 30));
                 buff.append("1").append("\n");
             }
-        }        
+        }
         return buff;
     }
 
@@ -718,7 +721,7 @@ public class TestTank extends TestEntity {
         }
         return 0;
     }
-    
+
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
@@ -730,7 +733,7 @@ public class TestTank extends TestEntity {
     @Override
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
-        
+
         boolean hasSponsonTurret = false;
 
         for (Mounted m : getEntity().getMisc()) {
@@ -738,10 +741,10 @@ public class TestTank extends TestEntity {
                 hasSponsonTurret = true;
             }
         }
-        
+
         for (Mounted m : getEntity().getMisc()) {
             final MiscType misc = (MiscType) m.getType();
-            
+
             if (misc.hasFlag(MiscType.F_JUMP_JET)) {
                 if (hasSponsonTurret) {
                     buff.append("can't combine vehicular jump jets and sponson turret\n");
@@ -767,7 +770,7 @@ public class TestTank extends TestEntity {
                 }
             }
         }
-        
+
         // Ensure that omni tank turrets aren't overloaded
         if (tank.isOmni()) {
             // Check to see if the base chassis turret weight is set
@@ -817,7 +820,7 @@ public class TestTank extends TestEntity {
                 illegal = true;
             }
         }
-        
+
         return illegal;
     }
 

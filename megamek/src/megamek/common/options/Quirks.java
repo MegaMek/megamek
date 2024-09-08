@@ -43,7 +43,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_BATTLE_FIST_LA, false);
         addOption(posQuirk, QUIRK_POS_BATTLE_FIST_RA, false);
         addOption(posQuirk, QUIRK_POS_COMBAT_COMPUTER, false);
-        addOption(posQuirk, QUIRK_POS_COMMAND_MECH, false);
+        addOption(posQuirk, QUIRK_POS_COMMAND_MEK, false);
         addOption(posQuirk, QUIRK_POS_COMPACT, false);
         addOption(posQuirk, QUIRK_POS_COWL, false);
         addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, false);
@@ -94,7 +94,7 @@ public class Quirks extends AbstractOptions {
         //Improved Communications
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
-        //Compact Mech
+        //Compact Mek
 
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
         addOption(negQuirk, QUIRK_NEG_BAD_REP_IS, false);

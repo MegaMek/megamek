@@ -43,7 +43,7 @@ public class EquipmentTypeLookupTest {
     public void testFailedEquipment() {
         final Set<String> failedEquipment = new HashSet<>();
 
-        final MechSummaryCache msc = MechSummaryCache.getInstance();
+        final MekSummaryCache msc = MekSummaryCache.getInstance();
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(50);
@@ -52,9 +52,9 @@ public class EquipmentTypeLookupTest {
             }
         }
 
-        for (MechSummary ms : msc.getAllMechs()) {
+        for (MekSummary ms : msc.getAllMeks()) {
             try {
-                Entity entity = new MechFileParser(ms.getSourceFile(),
+                Entity entity = new MekFileParser(ms.getSourceFile(),
                         ms.getEntryName()).getEntity();
                 failedEquipment.addAll(entity.failedEquipmentList);
             } catch (Exception ex) {

@@ -35,14 +35,14 @@ public class MMStaticDirectoryManager {
     // Directories
     private static DirectoryItems portraitDirectory;
     private static DirectoryItems camouflageDirectory;
-    private static MekTileset mechTileset;
+    private static MekTileset mekTileset;
 
     // Re-parsing Prevention Variables: They are True at startup and when the specified directory
     // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's
     // an error.
     private static boolean parsePortraitDirectory = true;
     private static boolean parseCamouflageDirectory = true;
-    private static boolean parseMechTileset = true;
+    private static boolean parseMekTileset = true;
     //endregion Variable Declarations
 
     //region Constructors
@@ -58,7 +58,7 @@ public class MMStaticDirectoryManager {
     public static void initialize() {
         initializePortraits();
         initializeCamouflage();
-        initializeMechTileset();
+        initializeMekTileset();
     }
 
     /**
@@ -142,19 +142,19 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * Parses MM's mech tileset when first called or when it was refreshed.
+     * Parses MM's mek tileset when first called or when it was refreshed.
      *
-     * @see #refreshMechTileset()
+     * @see #refreshMekTileset()
      */
-    private static void initializeMechTileset() {
-        if (parseMechTileset) {
-            // Set parseMechTileset to false to avoid parsing repeatedly when something fails
-            parseMechTileset = false;
-            mechTileset = new MekTileset(Configuration.unitImagesDir());
+    private static void initializeMekTileset() {
+        if (parseMekTileset) {
+            // Set parseMekTileset to false to avoid parsing repeatedly when something fails
+            parseMekTileset = false;
+            mekTileset = new MekTileset(Configuration.unitImagesDir());
             try {
-                mechTileset.loadFromFile("mechset.txt");// TODO : Remove inline file path
+                mekTileset.loadFromFile("mekset.txt");// TODO : Remove inline file path
             } catch (Exception e) {
-                LogManager.getLogger().error("Unable to load mech tileset", e);
+                LogManager.getLogger().error("Unable to load mek tileset", e);
             }
         }
     }
@@ -184,11 +184,11 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * @return a MechTileset object. May be null if the directory cannot be parsed
+     * @return a MekTileset object. May be null if the directory cannot be parsed
      */
-    public static @Nullable MekTileset getMechTileset() {
-        initializeMechTileset();
-        return mechTileset;
+    public static @Nullable MekTileset getMekTileset() {
+        initializeMekTileset();
+        return mekTileset;
     }
     //endregion Getters
 
@@ -218,15 +218,15 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * Reloads the MechTileset and returns the updated MechTileset object.
-     * This will update the MechTileset object with changes to the mech tileset
+     * Reloads the MekTileset and returns the updated MekTileset object.
+     * This will update the MekTileset object with changes to the mek tileset
      * (like added image files and changes to the tileset text file) while MM is running.
      *
-     * @see #getMechTileset()
+     * @see #getMekTileset()
      */
-    public static MekTileset refreshMechTileset() {
-        parseMechTileset = true;
-        return getMechTileset();
+    public static MekTileset refreshMekTileset() {
+        parseMekTileset = true;
+        return getMekTileset();
     }
     //endregion Refreshers
 }

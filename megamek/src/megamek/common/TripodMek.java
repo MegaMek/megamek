@@ -1170,13 +1170,13 @@ public class TripodMek extends Mek {
                         return new HitData(Mek.LOC_LT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_RT, true);
                         }
                         return new HitData(Mek.LOC_RT);
@@ -1224,13 +1224,13 @@ public class TripodMek extends Mek {
                         return new HitData(Mek.LOC_RT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_LT, true);
                         }
                         return new HitData(Mek.LOC_LT);
@@ -1249,7 +1249,7 @@ public class TripodMek extends Mek {
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 if (game.getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEk_HIT_LOCATIONS)
+                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)
                     && isProne()) {
                     switch (roll) {
                         case 2:

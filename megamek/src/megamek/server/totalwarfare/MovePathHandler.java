@@ -26,7 +26,7 @@ import org.apache.logging.log4j.LogManager;
 
 import megamek.MMConstants;
 import megamek.common.*;
-import megamek.common.actions.AirmechRamAttackAction;
+import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.ClearMinefieldAction;
@@ -393,7 +393,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
 
-        // if we used ProtoMech myomer booster, roll 2d6
+        // if we used ProtoMek myomer booster, roll 2d6
         // pilot damage on a 2
         if ((entity instanceof ProtoMek) && ((ProtoMek) entity).hasMyomerBooster()
                 && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER))) {
@@ -882,7 +882,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             r.subject = entity.getId();
             r.addDesc(entity);
             if (entity instanceof QuadVee && entity.isProne()
-                    && entity.getConversionMode() == QuadVee.CONV_MODE_MECH) {
+                    && entity.getConversionMode() == QuadVee.CONV_MODE_MEK) {
                 //Fall while converting to vehicle mode cancels conversion.
                 entity.setConvertingNow(false);
                 r.messageId = 2454;
@@ -968,10 +968,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Hex hex = getGame().getBoard().getHex(curPos);
                 if (md.automaticWiGELanding(false)) {
                     // try to land safely; LAMs require a psr when landing with gyro or leg actuator
-                    // damage and ProtoMechs always require a roll
+                    // damage and ProtoMeks always require a roll
                     int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
                     if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
-                        addReport(gameManager.landAirMech((LandAirMek) entity, entity.getPosition(), elevation,
+                        addReport(gameManager.landAirMek((LandAirMek) entity, entity.getPosition(), elevation,
                                 entity.delta_distance));
                     } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                         gameManager.getvPhaseReport().addAll(gameManager.landGliderPM((ProtoMek) entity, entity.getPosition(),
@@ -1021,7 +1021,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         } else {
                             // ack! automatic death! Tanks
                             // suffer an ammo/power plant hit.
-                            // TODO : a Mech suffers a Head Blown Off crit.
+                            // TODO : a Mek suffers a Head Blown Off crit.
                             addReport(gameManager.destroyEntity(violation,
                                     "impossible displacement",
                                     violation instanceof Mek,
@@ -1052,7 +1052,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 r.addDesc(entity);
                 if (entity.isAirborneVTOLorWIGE()) {
                     addReport(r);
-                    gameManager.crashAirMech(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                    gameManager.crashAirMek(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
                             "side torso destroyed"), gameManager.getvPhaseReport());
                 } else if (entity.isAirborne() && entity.isAero()) {
                     addReport(r);
@@ -1295,7 +1295,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // If this is the first step, use the Entity's starting elevation
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMek) {
-                        addReport(gameManager.landAirMech((LandAirMek) entity, step.getPosition(), elevation,
+                        addReport(gameManager.landAirMek((LandAirMek) entity, step.getPosition(), elevation,
                                 distance));
                     } else if (entity instanceof ProtoMek) {
                         addReport(gameManager.landGliderPM((ProtoMek) entity, step.getPosition(), elevation,
@@ -1392,9 +1392,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.setConvertingNow(true);
 
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
-                // starting hex if they fail to make an anti-mech check.
+                // starting hex if they fail to make an anti-mek check.
                 // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
-                if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_MECH
+                if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_MEK
                         && !entity.isOmni()) {
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(gameManager.checkDropBAFromConverting(entity, rider, curPos, curFacing,
@@ -1922,7 +1922,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(getGame());
                     if (target != null) {
-                        AirmechRamAttackAction raa = new AirmechRamAttackAction(
+                        AirMekRamAttackAction raa = new AirMekRamAttackAction(
                                 entity.getId(), target.getTargetType(),
                                 target.getId(), target.getPosition());
                         entity.setDisplacementAttack(raa);
@@ -2533,7 +2533,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check to see if we are a mech and we've moved OUT of fire
+            // check to see if we are a mek and we've moved OUT of fire
             Hex lastHex = getGame().getBoard().getHex(lastPos);
             if (entity.tracksHeat() && !entity.isAirborne()) {
                 if (!lastPos.equals(curPos) && (prevStep != null)
@@ -2573,7 +2573,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check to see if we are not a mech and we've moved INTO fire
+            // check to see if we are not a mek and we've moved INTO fire
             if (!(entity instanceof Mek)) {
                 boolean underwater = getGame().getBoard().getHex(curPos)
                         .containsTerrain(Terrains.WATER)
@@ -3107,7 +3107,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     ? prevHex.terrainLevel(Terrains.BRIDGE_ELEV)
                     : 0))))) {
 
-                // per TacOps, if the mech is walking backwards over an elevation change and falls
+                // per TacOps, if the mek is walking backwards over an elevation change and falls
                 // it falls into the lower hex. The caveat is if it already fell from some other PSR in this
                 // invocation of processMovement, then it can't fall again.
                 if ((entity instanceof Mek)
@@ -3145,7 +3145,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     bldgEntered = getGame().getBoard().getBuildingAt(curPos);
                 }
 
-                // ProtoMechs changing levels within a building cause damage
+                // ProtoMeks changing levels within a building cause damage
                 if (((buildingMove & 8) == 8) && (entity instanceof ProtoMek)) {
                     Building bldg = getGame().getBoard().getBuildingAt(curPos);
                     Vector<Report> vBuildingReport = gameManager.damageBuilding(bldg, 1, curPos);
@@ -3225,7 +3225,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && ((QuadVee) entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
+            boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
@@ -3252,9 +3252,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // Mechs and Protomechs moving down a cliff
+            // Meks and Protomeks moving down a cliff
             // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
-            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation,
@@ -3265,8 +3265,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // Mechs moving up a cliff
-            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+            // Meks moving up a cliff
+            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation,

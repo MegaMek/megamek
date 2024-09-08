@@ -43,10 +43,10 @@ class ArmorPanel extends PicMap {
     private static final int minTankLeftMargin = 8;
     private static final int minVTOLTopMargin = 8;
     private static final int minVTOLLeftMargin = 8;
-    private static final int minMechTopMargin = 18;
-    private static final int minMechLeftMargin = 7;
-    private static final int minMechBottomMargin = 0;
-    private static final int minMechRightMargin = 0;
+    private static final int minMekTopMargin = 18;
+    private static final int minMekLeftMargin = 7;
+    private static final int minMekBottomMargin = 0;
+    private static final int minMekRightMargin = 0;
     private static final int minInfTopMargin = 8;
     private static final int minInfLeftMargin = 8;
     private static final int minAeroTopMargin = 8;
@@ -108,7 +108,7 @@ class ArmorPanel extends PicMap {
     /**
      * updates fields for the specified mech
      */
-    public void displayMech(Entity en) {
+    public void displayMek(Entity en) {
         // Look out for a race condition.
         if (en == null) {
             return;
@@ -117,28 +117,28 @@ class ArmorPanel extends PicMap {
         removeAll();
         if (en instanceof QuadMek) {
             ams = quad;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
         } else if (en instanceof TripodMek) {
             ams = tripod;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
-        } else if (en instanceof ArmlessMech) {
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
+        } else if (en instanceof ArmlessMek) {
             ams = armless;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
         } else if (en instanceof Mek) {
             ams = mech;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
         } else if (en instanceof GunEmplacement) {
             ams = gunEmplacement;
             minLeftMargin = minTankLeftMargin;

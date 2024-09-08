@@ -50,7 +50,7 @@ public class MoveStep implements Serializable {
 
     /**
      * When supplying additional int data, use this to key the location of the cargo being picked up
-     * (i.e. mech left arm/right arm, vehicle body, etc)
+     * (i.e. mek left arm/right arm, vehicle body, etc)
      */
     public static final int CARGO_LOCATION_KEY = 1;
 
@@ -920,7 +920,7 @@ public class MoveStep implements Serializable {
                 }
                 break;
             case GET_UP:
-                // mechs with 1 MP are allowed to get up
+                // meks with 1 MP are allowed to get up
                 setMp(cachedEntityState.getRunMP() == 1 ? 1 : 2);
                 setHasJustStood(true);
                 break;
@@ -948,7 +948,7 @@ public class MoveStep implements Serializable {
                 } else {
                     if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                         // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
-                        // (LAMs and glider protomechs only)
+                        // (LAMs and glider protomeks only)
                         if (getClearance() == 0) {
                             setMp((entity instanceof ProtoMek) ? 4 : 5);
                         } else {
@@ -1938,7 +1938,7 @@ public class MoveStep implements Serializable {
             }
 
             // If airborne and some other non-Aero unit then everything is illegal, except
-            // turns and AirMech
+            // turns and AirMek
             if (!entity.isAero()) {
                 switch (type) {
                     case TURN_LEFT:
@@ -2320,14 +2320,14 @@ public class MoveStep implements Serializable {
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
 
-        // WiGEs, AirMechs, and glider ProtoMechs have different MP for ground and airborne movement
+        // WiGEs, AirMeks, and glider ProtoMeks have different MP for ground and airborne movement
         if (entity.getMovementMode() == EntityMovementMode.WIGE) {
             if (getClearance() <= 0 && type != MoveStepType.UP) {
                 if (entity instanceof LandAirMek) {
-                    // On the ground or underwater use AirMech walk/run.
+                    // On the ground or underwater use AirMek walk/run.
                     // Sprint can only be used on the ground, so that is already set.
-                    tmpWalkMP = ((LandAirMek) entity).getAirMechWalkMP();
-                    runMPNoBoost = ((LandAirMek) entity).getAirMechRunMP();
+                    tmpWalkMP = ((LandAirMek) entity).getAirMekWalkMP();
+                    runMPNoBoost = ((LandAirMek) entity).getAirMekRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
                     MPBoosters mpBoosters = ((LandAirMek) entity).getArmedMPBoosters();
                     if (!mpBoosters.isNone()) {
@@ -2341,8 +2341,8 @@ public class MoveStep implements Serializable {
                 }
             } else if (entity instanceof LandAirMek) {
                 // LAMs cannot use overdrive and MASC does not affect airborne MP.
-                tmpWalkMP = ((LandAirMek) entity).getAirMechCruiseMP();
-                runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = ((LandAirMek) entity).getAirMechFlankMP();
+                tmpWalkMP = ((LandAirMek) entity).getAirMekCruiseMP();
+                runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = ((LandAirMek) entity).getAirMekFlankMP();
             }
         }
 
@@ -2356,12 +2356,12 @@ public class MoveStep implements Serializable {
         }
 
         if (stepType == MoveStepType.CONVERT_MODE) {
-            // QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
+            // QuadVees and LAMs cannot convert in water, and Mek tracks cannot be used in water.
             if (currHex.containsTerrain(Terrains.WATER)
                     && getClearance() < 0) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            // QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
+            // QuadVees and LAMs cannot convert while prone. Meks with tracks don't actually convert,
             // and can switch to track mode while prone then stand.
             if (getEntity().isProne()
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMek)) {
@@ -2403,10 +2403,10 @@ public class MoveStep implements Serializable {
             tmpWalkMP = entity.getJumpMP();
         }
 
-        // check for valid walk/run mp; BRACE is a special case for protomechs
+        // check for valid walk/run mp; BRACE is a special case for protomeks
         if (!isJumping() && !entity.isStuck() && (tmpWalkMP > 0)
                 && ((getMp() > 0) || (stepType == MoveStepType.BRACE))) {
-            // Prone mechs can only spend MP to turn or get up
+            // Prone meks can only spend MP to turn or get up
             if ((stepType != MoveStepType.TURN_LEFT)
                     && (stepType != MoveStepType.TURN_RIGHT)
                     && (stepType != MoveStepType.GET_UP)
@@ -2596,7 +2596,7 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // Mechs with no arms and a missing leg cannot attempt to stand
+        // Meks with no arms and a missing leg cannot attempt to stand
         if (((stepType == MoveStepType.GET_UP) ||
                 (stepType == MoveStepType.CAREFUL_STAND)) &&
                 (entity instanceof Mek) &&
@@ -2608,7 +2608,7 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        // Mechs with 1 MP are allowed to get up, except
+        // Meks with 1 MP are allowed to get up, except
         // if they've used that 1MP up already
         if ((MoveStepType.GET_UP == stepType) && (1 == cachedEntityState.getRunMP())
                 && (entity.mpUsed < 1) && !entity.isStuck()) {
@@ -2651,7 +2651,7 @@ public class MoveStep implements Serializable {
         // Bimodal LAMs cannot spend MP when converting to fighter mode on the ground.
         if (entity instanceof LandAirMek
                 && ((LandAirMek) entity).getLAMType() == LandAirMek.LAM_BIMODAL
-                && entity.getConversionMode() == LandAirMek.CONV_MODE_MECH
+                && entity.getConversionMode() == LandAirMek.CONV_MODE_MEK
                 && movementMode == EntityMovementMode.AERODYNE
                 && altitude == 0
                 && mp > 0) {
@@ -2755,13 +2755,13 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // only standing mechs may go prone
+        // only standing meks may go prone
         if ((stepType == MoveStepType.GO_PRONE)
                 && (isProne() || !(entity instanceof Mek) || entity.isStuck())) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // Standing mechs and vehicles in fortified terrain can hull-down
+        // Standing meks and vehicles in fortified terrain can hull-down
         if (stepType == MoveStepType.HULL_DOWN) {
             if ((isHullDown()
                     || !((entity instanceof Mek) || (entity instanceof Tank)) || entity
@@ -2778,12 +2778,12 @@ public class MoveStep implements Serializable {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else if (entity.isGyroDestroyed()) {
-                // Mechs need to check for valid Gyros
+                // Meks need to check for valid Gyros
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
         }
 
-        // initially prone mechs can't charge
+        // initially prone meks can't charge
         if (((stepType == MoveStepType.CHARGE) || (stepType == MoveStepType.DFA))
                 && entity.isProne()) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2809,7 +2809,7 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // super heavy mechs can't climb on buildings
+        // super heavy meks can't climb on buildings
         if ((entity instanceof Mek)
                 && ((Mek) entity).isSuperHeavy()
                 && climbMode
@@ -3008,12 +3008,12 @@ public class MoveStep implements Serializable {
         final Hex srcHex = game.getBoard().getHex(prev);
         final Hex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = getEntity() instanceof Infantry;
-        final boolean isSuperHeavyMech = (getEntity() instanceof Mek)
+        final boolean isSuperHeavyMek = (getEntity() instanceof Mek)
                 && ((Mek) getEntity()).isSuperHeavy();
         final boolean isMechanizedInfantry = isInfantry
                 && ((Infantry) getEntity()).isMechanized();
         final boolean isProto = getEntity() instanceof ProtoMek;
-        final boolean isMech = getEntity() instanceof Mek;
+        final boolean isMek = getEntity() instanceof Mek;
         final boolean isAmphibious = cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
                 cachedEntityState.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
         final boolean isFogSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG);
@@ -3197,7 +3197,7 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING) && isMech
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING) && isMek
                     && (delta_e > 2) && (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -3250,7 +3250,7 @@ public class MoveStep implements Serializable {
                     && (destHex.terrainLevel(Terrains.BLDG_ELEV) > getEntity()
                     .height())) {
                 mp += 0;
-            } else if (!isInfantry && !isSuperHeavyMech) {
+            } else if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-protos pay extra according to the building type
                     mp += bldg.getType();
@@ -3375,7 +3375,7 @@ public class MoveStep implements Serializable {
         Building bld = game.getBoard().getBuildingAt(dest);
 
         if (bld != null) {
-            // ProtoMechs that are jumping can't change the level inside a building,
+            // ProtoMeks that are jumping can't change the level inside a building,
             // they can only jump onto a building or out of it
             if (src.equals(dest) && (srcAlt != destAlt)
                     && (entity instanceof ProtoMek)
@@ -3480,7 +3480,7 @@ public class MoveStep implements Serializable {
             }
         } // End STEP_TOW-checks
 
-        // mechs dumping ammo can't run
+        // meks dumping ammo can't run
         boolean bDumping = false;
         for (Mounted mo : entity.getAmmo()) {
             if (mo.isDumping()) {
@@ -3627,7 +3627,7 @@ public class MoveStep implements Serializable {
         // ugh, stacking checks. well, maybe we're immune!
         if (!isJumping() && (type != MoveStepType.CHARGE)
                 && (type != MoveStepType.DFA)) {
-            // can't move a mech into a hex with an enemy mech
+            // can't move a mek into a hex with an enemy mek
             if ((entity instanceof Mek)
                     && Compute.isEnemyIn(game, entity, dest, true, true,
                     getElevation())) {
@@ -4247,8 +4247,8 @@ public class MoveStep implements Serializable {
             return game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
         }
         if (entity instanceof LandAirMek) {
-            return entity.getConversionMode() == LandAirMek.CONV_MODE_MECH
-                    || (entity.getConversionMode() == LandAirMek.CONV_MODE_AIRMECH
+            return entity.getConversionMode() == LandAirMek.CONV_MODE_MEK
+                    || (entity.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK
                     && getClearance() <= 0);
         }
         return entity instanceof Mek;

@@ -122,7 +122,7 @@ public class VehicleTROView extends TROView {
     }
 
     private void addFluff() {
-        addMechVeeAeroFluff(tank);
+        addMekVeeAeroFluff(tank);
         if (tank.getJumpMP() > 0) {
             setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, tank.getFluff(),
                     () -> Messages.getString("TROView.jjVehicle")));

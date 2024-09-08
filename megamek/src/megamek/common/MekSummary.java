@@ -126,9 +126,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int lightVehicleBays;
     private int lightVehicleDoors;
     private double lightVehicleUnits;
-    private int protoMecheBays;
-    private int protoMechDoors;
-    private double protoMechUnits;
+    private int protoMekBays;
+    private int protoMekDoors;
+    private double protoMekUnits;
     private int battleArmorBays;
     private int battleArmorDoors;
     private double battleArmorUnits;
@@ -428,15 +428,15 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return dockingCollars;
     }
 
-    public int getMechBays() {
+    public int getMekBays() {
         return mechBays;
     }
 
-    public int getMechDoors() {
+    public int getMekDoors() {
         return mechDoors;
     }
 
-    public double getMechUnits() {
+    public double getMekUnits() {
         return mechUnits;
     }
 
@@ -464,16 +464,16 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return lightVehicleUnits;
     }
 
-    public int getProtoMecheBays() {
-        return protoMecheBays;
+    public int getProtoMekBays() {
+        return protoMekBays;
     }
 
-    public int getProtoMechDoors() {
-        return protoMechDoors;
+    public int getProtoMekDoors() {
+        return protoMekDoors;
     }
 
-    public double getProtoMechUnits() {
-        return protoMechUnits;
+    public double getProtoMekUnits() {
+        return protoMekUnits;
     }
 
     public int getBattleArmorBays() {
@@ -751,15 +751,15 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         dockingCollars = i;
     }
 
-    public void setMechBays(int i) {
+    public void setMekBays(int i) {
         mechBays = i;
     }
 
-    public void setMechDoors(int i) {
+    public void setMekDoors(int i) {
         mechDoors = i;
     }
 
-    public void setMechUnits(double d) {
+    public void setMekUnits(double d) {
         mechUnits = d;
     }
 
@@ -787,16 +787,16 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         lightVehicleUnits = d;
     }
 
-    public void setProtoMecheBays(int i) {
-        protoMecheBays = i;
+    public void setProtoMekBays(int i) {
+        protoMekBays = i;
     }
 
-    public void setProtoMechDoors(int i) {
-        protoMechDoors = i;
+    public void setProtoMekDoors(int i) {
+        protoMekDoors = i;
     }
 
-    public void setProtoMechUnits(double d) {
-        protoMechUnits = d;
+    public void setProtoMekUnits(double d) {
+        protoMekUnits = d;
     }
 
     public void setBattleArmorBays(int i) {
@@ -1336,7 +1336,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      */
     public @Nullable Entity loadEntity() {
         try {
-            return new MechFileParser(sourceFile, entryName).getEntity();
+            return new MekFileParser(sourceFile, entryName).getEntity();
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
             return null;
@@ -1346,15 +1346,15 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     /**
      * Loads and returns the entity for the given full name. If the entity cannot be loaded, the error is logged
      * and null is returned. This is a shortcut for first loading the MekSummary using
-     * {@link MekSummaryCache#getMech(String)} and then {@link #loadEntity()}.
+     * {@link MekSummaryCache#getMek(String)} and then {@link #loadEntity()}.
      *
      * @return The loaded entity or null in case of an error
      */
     public static @Nullable Entity loadEntity(String fullName) {
         try {
-            MekSummary ms = MekSummaryCache.getInstance().getMech(fullName);
+            MekSummary ms = MekSummaryCache.getInstance().getMek(fullName);
             if (ms != null) {
-                return new MechFileParser(ms.sourceFile, ms.entryName).getEntity();
+                return new MekFileParser(ms.sourceFile, ms.entryName).getEntity();
             } else {
                 LogManager.getLogger().error("MekSummary entry not found for {}", fullName);
             }

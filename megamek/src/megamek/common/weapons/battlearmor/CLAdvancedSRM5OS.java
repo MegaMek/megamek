@@ -35,7 +35,7 @@ public class CLAdvancedSRM5OS extends AdvancedSRMWeapon {
         longRange = 12;
         extremeRange = 16;
         bv = 15;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = 0.165;
         criticals = 5;
         cost = 37500;

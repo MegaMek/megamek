@@ -14,27 +14,17 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ACAPHandler;
-import megamek.common.weapons.ACCaselessHandler;
-import megamek.common.weapons.ACFlakHandler;
-import megamek.common.weapons.ACFlechetteHandler;
-import megamek.common.weapons.ACIncendiaryHandler;
-import megamek.common.weapons.ACTracerHandler;
-import megamek.common.weapons.ACWeaponHandler;
-import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.RapidfireACWeaponHandler;
-import megamek.common.weapons.Weapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.common.weapons.*;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC.
@@ -49,7 +39,7 @@ public abstract class ACWeapon extends AmmoWeapon {
     public ACWeapon() {
         super();
 
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_AC;
         explosive = true; // when firing incendiary ammo

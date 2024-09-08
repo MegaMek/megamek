@@ -27,6 +27,10 @@ import java.util.Map;
 import megamek.common.Game;
 import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.scriptedevent.GameEndTriggeredEvent;
+import megamek.server.scriptedevent.TriggeredEvent;
+import megamek.server.scriptedevent.VictoryTriggeredEvent;
+import megamek.server.trigger.TriggerSituation;
 
 /**
  * This class manages the victory conditions of a game. As victory conditions could potentially have some
@@ -75,6 +79,26 @@ public class VictoryHelper implements Serializable {
         }
 
         VictoryResult result = VictoryResult.noResult();
+
+        boolean gameEnds = false;
+        for (TriggeredEvent event : game.scriptedEvents()) {
+            gameEnds |= event.trigger().isTriggered(game, TriggerSituation.ROUND_END)
+                    && ((event instanceof GameEndTriggeredEvent)
+                    || ((event instanceof VictoryTriggeredEvent victoryEvent)
+                    && victoryEvent.isGameEnding()));
+        }
+
+        if (gameEnds) {
+            // Test all victory events, if any are met; if not, return a draw
+            for (TriggeredEvent event : game.scriptedEvents()) {
+                if ((event instanceof VictoryTriggeredEvent victoryEvent)
+                        && victoryEvent.isGameEnding()
+                        && victoryEvent.trigger().isTriggered(game, TriggerSituation.ROUND_END)) {
+                    return new VictoryResult(true);
+                }
+            }
+            return VictoryResult.drawResult();
+        }
 
         if (checkForVictory) {
             // Check optional Victory conditions; these can have reports

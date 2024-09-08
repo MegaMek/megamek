@@ -64,10 +64,10 @@ megamek/userdata/**
 /megamek/data/splash/
 
 # mechfiles
-/megamek/data/mechfiles/units.cache
-/megamek/data/mechfiles/IrTech/
-/megamek/data/mechfiles/Special/
-/megamek/data/mechfiles/customs/
+/megamek/data/mekfiles/units.cache
+/megamek/data/mekfiles/IrTech/
+/megamek/data/mekfiles/Special/
+/megamek/data/mekfiles/customs/
 
 # Images
 /megamek/data/images/*_atlas.png

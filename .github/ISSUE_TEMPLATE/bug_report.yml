@@ -21,7 +21,7 @@ body:
             - [MegaMekLab](https://github.com/MegaMek/megameklab/issues)
             - [MekHQ](https://github.com/MegaMek/mekhq/issues)
           required: true
-        - label: "I've tested the issue against the latest MILESTONE version"
+        - label: "I've tested the issue against at least the latest MILESTONE version"
           required: true
         - label: "I've asked on the MegaMek Discord about the error"
           required: true

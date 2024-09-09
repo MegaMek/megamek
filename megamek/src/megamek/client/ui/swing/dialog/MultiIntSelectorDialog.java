@@ -37,8 +37,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 
@@ -48,29 +46,34 @@ import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 public class MultiIntSelectorDialog extends AbstractButtonDialog {
     private String description;
     private JList<Integer> list;
-    
+
     /** Constructs a modal dialog with frame as parent. */
-    public MultiIntSelectorDialog(JFrame frame, String nameResourceID, String titleResourceID, 
+    public MultiIntSelectorDialog(JFrame frame, String nameResourceID, String titleResourceID,
             String descriptionResourceID, int maxValue, List<Integer> selectedItems) {
         super(frame, nameResourceID, titleResourceID);
         this.setResizable(false);
-        
+
         description = getString(descriptionResourceID);
         ListModel<Integer> listData = new AbstractListModel<Integer>() {
-            public int getSize() { return maxValue; }
-            public Integer getElementAt(int index) { return index; }
+            public int getSize() {
+                return maxValue;
+            }
+
+            public Integer getElementAt(int index) {
+                return index;
+            }
         };
-        
+
         list = new JList<>(listData);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        
+
         int[] selectedItemArray = new int[selectedItems.size()];
         for (int x = 0; x < selectedItems.size(); x++) {
             selectedItemArray[x] = selectedItems.get(x);
         }
-        
+
         list.setSelectedIndices(selectedItemArray);
-        
+
         initialize();
     }
 
@@ -82,21 +85,23 @@ public class MultiIntSelectorDialog extends AbstractButtonDialog {
 
         JPanel listFieldPanel = new FixedYPanel();
         listFieldPanel.add(list);
-        
-        JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + description), 
+
+        JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + description),
                 SwingConstants.CENTER);
         labInfo.setAlignmentX(CENTER_ALIGNMENT);
-        
+
         result.add(Box.createVerticalGlue());
         result.add(labInfo);
         result.add(Box.createVerticalStrut(5));
         result.add(listFieldPanel);
         result.add(Box.createVerticalGlue());
-        
+
         return result;
     }
-    
-    /** Returns the level change entered by the user or 0, if it cannot be parsed. */
+
+    /**
+     * Returns the level change entered by the user or 0, if it cannot be parsed.
+     */
     public List<Integer> getSelectedItems() {
         return list.getSelectedValuesList();
     }

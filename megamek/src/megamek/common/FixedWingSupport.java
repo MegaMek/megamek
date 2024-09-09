@@ -14,7 +14,6 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.FixedWingSupportCostCalculator;
 import megamek.common.equipment.ArmorType;
-import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jason Tighe

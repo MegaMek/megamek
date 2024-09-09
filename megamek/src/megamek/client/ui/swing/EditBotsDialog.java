@@ -19,7 +19,6 @@
 package megamek.client.ui.swing;
 
 import megamek.client.AbstractClient;
-import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;

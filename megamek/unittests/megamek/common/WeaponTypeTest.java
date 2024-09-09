@@ -19,16 +19,10 @@
 package megamek.common;
 
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.bayweapons.PPCBayWeapon;
-import megamek.common.weapons.ppc.ISERPPC;
-import megamek.common.weapons.ppc.PPCWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Enumeration;
-import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -40,32 +34,32 @@ public class WeaponTypeTest {
     private Entity mockEntity = mock(Entity.class);
 
     @BeforeAll
-    static void before(){
+    static void before() {
         EquipmentType.initializeTypes();
     }
 
     @Test
     public void testArtemisCompatibleFlag() {
-        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType etype = e.nextElement();
             if (etype instanceof WeaponType) {
                 int atype = ((WeaponType) etype).getAmmoType();
 
                 assertEquals(etype.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE),
                         (atype == AmmoType.T_LRM)
-                        || (atype == AmmoType.T_LRM_IMP)
-                        || (atype == AmmoType.T_MML)
-                        || (atype == AmmoType.T_SRM)
-                        || (atype == AmmoType.T_SRM_IMP)
-                        || (atype == AmmoType.T_NLRM)
-                        || (atype == AmmoType.T_LRM_TORPEDO)
-                        || (atype == AmmoType.T_SRM_TORPEDO)
-                        || (atype == AmmoType.T_LRM_TORPEDO_COMBO));
+                                || (atype == AmmoType.T_LRM_IMP)
+                                || (atype == AmmoType.T_MML)
+                                || (atype == AmmoType.T_SRM)
+                                || (atype == AmmoType.T_SRM_IMP)
+                                || (atype == AmmoType.T_NLRM)
+                                || (atype == AmmoType.T_LRM_TORPEDO)
+                                || (atype == AmmoType.T_SRM_TORPEDO)
+                                || (atype == AmmoType.T_LRM_TORPEDO_COMBO));
             }
         }
     }
 
-    private WeaponMounted setupBayWeapon(String name){
+    private WeaponMounted setupBayWeapon(String name) {
         EquipmentType etype = EquipmentType.get(name);
         WeaponMounted weapon = new WeaponMounted(mockEntity, (WeaponType) etype);
         WeaponMounted bWeapon = new WeaponMounted(mockEntity, (WeaponType) weapon.getType().getBayType());
@@ -83,7 +77,7 @@ public class WeaponTypeTest {
 
         WeaponMounted erplasbay = setupBayWeapon("CLERLargePulseLaser");
         wtype = erplasbay.getType();
-        assertEquals(RangeType.RANGE_LONG, wtype.getMaxRange(erplasbay ));
+        assertEquals(RangeType.RANGE_LONG, wtype.getMaxRange(erplasbay));
 
         WeaponMounted islplasbay = setupBayWeapon("ISLargePulseLaser");
         wtype = islplasbay.getType();
@@ -94,7 +88,7 @@ public class WeaponTypeTest {
         assertEquals(RangeType.RANGE_SHORT, wtype.getMaxRange(ersmlasbay));
 
         WeaponMounted islgaussbay = setupBayWeapon("ISLightGaussRifle");
-        wtype = islgaussbay .getType();
-        assertEquals(RangeType.RANGE_EXTREME, wtype.getMaxRange(islgaussbay ));
+        wtype = islgaussbay.getType();
+        assertEquals(RangeType.RANGE_EXTREME, wtype.getMaxRange(islgaussbay));
     }
 }

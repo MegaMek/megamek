@@ -27,8 +27,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -43,7 +41,7 @@ public class RandomMapPanelAdvanced extends JPanel {
     private static final String CT_GRID = "GRID";
     private static final String CT_METRO = "METRO";
     private static final String CT_TOWN = "TOWN";
-    private static final String[] CT_CHOICES = new String[]{CT_NONE, CT_GRID, CT_HUB, CT_METRO, CT_TOWN};
+    private static final String[] CT_CHOICES = new String[] { CT_NONE, CT_GRID, CT_HUB, CT_METRO, CT_TOWN };
 
     // Using tabs to keep the data organized.
     private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
@@ -52,215 +50,214 @@ public class RandomMapPanelAdvanced extends JPanel {
     private MapSettings mapSettings;
 
     // Elevation
-    private final VerifiableTextField elevationAlgorithmField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, BoardUtilities.getAmountElevationGenerators() - 1, true));
-    private final VerifiableTextField hillinessField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 99, true));
-    private final VerifiableTextField elevationRangeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField elevationCliffsField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField elevationInversionField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 99, true));
+    private final VerifiableTextField elevationAlgorithmField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, BoardUtilities.getAmountElevationGenerators() - 1, true));
+    private final VerifiableTextField hillinessField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 99, true));
+    private final VerifiableTextField elevationRangeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField elevationCliffsField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField elevationInversionField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 99, true));
     private final JCheckBox invertNegativeCheck = new JCheckBox();
-    private final VerifiableTextField elevationPeaksField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField elevationPeaksField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
     private final JComboBox<String> mountainStyleCombo = new JComboBox<>(MountainStyle.getStyleDescriptions());
-    private final VerifiableTextField mountainHeightMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField mountainHeightMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField mountainWidthMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField mountainWidthMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField craterChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField craterAmountMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField craterAmountMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField craterSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField craterSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField mountainHeightMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField mountainHeightMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField mountainWidthMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField mountainWidthMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField craterChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField craterAmountMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField craterAmountMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField craterSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField craterSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
 
     // Natural Features
-    private final VerifiableTextField roughsMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField roughsMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField roughsMinSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField roughsMaxSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMinSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMaxSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
 
-    private final VerifiableTextField roughsUltraChanceField =
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField roughsUltraChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
 
-    private final VerifiableTextField sandsMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField sandsMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField sandsSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField sandsSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField swampsMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField swampsMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField swampsMinSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField swampsMaxSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField woodsMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField woodsMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField woodsMinSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField woodsMaxSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField woodsHeavyChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField woodsUltraChanceField =
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField sandsMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMinSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMaxSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMinSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMaxSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsHeavyChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField woodsUltraChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
 
+    private final VerifiableTextField jungleMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleMinSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleMaxSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleHeavyChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField jungleUltraChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
 
-    private final VerifiableTextField jungleMinField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField jungleMaxField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField jungleMinSizeField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField jungleMaxSizeField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField jungleHeavyChanceField =
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField jungleUltraChanceField =
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField foliageMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageMinSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageMaxSizeField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageHeavyChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
 
-    private final VerifiableTextField foliageMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField foliageMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField foliageMinSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField foliageMaxSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField foliageHeavyChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField snowMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField snowMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField snowSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField snowSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
 
-    private final VerifiableTextField snowMinField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField snowMaxField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField snowSizeMinField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField snowSizeMaxField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-
-    private final VerifiableTextField tundraMinField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField tundraMaxField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField tundraSizeMinField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField tundraSizeMaxField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
 
     // Civilized Features.
-    private final VerifiableTextField fieldsMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fieldsMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fieldSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fieldSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fortifiedMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fortifiedMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fortifiedSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField fortifiedSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField pavementMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField pavementMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField pavementSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField pavementSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField roadChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField rubbleMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField rubbleMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField rubbleSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField rubbleSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField fieldsMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fieldsMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fieldSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fieldSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fortifiedMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fortifiedMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fortifiedSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField fortifiedSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField pavementMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField pavementMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField pavementSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField pavementSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField roadChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField rubbleMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField rubbleMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField rubbleSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField rubbleSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
 
-    private final VerifiableTextField rubbleUltraChanceField =
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField rubbleUltraChanceField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
 
     private final JComboBox<String> cityTypeCombo = new JComboBox<>(CT_CHOICES);
-    private final VerifiableTextField cityBlocks = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField cityCFMinField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(1, 150, true));
-    private final VerifiableTextField cityCFMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(1, 150, true));
-    private final VerifiableTextField cityFloorsMinField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(1, 100, true));
-    private final VerifiableTextField cityFloorsMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(1, 100, true));
-    private final VerifiableTextField cityDensityField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(1, 100, true));
-    private final VerifiableTextField townSizeField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(1, 100, true));
+    private final VerifiableTextField cityBlocks = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField cityCFMinField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(1, 150, true));
+    private final VerifiableTextField cityCFMaxField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(1, 150, true));
+    private final VerifiableTextField cityFloorsMinField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(1, 100, true));
+    private final VerifiableTextField cityFloorsMaxField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(1, 100, true));
+    private final VerifiableTextField cityDensityField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(1, 100, true));
+    private final VerifiableTextField townSizeField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(1, 100, true));
 
     // Water
-    private final VerifiableTextField lakesMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField lakesMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField lakeSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField lakeSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField deepChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField riverChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField iceMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField iceMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField iceSizeMinField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField iceSizeMaxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
-    private final VerifiableTextField freezeChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField lakesMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField lakesMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField lakeSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField lakeSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField deepChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField riverChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField iceMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField iceMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField iceSizeMinField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField iceSizeMaxField = new VerifiableTextField(4, true, true,
+            new VerifyIsPositiveInteger());
+    private final VerifiableTextField freezeChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
 
     // Special effects
-    private final VerifiableTextField droughtChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField floodChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField fireChanceField = 
-            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-    private final VerifiableTextField specialFxField = 
-            new VerifiableTextField(4, true, true, new VerifyIsInteger());
+    private final VerifiableTextField droughtChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField floodChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField fireChanceField = new VerifiableTextField(4, true, true,
+            new VerifyInRange(0, 100, true));
+    private final VerifiableTextField specialFxField = new VerifiableTextField(4, true, true, new VerifyIsInteger());
 
     /**
-     * Constructor for the advanced map settings panel.  This gives more detailed control over how the map will be
+     * Constructor for the advanced map settings panel. This gives more detailed
+     * control over how the map will be
      * generated.
      *
      * @param mapSettings The settings for the map to be generated.
@@ -286,7 +283,8 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     /**
-     * Update the panel controls with the values from the {@link MapSettings} object.
+     * Update the panel controls with the values from the {@link MapSettings}
+     * object.
      */
     private void loadMapSettings() {
         riverChanceField.setText(String.valueOf(mapSettings.getProbRiver()));
@@ -429,14 +427,14 @@ public class RandomMapPanelAdvanced extends JPanel {
 
     private JPanel setupRiverPanel() {
         JPanel panel = new FeaturePanel(new SpringLayout());
-        
+
         JLabel riverChanceLabel = new JLabel(Messages.getString("RandomMapDialog.labProbRiver"));
         panel.add(riverChanceLabel);
         riverChanceField.setToolTipText(Messages.getString("RandomMapDialog.riverChanceField.toolTip"));
         panel.add(riverChanceField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderRiver")));
+                Messages.getString("RandomMapDialog.borderRiver")));
         RandomMapPanelBasic.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
         return panel;
     }
@@ -472,7 +470,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderIce")));
+                Messages.getString("RandomMapDialog.borderIce")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
@@ -507,7 +505,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderLakes")));
+                Messages.getString("RandomMapDialog.borderLakes")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
@@ -549,7 +547,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(fieldSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
-                                         Messages.getString("RandomMapDialog.borderFields")));
+                Messages.getString("RandomMapDialog.borderFields")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
@@ -584,7 +582,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
-                                         Messages.getString("RandomMapDialog.borderRubble")));
+                Messages.getString("RandomMapDialog.borderRubble")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
@@ -599,7 +597,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(roadChanceField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
-                                         Messages.getString("RandomMapDialog.borderRoad")));
+                Messages.getString("RandomMapDialog.borderRoad")));
         RandomMapPanelBasic.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
         return panel;
     }
@@ -626,7 +624,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(pavementSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
-                                         Messages.getString("RandomMapDialog.borderPavement")));
+                Messages.getString("RandomMapDialog.borderPavement")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
@@ -654,7 +652,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(fortifiedSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
-                                         Messages.getString("RandomMapDialog.borderFortified")));
+                Messages.getString("RandomMapDialog.borderFortified")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
@@ -718,7 +716,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderCity")));
+                Messages.getString("RandomMapDialog.borderCity")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 6, 4, 6, 6, 6, 6);
         setCityPanelState();
@@ -747,17 +745,17 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(droughtLabel);
         droughtChanceField.setToolTipText(Messages.getString("RandomMapDialog.droughtChanceField.toolTip"));
         panel.add(droughtChanceField);
-        
+
         JLabel fireLabel = new JLabel(Messages.getString("RandomMapDialog.labProbFire"));
         panel.add(fireLabel);
         fireChanceField.setToolTipText(Messages.getString("RandomMapDialog.fireChanceField.toolTip"));
         panel.add(fireChanceField);
-        
+
         JLabel floodLabel = new JLabel(Messages.getString("RandomMapDialog.labProbFlood"));
         panel.add(floodLabel);
         floodChanceField.setToolTipText(Messages.getString("RandomMapDialog.floodChanceField.toolTip"));
         panel.add(floodChanceField);
-        
+
         JLabel fxLabel = new JLabel(Messages.getString("RandomMapDialog.labFxMod"));
         panel.add(fxLabel);
         specialFxField.setToolTipText(Messages.getString("RandomMapDialog.specialFxField.toolTip"));
@@ -785,7 +783,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
     private JPanel setupWoodsPanel() {
         JPanel panel = new FeaturePanel(new SpringLayout());
-        
+
         JLabel numberWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labForestSpots"));
         panel.add(numberWoodsLabel);
         woodsMinField.setToolTipText(Messages.getString("RandomMapDialog.woodsMinField.toolTip"));
@@ -819,7 +817,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderWoods")));
+                Messages.getString("RandomMapDialog.borderWoods")));
         RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
         return panel;
     }
@@ -864,26 +862,26 @@ public class RandomMapPanelAdvanced extends JPanel {
         RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
         return panel;
     }
-    
+
     private class FeaturePanel extends JPanel {
         private static final long serialVersionUID = 2064014325837995657L;
 
         public FeaturePanel(LayoutManager layout) {
             super(layout);
         }
-        
+
         @Override
         public Dimension getMaximumSize() {
             // Make this Panel not stretch vertically
             Dimension size = getPreferredSize();
             Dimension maxSize = super.getMaximumSize();
             return new Dimension(maxSize.width, size.height);
-        }        
+        }
     }
-    
+
     private JPanel setupFoliagePanel() {
         JPanel panel = new FeaturePanel(new SpringLayout());
-        
+
         JLabel numberWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labFoliageSpots"));
         panel.add(numberWoodsLabel);
         foliageMinField.setToolTipText(Messages.getString("RandomMapDialog.foliageMinField.toolTip"));
@@ -908,7 +906,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderFoliage")));
+                Messages.getString("RandomMapDialog.borderFoliage")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
@@ -916,7 +914,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
     private JPanel setupSwampsPanel() {
         JPanel panel = new FeaturePanel(new SpringLayout());
-        
+
         JLabel numberSwampsLabel = new JLabel(Messages.getString("RandomMapDialog.labSwampSpots"));
         panel.add(numberSwampsLabel);
         swampsMinField.setToolTipText(Messages.getString("RandomMapDialog.swampsMinField.toolTip"));
@@ -938,8 +936,8 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(swampsMaxSizeField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderSwamp")));
-        
+                Messages.getString("RandomMapDialog.borderSwamp")));
+
         RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
     }
@@ -966,7 +964,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(sandsSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderSand")));
+                Messages.getString("RandomMapDialog.borderSand")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
@@ -1057,7 +1055,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(new JLabel());
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderRough")));
+                Messages.getString("RandomMapDialog.borderRough")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
@@ -1076,7 +1074,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
     private JPanel setupCratersPanel() {
         JPanel panel = new FeaturePanel(new SpringLayout());
-        
+
         final JLabel craterChanceLabel = new JLabel(Messages.getString("RandomMapDialog.labProbCrater"));
         panel.add(craterChanceLabel);
         craterChanceField.setToolTipText(Messages.getString("RandomMapDialog.craterChanceField.toolTip"));
@@ -1105,7 +1103,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(craterSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderCrater")));
+                Messages.getString("RandomMapDialog.borderCrater")));
         RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
     }
@@ -1146,7 +1144,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(mountainWidthMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderMountain")));
+                Messages.getString("RandomMapDialog.borderMountain")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
         return panel;
@@ -1187,7 +1185,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(invertNegativeCheck);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
-                                         Messages.getString("RandomMapDialog.borderGeneral")));
+                Messages.getString("RandomMapDialog.borderGeneral")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
         return panel;
@@ -1261,7 +1259,8 @@ public class RandomMapPanelAdvanced extends JPanel {
         return (result == null);
     }
 
-    // Takes in a min and max field, makes sure the data is generally valid in each then compares them to make sure
+    // Takes in a min and max field, makes sure the data is generally valid in each
+    // then compares them to make sure
     // the minimum value does not exceed the maximum.
     private boolean isMinMaxVerified(VerifiableTextField min, VerifiableTextField max) {
         if (!isFieldVerified(min) || !isFieldVerified(max)) {
@@ -1409,7 +1408,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         if (!isFieldVerified(jungleUltraChanceField)) {
             return false;
         }
-        
+
         if (!isMinMaxVerified(foliageMinField, foliageMaxField)) {
             return false;
         }
@@ -1530,10 +1529,12 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     /**
-     * Returns a {@link MapSettings} object reflecting the values set on this panel after verifying that all the fields
-     * are valid.  If they are not, a NULL will be returned.
+     * Returns a {@link MapSettings} object reflecting the values set on this panel
+     * after verifying that all the fields
+     * are valid. If they are not, a NULL will be returned.
      *
-     * @return The new {@link MapSettings} object or NULL if there are any invalid settings on the panel.
+     * @return The new {@link MapSettings} object or NULL if there are any invalid
+     *         settings on the panel.
      */
     public MapSettings getMapSettings() {
         if (!areMapSettingsVerified()) {
@@ -1546,103 +1547,103 @@ public class RandomMapPanelAdvanced extends JPanel {
         // Update the settings with the values from the fields.
         newMapSettings.setAlgorithmToUse(elevationAlgorithmField.getAsInt());
         newMapSettings.setElevationParams(hillinessField.getAsInt(),
-                                          elevationRangeField.getAsInt(),
-                                          elevationInversionField.getAsInt());
+                elevationRangeField.getAsInt(),
+                elevationInversionField.getAsInt());
         newMapSettings.setCliffParam(elevationCliffsField.getAsInt());
 
         // No idea why this is an int instead of a boolean.
         newMapSettings.setInvertNegativeTerrain(invertNegativeCheck.isSelected() ? 1 : 0);
         newMapSettings.setMountainParams(elevationPeaksField.getAsInt(),
-                                         mountainWidthMinField.getAsInt(),
-                                         mountainWidthMaxField.getAsInt(),
-                                         mountainHeightMinField.getAsInt(),
-                                         mountainHeightMaxField.getAsInt(),
-                                         MountainStyle.getMountainStyle((String) mountainStyleCombo.getSelectedItem())
-                                                      .getCode());
+                mountainWidthMinField.getAsInt(),
+                mountainWidthMaxField.getAsInt(),
+                mountainHeightMinField.getAsInt(),
+                mountainHeightMaxField.getAsInt(),
+                MountainStyle.getMountainStyle((String) mountainStyleCombo.getSelectedItem())
+                        .getCode());
         newMapSettings.setCraterParam(craterChanceField.getAsInt(),
-                                      craterAmountMinField.getAsInt(),
-                                      craterAmountMaxField.getAsInt(),
-                                      craterSizeMinField.getAsInt(),
-                                      craterSizeMaxField.getAsInt());
+                craterAmountMinField.getAsInt(),
+                craterAmountMaxField.getAsInt(),
+                craterSizeMinField.getAsInt(),
+                craterSizeMaxField.getAsInt());
         newMapSettings.setRoughParams(roughsMinField.getAsInt(),
-                                      roughsMaxField.getAsInt(),
-                                      roughsMinSizeField.getAsInt(),
-                                      roughsMaxSizeField.getAsInt(),
-                                    roughsUltraChanceField.getAsInt());
+                roughsMaxField.getAsInt(),
+                roughsMinSizeField.getAsInt(),
+                roughsMaxSizeField.getAsInt(),
+                roughsUltraChanceField.getAsInt());
         newMapSettings.setSandParams(sandsMinField.getAsInt(),
-                                     sandsMaxField.getAsInt(),
-                                     sandsSizeMinField.getAsInt(),
-                                     sandsSizeMaxField.getAsInt());
+                sandsMaxField.getAsInt(),
+                sandsSizeMinField.getAsInt(),
+                sandsSizeMaxField.getAsInt());
         newMapSettings.setSnowParams(snowMinField.getAsInt(),
-                                    snowMaxField.getAsInt(),
-                                    snowSizeMinField.getAsInt(),
-                                    snowSizeMaxField.getAsInt());
+                snowMaxField.getAsInt(),
+                snowSizeMinField.getAsInt(),
+                snowSizeMaxField.getAsInt());
         newMapSettings.setTundraParams(tundraMinField.getAsInt(),
-                                    tundraMaxField.getAsInt(),
-                                    tundraSizeMinField.getAsInt(),
-                                    tundraSizeMaxField.getAsInt());
+                tundraMaxField.getAsInt(),
+                tundraSizeMinField.getAsInt(),
+                tundraSizeMaxField.getAsInt());
         newMapSettings.setSwampParams(swampsMinField.getAsInt(),
-                                      swampsMaxField.getAsInt(),
-                                      swampsMinSizeField.getAsInt(),
-                                      swampsMaxSizeField.getAsInt());
+                swampsMaxField.getAsInt(),
+                swampsMinSizeField.getAsInt(),
+                swampsMaxSizeField.getAsInt());
         newMapSettings.setForestParams(woodsMinField.getAsInt(),
-                                       woodsMaxField.getAsInt(),
-                                       woodsMinSizeField.getAsInt(),
-                                       woodsMaxSizeField.getAsInt(),
-                                       woodsHeavyChanceField.getAsInt(),
-                                        woodsUltraChanceField.getAsInt());
+                woodsMaxField.getAsInt(),
+                woodsMinSizeField.getAsInt(),
+                woodsMaxSizeField.getAsInt(),
+                woodsHeavyChanceField.getAsInt(),
+                woodsUltraChanceField.getAsInt());
         newMapSettings.setJungleParams(jungleMinField.getAsInt(),
-                                        jungleMaxField.getAsInt(),
-                                        jungleMinSizeField.getAsInt(),
-                                        jungleMaxSizeField.getAsInt(),
-                                        jungleHeavyChanceField.getAsInt(),
-                                        jungleUltraChanceField.getAsInt());
+                jungleMaxField.getAsInt(),
+                jungleMinSizeField.getAsInt(),
+                jungleMaxSizeField.getAsInt(),
+                jungleHeavyChanceField.getAsInt(),
+                jungleUltraChanceField.getAsInt());
         newMapSettings.setFoliageParams(foliageMinField.getAsInt(),
-                                       foliageMaxField.getAsInt(),
-                                       foliageMinSizeField.getAsInt(),
-                                       foliageMaxSizeField.getAsInt(),
-                                       foliageHeavyChanceField.getAsInt());
+                foliageMaxField.getAsInt(),
+                foliageMinSizeField.getAsInt(),
+                foliageMaxSizeField.getAsInt(),
+                foliageHeavyChanceField.getAsInt());
         newMapSettings.setPlantedFieldParams(fieldsMinField.getAsInt(),
-                                             fieldsMaxField.getAsInt(),
-                                             fieldSizeMinField.getAsInt(),
-                                             fieldSizeMaxField.getAsInt());
+                fieldsMaxField.getAsInt(),
+                fieldSizeMinField.getAsInt(),
+                fieldSizeMaxField.getAsInt());
         newMapSettings.setFortifiedParams(fortifiedMinField.getAsInt(),
-                                          fortifiedMaxField.getAsInt(),
-                                          fortifiedSizeMinField.getAsInt(),
-                                          fortifiedSizeMaxField.getAsInt());
+                fortifiedMaxField.getAsInt(),
+                fortifiedSizeMinField.getAsInt(),
+                fortifiedSizeMaxField.getAsInt());
         newMapSettings.setPavementParams(pavementMinField.getAsInt(),
-                                         pavementMaxField.getAsInt(),
-                                         pavementSizeMinField.getAsInt(),
-                                         pavementSizeMaxField.getAsInt());
+                pavementMaxField.getAsInt(),
+                pavementSizeMinField.getAsInt(),
+                pavementSizeMaxField.getAsInt());
         newMapSettings.setRubbleParams(rubbleMinField.getAsInt(),
-                                       rubbleMaxField.getAsInt(),
-                                       rubbleSizeMinField.getAsInt(),
-                                       rubbleSizeMaxField.getAsInt(),
-                                        rubbleUltraChanceField.getAsInt());
+                rubbleMaxField.getAsInt(),
+                rubbleSizeMinField.getAsInt(),
+                rubbleSizeMaxField.getAsInt(),
+                rubbleUltraChanceField.getAsInt());
         newMapSettings.setRoadParam(roadChanceField.getAsInt());
         newMapSettings.setCityParams(cityBlocks.getAsInt(),
-                                     (String) cityTypeCombo.getSelectedItem(),
-                                     cityCFMinField.getAsInt(),
-                                     cityCFMaxField.getAsInt(),
-                                     cityFloorsMinField.getAsInt(),
-                                     cityFloorsMaxField.getAsInt(),
-                                     cityDensityField.getAsInt(),
-                                     townSizeField.getAsInt());
+                (String) cityTypeCombo.getSelectedItem(),
+                cityCFMinField.getAsInt(),
+                cityCFMaxField.getAsInt(),
+                cityFloorsMinField.getAsInt(),
+                cityFloorsMaxField.getAsInt(),
+                cityDensityField.getAsInt(),
+                townSizeField.getAsInt());
         newMapSettings.setWaterParams(lakesMinField.getAsInt(),
-                                      lakesMaxField.getAsInt(),
-                                      lakeSizeMinField.getAsInt(),
-                                      lakeSizeMaxField.getAsInt(),
-                                      deepChanceField.getAsInt());
+                lakesMaxField.getAsInt(),
+                lakeSizeMinField.getAsInt(),
+                lakeSizeMaxField.getAsInt(),
+                deepChanceField.getAsInt());
         newMapSettings.setRiverParam(riverChanceField.getAsInt());
         newMapSettings.setIceParams(iceMinField.getAsInt(),
-                                    iceMaxField.getAsInt(),
-                                    iceSizeMinField.getAsInt(),
-                                    iceSizeMaxField.getAsInt());
+                iceMaxField.getAsInt(),
+                iceSizeMinField.getAsInt(),
+                iceSizeMaxField.getAsInt());
         newMapSettings.setSpecialFX(specialFxField.getAsInt(),
-                                    fireChanceField.getAsInt(),
-                                    freezeChanceField.getAsInt(),
-                                    floodChanceField.getAsInt(),
-                                    droughtChanceField.getAsInt());
+                fireChanceField.getAsInt(),
+                freezeChanceField.getAsInt(),
+                floodChanceField.getAsInt(),
+                droughtChanceField.getAsInt());
 
         return newMapSettings;
     }

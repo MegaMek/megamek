@@ -13,8 +13,6 @@
  */
 package megamek.common;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -64,14 +62,16 @@ public class GameReports implements FullGameReport<Report> {
     }
 
     /**
-     *  Returns the full set of reports. Note that the lists are fully modifiable and no copies.
+     * Returns the full set of reports. Note that the lists are fully modifiable and
+     * no copies.
      */
     public List<List<Report>> get() {
         return reports;
     }
 
     /**
-     * Replaces the entire contents of this FullGameReport with the given List of report lists.
+     * Replaces the entire contents of this FullGameReport with the given List of
+     * report lists.
      *
      * @param v The new contents
      */

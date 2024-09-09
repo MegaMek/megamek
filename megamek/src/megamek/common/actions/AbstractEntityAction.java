@@ -19,8 +19,6 @@
  */
 package megamek.common.actions;
 
-import megamek.common.Game;
-
 import java.io.Serializable;
 
 /**

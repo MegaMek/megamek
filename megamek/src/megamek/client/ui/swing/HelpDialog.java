@@ -24,13 +24,13 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
 /**
- * This is a basic help dialog that can display HTML pages and also reacts to hyperlink clicks.
+ * This is a basic help dialog that can display HTML pages and also reacts to
+ * hyperlink clicks.
+ *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @author Simon (Juliez)
  */
@@ -53,7 +53,7 @@ public class HelpDialog extends JDialog {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
 
-        //Listen for the user clicking on hyperlinks.
+        // Listen for the user clicking on hyperlinks.
         mainView.addHyperlinkListener(e -> {
             try {
                 if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {

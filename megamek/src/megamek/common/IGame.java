@@ -24,7 +24,6 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.BasicGameOptions;
-import megamek.server.scriptedevent.TriggeredActiveEvent;
 import megamek.server.scriptedevent.TriggeredEvent;
 
 import java.util.*;

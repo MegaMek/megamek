@@ -1,15 +1,12 @@
 package megamek.common.verifier;
 
 import megamek.common.AeroSpaceFighter;
-import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 class TestAeroTest {
 
@@ -33,7 +30,8 @@ class TestAeroTest {
         rating = TestAero.calculateEngineRating(aero, 25, 2);
         assertEquals(0, rating);
 
-        // 25-ton ASF desiring Safe Thrust of 5 should be 75 (tons * (desiredSafeThrust -2))
+        // 25-ton ASF desiring Safe Thrust of 5 should be 75 (tons * (desiredSafeThrust
+        // -2))
         rating = TestAero.calculateEngineRating(aero, 25, 5);
         assertEquals(75, rating);
 

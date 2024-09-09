@@ -15,8 +15,6 @@
  */
 package megamek.common;
 
-import megamek.common.weapons.Weapon;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

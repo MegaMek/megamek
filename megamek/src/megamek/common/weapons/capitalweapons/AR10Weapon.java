@@ -14,7 +14,6 @@ package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 import megamek.common.Mounted;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Jay Lawson

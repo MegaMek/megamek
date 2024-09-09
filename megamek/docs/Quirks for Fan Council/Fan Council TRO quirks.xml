@@ -5,11 +5,11 @@
 		<unitType>Infantry</unitType>
 		<quirk>prototype</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Awesome</chassis>
 		<model>AWS-10Q-JF-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>barrel_fists_la</quirk>
 		<quirk>barrel_fists_ra</quirk>
 	</unit>
@@ -17,8 +17,8 @@
 	<unit>
 		<chassis>BattleMaster</chassis>
 		<model>ENF-NAIS-WC-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>command_mech</quirk>
+		<unitType>Mek</unitType>
+		<quirk>command_mek</quirk>
 		<quirk>weak_head_1</quirk>
 		<quirk>prototype</quirk>
 	</unit>
@@ -26,7 +26,7 @@
 	<unit>
 		<chassis>Enforcer</chassis>
 		<model>ENF-NAIS-WC-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>barrel_fists_la</quirk>
 		<quirk>barrel_fists_ra</quirk>
 		<quirk>prototype</quirk>
@@ -53,8 +53,8 @@
 	<unit>
 		<chassis>Marauder</chassis>
 		<model>MAD-NAIS-WC-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>command_mech</quirk>
+		<unitType>Mek</unitType>
+		<quirk>command_mek</quirk>
 		<quirk>hyper_actuator</quirk>
 		<quirk>low_profile</quirk>
 		<quirk>prototype</quirk>
@@ -75,7 +75,7 @@
 	<unit>
 		<chassis>Ostroc</chassis>
 		<model>OSR-2X-ADF-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>low_profile</quirk>
 		<quirk>prototype</quirk>
 	</unit>
@@ -83,7 +83,7 @@
 	<unit>
 		<chassis>Warhammer</chassis>
 		<model>WHM-6DR-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>rugged_2</quirk>
 		<quirk>searchlight</quirk>
 		<quirk>stable</quirk>
@@ -93,7 +93,7 @@
 	<unit>
 		<chassis>Warhammer</chassis>
 		<model>WHM-6X-ADF-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>rugged_2</quirk>
 		<quirk>searchlight</quirk>
 		<quirk>stable</quirk>
@@ -103,7 +103,7 @@
 <!-- BEGIN TRO 3062 Quirks. -->
 	<unit>
 		<chassis>Fire Hawk</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>searchlight</quirk>
 		<quirk>no_arms</quirk>
 		<weaponQuirk>
@@ -116,7 +116,7 @@
 
 	<unit>
 		<chassis>Fulcrum</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>difficult_maintain</quirk>
 		<quirk>exp_actuator</quirk>
 	</unit>
@@ -124,7 +124,7 @@
 	<unit>
 		<chassis>Centurion</chassis>
 		<model>CN12-B-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_short</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
@@ -132,15 +132,15 @@
 	<unit>
 		<chassis>BattleMaster</chassis>
 		<model>BLR-10K-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>command_mech</quirk>
+		<unitType>Mek</unitType>
+		<quirk>command_mek</quirk>
 		<quirk>weak_head_1</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Longbow</chassis>
 		<model>LGB-7W-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>anti_air</quirk>
 		<quirk>searchlight</quirk>
 		<quirk>ubiquitous_is</quirk>
@@ -149,48 +149,48 @@
 
 	<unit>
 		<chassis>Gunner</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>barrel_fists_ra</quirk>
 		<quirk>imp_target_long</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Crimson HellKite</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>easy_maintain</quirk>
 		<quirk>stable</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Falcata</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>good_rep_1</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Loki (Hellbringer) Mk II</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>searchlight</quirk>
 		<quirk>easy_pilot</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Dimacheri</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>fast_reload</quirk>
 		<quirk>unbalanced</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Thylacine</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>directional_torso_mount</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Ferratus</chassis>
 		<model>all</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>variable_range_long</quirk>
 		<quirk>oversized</quirk>
 	</unit>

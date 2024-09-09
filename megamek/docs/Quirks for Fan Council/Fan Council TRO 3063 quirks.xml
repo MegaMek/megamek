@@ -9,7 +9,7 @@
 		<quirk>low_profile</quirk>
 		<quirk>trailer_hitch</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Ammo Carrier</chassis>
         <model>BU-20b-FC</model>
@@ -51,7 +51,7 @@
 		<quirk>anti_air</quirk>
 		<quirk>gas_hog</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Revenant Main Battle Tank</chassis>	<!---check-->
 		<unitType>Tank</unitType>
@@ -65,15 +65,15 @@
 		<quirk>difficult_maintain</quirk>
 		<quirk>imp_target_long</quirk>
 	</unit>
-	
-		
+
+
 	<unit>
 		<chassis>Nemera Armored Fighting Vehicle</chassis>
 		<model>all</model>
 		<unitType>Tank</unitType>
 		<quirk>rumble_seat</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Nemera Armored Fighting Vehicle</chassis>
 		<model>Mk XI-FC</model>
@@ -189,32 +189,32 @@
 			<weaponName>ISLongTomArtillery</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Sentinel</chassis>
 		<model>STN-6K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_com</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Sentinel</chassis>
 		<model>STN-7K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_com</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Sentinel</chassis>
 		<model>STN-6EX-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_com</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Trebuchet</chassis>
 		<model>TBT-8K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>easy_maintain</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>fast_reload</weaponQuirkName>
@@ -227,7 +227,7 @@
 	<unit>
 		<chassis>Trebuchet</chassis>
 		<model>TBT-8KL-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>easy_maintain</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>fast_reload</weaponQuirkName>
@@ -236,11 +236,11 @@
 			<weaponName>LRM 15</weaponName>
 		</weaponQuirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Scorpion II</chassis>	<!---check-->
 		<model>SCR-4K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>bad_rep_is</quirk>
 		<quirk>sensor_ghosts</quirk>
 		<weaponQuirk>
@@ -256,11 +256,11 @@
 			<weaponName>IS AMS</weaponName>
 		</weaponQuirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Scorpion II</chassis>
 		<model>SCR-5K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>bad_rep_is</quirk>
 		<quirk>sensor_ghosts</quirk>
 		<weaponQuirk>
@@ -276,19 +276,19 @@
 			<weaponName>Large Laser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Privateer</chassis>	<!---check-->
 		<model>PV-1K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>rugged_2</quirk>
 		<quirk>easy_maintain</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Privateer</chassis>
 		<model>PV-2K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>rugged_2</quirk>
 		<quirk>easy_maintain</quirk>
 	</unit>
@@ -296,7 +296,7 @@
 	<unit>
 		<chassis>White Knight</chassis>
 		<model>WNT-3K-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>poor_target_short</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -321,7 +321,7 @@
 	<unit>
 		<chassis>White Knight</chassis>
 		<model>WNT-3KM-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>poor_target_short</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -346,7 +346,7 @@
 	<unit>
 		<chassis>White Knight</chassis>
 		<model>WH7-KNT-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>poor_target_short</quirk>
 		<quirk>obsolete</quirk>
 		<weaponQuirk>
@@ -401,7 +401,7 @@
 		<unitType>Tank</unitType>
 		<quirk>poor_work</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Panzerfaust Armored Fighting Vehicle</chassis>
 		<model>all</model>
@@ -450,7 +450,7 @@
 			<weaponName>PPC</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Stingray Wheeled Support Tank</chassis>
 		<model>all</model>
@@ -458,14 +458,14 @@
 		<quirk>rugged_1</quirk>
 		<quirk>difficult_maintain</quirk>
 	</unit>
-	
+
 	 <unit>
         <chassis>Montgomery Assault Tank</chassis>
         <model>all</model>
 		<unitType>Tank</unitType>
 		<quirk>non_standard</quirk>
     </unit>
-	
+
 	<unit>
 		<chassis>Panzer IX Armored Assault Tank</chassis>
 		<unitType>Tank</unitType>
@@ -474,24 +474,24 @@
 
 	<unit>
 		<chassis>Isometrus</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_sensors</quirk>
 		<quirk>cramped_cockpit</quirk>
 		<quirk>no_arms</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Cobra</chassis>
 		<model>CBR-02LA-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>pro_actuator</quirk>
 		<quirk>unbalanced</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Centurion</chassis>
 		<model>CN9-S-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_short</quirk>
 		<quirk>non_standard</quirk>
 		<weaponQuirk>
@@ -501,11 +501,11 @@
 			<weaponName>CLUltraAC20</weaponName>
 		</weaponQuirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Centurion</chassis>
 		<model>CN9-S-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_short</quirk>
 		<quirk>non_standard</quirk>
 		<weaponQuirk>
@@ -515,19 +515,19 @@
 			<weaponName>CLUltraAC20</weaponName>
 		</weaponQuirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Centurion</chassis>
 		<model>CN9-SG-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_short</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Centurion</chassis>
 		<model>CN9-SX-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_short</quirk>
 		<quirk>non_standard</quirk>
 		<weaponQuirk>
@@ -537,18 +537,18 @@
 			<weaponName>ISLBXAC20</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Nightsky</chassis>
 		<model>NGS-7S-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>rugged_1</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Griffin</chassis>
 		<model>GRF-5S-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>battle_fists_la</quirk>
 		<quirk>battle_fists_ra</quirk>
 		<quirk>rugged_1</quirk>
@@ -561,10 +561,10 @@
 			<weaponName>ISERLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Vagabond</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>no_arms</quirk>
 		<quirk>imp_target_med</quirk>
 	</unit>
@@ -572,7 +572,7 @@
 	<unit>
 		<chassis>Fafnir</chassis>
 		<model>FNR-5C-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>no_arms</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
@@ -597,28 +597,28 @@
 		<quirk>imp_com</quirk>
 		<quirk>hard_pilot</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Horatio Heavy Bridgelayer</chassis>
 		<unitType>Tank</unitType>
 		<quirk>poor_performance</quirk>
 		<quirk>rugged_1</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>BiFrost Heavy Bridgelayer</chassis>
 		<unitType>Tank</unitType>
 		<quirk>poor_performance</quirk>
 		<quirk>rugged_1</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Sankyou Heavy Bridgelayer</chassis>
 		<unitType>Tank</unitType>
 		<quirk>poor_performance</quirk>
 		<quirk>rugged_1</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Jaguar Medium Strike Tank</chassis>
 		<weaponQuirk>
@@ -634,20 +634,20 @@
 			<weaponName>ISLightGaussRifle</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Sarpedon Medium Tank</chassis>
 		<unitType>Tank</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Striker Medium Tank Mk II</chassis>
 		<unitType>Tank</unitType>
 		<quirk>bad_rep_is</quirk>
 		<quirk>fast_reload</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Hammerhead II Escort</chassis>
 		<unitType>Tank</unitType>
@@ -726,13 +726,13 @@
 			<weaponName>Medium Laser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Diomedes Urban Combat Vehicle</chassis>	<!-- check-->
 		<unitType>Tank</unitType>
 		<quirk>searchlight</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Zhukov Heavy Tank</chassis>
 		<model>Mk II-FC</model>
@@ -740,10 +740,10 @@
 		<quirk>variable_range_long</quirk>
 		<quirk>difficult_maintain</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Vulcan II</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>nimble_jumper</quirk>
 		<quirk>weak_head_1</quirk>
 		<quirk>pro_actuator</quirk>
@@ -752,49 +752,49 @@
 	<unit>
 		<chassis>Black Knight</chassis>
 		<model>BL-13-KNT-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>command_mech</quirk>
+		<unitType>Mek</unitType>
+		<quirk>command_mek</quirk>
 		<quirk>hyper_actuator</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Black Knight</chassis>
 		<model>BL-15-KNT-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>command_mech</quirk>
+		<unitType>Mek</unitType>
+		<quirk>command_mek</quirk>
 		<quirk>hyper_actuator</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Black Knight</chassis>
 		<model>BL-16-KNT-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>command_mech</quirk>
+		<unitType>Mek</unitType>
+		<quirk>command_mek</quirk>
 		<quirk>hyper_actuator</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Thug</chassis>
 		<model>THG-13M-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>exp_actuator</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Thug</chassis>
 		<model>THG-14M-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>exp_actuator</quirk>
 	</unit>
-	
-<!-- BEGIN 3063 CCAF Quirks. -->	
+
+<!-- BEGIN 3063 CCAF Quirks. -->
 	<unit>
 		<chassis>Feng-niao Reconnaissance Hovercraft Mk III</chassis>
 		<unitType>Tank</unitType>
 		<quirk>rumble_seat</quirk>
 		<quirk>imp_com</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Feng-niao Reconnaissance Hovercraft Mk IV</chassis>
 		<unitType>Tank</unitType>
@@ -877,7 +877,7 @@
 			<weaponName>Medium Laser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Ammunition Carrier</chassis>
 		<model>CM-33-FC</model>
@@ -885,14 +885,14 @@
 		<quirk>trailer_hitch</quirk>
 		<quirk>rumble_seat</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Ammunition Carrier</chassis>
 		<model>CM-34-FC</model>
 		<unitType>Tank</unitType>
 		<quirk>trailer_hitch</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Erlang Shen Anti-Air Artillery</chassis>
 		<model>all</model>
@@ -1009,7 +1009,7 @@
 			<weaponName>ISSmallPulseLaser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Quiang-Ton Fire Support Vehicle</chassis>
 		<unitType>Tank</unitType>
@@ -1017,13 +1017,13 @@
 		<quirk>searchlight</quirk>
 		<quirk>fast_reload</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Dao Heavy Tank</chassis>
 		<unitType>Tank</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Foxhound Mobile Artillery</chassis>
 		<model>(Standard)-FC</model>
@@ -1042,11 +1042,11 @@
 		<unitType>Tank</unitType>
 		<quirk>non_standard</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Griffin</chassis>
         <model>GRF-3L-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_long</quirk>
 		<quirk>difficult_eject</quirk>
 		<quirk>battle_fists_la</quirk>
@@ -1061,11 +1061,11 @@
 			<weaponName>ISERLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Griffin</chassis>
         <model>GRF-3LL-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_long</quirk>
 		<quirk>difficult_eject</quirk>
 		<quirk>battle_fists_la</quirk>
@@ -1084,7 +1084,7 @@
 	<unit>
 		<chassis>BattleAxe</chassis>
 		<model>BKX-7SC-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>difficult_maintain</quirk>
 		<quirk>barrel_fists_la</quirk>
 		<quirk>barrel_fists_ra</quirk>
@@ -1093,7 +1093,7 @@
 	<unit>
 		<chassis>BattleAxe</chassis>
 		<model>BKX-8IF-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>difficult_maintain</quirk>
 		<quirk>barrel_fists_la</quirk>
 		<quirk>barrel_fists_ra</quirk>
@@ -1102,16 +1102,16 @@
 	<unit>
 		<chassis>BattleAxe</chassis>
 		<model>BKX-8L-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>difficult_maintain</quirk>
 		<quirk>barrel_fists_la</quirk>
 		<quirk>barrel_fists_ra</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Cataphract III</chassis>
 		<model>CTF-3X-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>direct_torso_mount</weaponQuirkName>
 			<location>LT</location>
@@ -1119,31 +1119,31 @@
 			<weaponName>ISERPPC</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Culverine</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>exp_actuator</quirk>
 		<quirk>fast_reload</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Privateer</chassis>
 		<model>PV-2L-FC</model>
-		<unitType>Mech</unitType>
-		<quirk>reinforced_legs</quirk>
-		<quirk>rugged_1</quirk>
-	</unit>
-	
-	<unit>
-		<chassis>Privateer</chassis>
-		<model>PV-3L-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>reinforced_legs</quirk>
 		<quirk>rugged_1</quirk>
 	</unit>
 
-<!-- BEGIN 3063 AFFS Quirks. -->	
+	<unit>
+		<chassis>Privateer</chassis>
+		<model>PV-3L-FC</model>
+		<unitType>Mek</unitType>
+		<quirk>reinforced_legs</quirk>
+		<quirk>rugged_1</quirk>
+	</unit>
+
+<!-- BEGIN 3063 AFFS Quirks. -->
 	<unit>
 		<chassis>Dragonfly Scout VTOL</chassis>
 		<model>all</model>
@@ -1151,14 +1151,14 @@
 		<quirk>hard_pilot</quirk>
 		<quirk>vtol_rotor</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Cheyenne Attack VTOL</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
 		<quirk>vtol_rotor</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Machete</chassis>
 		<unitType>Aero</unitType>
@@ -1194,7 +1194,7 @@
 			<weaponName>ISUltraAC20</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Pershing Self-Propelled Artillery</chassis>	<!-- check -->
 		<model>(Standard)-FC</model>
@@ -1206,7 +1206,7 @@
 			<weaponName>ISSniper</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Pershing Self-Propelled Artillery</chassis>
 		<model>(Defense)-FC</model>
@@ -1218,7 +1218,7 @@
 			<weaponName>ISSniper</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Roland Main Battle Tank</chassis>
 		<model>all</model>
@@ -1323,43 +1323,43 @@
 		<quirk>difficult_maintain</quirk>
 		<quirk>rugged_1</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Blackjack</chassis>
 		<model>BJ2-OG-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>non_standard</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Blackjack</chassis>
 		<model>BJ2-OG2-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>non_standard</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Blackjack</chassis>
 		<model>BJ2-OG3-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>non_standard</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Praetorian</chassis>	<!---check-->
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>imp_target_short</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
-		
+
 	<unit>
 		<chassis>Durendal</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>non_standard</quirk>
 		<quirk>easy_pilot</quirk>
 		<quirk>good_rep_1</quirk>
 	</unit>
-	
+
 <!-- BEGIN 3063 Periphery Quirks. -->
 	<unit>
 		<chassis>Oculus Recon Rotorcraft</chassis>	<!---check-->
@@ -1406,13 +1406,13 @@
 			<weaponName>Large Laser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Diatryma Armored Car</chassis>	<!---check-->
 		<unitType>Tank</unitType>
 		<quirk>searchlight</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Zephyrus Gunship Scout</chassis>
 		<model>all</model>
@@ -1421,7 +1421,7 @@
 		<quirk>hard_pilot</quirk>
 		<quirk>searchlight</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Werewolf Gunship</chassis>
 		<model>(DCMS)-FC</model>
@@ -1434,7 +1434,7 @@
 			<weaponName>PPC</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Werewolf Gunship</chassis>
 		<model>(OA)-FC</model>
@@ -1447,14 +1447,14 @@
 			<weaponName>PPC</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Uragan</chassis>	<!---check-->
 		<model>all</model>
 		<unitType>Aero</unitType>
 		<quirk>rugged_2</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Sounder</chassis>
 		<model>all</model>
@@ -1494,7 +1494,7 @@
 	<unit>
 		<chassis>Quickdraw</chassis>
 		<model>QKD-8K 'Death Incarnate'-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>hyper_actuator</quirk>
 		<quirk>exp_actuator</quirk>
 		<quirk>distracting</quirk>
@@ -1503,7 +1503,7 @@
 	<unit>
 		<chassis>Thunderbolt</chassis>
 		<model>F4V-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>multi_trac</quirk>
 		<quirk>rugged_2</quirk>
 		<quirk>ubiquitous_is</quirk>
@@ -1513,7 +1513,7 @@
 	<unit>
 		<chassis>Thunderbolt</chassis>
 		<model>F4W-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>multi_trac</quirk>
 		<quirk>rugged_2</quirk>
 		<quirk>ubiquitous_is</quirk>
@@ -1523,7 +1523,7 @@
 	<unit>
 		<chassis>Thunderbolt</chassis>
 		<model>F4X-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>multi_trac</quirk>
 		<quirk>rugged_2</quirk>
 		<quirk>ubiquitous_is</quirk>
@@ -1533,7 +1533,7 @@
 	<unit>
 		<chassis>Forge</chassis>	<!---check-->
 		<model>all</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>hyper_actuator</quirk>
 		<quirk>exp_actuator</quirk>
 	</unit>
@@ -1541,11 +1541,11 @@
 	<unit>
 		<chassis>Pollaxe</chassis>	<!---check-->
 		<model>all</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>hyper_actuator</quirk>
 		<quirk>exp_actuator</quirk>
 	</unit>
-	
+
 <!-- BEGIN 3063 ComStar Quirks. -->
 	<unit>
 		<chassis>Heirax Transport VTOL</chassis>
@@ -1554,17 +1554,17 @@
 		<quirk>poor_target_long</quirk>
 		<quirk>vtol_rotor</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Champion</chassis>
 		<model>CHP-4C-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 	</unit>
-	
+
 	<unit>
 		<chassis>Champion</chassis>
 		<model>CHP-4C3-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 	</unit>
 
 <!-- BEGIN 3063 WoB Quirks. -->
@@ -1583,14 +1583,14 @@
 		<quirk>searchlight</quirk>
 		<quirk>difficult_maintain</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Champion II</chassis>
 		<model>all</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>stable</quirk>
 	</unit>
-	
+
 <!-- BEGIN 3063 Merc Quirks. -->
 	<unit>
 		<chassis>Harbinger NOTAR Gunship</chassis>
@@ -1598,7 +1598,7 @@
 		<unitType>VTOL</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Hessian Hovertank</chassis>
 		<model>all</model>
@@ -1749,24 +1749,24 @@
 			<weaponName>Medium Laser</weaponName>
 		</weaponQuirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Jenner</chassis>
 		<model>JR7-X-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>no_arms</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Jenner</chassis>
 		<model>JR7-XT-FC</model>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>no_arms</quirk>
 	</unit>
-	
+
 	<unit>
 		<chassis>Nimravus</chassis>
-		<unitType>Mech</unitType>
+		<unitType>Mek</unitType>
 		<quirk>multi_trac</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>

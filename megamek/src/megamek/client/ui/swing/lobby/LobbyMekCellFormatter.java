@@ -256,14 +256,20 @@ class LobbyMekCellFormatter {
         int sp = entity.getStartingPos(true);
         int spe = entity.getStartingPos(false);
         if ((!entity.isOffBoard())
-                && (sp >= 0)
-                && (sp < IStartingPositions.START_LOCATION_NAMES.length)) {
+                && (sp >= 0)) {
             firstEntry = dotSpacer(result, firstEntry);
             if (spe != Board.START_NONE) {
                 result.append(guiScaledFontHTML(uiLightGreen()));
             }
             String msg_start = Messages.getString("ChatLounge.Start");
-            result.append(" " + msg_start + ":" + IStartingPositions.START_LOCATION_NAMES[sp]);
+            result.append(" " + msg_start + ": ");
+            
+            if (sp <= Board.NUM_ZONES) {
+                result.append(IStartingPositions.START_LOCATION_NAMES[sp]);
+            } else {
+                result.append(" Zone " + Board.decodeCustomDeploymentZoneID(sp));
+            }
+            
             if (sp == 0) {
                 int NWx = entity.getStartingAnyNWx() + 1;
                 int NWy = entity.getStartingAnyNWy() + 1;

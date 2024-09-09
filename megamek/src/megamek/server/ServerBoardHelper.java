@@ -18,11 +18,15 @@
  */
 package megamek.server;
 
+import megamek.MMConstants;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.MapSettings;
+import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -89,6 +93,51 @@ public class ServerBoardHelper {
                 }
             }
         }
+    }
+    
+    /**
+     * Returns the game map as it is currently set in the map settings tab.
+     * When onlyFixedBoards is true, all Generated and Surprise boards are
+     * replaced by empty boards, otherwise they are filled with a generated or
+     * a choice of the surprise maps.
+     */
+    public static Board getPossibleGameBoard(MapSettings mapSettings, boolean onlyFixedBoards) {
+        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+        List<Boolean> rotateBoard = new ArrayList<>();
+        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
+            sheetBoards[i] = new Board();
+
+            String name = mapSettings.getBoardsSelectedVector().get(i);
+            if ((name.startsWith(MapSettings.BOARD_GENERATED) || name.startsWith(MapSettings.BOARD_SURPRISE))
+                    && onlyFixedBoards) {
+                sheetBoards[i] = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+            } else if (name.startsWith(MapSettings.BOARD_GENERATED)
+                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
+                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
+            } else {
+                boolean flipBoard = false;
+
+                if (name.startsWith(MapSettings.BOARD_SURPRISE)) {
+                    List<String> boardList = extractSurpriseMaps(name);
+                    int rnd = (int) (Math.random() * boardList.size());
+                    name = boardList.get(rnd);
+                } else if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                    // only rotate boards with an even width
+                    if ((mapSettings.getBoardWidth() % 2) == 0) {
+                        flipBoard = true;
+                    }
+                    name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
+                }
+
+                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile());
+                BoardUtilities.flip(sheetBoards[i], flipBoard, flipBoard);
+            }
+        }
+
+        return BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
+                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
+                mapSettings.getMedium());
     }
 
     private ServerBoardHelper() { }

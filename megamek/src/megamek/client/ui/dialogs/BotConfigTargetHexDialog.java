@@ -29,6 +29,7 @@ import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
+import megamek.server.ServerBoardHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +59,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         clientGui = cg;
         if (clientGui != null) {
             if (clientGui.getClient().getGame().getPhase().isLounge()) {
-                board = clientGui.chatlounge.getPossibleGameBoard(true);
+                board = ServerBoardHelper.getPossibleGameBoard(clientGui.getClient().getMapSettings(), true);
             } else {
                 board = clientGui.getClient().getBoard();
             }

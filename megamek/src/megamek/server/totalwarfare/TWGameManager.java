@@ -747,6 +747,7 @@ public class TWGameManager extends AbstractGameManager {
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     game.setMapSettings(mapSettings);
+                    cleanupCustomDZs();
                     resetPlayersDone();
                     send(createMapSettingsPacket());
                 }
@@ -808,6 +809,32 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
+    /**
+     * Worker function that goes through all the units and players and sets any custom deployment zones 
+     * that do not exist in the current map settings to the default.
+     */
+    public void cleanupCustomDZs() {
+        var currentBoard = ServerBoardHelper.getPossibleGameBoard(game.getMapSettings(), true);
+
+        for (Player player : game.getPlayersList()) {
+            if ((player.getStartingPos() > Board.NUM_ZONES_X2) &&
+                    !currentBoard.getCustomDeploymentZones().contains(
+                            Board.decodeCustomDeploymentZoneID(player.getStartingPos()))) {
+                player.setStartingPos(Board.START_ANY); // default to "any"
+                transmitPlayerUpdate(player);
+            }
+        }
+
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((entity.getStartingPos() > Board.NUM_ZONES_X2) &&
+                    !currentBoard.getCustomDeploymentZones().contains(
+                            Board.decodeCustomDeploymentZoneID(entity.getStartingPos()))) {
+                entity.setStartingPos(Board.START_NONE); // default to "use owner"
+                entityUpdate(entity.getId());
+            }
+        }
+    }
+    
     /**
      * Check a list of entity Ids for doomed entities and destroy those.
      */

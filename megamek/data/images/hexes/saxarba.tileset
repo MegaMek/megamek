@@ -695,6 +695,7 @@ base 10 "" "lunar" "saxarba/theme_lunar/base_lunar_10.png;saxarba/theme_lunar/ba
 base * "sky:1" "" "atmospheric_map/sky.png"
 
 # To avoid errors
+super * "deployment_zone:*" "" "saxarba/misc/blank.png"
 super * "fluff:*" "" "saxarba/misc/blank.png"
 super * "road_fluff:*" "" "saxarba/misc/blank.png"
 super * "ground_fluff:*" "" "saxarba/misc/blank.png"

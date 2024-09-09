@@ -34,10 +34,11 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.server.ServerBoardHelper;
+
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -211,7 +212,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         String name = baseName;
         if (client != null) {
             int counter = 0;
-            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(Player::getName).collect(Collectors.toSet());
+            Set<String> playerNames = client.getGame().getPlayersList().stream().map(Player::getName).collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
                 name = baseName + counter;
@@ -495,7 +496,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // adding ".2" when necessary. But it has to be unique among local bots as otherwise
         // the connection between the client.bots stored name and the server-given name
         // gets lost. It doesn't hurt to check against all players though.
-        boolean playerNameTaken = (client != null) && client.getGame().getPlayersVector().stream()
+        boolean playerNameTaken = (client != null) && client.getGame().getPlayersList().stream()
                 .anyMatch(p -> p.getName().equals(nameField.getText()));
         if (isNewBot && playerNameTaken) {
             JOptionPane.showMessageDialog(getFrame(), Messages.getString("ChatLounge.AlertExistsBot.message"));
@@ -806,7 +807,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 if (client != null) {
                     Board board = client.getBoard();
                     if (client.getGame().getPhase().isLounge()) {
-                        board = clientGui.chatlounge.getPossibleGameBoard(true);
+                        board = ServerBoardHelper.getPossibleGameBoard(clientGui.getClient().getMapSettings(), true);
                     }
                     if (board == null) {
                         content += Messages.getString("BotConfigDialog.hexListNoMp");

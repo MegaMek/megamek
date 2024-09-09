@@ -53,6 +53,7 @@ public class Board implements Serializable {
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
     public static final int NUM_ZONES = 11;
+    public static final int NUM_ZONES_X2 = 22;
 
     // Board Dimensions
     // Used for things like artillery rules that reference the standard mapsheet dimensions
@@ -66,6 +67,8 @@ public class Board implements Serializable {
     public static final int T_GROUND = 0;
     public static final int T_ATMOSPHERE = 1;
     public static final int T_SPACE = 2;
+    
+    public static final int MAX_DEPLOYMENT_ZONE_NUMBER = 31;
 
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
 
@@ -116,6 +119,8 @@ public class Board implements Serializable {
     private Set<String> tags = new HashSet<>();
 
     private final int boardId = 0;
+    
+    private transient Map<Integer, Set<Coords>> deploymentZones = null;
 
     //endregion Variable Declarations
 
@@ -927,10 +932,10 @@ public class Board implements Serializable {
             case START_CENTER:
                 return (c.getX() >= (width / 3)) && (c.getX() <= ((2 * width) / 3)) && (c.getY() >= (height / 3))
                         && (c.getY() <= ((2 * height) / 3));
-            default: // ummm. .
-                return false;
+            default: // this could signify a custom deployment zone
+                Set<Coords> customDeploymentZone = getCustomDeploymentZone(Board.decodeCustomDeploymentZoneID(zoneType));
+                return (customDeploymentZone != null) && customDeploymentZone.contains(c);
         }
-
     }
 
     /**
@@ -1893,5 +1898,101 @@ public class Board implements Serializable {
     /** @return The name of this map; this is meant to be displayed in the GUI. */
     public String getMapName() {
         return "Board #" + boardId;
+    }
+    
+    /**
+     * @return Given an "exits" value, returns it in a list form.
+     * (i.e. exits value of 4 returns {3}, exit value of 5 returns {1, 3}
+     */
+    public static List<Integer> exitsAsIntList(int exits) {
+        List<Integer> results = new ArrayList<>();
+        int exitIndex = 1;
+        
+        for (long bitToCheck = 1; bitToCheck <= Integer.MAX_VALUE; bitToCheck *= 2, exitIndex++) {
+            if ((exits & bitToCheck) != 0) {
+                results.add(exitIndex);
+            }
+        }
+        
+        return results;
+    }
+    
+    /**
+     * Given a list of integers, returns them in a bit-packed form. 
+     */
+    public static int IntListAsExits(List<Integer> list) {
+        int result = 0;
+        
+        for (int listItem : list) {
+            result |= 1 << (listItem - 1);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Worker function that initializes any custom deployment zones present on the board
+     */
+    private void initializeDeploymentZones() {
+        deploymentZones = new HashMap<>();
+        
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                Hex currentHex = getHex(x, y);
+                Terrain deploymentZone = currentHex.getTerrain(Terrains.DEPLOYMENT_ZONE);
+                
+                if (deploymentZone != null) {
+                    for (int zoneID : Board.exitsAsIntList(deploymentZone.getExits())) {
+                        deploymentZones.computeIfAbsent(zoneID, k->new HashSet<>()).add(new Coords(x, y));
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Resets the "intermediate" deployment zones associated with this board, in case
+     * the deployment zones change
+     */
+    public void resetDeploymentZones() {
+        deploymentZones = null;
+    }
+    
+    /**
+     * Gets the IDs of all custom deployment zones defined for this board.
+     */
+    public Set<Integer> getCustomDeploymentZones() {
+        if (deploymentZones == null) {
+            initializeDeploymentZones();
+        }
+        
+        return deploymentZones.keySet();
+    }
+    
+    /**
+     * Gets all the coordinates in the given custom deployment zone
+     */
+    public Set<Coords> getCustomDeploymentZone(int zoneID) {
+        if (deploymentZones == null) {
+            initializeDeploymentZones();
+        }
+        
+        return deploymentZones.getOrDefault(zoneID, null);
+    }
+    
+    /**
+     * Use this method to convert a deployment zone ID as represented in the UI zone selectors
+     * (e.g. in the PlayerSettingsDialog) to a deployment zone ID as stored in the board.
+     */
+    public static int decodeCustomDeploymentZoneID(int zoneID) {
+        return zoneID - NUM_ZONES_X2;
+    }
+    
+    /**
+     * Use this method to convert a deployment zone ID as stored in the board to a number
+     * suitable for representation in the UI zone selectors (e.g. PlayerSettingsDialog)
+     */
+    public static int encodeCustomDeploymentZoneID(int zoneID) {
+        return zoneID + NUM_ZONES_X2;
     }
 }

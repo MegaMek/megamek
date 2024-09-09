@@ -102,4 +102,6 @@ public final class MMConstants extends SuiteConstants {
     public static final int TSEMP_EFFECT_INTERFERENCE = 1;
     public static final int TSEMP_EFFECT_SHUTDOWN = 2;
     // endregion Magic Numbers That Should Be Enums
+    
+    public static final String CL_KEY_FILEEXTENTION_BOARD = ".board";
 }

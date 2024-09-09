@@ -47,7 +47,7 @@ class PlayerTablePopup {
     static final String PTP_REPLACE = "REPLACE";
 
     static ScalingPopup playerTablePopup(ClientGUI clientGui, ActionListener listener,
-            Collection<Player> players) {
+            Collection<Player> players, Board currentBoard) {
 
         ScalingPopup popup = new ScalingPopup();
 
@@ -62,7 +62,7 @@ class PlayerTablePopup {
 
         popup.add(menuItem("Player Settings...", PTP_CONFIG, isConfigurable, listener));
         popup.add(teamMenu(allConfigurable, listener));
-        popup.add(startPosMenu(allConfigurable, listener));
+        popup.add(startPosMenu(allConfigurable, listener, currentBoard));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Remove Bot", PTP_BOTREMOVE, isOnePlayer && allOwnedBots, listener));
         popup.add(menuItem("Bot Settings...", PTP_BOTSETTINGS, isOnePlayer && allOwnedBots, listener));
@@ -84,12 +84,18 @@ class PlayerTablePopup {
     }
 
     /** Returns the "Starting Position" submenu, allowing to assign deployment positions. */
-    private static JMenu startPosMenu(boolean enabled, ActionListener listener) {
+    private static JMenu startPosMenu(boolean enabled, ActionListener listener, Board currentBoard) {
         JMenu menu = new JMenu("Deployment Area");
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < Board.NUM_ZONES; i++) {
             JMenuItem item = menuItem(IStartingPositions.START_LOCATION_NAMES[i], PTP_DEPLOY + "|" + i, enabled, listener);
             menu.add(item);
         }
+        
+        for (int i : currentBoard.getCustomDeploymentZones()) {
+            JMenuItem item = menuItem("Zone " + i, PTP_DEPLOY + "|" + Board.encodeCustomDeploymentZoneID(i), enabled, listener);
+            menu.add(item);
+        }
+        
         menu.setEnabled(enabled);
         return menu;
     }

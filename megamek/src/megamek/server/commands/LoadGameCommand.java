@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * Loads a saved game on the server
- * 
+ *
  * @author Taharqa
  * @since November 19, 2008
  */
@@ -63,7 +63,7 @@ public class LoadGameCommand extends ServerCommand {
         // Keep track of the current id to name mapping
         Map<String, Integer> nameToIdMap = new HashMap<>();
         Map<Integer, String> idToNameMap = new HashMap<>();
-        for (Player p: server.getGame().getPlayersVector()) {
+        for (Player p : server.getGame().getPlayersList()) {
             nameToIdMap.put(p.getName(), p.getId());
             idToNameMap.put(p.getId(), p.getName());
         }

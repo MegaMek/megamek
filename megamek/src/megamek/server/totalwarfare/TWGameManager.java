@@ -1251,9 +1251,9 @@ public class TWGameManager extends AbstractGameManager {
             game.setVictoryTeam(victor.getTeam());
         }
 
-        Vector<Player> playersVector = game.getPlayersVector();
+        List<Player> playersVector = game.getPlayersList();
         for (int i = 0; i < playersVector.size(); i++) {
-            Player player = playersVector.elementAt(i);
+            Player player = playersVector.get(i);
             player.setAdmitsDefeat(false);
         }
     }
@@ -1900,7 +1900,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     void sendSpecialHexDisplayPackets() {
-        for (Player player : game.getPlayersVector()) {
+        for (Player player : game.getPlayersList()) {
             send(createSpecialHexDisplayPacket(player.getId()));
         }
     }
@@ -2150,7 +2150,7 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
-        for (Player player : game.getPlayersVector()) {
+        for (Player player : game.getPlayersList()) {
             if ((player.getId() == game.getVictoryPlayerId()) || ((player.getTeam() == game.getVictoryTeam())
                     && (game.getVictoryTeam() != Player.TEAM_NONE))) {
                 continue;
@@ -5799,7 +5799,7 @@ public class TWGameManager extends AbstractGameManager {
                     } else {
                         firstPacket = false;
                         // Notify other clients, so they can display a message
-                        for (Player p : game.getPlayersVector()) {
+                        for (Player p : game.getPlayersList()) {
                             if (p.getId() == hidden.getOwnerId()) {
                                 continue;
                             }
@@ -9635,7 +9635,7 @@ public class TWGameManager extends AbstractGameManager {
         Packet p = packetHelper.createAttackPacket(vector, false);
         if (getGame().getPhase().isSimultaneous(getGame())) {
             // Update attack only to player who declared it & observers
-            for (Player player : game.getPlayersVector()) {
+            for (Player player : game.getPlayersList()) {
                 if (player.canIgnoreDoubleBlind() || player.isObserver()
                         || (entity.getOwnerId() == player.getId())) {
                     send(player.getId(), p);
@@ -25413,7 +25413,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // If we're doing double blind, be careful who can see it...
         if (doBlind()) {
-            Vector<Player> playersVector = game.getPlayersVector();
+            List<Player> playersVector = game.getPlayersList();
             Vector<Player> vCanSee;
             if (updateVisibility) {
                 vCanSee = whoCanSee(eTarget, true, losCache);
@@ -25446,8 +25446,8 @@ public class TWGameManager extends AbstractGameManager {
             // send an entity delete to everyone else
             pack = createRemoveEntityPacket(nEntityID, eTarget.getRemovalCondition());
             for (int x = 0; x < playersVector.size(); x++) {
-                if (!vCanSee.contains(playersVector.elementAt(x))) {
-                    Player p = playersVector.elementAt(x);
+                if (!vCanSee.contains(playersVector.get(x))) {
+                    Player p = playersVector.get(x);
                     send(p.getId(), pack);
                 }
             }
@@ -25469,8 +25469,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param vCanSee       The list of Players who can see the loader.
      * @param playersVector The list of all Players
      */
-    private void entityUpdateLoadedUnits(Entity loader, Vector<Player> vCanSee,
-            Vector<Player> playersVector) {
+    private void entityUpdateLoadedUnits(Entity loader, Vector<Player> vCanSee, List<Player> playersVector) {
         // In double-blind, the client may not know about the loaded units,
         // so we need to send them.
         for (Entity eLoaded : loader.getLoadedUnits()) {
@@ -25483,8 +25482,8 @@ public class TWGameManager extends AbstractGameManager {
             // send an entity delete to everyone else
             pack = createRemoveEntityPacket(eLoaded.getId(), eLoaded.getRemovalCondition());
             for (int x = 0; x < playersVector.size(); x++) {
-                if (!vCanSee.contains(playersVector.elementAt(x))) {
-                    Player p = playersVector.elementAt(x);
+                if (!vCanSee.contains(playersVector.get(x))) {
+                    Player p = playersVector.get(x);
                     send(p.getId(), pack);
                 }
             }
@@ -25630,9 +25629,9 @@ public class TWGameManager extends AbstractGameManager {
      * Adds teammates of a player to the Vector. Utility function for whoCanSee.
      */
     private void addTeammates(Vector<Player> vector, Player player) {
-        Vector<Player> playersVector = game.getPlayersVector();
+        List<Player> playersVector = game.getPlayersList();
         for (int j = 0; j < playersVector.size(); j++) {
-            Player p = playersVector.elementAt(j);
+            Player p = playersVector.get(j);
             if (!player.isEnemyOf(p) && !vector.contains(p)) {
                 vector.addElement(p);
             }
@@ -25643,9 +25642,9 @@ public class TWGameManager extends AbstractGameManager {
      * Adds observers to the Vector. Utility function for whoCanSee.
      */
     private void addObservers(Vector<Player> vector) {
-        Vector<Player> playersVector = game.getPlayersVector();
+        List<Player> playersVector = game.getPlayersList();
         for (int j = 0; j < playersVector.size(); j++) {
-            Player p = playersVector.elementAt(j);
+            Player p = playersVector.get(j);
             if (p.isObserver() && !vector.contains(p)) {
                 vector.addElement(p);
             }
@@ -25660,9 +25659,9 @@ public class TWGameManager extends AbstractGameManager {
         // If double-blind is in effect, filter each players' list individually,
         // and then quit out...
         if (doBlind()) {
-            Vector<Player> playersVector = game.getPlayersVector();
+            List<Player> playersVector = game.getPlayersList();
             for (int x = 0; x < playersVector.size(); x++) {
-                Player p = playersVector.elementAt(x);
+                Player p = playersVector.get(x);
                 send(p.getId(), createFilteredFullEntitiesPacket(p, null));
             }
             return;

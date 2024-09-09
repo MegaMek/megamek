@@ -190,7 +190,7 @@ public class AddBotUtil {
 
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -231,7 +231,7 @@ public class AddBotUtil {
 
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -276,7 +276,7 @@ public class AddBotUtil {
         final Game game = client.getGame();
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
 
         if (possible.isEmpty()) {

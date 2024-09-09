@@ -1656,7 +1656,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the number of passengers on this unit
      * Intended for spacecraft, where we want to get the crews of transported units
      * plus actual passengers assigned to quarters
-     * 
+     *
      * @return
      */
     public int getNPassenger() {
@@ -1676,7 +1676,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Updates the number of marines aboard
-     * 
+     *
      * @param marines The number of marines to add/subtract
      */
     public void setNMarines(int marines) {
@@ -1878,7 +1878,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Is this entity shut down, or if applicable is the crew unconscious?
-     * 
+     *
      * @param checkCrew If true, consider the fitness of the crew when determining
      *                  if the entity is immobile.
      */
@@ -2564,7 +2564,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Convenience method to determine whether this entity should be treated as an
      * airborne aero on a ground map.
-     * 
+     *
      * @return True if this is an airborne aircraft on a ground map.
      */
     public boolean isAirborneAeroOnGroundMap() {
@@ -2584,7 +2584,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Sets the marker used to disambiguate this entity
      * from others with the same name. These are monotonically
      * increasing values, starting from one.
-     * 
+     *
      * @param duplicateMarker A marker to disambiguate this entity
      *                        from others with the same name.
      */
@@ -2600,7 +2600,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Updates the marker used to disambiguate this entity
      * from others with the same name after one of them has
      * been removed from the game.
-     * 
+     *
      * @param removedMarker The marker of the removed entity.
      * @return A value indicating whether or not this entity
      *         updated its duplicate marker.
@@ -2629,7 +2629,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the display name for this entity.
-     * 
+     *
      * @param displayName The new display name.
      */
     protected void setDisplayName(String displayName) {
@@ -2648,7 +2648,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Creates a display name for the entity.
-     * 
+     *
      * @param duplicateMarker A number used to disambiguate two entities with
      *                        the same name.
      * @return A display name for the entity.
@@ -2687,7 +2687,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Creates a short name for the entity.
-     * 
+     *
      * @param duplicateMarker A number used to disambiguate two entities with
      *                        the same name.
      * @return A short name for the entity.
@@ -2832,7 +2832,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Used by TargetingPhaseDisplay.java and FiringDisplay.java
-     * 
+     *
      * @param value true sets twistedPhase to current phase (or leaves it if set);
      *              false unsets twistedPhase
      */
@@ -9934,7 +9934,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns true if the offboard entity should be deployed this round.
-     * 
+     *
      * @param round The current round number.
      * @return True if and only if the offboard entity should deploy this
      *         round, otherwise false.
@@ -10072,7 +10072,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If team vision, see if any players on team can see
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
-            for (Player teammate : game.getPlayersVector()) {
+            for (Player teammate : game.getPlayersList()) {
                 if ((teammate.getTeam() == p.getTeam()) && entitySeenBy.contains(teammate)) {
                     return true;
                 }
@@ -10143,7 +10143,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If team vision, see if any players on team can see
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
-            for (Player teammate : game.getPlayersVector()) {
+            for (Player teammate : game.getPlayersList()) {
                 if ((teammate.getTeam() == p.getTeam()) && entityDetectedBy.contains(teammate)) {
                     return true;
                 }
@@ -10598,7 +10598,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns true if this unit has a ClampMountMek or ClampMountTank that
      * is currently unloaded.
-     * 
+     *
      * @return
      */
     public boolean hasUnloadedClampMount() {
@@ -10706,7 +10706,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <p>
      * Onboard units (units with an offboard distance of zero and a direction of
      * <code>Entity.NONE</code>) will be unaffected by this method.
-     * 
+     *
      * @param round The current round number.
      */
     public void deployOffBoard(int round) {
@@ -11383,7 +11383,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get the entity's "climbing mode"
-     * 
+     *
      * @return True or false, where true = climb up and false = go through
      */
     public boolean climbMode() {
@@ -11794,7 +11794,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns true if this unit has already made a pointblank shot this round.
-     * 
+     *
      * @return
      */
     public boolean madePointblankShot() {
@@ -13249,7 +13249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Sets the barrier armor rating for support vehicles. Has no effect on other
      * unit types.
-     * 
+     *
      * @param rating The BAR
      */
     public void setBARRating(int rating) {
@@ -13258,7 +13258,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Sets the barrier armor rating in a specific location for support vehicles.
      * Has no effect on other unit types.
-     * 
+     *
      * @param rating The BAR
      * @param loc    The location index
      */
@@ -13340,7 +13340,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Is this a naval vessel?
-     * 
+     *
      * @return Whether it is or not.
      */
     public boolean isNaval() {
@@ -13351,7 +13351,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determines if the pilot has the Nightwalker SPA
-     * 
+     *
      * @return true when pilots have the SPA and are not
      *         in a flying vehicle.
      */
@@ -13581,7 +13581,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Gets the initial BV of a unit.
      *
      * Useful for comparisons with the current BV.
-     * 
+     *
      * @return The initial BV of a unit.
      */
     public int getInitialBV() {
@@ -13592,7 +13592,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Sets the initial BV for a unit.
      *
      * Called when the game is initialized.
-     * 
+     *
      * @param bv The initial BV of a unit.
      */
     public void setInitialBV(int bv) {
@@ -14587,7 +14587,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Units capable of converting mode should override this to perform any other
      * necessary changes.
-     * 
+     *
      * @param mode
      */
     public void setConversionMode(int mode) {
@@ -15003,7 +15003,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * we're on an air/space map, using extreme range. Assumes target is not
      * airborne
      * if we are on a ground map.
-     * 
+     *
      * @return
      */
     public int getMaxWeaponRange() {
@@ -15014,7 +15014,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The max weapons range of this entity, taking into account whether
      * we're on an air/space map, using extreme range, and whether the target is
      * airborne.
-     * 
+     *
      * @param targetIsAirborne
      * @return
      */
@@ -15097,7 +15097,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the number of rounds that the entity is affected by an ASEW missile
-     * 
+     *
      * @param turns - integer specifying the number of end phases that the effects
      *              last through
      *              Technically, about 1.5 turns elapse per the rules for ASEW
@@ -15339,15 +15339,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * game modes.
      * <p>
      * To check if a given entity consists of multiple sub-entities, use
-     * 
+     *
      * <pre>
      * if (entity.getSubEntities().isPresent()) {
      *     ...
      * }
      * </pre>
-     * 
+     *
      * To iterate over entities (if present), use:
-     * 
+     *
      * <pre>
      * entity.getSubEntities().ifPresent(entities -&gt; entities.forEach(
      *     subEntity -&gt; {
@@ -15386,7 +15386,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Entities that use different sprites for different modes should override this
-     * 
+     *
      * @return a code identifying the mode, or an empty string for the default
      *         sprite
      */
@@ -15870,7 +15870,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * absence only.
      * The entity may gain this ability from different places, not exclusively the
      * crew.
-     * 
+     *
      * @param name - name of the ability as recorded in the options
      * @return true if the entity has this ability from some source
      */
@@ -15886,7 +15886,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * determine if an entity has an ability at a given level.
      * The entity may gain this ability from different places, not exclusively the
      * crew.
-     * 
+     *
      * @param name   - name of the ability as recorded in the optionsme
      * @param choice - A string indicating the given level being asked about
      * @return true if the entity has this ability at the given choice from some
@@ -15912,7 +15912,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Retrieves the IDs of all entities that this entity has detected with sensors
-     * 
+     *
      * @return the contents of this entity's sensorContacts set
      */
     public Set<Integer> getSensorContacts() {
@@ -15921,7 +15921,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks the sensorContacts set for a specific target's ID number
-     * 
+     *
      * @param targetId the ID number of the target entity to check for
      * @return true if the entity's sensorContacts set contains the passed-in target
      *         ID
@@ -15932,7 +15932,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Adds the specified target entity's ID to this entity's sensorContacts
-     * 
+     *
      * @param targetId the ID number of the target entity to add
      */
     public void addSensorContact(int targetId) {
@@ -15941,7 +15941,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Removes the specified target entity's ID from this entity's sensorContacts
-     * 
+     *
      * @param targetIds the ID number of the target entity to remove
      */
     public void removeSensorContact(Collection<Integer> targetIds) {
@@ -15959,7 +15959,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Retrieves the IDs of all entities that this entity has established firing
      * solutions on
-     * 
+     *
      * @return the contents of this entity's firingSolutions set
      */
     public Set<Integer> getFiringSolutions() {
@@ -15968,7 +15968,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks the firingSolutions set for a specific target's ID number
-     * 
+     *
      * @param targetId the ID number of the target entity to check for
      * @return true if the entity's firingSolutions set contains the passed-in
      *         target ID
@@ -15979,7 +15979,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Adds the specified target entity's ID to this entity's firingSolutions
-     * 
+     *
      * @param targetId the ID number of the target entity to add
      */
     public void addFiringSolution(int targetId) {
@@ -15988,7 +15988,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Removes the specified target entity's ID from this entity's firingSolutions
-     * 
+     *
      * @param targetIds the ID number of the target entity to remove
      */
     public void removeFiringSolution(Collection<Integer> targetIds) {

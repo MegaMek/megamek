@@ -51,7 +51,7 @@ public class AddBotUtilTest {
                 final Enumeration<Player> playerEnumeration = playerVector.elements();
 
                 mockGame = mock(Game.class);
-                when(mockGame.getPlayersVector()).thenReturn(playerVector);
+                when(mockGame.getPlayersList()).thenReturn(playerVector);
                 when(mockGame.getPlayers()).thenReturn(playerEnumeration);
                 doNothing().when(mockGame).addGameListener(any(GameListener.class));
 

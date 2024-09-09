@@ -94,7 +94,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     protected void refreshPlayers() {
-        ghostAndBotPlayers = game.getPlayersVector().stream()
+        ghostAndBotPlayers = game.getPlayersList().stream()
                 .filter(client -> client.isGhost() || client.isBot())
                 .sorted(Comparator.comparingInt(Player::getId)).collect(Collectors.toList());
         ghostAndBotPlayers.forEach(player -> botConfigs.put(player, new BehaviorSettings()));
@@ -342,7 +342,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
      * Returns the result of the dialog with respect to selected princess bots to be
      * kicked
      * The result may be empty, but not null.
-     * 
+     *
      * @return a Set of bot player names to be kicked. May be empty but not null
      */
     public Set<String> getKickBots() {

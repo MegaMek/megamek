@@ -31,47 +31,54 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Common interface for games with different rule sets, such as Total Warfare, BattleForce, or Alpha Strike.
+ * Common interface for games with different rule sets, such as Total Warfare,
+ * BattleForce, or Alpha Strike.
  */
 public interface IGame {
 
-    //region Player turns
+    // region Player turns
 
     @Nullable
     PlayerTurn getTurn();
 
     /**
-     * @return True when there is at least one more player turn waiting to be played in the current game
-     * phase.
-     * //TODO this code from Game is surprising; the last available turn should be at size()-1, but apparently this works
+     * @return True when there is at least one more player turn waiting to be played
+     *         in the current game
+     *         phase.
+     *         //TODO this code from Game is surprising; the last available turn
+     *         should be at size()-1, but apparently this works
      */
     default boolean hasMoreTurns() {
         return getTurnsList().size() > getTurnIndex();
     }
 
     /**
-     * Returns the current turn index, i.e. the turn that should next be played by the corresponding player.
+     * Returns the current turn index, i.e. the turn that should next be played by
+     * the corresponding player.
      */
     int getTurnIndex();
 
     /**
-     * @return the current list of turns. If you're not the GameManager, don't even think
-     * about changing any of the turns.
+     * @return the current list of turns. If you're not the GameManager, don't even
+     *         think
+     *         about changing any of the turns.
      */
     List<? extends PlayerTurn> getTurnsList();
 
-    //endregion
+    // endregion
 
     BasicGameOptions getOptions();
 
     /**
-     * @return The current game round, with 0 typically indicating deployment and 1 the first
-     * actual game round.
+     * @return The current game round, with 0 typically indicating deployment and 1
+     *         the first
+     *         actual game round.
      */
     int getCurrentRound();
 
     /**
-     * Sets the current game round to the given round number. See {@link #getCurrentRound()}. This
+     * Sets the current game round to the given round number. See
+     * {@link #getCurrentRound()}. This
      * method can be used in both GameManager and Client.
      *
      * @param currentRound The new round number
@@ -79,11 +86,12 @@ public interface IGame {
     void setCurrentRound(int currentRound);
 
     /**
-     * Adds 1 to the current round value. This method is intended for server use only.
+     * Adds 1 to the current round value. This method is intended for server use
+     * only.
      */
     void incrementCurrentRound();
 
-    //region Phase Management
+    // region Phase Management
 
     /**
      * @return The current phase of this game.
@@ -91,7 +99,8 @@ public interface IGame {
     GamePhase getPhase();
 
     /**
-     * Sets the current game phase to the given phase. May perform phase-dependent cleanup.
+     * Sets the current game phase to the given phase. May perform phase-dependent
+     * cleanup.
      * This method is intended for the GameManager.
      *
      * @param phase The new phase
@@ -107,9 +116,12 @@ public interface IGame {
     void setLastPhase(GamePhase lastPhase);
 
     /**
-     * Sets the current game phase to the given phase. May perform phase-dependent cleanup and fire
-     * game events. This method is intended for the Client. By default, this method calls
-     * {@link #setPhase(GamePhase)}. When overridden, it'll usually make sense to call super(phase).
+     * Sets the current game phase to the given phase. May perform phase-dependent
+     * cleanup and fire
+     * game events. This method is intended for the Client. By default, this method
+     * calls
+     * {@link #setPhase(GamePhase)}. When overridden, it'll usually make sense to
+     * call super(phase).
      *
      * @param phase The new phase
      */
@@ -118,7 +130,8 @@ public interface IGame {
     }
 
     /**
-     * Returns true when the current game phase should be played, meaning it is played in the current type
+     * Returns true when the current game phase should be played, meaning it is
+     * played in the current type
      * of game and there are possible actions in it in the present game state.
      * The result may be different in other rounds.
      *
@@ -128,9 +141,12 @@ public interface IGame {
     boolean isCurrentPhasePlayable();
 
     /**
-     * Returns true when the current game phase should be skipped, either because it is not played at
-     * all in the current type of game or because the present game state dictates that there can be no
-     * actions in it. The result may be different in other rounds. This is the opposite of
+     * Returns true when the current game phase should be skipped, either because it
+     * is not played at
+     * all in the current type of game or because the present game state dictates
+     * that there can be no
+     * actions in it. The result may be different in other rounds. This is the
+     * opposite of
      * {@link #isCurrentPhasePlayable()}.
      *
      * @return True when the current phase should be skipped entirely in this round
@@ -140,17 +156,19 @@ public interface IGame {
         return !isCurrentPhasePlayable();
     }
 
-    //endregion
+    // endregion
 
     /**
-     * Fires the given GameEvent, sending the event to all GameListener of this game.
+     * Fires the given GameEvent, sending the event to all GameListener of this
+     * game.
      *
      * @param event the game event.
      */
     void fireGameEvent(GameEvent event);
 
     /**
-     * Adds a GameListener to this game. The GameListener will receive any subsequently fired GameEvents.
+     * Adds a GameListener to this game. The GameListener will receive any
+     * subsequently fired GameEvents.
      *
      * @param listener The GameListener to add
      */
@@ -184,33 +202,34 @@ public interface IGame {
      * @param id a player id
      * @return the individual player assigned the id parameter.
      */
-    @Nullable Player getPlayer(int id);
+    @Nullable
+    Player getPlayer(int id);
 
     /** @return An enumeration of {@link Player players} in the game. */
     @Deprecated
     Enumeration<Player> getPlayers();
 
-    /** @return The current players as a list. */
-    @Deprecated
-    Vector<Player> getPlayersVector();
-
-    /** @return The current players as a list. Implementations should make sure that this list can be safely modified. */
+    /**
+     * @return The current players as a list. Implementations should make sure that
+     *         this list can be safely modified.
+     */
     List<Player> getPlayersList();
 
     /**
      * Adds the given Player to the game with the given game-unique id.
      * // TODO : Can this be made a default method?
      *
-     * @param id The game-unique id of this player
+     * @param id     The game-unique id of this player
      * @param player The Player object
      */
     void addPlayer(int id, Player player);
 
     /**
      * Sets the given Player to the given game-unique id.
-     * // TODO : Is this method useful? Why not use addPlayer that also sets single-blind info?
+     * // TODO : Is this method useful? Why not use addPlayer that also sets
+     * single-blind info?
      *
-     * @param id The game-unique id of this player
+     * @param id     The game-unique id of this player
      * @param player The Player object
      */
     void setPlayer(int id, Player player);
@@ -222,12 +241,18 @@ public interface IGame {
      */
     void removePlayer(int id);
 
-    /** @return The current number of active players in the game. This includes observers but not ghosts. */
+    /**
+     * @return The current number of active players in the game. This includes
+     *         observers but not ghosts.
+     */
     int getNoOfPlayers();
 
     // TEAMS //////////////
 
-    /** @return The teams in the game. Implementations should make sure that this list can be safely modified. */
+    /**
+     * @return The teams in the game. Implementations should make sure that this
+     *         list can be safely modified.
+     */
     List<Team> getTeams();
 
     /** @return The number of teams in the game. */
@@ -235,7 +260,8 @@ public interface IGame {
 
     void setupTeams();
 
-    @Nullable default Team getTeamForPlayer(Player player) {
+    @Nullable
+    default Team getTeamForPlayer(Player player) {
         for (Team team : getTeams()) {
             if (team.hasPlayer(player)) {
                 return team;
@@ -267,8 +293,9 @@ public interface IGame {
     }
 
     /**
-     * @return The InGameObject from those that are out of game (destroyed, fled, never deployed) associated
-     * with the given id, if there is one.
+     * @return The InGameObject from those that are out of game (destroyed, fled,
+     *         never deployed) associated
+     *         with the given id, if there is one.
      */
     default Optional<InGameObject> getOutOfGameUnit(int id) {
         return getGraveyard().stream().filter(o -> o.getId() == id).findAny();
@@ -281,18 +308,26 @@ public interface IGame {
         return getInGameObject(id).orElse(getOutOfGameUnit(id).orElse(null));
     }
 
-    /** @return A list of all InGameObjects of this game. This list is copied and may be safely modified. */
+    /**
+     * @return A list of all InGameObjects of this game. This list is copied and may
+     *         be safely modified.
+     */
     List<InGameObject> getInGameObjects();
 
-    /** @return A list of all InGameObjects of this game with the given ids. The returned list may be safely modified. */
+    /**
+     * @return A list of all InGameObjects of this game with the given ids. The
+     *         returned list may be safely modified.
+     */
     default List<InGameObject> getInGameObjects(Collection<Integer> idList) {
         return getInGameObjects().stream().filter(o -> idList.contains(o.getId())).collect(Collectors.toList());
     }
 
     /**
-     * This is a Client-side method to replace or add units that are sent from the server.
+     * This is a Client-side method to replace or add units that are sent from the
+     * server.
      *
-     * Adds the given units to the list of units or objects in the current game. When a unit's ID is already
+     * Adds the given units to the list of units or objects in the current game.
+     * When a unit's ID is already
      * present the currently assigned unit will be replaced with the given new one.
      *
      * @param units The units to add or use as a replacement for current units.
@@ -300,18 +335,21 @@ public interface IGame {
     void replaceUnits(List<InGameObject> units);
 
     /**
-     * @return a list of units that are destroyed or otherwise no longer part of the game. These
-     * should have a reason for their removal set.
+     * @return a list of units that are destroyed or otherwise no longer part of the
+     *         game. These
+     *         should have a reason for their removal set.
      */
     List<InGameObject> getGraveyard();
 
-    //endregion
+    // endregion
 
-    //region Board
+    // region Board
 
     /**
-     * Sets the given board as the game's board with the given boardId, possibly replacing the former board
-     * of the same id. This method is written with the idea that a game might have more than one board.
+     * Sets the given board as the game's board with the given boardId, possibly
+     * replacing the former board
+     * of the same id. This method is written with the idea that a game might have
+     * more than one board.
      * Game's legacy methods of setBoard() and getBoard() use the boardId 0.
      * This method is meant as a server-side method.
      *
@@ -321,7 +359,8 @@ public interface IGame {
     void setBoard(int boardId, Board board);
 
     /**
-     * Returns the board with the given boardId or null if the game does not have a board of that boardId.
+     * Returns the board with the given boardId or null if the game does not have a
+     * board of that boardId.
      *
      * @param boardId The board's ID
      * @return The board with the given ID
@@ -332,15 +371,18 @@ public interface IGame {
     }
 
     /**
-     * Returns the complete map of boardIds/boards the game uses. The returned map is an unmodifiable view
-     * of the game's map, but not a deep copy, so changes to a board will affect the game.
+     * Returns the complete map of boardIds/boards the game uses. The returned map
+     * is an unmodifiable view
+     * of the game's map, but not a deep copy, so changes to a board will affect the
+     * game.
      *
      * @return The game's boards and their IDs
      */
     Map<Integer, Board> getBoards();
 
     /**
-     * Returns the game's board. This method internally uses the boardId 0 for every call, see {@link #getBoard(int)}.
+     * Returns the game's board. This method internally uses the boardId 0 for every
+     * call, see {@link #getBoard(int)}.
      * It can eventually be replaced to allow multiple maps for any type of game.
      *
      * @return The game's board (using ID = 0)
@@ -350,8 +392,10 @@ public interface IGame {
     }
 
     /**
-     * Sets the given board as the game's board with the given boardId, possibly replacing the former board
-     * of the same id. This method is written with the idea that a game might have more than one board.
+     * Sets the given board as the game's board with the given boardId, possibly
+     * replacing the former board
+     * of the same id. This method is written with the idea that a game might have
+     * more than one board.
      * This method is meant as a client-side method and may fire game events.
      *
      * @param boardId (currently ignored) The boardId to assing to that board
@@ -361,17 +405,19 @@ public interface IGame {
 
     /**
      * Sets the given boards as the game's boards, replacing all previous boards.
-     * This method is written with the idea that a game might have more than one board.
+     * This method is written with the idea that a game might have more than one
+     * board.
      * This method is meant as a client-side method and may fire game events.
      *
      * @param boards The new boards
      */
     void receiveBoards(Map<Integer, Board> boards);
 
-    //endregion
+    // endregion
 
     /**
-     * Returns a new ReportEntry with the given report message Id. The ReportEntry subclass returned
+     * Returns a new ReportEntry with the given report message Id. The ReportEntry
+     * subclass returned
      * depends on the implementation in the IGame subclass.
      *
      * @param messageId The message Id from report-messages.properties
@@ -379,11 +425,13 @@ public interface IGame {
      */
     ReportEntry getNewReport(int messageId);
 
-    //region Scripted Events
+    // region Scripted Events
 
     /**
-     * @return All scripted events present in this game. Note that these will typically only be present on
-     * the Server side and the Clients will only receive the results of those events.
+     * @return All scripted events present in this game. Note that these will
+     *         typically only be present on
+     *         the Server side and the Clients will only receive the results of
+     *         those events.
      */
     @ServerOnly
     List<TriggeredEvent> scriptedEvents();
@@ -395,5 +443,5 @@ public interface IGame {
      */
     void addScriptedEvent(TriggeredEvent event);
 
-    //endregion
+    // endregion
 }

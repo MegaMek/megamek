@@ -1894,7 +1894,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.setSearchlightState(SearchOn);
                 if (gameManager.doBlind()) { // if double blind, we may need to filter the
                     // players that receive this message
-                    Vector<Player> playersVector = getGame().getPlayersVector();
+                    List<Player> playersVector = getGame().getPlayersList();
                     Vector<Player> vCanSee = gameManager.whoCanSee(entity);
                     for (Player p : playersVector) {
                         if (vCanSee.contains(p)) { // Player sees the unit

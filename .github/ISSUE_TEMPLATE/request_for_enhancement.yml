@@ -1,5 +1,5 @@
 name: Request for Enhancement
-description: Request an enhancement for MegaMekLab. Review our Content Policy first.
+description: Request an enhancement for MegaMek. Review our Content Policy first.
 title: "[RFE] Brief Description"
 labels: [(RFE) Enhancement]
 body:
@@ -68,7 +68,7 @@ body:
     id: megamek-version
     attributes:
       label: MegaMekLab Suite Version *
-      description: Which version of MegaMekLab are you using? All RFEs must be checked against the most current development release.
+      description: Which version of MegaMek are you using? All RFEs must be checked against the most current development release.
       placeholder: "e.g., v0.50.0, v0.49.19.1, or development version"
     validations:
       required: true

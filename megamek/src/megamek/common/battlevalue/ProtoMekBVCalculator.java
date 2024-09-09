@@ -29,7 +29,7 @@ public class ProtoMekBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected double getAmmoBV(Mounted ammo) {
+    protected double getAmmoBV(Mounted<?> ammo) {
         return ((AmmoType) ammo.getType()).getKgPerShotBV(ammo.getUsableShotsLeft());
     }
 

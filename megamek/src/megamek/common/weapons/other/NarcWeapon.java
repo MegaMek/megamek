@@ -19,7 +19,10 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Game;
+import megamek.common.Mounted;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.NarcExplosiveHandler;
@@ -67,7 +70,7 @@ public abstract class NarcWeapon extends MissileWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 }

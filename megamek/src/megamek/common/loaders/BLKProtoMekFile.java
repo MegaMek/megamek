@@ -28,6 +28,7 @@ import megamek.common.verifier.TestProtoMek;
 
 /**
  * This class loads ProtoMek BLK files.
+ * 
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @since April 6, 2002, 2:06 AM
  */
@@ -190,7 +191,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
                 try {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
-                    Mounted mount;
+                    Mounted<?> mount;
                     if (ammoIndex > 0) {
                         mount = t.addEquipment(etype, ProtoMek.LOC_BODY, false, shotsCount);
                     } else if (TestProtoMek.requiresSlot(etype)) {

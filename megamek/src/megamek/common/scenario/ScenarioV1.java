@@ -53,7 +53,8 @@ import megamek.server.IGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * This class holds all scenario info loaded from a scenario (.mms) file. It is a map of constants given in
+ * This class holds all scenario info loaded from a scenario (.mms) file. It is
+ * a map of constants given in
  * {@link ScenarioLoader} to a list of data for that constant.
  */
 public class ScenarioV1 extends HashMap<String, Collection<String>> implements Scenario {
@@ -241,9 +242,10 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             for (Entity entity : entities) {
                 entity.setOwner(player);
                 entity.setId(entityId);
-                ++ entityId;
+                ++entityId;
                 game.addEntity(entity);
-                // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                // Grounded DropShips don't set secondary positions unless they're part of a
+                // game and can verify
                 // they're not on a space map.
                 if (entity.isLargeCraft() && !entity.isAirborne()) {
                     entity.setAltitude(0);
@@ -278,7 +280,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     /**
      * Parses a boolean value. When the key is not present, returns the given
-     * defaultValue. When the key is present, interprets "true" and "on"  and "1"
+     * defaultValue. When the key is present, interprets "true" and "on" and "1"
      * as true and everything else as false.
      */
     private boolean parseBoolean(String key, boolean defaultValue) {
@@ -291,12 +293,13 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return result;
     }
 
-    // TODO : legal/valid ammo type handling and game options, since they are set at this point
-    private AmmoType getValidAmmoType(Game game, Mounted mounted, String ammoString) {
+    // TODO : legal/valid ammo type handling and game options, since they are set at
+    // this point
+    private AmmoType getValidAmmoType(Game game, Mounted<?> mounted, String ammoString) {
         final Entity e = mounted.getEntity();
         final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         final EquipmentType currentAmmoType = mounted.getType();
-        final Mounted currentWeapon = mounted.getLinkedBy();
+        final Mounted<?> currentWeapon = mounted.getLinkedBy();
         final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
         final EquipmentType newAmmoType = EquipmentType.get(ammoString);
         if (newAmmoType == null) {
@@ -317,12 +320,18 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             final EnumSet<AmmoType.Munitions> muniType = ((AmmoType) newAmmoType).getMunitionType();
             muniType.add(AmmoType.Munitions.M_INCENDIARY_LRM);
             if ((muniType.contains(AmmoType.Munitions.M_SEMIGUIDED) || (muniType.contains(AmmoType.Munitions.M_SWARM_I))
-                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)) || (muniType.contains(AmmoType.Munitions.M_THUNDER_INFERNO))
-                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) || (muniType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
-                    || (muniType.contains(AmmoType.Munitions.M_INFERNO_IV)) || (muniType.contains(AmmoType.Munitions.M_VIBRABOMB_IV))
-                    || (muniType.contains(AmmoType.Munitions.M_LISTEN_KILL)) || (muniType.contains(AmmoType.Munitions.M_ANTI_TSM))
-                    || (muniType.contains(AmmoType.Munitions.M_DEAD_FIRE)) || (muniType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)))) {
-                LogManager.getLogger().warn(String.format("Ammo type %s not allowed by Clan rules", newAmmoType.getName()));
+                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
+                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_INFERNO))
+                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
+                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
+                    || (muniType.contains(AmmoType.Munitions.M_INFERNO_IV))
+                    || (muniType.contains(AmmoType.Munitions.M_VIBRABOMB_IV))
+                    || (muniType.contains(AmmoType.Munitions.M_LISTEN_KILL))
+                    || (muniType.contains(AmmoType.Munitions.M_ANTI_TSM))
+                    || (muniType.contains(AmmoType.Munitions.M_DEAD_FIRE))
+                    || (muniType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)))) {
+                LogManager.getLogger()
+                        .warn(String.format("Ammo type %s not allowed by Clan rules", newAmmoType.getName()));
                 return null;
             }
         }
@@ -334,7 +343,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             return null;
         }
 
-        int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType() : 0;
+        int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType()
+                : 0;
         if ((((AmmoType) newAmmoType).getRackSize() == ((AmmoType) currentAmmoType).getRackSize())
                 && (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR))
                 && (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING))
@@ -355,7 +365,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         TWGameManager m = (TWGameManager) iGameManager;
         for (DamagePlan damagePlan : damagePlans) {
             LogManager.getLogger().debug(String.format("Applying damage to %s", damagePlan.entity.getShortName()));
-            for (int y = 0; y < damagePlan.nBlocks; ++ y) {
+            for (int y = 0; y < damagePlan.nBlocks; ++y) {
                 HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 LogManager.getLogger().debug("[s.damageEntity(dp.entity, hit, 5)]");
                 m.damageEntity(damagePlan.entity, hit, 5);
@@ -427,7 +437,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         CriticalSlot cs = null;
                         if ((chp.entity instanceof ProtoMek)
                                 && (ProtoMek.LOC_TORSO == critHit.loc)
-                                && ((ProtoMek.SYSTEM_TORSO_WEAPON_A == critHit.slot) || (ProtoMek.SYSTEM_TORSO_WEAPON_B == critHit.slot))) {
+                                && ((ProtoMek.SYSTEM_TORSO_WEAPON_A == critHit.slot)
+                                        || (ProtoMek.SYSTEM_TORSO_WEAPON_B == critHit.slot))) {
                             cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot);
                         }
                         // Is this a valid slot number?
@@ -483,8 +494,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                                 if (newAmmoType != null) {
                                     ammo.changeAmmoType(newAmmoType);
                                 } else {
-                                    LogManager.getLogger().warn(String.format("Illegal ammo type '%s' for unit %s, slot %s",
-                                            sa.type, sap.entity.getDisplayName(), ammo.getName()));
+                                    LogManager.getLogger()
+                                            .warn(String.format("Illegal ammo type '%s' for unit %s, slot %s",
+                                                    sa.type, sap.entity.getDisplayName(), ammo.getName()));
                                 }
                             }
                         }
@@ -500,7 +512,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         // is a ammo item then set its amount!
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
                         if (cs != null) {
-                            Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
+                            Mounted<?> ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
                             if (ammo == null) {
                                 LogManager.getLogger().error(String.format("%s - invalid slot specified %d: %d",
                                         sap.entity.getShortName(), sa.loc, sa.slot + 1));
@@ -529,39 +541,47 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {
-            g.getPlanetaryConditions().setAtmosphere(Atmosphere.getAtmosphere(StringUtil.toInt(p.getString(PARAM_PLANETCOND_ATMOS),0)));
+            g.getPlanetaryConditions()
+                    .setAtmosphere(Atmosphere.getAtmosphere(StringUtil.toInt(p.getString(PARAM_PLANETCOND_ATMOS), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
-            g.getPlanetaryConditions().setLight(Light.getLight(StringUtil.toInt(p.getString(PARAM_PLANETCOND_LIGHT), 0)));
+            g.getPlanetaryConditions()
+                    .setLight(Light.getLight(StringUtil.toInt(p.getString(PARAM_PLANETCOND_LIGHT), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
-            g.getPlanetaryConditions().setWeather(Weather.getWeather(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WEATHER), 0)));
+            g.getPlanetaryConditions()
+                    .setWeather(Weather.getWeather(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WEATHER), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WIND)) {
-            g.getPlanetaryConditions().setWind(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WIND),0)));
+            g.getPlanetaryConditions().setWind(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WIND), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
-            g.getPlanetaryConditions().setWindDirection(WindDirection.getWindDirection(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDDIR),0)));
+            g.getPlanetaryConditions().setWindDirection(
+                    WindDirection.getWindDirection(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDDIR), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {
-            g.getPlanetaryConditions().setShiftingWindDirection(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false));
+            g.getPlanetaryConditions()
+                    .setShiftingWindDirection(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGSTR)) {
-            g.getPlanetaryConditions().setShiftingWindStrength(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false));
+            g.getPlanetaryConditions()
+                    .setShiftingWindStrength(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDMIN)) {
-            g.getPlanetaryConditions().setWindMin(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMIN), 0)));
+            g.getPlanetaryConditions()
+                    .setWindMin(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMIN), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDMAX)) {
-            g.getPlanetaryConditions().setWindMax(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMAX), 0)));
+            g.getPlanetaryConditions()
+                    .setWindMax(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMAX), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_EMI)) {
@@ -574,7 +594,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
-            BlowingSand blowingSand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false) ? BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE;
+            BlowingSand blowingSand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false) ? BlowingSand.BLOWING_SAND
+                    : BlowingSand.BLOWING_SAND_NONE;
             g.getPlanetaryConditions().setBlowingSand(blowingSand);
         }
     }
@@ -599,12 +620,13 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         // Add other information
-        for (String key: p.keySet()) {
+        for (String key : p.keySet()) {
             Matcher dataMatcher = unitDataPattern.matcher(key);
             if (dataMatcher.matches()) {
                 String unitKey = dataMatcher.group(1);
                 if (!entities.containsKey(unitKey)) {
-                    LogManager.getLogger().warn("Scenario loading: Data for undeclared unit encountered, ignoring: " + key);
+                    LogManager.getLogger()
+                            .warn("Scenario loading: Data for undeclared unit encountered, ignoring: " + key);
                     continue;
                 }
                 Entity e = entities.get(unitKey);
@@ -683,8 +705,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                                 ((IAero) e).land();
                             }
                         } else {
-                            LogManager.getLogger().warn(String.format("Altitude setting for a non-aerospace unit %s; ignoring",
-                                    e.getShortName()));
+                            LogManager.getLogger()
+                                    .warn(String.format("Altitude setting for a non-aerospace unit %s; ignoring",
+                                            e.getShortName()));
                         }
                         break;
                     default:
@@ -707,16 +730,20 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             LogManager.getLogger().debug(String.format("Loading %s", ms.getName()));
             Entity e = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
-            // The following section is used to determine if part 4 of the string includes gender or not
-            // The regex is used to match a number that might be negative. As the direction is never
+            // The following section is used to determine if part 4 of the string includes
+            // gender or not
+            // The regex is used to match a number that might be negative. As the direction
+            // is never
             // a number, if a number is found it must be gender.
-            // The i value must be included to ensure that the correct indexes are used for the
+            // The i value must be included to ensure that the correct indexes are used for
+            // the
             // direction calculation below.
             if ((parts.length > 4) && parts[4].matches("-?\\d+")) {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
                         Gender.parseFromString(parts[4]), Boolean.parseBoolean(parts[5]), null));
-                i = 6; // direction will be part 6, as the scenario has the gender of its pilots included
+                i = 6; // direction will be part 6, as the scenario has the gender of its pilots
+                       // included
             } else {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
@@ -800,7 +827,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if (camouflageParameters.length == 2) {
             return new Camouflage(camouflageParameters[0], camouflageParameters[1]);
         } else {
-            LogManager.getLogger().error("Attempted to parse illegal camouflage parameter array of size " + camouflageParameters.length + " from " + camouflage);
+            LogManager.getLogger().error("Attempted to parse illegal camouflage parameter array of size "
+                    + camouflageParameters.length + " from " + camouflage);
             return new Camouflage();
         }
     }
@@ -926,12 +954,12 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                     .split(SEPARATOR_COMMA, -1));
         }
 
-        for (String dir: allDirs) {
+        for (String dir : allDirs) {
             File curDir = new File(Configuration.boardsDir(), dir);
             if (curDir.exists()) {
                 for (String file : curDir.list()) {
                     if (file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
-                        boards.add(dir+"/"+file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
+                        boards.add(dir + "/" + file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
                     }
                 }
             }
@@ -1013,7 +1041,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     /**
      * Parses a boolean value. When the key is not present, returns the given
-     * defaultValue. When the key is present, interprets "true" and "on"  and "1"
+     * defaultValue. When the key is present, interprets "true" and "on" and "1"
      * as true and everything else as false.
      */
     private boolean parseBoolean(ScenarioV1 p, String key, boolean defaultValue) {

@@ -163,7 +163,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
         // Track the last potential anti-personnel mount and put any APM weapon there
-        Mounted lastAPM = null;
+        Mounted<?> lastAPM = null;
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
                 int mountLoc = BattleArmor.MOUNT_LOC_NONE;
@@ -194,7 +194,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                 if (saEquip[x].contains(":Shots")) {
                     String shotString = saEquip[x].substring(
                             saEquip[x].indexOf(":Shots"),
-                            saEquip[x].indexOf("#")+1);
+                            saEquip[x].indexOf("#") + 1);
                     numShots = Integer.parseInt(
                             shotString.replace(":Shots", "").replace("#", ""));
                     saEquip[x] = saEquip[x].replace(shotString, "");
@@ -209,7 +209,6 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
 
-
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
@@ -217,7 +216,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted m = t.addEquipment(etype, nLoc, false,
+                        Mounted<?> m = t.addEquipment(etype, nLoc, false,
                                 mountLoc, dwpMounted);
                         if (numShots != 0 && (m.getType() instanceof AmmoType)) {
                             m.setShotsLeft(numShots);

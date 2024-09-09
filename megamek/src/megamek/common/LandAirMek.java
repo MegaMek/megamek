@@ -133,7 +133,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private int altLoss = 0;
     private int altLossThisRound = 0;
 
-    //Autoejection
+    // Autoejection
     private boolean critThresh = false;
 
     // Bomb choices
@@ -210,7 +210,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
-            LogManager.getLogger().error("Attempted to get LAM Type string for unknown type " + lamType + " returning standard.");
+            LogManager.getLogger()
+                    .error("Attempted to get LAM Type string for unknown type " + lamType + " returning standard.");
             return LAM_STRING[LAM_STANDARD];
         }
         return LAM_STRING[lamType];
@@ -366,7 +367,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 j = Math.max(j + weatherMod, 0);
             }
 
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.getWeather().isClear()
                     && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
@@ -386,7 +387,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             int weatherMod = conditions.getMovementMods(this);
             j = Math.max(j + weatherMod, 0);
 
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.getWeather().isClear()
                     && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
@@ -507,7 +508,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             if (getConversionMode() == CONV_MODE_FIGHTER) {
                 setRapidFire();
             } else if (prevMode == CONV_MODE_FIGHTER) {
-                for (Mounted m : getTotalWeaponList()) {
+                for (Mounted<?> m : getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) m.getType();
                     if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
                         m.setMode("");
@@ -843,7 +844,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * Start a new round
      *
      * @param roundNumber
-     *            the <code>int</code> number of the new round
+     *                    the <code>int</code> number of the new round
      */
     @Override
     public void newRound(int roundNumber) {
@@ -957,11 +958,11 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * damage and type of map.
      *
      * @param fromMode
-     *            The mode to convert from (one of CONV_MODE_MEK,
-     *            CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
+     *                 The mode to convert from (one of CONV_MODE_MEK,
+     *                 CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
      * @param toMode
-     *            The mode to convert to (one of CONV_MODE_MEK,
-     *            CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
+     *                 The mode to convert to (one of CONV_MODE_MEK,
+     *                 CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
      * @return true if it is possible for the LAM to convert to the given mode.
      */
     public boolean canConvertTo(int fromMode, int toMode) {
@@ -1035,15 +1036,15 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     private static final TechAdvancement[] TA_LAM = {
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
-                .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //standard
+                    .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
-                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
+                    .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
 
     @Override
@@ -1078,9 +1079,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public boolean hasInfernoAmmo() {
-        for (Mounted m : getMisc()) {
+        for (Mounted<?> m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BOMB_BAY) && m.getLinked() != null) {
-                Mounted bomb = m.getLinked();
+                Mounted<?> bomb = m.getLinked();
                 // We may have to go through a launcher to get to the ordnance
                 if (bomb.getLinked() != null) {
                     bomb = bomb.getLinked();
@@ -1111,6 +1112,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getMaxExtBombPoints() {
         return 0;
     }
+
     @Override
     public int getMaxIntBombPoints() {
         return countWorkingMisc(MiscType.F_BOMB_BAY);
@@ -1138,12 +1140,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public void setUsedInternalBombs(int b){
+    public void setUsedInternalBombs(int b) {
         // Do nothing; LAMs don't take internal bomb bay hits like this
     }
 
     @Override
-    public void increaseUsedInternalBombs(int b){
+    public void increaseUsedInternalBombs(int b) {
         // Do nothing
     }
 
@@ -1382,7 +1384,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * Modifier to landing or vertical takeoff roll for landing gear damage.
      *
      * @param vTakeoff
-     *            true if this is for a vertical takeoff, false if for a landing
+     *                 true if this is for a vertical takeoff, false if for a
+     *                 landing
      * @return the control roll modifier
      */
     @Override
@@ -1398,34 +1401,34 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         }
     }
 
-    //Landing mods for partial repairs
+    // Landing mods for partial repairs
     @Override
     public int getLandingGearPartialRepairs() {
         if (getPartialRepairs().booleanOption("aero_gear_crit")) {
-        return 2;
+            return 2;
         } else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
-        return 1;
+            return 1;
         } else {
-        return 0;
+            return 0;
         }
     }
 
-    //Avionics mods for partial repairs
+    // Avionics mods for partial repairs
     @Override
     public int getAvionicsMisreplaced() {
         if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
-        return 1;
+            return 1;
         } else {
-        return 0;
+            return 0;
         }
     }
 
     @Override
     public int getAvionicsMisrepaired() {
         if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
-        return 1;
+            return 1;
         } else {
-        return 0;
+            return 0;
         }
     }
 
@@ -1437,7 +1440,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if (getConversionMode() != CONV_MODE_FIGHTER) {
             return super.getWeaponArc(wn);
         }
-        final Mounted mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(wn);
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)
                 || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
@@ -1628,10 +1631,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-            || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+                || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (fuel * 0.9);
         } else {
-        return fuel;
+            return fuel;
         }
     }
 
@@ -1639,9 +1642,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
                 || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-                return (int) (currentfuel * 0.9);
+            return (int) (currentfuel * 0.9);
         } else {
-        return currentfuel;
+            return currentfuel;
         }
     }
 
@@ -1671,7 +1674,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * Set number of fuel points based on fuel tonnage.
      *
      * @param fuelTons
-     *            The number of tons of fuel
+     *                 The number of tons of fuel
      */
     @Override
     public void setFuelTonnage(double fuelTons) {
@@ -1882,7 +1885,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public Map<String, Integer> groupWeaponsByLocation() {
         Map<String, Integer> groups = new HashMap<>();
-        for (Mounted mounted : getTotalWeaponList()) {
+        for (Mounted<?> mounted : getTotalWeaponList()) {
             int loc = LOC_CAPITAL_WINGS;
             if ((loc == Mek.LOC_CT) || (loc == Mek.LOC_HEAD)) {
                 loc = LOC_CAPITAL_NOSE;
@@ -2031,7 +2034,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    protected void addBomb(Mounted mounted, int loc) throws LocationFullException {
+    protected void addBomb(Mounted<?> mounted, int loc) throws LocationFullException {
         if ((loc < 0) || (loc >= crits.length)) {
             LogManager.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
             return;
@@ -2132,7 +2135,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     /**
-     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     * A method to add/remove sensors that only work in space as we transition in
+     * and out of an atmosphere
      */
     @Override
     public void updateSensorOptions() {
@@ -2148,7 +2152,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             }
             getSensors().removeAll(sensorsToRemove);
             if (sensorsToRemove.size() >= 1) {
-            setNextSensor(getSensors().firstElement());
+                setNextSensor(getSensors().firstElement());
             }
         }
         // If we are in space, add them back...

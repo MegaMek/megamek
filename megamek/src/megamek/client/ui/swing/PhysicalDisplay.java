@@ -50,7 +50,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
     /**
      * This enumeration lists all the possible ActionCommands that can be
-     * carried out during the physical phase.  Each command has a string for the
+     * carried out during the physical phase. Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
      *
      * @author arlith
@@ -219,7 +219,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         return buttonList;
     }
 
-
     /**
      * Selects an entity, by number, for movement.
      */
@@ -229,7 +228,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
 
@@ -261,7 +260,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         // does it have a club?
         String clubLabel = null;
-        for (Mounted club : entity.getClubs()) {
+        for (Mounted<?> club : entity.getClubs()) {
             String thisLab;
             if (club.getName().endsWith("Club")) {
                 thisLab = Messages.getString("PhysicalDisplay.Club");
@@ -280,8 +279,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         buttons.get(PhysicalCommand.PHYSICAL_CLUB).setText(clubLabel);
 
         if ((entity instanceof Mek)
-            && !entity.isProne()
-            && entity.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER)) {
+                && !entity.isProne()
+                && entity.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER)) {
             setDodgeEnabled(true);
         }
         updateDonePanel();
@@ -512,7 +511,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
 
             if (zweihandering) {
-                if (armChosenZwei==PunchAttackAction.LEFT) {
+                if (armChosenZwei == PunchAttackAction.LEFT) {
                     leftArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
                 } else {
                     rightArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
@@ -543,7 +542,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         .getTargetType(), target.getId(),
                         PunchAttackAction.LEFT, leftBladeExtend,
                         rightBladeExtend, zweihandering));
-                if (isMeleeMaster  && !zweihandering) {
+                if (isMeleeMaster && !zweihandering) {
                     // hit 'em again!
                     addAttack(new PunchAttackAction(currentEntity, target
                             .getTargetType(), target.getId(),
@@ -818,10 +817,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     JumpJetAttackAction.RIGHT);
             if ((d_left * Compute.oddsAbove(
                     left.getValue(),
-                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) > (d_right * Compute
-                    .oddsAbove(
-                            right.getValue(),
-                            ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
+                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) > (d_right
+                            * Compute
+                                    .oddsAbove(
+                                            right.getValue(),
+                                            ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
                 toHit = left;
                 leg = JumpJetAttackAction.LEFT;
                 damage = d_left;
@@ -944,7 +944,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if (canZweihander) {
                 ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient().getGame(), currentEntity,
                         target, club, ash.getAimTable(), true);
-                zweihandering = clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
+                zweihandering = clientgui.doYesNoDialog(
+                        Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
                         Messages.getString("PhysicalDisplay.ZweihanderClubDialog.message",
                                 toHitZwei.getValueAsString(),
                                 Compute.oddsAbove(toHit.getValue(), isAptPiloting),
@@ -961,12 +962,15 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
             addAttack(new ClubAttackAction(currentEntity,
                     target.getTargetType(), target.getId(), club, ash
-                            .getAimTable(), zweihandering));
+                            .getAimTable(),
+                    zweihandering));
             if (isMeleeMaster && !zweihandering) {
                 // hit 'em again!
                 addAttack(new ClubAttackAction(currentEntity, target
-                        .getTargetType(), target.getId(), club, ash
-                        .getAimTable(), zweihandering));
+                        .getTargetType(), target.getId(), club,
+                        ash
+                                .getAimTable(),
+                        zweihandering));
             }
             ready();
         }
@@ -1062,7 +1066,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (canHitLeft) {
             damageLeft = BrushOffAttackAction.getDamageFor(ce(), BrushOffAttackAction.LEFT);
             left = Messages.getString("PhysicalDisplay.LAHit", toHitLeft.getValueAsString(),
-                    Compute.oddsAbove(toHitLeft.getValue(), ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)), damageLeft);
+                    Compute.oddsAbove(toHitLeft.getValue(), ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                    damageLeft);
         }
 
         // If we can hit with the right arm, get
@@ -1203,7 +1208,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      */
     void updateTarget() {
         // dis/enable physical attach buttons
-        if ((currentEntity != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity()) && (target != null)) {
+        if ((currentEntity != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+                && (target != null)) {
             if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
                 // punch?
                 final ToHitData leftArm = PunchAttackAction.toHit(clientgui
@@ -1263,12 +1269,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         .getGame(), currentEntity, target, JumpJetAttackAction.BOTH);
                 setJumpJetEnabled(!((jjl.getValue() == TargetRoll.IMPOSSIBLE)
                         && (jjr.getValue() == TargetRoll.IMPOSSIBLE) && (jjb
-                            .getValue() == TargetRoll.IMPOSSIBLE)));
+                                .getValue() == TargetRoll.IMPOSSIBLE)));
 
                 // clubbing?
                 boolean canClub = false;
                 boolean canAim = false;
-                for (Mounted club : ce().getClubs()) {
+                for (Mounted<?> club : ce().getClubs()) {
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit(clientgui.getClient().getGame(),
                                 currentEntity, target, club, ash.getAimTable(), false);
@@ -1356,7 +1362,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
         if (clientgui.getClient().isMyTurn()
-            && (b.getButton() == MouseEvent.BUTTON1)) {
+                && (b.getButton() == MouseEvent.BUTTON1)) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(
                         clientgui.getBoardView().getLastCursor())) {
@@ -1456,8 +1462,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        // On simultaneous phases, each player ending their turn will generate a turn change
-        // We want to ignore turns from other players and only listen to events we generated
+        // On simultaneous phases, each player ending their turn will generate a turn
+        // change
+        // We want to ignore turns from other players and only listen to events we
+        // generated
         // Except on the first turn
         if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())

@@ -175,7 +175,8 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
             a.setOmni(true);
         }
 
-        // how many bombs can it carry; dependent on transport bays as well as total mass.
+        // how many bombs can it carry; dependent on transport bays as well as total
+        // mass.
         a.autoSetMaxBombPoints();
 
         a.setArmorTonnage(a.getArmorWeight());
@@ -266,7 +267,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : Aero.LOC_FUSELAGE;
-                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
+                        Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
@@ -297,7 +298,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
             }
         }
         if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                     // core system does not include drone capacity
                     m.setSize(legacyDCCSCapacity);

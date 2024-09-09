@@ -61,7 +61,7 @@ public class ISBARL4 extends RLWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         // This value gets divided by 10 for being one-shot
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.29 : 0;
     }

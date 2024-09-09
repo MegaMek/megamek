@@ -21,8 +21,10 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.Weapon;
 
 /**
- * Commented out in WeaponType. Clan version is same stats as IS one. And Clan versions captures
+ * Commented out in WeaponType. Clan version is same stats as IS one. And Clan
+ * versions captures
  * Tech progression for both.
+ * 
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
@@ -57,7 +59,7 @@ public class ISBAMortarLight extends Weapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.276 : 0;
     }
 

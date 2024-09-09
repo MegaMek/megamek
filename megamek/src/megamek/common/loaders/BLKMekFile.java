@@ -156,7 +156,8 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
 
         if (!dataFile.exists("internal armor")) {
             // try to guess...
-            mech.setInternal(3, (armor[CF] + armor[CB]) / 2, (armor[LF] + armor[LB]) / 2, (armor[LA] / 2), (armor[LL] / 2));
+            mech.setInternal(3, (armor[CF] + armor[CB]) / 2, (armor[LF] + armor[LB]) / 2, (armor[LA] / 2),
+                    (armor[LL] / 2));
         } else {
             armor = dataFile.getDataAsInt("internal armor");
             // all the locations should be about the same...
@@ -243,19 +244,24 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                     critName = critName.substring(0, critName.length() - 4).trim();
                 }
                 if (critName.contains("Engine")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, armored));
+                    mech.setCritical(loc, c,
+                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, armored));
+                    mech.setCritical(loc, c,
+                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, armored));
+                    mech.setCritical(loc, c,
+                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Cockpit")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, armored));
+                    mech.setCritical(loc, c,
+                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Gyro")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, armored));
+                    mech.setCritical(loc, c,
+                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, armored));
                     continue;
                 }
 
@@ -266,7 +272,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                 }
                 if (etype != null) {
                     try {
-                        Mounted mount = mech.addEquipment(etype, loc,
+                        Mounted<?> mount = mech.addEquipment(etype, loc,
                                 rearMounted, BattleArmor.MOUNT_LOC_NONE, false,
                                 turretMounted);
                         mount.setOmniPodMounted(isOmniMounted);
@@ -290,8 +296,8 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                     }
                 }
 
-            }// end of specific location
-        }// end of all crits
+            } // end of specific location
+        } // end of all crits
 
         if (dataFile.exists("omni")) {
             mech.setOmni(true);

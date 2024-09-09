@@ -47,15 +47,18 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * A utility class for retrieving unit information in a formatted string.
  *
- * The information is encoded in a series of classes that implement a common {@link ViewElement}
+ * The information is encoded in a series of classes that implement a common
+ * {@link ViewElement}
  * interface, which can format the element either in html or in plain text.
+ * 
  * @author Ryan McConnell
  * @since January 20, 2003
  */
 public class MekView {
 
     /**
-     * Provides common interface for various ways to present data that can be formatted
+     * Provides common interface for various ways to present data that can be
+     * formatted
      * either as HTML or as plain text.
      *
      * @see SingleLine
@@ -67,11 +70,14 @@ public class MekView {
      */
     interface ViewElement {
         String toPlainText();
+
         String toHTML();
+
         String toDiscord();
     }
 
     private static final Pattern numberPattern = Pattern.compile("\\b\\d+\\b");
+
     private static String highlightNumbersForDiscord(String original) {
         return numberPattern.matcher(original).replaceAll(DiscordFormat.NUMBER_COLOR + "$0" + DiscordFormat.WHITE);
     }
@@ -103,56 +109,72 @@ public class MekView {
     private final ViewFormatting formatting;
 
     /**
-     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
+     * Compiles information about an {@link Entity} useful for showing a summary of
+     * its abilities.
      * Produced output formatted in html.
      *
-     * @param entity           The entity to summarize
-     * @param showDetail       If true, shows individual weapons that make up weapon bays.
+     * @param entity     The entity to summarize
+     * @param showDetail If true, shows individual weapons that make up weapon bays.
      */
     public MekView(Entity entity, boolean showDetail) {
         this(entity, showDetail, false, ViewFormatting.HTML);
     }
 
     /**
-     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
+     * Compiles information about an {@link Entity} useful for showing a summary of
+     * its abilities.
      * Produced output formatted in html.
      *
      * @param entity           The entity to summarize
-     * @param showDetail       If true, shows individual weapons that make up weapon bays.
-     * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
-     *                         equipment-only cost for conventional infantry for MekHQ.
+     * @param showDetail       If true, shows individual weapons that make up weapon
+     *                         bays.
+     * @param useAlternateCost If true, uses alternate cost calculation. This
+     *                         primarily provides an
+     *                         equipment-only cost for conventional infantry for
+     *                         MekHQ.
      */
     public MekView(Entity entity, boolean showDetail, boolean useAlternateCost) {
         this(entity, showDetail, useAlternateCost, ViewFormatting.HTML);
     }
 
     /**
-     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
+     * Compiles information about an {@link Entity} useful for showing a summary of
+     * its abilities.
      *
      * @param entity           The entity to summarize
-     * @param showDetail       If true, shows individual weapons that make up weapon bays.
-     * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
-     *                         equipment-only cost for conventional infantry for MekHQ.
-     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
+     * @param showDetail       If true, shows individual weapons that make up weapon
+     *                         bays.
+     * @param useAlternateCost If true, uses alternate cost calculation. This
+     *                         primarily provides an
+     *                         equipment-only cost for conventional infantry for
+     *                         MekHQ.
+     * @param formatting       Which formatting style to use: HTML, Discord, or None
+     *                         (plaintext)
      */
     public MekView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
-                    final ViewFormatting formatting) {
+            final ViewFormatting formatting) {
         this(entity, showDetail, useAlternateCost, (entity.getCrew() == null), formatting);
     }
 
     /**
-     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
+     * Compiles information about an {@link Entity} useful for showing a summary of
+     * its abilities.
      *
      * @param entity           The entity to summarize
-     * @param showDetail       If true, shows individual weapons that make up weapon bays.
-     * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
-     *                         equipment-only cost for conventional infantry for MekHQ.
-     * @param ignorePilotBV    If true then the BV calculation is done without including the pilot
+     * @param showDetail       If true, shows individual weapons that make up weapon
+     *                         bays.
+     * @param useAlternateCost If true, uses alternate cost calculation. This
+     *                         primarily provides an
+     *                         equipment-only cost for conventional infantry for
+     *                         MekHQ.
+     * @param ignorePilotBV    If true then the BV calculation is done without
+     *                         including the pilot
      *                         BV modifiers
-     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
+     * @param formatting       Which formatting style to use: HTML, Discord, or None
+     *                         (plaintext)
      */
     public MekView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
-                    final boolean ignorePilotBV, final ViewFormatting formatting) {
+            final boolean ignorePilotBV, final ViewFormatting formatting) {
         this.entity = entity;
         this.formatting = formatting;
         isMek = entity instanceof Mek;
@@ -214,8 +236,8 @@ public class MekView {
 
             if (inf.getCrew() != null) {
                 ArrayList<String> augmentations = new ArrayList<>();
-                for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-                        e.hasMoreElements();) {
+                for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES); e
+                        .hasMoreElements();) {
                     final IOption o = e.nextElement();
                     if (o.booleanValue()) {
                         augmentations.add(o.getDisplayableName());
@@ -256,7 +278,7 @@ public class MekView {
         String tableSpacer = "     ";
         tpTable.setColNames(Messages.getString("MekView.Level"), tableSpacer,
                 Messages.getString("MekView.Era"));
-        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT,TableElement.JUSTIFIED_LEFT);
+        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
 
         String eraText = entity.getExperimentalRange()
                 + eraText(entity.getPrototypeDate(), entity.getProductionDate());
@@ -301,7 +323,8 @@ public class MekView {
         String source = entity.getSource();
         if (!source.isBlank()) {
             if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
-                sHead.add(new HyperLinkElement(Messages.getString("MekView.Source"), MMConstants.BT_URL_SHRAPNEL, source));
+                sHead.add(new HyperLinkElement(Messages.getString("MekView.Source"), MMConstants.BT_URL_SHRAPNEL,
+                        source));
             } else {
                 sHead.add(new LabeledElement(Messages.getString("MekView.Source"), source));
             }
@@ -314,14 +337,15 @@ public class MekView {
             sHead.add(new LabeledElement("Role", entity.getRole().toString()));
         }
 
-        //We may have altered the starting mode during configuration, so we save the current one here to restore it
+        // We may have altered the starting mode during configuration, so we save the
+        // current one here to restore it
         int originalMode = entity.getConversionMode();
         entity.setConversionMode(0);
         if (!isGunEmplacement) {
             sBasic.add(new SingleLine());
             StringBuilder moveString = new StringBuilder();
             moveString.append(entity.getWalkMP()).append("/")
-                .append(entity.getRunMPasString());
+                    .append(entity.getRunMPasString());
             if (entity.getJumpMP() > 0) {
                 moveString.append("/")
                         .append(entity.getJumpMP());
@@ -345,17 +369,17 @@ public class MekView {
             }
             if (isVehicle) {
                 moveString.append(" (").append(Messages
-                            .getString("MovementType." + entity.getMovementModeAsString()))
-                            .append(")");
+                        .getString("MovementType." + entity.getMovementModeAsString()))
+                        .append(")");
                 if ((((Tank) entity).getMotiveDamage() > 0)
                         || (((Tank) entity).getMotivePenalty() > 0)) {
                     moveString.append(" ").append(warningStart())
-                        .append("(motive damage: -")
-                        .append(((Tank) entity).getMotiveDamage())
-                        .append("MP/-")
-                        .append(((Tank) entity).getMotivePenalty())
-                        .append(" piloting)")
-                        .append(warningEnd());
+                            .append("(motive damage: -")
+                            .append(((Tank) entity).getMotiveDamage())
+                            .append("MP/-")
+                            .append(((Tank) entity).getMotivePenalty())
+                            .append(" piloting)")
+                            .append(warningEnd());
                 }
             }
             if (entity.isConventionalInfantry() && ((Infantry) entity).getMount() != null) {
@@ -424,7 +448,7 @@ public class MekView {
             StringBuilder hsString = new StringBuilder(String.valueOf(a.getHeatSinks()));
             if (a.getPodHeatSinks() > 0) {
                 hsString.append(" (").append(a.getPodHeatSinks()).append(" ")
-                    .append(Messages.getString("MekView.Pod")).append(")");
+                        .append(Messages.getString("MekView.Pod")).append(")");
             }
             if (a.getHeatCapacity() > a.getHeatSinks()) {
                 hsString.append(" [")
@@ -460,7 +484,7 @@ public class MekView {
             String gyroString = aMek.getGyroTypeString();
             if (aMek.getGyroHits() > 0) {
                 gyroString += " " + warningStart() + "(" + aMek.getGyroHits()
-                    + " hits)" + warningEnd();
+                        + " hits)" + warningEnd();
             }
             if (aMek.hasArmoredGyro()) {
                 gyroString += " (armored)";
@@ -482,7 +506,7 @@ public class MekView {
             sBasic.add(new LabeledElement(Messages.getString("MekView.FuelPoints"),
                     String.format(Messages.getString("MekView.Fuel.format"), fuel, a.getFuelTonnage())));
 
-            //Display Strategic Fuel Use for Small Craft and up
+            // Display Strategic Fuel Use for Small Craft and up
             if (isSmallCraft || isJumpship) {
                 sBasic.add(new LabeledElement(Messages.getString("MekView.TonsPerBurnDay"),
                         String.format("%2.2f", a.getStrategicFuelUse())));
@@ -514,7 +538,7 @@ public class MekView {
             }
 
             List<String> wpQuirksList = new ArrayList<>();
-            for (Mounted weapon: entity.getWeaponList()) {
+            for (Mounted<?> weapon : entity.getWeaponList()) {
                 List<String> activeWeaponQuirksNames = weapon.getQuirks().activeQuirks().stream()
                         .map(IOption::getDisplayableNameWithValue)
                         .collect(Collectors.toList());
@@ -557,9 +581,9 @@ public class MekView {
             if (!sb.isEmpty()) {
                 sInvalid.add(new SingleLine());
                 String[] errorLines = sb.toString().split("\n");
-                String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ?
-                        Messages.getString("MekView.InvalidButIllegalQuirk") :
-                        Messages.getString("MekView.InvalidReasons");
+                String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
+                        ? Messages.getString("MekView.InvalidButIllegalQuirk")
+                        : Messages.getString("MekView.InvalidReasons");
                 ItemList errorList = new ItemList(label);
                 Arrays.stream(errorLines).forEach(errorList::addItem);
                 sInvalid.add(errorList);
@@ -589,13 +613,14 @@ public class MekView {
     }
 
     /**
-     * Converts a list of {@link ViewElement}s to a String using the selected format.
+     * Converts a list of {@link ViewElement}s to a String using the selected
+     * format.
      *
      * @param section The elements to format.
-     * @return        The formatted data.
+     * @return The formatted data.
      */
     private String getReadout(List<ViewElement> section) {
-        Function<ViewElement,String> mapper;
+        Function<ViewElement, String> mapper;
         switch (formatting) {
             case HTML:
                 mapper = ViewElement::toHTML;
@@ -613,7 +638,9 @@ public class MekView {
     }
 
     /**
-     * The head section includes the title (unit name), tech level and availability, tonnage, bv, and cost.
+     * The head section includes the title (unit name), tech level and availability,
+     * tonnage, bv, and cost.
+     * 
      * @return The data from the head section.
      */
     public String getMekReadoutHead() {
@@ -621,8 +648,10 @@ public class MekView {
     }
 
     /**
-     * The basic section includes general details such as movement, system equipment (cockpit, gyro, etc.)
+     * The basic section includes general details such as movement, system equipment
+     * (cockpit, gyro, etc.)
      * and armor.
+     * 
      * @return The data from the basic section
      */
     public String getMekReadoutBasic() {
@@ -631,6 +660,7 @@ public class MekView {
 
     /**
      * The invalid section includes reasons why the unit is invalid
+     * 
      * @return The data from the invalid section
      */
     public String getMekReadoutInvalid() {
@@ -638,7 +668,9 @@ public class MekView {
     }
 
     /**
-     * The loadout includes weapons, ammo, and other equipment broken down by location.
+     * The loadout includes weapons, ammo, and other equipment broken down by
+     * location.
+     * 
      * @return The data from the loadout section.
      */
     public String getMekReadoutLoadout() {
@@ -646,8 +678,10 @@ public class MekView {
     }
 
     /**
-     * The fluff section includes fluff details like unit history and deployment patterns
+     * The fluff section includes fluff details like unit history and deployment
+     * patterns
      * as well as quirks.
+     * 
      * @return The data from the fluff section.
      */
     public String getMekReadoutFluff() {
@@ -727,7 +761,8 @@ public class MekView {
 
         if (!(isInf && !isBA)) {
             TableElement locTable = new TableElement(5);
-            locTable.setColNames("", "Internal", "Armor", "", ""); // last two columns are patchwork armor and location damage
+            locTable.setColNames("", "Internal", "Armor", "", ""); // last two columns are patchwork armor and location
+                                                                   // damage
             locTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                     TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
             for (int loc = 0; loc < entity.locations(); loc++) {
@@ -747,7 +782,7 @@ public class MekView {
                     }
 
                 }
-                String[] row = {entity.getLocationName(loc),
+                String[] row = { entity.getLocationName(loc),
                         renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc), formatting),
                         "", "", "" };
 
@@ -765,7 +800,8 @@ public class MekView {
                 if (entity.hasRearArmor(loc)) {
                     row = new String[] { entity.getLocationName(loc) + " (rear)", "",
                             renderArmor(entity.getArmorForReal(loc, true),
-                                    entity.getOArmor(loc, true), formatting), "", ""};
+                                    entity.getOArmor(loc, true), formatting),
+                            "", "" };
                     locTable.addRow(row);
                 }
             }
@@ -874,12 +910,10 @@ public class MekView {
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
             retVal.add(new LabeledElement("Primary Weapon",
-                    (null != inf.getPrimaryWeapon()) ?
-                            inf.getPrimaryWeapon().getDesc() : "None"));
+                    (null != inf.getPrimaryWeapon()) ? inf.getPrimaryWeapon().getDesc() : "None"));
             retVal.add(new LabeledElement("Secondary Weapon",
-                    (null != inf.getSecondaryWeapon()) ?
-                            inf.getSecondaryWeapon().getDesc()
-                                    + " (" + inf.getSecondaryWeaponsPerSquad() + ")" : "None"));
+                    (null != inf.getSecondaryWeapon()) ? inf.getSecondaryWeapon().getDesc()
+                            + " (" + inf.getSecondaryWeaponsPerSquad() + ")" : "None"));
             retVal.add(new LabeledElement("Damage per trooper",
                     String.format("%3.3f", inf.getDamagePerTrooper())));
             retVal.add(new SingleLine());
@@ -931,7 +965,7 @@ public class MekView {
                 row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
             } else if (wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
                 row[3] = warningStart() + Messages.getString("MekView.WeaponDamage")
-                    + ")" + warningEnd();
+                        + ")" + warningEnd();
             }
             if (mounted.isDestroyed()) {
                 if (mounted.isRepairable()) {
@@ -989,11 +1023,11 @@ public class MekView {
         return retVal;
     }
 
-    private String quirkMarker(Mounted mounted) {
+    private String quirkMarker(Mounted<?> mounted) {
         return (mounted.countQuirks() > 0) ? " (Q)" : "";
     }
 
-    private boolean hideAmmo(Mounted mounted) {
+    private boolean hideAmmo(Mounted<?> mounted) {
         return ((mounted.getLinkedBy() != null) && mounted.getLinkedBy().isOneShot())
                 || (mounted.getSize() == 0) || (mounted.getLocation() == Entity.LOC_NONE);
     }
@@ -1004,7 +1038,7 @@ public class MekView {
         ammoTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
 
-        for (Mounted mounted : entity.getAmmo()) {
+        for (Mounted<?> mounted : entity.getAmmo()) {
             if (hideAmmo(mounted)) {
                 continue;
             }
@@ -1024,18 +1058,17 @@ public class MekView {
             }
         }
         if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            for (Mounted mounted : entity.getWeaponList()) {
-                String[] row = {mounted.getName(),
+            for (Mounted<?> mounted : entity.getWeaponList()) {
+                String[] row = { mounted.getName(),
                         entity.getLocationAbbr(mounted.getLocation()),
                         String.valueOf((int) mounted.getSize() * ((InfantryWeapon) mounted.getType()).getShots()),
-                        ""};
+                        "" };
                 if (entity.isOmni()) {
-                    row[3] = mounted.isOmniPodMounted() ?
-                            Messages.getString("MekView.Pod") :
-                            Messages.getString("MekView.Fixed");
+                    row[3] = mounted.isOmniPodMounted() ? Messages.getString("MekView.Pod")
+                            : Messages.getString("MekView.Fixed");
                 }
                 int shotsLeft = 0;
-                for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                for (Mounted<?> current = mounted.getLinked(); current != null; current = current.getLinked()) {
                     shotsLeft += current.getUsableShotsLeft();
                 }
                 if (mounted.isDestroyed()) {
@@ -1076,17 +1109,17 @@ public class MekView {
         miscTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER);
         int nEquip = 0;
-        for (Mounted mounted : entity.getMisc()) {
+        for (Mounted<?> mounted : entity.getMisc()) {
             String name = mounted.getName();
             if ((((mounted.getLocation() == Entity.LOC_NONE)
-                        // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-                        && (!isMek || mounted.getCriticals() > 0)))
+                    // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
+                    && (!isMek || mounted.getCriticals() > 0)))
                     || name.contains("Jump Jet")
                     || (name.contains("CASE")
-                        && !name.contains("II")
-                        && entity.isClan())
+                            && !name.contains("II")
+                            && entity.isClan())
                     || (name.contains("Heat Sink")
-                        && !name.contains("Radical"))
+                            && !name.contains("Radical"))
                     || EquipmentType.isArmorType(mounted.getType())
                     || EquipmentType.isStructureType(mounted.getType())) {
                 // These items are displayed elsewhere, so skip them here.
@@ -1144,7 +1177,7 @@ public class MekView {
             crewTable.addRow(Messages.getString("MekView.Officers"), String.valueOf(a.getNOfficers()));
             crewTable.addRow(Messages.getString("MekView.Enlisted"),
                     String.valueOf(Math.max(a.getNCrew()
-                    - a.getBayPersonnel() - a.getNGunners() - a.getNOfficers(), 0)));
+                            - a.getBayPersonnel() - a.getNGunners() - a.getNOfficers(), 0)));
             crewTable.addRow(Messages.getString("MekView.Gunners"), String.valueOf(a.getNGunners()));
             crewTable.addRow(Messages.getString("MekView.BayPersonnel"), String.valueOf(a.getBayPersonnel()));
             if (a.getNPassenger() > 0) {
@@ -1222,7 +1255,8 @@ public class MekView {
     }
 
     /**
-     * Used when an element is expected but the unit has no data for it. Outputs an empty string.
+     * Used when an element is expected but the unit has no data for it. Outputs an
+     * empty string.
      */
     private static class EmptyElement implements ViewElement {
 
@@ -1244,7 +1278,8 @@ public class MekView {
     }
 
     /**
-     * Basic one-line entry consisting of a label, a colon, and a value. In html and discord the label is bold.
+     * Basic one-line entry consisting of a label, a colon, and a value. In html and
+     * discord the label is bold.
      *
      */
     private static class LabeledElement implements ViewElement {
@@ -1273,30 +1308,34 @@ public class MekView {
         @Override
         public String toDiscord() {
             String htmlCleanedText = value.replaceAll("<[Bb][Rr]> *", "\n")
-                .replaceAll("<[Pp]> *", "\n\n")
-                .replaceAll("</[Pp]> *", "\n")
-                .replaceAll("<[^>]*>", "");
-            return DiscordFormat.BOLD + label + DiscordFormat.RESET + ": " + highlightNumbersForDiscord(htmlCleanedText) + '\n';
+                    .replaceAll("<[Pp]> *", "\n\n")
+                    .replaceAll("</[Pp]> *", "\n")
+                    .replaceAll("<[^>]*>", "");
+            return DiscordFormat.BOLD + label + DiscordFormat.RESET + ": " + highlightNumbersForDiscord(htmlCleanedText)
+                    + '\n';
         }
     }
 
     /**
-     * Data laid out in a table with named columns. The columns are left-justified by default,
-     * but justification can be set for columns individually. Plain text output requires a monospace
-     * font to line up correctly. For HTML and discord output the background color of an individual row can be set.
+     * Data laid out in a table with named columns. The columns are left-justified
+     * by default,
+     * but justification can be set for columns individually. Plain text output
+     * requires a monospace
+     * font to line up correctly. For HTML and discord output the background color
+     * of an individual row can be set.
      *
      */
     private static class TableElement implements ViewElement {
 
-        static final int JUSTIFIED_LEFT   = 0;
+        static final int JUSTIFIED_LEFT = 0;
         static final int JUSTIFIED_CENTER = 1;
-        static final int JUSTIFIED_RIGHT  = 2;
+        static final int JUSTIFIED_RIGHT = 2;
 
         private final int[] justification;
         private final String[] colNames;
         private final List<String[]> data = new ArrayList<>();
-        private final Map<Integer,Integer> colWidth = new HashMap<>();
-        private final Map<Integer,String> colors = new HashMap<>();
+        private final Map<Integer, Integer> colWidth = new HashMap<>();
+        private final Map<Integer, String> colors = new HashMap<>();
 
         TableElement(int colCount) {
             justification = new int[colCount];
@@ -1476,7 +1515,8 @@ public class MekView {
     }
 
     /**
-     * Displays a label (bold for html and discord output) followed by a column of items
+     * Displays a label (bold for html and discord output) followed by a column of
+     * items
      *
      */
     private static class ItemList implements ViewElement {
@@ -1539,7 +1579,8 @@ public class MekView {
     }
 
     /**
-     * Displays a single line of text. The default constructor is used to insert a new line.
+     * Displays a single line of text. The default constructor is used to insert a
+     * new line.
      */
     private static class SingleLine implements ViewElement {
 
@@ -1610,7 +1651,8 @@ public class MekView {
     }
 
     /**
-     * Displays a single line in bold in a larger font in html. In plain text simply displays a single line.
+     * Displays a single line in bold in a larger font in html. In plain text simply
+     * displays a single line.
      */
     private static class Title implements ViewElement {
 
@@ -1632,13 +1674,16 @@ public class MekView {
 
         @Override
         public String toDiscord() {
-            return DiscordFormat.BOLD.toString() + DiscordFormat.UNDERLINE + DiscordFormat.CYAN + title + DiscordFormat.RESET + '\n';
+            return DiscordFormat.BOLD.toString() + DiscordFormat.UNDERLINE + DiscordFormat.CYAN + title
+                    + DiscordFormat.RESET + '\n';
         }
     }
 
     /**
-     * Marks warning text; in html the text is displayed in red. In plain text it is preceded and followed
+     * Marks warning text; in html the text is displayed in red. In plain text it is
+     * preceded and followed
      * by an asterisk.
+     * 
      * @return A String that is used to mark the beginning of a warning.
      */
     private String warningStart() {
@@ -1656,6 +1701,7 @@ public class MekView {
 
     /**
      * Returns the end element of the warning text.
+     * 
      * @return A String that is used to mark the end of a warning.
      */
     private String warningEnd() {
@@ -1672,8 +1718,10 @@ public class MekView {
     }
 
     /**
-     * Marks the beginning of a section of italicized text if using html output. For plain text
+     * Marks the beginning of a section of italicized text if using html output. For
+     * plain text
      * returns an empty String.
+     * 
      * @return The starting element for italicized text.
      */
     private String italicsStart() {
@@ -1691,6 +1739,7 @@ public class MekView {
 
     /**
      * Marks the end of a section of italicized text.
+     * 
      * @return The ending element for italicized text.
      */
     private String italicsEnd() {

@@ -62,7 +62,7 @@ public abstract class SRMWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
@@ -94,7 +94,7 @@ public abstract class SRMWeapon extends MissileWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return super.getBattleForceDamage(range, fcs) * 2;
     }
 

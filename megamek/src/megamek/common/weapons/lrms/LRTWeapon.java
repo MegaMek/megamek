@@ -82,14 +82,14 @@ public abstract class LRTWeapon extends MissileWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (isClan()) {
             if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
             } else if (isArtemisV(fcs)) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.42 * rackSize / 5 : 0;
             } else {
-                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3  * rackSize / 5 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3 * rackSize / 5 : 0;
             }
         } else {
             if (isArtemisIV(fcs) || isArtemisProto(fcs)) {

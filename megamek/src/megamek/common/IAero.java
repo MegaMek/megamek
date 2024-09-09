@@ -156,11 +156,15 @@ public interface IAero {
     double getFuelPointsPerTon();
 
     /**
-     * @return True when this aero requires fuel to move. Note that the result is undefined when
-     * the unit has no engine. Callers should consider this case themselves. Also note that
-     * this method does not check whether fuel use as a game option is active, only if the unit
-     * technically requires fuel to move. For example, returns false for solar powered prop-driven
-     * fixed wing support (TM p129).
+     * @return True when this aero requires fuel to move. Note that the result is
+     *         undefined when
+     *         the unit has no engine. Callers should consider this case themselves.
+     *         Also note that
+     *         this method does not check whether fuel use as a game option is
+     *         active, only if the unit
+     *         technically requires fuel to move. For example, returns false for
+     *         solar powered prop-driven
+     *         fixed wing support (TM p129).
      */
     default boolean requiresFuel() {
         return true;
@@ -188,7 +192,6 @@ public interface IAero {
     void autoSetFatalThresh();
 
     int getAltitude();
-
 
     /**
      * Iterate through current weapons and count the number in each capital
@@ -232,7 +235,7 @@ public interface IAero {
                     String name = key.split(":")[0];
                     int loc = Integer.parseInt(key.split(":")[1]);
                     EquipmentType etype = EquipmentType.get(name);
-                    Mounted newmount;
+                    Mounted<?> newmount;
                     if (etype != null) {
                         try {
                             newmount = ((Entity) this).addWeaponGroup(etype, loc);
@@ -254,7 +257,7 @@ public interface IAero {
      * Set number of fuel points based on fuel tonnage.
      *
      * @param fuelTons
-     *            The number of tons of fuel
+     *                 The number of tons of fuel
      */
     void setFuelTonnage(double fuelTons);
 
@@ -333,12 +336,15 @@ public interface IAero {
     default PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(md.getLastStepMovementType());
 
-        // if the entity has already moved, its movement got interrupted (probably by a hidden unit, not much else can interrupt an aero unit)
-        // in which case, the movement is complete. We just need to allow the user to hit 'done'.
+        // if the entity has already moved, its movement got interrupted (probably by a
+        // hidden unit, not much else can interrupt an aero unit)
+        // in which case, the movement is complete. We just need to allow the user to
+        // hit 'done'.
         if (((Entity) this).delta_distance > 0) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: aero has already moved");
-        // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere,
-        // hovering, landing, or going off board
+            // an airborne, aerodyne aero is considered to "stall" if it's not moving
+            // anywhere,
+            // hovering, landing, or going off board
         } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
                 && !((Entity) this).getGame().getBoard().inSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
@@ -418,12 +424,13 @@ public interface IAero {
      *
      * @param moveType
      * @param velocity
-     *            Velocity when the check is to be made, this needs to be passed
-     *            as the check could happen as part of a Move Path
+     *                   Velocity when the check is to be made, this needs to be
+     *                   passed
+     *                   as the check could happen as part of a Move Path
      * @param landingPos
-     *            The final position the Aero will land on.
+     *                   The final position the Aero will land on.
      * @param isVertical
-     *            If this a vertical or horizontal landing
+     *                   If this a vertical or horizontal landing
      * @return A PilotingRollData tha represents the landing control roll that
      *         must be passed
      */
@@ -449,7 +456,8 @@ public interface IAero {
             roll.addModifier(+2, "No life support");
         }
 
-        // Landing Gear Partial Repairs, only apply if the landing gear isn't currently damaged
+        // Landing Gear Partial Repairs, only apply if the landing gear isn't currently
+        // damaged
         if (getLandingGearMod(false) == 0) {
             if (getLandingGearPartialRepairs() == 2) {
                 roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
@@ -462,7 +470,8 @@ public interface IAero {
         if (avihits < 3) {
             if (getAvionicsMisrepaired() == 1) {
                 roll.addModifier(1, "misrepaired avionics");
-            } if (getAvionicsMisreplaced() == 1) {
+            }
+            if (getAvionicsMisreplaced() == 1) {
                 roll.addModifier(1, "misreplaced avionics");
             }
         }
@@ -754,7 +763,8 @@ public interface IAero {
         if (!hex.isClearForLanding()) {
             return "Unacceptable terrain for landing";
         }
-        // Aerospace units are destroyed by water landings except for those that have flotation hulls.
+        // Aerospace units are destroyed by water landings except for those that have
+        // flotation hulls.
         // LAMs are not.
         if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
                 && (hex.terrainLevel(Terrains.WATER) > 0)
@@ -809,14 +819,15 @@ public interface IAero {
      * adjusted by certain game options
      *
      * @param fuelUsed
-     *            The number of fuel points to use
+     *                 The number of fuel points to use
      */
     default void useFuel(int fuelUsed) {
         setCurrentFuel(Math.max(0, getCurrentFuel() - fuelUsed));
     }
 
     /**
-     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     * A method to add/remove sensors that only work in space as we transition in
+     * and out of an atmosphere
      */
     default void updateSensorOptions() {
 

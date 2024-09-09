@@ -53,9 +53,9 @@ public abstract class UnitStatusFormatter {
                 sb.append("No ").append(e.getCrew().getCrewType().getRoleName(i));
             } else {
                 sb.append(e.getCrew().getCrewType().getRoleName(i)).append(": ")
-                    .append(e.getCrew().getName(i));
+                        .append(e.getCrew().getName(i));
                 sb.append(" (").append(e.getCrew().getGunnery(i)).append("/")
-                    .append(e.getCrew().getPiloting(i)).append(")");
+                        .append(e.getCrew().getPiloting(i)).append(")");
             }
             sb.append("\n");
         }
@@ -69,7 +69,7 @@ public abstract class UnitStatusFormatter {
 
     private static String formatAmmo(Entity e) {
         StringBuilder sb = new StringBuilder(1024);
-        for (Mounted ammo : e.getAmmo()) {
+        for (Mounted<?> ammo : e.getAmmo()) {
             sb.append(ammo.getName());
             sb.append(": ").append(ammo.getBaseShotsLeft())
                     .append("\n");
@@ -103,7 +103,7 @@ public abstract class UnitStatusFormatter {
                         sb.append(ProtoMek.systemNames[cs.getIndex()]);
                     }
                 } else if (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                    Mounted m = cs.getMount();
+                    Mounted<?> m = cs.getMount();
                     sb.append(cs.isHit() ? "*" : "")
                             .append(cs.isDestroyed() ? "*" : "")
                             .append(cs.isBreached() ? "x" : "")

@@ -190,7 +190,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
         // check if attacker has fired leg-mounted weapons
-        for (Mounted mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && (mounted.getLocation() == legLoc)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Weapons fired from leg this turn");
@@ -234,7 +234,6 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (ae.isHullDown()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
-
 
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
@@ -287,12 +286,12 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
 
-        //What to do with grounded dropships? Awaiting rules clarification, but
-        //until then, we will assume that if the attacker height is less than half
-        //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
-        //See Dropship.rollHitLocation to see how HIT_KICK is handled
+        // What to do with grounded dropships? Awaiting rules clarification, but
+        // until then, we will assume that if the attacker height is less than half
+        // the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
+        // See Dropship.rollHitLocation to see how HIT_KICK is handled
         if (target instanceof Dropship) {
-            if ((attackerElevation - targetElevation) > (target.getHeight()/2)) {
+            if ((attackerElevation - targetElevation) > (target.getHeight() / 2)) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
@@ -320,16 +319,24 @@ public class KickAttackAction extends PhysicalAttackAction {
         final int leg = this.getLeg();
         switch (leg) {
             case KickAttackAction.BOTH:
-                rollLeft = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT).getValueAsString();
-                rollRight = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                rollLeft = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
+                        .getValueAsString();
+                rollRight = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
+                        .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickBoth", rollLeft, rollRight);
                 break;
             case KickAttackAction.LEFT:
-                rollLeft = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                rollLeft = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
+                        .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickLeft", rollLeft);
                 break;
             case KickAttackAction.RIGHT:
-                rollRight = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                rollRight = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
+                        .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickRight", rollRight);
                 break;
             default:

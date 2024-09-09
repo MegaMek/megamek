@@ -77,16 +77,15 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new VGLWeaponHandler(toHit, waa, game, manager);
     }
 
-    public static Targetable getTargetHex(Mounted weapon, int weaponID) {
+    public static Targetable getTargetHex(Mounted<?> weapon, int weaponID) {
         Entity owner = weapon.getEntity();
         int facing;
 
-        facing = owner.isSecondaryArcWeapon(weaponID) ?
-                owner.getSecondaryFacing() : owner.getFacing();
+        facing = owner.isSecondaryArcWeapon(weaponID) ? owner.getSecondaryFacing() : owner.getFacing();
         facing = (facing + weapon.getFacing()) % 6;
 
         // attempt to target first the "correct" automatic coordinates.

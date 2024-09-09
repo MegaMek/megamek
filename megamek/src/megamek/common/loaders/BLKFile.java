@@ -305,7 +305,7 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, false,
+                        Mounted<?> mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted, isOmniMounted);
                         // Need to set facing for VGLs
@@ -342,7 +342,7 @@ public class BLKFile {
             }
         }
         if (mashOperatingTheaters > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_MASH)) {
                     // includes one as part of the core component
                     m.setSize(m.getSize() + mashOperatingTheaters);
@@ -351,7 +351,7 @@ public class BLKFile {
             }
         }
         if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                     // core system does not include drone capacity
                     m.setSize(legacyDCCSCapacity);
@@ -721,7 +721,7 @@ public class BLKFile {
         }
 
         List<String> weaponQuirkList = new ArrayList<>();
-        for (Mounted equipment : t.getEquipment()) {
+        for (Mounted<?> equipment : t.getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
                 weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(equipment.getLocation()) + ":"
                         + t.slotNumber(equipment) + ":" + equipment.getType().getInternalName());
@@ -1198,7 +1198,7 @@ public class BLKFile {
         return blk;
     }
 
-    private static String encodeEquipmentLine(Mounted m) {
+    private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
         if (m.isRearMounted()) {
             name = "(R) " + name;

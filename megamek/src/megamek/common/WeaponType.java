@@ -447,11 +447,11 @@ public class WeaponType extends EquipmentType {
         return ammoType;
     }
 
-    public int[] getRanges(Mounted weapon) {
+    public int[] getRanges(Mounted<?> weapon) {
         return getRanges(weapon, weapon.getLinked());
     }
 
-    public int[] getRanges(Mounted weapon, Mounted ammo) {
+    public int[] getRanges(Mounted<?> weapon, Mounted<?> ammo) {
         // modify the ranges for ATM missile systems based on the ammo selected
         // FIXME: this is not the right place to hardcode these
         int minRange = getMinimumRange();
@@ -821,7 +821,7 @@ public class WeaponType extends EquipmentType {
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
      * @return - damage in BattleForce scale
      */
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return getBattleForceDamage(range);
     }
 

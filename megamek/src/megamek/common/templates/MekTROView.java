@@ -237,7 +237,7 @@ public class MekTROView extends TROView {
     }
 
     @Override
-    protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+    protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
         String loc = entity.getLocationAbbr(mounted.getLocation());
         if (mounted.isRearMounted()) {
             loc += "(R)";
@@ -246,7 +246,7 @@ public class MekTROView extends TROView {
     }
 
     @Override
-    protected boolean skipMount(Mounted mount, boolean includeAmmo) {
+    protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
         if (mount.getLocation() == Entity.LOC_NONE) {
             // Skip heat sinks, Clan CASE, armor, and structure. We do want to show things
             // like robotic control systems.

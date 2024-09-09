@@ -42,7 +42,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
         Coords targetPos = target.getPosition();
 
-        Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE))) {
             LogManager.getLogger().error("Not using mine clearance ammo!");
@@ -237,7 +237,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
     /**
      * Indents all reports in the collection, and adds a new line to the last
-     * one.  This is used to make nested reports line-up and look nicer.
+     * one. This is used to make nested reports line-up and look nicer.
      *
      * @param reports
      */

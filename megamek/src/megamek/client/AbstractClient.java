@@ -79,7 +79,10 @@ public abstract class AbstractClient implements IClient {
 
     protected final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
-    /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
+    /**
+     * The bots controlled by the local player; maps a bot's name String to a bot's
+     * client.
+     */
     protected Map<String, AbstractClient> bots = new TreeMap<>(String::compareTo);
 
     // Image cache for storing unit icons in as base64 with the unit ID as key
@@ -183,7 +186,8 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Called to determine whether the game log should be kept.
-     * Default implementation delegates to {@code PreferenceManager.getClientPreferences()}.
+     * Default implementation delegates to
+     * {@code PreferenceManager.getClientPreferences()}.
      */
     protected boolean keepGameLog() {
         return PreferenceManager.getClientPreferences().keepGameLog();
@@ -236,7 +240,10 @@ public abstract class AbstractClient implements IClient {
         }
     }
 
-    /** Sends the packet to the server, if this client is connected. Otherwise, does nothing. */
+    /**
+     * Sends the packet to the server, if this client is connected. Otherwise, does
+     * nothing.
+     */
     protected void send(Packet packet) {
         if (connection != null) {
             connection.send(packet);
@@ -256,8 +263,10 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Perform a dump of the current memory usage. This method is useful in tracking performance issues
-     * on various player's systems. You can activate it by changing the "memorydumpon" setting to
+     * Perform a dump of the current memory usage. This method is useful in tracking
+     * performance issues
+     * on various player's systems. You can activate it by changing the
+     * "memorydumpon" setting to
      * "true" in the clientsettings.xml file.
      *
      * @param where A String indicating which part of the game is making this call.
@@ -326,7 +335,7 @@ public abstract class AbstractClient implements IClient {
      * This is used by external programs running megamek
      *
      * @param l
-     *            the game listener.
+     *          the game listener.
      */
     @SuppressWarnings("unused")
     public void addCloseClientListener(CloseClientListener l) {
@@ -334,7 +343,8 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * This method is the starting point that handles all received Packets. This method should only
+     * This method is the starting point that handles all received Packets. This
+     * method should only
      * be overriden in very special cases such as in Princess to call Precognition.
      *
      * @param packet The packet to handle
@@ -346,7 +356,8 @@ public abstract class AbstractClient implements IClient {
         }
         try {
             if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
-                //TODO gather any fired events and fire them only at the end of the packets, possibly only for SBF
+                // TODO gather any fired events and fire them only at the end of the packets,
+                // possibly only for SBF
                 @SuppressWarnings("unchecked")
                 var includedPackets = (List<Packet>) packet.getObject(0);
                 for (Packet includedPacket : includedPackets) {
@@ -365,11 +376,15 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Handles any Packets that are specific to the game type (TW, AS...). When implementing this,
-     * make sure that this doesn't do duplicate actions with {@link #handleGameIndependentPacket(Packet)}
-     * - but packets may be handled in both methods (all packets traverse both methods).
+     * Handles any Packets that are specific to the game type (TW, AS...). When
+     * implementing this,
+     * make sure that this doesn't do duplicate actions with
+     * {@link #handleGameIndependentPacket(Packet)}
+     * - but packets may be handled in both methods (all packets traverse both
+     * methods).
      *
-     * When making changes, do not forget to update Precognition which is a Client clone but unfortunately
+     * When making changes, do not forget to update Precognition which is a Client
+     * clone but unfortunately
      * not a subclass.
      *
      * @param packet The packet to handle
@@ -493,6 +508,8 @@ public abstract class AbstractClient implements IClient {
                 synchronized (unitNameTracker) {
                     unitNameTracker.clear();
                 }
+                break;
+            default:
                 break;
         }
     }

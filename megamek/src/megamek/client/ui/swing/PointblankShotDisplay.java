@@ -59,7 +59,7 @@ public class PointblankShotDisplay extends FiringDisplay {
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the pointblank phase.  Each command has a string for
+     * carried out during the pointblank phase. Each command has a string for
      * the command plus a flag that determines what unit type it is
      * appropriate for.
      *
@@ -112,9 +112,8 @@ public class PointblankShotDisplay extends FiringDisplay {
 
             String msg_left = Messages.getString("Left");
             String msg_right = Messages.getString("Right");
-            String msg_next= Messages.getString("Next");
+            String msg_next = Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
-
 
             switch (this) {
                 case FIRE_TWIST:
@@ -128,7 +127,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                     break;
                 case FIRE_SKIP:
                     result = "<BR>";
-                    result +=  "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
@@ -275,7 +274,6 @@ public class PointblankShotDisplay extends FiringDisplay {
         return buttonList;
     }
 
-
     /**
      * Selects an entity, by number, for firing.
      */
@@ -302,7 +300,7 @@ public class PointblankShotDisplay extends FiringDisplay {
 
             // only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing()
-                            && ce().getCrew().isActive());
+                    && ce().getCrew().isActive());
 
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
@@ -392,7 +390,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                 int totalheat = 0;
                 for (EntityAction action : attacks) {
                     if (action instanceof WeaponAttackAction) {
-                        Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
+                        Mounted<?> weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
                         totalheat += weapon.getCurrentHeat();
                     }
                 }
@@ -538,7 +536,7 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         // declare searchlight, if possible
         if (GUIP.getAutoDeclareSearchlight()
-            && ce().isUsingSearchlight()) {
+                && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
@@ -556,7 +554,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         if ((mounted.getLinked() != null)
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)
                 && (mounted.getLinked().getType() instanceof AmmoType)) {
-            Mounted ammoMount = mounted.getLinked();
+            Mounted<?> ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             EnumSet<AmmoType.Munitions> ammoMunitionType = ammoType.getMunitionType();
@@ -570,7 +568,8 @@ public class PointblankShotDisplay extends FiringDisplay {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
-                waa.setHomingShot(ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) && ammoMount.curMode().equals("Homing"));
+                waa.setHomingShot(ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING)
+                        && ammoMount.curMode().equals("Homing"));
             }
         }
 
@@ -597,14 +596,14 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1)
-            && GUIP.getAutoEndFiring()) {
+                && GUIP.getAutoEndFiring()) {
             ready();
             return;
         }
 
         // otherwise, display firing info for the next weapon
         clientgui.getUnitDisplay().wPan.displayMek(ce());
-        Mounted nextMounted = ce().getEquipment(nextWeapon);
+        Mounted<?> nextMounted = ce().getEquipment(nextWeapon);
         if (!mounted.getType().hasFlag(WeaponType.F_VGL) && (nextMounted != null)
                 && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
             clientgui.getUnitDisplay().wPan.setPrevTarget(target);
@@ -623,7 +622,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             return;
         }
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Mounted weapon = ce().getEquipment(weaponId);
+        Mounted<?> weapon = ce().getEquipment(weaponId);
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing;
@@ -664,7 +663,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
-               && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
+                && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
                 WeaponMounted weapon = (WeaponMounted) ce().getEquipment(weaponId);
@@ -675,7 +674,8 @@ public class PointblankShotDisplay extends FiringDisplay {
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true,
                             WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
-                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
+                    clientgui.getUnitDisplay().wPan.setTarget(target,
+                            Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
 
                 } else {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
@@ -696,7 +696,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
             WeaponMounted m = ce().getWeapon(weaponId);
             // If we have a Centurion Weapon System selected, we may need to
-            //  update ranges.
+            // update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
             }
@@ -726,7 +726,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         }
 
         if ((weaponId != -1) && (ce() != null)) {
-            Mounted m = ce().getEquipment(weaponId);
+            Mounted<?> m = ce().getEquipment(weaponId);
             setFireModeEnabled(m.isModeSwitchable());
         }
 
@@ -745,13 +745,13 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.isProcessingPointblankShot()
-            || ((b.getButton() != MouseEvent.BUTTON1))) {
+                || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
         if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
@@ -782,7 +782,7 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         Coords evtCoords = b.getCoords();
         if (clientgui.isProcessingPointblankShot() && (evtCoords != null)
-            && (ce() != null)) {
+                && (ce() != null)) {
             if (!evtCoords.equals(ce().getPosition())) {
                 if (shiftheld) {
                     updateFlipArms(false);
@@ -836,7 +836,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
-                   || (ev.getActionCommand().equals(FiringCommand.FIRE_CANCEL.getCmd()))) {
+                || (ev.getActionCommand().equals(FiringCommand.FIRE_CANCEL.getCmd()))) {
             clear();
         }
     }

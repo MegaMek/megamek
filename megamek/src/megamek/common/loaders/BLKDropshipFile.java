@@ -96,7 +96,6 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         // All dropships are VSTOL and can hover
         a.setVSTOL(true);
 
-
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
             throw new EntityLoadingException(
@@ -285,7 +284,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
 
                 if (etype != null) {
                     // first load the equipment
-                    Mounted newmount;
+                    Mounted<?> newmount;
                     try {
                         if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
@@ -356,7 +355,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
             }
         }
         if (mashOperatingTheaters > 0) {
-            for (Mounted m : a.getMisc()) {
+            for (Mounted<?> m : a.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_MASH)) {
                     // includes one as part of the core component
                     m.setSize(m.getSize() + mashOperatingTheaters);
@@ -365,7 +364,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
             }
         }
         if (legacyDCCSCapacity > 0) {
-            for (Mounted m : a.getMisc()) {
+            for (Mounted<?> m : a.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                     // core system does not include drone capacity
                     m.setSize(legacyDCCSCapacity);

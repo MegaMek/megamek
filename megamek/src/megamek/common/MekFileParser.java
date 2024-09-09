@@ -77,7 +77,7 @@ public class MekFileParser {
         } else {
             // try zip file
             try (ZipFile zipFile = new ZipFile(f.getAbsolutePath());
-                 InputStream is = zipFile.getInputStream(zipFile.getEntry(entryName))) {
+                    InputStream is = zipFile.getInputStream(zipFile.getEntry(entryName))) {
                 parse(is, entryName);
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
@@ -107,16 +107,18 @@ public class MekFileParser {
     }
 
     /**
-     * Initialize the list of canon unit names; should only be called if canonUnitNames is null or
+     * Initialize the list of canon unit names; should only be called if
+     * canonUnitNames is null or
      * needs to be reinitialized.
-     * @param dir location where the canonUnitNames file should be
+     *
+     * @param dir      location where the canonUnitNames file should be
      * @param fileName String name of the file containing canon unit names
      */
     protected static void initCanonUnitNames(File dir, String fileName) {
         Vector<String> unitNames = new Vector<>();
         try (FileReader fr = new FileReader(new MegaMekFile(
                 dir, fileName).getFile());
-             BufferedReader br = new BufferedReader(fr)) {
+                BufferedReader br = new BufferedReader(fr)) {
             String s;
             String name;
             while ((s = br.readLine()) != null) {
@@ -137,6 +139,7 @@ public class MekFileParser {
 
     /**
      * Directly assign a Vector of unit names; protected for unit testing purposes
+     *
      * @param unitNames
      */
     protected static void setCanonUnitNames(Vector<String> unitNames) {
@@ -151,16 +154,8 @@ public class MekFileParser {
         String lowerName = fileName.toLowerCase();
         IMekLoader loader;
 
-        if (lowerName.endsWith(".mep")) {
-            loader = new MepFile(is);
-        } else if (lowerName.endsWith(".mtf")) {
+        if (lowerName.endsWith(".mtf")) {
             loader = new MtfFile(is);
-        } else if (lowerName.endsWith(".hmp")) {
-            loader = new HmpFile(is);
-        } else if (lowerName.endsWith(".hmv")) {
-            loader = new HmvFile(is);
-        } else if (lowerName.endsWith(".xml")) {
-            loader = TdbFile.getInstance(is);
         } else if (lowerName.endsWith(".blk")) {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
@@ -262,7 +257,8 @@ public class MekFileParser {
                 || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // Large craft get active radar
-            // And both a passive sensor suite and thermal/optical sensors, which only work in space
+            // And both a passive sensor suite and thermal/optical sensors, which only work
+            // in space
             ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
             ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
             // Only military craft get ESM, which detects active radar
@@ -293,10 +289,10 @@ public class MekFileParser {
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
                     || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
                 // We can link to a laser in the same location that isn't already linked.
-                Predicate<Mounted<?>> linkable = mount ->
-                        (mount.getLinkedBy() == null) && (mount.getLocation() == m.getLocation())
-                                && (mount.getType() instanceof WeaponType)
-                                && mount.getType().hasFlag(WeaponType.F_LASER);
+                Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null)
+                        && (mount.getLocation() == m.getLocation())
+                        && (mount.getType() instanceof WeaponType)
+                        && mount.getType().hasFlag(WeaponType.F_LASER);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                     linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE)
@@ -306,7 +302,8 @@ public class MekFileParser {
                 /*
                  * First check the immediate predecessor in the equipment list, which allows
                  * pairing the insulator or pulse module with a specific weapon by placing them
-                 * in a specific order. If that doesn't work, fall back to finding the first eligible
+                 * in a specific order. If that doesn't work, fall back to finding the first
+                 * eligible
                  * weapon in the location.
                  */
                 int eqNum = ent.getEquipment().indexOf(m);
@@ -401,10 +398,11 @@ public class MekFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite for " + ent.getShortName() + ".  Meks with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                            "Unable to find an ECM Suite for " + ent.getShortName()
+                                    + ".  Meks with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
-            // Link PPC Capacitor to PPC it its location.
+              // Link PPC Capacitor to PPC it its location.
             else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
 
                 // link up to a weapon in the same location
@@ -468,20 +466,20 @@ public class MekFileParser {
                     throw new EntityLoadingException(
                             "Unable to match Apollo to launcher for " + ent.getShortName());
                 }
-            }// End link-Apollo
+            } // End link-Apollo
         }
-              // now find any active probes and add them to the sensor list
-              // choose this sensor if added
-              //WOR CEWS
+        // now find any active probes and add them to the sensor list
+        // choose this sensor if added
+        // WOR CEWS
         for (Mounted<?> m : ent.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BAP)) {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-               } else if (m.getType().getInternalName().equals(Sensor.BAPP)) {
+                } else if (m.getType().getInternalName().equals(Sensor.BAPP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAPP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-               } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
+                } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
@@ -524,7 +522,7 @@ public class MekFileParser {
                         || (!ent.getMPBoosters().isNone() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(
-                            "Unable to load AES due to incompatible systems for "+ent.getShortName());
+                            "Unable to load AES due to incompatible systems for " + ent.getShortName());
                 }
 
                 if ((m.getLocation() != Mek.LOC_LARM)
@@ -533,7 +531,7 @@ public class MekFileParser {
                         && (m.getLocation() != Mek.LOC_RLEG)
                         && (m.getLocation() != Mek.LOC_CLEG)) {
                     throw new EntityLoadingException(
-                            "Unable to load AES due to incompatible location for "+ent.getShortName());
+                            "Unable to load AES due to incompatible location for " + ent.getShortName());
                 }
 
             }
@@ -541,22 +539,24 @@ public class MekFileParser {
             if (m.getType().hasFlag(MiscType.F_HARJEL)
                     && (m.getLocation() == Mek.LOC_HEAD)) {
                 throw new EntityLoadingException(
-                        "Unable to load harjel in head for "+ent.getShortName());
+                        "Unable to load harjel in head for " + ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_MASS)
                     && ((m.getLocation() != Mek.LOC_HEAD) || ((((Mek) ent)
-                            .getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) && (m
-                            .getLocation() != Mek.LOC_CT)))) {
+                            .getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
+                            && (m
+                                    .getLocation() != Mek.LOC_CT)))) {
                 throw new EntityLoadingException(
-                        "Unable to load MASS for "+ent.getShortName()+"!  Must be located in the same location as the cockpit.");
+                        "Unable to load MASS for " + ent.getShortName()
+                                + "!  Must be located in the same location as the cockpit.");
             }
 
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                     && (((ent instanceof Mek) && (m.getLocation() == Mek.LOC_HEAD)) || ((ent instanceof VTOL) && (m
                             .getLocation() == VTOL.LOC_ROTOR)))) {
                 throw new EntityLoadingException(
-                        "Unable to load Modular Armor in Rotor/Head location for "+ent.getShortName());
+                        "Unable to load Modular Armor in Rotor/Head location for " + ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_TALON)) {
@@ -588,7 +588,7 @@ public class MekFileParser {
                 for (WeaponMounted mWeapon : ent.getWeaponList()) {
                     WeaponType wtype = mWeapon.getType();
 
-                    //Handle weapon bays
+                    // Handle weapon bays
                     if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))) {
                         for (WeaponMounted bayMountedWeapon : mWeapon.getBayWeapons()) {
                             WeaponType bayWeapType = bayMountedWeapon.getType();
@@ -643,14 +643,15 @@ public class MekFileParser {
                 }
 
                 // huh. this shouldn't happen
-                Objects.requireNonNull(m.getLinked(), "No available PPC to match Capacitor for " + ent.getShortName() + "!");
+                Objects.requireNonNull(m.getLinked(),
+                        "No available PPC to match Capacitor for " + ent.getShortName() + "!");
 
             }
         } // Check the next piece of equipment.
 
         // For BattleArmor, we have to ensure that all ammo that is DWP mounted
-        //  is linked to it's DWP mounted weapon, so that TestBattleArmor
-        //  can properly account for DWP mounted ammo
+        // is linked to it's DWP mounted weapon, so that TestBattleArmor
+        // can properly account for DWP mounted ammo
         if (ent instanceof BattleArmor) {
             for (Mounted<?> ammo : ent.getAmmo()) {
                 if (ammo.isDWPMounted()) {
@@ -663,7 +664,7 @@ public class MekFileParser {
                         }
                     }
                     // If we didn't find a match, we can link to a weapon with
-                    //  already linked ammo.
+                    // already linked ammo.
                     if (ammo.getLinkedBy() == null) {
                         for (Mounted<?> weapon : ent.getWeaponList()) {
                             if (weapon.isDWPMounted()
@@ -690,7 +691,8 @@ public class MekFileParser {
         ent.addClanCase();
 
         if (ent instanceof BattleArmor) {
-            // now, depending on equipment and chassis, BA might be able to do leg and swarm attacks
+            // now, depending on equipment and chassis, BA might be able to do leg and swarm
+            // attacks
             if (((BattleArmor) ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
                 int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
                 int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
@@ -806,8 +808,10 @@ public class MekFileParser {
     }
 
     /**
-     * Links each Dumper to the first (unlinked) Cargo equipment if there is one in the same location.
-     * Works only for variable size Cargo, {@link MiscType#createCargo()}, but not Liquid Storage,
+     * Links each Dumper to the first (unlinked) Cargo equipment if there is one in
+     * the same location.
+     * Works only for variable size Cargo, {@link MiscType#createCargo()}, but not
+     * Liquid Storage,
      * Cargo containers or bays.
      *
      * @param entity The entity to add links to
@@ -834,10 +838,14 @@ public class MekFileParser {
 
     /**
      * Links machine gun arrays to their machine guns using the bayWeapon list.
-     * We take the first qualifying machine gun in the location (correct size and not already
-     * linked to this or another MGA and continue linking successive slots until full or we get to
-     * a slot that does not contain a qualifying machine gun. This allows specifying which guns go
-     * with which array in the event of multiple MGAs in a location or some MGs that are not linked.
+     * We take the first qualifying machine gun in the location (correct size and
+     * not already
+     * linked to this or another MGA and continue linking successive slots until
+     * full or we get to
+     * a slot that does not contain a qualifying machine gun. This allows specifying
+     * which guns go
+     * with which array in the event of multiple MGAs in a location or some MGs that
+     * are not linked.
      *
      * @param entity
      */
@@ -887,7 +895,8 @@ public class MekFileParser {
             System.out.println("\t.hmp    Heavy Metal Pro (c) RCW Enterprises");
             System.out.println("\t.mep    MechEngineer Pro (c) Howling Moon SoftWorks");
             System.out.println("\t.xml    The Drawing Board (c) Blackstone Interactive");
-            System.out.println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
+            System.out.println(
+                    "Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MekFileParser.getResponse("Press <enter> to exit...");
             return;
         }

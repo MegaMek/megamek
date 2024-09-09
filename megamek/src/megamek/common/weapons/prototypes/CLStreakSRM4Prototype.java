@@ -21,6 +21,7 @@ package megamek.common.weapons.prototypes;
 
 import megamek.common.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+
 /**
  * @author Sebastian Brocks
  */
@@ -54,17 +55,17 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         rulesRefs = "97, IO";
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-            .setIntroLevel(false)
-            .setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
-            .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
-            .setClanApproximate(true, false, false, true, false)
-            .setPrototypeFactions(F_CSA);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+                .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
+                .setClanApproximate(true, false, false, true, false)
+                .setPrototypeFactions(F_CSA);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.84 :0;
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
+        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.84 : 0;
     }
 }

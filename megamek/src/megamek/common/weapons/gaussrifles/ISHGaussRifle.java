@@ -84,12 +84,12 @@ public class ISHGaussRifle extends GaussWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new HGRHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.LONG_RANGE) {
             return 1;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {

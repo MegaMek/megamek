@@ -25,6 +25,7 @@ import megamek.common.weapons.Weapon;
 /**
  * Added per IO Pg 53 - Tech Manual shows this is an IS weapon only
  * But IO seems to have made this a Clan weapon as well
+ * 
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
@@ -87,7 +88,7 @@ public class CLBAMortarHeavy extends Weapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         if (range <= AlphaStrikeElement.SHORT_RANGE) {
             return 0.249;
         } else if (range <= AlphaStrikeElement.MEDIUM_RANGE) {

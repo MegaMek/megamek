@@ -79,14 +79,14 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
 
         int troopersHit = 0;
-        //when swarming all troopers hit
+        // when swarming all troopers hit
         if (ae.getSwarmTargetId() == target.getId()) {
             troopersHit = ((Infantry) ae).getShootingStrength();
         } else if (!(ae instanceof Infantry)) {
             troopersHit = 1;
         } else {
             troopersHit = Compute.missilesHit(((Infantry) ae)
-                .getShootingStrength(), nHitMod);
+                    .getShootingStrength(), nHitMod);
         }
         double damage = calculateBaseDamage(ae, weapon, wtype);
 
@@ -104,10 +104,11 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
 
-        // conventional infantry weapons with high damage get treated as if they have the infantry burst mod
+        // conventional infantry weapons with high damage get treated as if they have
+        // the infantry burst mod
         if (target.isConventionalInfantry() &&
                 (wtype.hasFlag(WeaponType.F_INF_BURST) ||
-                (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
+                        (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
         if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
@@ -134,15 +135,17 @@ public class InfantryWeaponHandler extends WeaponHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
         if (target.isConventionalInfantry()) {
-            //this is a little strange, but I can't just do this in calcDamagePerHit because
-            //that is called up before misses are determined and will lead to weird reporting
+            // this is a little strange, but I can't just do this in calcDamagePerHit
+            // because
+            // that is called up before misses are determined and will lead to weird
+            // reporting
             nDamPerHit = damageDealt;
             return 1;
         }
         return damageDealt;
     }
 
-    //we need to figure out AV damage to aeros for AA weapons
+    // we need to figure out AV damage to aeros for AA weapons
     @Override
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
@@ -151,8 +154,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av;
-        //Sigh, another rules oversight - nobody bothered to figure this out
-        //To be consistent with other cluster weapons we will assume 60% hit
+        // Sigh, another rules oversight - nobody bothered to figure this out
+        // To be consistent with other cluster weapons we will assume 60% hit
         if (ae.isConventionalInfantry()) {
             double damage = ((Infantry) ae).getDamagePerTrooper();
             av = (int) Math.round(damage * 0.6 * ((Infantry) ae).getShootingStrength());
@@ -170,7 +173,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
     @Override
     public void useAmmo() {
         if (ae.isSupportVehicle()) {
-            Mounted ammo = weapon.getLinked();
+            Mounted<?> ammo = weapon.getLinked();
             if (ammo == null) {
                 ae.loadWeapon(weapon);
                 ammo = weapon.getLinked();
@@ -178,7 +181,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
                 LogManager.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
-                                ae.getShortName(), weapon.getName()));
+                        ae.getShortName(), weapon.getName()));
                 return;
             }
 
@@ -195,17 +198,19 @@ public class InfantryWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Utility function to calculate variable damage based only on the firing entity.
+     * Utility function to calculate variable damage based only on the firing
+     * entity.
      */
-    public static double calculateBaseDamage(Entity ae, Mounted weapon, WeaponType wtype) {
+    public static double calculateBaseDamage(Entity ae, Mounted<?> weapon, WeaponType wtype) {
         if (ae.isConventionalInfantry()) {
-            //for conventional infantry, we have to calculate primary and secondary weapons
-            //to get damage per trooper
+            // for conventional infantry, we have to calculate primary and secondary weapons
+            // to get damage per trooper
             return ((Infantry) ae).getDamagePerTrooper();
         } else if (ae.isSupportVehicle()) {
             // Damage for some weapons depends on what type of ammo is being used
             if ((weapon.getLinked() != null)
-                    && ((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
+                    && ((AmmoType) weapon.getLinked().getType()).getMunitionType()
+                            .contains(AmmoType.Munitions.M_INFERNO)) {
                 return ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
             } else {
                 return ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();

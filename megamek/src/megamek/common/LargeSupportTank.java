@@ -40,22 +40,22 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
     public static final int LOC_TURRET_2 = 8;
-    
+
     private double fuelTonnage = 0;
 
     private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
             "RRRS", "RRLS", "RR", "TU", "TU2" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret"};
-    
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
             "Front Turret" };
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
-    
+
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -82,7 +82,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -258,7 +258,7 @@ public class LargeSupportTank extends SupportTank {
     public int height() {
         return 1;
     }
-    
+
     @Override
     public boolean isSuperHeavy() {
         return true;
@@ -271,7 +271,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
@@ -372,7 +372,8 @@ public class LargeSupportTank extends SupportTank {
             return false;
         }
 
-        // no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
+        // no weapons can fire anymore, can cause no more than 5 points of combined
+        // weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
             LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
@@ -380,7 +381,6 @@ public class LargeSupportTank extends SupportTank {
         }
         return false;
     }
-
 
     @Override
     public long getEntityType() {

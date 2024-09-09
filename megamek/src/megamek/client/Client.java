@@ -61,7 +61,8 @@ import java.util.zip.GZIPInputStream;
 public class Client extends AbstractClient {
 
     /**
-     * The game state object: this object is not ever replaced during a game, only updated. A
+     * The game state object: this object is not ever replaced during a game, only
+     * updated. A
      * reference can therefore be cached by other objects.
      */
     protected final Game game = new Game();
@@ -70,7 +71,8 @@ public class Client extends AbstractClient {
     private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
 
-    //FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
+    // FIXME: Should ideally be located elsewhere; the client should handle data,
+    // not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
 
     public Client(String name, String host, int port) {
@@ -93,7 +95,6 @@ public class Client extends AbstractClient {
     public Vector<Coords> getArtilleryAutoHit() {
         return artilleryAutoHitHexes;
     }
-
 
     public Entity getEntity(int id) {
         return game.getEntity(id);
@@ -163,6 +164,7 @@ public class Client extends AbstractClient {
     /**
      * Changes the game phase, and the displays that go along with it.
      */
+    @Override
     public void changePhase(GamePhase phase) {
         super.changePhase(phase);
         switch (phase) {
@@ -177,6 +179,8 @@ public class Client extends AbstractClient {
             case FIRING:
             case PHYSICAL:
                 memDump("entering phase " + phase);
+                break;
+            default:
                 break;
         }
     }
@@ -216,11 +220,11 @@ public class Client extends AbstractClient {
      * Maintain backwards compatibility.
      *
      * @param id
-     *            - the <code>int</code> ID of the deployed entity
+     *                - the <code>int</code> ID of the deployed entity
      * @param c
-     *            - the <code>Coords</code> where the entity should be deployed
+     *                - the <code>Coords</code> where the entity should be deployed
      * @param nFacing
-     *            - the <code>int</code> direction the entity should face
+     *                - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
         this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
@@ -231,16 +235,17 @@ public class Client extends AbstractClient {
      * starting with the given units already loaded.
      *
      * @param id
-     *            - the <code>int</code> ID of the deployed entity
+     *                    - the <code>int</code> ID of the deployed entity
      * @param c
-     *            - the <code>Coords</code> where the entity should be deployed
+     *                    - the <code>Coords</code> where the entity should be
+     *                    deployed
      * @param nFacing
-     *            - the <code>int</code> direction the entity should face
+     *                    - the <code>int</code> direction the entity should face
      * @param loadedUnits
-     *            - a <code>List</code> of units that start the game being
-     *            transported byt the deployed entity.
+     *                    - a <code>List</code> of units that start the game being
+     *                    transported byt the deployed entity.
      * @param assaultDrop
-     *            - true if deployment is an assault drop
+     *                    - true if deployment is an assault drop
      */
     public void deploy(int id, Coords c, int nFacing, int elevation, List<Entity> loadedUnits, boolean assaultDrop) {
         int packetCount = 6 + loadedUnits.size();
@@ -267,9 +272,9 @@ public class Client extends AbstractClient {
      * attacker gets to choose. This method updates the server with the users
      * choice.
      *
-     * @param targetId The target ID
+     * @param targetId   The target ID
      * @param attackerId The attacker Entity ID
-     * @param pos The selected hex
+     * @param pos        The selected hex
      */
     public void sendPlayerPickedPassThrough(Integer targetId, Integer attackerId, Coords pos) {
         send(new Packet(PacketCommand.ENTITY_GTA_HEX_SELECT, targetId, attackerId, pos));
@@ -348,7 +353,7 @@ public class Client extends AbstractClient {
      * Sends an "add entity" packet with only one Entity.
      *
      * @param entity
-     *            The Entity to add.
+     *               The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
         ArrayList<Entity> entities = new ArrayList<>(1);
@@ -361,7 +366,7 @@ public class Client extends AbstractClient {
      * objects.
      *
      * @param entities
-     *            The collection of Entity objects to add.
+     *                 The collection of Entity objects to add.
      */
     public void sendAddEntity(List<Entity> entities) {
         for (Entity entity : entities) {
@@ -389,7 +394,7 @@ public class Client extends AbstractClient {
      * Sends an updated state of ground objects (i.e. cargo etc)
      */
     public void sendDeployGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
-    	send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, groundObjects));
+        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, groundObjects));
     }
 
     /**
@@ -471,12 +476,12 @@ public class Client extends AbstractClient {
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
-            for (Entity e: newOutOfGame) {
+            for (Entity e : newOutOfGame) {
                 cacheImgTag(e);
             }
         }
         // cache the image data for the entities and set force for entities
-        for (Entity e: newEntities) {
+        for (Entity e : newEntities) {
             cacheImgTag(e);
             e.setForceId(game.getForces().getForceId(e));
         }
@@ -489,7 +494,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Receives a force-related update containing affected forces and affected entities
+     * Receives a force-related update containing affected forces and affected
+     * entities
      */
     @SuppressWarnings("unchecked")
     protected void receiveForceUpdate(Packet c) {
@@ -504,7 +510,10 @@ public class Client extends AbstractClient {
         }
     }
 
-    /** Receives a server packet commanding deletion of forces. Only valid in the lobby phase. */
+    /**
+     * Receives a server packet commanding deletion of forces. Only valid in the
+     * lobby phase.
+     */
     protected void receiveForcesDelete(Packet c) {
         @SuppressWarnings("unchecked")
         Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
@@ -546,7 +555,7 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
         Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             getGame().setEntity(entity.getId(), entity);
         }
     }
@@ -558,10 +567,10 @@ public class Client extends AbstractClient {
         @SuppressWarnings("unchecked")
         List<Force> forces = (List<Force>) packet.getObject(2);
         // create a final image for the entity
-        for (int id: entityIds) {
+        for (int id : entityIds) {
             cacheImgTag(game.getEntity(id));
         }
-        for (Force force: forces) {
+        for (Force force : forces) {
             game.getForces().replace(force.getId(), force);
         }
         // Move the unit to its final resting place.
@@ -585,8 +594,8 @@ public class Client extends AbstractClient {
 
     @SuppressWarnings("unchecked")
     protected void receiveUpdateGroundObjects(Packet packet) {
-    	game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
-    	game.processGameEvent(new GameBoardChangeEvent(this));
+        game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
+        game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
     @SuppressWarnings("unchecked")
@@ -659,13 +668,9 @@ public class Client extends AbstractClient {
                 Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
                 addAction = false;
-            } else if (ea instanceof AttackAction) {
-                // The equipment type of a club needs to be restored.
-                if (ea instanceof ClubAttackAction) {
-                    ClubAttackAction caa = (ClubAttackAction) ea;
-                    Mounted club = caa.getClub();
-                    club.restore();
-                }
+            } else if (ea instanceof ClubAttackAction clubAttackAction) {
+                Mounted<?> club = clubAttackAction.getClub();
+                club.restore();
             }
 
             if (addAction) {
@@ -679,7 +684,6 @@ public class Client extends AbstractClient {
         }
     }
 
-
     // Should be private?
     public String receiveReport(List<Report> reports) {
         if (reports == null) {
@@ -692,7 +696,7 @@ public class Client extends AbstractClient {
         }
 
         Set<Integer> setEntity = new HashSet<>();
-        //find id stored in spans and extract it
+        // find id stored in spans and extract it
         Pattern pEntity = Pattern.compile("<span id='(.*?)'></span>");
         Matcher mEntity = pEntity.matcher(report.toString());
 
@@ -716,7 +720,7 @@ public class Client extends AbstractClient {
         }
 
         Set<String> setCrew = new HashSet<>();
-        //find id stored in spans and extract it
+        // find id stored in spans and extract it
         Pattern pCrew = Pattern.compile("<span crew='(.*?)'></span>");
         Matcher mCrew = pCrew.matcher(report.toString());
 
@@ -750,13 +754,16 @@ public class Client extends AbstractClient {
                         // Adjust the portrait size to the GUI scale and number of pilots
                         float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
                         imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                        Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
+                        Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize,
+                                Image.SCALE_SMOOTH);
                         // convert image to base64, add to the <img> tag and store in cache
-                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
+                                portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
                         bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                         String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
                         String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                        updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>", img);
+                        updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>",
+                                img);
                     }
                 }
             }
@@ -898,8 +905,8 @@ public class Client extends AbstractClient {
                 receiveRemoveMinefield(packet);
                 break;
             case UPDATE_GROUND_OBJECTS:
-            	receiveUpdateGroundObjects(packet);
-            	break;
+                receiveUpdateGroundObjects(packet);
+                break;
             case ADD_SMOKE_CLOUD:
                 SmokeCloud cloud = (SmokeCloud) packet.getObject(0);
                 game.addSmokeCloud(cloud);
@@ -1023,7 +1030,7 @@ public class Client extends AbstractClient {
                 }
 
                 try (OutputStream os = new FileOutputStream(localFile);
-                     BufferedOutputStream bos = new BufferedOutputStream(os)) {
+                        BufferedOutputStream bos = new BufferedOutputStream(os)) {
                     List<Integer> data = (List<Integer>) packet.getObject(1);
                     for (Integer d : data) {
                         bos.write(d);
@@ -1195,16 +1202,20 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given force.
-     * The server will handle this; the client does not have to implement the change.
+     * Sends a packet instructing the server to add the given entities to the given
+     * force.
+     * The server will handle this; the client does not have to implement the
+     * change.
      */
     public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
         send(new Packet(PacketCommand.FORCE_ADD_ENTITY, entities, forceId));
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given force.
-     * The server will handle this; the client does not have to implement the change.
+     * Sends a packet instructing the server to add the given entities to the given
+     * force.
+     * The server will handle this; the client does not have to implement the
+     * change.
      */
     public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));

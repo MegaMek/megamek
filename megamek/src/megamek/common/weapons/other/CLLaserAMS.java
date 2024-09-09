@@ -67,7 +67,7 @@ public class CLLaserAMS extends LaserWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

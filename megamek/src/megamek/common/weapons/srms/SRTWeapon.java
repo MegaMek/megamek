@@ -63,7 +63,7 @@ public abstract class SRTWeapon extends MissileWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range >= AlphaStrikeElement.LONG_RANGE) {
             return 0;
         }

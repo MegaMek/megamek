@@ -61,7 +61,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
-//        a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
+        // a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
 
         // figure out fuel
         if (!dataFile.exists("fuel")) {
@@ -213,7 +213,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : Aero.LOC_FUSELAGE;
-                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
+                        Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
@@ -239,7 +239,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
             }
         }
         if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                     // core system does not include drone capacity
                     m.setSize(legacyDCCSCapacity);

@@ -35,9 +35,9 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * @param game The current {@link Game}
+     * @param game       The current {@link Game}
      * @param attackerId the attacking entity id
-     * @param target the attack's target
+     * @param target     the attack's target
      * @return the to hit number for the current grapple attack
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -47,19 +47,20 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     /**
      * Calculates ToHitData for a grapple attack.
      *
-     * @param game The current {@link Game}
+     * @param game        The current {@link Game}
      * @param attackerId
      * @param target
      * @param grappleSide
      * @param isChainWhip
-     *            Flag that determines if the attack is coming from a chain
-     *            whip. If true, ignore illegal cases, as this comes from a
-     *            bonus attack for a chain whip, and the attack should never be
-     *            illegal. See TO pg 289.
+     *                    Flag that determines if the attack is coming from a chain
+     *                    whip. If true, ignore illegal cases, as this comes from a
+     *                    bonus attack for a chain whip, and the attack should never
+     *                    be
+     *                    illegal. See TO pg 289.
      * @return
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int grappleSide,
-                                  boolean isChainWhip) {
+            boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
 
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
@@ -177,7 +178,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     /**
      * Various modifiers to check to see if the grapple attack is illegal.
      *
-     * @param game The current {@link Game}
+     * @param game        The current {@link Game}
      * @param ae
      * @param target
      * @param grappleSide
@@ -206,9 +207,9 @@ public class GrappleAttackAction extends PhysicalAttackAction {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                     && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "A friendly unit can never be the target of a direct attack.");
             }
@@ -293,7 +294,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         // check if attacker has fired any weapons
         if (!counter) {
-            for (Mounted mounted : ae.getWeaponList()) {
+            for (Mounted<?> mounted : ae.getWeaponList()) {
                 if (mounted.isUsedThisRound()) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Fired weapons");
                 }

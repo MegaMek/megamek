@@ -71,7 +71,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         int damage = 0;
-        for (Mounted m : entity.getMisc()) {
+        for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET) && m.isReady()
                     && m.getLocation() == legLoc) {
                 damage += 3;
@@ -88,6 +88,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified leg to kick
+     * 
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
@@ -152,11 +153,12 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         // check if attacker even has jump jets!
         boolean hasJJ = false;
-        for (Mounted m : ae.getMisc()) {
+        for (Mounted<?> m : ae.getMisc()) {
             int loc = m.getLocation();
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)
                     && m.isReady()
-                    && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT)) || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
+                    && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT))
+                            || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
                 hasJJ = true;
                 break;
             }
@@ -172,7 +174,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         // check if attacker has fired leg-mounted weapons
-        for (Mounted mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound()) {
                 int loc = mounted.getLocation();
                 if (((leg == BOTH || leg == LEFT) && loc == kickLegs[0])

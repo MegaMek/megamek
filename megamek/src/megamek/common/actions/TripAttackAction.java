@@ -122,7 +122,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             usedWeapons[i] = false;
         }
 
-        for (Mounted mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound()) {
                 int loc = mounted.getLocation();
                 if (loc != Entity.LOC_NONE) {

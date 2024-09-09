@@ -60,7 +60,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Mounted ammo = game.getEntity(waa.getEntityId())
+        Mounted<?> ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {

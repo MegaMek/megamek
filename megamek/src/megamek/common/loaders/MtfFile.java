@@ -36,7 +36,8 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 
 /**
- * This class represents mtf files which are used to store Meks. The class contains the file reader while the
+ * This class represents mtf files which are used to store Meks. The class
+ * contains the file reader while the
  * mtf file generation is currently located in {@link Mek#getMtf()}.
  *
  * @author Ben
@@ -90,15 +91,14 @@ public class MtfFile implements IMekLoader {
     private int bv = 0;
     private String role;
 
-    private final Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
-    private final List<Mounted> vSplitWeapons = new ArrayList<>();
+    private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
+    private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
 
     private final List<String> quirkLines = new ArrayList<>();
 
-    public static final int[] locationOrder =
-            {Mek.LOC_LARM, Mek.LOC_RARM, Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT, Mek.LOC_HEAD, Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG};
-    public static final int[] rearLocationOrder =
-            {Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT};
+    public static final int[] locationOrder = { Mek.LOC_LARM, Mek.LOC_RARM, Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT,
+            Mek.LOC_HEAD, Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG };
+    public static final int[] rearLocationOrder = { Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT };
 
     public static final String COMMENT = "#";
     public static final String MTF_VERSION = "version:";
@@ -156,7 +156,7 @@ public class MtfFile implements IMekLoader {
 
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-             BufferedReader r = new BufferedReader(isr)) {
+                BufferedReader r = new BufferedReader(isr)) {
             critData = new String[9][12];
             readLines(r);
         } catch (IOException ex) {
@@ -250,7 +250,9 @@ public class MtfFile implements IMekLoader {
             mech.setWeight(Integer.parseInt(tonnage.substring(5)));
 
             int engineFlags = 0;
-            if ((mech.isClan() && !mech.isMixedTech()) || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engine)) || (mech.isMixedTech() && !mech.isClan() && mech.itemOppositeTech(engine))) {
+            if ((mech.isClan() && !mech.isMixedTech())
+                    || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engine))
+                    || (mech.isMixedTech() && !mech.isClan() && mech.itemOppositeTech(engine))) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
             if (mech.isSuperHeavy()) {
@@ -266,9 +268,12 @@ public class MtfFile implements IMekLoader {
             boolean laserSinks = heatSinks.contains(HS_LASER);
             boolean compactSinks = heatSinks.contains(HS_COMPACT);
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
-            int baseHeatSinks = Integer.parseInt(baseChassieHeatSinks.substring("base chassis heat sinks:".length()).trim());
-            // For mixed tech units with double heat sinks we want to install the correct type. Legacy files
-            // don't specify, so we'll use TECH_BASE_ALL to indicate unknown and check for heat sinks on the
+            int baseHeatSinks = Integer
+                    .parseInt(baseChassieHeatSinks.substring("base chassis heat sinks:".length()).trim());
+            // For mixed tech units with double heat sinks we want to install the correct
+            // type. Legacy files
+            // don't specify, so we'll use TECH_BASE_ALL to indicate unknown and check for
+            // heat sinks on the
             // critical table.
             int heatSinkBase;
             if (heatSinks.contains(TECH_BASE_CLAN)) {
@@ -305,7 +310,8 @@ public class MtfFile implements IMekLoader {
                             mech.setArmorTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
                             break;
                         default:
-                            throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                            throw new EntityLoadingException(
+                                    "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 } else {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
@@ -325,7 +331,8 @@ public class MtfFile implements IMekLoader {
                             mech.setArmorTechLevel(TechConstants.T_IS_UNOFFICIAL);
                             break;
                         default:
-                            throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                            throw new EntityLoadingException(
+                                    "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 }
                 thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
@@ -344,10 +351,12 @@ public class MtfFile implements IMekLoader {
                 if ((locationOrder[x] == Mek.LOC_CLEG) && !(mech instanceof TripodMek)) {
                     continue;
                 }
-                mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
+                mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)),
+                        locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                     boolean clan = armorValues[x].contains("Clan");
-                    String armorName = armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('('));
+                    String armorName = armorValues[x].substring(armorValues[x].indexOf(':') + 1,
+                            armorValues[x].indexOf('('));
                     if (!armorName.contains("Clan") && !armorName.contains("IS")) {
                         if (clan) {
                             armorName = "Clan " + armorName;
@@ -373,7 +382,8 @@ public class MtfFile implements IMekLoader {
                                 mech.setArmorTechLevel(TechConstants.T_CLAN_UNOFFICIAL, locationOrder[x]);
                                 break;
                             default:
-                                throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                                throw new EntityLoadingException(
+                                        "Unsupported tech level: " + rulesLevel.substring(12).trim());
                         }
                     } else if (armorValue.contains("inner sphere")) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
@@ -393,14 +403,16 @@ public class MtfFile implements IMekLoader {
                                 mech.setArmorTechLevel(TechConstants.T_IS_UNOFFICIAL, locationOrder[x]);
                                 break;
                             default:
-                                throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                                throw new EntityLoadingException(
+                                        "Unsupported tech level: " + rulesLevel.substring(12).trim());
                         }
                     }
                 }
             }
 
             for (int x = 0; x < rearLocationOrder.length; x++) {
-                mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
+                mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)),
+                        rearLocationOrder[x]);
             }
 
             // oog, crits.
@@ -419,7 +431,8 @@ public class MtfFile implements IMekLoader {
                 // Set capital fighter stats for LAMs
                 ((LandAirMek) mech).autoSetCapArmor();
                 ((LandAirMek) mech).autoSetFatalThresh();
-                int fuelTankCount = (int) mech.getEquipment().stream().filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
+                int fuelTankCount = (int) mech.getEquipment().stream()
+                        .filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
                 ((LandAirMek) mech).setFuel(80 * (1 + fuelTankCount));
             }
 
@@ -427,10 +440,12 @@ public class MtfFile implements IMekLoader {
             if (laserSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_LASER_HEAT_SINK);
             } else if (dblSinks) {
-                // If the heat sink entry didn't specify Clan or IS double, check for sinks that take
-                // critical slots. If none are found, default to the overall tech base of the unit.
+                // If the heat sink entry didn't specify Clan or IS double, check for sinks that
+                // take
+                // critical slots. If none are found, default to the overall tech base of the
+                // unit.
                 if (heatSinkBase == ITechnology.TECH_BASE_ALL) {
-                    for (Mounted mounted : mech.getMisc()) {
+                    for (Mounted<?> mounted : mech.getMisc()) {
                         if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                             heatSinkBase = mounted.getType().getTechBase();
                         }
@@ -526,9 +541,12 @@ public class MtfFile implements IMekLoader {
             }
 
             if (line.toLowerCase().startsWith(MTF_VERSION)) {
-                // Reading the version, chassis and model as the first three lines without header is kept
-                // for backward compatibility for user-generated units. However the version is no longer checked
-                // for correct values as that makes no difference so long as the unit can be loaded
+                // Reading the version, chassis and model as the first three lines without
+                // header is kept
+                // for backward compatibility for user-generated units. However the version is
+                // no longer checked
+                // for correct values as that makes no difference so long as the unit can be
+                // loaded
                 // Version 1.0: Initial version.
                 // Version 1.1: Added level 3 cockpit and gyro options.
                 // version 1.2: added full head ejection
@@ -660,7 +678,8 @@ public class MtfFile implements IMekLoader {
             }
             mech.setMixedTech(true);
         } else if (techBase.equalsIgnoreCase("Mixed")) {
-            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            throw new EntityLoadingException(
+                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
         } else {
             throw new EntityLoadingException("Unsupported tech base: " + techBase);
         }
@@ -709,28 +728,35 @@ public class MtfFile implements IMekLoader {
             }
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, isArmored));
+                mech.setCritical(loc, i,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, isArmored));
+                mech.setCritical(loc, i,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, isArmored));
+                mech.setCritical(loc, i,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, isArmored));
+                mech.setCritical(loc, i,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
                 mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, isArmored));
                 continue;
-            } else if ((critName.contains("Actuator")) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
+            } else if ((critName.contains("Actuator")) || critName.equalsIgnoreCase("Shoulder")
+                    || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
                 continue;
             } else if (critName.equalsIgnoreCase("Landing Gear")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, true, isArmored));
+                mech.setCritical(loc, i,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Avionics")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
+                mech.setCritical(loc, i,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
                 continue;
             }
             // if the slot's full already, skip it.
@@ -802,12 +828,13 @@ public class MtfFile implements IMekLoader {
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted,
-                                              BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                              isTurreted);
+                                BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
                     } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
-                        // Targeting computers are special, they need to be loaded like spreadable equipment, but they aren't spreadable
+                        // Targeting computers are special, they need to be loaded like spreadable
+                        // equipment, but they aren't spreadable
                         Mounted<?> m = hSharedEquip.get(etype);
                         if (m == null) {
                             m = mech.addTargCompWithoutSlots((MiscType) etype, loc, isOmniPod, isArmored);
@@ -815,12 +842,12 @@ public class MtfFile implements IMekLoader {
                         }
                         mech.addCritical(loc, new CriticalSlot(m));
 
-
-                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
+                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable())
+                            || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer location?
-                        Mounted m = null;
+                        Mounted<?> m = null;
                         boolean bFound = false;
-                        for (Mounted vSplitWeapon : vSplitWeapons) {
+                        for (Mounted<?> vSplitWeapon : vSplitWeapons) {
                             m = vSplitWeapon;
                             int nLoc = m.getLocation();
                             if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
@@ -859,18 +886,22 @@ public class MtfFile implements IMekLoader {
                         m.setOmniPodMounted(isOmniPod);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
-                        Mounted mount;
+                        Mounted<?> mount;
                         if (etype2 == null) {
                             mount = mech.addEquipment(etype, loc, rearMounted,
-                                                      BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                                      isTurreted, false, false, isOmniPod);
+                                    BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                    isTurreted, false, false, isOmniPod);
                         } else {
                             if (etype instanceof AmmoType) {
-                                if (!(etype2 instanceof AmmoType) || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {
-                                    throw new EntityLoadingException("Can't combine ammo for different weapons in one slot");
+                                if (!(etype2 instanceof AmmoType)
+                                        || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {
+                                    throw new EntityLoadingException(
+                                            "Can't combine ammo for different weapons in one slot");
                                 }
                             } else {
-                                if (!(etype.equals(etype2)) || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK) && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)))) {
+                                if (!(etype.equals(etype2))
+                                        || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK)
+                                                && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)))) {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }
@@ -884,8 +915,8 @@ public class MtfFile implements IMekLoader {
                             // The size may require additional critical slots
                             // Account for loading Superheavy oversized Variable Size components
                             int critCount = mount.getCriticals();
-                            if (mech.isSuperHeavy()){
-                                critCount = (int)Math.ceil(critCount / 2.0);
+                            if (mech.isSuperHeavy()) {
+                                critCount = (int) Math.ceil(critCount / 2.0);
                             }
                             for (int c = 1; c < critCount; c++) {
                                 CriticalSlot cs = new CriticalSlot(mount);

@@ -27,9 +27,12 @@ import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC.
- * (No difference between ACWeapon and AmmoWeapon except the ability to use special ammos
+ * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT
+ * ultras/LB/RAC.
+ * (No difference between ACWeapon and AmmoWeapon except the ability to use
+ * special ammos
  * (precision, AP, etc.))
+ *
  * @author Andrew Hunter
  * @since Sep 25, 2004
  */
@@ -55,14 +58,15 @@ public abstract class ACWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+            TWGameManager gameManager) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked()
+                .getType();
 
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
         if (weapon.curMode().equals("Rapid")) {
-            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
-            return ah;
+            return new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
             return new ACAPHandler(toHit, waa, game, gameManager);
@@ -85,7 +89,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         }
 
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
-            return new ACCaselessHandler (toHit, waa, game, gameManager);
+            return new ACCaselessHandler(toHit, waa, game, gameManager);
         }
 
         return new ACWeaponHandler(toHit, waa, game, gameManager);

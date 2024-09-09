@@ -95,9 +95,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             infantry.setSecondaryWeapon((InfantryWeapon) stype);
         }
 
-        // if there is more than one secondary weapon per squad, then add that to the unit
+        // if there is more than one secondary weapon per squad, then add that to the
+        // unit
         // otherwise add the primary weapon
-        Mounted m;
+        Mounted<?> m;
         try {
             if ((infantry.getSecondaryWeaponsPerSquad() > 1)) {
                 m = new InfantryWeaponMounted(infantry, (InfantryWeapon) stype, (InfantryWeapon) ptype);
@@ -125,7 +126,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             }
         }
 
-        // backward compatibility: armor kits should now be saved and loaded as part of LOC_INFANTRY equipment
+        // backward compatibility: armor kits should now be saved and loaded as part of
+        // LOC_INFANTRY equipment
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName);
@@ -184,7 +186,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
                 .findFirst()
                 .ifPresent(mounted -> infantry.setArmorKit(mounted.getType()));
 
-        // backward compatibility: if an antimek better than 8 entry exists, assume anti-mek gear
+        // backward compatibility: if an antimek better than 8 entry exists, assume
+        // anti-mek gear
         if (dataFile.exists("antimek")) {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
@@ -196,7 +199,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             }
         }
 
-        // Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official unit description.
+        // Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the
+        // official unit description.
         if (dataFile.exists("augmentation")) {
             String[] augmentations = dataFile.getDataAsString("augmentation");
             for (String aug : augmentations) {

@@ -68,7 +68,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range > getLongRange()) {
             return 0;
         }

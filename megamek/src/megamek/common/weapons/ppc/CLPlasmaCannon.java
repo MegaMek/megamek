@@ -14,11 +14,11 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PlasmaCannonHandler;
@@ -75,7 +75,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new PlasmaCannonHandler(toHit, waa, game, manager);
     }
 
@@ -85,7 +85,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         return 0;
     }
 }

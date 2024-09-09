@@ -37,13 +37,13 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         this.ammoType = AmmoType.T_LRM_STREAK;
         flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         clearModes();
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setClanAdvancement(DATE_NONE, 3057, 3079, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, true, false,false)
-        .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-        .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(DATE_NONE, 3057, 3079, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, true, false, false)
+                .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override
@@ -62,7 +62,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.1 * getRackSize() : 0;
     }
 
@@ -79,7 +79,6 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         }
         return "LRM STREAK " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
-
 
     @Override
     public boolean hasIndirectFire() {

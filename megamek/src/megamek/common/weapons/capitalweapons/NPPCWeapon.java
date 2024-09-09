@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -26,7 +26,7 @@ import megamek.common.weapons.lasers.EnergyWeapon;
  */
 public abstract class NPPCWeapon extends EnergyWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 414010600231978506L;
 
@@ -36,14 +36,14 @@ public abstract class NPPCWeapon extends EnergyWeapon {
         this.capital = true;
         flags = flags.andNot(F_PROTO_WEAPON);
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL;
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         int maxRange = damage == 7 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.EXTREME_RANGE;
         return (range <= maxRange) ? damage : 0;
     }

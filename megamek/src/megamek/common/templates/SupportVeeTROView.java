@@ -132,7 +132,7 @@ public class SupportVeeTROView extends TROView {
     }
 
     @Override
-    protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+    protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
         if (mounted.isPintleTurretMounted()) {
             return Messages.getString("TROView.Pintle");
         } else if (mounted.isSponsonTurretMounted()) {
@@ -147,7 +147,7 @@ public class SupportVeeTROView extends TROView {
         final List<String> chassisMods = new ArrayList<>();
         final Map<EquipmentKey, Integer> miscCount = new HashMap<>();
         int nameWidth = 20;
-        for (final Mounted m : entity.getEquipment()) {
+        for (final Mounted<?> m : entity.getEquipment()) {
             if (skipMount(m, includeAmmo)) {
                 continue;
             }

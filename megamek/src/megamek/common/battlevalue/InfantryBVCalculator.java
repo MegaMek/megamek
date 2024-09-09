@@ -48,7 +48,8 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected void processArmor() { }
+    protected void processArmor() {
+    }
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
@@ -84,8 +85,10 @@ public class InfantryBVCalculator extends BVCalculator {
         int secondaryShooterCount = infantry.getSecondaryWeaponsPerSquad() * infantry.getSquadCount();
         int primaryShooterCount = originalTroopers - secondaryShooterCount;
 
-        // Damage dealt by the troopers is averaged over primary and secondary weapons; therefore calculate
-        // weapon damage at full strength and then multiply by the surviving trooper ratio
+        // Damage dealt by the troopers is averaged over primary and secondary weapons;
+        // therefore calculate
+        // weapon damage at full strength and then multiply by the surviving trooper
+        // ratio
         if (primaryWeapon != null) {
             Mounted<?> primaryWeaponMounted = Mounted.createMounted(infantry, primaryWeapon);
             processWeapon(primaryWeaponMounted, true, true, primaryShooterCount);
@@ -117,7 +120,8 @@ public class InfantryBVCalculator extends BVCalculator {
 
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
-        Predicate<Mounted> weaponFilter = m -> countAsOffensiveWeapon(m) && m.getLocation() == Infantry.LOC_FIELD_GUNS;
+        Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)
+                && m.getLocation() == Infantry.LOC_FIELD_GUNS;
         double fieldGunBV = processWeaponSection(true, weaponFilter, true);
         bvReport.finalizeTentativeSection(fieldGunBV > 0);
 
@@ -184,7 +188,7 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected String equipmentDescriptor(Mounted mounted) {
+    protected String equipmentDescriptor(Mounted<?> mounted) {
         return mounted.getType().getShortName();
     }
 }

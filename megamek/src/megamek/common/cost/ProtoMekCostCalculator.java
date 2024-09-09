@@ -67,10 +67,11 @@ public class ProtoMekCostCalculator {
         // Jump jet cost is based on tonnage and jump MP.
         costs[idx++] = protoMek.getWeight() * protoMek.getJumpMP() * protoMek.getJumpMP() * 200;
 
-        // Heat sinks is constant per sink. Per the construction rules, we need enough sinks to sink all energy
+        // Heat sinks is constant per sink. Per the construction rules, we need enough
+        // sinks to sink all energy
         // weapon heat, so we just calculate the cost that way.
         int sinks = 0;
-        for (Mounted mount : protoMek.getWeaponList()) {
+        for (Mounted<?> mount : protoMek.getWeaponList()) {
             if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
                 WeaponType wtype = (WeaponType) mount.getType();
                 sinks += wtype.getHeat();

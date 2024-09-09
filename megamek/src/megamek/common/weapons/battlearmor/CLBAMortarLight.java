@@ -88,7 +88,7 @@ public class CLBAMortarLight extends Weapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.276 : 0;
     }
 

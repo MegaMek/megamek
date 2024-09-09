@@ -62,7 +62,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                     && (board.getHex(rearCoords).terrainLevel(
                             Terrains.BLDG_ELEV)
                             + board.getHex(rearCoords).getLevel() > currentHex
-                            .getLevel() + 4)) {
+                                    .getLevel() + 4)) {
                 rearCoords = src;
             }
 
@@ -89,7 +89,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
-                Mounted mounted = slot1.getMount();
+                Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
                     ae.hitAllCriticals(wloc, i);
                     break;

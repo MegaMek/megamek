@@ -119,9 +119,9 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      * the player to fire any active pods.
      *
      * @param clientgui
-     *            the <code>ClientGUI</code> parent of this dialog
+     *                   the <code>ClientGUI</code> parent of this dialog
      * @param entity
-     *            the <code>Entity</code> that can fire AP Pods.
+     *                   the <code>Entity</code> that can fire AP Pods.
      * @param attackType
      */
     public TriggerBPodDialog(ClientGUI clientgui, Entity entity, String attackType) {
@@ -139,7 +139,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         panPods.setLayout(new GridLayout(0, 1));
 
         // Walk through the entity's weapons equipment, looking for Anti-BA Pods.
-        for (Mounted mount : entity.getWeaponList()) {
+        for (Mounted<?> mount : entity.getWeaponList()) {
 
             // Is this an Anti-BA Pod?
             if (mount.getType().hasFlag(WeaponType.F_B_POD)) {
@@ -167,12 +167,12 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                         }
                     } // Only Forward Mounted Arm and Side Torso B-Pod's can be
                       // used against
-                    // Swarm attacks
+                      // Swarm attacks
                     else if (attackType.equals(Infantry.SWARM_MEK)
                             && (mount.isRearMounted()
                                     || (mount.getLocation() == Mek.LOC_CT)
                                     || (mount.getLocation() == Mek.LOC_LLEG) || (mount
-                                    .getLocation() == Mek.LOC_RLEG))) {
+                                            .getLocation() == Mek.LOC_RLEG))) {
                         pod.setEnabled(false);
                     } else {
                         // Yup. Add a traker for this pod.
@@ -242,7 +242,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 + clientgui.frame.getSize().width / 2 - size.width / 2,
                 clientgui.frame.getLocation().y
                         + clientgui.frame.getSize().height / 2 - size.height
-                        / 2);
+                                / 2);
     }
 
     @Override
@@ -268,7 +268,8 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 temp.addElement(new TriggerBPodAction(entityId, pod.getNum(),
                         chooseTarget(
                                 clientgui.getClient().getGame().getEntity(entityId)
-                                        .getPosition()).getId()));
+                                        .getPosition())
+                                .getId()));
             }
         }
 

@@ -46,12 +46,12 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new StreakHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize() * 2;

@@ -66,7 +66,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
                 finalMDamage = finalSDamage;
                 maxRangeText = "Ranges: S, M";
             } else {
-                maxRangeText  = "Range: S";
+                maxRangeText = "Range: S";
             }
             report.addLine("Final Damage", "", finalSDamage + "");
             report.addLine("Range:", range + " hexes", maxRangeText);
@@ -86,7 +86,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
+    protected void assignSpecialAbilities(Mounted<?> weapon, WeaponType weaponType) {
         super.assignSpecialAbilities(weapon, weaponType);
 
         if (weaponType instanceof InfantryAttack) {
@@ -99,7 +99,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
         report.startTentativeSection();
         report.addEmptyLine();
         report.addLine("--- Heat Damage (HT):", "");
-        for (Mounted weapon : weaponsList) {
+        for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA))
                     && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
@@ -107,8 +107,9 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
                     report.addLine("Insufficient S damage", "No HT", "");
                 } else {
                     report.addLine(weapon.getName(), "(has heat damage)", "");
-                    ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0, 0);
-                    locations[0].setSUA(HT, finalHtValue); // don't set it directly, it  gets overwritten
+                    ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0,
+                            0);
+                    locations[0].setSUA(HT, finalHtValue); // don't set it directly, it gets overwritten
                     report.addLine("Final Ability", "", "HT" + finalHtValue);
                 }
                 report.endTentativeSection();

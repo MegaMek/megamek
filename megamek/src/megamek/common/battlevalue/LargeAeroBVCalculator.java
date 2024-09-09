@@ -82,7 +82,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
             }
         }
 
-        for (Mounted weapon : entity.getTotalWeaponList()) {
+        for (Mounted<?> weapon : entity.getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) weapon.getType();
 
             if (weapon.isDestroyed() || wtype.hasFlag(WeaponType.F_AMS)
@@ -111,7 +111,8 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     }
 
     @Override
-    protected void processExplosiveEquipment() { }
+    protected void processExplosiveEquipment() {
+    }
 
     @Override
     protected int heatEfficiency() {
@@ -119,16 +120,16 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         return entity.getHeatCapacity();
     }
 
-    protected abstract Predicate<Mounted> leftWeaponFilter();
+    protected abstract Predicate<Mounted<?>> leftWeaponFilter();
 
-    protected abstract Predicate<Mounted> leftAftWeaponFilter();
+    protected abstract Predicate<Mounted<?>> leftAftWeaponFilter();
 
-    protected abstract Predicate<Mounted> rightWeaponFilter();
+    protected abstract Predicate<Mounted<?>> rightWeaponFilter();
 
-    protected abstract Predicate<Mounted> rightAftWeaponFilter();
+    protected abstract Predicate<Mounted<?>> rightAftWeaponFilter();
 
     @Override
-    protected double arcFactor(Mounted equipment) {
+    protected double arcFactor(Mounted<?> equipment) {
         return arcFactor(bvLocation(equipment));
     }
 
@@ -147,29 +148,29 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     }
 
     @Override
-    protected boolean isNominalRear(Mounted weapon) {
+    protected boolean isNominalRear(Mounted<?> weapon) {
         return false;
     }
 
     @Override
-    protected boolean isNominalRearArc(Mounted weapon) {
+    protected boolean isNominalRearArc(Mounted<?> weapon) {
         return super.isNominalRearArc(weapon);
     }
 
-    protected boolean isNominalArc(int nominalBvLocation, Mounted equipment) {
+    protected boolean isNominalArc(int nominalBvLocation, Mounted<?> equipment) {
         return bvLocation(equipment) == nominalBvLocation;
     }
 
-    protected abstract int bvLocation(Mounted equipment);
+    protected abstract int bvLocation(Mounted<?> equipment);
 
     @Override
     protected void determineFront() {
-        Predicate<Mounted> frontFilter = frontWeaponFilter();
-        Predicate<Mounted> rearFilter = rearWeaponFilter();
-        Predicate<Mounted> leftFilter = leftWeaponFilter();
-        Predicate<Mounted> rightFilter = rightWeaponFilter();
-        Predicate<Mounted> leftAftFilter = leftAftWeaponFilter();
-        Predicate<Mounted> rightAftFilter = rightAftWeaponFilter();
+        Predicate<Mounted<?>> frontFilter = frontWeaponFilter();
+        Predicate<Mounted<?>> rearFilter = rearWeaponFilter();
+        Predicate<Mounted<?>> leftFilter = leftWeaponFilter();
+        Predicate<Mounted<?>> rightFilter = rightWeaponFilter();
+        Predicate<Mounted<?>> leftAftFilter = leftAftWeaponFilter();
+        Predicate<Mounted<?>> rightAftFilter = rightAftWeaponFilter();
         Map<Integer, Double> bvPerArc = new HashMap<>();
         double weaponsBVFront = processWeaponSection(false, frontFilter, false);
         double weaponsBVRear = processWeaponSection(false, rearFilter, false);
@@ -212,14 +213,17 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         frontAndRearDecided = true;
     }
 
-    /** @return True when the two weapons are equal for conversion purposes (same type, location and links). */
-    protected boolean canBeSummed(Mounted weapon1, Mounted weapon2) {
+    /**
+     * @return True when the two weapons are equal for conversion purposes (same
+     *         type, location and links).
+     */
+    protected boolean canBeSummed(Mounted<?> weapon1, Mounted<?> weapon2) {
         return weapon1.getType().equals(weapon2.getType())
                 && weapon1.getLocation() == weapon2.getLocation()
                 && weapon1.isRearMounted() == weapon2.isRearMounted()
                 && ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null)
-                || (weapon1.getLinkedBy() != null
-                && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
+                        || (weapon1.getLinkedBy() != null
+                                && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
     }
 
     @Override
@@ -316,7 +320,8 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     }
 
     @Override
-    protected void processAmmo() { }
+    protected void processAmmo() {
+    }
 
     protected abstract String arcName(int bvLocation);
 

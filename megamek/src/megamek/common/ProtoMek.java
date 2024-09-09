@@ -99,19 +99,20 @@ public class ProtoMek extends Entity {
     public static final String[] systemNames = { "Arm", "Leg", "Head", "Torso" };
 
     /**
-     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
+     * Contains a mapping of locations which are blocked when carrying cargo in the
+     * "key" location
      */
     public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
 
     static {
-    	BLOCKED_FIRING_LOCATIONS = new HashMap<>();
-    	BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_TORSO);
+        BLOCKED_FIRING_LOCATIONS = new HashMap<>();
+        BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_TORSO);
 
-    	BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_TORSO);
+        BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_TORSO);
     }
 
     // For grapple attacks
@@ -195,8 +196,9 @@ public class ProtoMek extends Entity {
      * Get the weapon in the given torso location (if any).
      *
      * @param torsoNum
-     *            - a <code>int</code> that corresponds to SYSTEM_TORSO_WEAPON_A
-     *            through SYSTEM_TORSO_WEAPON_F
+     *                 - a <code>int</code> that corresponds to
+     *                 SYSTEM_TORSO_WEAPON_A
+     *                 through SYSTEM_TORSO_WEAPON_F
      * @return the <code>Mounted</code> weapon at the needed location. This
      *         value will be <code>null</code> if no weapon is in the indicated
      *         location.
@@ -204,7 +206,7 @@ public class ProtoMek extends Entity {
     public Mounted<?> getTorsoWeapon(int torsoNum) {
         int index = torsoNum - SYSTEM_TORSO_WEAPON_A;
         // There are some non-weapons that take up weapon critical slots
-        List<Mounted> torsoEquipment = getEquipment().stream().filter(m -> (m.getLocation() == LOC_TORSO)
+        List<Mounted<?>> torsoEquipment = getEquipment().stream().filter(m -> (m.getLocation() == LOC_TORSO)
                 && m.getType().isHittable()).collect(Collectors.toList());
         if (index < torsoEquipment.size()) {
             return torsoEquipment.get(index);
@@ -586,58 +588,59 @@ public class ProtoMek extends Entity {
      * Returns true if the entity can pick up ground objects
      */
     public boolean canPickupGroundObject() {
-    	return !isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null) ||
-    			!isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
+        return !isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null) ||
+                !isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
     }
 
     /**
      * The maximum tonnage of ground objects that can be picked up by this unit
      */
     public double maxGroundObjectTonnage() {
-    	double percentage = 0.0;
+        double percentage = 0.0;
 
-    	if (!isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null)) {
-    		percentage += 0.05;
-    	}
-    	if (!isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null)) {
-    		percentage += 0.05;
-    	}
+        if (!isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null)) {
+            percentage += 0.05;
+        }
+        if (!isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null)) {
+            percentage += 0.05;
+        }
 
-    	double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+        double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
 
-    	return getWeight() * percentage * heavyLifterMultiplier;
+        return getWeight() * percentage * heavyLifterMultiplier;
     }
 
     @Override
     public List<Integer> getDefaultPickupLocations() {
-    	List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
 
-    	if ((getCarriedObject(ProtoMek.LOC_LARM) == null) && !isLocationBad(ProtoMek.LOC_LARM)) {
-    		result.add(ProtoMek.LOC_LARM);
-    	}
-    	if ((getCarriedObject(ProtoMek.LOC_RARM) == null) && !isLocationBad(ProtoMek.LOC_RARM)) {
-    		result.add(ProtoMek.LOC_RARM);
-    	}
+        if ((getCarriedObject(ProtoMek.LOC_LARM) == null) && !isLocationBad(ProtoMek.LOC_LARM)) {
+            result.add(ProtoMek.LOC_LARM);
+        }
+        if ((getCarriedObject(ProtoMek.LOC_RARM) == null) && !isLocationBad(ProtoMek.LOC_RARM)) {
+            result.add(ProtoMek.LOC_RARM);
+        }
 
-    	return result;
+        return result;
     }
 
     @Override
     public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
-    	List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
 
-    	// if we can pick the object up according to "one handed pick up rules" in TacOps
-    	if (cargo.getTonnage() <= (getWeight() / 20)) {
-    		if ((getCarriedObject(ProtoMek.LOC_LARM) == null) && !isLocationBad(ProtoMek.LOC_LARM)) {
-    			result.add(ProtoMek.LOC_LARM);
-    		}
+        // if we can pick the object up according to "one handed pick up rules" in
+        // TacOps
+        if (cargo.getTonnage() <= (getWeight() / 20)) {
+            if ((getCarriedObject(ProtoMek.LOC_LARM) == null) && !isLocationBad(ProtoMek.LOC_LARM)) {
+                result.add(ProtoMek.LOC_LARM);
+            }
 
-    		if ((getCarriedObject(ProtoMek.LOC_RARM) == null) && !isLocationBad(ProtoMek.LOC_RARM)) {
-    			result.add(ProtoMek.LOC_RARM);
-    		}
-    	}
+            if ((getCarriedObject(ProtoMek.LOC_RARM) == null) && !isLocationBad(ProtoMek.LOC_RARM)) {
+                result.add(ProtoMek.LOC_RARM);
+            }
+        }
 
-    	return result;
+        return result;
     }
 
     @Override
@@ -649,7 +652,10 @@ public class ProtoMek extends Entity {
         }
     }
 
-    /** @return True if this ProtoMek mounts an operable Myomer Booster. See {@link Mounted#isOperable()}. */
+    /**
+     * @return True if this ProtoMek mounts an operable Myomer Booster. See
+     *         {@link Mounted#isOperable()}.
+     */
     public boolean hasMyomerBooster() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -712,7 +718,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int roll = -1;
 
         if ((aimedLocation != LOC_NONE) && aimingMode.isImmobile()) {
@@ -844,15 +850,15 @@ public class ProtoMek extends Entity {
      * Sets the internal structure for the pMek.
      *
      * @param head
-     *            head
+     *                head
      * @param torso
-     *            center torso
+     *                center torso
      * @param arm
-     *            right/left arm
+     *                right/left arm
      * @param legs
-     *            right/left leg
+     *                right/left leg
      * @param mainGun
-     *            main gun
+     *                main gun
      */
     public void setInternal(int head, int torso, int arm, int legs, int mainGun) {
         initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
@@ -872,7 +878,7 @@ public class ProtoMek extends Entity {
     public void autoSetInternal() {
         int mainGunIS = hasMainGun() ? (getWeight() > 9 ? 2 : 1) : IArmorState.ARMOR_NA;
         switch ((int) weight) {
-        // H, TSO, ARM, LEGS, MainGun
+            // H, TSO, ARM, LEGS, MainGun
             case 2:
                 setInternal(1, 2, isQuad() ? IArmorState.ARMOR_NA : 1,
                         isQuad() ? 4 : 2, mainGunIS);
@@ -969,7 +975,8 @@ public class ProtoMek extends Entity {
             if (-1 != shots) {
                 mounted.setShotsLeft(shots);
                 mounted.setOriginalShots(shots);
-                ((AmmoMounted) mounted).setAmmoCapacity(shots * ((AmmoMounted) mounted).getType().getKgPerShot() / 1000);
+                ((AmmoMounted) mounted)
+                        .setAmmoCapacity(shots * ((AmmoMounted) mounted).getType().getKgPerShot() / 1000);
                 super.addEquipment(mounted, loc, rearMounted);
                 return;
             }
@@ -1377,17 +1384,20 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * WoB protoMek interface allows it to be piloted by a quadruple amputee with a VDNI implant.
+     * WoB protoMek interface allows it to be piloted by a quadruple amputee with a
+     * VDNI implant.
      * No effect on game play.
      *
-     * @return Whether the protoMek is equipped with an Inner Sphere ProtoMek Interface.
+     * @return Whether the protoMek is equipped with an Inner Sphere ProtoMek
+     *         Interface.
      */
     public boolean hasInterfaceCockpit() {
         return interfaceCockpit;
     }
 
     /**
-     * Sets whether the protoMek has an Inner Sphere ProtoMek Interface. This will also determine
+     * Sets whether the protoMek has an Inner Sphere ProtoMek Interface. This will
+     * also determine
      * whether it is a mixed tech unit.
      *
      * @param interfaceCockpit Whether the protoMek has an IS interface
@@ -1511,7 +1521,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType,
-                                                     Hex curHex) {
+            Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE, "ProtoMeks cannot fall");
         return roll;
@@ -1551,7 +1561,6 @@ public class ProtoMek extends Entity {
         return true;
     }
 
-
     /**
      * Returns the type of jump jet system the ProtoMek has.
      */
@@ -1573,7 +1582,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(3.385 + 1.093*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(3.385 + 1.093 * Math.log(getWeight())));
     }
 
     @Override
@@ -1615,6 +1624,6 @@ public class ProtoMek extends Entity {
      * block other locations from firing.
      */
     protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
-    	return BLOCKED_FIRING_LOCATIONS;
+        return BLOCKED_FIRING_LOCATIONS;
     }
 }

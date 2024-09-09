@@ -241,7 +241,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
-                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
+                        Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
@@ -266,7 +266,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
             }
         }
         if (mashOperatingTheaters > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_MASH)) {
                     // includes one as part of the core component
                     m.setSize(m.getSize() + mashOperatingTheaters);
@@ -275,7 +275,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
             }
         }
         if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                     // core system does not include drone capacity
                     m.setSize(legacyDCCSCapacity);

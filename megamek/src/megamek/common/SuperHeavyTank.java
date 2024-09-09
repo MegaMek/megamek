@@ -33,17 +33,16 @@ public class SuperHeavyTank extends Tank {
     public static final int LOC_TURRET_2 = 8;
 
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS =
-        { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
+    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RRRS", "RRLS", "RR", "TU", "FT" };
+            "RRRS", "RRLS", "RR", "TU", "FT" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -68,7 +67,7 @@ public class SuperHeavyTank extends Tank {
         return LOC_TURRET_2;
     }
 
-    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+    // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(F_LC)
@@ -83,7 +82,7 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -303,7 +302,7 @@ public class SuperHeavyTank extends Tank {
         } else if ((fa == 270) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARLEFT;
         } else if ((fa == 210) && (leftBetter == 0)) {
-            return  ToHitData.SIDE_REAR;
+            return ToHitData.SIDE_REAR;
         } else if ((fa == 150) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARRIGHT;
         } else if ((fa == 90) && (leftBetter == 1)) {
@@ -350,10 +349,10 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
-        if ((mounted.getType() instanceof WeaponType) 
+        if ((mounted.getType() instanceof WeaponType)
                 && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
@@ -451,7 +450,8 @@ public class SuperHeavyTank extends Tank {
             return false;
         }
 
-        // no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
+        // no weapons can fire anymore, can cause no more than 5 points of combined
+        // weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
             LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
@@ -460,7 +460,7 @@ public class SuperHeavyTank extends Tank {
 
         return false;
     }
-    
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
@@ -468,6 +468,6 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(2.681 + 0.681*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(2.681 + 0.681 * Math.log(getWeight())));
     }
 }

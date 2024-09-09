@@ -68,12 +68,12 @@ public class CLLightMGA extends AmmoWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new MGAWeaponHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

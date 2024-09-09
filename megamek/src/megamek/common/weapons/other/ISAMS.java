@@ -63,7 +63,7 @@ public class ISAMS extends AmmoWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

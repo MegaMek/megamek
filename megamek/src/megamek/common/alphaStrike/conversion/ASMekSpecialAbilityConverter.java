@@ -37,12 +37,13 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
     private final Mek mek = (Mek) entity;
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
+     * instead.
      * Constructs a special ability converter for Mek units.
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASMekSpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -117,7 +118,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
     }
 
     @Override
-    protected void processSEALandSOA(Mounted misc) {
+    protected void processSEALandSOA(Mounted<?> misc) {
         if (mek.isIndustrial()) {
             MiscType miscType = (MiscType) misc.getType();
             if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {

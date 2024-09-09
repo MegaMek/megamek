@@ -71,18 +71,21 @@ public final class UnitToolTip {
 
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
-                                                  MapSettings mapSettings) {
+            MapSettings mapSettings) {
         return getEntityTipTable(entity, localPlayer, true, true, false, mapSettings,
-                true, false, false, false, false,false);
+                true, false, false, false, false, false);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, false, true, true, null,
-                true, true, true, true, true,false);
+                true, true, true, true, true, false);
     }
 
-    /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
+    /**
+     * Returns the unit tooltip with values that are relevant in-game without the
+     * Pilot info.
+     */
     public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, true, false, false, null,
                 true, true, true, true, true, false);
@@ -111,8 +114,9 @@ public final class UnitToolTip {
 
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-           boolean details, boolean pilotInfoShow, boolean pilotInfoStandard, @Nullable MapSettings mapSettings, boolean showName,
-           boolean inGameValue, boolean showBV, boolean showSensors, boolean showSeenBy, boolean report) {
+            boolean details, boolean pilotInfoShow, boolean pilotInfoStandard, @Nullable MapSettings mapSettings,
+            boolean showName,
+            boolean inGameValue, boolean showBV, boolean showSensors, boolean showSeenBy, boolean report) {
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             String msg_senorreturn = Messages.getString("BoardView1.sensorReturn");
@@ -187,9 +191,11 @@ public final class UnitToolTip {
 
     public static String getTargetTipDetail(Targetable target, @Nullable Client client) {
         if (target instanceof Entity) {
-            return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null).toString();
+            return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null)
+                    .toString();
         } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, (client != null) ? client.getBoard() : null, GUIP);
+            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, (client != null) ? client.getBoard() : null,
+                    GUIP);
         } else if (target instanceof Hex) {
             return HexTooltip.getHexTip((Hex) target, client, GUIP);
         } else {
@@ -208,7 +214,7 @@ public final class UnitToolTip {
         return target.getDisplayName();
     }
 
-    public static String getTargetTipSummaryEntity(Entity entity, @Nullable Client client ) {
+    public static String getTargetTipSummaryEntity(Entity entity, @Nullable Client client) {
         if (entity == null) {
             return Messages.getString("BoardView1.Tooltip.NoTarget");
         }
@@ -231,7 +237,8 @@ public final class UnitToolTip {
             // Unit Chassis and Player
             Player owner = (game != null) ? game.getPlayer(entity.getOwnerId()) : null;
             Color ownerColor = (owner != null) ? owner.getColour().getColour() : GUIP.getUnitToolTipFGColor();
-            String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
+            String ownerName = (owner != null) ? owner.getName()
+                    : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
             String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
             String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";
             result = entity.getFullChassis() + clanStr;
@@ -246,7 +253,8 @@ public final class UnitToolTip {
         return result;
     }
 
-    private static String getPilotInfo(Entity entity, boolean pilotInfoShow, boolean pilotInfoStandard, boolean report) {
+    private static String getPilotInfo(Entity entity, boolean pilotInfoShow, boolean pilotInfoStandard,
+            boolean report) {
         if (!pilotInfoShow) {
             return "";
         }
@@ -274,7 +282,7 @@ public final class UnitToolTip {
                 }
             }
 
-            return  guiScaledFontHTML(GUIP.getUnitToolTipQuirkColor(), TT_SMALLFONT_DELTA) + sQuirks + "</FONT>";
+            return guiScaledFontHTML(GUIP.getUnitToolTipQuirkColor(), TT_SMALLFONT_DELTA) + sQuirks + "</FONT>";
         }
 
         return "";
@@ -293,13 +301,15 @@ public final class UnitToolTip {
     }
 
     private static boolean hideArmorLocation(Entity entity, int location) {
-        return ((entity.getOArmor(location) <= 0) && (entity.getOInternal(location) <= 0) && !entity.hasRearArmor(location))
+        return ((entity.getOArmor(location) <= 0) && (entity.getOInternal(location) <= 0)
+                && !entity.hasRearArmor(location))
                 || (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
     }
 
     private static String locationHeader(Entity entity, int location) {
-        String msg_activetroopers =Messages.getString("BoardView1.Tooltip.ActiveTroopers");
-        return entity.isConventionalInfantry() ? ((Infantry) entity).getShootingStrength() + " " + msg_activetroopers : entity.getLocationAbbr(location);
+        String msg_activetroopers = Messages.getString("BoardView1.Tooltip.ActiveTroopers");
+        return entity.isConventionalInfantry() ? ((Infantry) entity).getShootingStrength() + " " + msg_activetroopers
+                : entity.getLocationAbbr(location);
     }
 
     private static StringBuilder sysCrits(Entity entity, int type, int index, int loc, String locAbbr) {
@@ -307,7 +317,7 @@ public final class UnitToolTip {
         int total = entity.getNumberOfCriticals(type, index, loc);
         int hits = entity.getHitCriticals(type, index, loc);
         int good = total - hits;
-        boolean bad = (entity.getBadCriticals(type,index, loc) > 0);
+        boolean bad = (entity.getBadCriticals(type, index, loc) > 0);
 
         if ((good + hits) > 0) {
             locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
@@ -448,16 +458,19 @@ public final class UnitToolTip {
         String msg_abbr_stabilizers = Messages.getString("BoardView1.Tooltip.AbbreviationStabilizers");
         String msg_abbr_turretlocked = Messages.getString("BoardView1.Tooltip.AbbreviationTurretLocked");
         String msg_abbr_minormovementdamage = Messages.getString("BoardView1.Tooltip.AbbreviationMinorMovementDamage");
-        String msg_abbr_moderatemovementdamage = Messages.getString("BoardView1.Tooltip.AbbreviationModerateMovementDamage");
+        String msg_abbr_moderatemovementdamage = Messages
+                .getString("BoardView1.Tooltip.AbbreviationModerateMovementDamage");
         String msg_abbr_heavymovementdamage = Messages.getString("BoardView1.Tooltip.AbbreviationHeavyMovementDamage");
 
-        for (int loc = 0 ; loc < entity.locations(); loc++) {
-            // do not show locations that do not support/have armor/internals like HULL on Aero
+        for (int loc = 0; loc < entity.locations(); loc++) {
+            // do not show locations that do not support/have armor/internals like HULL on
+            // Aero
             if (hideArmorLocation(entity, loc)) {
                 continue;
             }
 
-            boolean locDestroyed = (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED || entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED);
+            boolean locDestroyed = (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED
+                    || entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED);
 
             if (locDestroyed) {
                 // Destroyed location
@@ -488,38 +501,58 @@ public final class UnitToolTip {
             if (entity instanceof Mek) {
                 switch (loc) {
                     case Mek.LOC_HEAD:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, loc, msg_abbr_sensors)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc,
+                                msg_abbr_lifesupport).toString();
                         break;
                     case Mek.LOC_CT:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc, msg_abbr_gyro).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, loc, msg_abbr_engine)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc, msg_abbr_gyro)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, loc, msg_abbr_sensors)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc,
+                                msg_abbr_lifesupport).toString();
                         break;
                     case Mek.LOC_RT:
                     case Mek.LOC_LT:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, loc, msg_abbr_engine)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, loc,
+                                msg_abbr_lifesupport).toString();
                         break;
                     case Mek.LOC_RARM:
                     case Mek.LOC_LARM:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, loc, msg_abbr_upperarm).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, loc, msg_abbr_lowerarm).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND, loc, msg_abbr_hand).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, loc,
+                                msg_abbr_upperarm).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, loc,
+                                msg_abbr_lowerarm).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND, loc, msg_abbr_hand)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msg_abbr_hip)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc,
+                                msg_abbr_upperleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc,
+                                msg_abbr_lowerleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc, msg_abbr_foot)
+                                .toString();
                         break;
                     case Mek.LOC_RLEG:
                     case Mek.LOC_LLEG:
                     case Mek.LOC_CLEG:
-                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msg_abbr_hip)
+                                .toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc,
+                                msg_abbr_upperleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc,
+                                msg_abbr_lowerleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc, msg_abbr_foot)
+                                .toString();
                         break;
                     default:
                         col3 = "";
@@ -540,7 +573,8 @@ public final class UnitToolTip {
                     case SuperHeavyTank.LOC_TURRET:
                     case SuperHeavyTank.LOC_TURRET_2:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
-                        col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString()
+                                : "";
                         break;
                     default:
                         col3 = "";
@@ -559,7 +593,8 @@ public final class UnitToolTip {
                     case Tank.LOC_TURRET:
                     case Tank.LOC_TURRET_2:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
-                        col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString()
+                                : "";
                         break;
                     default:
                         col3 = "";
@@ -640,7 +675,8 @@ public final class UnitToolTip {
     /**
      * Returns a string representing armor or internal structure of one location.
      * The location has the given orig original Armor/IS and the given curr current
-     * Armor/IS. The character dChar will be repeated at appropriate colors depending
+     * Armor/IS. The character dChar will be repeated at appropriate colors
+     * depending
      * on the value of curr, orig and the static visUnit which gives the amount of
      * Armor/IS per single character.
      */
@@ -680,7 +716,7 @@ public final class UnitToolTip {
                 result += guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact + "</FONT>";
             } else {
                 String sIntact = repeat(dChar, numIntact);
-                result += guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact  + "</FONT>";
+                result += guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact + "</FONT>";
             }
         }
         if (numPartial > 0) {
@@ -693,9 +729,9 @@ public final class UnitToolTip {
                 String msg_x = Messages.getString("BoardView1.Tooltip.X");
                 String sDamage = dChar + msg_x + tensDmgd * 10;
                 sDamage += repeat(dChar, numDmgd - 10 * tensDmgd);
-                result +=  guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
+                result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
             } else {
-                String sDamage  = repeat(dChar, numDmgd);
+                String sDamage = repeat(dChar, numDmgd);
                 result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
             }
         }
@@ -711,10 +747,10 @@ public final class UnitToolTip {
         String result = "";
         Color colorIntact = GUIP.getUnitTooltipArmorMiniColorIntact();
         Color colorDamaged = GUIP.getUnitTooltipArmorMiniColorDamaged();
-        String dChar =  GUIP.getUnitToolTipArmorMiniDestoryedChar();
+        String dChar = GUIP.getUnitToolTipArmorMiniDestoryedChar();
         String iChar = GUIP.getUnitToolTipArmorMiniCriticalChar();
 
-        if (good > 0)  {
+        if (good > 0) {
             if (!destroyed) {
                 String sGood = repeat(iChar, good);
                 result = guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sGood + "</FONT>";
@@ -724,7 +760,7 @@ public final class UnitToolTip {
             }
         }
         if (bad > 0) {
-            String sBad =repeat(dChar, bad);
+            String sBad = repeat(dChar, bad);
             result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
         }
         return new StringBuilder().append(result);
@@ -766,7 +802,7 @@ public final class UnitToolTip {
         HashMap<String, WeaponInfo> wpInfos = new HashMap<>();
         // Gather names, counts, Clan/IS
         WeaponInfo currentWp;
-        for (WeaponMounted curWp: weapons) {
+        for (WeaponMounted curWp : weapons) {
             WeaponType wtype = curWp.getType();
             if (isNotTTRelevant(wtype)) {
                 continue;
@@ -775,7 +811,7 @@ public final class UnitToolTip {
             String weapDesc = curWp.getDesc();
 
             if (GUIP.getShowWpsLocinTT() && (entity.locations() > 1)) {
-                weapDesc += " ["+entity.getLocationAbbr(curWp.getLocation()) + ']';
+                weapDesc += " [" + entity.getLocationAbbr(curWp.getLocation()) + ']';
             }
 
             // Distinguish equal weapons with and without rapid fire
@@ -843,7 +879,8 @@ public final class UnitToolTip {
                 wpInfos.put(weapDesc, currentWp);
 
                 // Add ammo info if the weapon has ammo
-                // Check wpInfos for dual entries to avoid displaying ammo twice for non/rapid-fire
+                // Check wpInfos for dual entries to avoid displaying ammo twice for
+                // non/rapid-fire
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
                         && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
                         && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
@@ -910,7 +947,8 @@ public final class UnitToolTip {
                 row = createAmmoEntry(currentEquip).toString();
             } else {
                 // This WeaponInfo is a weapon
-                // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+                // Check if weapon is destroyed, text gray and strikethrough if so, remove the
+                // "x "/"*"
                 boolean isDestroyed = false;
                 String nameStr = currentEquip.name;
                 if (nameStr == null) {
@@ -927,7 +965,8 @@ public final class UnitToolTip {
                     isDestroyed = true;
                 }
 
-                // Remove the rapid fire marker (used only to distinguish weapons set to different modes)
+                // Remove the rapid fire marker (used only to distinguish weapons set to
+                // different modes)
                 nameStr = nameStr.replace(RAPIDFIRE, "");
                 nameStr = nameStr.replace(CLANWP, "");
                 nameStr += currentEquip.range;
@@ -968,7 +1007,8 @@ public final class UnitToolTip {
                         }
                         col2 += "<BR>";
                     }
-                };
+                }
+                ;
 
                 col1 = guiScaledFontHTML(GUIP.getUnitToolTipWeaponColor()) + col1 + "</FONT>";
                 col1 = "<TD>" + col1 + "</TD>";
@@ -990,13 +1030,13 @@ public final class UnitToolTip {
     private static StringBuilder bombList(Entity entity) {
         String col1 = "";
         String col2 = "";
-        String col3= "";
+        String col3 = "";
         String row = "";
         String rows = "";
         String table = "";
 
         if (entity.isBomber()) {
-            int[] loadout = { };
+            int[] loadout = {};
 
             if (entity.getGame().getPhase().isLounge()) {
                 loadout = ((IBomber) entity).getBombChoices();
@@ -1018,7 +1058,7 @@ public final class UnitToolTip {
                     col2 = "<TD>" + col2 + "</TD>";
                     col3 = guiScaledFontHTML(GUIP.getUnitToolTipWeaponColor()) + col3 + "</FONT>";
                     col3 = "<TD>" + col3 + "</TD>";
-                    row = "<TR>" + col1  + col2 + col3 + "</TR>";
+                    row = "<TR>" + col1 + col2 + col3 + "</TR>";
                 } else {
                     row = "";
                 }
@@ -1066,9 +1106,10 @@ public final class UnitToolTip {
             row = "<TR>" + col1 + col2 + "</TR>";
             rows += row;
         } else {
-            for (Entry<String, Integer> ammo: ammoInfo.ammos.entrySet()) {
+            for (Entry<String, Integer> ammo : ammoInfo.ammos.entrySet()) {
                 String msg_standard = Messages.getString("BoardView1.Tooltip.Standard");
-                String ammoName = ammo.getKey().equals(msg_standard) && ammoInfo.ammos.size() == 1 ? "" : ammo.getKey() + ": ";
+                String ammoName = ammo.getKey().equals(msg_standard) && ammoInfo.ammos.size() == 1 ? ""
+                        : ammo.getKey() + ": ";
                 // No entry when no ammo of this type left but some other type left
                 if (ammo.getValue() == 0) {
                     continue;
@@ -1108,7 +1149,7 @@ public final class UnitToolTip {
         }
         if (entity.hasActiveECCM()) {
             String msg_eccmsource = Messages.getString("BoardView1.eccmSource");
-            sECMInfo += ECM_SIGN+ " " +msg_eccmsource;
+            sECMInfo += ECM_SIGN + " " + msg_eccmsource;
         }
 
         result = guiScaledFontHTML() + sECMInfo + "</FONT>";
@@ -1120,6 +1161,7 @@ public final class UnitToolTip {
     public static class HeatDisplayHelper {
         public String heatCapacityStr;
         public int heatCapWater;
+
         public HeatDisplayHelper(String heatCapacityStr, int heatCapWater) {
             this.heatCapacityStr = heatCapacityStr;
             this.heatCapWater = heatCapWater;
@@ -1127,7 +1169,8 @@ public final class UnitToolTip {
     }
 
     /**
-     * returns total heat capacity factoring in normal capacity, water and radical HS
+     * returns total heat capacity factoring in normal capacity, water and radical
+     * HS
      *
      */
     public static HeatDisplayHelper getHeatCapacityForDisplay(Entity e) {
@@ -1158,7 +1201,7 @@ public final class UnitToolTip {
             }
         }
 
-        String heatCapacityStr = Integer.toString(heatCap) ;
+        String heatCapacityStr = Integer.toString(heatCap);
 
         if (heatCap < heatCapOrg) {
             heatCapacityStr += "*";
@@ -1176,16 +1219,18 @@ public final class UnitToolTip {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor();
         String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
-        result += Messages.getString("BoardView1.Tooltip.ArmorInternals",armorStr, internalStr);
+        result += Messages.getString("BoardView1.Tooltip.ArmorInternals", armorStr, internalStr);
         result += ' ' + getDamageLevelDesc(entity, true);
 
         if (!isGunEmplacement && entity.isImmobile()) {
-            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
+            result += ' ' + guiScaledFontHTML(GUIP.getWarningColor())
+                    + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
         }
 
         // Unit Prone
         if (!isGunEmplacement && entity.isProne()) {
-            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone") + "</FONT>";
+            result += ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone")
+                    + "</FONT>";
         }
 
         return result;
@@ -1200,7 +1245,8 @@ public final class UnitToolTip {
 
         if (e.isAirborne() && e.getGame().getBoard().onGround()) {
             return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
-                    + srh.maxSensorRange + ")" + " {" + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")
+                    + srh.maxSensorRange + ")" + " {"
+                    + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")
                     + " (" + srh.minGroundSensorRange + "-" + srh.maxGroundSensorRange + ")}";
         }
         return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
@@ -1230,7 +1276,7 @@ public final class UnitToolTip {
                 break;
             case Entity.DMG_LIGHT:
                 String msg_lightdmg = Messages.getString("BoardView1.Tooltip.LightDmg");
-                result = msg_lightdmg ;
+                result = msg_lightdmg;
                 break;
             default:
                 String msg_undamaged = Messages.getString("BoardView1.Tooltip.Undamaged");
@@ -1242,7 +1288,7 @@ public final class UnitToolTip {
 
     /** Returns values that only are relevant when in-game such as heat. */
     private static StringBuilder inGameValues(Entity entity, Player localPlayer, boolean inGameValue,
-                                              boolean showBV, boolean showSensors, boolean showSeenBy) {
+            boolean showBV, boolean showSensors, boolean showSeenBy) {
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -1257,7 +1303,8 @@ public final class UnitToolTip {
             // BV Info
             // Hidden for invisible units when in double blind and hide enemy bv is selected
             // Also not shown in the lobby as BV is shown there outside the tooltip
-            boolean showEnemyBV = !(gameOptions.booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) && gameOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
+            boolean showEnemyBV = !(gameOptions.booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV)
+                    && gameOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
             boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
 
             if (isVisible || showEnemyBV) {
@@ -1339,8 +1386,9 @@ public final class UnitToolTip {
         if (entity instanceof Infantry) {
             InfantryMount mount = ((Infantry) entity).getMount();
             if ((mount != null) && entity.getMovementMode().isSubmarine() && (entity.underwaterRounds > 0)) {
-                String uw = "<br/>" + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds).toString();
-                if (entity.underwaterRounds >=mount.getUWEndurance()) {
+                String uw = "<br/>"
+                        + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds).toString();
+                if (entity.underwaterRounds >= mount.getUWEndurance()) {
                     uw = guiScaledFontHTML(GUIP.getWarningColor()) + uw + "</font>";
                 }
                 result += uw;
@@ -1352,7 +1400,8 @@ public final class UnitToolTip {
         if (entity.isAero()) {
             // Velocity, Altitude, Elevation, Fuel
             IAero aero = (IAero) entity;
-            sAeroInfo = addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getCurrentFuel()).toString();
+            sAeroInfo = addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(),
+                    aero.getCurrentFuel()).toString();
         } else if (entity.getElevation() != 0) {
             // Elevation only
             sAeroInfo = addToTT("Elev", BR, entity.getElevation()).toString();
@@ -1379,7 +1428,7 @@ public final class UnitToolTip {
                 sHeat += addToTT("Heat", BR, heat).toString();
             }
             HeatDisplayHelper hdh = getHeatCapacityForDisplay(entity);
-            sHeat += " / "+ hdh.heatCapacityStr;
+            sHeat += " / " + hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat, GUIP.getUnitToolTipFGColor())) + sHeat + "</FONT>";
 
             if (entity instanceof Mek && ((Mek) entity).hasActiveTSM()) {
@@ -1389,7 +1438,7 @@ public final class UnitToolTip {
             }
         }
 
-        String illuminated = entity.isIlluminated() ?  DOT_SPACER +"\uD83D\uDCA1" : "";
+        String illuminated = entity.isIlluminated() ? DOT_SPACER + "\uD83D\uDCA1" : "";
         result += guiScaledFontHTML(GUIP.getCautionColor()) + illuminated + "</FONT>";
 
         if (entity.hasSearchlight()) {
@@ -1423,7 +1472,6 @@ public final class UnitToolTip {
             result += guiScaledFontHTML(GUIP.getCautionColor()) + sUnitProne + "</FONT>";
         }
 
-
         if (!entity.getHiddenActivationPhase().isUnknown()) {
             result += addToTT("HiddenActivating", BR, entity.getHiddenActivationPhase().toString()).toString();
         } else if (entity.isHidden()) {
@@ -1431,9 +1479,9 @@ public final class UnitToolTip {
         }
 
         // Jammed by ECM - don't know how to replicate this correctly from the boardview
-        //      if (isAffectedByECM()) {
-        //          addToTT("Jammed", BR);
-        //      }
+        // if (isAffectedByECM()) {
+        // addToTT("Jammed", BR);
+        // }
 
         // Swarmed
         if (entity.getSwarmAttackerId() != Entity.NONE) {
@@ -1451,7 +1499,8 @@ public final class UnitToolTip {
 
         // Spotting
         if (entity.isSpotting() && game.hasEntity(entity.getSpotTargetId())) {
-            String sSpotting = addToTT("Spotting", BR, game.getEntity(entity.getSpotTargetId()).getDisplayName()).toString();
+            String sSpotting = addToTT("Spotting", BR, game.getEntity(entity.getSpotTargetId()).getDisplayName())
+                    .toString();
             result += guiScaledFontHTML() + sSpotting + "</FONT>";
         }
 
@@ -1463,8 +1512,7 @@ public final class UnitToolTip {
                 int seenByResolution = GUIP.getUnitToolTipSeenByResolution();
                 String tmpStr = "";
 
-                dance:
-                for (Player player : entity.getWhoCanSee()) {
+                dance: for (Player player : entity.getWhoCanSee()) {
                     if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
                         switch (seenByResolution) {
                             case 0:
@@ -1503,7 +1551,8 @@ public final class UnitToolTip {
         if (showSensors) {
             // If sensors, display what sensors this unit is using
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                    || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
+                    || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
+                            && entity.isSpaceborne()) {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
                 if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
@@ -1542,11 +1591,14 @@ public final class UnitToolTip {
         return new StringBuilder().append(result);
     }
 
-    /** Returns unit values that are relevant in-game and in the lobby such as movement ability. */
+    /**
+     * Returns unit values that are relevant in-game and in the lobby such as
+     * movement ability.
+     */
     private static StringBuilder getMovement(Entity entity) {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
-        String l1= "";
+        String l1 = "";
         String l2 = "";
         String l3 = "";
         String l4 = "";
@@ -1572,13 +1624,13 @@ public final class UnitToolTip {
                             if (!entity.isLocationBad(i)) {
                                 if (((Mek) entity).legHasHipCrit(i)) {
                                     hipHits++;
-                                    if ((entity.getGame() == null) || (!entity.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE))) {
+                                    if ((entity.getGame() == null) || (!entity.getGame().getOptions()
+                                            .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE))) {
                                         continue;
                                     }
                                 }
                                 actuatorHits += ((Mek) entity).countLegActuatorCrits(i);
-                            }
-                            else {
+                            } else {
                                 legsDestroyed++;
                             }
                         }
@@ -1595,7 +1647,7 @@ public final class UnitToolTip {
             int partialWingWeaterMod = 0;
 
             if ((entity instanceof Mek) || (entity instanceof Tank)) {
-                for (Mounted mounted : entity.getMisc()) {
+                for (Mounted<?> mounted : entity.getMisc()) {
                     if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
                         jumpJet++;
                         if (mounted.isDestroyed() || mounted.isBreached()) {
@@ -1626,7 +1678,7 @@ public final class UnitToolTip {
             int walkMP = entity.getOriginalWalkMP();
             int runMP = entity.getOriginalRunMP();
             int jumpMP = entity.getOriginalJumpMP();
-            String sMove = addToTT("Movement", NOBR , walkMP,  runMP).toString();
+            String sMove = addToTT("Movement", NOBR, walkMP, runMP).toString();
 
             if (jumpMP > 0) {
                 sMove += "/" + jumpMP;
@@ -1650,9 +1702,9 @@ public final class UnitToolTip {
             sMove += sMoveMode;
 
             if ((walkMP != walkMPModified) || (runMP != runMPModified) || (jumpMP != jumpMPModified)) {
-                if (entity.getGame().getPlanetaryConditions().getGravity()  != 1.0) {
+                if (entity.getGame().getPlanetaryConditions().getGravity() != 1.0) {
                     sMove += DOT_SPACER;
-                    String sGravity =  entity.getGame().getPlanetaryConditions().getGravity() + "g";
+                    String sGravity = entity.getGame().getPlanetaryConditions().getGravity() + "g";
                     sMove += guiScaledFontHTML(GUIP.getWarningColor()) + sGravity + "</FONT>";
                 }
                 int walkMPNoHeat = entity.getWalkMP(MPCalculationSetting.NO_HEAT);
@@ -1682,7 +1734,8 @@ public final class UnitToolTip {
                 sMove += guiScaledFontHTML(GUIP.getWarningColor()) + sWeather + "</FONT>";
             }
 
-            if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0) || (paritalWingDistroyed > 0)
+            if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0)
+                    || (paritalWingDistroyed > 0)
                     || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
                 sMove += DOT_SPACER;
                 String sDamage = "\uD83D\uDD27";
@@ -1709,7 +1762,8 @@ public final class UnitToolTip {
                 sMove += DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + sArmor + "</FONT>";
             }
 
-            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0; width: 300px;\">" + sMove + "</Li>";
+            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0; width: 300px;\">"
+                    + sMove + "</Li>";
 
             if ((jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (paritalWingDistroyed > 0)) {
                 String jj = "";
@@ -1717,18 +1771,19 @@ public final class UnitToolTip {
                     String msg_jumpjets = Messages.getString("BoardView1.Tooltip.JumpJets");
                     jj = msg_jumpjets + ": " + (jumpJet - jumpJetDistroyed) + "/" + jumpJet;
                 }
-                if (jumpBoosterDistroyed > 0)  {
+                if (jumpBoosterDistroyed > 0) {
                     String msg_jumpBoosters = Messages.getString("BoardView1.Tooltip.JumpBoosters");
                     jj += "; " + msg_jumpBoosters + ": " + (jumpBooster - jumpBoosterDistroyed) + "/" + jumpBooster;
                 }
-                if (paritalWingDistroyed > 0)  {
+                if (paritalWingDistroyed > 0) {
                     String msg_partialwing = Messages.getString("BoardView1.Tooltip.PartialWing");
                     jj += "; " + msg_partialwing + ": " + (paritalWing - paritalWingDistroyed) + "/" + paritalWing;
                 }
                 if (jj.startsWith(";")) {
                     jj = jj.substring(2);
                 }
-                l2 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + jj + "</Li>";
+                l2 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + jj
+                        + "</Li>";
             }
         }
 
@@ -1738,11 +1793,13 @@ public final class UnitToolTip {
             int spec = inf.getSpecializations();
             if (spec > 0) {
                 String sInfantrySpec = addToTT("InfSpec", NOBR, Infantry.getSpecializationName(spec)).toString();
-                l3 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sInfantrySpec + "</Li>";
+                l3 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">"
+                        + sInfantrySpec + "</Li>";
             }
         }
 
-        String ul = "<UL style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + l1 + l2 + l3 + "</UL>";
+        String ul = "<UL style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + l1 + l2
+                + l3 + "</UL>";
         result = guiScaledFontHTML() + ul + "</FONT>";
 
         return new StringBuilder().append(result);
@@ -1751,14 +1808,15 @@ public final class UnitToolTip {
     private static StringBuilder getArmor(Entity entity) {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
-        String l1= "";
+        String l1 = "";
 
         // Armor and Internals
         if (entity instanceof FighterSquadron) {
             String msg_armorcapital = Messages.getString("BoardView1.Tooltip.ArmorCapital");
             String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor() + " " + msg_armorcapital;
             String sArmorInternals = Messages.getString("BoardView1.Tooltip.FSQTotalArmor", armorStr);
-            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sArmorInternals + "</Li>";
+            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">"
+                    + sArmorInternals + "</Li>";
         } else if (!isGunEmplacement) {
             String msg_unknown = Messages.getString("BoardView1.Tooltip.Unknown");
             String armorType = TROView.formatArmorType(entity, true).replace(msg_unknown, "");
@@ -1769,11 +1827,13 @@ public final class UnitToolTip {
             }
             String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor() + armorType;
             String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
-            String sArmorInternals = addToTT("ArmorInternals" , NOBR, armorStr, internalStr).toString();
-            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sArmorInternals + "</Li>";
+            String sArmorInternals = addToTT("ArmorInternals", NOBR, armorStr, internalStr).toString();
+            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">"
+                    + sArmorInternals + "</Li>";
         }
 
-        String ul = "<UL style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + l1 + "</UL>";
+        String ul = "<UL style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + l1
+                + "</UL>";
         result = guiScaledFontHTML() + ul + "</FONT>";
 
         return new StringBuilder().append(result);
@@ -1791,7 +1851,8 @@ public final class UnitToolTip {
         // Critical (red) warnings
         if (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null) {
             String msg_cannotsurvive = Messages.getString("BoardView1.Tooltip.CannotSurvive");
-            sWarnings += "<BR>" + msg_cannotsurvive + " " + entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame());
+            sWarnings += "<BR>" + msg_cannotsurvive + " "
+                    + entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame());
         }
         if (entity.doomedInAtmosphere() && mapSettings.getMedium() == MapSettings.MEDIUM_ATMOSPHERE) {
             String msg_cannotsurviveatmo = Messages.getString("BoardView1.Tooltip.CannotSurviveAtmo");
@@ -1841,7 +1902,7 @@ public final class UnitToolTip {
                 sCarriedUnits += msg_carriedunits + ":";
             }
 
-            for (Entity carried: entity.getLoadedUnits()) {
+            for (Entity carried : entity.getLoadedUnits()) {
                 sCarriedUnits += "<BR>&nbsp;&nbsp;" + carried.getShortNameRaw();
                 if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                     sCarriedUnits += " [" + carried.getId() + "]";
@@ -1855,22 +1916,22 @@ public final class UnitToolTip {
     }
 
     private static StringBuilder carriedCargo(Entity entity) {
-    	StringBuilder sb = new StringBuilder();
-    	List<ICarryable> cargoList = entity.getDistinctCarriedObjects();
+        StringBuilder sb = new StringBuilder();
+        List<ICarryable> cargoList = entity.getDistinctCarriedObjects();
 
-    	if (!cargoList.isEmpty()) {
-    		sb.append(guiScaledFontHTML());
-    		sb.append(Messages.getString("MissionRole.cargo"));
-    		sb.append(":<br/>&nbsp;&nbsp;");
+        if (!cargoList.isEmpty()) {
+            sb.append(guiScaledFontHTML());
+            sb.append(Messages.getString("MissionRole.cargo"));
+            sb.append(":<br/>&nbsp;&nbsp;");
 
-	    	for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-	    		sb.append(cargo.toString());
-	    		sb.append("<br/>&nbsp;&nbsp;");
-	    	}
-	    	sb.append("</FONT>");
-    	}
+            for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+                sb.append(cargo.toString());
+                sb.append("<br/>&nbsp;&nbsp;");
+            }
+            sb.append("</FONT>");
+        }
 
-    	return sb;
+        return sb;
     }
 
     /** Returns the full force chain the entity is in as one text line. */
@@ -1940,7 +2001,7 @@ public final class UnitToolTip {
         sC3UnitName = " [" + c3member.getId() + "] ";
 
         if (c3member.isC3CompanyCommander()) {
-            msg_c3 = Messages.getString("BoardView1.Tooltip.C3CC")  + " ";
+            msg_c3 = Messages.getString("BoardView1.Tooltip.C3CC") + " ";
         } else if (c3member.hasC3M()) {
             msg_c3 = Messages.getString("BoardView1.Tooltip.C3M") + " ";
         }
@@ -1981,5 +2042,6 @@ public final class UnitToolTip {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
     }
 
-    private UnitToolTip() { }
+    private UnitToolTip() {
+    }
 }

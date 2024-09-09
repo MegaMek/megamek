@@ -51,7 +51,7 @@ public class ASSpecialAbilityConverter {
             return new ASLargeAeroSpecialAbilityConverter(entity, element, report);
         } else if (element.isProtoMek()) { // PM
             return new ASProtoMekSpecialAbilityConverter(entity, element, report);
-        } else if (element.isMek()) {   // BM, IM
+        } else if (element.isMek()) { // BM, IM
             return new ASMekSpecialAbilityConverter(entity, element, report);
         } else if (entity instanceof Tank) { // CV and ground SV
             return new ASVehicleSpecialAbilityConverter(entity, element, report);
@@ -68,9 +68,9 @@ public class ASSpecialAbilityConverter {
      * Do not call this directly. Use the static getASDamageConverter instead.
      * Constructs a damage converter for ground units.
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASSpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         this.element = element;
@@ -89,7 +89,7 @@ public class ASSpecialAbilityConverter {
     }
 
     protected void processENE() {
-        for (Mounted equipment : entity.getEquipment()) {
+        for (Mounted<?> equipment : entity.getEquipment()) {
             if (isExplosive(equipment)) {
                 report.addLine(equipment.getName(), "Explosive equipment", "No ENE");
                 if (entity.isClan() && element.isType(BM, IM, SV, CV, MS)) {
@@ -103,7 +103,7 @@ public class ASSpecialAbilityConverter {
     }
 
     protected void processEquipment() {
-        for (Mounted equipment : entity.getEquipment()) {
+        for (Mounted<?> equipment : entity.getEquipment()) {
             if ((equipment.getType() instanceof MiscType)) {
                 processMiscMounted(equipment);
             }
@@ -113,7 +113,7 @@ public class ASSpecialAbilityConverter {
         }
     }
 
-    protected void processMiscMounted(Mounted misc) {
+    protected void processMiscMounted(Mounted<?> misc) {
         MiscType miscType = (MiscType) misc.getType();
         if (miscType.is(Sensor.EW_EQUIPMENT)) {
             assign(misc, ECM);
@@ -301,9 +301,11 @@ public class ASSpecialAbilityConverter {
         return !(element.isInfantry() || element.isProtoMek() || element.isFighter() || element.isLargeAerospace());
     }
 
-    protected void processSEALandSOA(Mounted misc) { }
+    protected void processSEALandSOA(Mounted<?> misc) {
+    }
 
-    protected void processATMO() { }
+    protected void processATMO() {
+    }
 
     protected boolean hasSoaCapableEngine() {
         if (!entity.hasEngine()) {
@@ -424,7 +426,7 @@ public class ASSpecialAbilityConverter {
                         assign("Armored Critical Slot", ARM);
                         return;
                     } else if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                        Mounted mount = crit.getMount();
+                        Mounted<?> mount = crit.getMount();
                         if (mount.isArmored()) {
                             assign(mount, ARM);
                             return;
@@ -474,18 +476,22 @@ public class ASSpecialAbilityConverter {
         }
     }
 
-    /** Assign MFB for certain types of Bay. Overridden for Large Aero that do not assign MFB. */
+    /**
+     * Assign MFB for certain types of Bay. Overridden for Large Aero that do not
+     * assign MFB.
+     */
     protected void processMFB(Transporter transporter) {
         assign(transporter.toString(), MFB);
     }
 
     /** Returns true when the given Mounted blocks ENE. */
-    protected static boolean isExplosive(Mounted equipment) {
+    protected static boolean isExplosive(Mounted<?> equipment) {
         // LAM Bomb Bays are explosive
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOMB_BAY)) {
             return true;
         }
-        // According to ASC p.123 Booby Traps count as explosive contrary to TO AUE p.109
+        // According to ASC p.123 Booby Traps count as explosive contrary to TO AUE
+        // p.109
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOOBY_TRAP)) {
             return true;
         }
@@ -496,7 +502,8 @@ public class ASSpecialAbilityConverter {
     }
 
     protected void finalizeSpecials() {
-        // For MHQ, the values may contain decimals, but the the final MHQ value is rounded down to an int.
+        // For MHQ, the values may contain decimals, but the the final MHQ value is
+        // rounded down to an int.
         if (element.getSUA(MHQ) instanceof Double) {
             double mhqValue = (double) element.getSUA(MHQ);
             element.getSpecialAbilities().replaceSUA(MHQ, (int) mhqValue);
@@ -572,18 +579,27 @@ public class ASSpecialAbilityConverter {
         }
     }
 
-    /** Adds the sua(s) to the element and writes a report line for each, if it is not yet present. */
-    protected void assign(Mounted equipment, BattleForceSUA firstSua, BattleForceSUA... moreSuas) {
+    /**
+     * Adds the sua(s) to the element and writes a report line for each, if it is
+     * not yet present.
+     */
+    protected void assign(Mounted<?> equipment, BattleForceSUA firstSua, BattleForceSUA... moreSuas) {
         assign(equipment.getType().getName(), firstSua);
         Arrays.stream(moreSuas).forEach(sua -> assign(equipment.getType().getName(), sua));
     }
 
-    /** Adds the sua to the element and writes a report line using the name of the given equipment if the sua is not yet present. */
-    protected void assign(Mounted equipment, BattleForceSUA sua) {
+    /**
+     * Adds the sua to the element and writes a report line using the name of the
+     * given equipment if the sua is not yet present.
+     */
+    protected void assign(Mounted<?> equipment, BattleForceSUA sua) {
         assign(equipment.getType().getName(), sua);
     }
 
-    /** Adds the sua to the element and writes a report line using the given text - only if the sua is not yet present. */
+    /**
+     * Adds the sua to the element and writes a report line using the given text -
+     * only if the sua is not yet present.
+     */
     protected void assign(String text, BattleForceSUA sua) {
         if (!element.hasSUA(sua)) {
             addReportLine(text, sua, "");
@@ -591,39 +607,60 @@ public class ASSpecialAbilityConverter {
         }
     }
 
-    /** Writes a report line for adding the sua using the name of the given equipment. */
-    protected void addReportLine(Mounted equipment, BattleForceSUA sua) {
+    /**
+     * Writes a report line for adding the sua using the name of the given
+     * equipment.
+     */
+    protected void addReportLine(Mounted<?> equipment, BattleForceSUA sua) {
         addReportLine(equipment, sua, "");
     }
 
-    /** Adds the sua with the given value to the element and writes a report line using the name of the given equipment. */
-    protected void assign(Mounted equipment, BattleForceSUA sua, double doubleAbilityValue) {
+    /**
+     * Adds the sua with the given value to the element and writes a report line
+     * using the name of the given equipment.
+     */
+    protected void assign(Mounted<?> equipment, BattleForceSUA sua, double doubleAbilityValue) {
         assign(equipment.getType().getName(), sua, doubleAbilityValue);
     }
 
-    /** Adds the sua with the given value to the element and writes a report line using the given text. */
+    /**
+     * Adds the sua with the given value to the element and writes a report line
+     * using the given text.
+     */
     protected void assign(String text, BattleForceSUA sua, double doubleAbilityValue) {
         addReportLine(text, sua, formatForReport(doubleAbilityValue));
         element.getSpecialAbilities().mergeSUA(sua, doubleAbilityValue);
     }
 
-    /** Adds the sua with the given value to the element and writes a report line using the name of the given equipment. */
-    protected void assign(Mounted equipment, BattleForceSUA sua, int intAbilityValue) {
+    /**
+     * Adds the sua with the given value to the element and writes a report line
+     * using the name of the given equipment.
+     */
+    protected void assign(Mounted<?> equipment, BattleForceSUA sua, int intAbilityValue) {
         assign(equipment.getType().getName(), sua, intAbilityValue);
     }
 
-    /** Adds the sua with the given value to the element and writes a report line using the given text. */
+    /**
+     * Adds the sua with the given value to the element and writes a report line
+     * using the given text.
+     */
     protected void assign(String text, BattleForceSUA sua, int intAbilityValue) {
         addReportLine(text, sua, intAbilityValue + "");
         element.getSpecialAbilities().mergeSUA(sua, intAbilityValue);
     }
 
-    /** Writes a report line for adding the sua with the given value using the name of the given equipment. */
-    protected void addReportLine(Mounted equipment, BattleForceSUA sua, String abilityValue) {
+    /**
+     * Writes a report line for adding the sua with the given value using the name
+     * of the given equipment.
+     */
+    protected void addReportLine(Mounted<?> equipment, BattleForceSUA sua, String abilityValue) {
         addReportLine(equipment.getType().getName(), sua, abilityValue);
     }
 
-    /** Writes a report line for adding the sua with the given value using the given text. */
+    /**
+     * Writes a report line for adding the sua with the given value using the given
+     * text.
+     */
     protected void addReportLine(String text, BattleForceSUA sua, String abilityValue) {
         String hiddenText = AlphaStrikeHelper.hideSpecial(sua, element) ? "(hidden)" : "";
         if (text.length() > 32) {

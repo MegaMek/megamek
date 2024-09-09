@@ -73,7 +73,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
-        //support vees don't use engine ratings, so just use a value of 1
+        // support vees don't use engine ratings, so just use a value of 1
         a.setEngine(new Engine(1, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         loadSVArmor(a);
@@ -215,7 +215,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        Mounted<?> mount = t.addEquipment(etype, nLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
@@ -252,7 +252,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         }
 
         if (mashOperatingTheaters > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_MASH)) {
                     // includes one as part of the core component
                     m.setSize(m.getSize() + mashOperatingTheaters);
@@ -262,7 +262,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         }
 
         if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
+            for (Mounted<?> m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                     // core system does not include drone capacity
                     m.setSize(legacyDCCSCapacity);

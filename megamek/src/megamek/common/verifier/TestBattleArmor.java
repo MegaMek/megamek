@@ -136,7 +136,7 @@ public class TestBattleArmor extends TestEntity {
          * name.
          *
          * @param name
-         *            The internal name.
+         *             The internal name.
          * @return The <code>BAManipulator</code> that corresponds to the given
          *         internal name or null if no match was found.
          */
@@ -151,9 +151,9 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public enum BAMotiveSystems {
-        BA_JUMP (EquipmentTypeLookup.BA_JUMP_JET, EntityMovementMode.INF_JUMP, new int[] { 25, 25, 50, 125, 250 }),
-        BA_VTOL (EquipmentTypeLookup.BA_VTOL, EntityMovementMode.VTOL, new int[] { 30, 40, 60 }),
-        BA_UMU (EquipmentTypeLookup.BA_UMU, EntityMovementMode.INF_UMU, new int[] { 45, 45, 85, 160, 250});
+        BA_JUMP(EquipmentTypeLookup.BA_JUMP_JET, EntityMovementMode.INF_JUMP, new int[] { 25, 25, 50, 125, 250 }),
+        BA_VTOL(EquipmentTypeLookup.BA_VTOL, EntityMovementMode.VTOL, new int[] { 30, 40, 60 }),
+        BA_UMU(EquipmentTypeLookup.BA_UMU, EntityMovementMode.INF_UMU, new int[] { 45, 45, 85, 160, 250 });
 
         private final String internalName;
         private final EntityMovementMode mode;
@@ -192,8 +192,9 @@ public class TestBattleArmor extends TestEntity {
 
         /**
          * @param weightClass The EntityWeightClass index for the suit
-         * @return            The mass of the motive system per MP
-         * @throws IndexOutOfBoundsException if the weight class is not in the range allowed by the suit
+         * @return The mass of the motive system per MP
+         * @throws IndexOutOfBoundsException if the weight class is not in the range
+         *                                   allowed by the suit
          */
         public double getWeight(int weightClass) {
             return weightsKg[weightClass] / 1000.0;
@@ -213,7 +214,7 @@ public class TestBattleArmor extends TestEntity {
      * @param loc
      * @return
      */
-    public static boolean isMountLegal(BattleArmor ba, Mounted newMount, int loc) {
+    public static boolean isMountLegal(BattleArmor ba, Mounted<?> newMount, int loc) {
         return isMountLegal(ba, newMount, loc, BattleArmor.LOC_SQUAD);
     }
 
@@ -231,7 +232,7 @@ public class TestBattleArmor extends TestEntity {
      * @param trooper
      * @return
      */
-    public static boolean isMountLegal(BattleArmor ba, Mounted newMount,
+    public static boolean isMountLegal(BattleArmor ba, Mounted<?> newMount,
             int loc, int trooper) {
         int numUsedCrits = 0;
         int numAntiMekWeapons = 0;
@@ -243,7 +244,7 @@ public class TestBattleArmor extends TestEntity {
         if ((loc == BattleArmor.MOUNT_LOC_TURRET) && (ba.getTurretCapacity() == 0)) {
             return false;
         }
-        for (Mounted m : ba.getEquipment()) {
+        for (Mounted<?> m : ba.getEquipment()) {
             // Manipulators don't take up slots in BA
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;
@@ -256,7 +257,7 @@ public class TestBattleArmor extends TestEntity {
 
             if (m.getBaMountLoc() == loc
                     && (m.getLocation() == trooper
-                        || m.getLocation() == BattleArmor.LOC_SQUAD)) {
+                            || m.getLocation() == BattleArmor.LOC_SQUAD)) {
 
                 if ((m.getType() instanceof WeaponType)
                         && !(m.getType() instanceof InfantryWeapon)) {
@@ -273,16 +274,18 @@ public class TestBattleArmor extends TestEntity {
             }
         }
 
-        // In the case of quads with turrets, we need to apply the total of body + turret to the limitation
+        // In the case of quads with turrets, we need to apply the total of body +
+        // turret to the limitation
         if ((loc == BattleArmor.MOUNT_LOC_TURRET)
                 || ((loc == BattleArmor.MOUNT_LOC_BODY)
                         && (ba.getTurretCapacity() > 0))) {
             int otherLoc = (loc == BattleArmor.MOUNT_LOC_BODY)
-                    ? BattleArmor.MOUNT_LOC_TURRET : BattleArmor.MOUNT_LOC_BODY;
-            for (Mounted m : ba.getEquipment()) {
+                    ? BattleArmor.MOUNT_LOC_TURRET
+                    : BattleArmor.MOUNT_LOC_BODY;
+            for (Mounted<?> m : ba.getEquipment()) {
                 if (m.getBaMountLoc() == otherLoc
                         && (m.getLocation() == trooper
-                            || m.getLocation() == BattleArmor.LOC_SQUAD)) {
+                                || m.getLocation() == BattleArmor.LOC_SQUAD)) {
 
                     if ((m.getType() instanceof WeaponType)
                             && !(m.getType() instanceof InfantryWeapon)) {
@@ -305,15 +308,13 @@ public class TestBattleArmor extends TestEntity {
         if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
             if (newMount.getType() instanceof WeaponType) {
-                if ((numAntiMekWeapons + 1) <=
-                        ba.getNumAllowedAntiMekWeapons(loc)) {
+                if ((numAntiMekWeapons + 1) <= ba.getNumAllowedAntiMekWeapons(loc)) {
                     return true;
                 } else {
                     return false;
                 }
             } else if (newMount.getType().hasFlag(MiscType.F_AP_MOUNT)) {
-                if ((numAntiPersonnelWeapons + 1) <=
-                        ba.getNumAllowedAntiPersonnelWeapons(loc, trooper)) {
+                if ((numAntiPersonnelWeapons + 1) <= ba.getNumAllowedAntiPersonnelWeapons(loc, trooper)) {
                     return true;
                 } else {
                     return false;
@@ -419,7 +420,8 @@ public class TestBattleArmor extends TestEntity {
         if (turret > 0) {
             double weight = turret * 0.01 + 0.03;
             if (ba.hasModularTurretMount()) {
-                // modular turret has the same base weight as a standard turret with one more slot,
+                // modular turret has the same base weight as a standard turret with one more
+                // slot,
                 // plus another 10 kg for being modular
                 weight += 0.02;
             }
@@ -526,8 +528,9 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public String printWeightArmor() {
         String armorName = EquipmentType.getArmorTypeName(ba
-                .getArmorType(BattleArmor.LOC_SQUAD), TechConstants.isClan(ba
-                .getArmorTechLevel(BattleArmor.LOC_SQUAD)));
+                .getArmorType(BattleArmor.LOC_SQUAD),
+                TechConstants.isClan(ba
+                        .getArmorTechLevel(BattleArmor.LOC_SQUAD)));
 
         return StringUtil.makeLength("Armor: " + getTotalOArmor() + " " + armorName, getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightArmor(), true) + "\n";
@@ -601,7 +604,8 @@ public class TestBattleArmor extends TestEntity {
 
         if (ba.hasWorkingMisc(MiscType.F_PARTIAL_WING) && !ba.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)
                 && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba.getJumpMP() < 1))) {
-            buff.append("BattleArmor with a partial wing must have jump jets with a least 1MP or mechanical jump boosters!");
+            buff.append(
+                    "BattleArmor with a partial wing must have jump jets with a least 1MP or mechanical jump boosters!");
             return false;
         }
 
@@ -616,7 +620,7 @@ public class TestBattleArmor extends TestEntity {
                 && ((ba.getArmorType(BattleArmor.LOC_SQUAD) == EquipmentType.T_ARMOR_BA_STEALTH)
                         || (ba.getArmorType(BattleArmor.LOC_SQUAD) == EquipmentType.T_ARMOR_BA_STEALTH_BASIC)
                         || (ba.getArmorType(BattleArmor.LOC_SQUAD) == EquipmentType.T_ARMOR_BA_STEALTH_IMP) || (ba
-                        .getArmorType(BattleArmor.LOC_SQUAD) == EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE))) {
+                                .getArmorType(BattleArmor.LOC_SQUAD) == EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE))) {
             buff.append("BattleArmor may not mount a myomer booster "
                     + "and stealth armor!");
             return false;
@@ -637,13 +641,13 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public boolean correctCriticals(StringBuffer buff) {
-        Vector<Mounted> unallocated = new Vector<>();
+        Vector<Mounted<?>> unallocated = new Vector<>();
         getUnallocatedEquipment(ba, unallocated);
         boolean correct = true;
 
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
-            for (Mounted mount : unallocated) {
+            for (Mounted<?> mount : unallocated) {
                 buff.append("- ").append(mount.getName()).append("\n");
             }
             correct = false;
@@ -654,9 +658,9 @@ public class TestBattleArmor extends TestEntity {
         int[][] numAMWeapons = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
         int numSSWMs = 0;
         int numGloveMountedAPWeapons = 0;
-        Mounted squadSupportWeapon = null;
+        Mounted<?> squadSupportWeapon = null;
         // Count used crits, AM/AP weaps for each squad member and location
-        for (Mounted m : ba.getEquipment()) {
+        for (Mounted<?> m : ba.getEquipment()) {
             // BA Tasers should be mounted individually
             if (m.getType().hasFlag(WeaponType.F_TASER)
                     && m.getLocation() == BattleArmor.LOC_SQUAD) {
@@ -714,7 +718,7 @@ public class TestBattleArmor extends TestEntity {
             // Special considerations for AP weapons
             if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_INFANTRY)) {
-                Mounted link = m.getLinkedBy();
+                Mounted<?> link = m.getLinkedBy();
                 if (link == null) {
                     correct = false;
                     buff.append(m.getName() + " is an infantry weapon but " +
@@ -731,11 +735,11 @@ public class TestBattleArmor extends TestEntity {
                 if (link.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                     if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
                         buff.append(m.getName() + " is a support weapon and " +
-                            "BattleArmor AP mounts cannot mount " +
-                            "support weapons!\n");
+                                "BattleArmor AP mounts cannot mount " +
+                                "support weapons!\n");
                         correct = false;
                     }
-                // Special considerations for armored gloves
+                    // Special considerations for armored gloves
                 } else if (link.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
                     if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
                         if ((m.getType() instanceof InfantryWeapon)) {
@@ -772,8 +776,8 @@ public class TestBattleArmor extends TestEntity {
                 }
                 if (m.getBaseShotsLeft() > maxShots) {
                     buff.append(m.getName()).append(" has ").append(m.getBaseShotsLeft())
-                        .append(" shots, but BattleArmor may only have at most ")
-                        .append(maxShots).append(" shots per slot.\n");
+                            .append(" shots, but BattleArmor may only have at most ")
+                            .append(maxShots).append(" shots per slot.\n");
                     correct = false;
                 }
             }
@@ -841,7 +845,7 @@ public class TestBattleArmor extends TestEntity {
 
         if (squadSupportWeapon != null) {
             WeaponType sswType = (WeaponType) squadSupportWeapon.getType();
-            for (Mounted ammo : ba.getAmmo()) {
+            for (Mounted<?> ammo : ba.getAmmo()) {
                 if (ammo.isSquadSupportWeapon() &&
                         !AmmoType.isAmmoValid(ammo, sswType)) {
                     buff.append(ammo.getName() + " is squad support weapon " +
@@ -872,8 +876,7 @@ public class TestBattleArmor extends TestEntity {
                 if (BattleArmor.MOUNT_LOC_TURRET == loc) {
                     continue;
                 }
-                if (numAMWeapons[t][loc] >
-                        ba.getNumAllowedAntiMekWeapons(loc)) {
+                if (numAMWeapons[t][loc] > ba.getNumAllowedAntiMekWeapons(loc)) {
                     buff.append(BattleArmor.getBaMountLocAbbr(loc) + " of "
                             + ba.getLocationAbbr(t) + " has "
                             + numAMWeapons[t][loc]
@@ -899,8 +902,8 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public void getUnallocatedEquipment(Entity entity,
-            Vector<Mounted> unallocated) {
-        for (Mounted m : entity.getEquipment()) {
+            Vector<Mounted<?>> unallocated) {
+        for (Mounted<?> m : entity.getEquipment()) {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
                 // OS-launcher ammo doesn't take up a slot
                 if ((m.getType() instanceof AmmoType)
@@ -945,7 +948,7 @@ public class TestBattleArmor extends TestEntity {
         int numRAManipulators = 0;
         BAManipulator laManipType = BAManipulator.NONE;
         BAManipulator raManipType = BAManipulator.NONE;
-        for (Mounted m : ba.getEquipment()) {
+        for (Mounted<?> m : ba.getEquipment()) {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                     numLAManipulators++;
@@ -1066,9 +1069,10 @@ public class TestBattleArmor extends TestEntity {
     }
 
     /**
-     * @param eq        The equipment
-     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
-     * @return          Whether the equipment can be mounted in the BattleArmor suit
+     * @param eq     The equipment
+     * @param buffer If non-null and the location is invalid, will be appended with
+     *               an explanation
+     * @return Whether the equipment can be mounted in the BattleArmor suit
      */
     public static boolean isValidBALocation(EquipmentType eq, @Nullable StringBuffer buffer) {
         // Infantry weapons can only be mounted in armored gloves/APMs
@@ -1131,7 +1135,7 @@ public class TestBattleArmor extends TestEntity {
      */
     public double getWeightMiscEquip(int trooper) {
         double weightSum = 0.0;
-        for (Mounted m : getEntity().getMisc()) {
+        for (Mounted<?> m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
             // If this equipment isn't mounted on the squad or this particular
             // trooper, skip it
@@ -1182,7 +1186,7 @@ public class TestBattleArmor extends TestEntity {
 
     public double getWeightWeapon(int trooper) {
         double weight = 0.0;
-        for (Mounted m : getEntity().getWeaponList()) {
+        for (Mounted<?> m : getEntity().getWeaponList()) {
             // If this equipment isn't mounted on the squad or this particular
             // trooper, skip it
             if ((m.getLocation() != BattleArmor.LOC_SQUAD)
@@ -1197,7 +1201,8 @@ public class TestBattleArmor extends TestEntity {
                 continue;
             }
 
-            // The weight of an anti-personnel weapon in an AP mount or armored glove manipulator doesn't
+            // The weight of an anti-personnel weapon in an AP mount or armored glove
+            // manipulator doesn't
             // count toward suit weight limit.
             if (m.isAPMMounted()) {
                 continue;
@@ -1211,7 +1216,7 @@ public class TestBattleArmor extends TestEntity {
 
     public double getWeightAmmo(int trooper) {
         double weight = 0.0;
-        for (Mounted m : getEntity().getAmmo()) {
+        for (Mounted<?> m : getEntity().getAmmo()) {
 
             // If this equipment isn't mounted on the squad or this particular
             // trooper, skip it
@@ -1264,7 +1269,7 @@ public class TestBattleArmor extends TestEntity {
         weight += getWeightAmmo(trooper);
 
         // Round weight to prevent odd behavior
-        return Math.round(weight*1000) / 1000.0;
+        return Math.round(weight * 1000) / 1000.0;
     }
 
     @Override
@@ -1282,7 +1287,7 @@ public class TestBattleArmor extends TestEntity {
         Map<String, Integer> equipmentCount = new HashMap<>();
         List<String> currentErrors = new ArrayList<>();
 
-        for (Mounted mount : battleArmor.getEquipment()) {
+        for (Mounted<?> mount : battleArmor.getEquipment()) {
             equipmentCount.merge(mount.getType().getInternalName(), 1, Integer::sum);
 
             if (mount.getType() instanceof WeaponType) {

@@ -71,7 +71,7 @@ public class ProtoMekTROView extends TROView {
         setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
         setModelData("walkMP", proto.getWalkMP());
         setModelData("runMP", proto.getRunMPasString());
-        final List<Mounted> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_UMU))
+        final List<Mounted<?>> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_UMU))
                 .collect(Collectors.toList());
         if (umu.isEmpty()) {
             setModelData("jumpMP", proto.getOriginalJumpMP());
@@ -125,7 +125,7 @@ public class ProtoMekTROView extends TROView {
     protected int addEquipment(Entity entity, boolean includeAmmo) {
         final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
-        for (final Mounted m : entity.getEquipment()) {
+        for (final Mounted<?> m : entity.getEquipment()) {
             if ((m.getLocation() < 0) || m.isWeaponGroup() || (!includeAmmo && (m.getType() instanceof AmmoType))) {
                 continue;
             }
@@ -136,7 +136,8 @@ public class ProtoMekTROView extends TROView {
             final String loc = formatLocationTableEntry(entity, m);
             equipment.putIfAbsent(loc, new HashMap<>());
             if (m.getType() instanceof AmmoType) {
-                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), m.getBaseShotsLeft(), Integer::sum);
+                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), m.getBaseShotsLeft(),
+                        Integer::sum);
             } else {
                 equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), 1, Integer::sum);
             }

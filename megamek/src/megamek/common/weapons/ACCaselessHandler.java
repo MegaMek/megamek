@@ -21,7 +21,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Dave Nawton
@@ -38,7 +38,7 @@ public class ACCaselessHandler extends ACWeaponHandler {
      * @param g
      */
     public ACCaselessHandler (ToHitData t, WeaponAttackAction w,
-            Game g, GameManager m) {
+            Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

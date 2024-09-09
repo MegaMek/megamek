@@ -57,7 +57,7 @@ import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.IGameManager;
 import megamek.server.Server;
 import megamek.utilities.xml.MMXMLUtility;
@@ -346,6 +346,16 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         editor.boardNew(GUIPreferences.getInstance().getBoardEdRndStart());
     }
 
+    /**
+     * Display the board editor and load the given board
+     */
+    void showEditor(String boardFile) {
+        BoardEditor editor = new BoardEditor(controller);
+        controller.boardEditor = editor;
+        launch(editor.getFrame());
+        editor.loadBoard(new File(boardFile));
+    }
+
     void showSkinEditor() {
         int response = JOptionPane.showConfirmDialog(frame,
                 "The skin editor is currently "
@@ -368,7 +378,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         BoardEditor editor = new BoardEditor(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
-        editor.boardLoad();
+        editor.loadBoard();
     }
 
     /**
@@ -480,7 +490,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             case BF-> new BFGameManager();
              */
             case SBF -> new SBFGameManager();
-            default -> new GameManager();
+            default -> new TWGameManager();
         };
     }
 
@@ -1016,6 +1026,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     private final ActionListener actionListener = ev -> {
+        if (ev.getActionCommand().startsWith(ClientGUI.BOARD_RECENT)) {
+            String recentBoard = ev.getActionCommand().substring(ClientGUI.BOARD_RECENT.length() + 1);
+            showEditor(recentBoard);
+        }
         switch (ev.getActionCommand()) {
             case ClientGUI.BOARD_NEW:
                 showEditor();

@@ -100,7 +100,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_NEXT("moveNext", CMD_NONE),
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO),
         MOVE_WALK("moveWalk", CMD_GROUND),
-        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF),
+        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF | CMD_PROTOMECH),
         MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL),
         MOVE_GET_UP("moveGetUp", CMD_MECH),
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL),
@@ -643,7 +643,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         currentEntity = en;
-        clientgui.setSelectedEntityNum(en);
+
         gear = MovementDisplay.GEAR_LAND;
 
         clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
@@ -697,6 +697,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             @Override
             public void run() {
                 clientgui.getUnitDisplay().displayEntity(ce);
+                clientgui.getBoardView().redrawEntity(ce);
+                clientgui.setSelectedEntityNum(ce.getId());
                 if (GUIP.getMoveDisplayTabDuringMovePhases()) {
                     clientgui.getUnitDisplay().showPanel(MechPanelTabStrip.SUMMARY);
                 }
@@ -4423,7 +4425,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = en.getWalkMP();
         } else if ((ce() instanceof Mech) && !(ce() instanceof QuadVee)
                 && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
-            // A non-QuadVee 'Mech that is using tracked movement is limited to walking
+            // A non-QuadVee 'Mek that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
@@ -4503,7 +4505,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = ce().getWalkMP();
         } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
                 && ce().getMovementMode() == EntityMovementMode.TRACKED) {
-            // A non-QuadVee 'Mech that is using tracked movement (or converting to it) is limited to walking
+            // A non-QuadVee 'Mek that is using tracked movement (or converting to it) is limited to walking
             maxMP = ce().getWalkMP();
         } else {
             maxMP = ce().getRunMP();

@@ -25,6 +25,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
@@ -33,10 +34,7 @@ import megamek.client.ui.swing.dialog.MultiIntSelectorDialog;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.util.FontHandler;
-import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.StringDrawer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -505,22 +503,9 @@ public class BoardEditor extends JPanel
             @Override
             public void windowClosing(WindowEvent e) {
                 // When the board has changes, ask the user
-                if (hasChanges) {
-                    ignoreHotKeys = true;
-                    int savePrompt = JOptionPane.showConfirmDialog(null,
-                            Messages.getString("BoardEditor.exitprompt"),
-                            Messages.getString("BoardEditor.exittitle"),
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.WARNING_MESSAGE);
-                    ignoreHotKeys = false;
-
-                    // When the user cancels or did not actually save the board, don't close
-                    if (((savePrompt == JOptionPane.YES_OPTION) && !boardSave(false)) ||
-                            (savePrompt == JOptionPane.CANCEL_OPTION)) {
-                        return;
-                    }
+                if (hasChanges && (showSavePrompt() == DialogResult.CANCELLED)) {
+                    return;
                 }
-
                 // otherwise: exit the Map Editor
                 minimapW.setVisible(false);
                 if (controller != null) {
@@ -535,6 +520,32 @@ public class BoardEditor extends JPanel
                 GUIPreferences.getInstance().removePreferenceChangeListener(BoardEditor.this);
             }
         });
+    }
+
+    /**
+     * Shows a prompt to save the current board. When the board is actually saved or the user presses
+     * "No" (don't want to save), returns DialogResult.CONFIRMED. In this case, the action (loading a board
+     * or leaving the board editor) that led to this prompt may be continued.
+     * In all other cases, returns DialogResult.CANCELLED, meaning the action should not be continued.
+     *
+     * @return DialogResult.CANCELLED (cancel action) or CONFIRMED (continue action)
+     */
+    private DialogResult showSavePrompt() {
+        ignoreHotKeys = true;
+        int savePrompt = JOptionPane.showConfirmDialog(null,
+                Messages.getString("BoardEditor.exitprompt"),
+                Messages.getString("BoardEditor.exittitle"),
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+        ignoreHotKeys = false;
+        // When the user cancels or did not actually save the board, don't load anything
+        if (((savePrompt == JOptionPane.YES_OPTION) && !boardSave(false))
+                || (savePrompt == JOptionPane.CANCEL_OPTION)
+                || (savePrompt == JOptionPane.CLOSED_OPTION)) {
+            return DialogResult.CANCELLED;
+        } else {
+            return DialogResult.CONFIRMED;
+        }
     }
 
     /**
@@ -1032,10 +1043,9 @@ public class BoardEditor extends JPanel
         addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew);
         addManyActionListeners(butDelTerrain, butAddTerrain, butSourceFile);
 
-        JPanel panButtons = new JPanel(new GridLayout(3, 2, 2, 2));
+        JPanel panButtons = new JPanel(new GridLayout(3, 3, 2, 2));
         addManyButtons(panButtons, List.of(butBoardNew, butBoardSave, butBoardOpen,
-                butExpandMap, butBoardSaveAs, butBoardSaveAsImage));
-        panButtons.add(butBoardValidate);
+                butExpandMap, butBoardSaveAs, butBoardSaveAsImage, butBoardValidate));
         if (Desktop.isDesktopSupported()) {
             panButtons.add(butSourceFile);
         }
@@ -1468,7 +1478,7 @@ public class BoardEditor extends JPanel
         mapSettings = newSettings;
     }
 
-    public void boardLoad() {
+    public void loadBoard() {
         JFileChooser fc = new JFileChooser(loadPath);
         setDialogSize(fc);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
@@ -1479,10 +1489,11 @@ public class BoardEditor extends JPanel
             // I want a file, y'know!
             return;
         }
-        curBoardFile = fc.getSelectedFile();
-        loadPath = curBoardFile.getParentFile();
-        // load!
-        try (InputStream is = new FileInputStream(fc.getSelectedFile())) {
+        loadBoard(fc.getSelectedFile());
+    }
+
+    public void loadBoard(File file) {
+        try (InputStream is = new FileInputStream(file)) {
             // tell the board to load!
             board.load(is, null, true);
             Set<String> boardTags = board.getTags();
@@ -1499,15 +1510,31 @@ public class BoardEditor extends JPanel
             }
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
+            curBoardFile = file;
+            RecentBoardList.addBoard(curBoardFile);
+            loadPath = curBoardFile.getParentFile();
 
             // Now, *after* initialization of the board which will correct some errors,
             // do a board validation
             validateBoard(false);
-
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
             LogManager.getLogger().error("", ex);
+            showBoardLoadError(ex);
+            initializeBoardIfEmpty();
+        }
+    }
+
+    private void showBoardLoadError(Exception ex) {
+        String message = Messages.getString("BoardEditor.loadBoardError") + System.lineSeparator() + ex.getMessage();
+        String title = Messages.getString("Error");
+        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void initializeBoardIfEmpty() {
+        if ((board == null) || (board.getWidth() == 0) || (board.getHeight() == 0)) {
+            boardNew(false);
         }
     }
 
@@ -1579,6 +1606,7 @@ public class BoardEditor extends JPanel
             butSourceFile.setEnabled(true);
             savedUndoStackSize = undoStack.size();
             hasChanges = false;
+            RecentBoardList.addBoard(curBoardFile);
             setFrameTitle();
             return true;
         } catch (IOException e) {
@@ -1797,7 +1825,13 @@ public class BoardEditor extends JPanel
     //
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equals(ClientGUI.BOARD_NEW)) {
+        if (ae.getActionCommand().startsWith(ClientGUI.BOARD_RECENT)) {
+            if (hasChanges && (showSavePrompt() == DialogResult.CANCELLED)) {
+                return;
+            }
+            String recentBoard = ae.getActionCommand().substring(ClientGUI.BOARD_RECENT.length() + 1);
+            loadBoard(new File(recentBoard));
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_NEW)) {
             ignoreHotKeys = true;
             boardNew(true);
             ignoreHotKeys = false;
@@ -1807,7 +1841,7 @@ public class BoardEditor extends JPanel
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_OPEN)) {
             ignoreHotKeys = true;
-            boardLoad();
+            loadBoard();
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SAVE)) {
             ignoreHotKeys = true;

@@ -589,8 +589,8 @@ public class TeamLoadoutGenerator {
     ) {
         ReconfigurationParameters rp = new ReconfigurationParameters();
 
-        // Set own faction and quality rating
-        rp.friendlyFaction = friendlyFaction;
+        // Set own faction and quality rating (default to generic IS if faction is not provided)
+        rp.friendlyFaction = (friendlyFaction == null) ? "IS" : friendlyFaction;
         rp.friendlyQuality = rating;
 
         // Fill desired bin fill ratio / percentage (as float)
@@ -721,21 +721,34 @@ public class TeamLoadoutGenerator {
         return swapped;
     }
 
-    // Set Artemis LRM carriers to use Artemis LRMs
-    private static boolean setLRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+    private static boolean insertArtemisImperatives(Entity e, MunitionTree mt, String ammoClass) {
         boolean artemis = !(e.getMiscEquipment(MiscType.F_ARTEMIS).isEmpty()
                 && e.getMiscEquipment(MiscType.F_ARTEMIS_V).isEmpty());
 
         if (artemis) {
-            for (Mounted wpn : e.getWeaponList()) {
-                if (wpn.getName().toLowerCase().contains("lrm")) {
-                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", wpn.getType().getShortName(),
+            for (AmmoMounted bin : e.getAmmo()) {
+                if (bin.getName().toUpperCase().contains(ammoClass)) {
+                    String binType = bin.getType().getBaseName();
+                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", binType,
                             "Artemis-capable");
                 }
             }
             return true;
         }
         return false;
+    }
+
+    // Set Artemis LRM carriers to use Artemis LRMs
+    private static boolean setLRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        return insertArtemisImperatives(e, mt, "LRM");
+    }
+
+    private static boolean setSRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        return insertArtemisImperatives(e, mt, "SRM");
+    }
+
+    private static boolean setMMLImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        return insertArtemisImperatives(e, mt, "MML");
     }
     // region Imperative mutators
 
@@ -798,6 +811,10 @@ public class TeamLoadoutGenerator {
             }
             if (rp.enemyFliers >= rp.enemyCount / castPropertyDouble("mtFlakEnemyFliersFractionDivisor", 4.0)) {
                 mwc.increaseFlakMunitions();
+            }
+            // Decrease if no bombers or fliers at all
+            if (rp.enemyBombers == 0 && rp.enemyFliers == 0) {
+                mwc.decreaseFlakMunitions();
             }
 
             // Enemy fast movers make more precise ammo attractive
@@ -905,7 +922,7 @@ public class TeamLoadoutGenerator {
             // Only increase utility rounds if we have more off-board units that the other guys
             if (rp.enemyOffBoard < rp.friendlyOffBoard /
                     castPropertyDouble("mtUtilityAmmoFriendlyVsEnemyFractionDivisor", 1.0)) {
-                mwc.increaseUtilityMunitions();
+                mwc.increaseArtilleryUtilityMunitions();
             }
         } else {
             // Reduce utility munition chances if we've only got a lance or so of arty
@@ -913,7 +930,8 @@ public class TeamLoadoutGenerator {
         }
 
         // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
-        if (rp.friendlyFaction.equals("FS") && rp.enemyFactions.contains("CC")
+        if ((rp.friendlyFaction != null && rp.enemyFactions != null)
+                && rp.friendlyFaction.equals("FS") && rp.enemyFactions.contains("CC")
                 && (3028 <= rp.allowedYear && rp.allowedYear <= 3050)) {
             ArrayList<String> tsmOnly = new ArrayList<String>(List.of("Anti-TSM"));
             mwc.increaseMunitions(tsmOnly);
@@ -945,6 +963,8 @@ public class TeamLoadoutGenerator {
             // utility
             setACImperatives(e, mt, rp);
             setLRMImperatives(e, mt, rp);
+            setSRMImperatives(e, mt, rp);
+            setMMLImperatives(e, mt, rp);
         }
 
         return mt;
@@ -961,7 +981,7 @@ public class TeamLoadoutGenerator {
     public static MunitionTree applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
         // Iterate over every entry in the set of top-weighted munitions for each category
         HashMap<String, List<String>> topWeights = mwc.getTopN(
-                castPropertyInt("mtTopMunitionsSubsetCount", 4)
+                castPropertyInt("mtTopMunitionsSubsetCount", 8)
         );
 
         for (Map.Entry<String, List<String>> e : topWeights.entrySet()) {
@@ -1981,6 +2001,24 @@ class MunitionWeightCollection {
 
     public void decreaseUtilityMunitions() {
         decreaseMunitions(TeamLoadoutGenerator.UTILITY_MUNITIONS);
+    }
+
+    public void increaseArtilleryUtilityMunitions() {
+        modifyMatchingWeights(
+                mapTypeToWeights.get("Artillery"),
+                TeamLoadoutGenerator.UTILITY_MUNITIONS,
+                getPropDouble("increaseWeightFactor", 2.0),
+                getPropDouble("increaseWeightDecrement", 1.0)
+        );
+    }
+
+    public void decreaseArtilleryUtilityMunitions() {
+        modifyMatchingWeights(
+                mapTypeToWeights.get("Artillery"),
+                TeamLoadoutGenerator.UTILITY_MUNITIONS,
+                getPropDouble("decreaseWeightFactor", 0.5),
+                getPropDouble("decreaseWeightDecrement", 0.0)
+        );
     }
 
     public void increaseGuidedMunitions() {

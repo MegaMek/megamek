@@ -13,15 +13,6 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.client.ui.SharedUtility;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -30,6 +21,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.client.ui.SharedUtility;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 
 public abstract class PathRanker implements IPathRanker {
     // TODO: Introduce PathRankerCacheHelper class that contains "global" path ranker state
@@ -256,7 +257,7 @@ public abstract class PathRanker implements IPathRanker {
         for (Entity e : enemies) {
             // Skip airborne aero units as they're further away than they seem and hard to catch.
             // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected
-            // MechWarriors
+            // MekWarriors
             if (e.isAirborneAeroOnGroundMap() ||
                     getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(),
                             getOwner().getForcedWithdrawal())) {

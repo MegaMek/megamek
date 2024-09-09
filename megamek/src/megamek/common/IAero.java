@@ -133,6 +133,8 @@ public interface IAero {
 
     int getThresh(int loc);
 
+    int getHighestThresh();
+
     boolean wasCritThresh();
 
     void setCritThresh(boolean b);

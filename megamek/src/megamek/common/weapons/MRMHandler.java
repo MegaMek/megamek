@@ -25,7 +25,7 @@ import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -43,7 +43,7 @@ public class MRMHandler extends MissileWeaponHandler {
      * @param g
      * @param m
      */
-    public MRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

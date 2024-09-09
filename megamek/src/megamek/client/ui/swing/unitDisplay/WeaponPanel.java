@@ -2736,4 +2736,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             tWeaponScroll.repaint();
         }
     }
+
+    /**
+     * Updates the Weapon Panel with the information for the given entity.  If the given entity
+     * is `null`, this method will do nothing.
+     * @param entity - The weapon panel will update info based on the {@link Entity} provided.
+     */
+    public void updateForEntity(Entity entity) {
+        if (entity == null) {
+            return;
+        }
+
+        // Takes note of the selected weapon to re-select after the call to `displayMech()`
+        int weaponNum = getSelectedWeaponNum();
+        displayMech(entity);
+        selectWeapon(weaponNum);
+    }
 }

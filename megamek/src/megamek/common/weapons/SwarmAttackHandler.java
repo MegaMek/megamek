@@ -22,7 +22,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -37,7 +37,7 @@ public class SwarmAttackHandler extends WeaponHandler {
      * @param g
      */
     public SwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }

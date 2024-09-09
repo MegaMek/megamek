@@ -54,6 +54,9 @@ public abstract class BasicGameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_GM_CONTROLS_DONE_REPORT_PHASE, false);
         addOption(base, OptionsConstants.BASE_HIDE_UNOFFICIAL, false);
         addOption(base, OptionsConstants.BASE_HIDE_LEGACY, false);
+
+        IBasicOptionGroup victory = addGroup("victory");
+        addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true);
     }
 
     public abstract Vector<IOption> loadOptions();

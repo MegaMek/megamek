@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -26,7 +26,7 @@ import java.util.Vector;
 public class FireExtinguisherHandler extends WeaponHandler {
     private static final long serialVersionUID = -7047033962986081773L;
 
-    public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

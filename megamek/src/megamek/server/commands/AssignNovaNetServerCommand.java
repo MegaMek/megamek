@@ -9,7 +9,7 @@ import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
@@ -19,9 +19,9 @@ import megamek.server.Server;
 
 public class AssignNovaNetServerCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public AssignNovaNetServerCommand(Server server, GameManager gameManager) {
+    public AssignNovaNetServerCommand(Server server, TWGameManager gameManager) {
         super(
                 server,
                 "nova",

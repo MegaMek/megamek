@@ -443,7 +443,7 @@ public class QuadVee extends QuadMech {
             return true;
         }
 
-        // In 'Mech mode the torso rotation can be limited by gyro damage.
+        // In 'Mek mode the torso rotation can be limited by gyro damage.
         int gyroHits = getGyroHits();
         if (getGyroType() == GYRO_HEAVY_DUTY) {
             gyroHits--;

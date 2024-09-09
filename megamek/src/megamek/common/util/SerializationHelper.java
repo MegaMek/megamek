@@ -27,6 +27,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.common.Coords;
 import megamek.common.net.marshalling.SanityInputFilter;
+import megamek.server.victory.VictoryCondition;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -62,7 +63,7 @@ public class SerializationHelper {
         xStream.allowTypeHierarchy(megamek.common.options.AbstractOptions.class);
         xStream.allowTypeHierarchy(megamek.common.options.IOption.class);
         xStream.allowTypeHierarchy(megamek.common.weapons.AttackHandler.class);
-        xStream.allowTypeHierarchy(megamek.server.victory.IVictoryConditions.class);
+        xStream.allowTypeHierarchy(VictoryCondition.class);
         xStream.allowTypeHierarchy(megamek.common.strategicBattleSystems.SBFMoveStep.class);
         return xStream;
     }

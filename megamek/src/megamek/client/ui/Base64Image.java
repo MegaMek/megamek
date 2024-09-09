@@ -47,14 +47,25 @@ public class Base64Image implements Serializable {
     /** The displayable image. Created lazily by {@link #getImage()}. */
     private transient Image image;
 
-    /** Creates an empty Base64Image. */
+    /**
+     * Creates an empty Base64Image.
+     */
     public Base64Image() {
         this("");
     }
 
-    /** Creates a Base64Image with the given base64-encoded image. */
+    /**
+     * Creates a Base64Image with the given base64-encoded image.
+     */
     public Base64Image(String base64) {
         this.base64encodedImage = Objects.requireNonNullElse(base64, "");
+    }
+
+    /**
+     * Creates a Base64Image from the given image. The given image itself is not stored.
+     */
+    public Base64Image(@Nullable Image image) {
+        this.base64encodedImage = ImageUtil.base64TextEncodeImage(image);
     }
 
     /** @return True when there is no image, i.e. the base64 encoded form is blank. */

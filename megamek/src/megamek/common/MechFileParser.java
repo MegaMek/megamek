@@ -19,7 +19,6 @@ import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
-import megamek.common.weapons.Weapon;
 import megamek.common.weapons.ppc.*;
 import org.apache.logging.log4j.LogManager;
 
@@ -80,6 +79,47 @@ public class MechFileParser {
             LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
         }
+    }
+
+    public static void initCanonUnitNames() {
+        initCanonUnitNames(Configuration.docsDir(), FILENAME_OFFICIAL_UNITS);
+    }
+
+    /**
+     * Initialize the list of canon unit names; should only be called if canonUnitNames is null or
+     * needs to be reinitialized.
+     * @param dir location where the canonUnitNames file should be
+     * @param fileName String name of the file containing canon unit names
+     */
+    protected static void initCanonUnitNames(File dir, String fileName) {
+        Vector<String> unitNames = new Vector<>();
+        try (FileReader fr = new FileReader(new MegaMekFile(
+                dir, fileName).getFile());
+             BufferedReader br = new BufferedReader(fr)) {
+            String s;
+            String name;
+            while ((s = br.readLine()) != null) {
+                int nIndex1 = s.indexOf('|');
+                if (nIndex1 > -1) {
+                    name = s.substring(0, nIndex1);
+                    unitNames.addElement(name);
+                }
+            }
+            Collections.sort(unitNames);
+        } catch (Exception ignored) {
+
+        }
+
+        // Update names
+        setCanonUnitNames(unitNames);
+    }
+
+    /**
+     * Directly assign a Vector of unit names; protected for unit testing purposes
+     * @param unitNames
+     */
+    protected static void setCanonUnitNames(Vector<String> unitNames) {
+        canonUnitNames = unitNames;
     }
 
     public Entity getEntity() {
@@ -732,29 +772,8 @@ public class MechFileParser {
 
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
-        try {
-            if (canonUnitNames == null) {
-                canonUnitNames = new Vector<>();
-                // init the list.
-                try (FileReader fr = new FileReader(new MegaMekFile(
-                        Configuration.docsDir(), FILENAME_OFFICIAL_UNITS).getFile());
-                     BufferedReader br = new BufferedReader(fr)) {
-                    String s;
-                    String name;
-                    while ((s = br.readLine()) != null) {
-                        int nIndex1 = s.indexOf('|');
-                        if (nIndex1 > -1) {
-                            name = s.substring(0, nIndex1);
-                            canonUnitNames.addElement(name);
-                        }
-                    }
-                    Collections.sort(canonUnitNames);
-                } catch (Exception ignored) {
-
-                }
-            }
-        } catch (Exception ignored) {
-
+        if (canonUnitNames == null) {
+            initCanonUnitNames();
         }
 
         int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());

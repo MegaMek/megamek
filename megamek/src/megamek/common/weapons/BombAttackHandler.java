@@ -18,7 +18,7 @@ import megamek.common.SpecialHexDisplay.Type;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
 import java.util.Vector;
@@ -36,7 +36,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @param g
      */
     public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }

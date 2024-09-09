@@ -51,7 +51,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public static final int LOC_CAPITAL_WINGS = 10;
 
     /**
-     * Translate a 'Mech location to the equivalent Aero location.
+     * Translate a 'Mek location to the equivalent Aero location.
      */
     public static int getAeroLocation(int loc) {
         switch (loc) {
@@ -914,7 +914,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /*
-     * Cycling through conversion modes for LAMs in 'Mech or fighter mode is
+     * Cycling through conversion modes for LAMs in 'Mek or fighter mode is
      * simple toggling between two states. LAMs in AirMech mode have three
      * possible states.
      */
@@ -1690,6 +1690,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public int getThresh(int loc) {
         return getInternal(loc);
+    }
+
+    /**
+     * @return the highest damage threshold for the LAM unit
+     */
+    @Override
+    public int getHighestThresh() {
+        int max = getThresh(0);
+        for (int i = 1; i < locations(); i++) {
+            if (getThresh(i) > max) {
+                max = getThresh(i);
+            }
+        }
+        return max;
     }
 
     @Override

@@ -2565,29 +2565,29 @@ public class MoveStep implements Serializable {
 
         if (entity.isGyroDestroyed() && !((entity instanceof LandAirMech)
                 && (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
-            //A prone 'Mech with a destroyed gyro can only change a single hex side, or eject
+            //A prone 'Mek with a destroyed gyro can only change a single hex side, or eject
             if (entity.isProne()) {
                 if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
                         || getMpUsed() > 1) && stepType != MoveStepType.EJECT) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else {
-                //Normally a 'Mech falls immediately when the gyro is destroyed and can't stand again.
-                //QuadVees using vehicle mode and 'Mechs using tracks do not fall and can continue to
+                //Normally a 'Mek falls immediately when the gyro is destroyed and can't stand again.
+                //QuadVees using vehicle mode and 'Meks using tracks do not fall and can continue to
                 //stand, but cannot use non-tracked/wheeled MP except for a QuadVee converting back to
-                //vehicle mode. This also covers a 'Mech that started with a destroyed gyro but was not
+                //vehicle mode. This also covers a 'Mek that started with a destroyed gyro but was not
                 //set to deploy prone. Perhaps that should not be allowed.
                 if (getMp() > 0) {
                     boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED
                             || entity.getMovementMode() == EntityMovementMode.WHEELED;
                     if (entity instanceof QuadVee) {
-                        //We are in 'Mech/non-tracked mode if the end mode is vee and we are converting
-                        //of the end mode is 'Mech and we are not converting.
+                        //We are in 'Mek/non-tracked mode if the end mode is vee and we are converting
+                        //of the end mode is 'Mek and we are not converting.
                         if (isTracked == entity.isConvertingNow() && stepType != MoveStepType.CONVERT_MODE) {
                             movementType = EntityMovementType.MOVE_ILLEGAL;
                         }
                     } else if (!isTracked) {
-                        //Non QuadVee tracked 'Mechs don't actually convert. They just go, so we only need to
+                        //Non QuadVee tracked 'Meks don't actually convert. They just go, so we only need to
                         //know the end mode.
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }

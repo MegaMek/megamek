@@ -15,10 +15,9 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -37,7 +36,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         super();
     }
 
-    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

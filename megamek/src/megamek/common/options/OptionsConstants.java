@@ -28,7 +28,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_BATTLE_FIST_LA = "battle_fists_la";
     public static final String QUIRK_POS_BATTLE_FIST_RA = "battle_fists_ra";
     public static final String QUIRK_POS_COMBAT_COMPUTER = "combat_computer";
-    public static final String QUIRK_POS_COMMAND_MEK = "command_mek";
+    public static final String QUIRK_POS_COMMAND_MEK = "command_mech";
     public static final String QUIRK_POS_COMPACT = "compact_mek";
     public static final String QUIRK_POS_COWL = "cowl";
     // TODO - Code directional torso mount for play

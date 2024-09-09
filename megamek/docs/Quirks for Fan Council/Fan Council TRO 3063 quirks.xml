@@ -753,7 +753,7 @@
 		<chassis>Black Knight</chassis>
 		<model>BL-13-KNT-FC</model>
 		<unitType>Mek</unitType>
-		<quirk>command_mek</quirk>
+		<quirk>command_mech</quirk>
 		<quirk>hyper_actuator</quirk>
 	</unit>
 
@@ -761,7 +761,7 @@
 		<chassis>Black Knight</chassis>
 		<model>BL-15-KNT-FC</model>
 		<unitType>Mek</unitType>
-		<quirk>command_mek</quirk>
+		<quirk>command_mech</quirk>
 		<quirk>hyper_actuator</quirk>
 	</unit>
 
@@ -769,7 +769,7 @@
 		<chassis>Black Knight</chassis>
 		<model>BL-16-KNT-FC</model>
 		<unitType>Mek</unitType>
-		<quirk>command_mek</quirk>
+		<quirk>command_mech</quirk>
 		<quirk>hyper_actuator</quirk>
 	</unit>
 

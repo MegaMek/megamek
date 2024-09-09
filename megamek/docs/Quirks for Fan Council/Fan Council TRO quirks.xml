@@ -18,7 +18,7 @@
 		<chassis>BattleMaster</chassis>
 		<model>ENF-NAIS-WC-FC</model>
 		<unitType>Mek</unitType>
-		<quirk>command_mek</quirk>
+		<quirk>command_mech</quirk>
 		<quirk>weak_head_1</quirk>
 		<quirk>prototype</quirk>
 	</unit>
@@ -54,7 +54,7 @@
 		<chassis>Marauder</chassis>
 		<model>MAD-NAIS-WC-FC</model>
 		<unitType>Mek</unitType>
-		<quirk>command_mek</quirk>
+		<quirk>command_mech</quirk>
 		<quirk>hyper_actuator</quirk>
 		<quirk>low_profile</quirk>
 		<quirk>prototype</quirk>
@@ -133,7 +133,7 @@
 		<chassis>BattleMaster</chassis>
 		<model>BLR-10K-FC</model>
 		<unitType>Mek</unitType>
-		<quirk>command_mek</quirk>
+		<quirk>command_mech</quirk>
 		<quirk>weak_head_1</quirk>
 	</unit>
 

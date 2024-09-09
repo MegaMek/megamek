@@ -182,7 +182,6 @@ public class MekSummaryCache {
         return failedFiles;
     }
 
-    @SuppressWarnings("unused") // Used in MHQ
     public void loadMekData() {
         loadMekData(false);
     }
@@ -206,15 +205,14 @@ public class MekSummaryCache {
                 if (unit_cache_path.exists()) {
                     loadReport.append("  Reading from unit cache file...\n");
                     lLastCheck = unit_cache_path.lastModified();
-                    InputStream istream = new BufferedInputStream(
-                            new FileInputStream(unit_cache_path));
-                    ObjectInputStream fin = new ObjectInputStream(istream);
-                    Integer nuunits = (Integer) fin.readObject();
-                    for (int i = 0; i < nuunits; i++) {
+                    InputStream inputStream = new BufferedInputStream(new FileInputStream(unit_cache_path));
+                    ObjectInputStream fin = new ObjectInputStream(inputStream);
+                    Integer newUnits = (Integer) fin.readObject();
+                    for (int i = 0; i < newUnits; i++) {
                         if (interrupted) {
                             done();
                             fin.close();
-                            istream.close();
+                            inputStream.close();
                             return;
                         }
                         MekSummary ms = (MekSummary) fin.readObject();
@@ -232,7 +230,7 @@ public class MekSummaryCache {
                         }
                     }
                     fin.close();
-                    istream.close();
+                    inputStream.close();
                 }
             } catch (Exception ex) {
                 loadReport.append("  Unable to load unit cache: ")
@@ -277,7 +275,7 @@ public class MekSummaryCache {
                 if (storyArcsFiles != null) {
                     for (File file : storyArcsFiles) {
                         if (file.isDirectory()) {
-                            File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
+                            File storyArcUnitsDir = new File(file.getPath() + "/data/mekfiles");
                             if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
                                 bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
                             }

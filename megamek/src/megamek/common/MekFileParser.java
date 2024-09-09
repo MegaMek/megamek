@@ -172,9 +172,9 @@ public class MekFileParser {
                     loader = new BLKInfantryFile(bb);
                 } else if (sType.equals("BattleArmor")) {
                     loader = new BLKBattleArmorFile(bb);
-                } else if (sType.equals("ProtoMek")) {
+                } else if (sType.equals("ProtoMek") || sType.equals("ProtoMech")) {
                     loader = new BLKProtoMekFile(bb);
-                } else if (sType.equals("Mek")) {
+                } else if (sType.equals("Mek") || sType.equals("Mech")) {
                     loader = new BLKMekFile(bb);
                 } else if (sType.equals("VTOL")) {
                     loader = new BLKVTOLFile(bb);
@@ -285,7 +285,7 @@ public class MekFileParser {
         }
 
         // Walk through the list of equipment.
-        for (Mounted m : ent.getMisc()) {
+        for (Mounted<?> m : ent.getMisc()) {
             if (m.getLinked() != null) {
                 continue;
             }
@@ -293,7 +293,7 @@ public class MekFileParser {
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
                     || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
                 // We can link to a laser in the same location that isn't already linked.
-                Predicate<Mounted> linkable = mount ->
+                Predicate<Mounted<?>> linkable = mount ->
                         (mount.getLinkedBy() == null) && (mount.getLocation() == m.getLocation())
                                 && (mount.getType() instanceof WeaponType)
                                 && mount.getType().hasFlag(WeaponType.F_LASER);
@@ -313,7 +313,7 @@ public class MekFileParser {
                 if ((eqNum > 0) && linkable.test(ent.getEquipment().get(eqNum - 1))) {
                     m.setLinked(ent.getEquipment().get(eqNum - 1));
                 } else {
-                    for (Mounted weapon : ent.totalWeaponList) {
+                    for (Mounted<?> weapon : ent.totalWeaponList) {
                         if (linkable.test(weapon)) {
                             m.setLinked(weapon);
                             break;
@@ -325,7 +325,7 @@ public class MekFileParser {
                             + ent.getShortName());
                 }
             } else if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
-                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     if (!mWeapon.isDWPMounted()) {
                         continue;
                     }
@@ -345,7 +345,7 @@ public class MekFileParser {
                     throw new EntityLoadingException("Unable to match DWP to weapon for " + ent.getShortName());
                 }
             } else if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
-                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     // Can only link APM mounted weapons that aren't linked
                     if (!mWeapon.isAPMMounted()
                             || (mWeapon.getLinkedBy() != null)) {
@@ -363,7 +363,7 @@ public class MekFileParser {
                     || m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
 
                     if (!mWeapon.getType().hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE)) {
                         continue;
@@ -389,7 +389,7 @@ public class MekFileParser {
                     && (ent instanceof Mek)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
-                for (Mounted mEquip : ent.getMisc()) {
+                for (Mounted<?> mEquip : ent.getMisc()) {
                     MiscType mtype = (MiscType) mEquip.getType();
                     if (mtype.hasFlag(MiscType.F_ECM)) {
                         m.setLinked(mEquip);
@@ -408,7 +408,7 @@ public class MekFileParser {
             else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // Only PPCS are Valid
@@ -442,7 +442,7 @@ public class MekFileParser {
             else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // only srm and lrm are valid for artemis
@@ -473,7 +473,7 @@ public class MekFileParser {
               // now find any active probes and add them to the sensor list
               // choose this sensor if added
               //WOR CEWS
-        for (Mounted m : ent.getMisc()) {
+        for (Mounted<?> m : ent.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BAP)) {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
@@ -652,10 +652,10 @@ public class MekFileParser {
         //  is linked to it's DWP mounted weapon, so that TestBattleArmor
         //  can properly account for DWP mounted ammo
         if (ent instanceof BattleArmor) {
-            for (Mounted ammo : ent.getAmmo()) {
+            for (Mounted<?> ammo : ent.getAmmo()) {
                 if (ammo.isDWPMounted()) {
                     // First, make sure every valid DWP weapon has ammo
-                    for (Mounted weapon : ent.getWeaponList()) {
+                    for (Mounted<?> weapon : ent.getWeaponList()) {
                         if (weapon.isDWPMounted() && (weapon.getLinked() == null)
                                 && AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())) {
                             weapon.setLinked(ammo);
@@ -665,7 +665,7 @@ public class MekFileParser {
                     // If we didn't find a match, we can link to a weapon with
                     //  already linked ammo.
                     if (ammo.getLinkedBy() == null) {
-                        for (Mounted weapon : ent.getWeaponList()) {
+                        for (Mounted<?> weapon : ent.getWeaponList()) {
                             if (weapon.isDWPMounted()
                                     && AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())) {
                                 weapon.setLinked(ammo);
@@ -697,7 +697,7 @@ public class MekFileParser {
                 int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
-                for (Mounted m : ent.getWeaponList()) {
+                for (Mounted<?> m : ent.getWeaponList()) {
                     if (m.getType().getInternalName().equals(Infantry.SWARM_WEAPON_MEK)) {
                         hasSwarm = true;
                     } else if (m.getType().getInternalName().equals(Infantry.SWARM_MEK)) {
@@ -813,16 +813,16 @@ public class MekFileParser {
      * @param entity The entity to add links to
      */
     static void linkDumpers(Entity entity) {
-        List<Mounted> dumpers = entity.getMisc().stream()
+        List<Mounted<?>> dumpers = entity.getMisc().stream()
                 .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER)).collect(Collectors.toList());
 
-        List<Mounted> cargos = entity.getMisc().stream()
+        List<Mounted<?>> cargos = entity.getMisc().stream()
                 .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO)).collect(Collectors.toList());
         cargos.forEach(cargo -> cargo.setLinkedBy(null));
 
-        for (Mounted dumper : dumpers) {
+        for (Mounted<?> dumper : dumpers) {
             dumper.setLinked(null);
-            for (Mounted cargo : cargos) {
+            for (Mounted<?> cargo : cargos) {
                 if ((cargo.getLinkedBy() == null) && (cargo.getLocation() == dumper.getLocation())) {
                     dumper.setLinked(cargo);
                     cargo.setLinkedBy(dumper);

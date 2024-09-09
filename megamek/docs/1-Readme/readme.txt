@@ -322,11 +322,11 @@ After this phase, it's time for initiative again! Hurrah!
 
 ### CUSTOM UNITS
 
-All units (mechs, vehicles, infantry, etc.) are located in the data/mechfiles directory. They
+All units (mechs, vehicles, infantry, etc.) are located in the data/mekfilesdirectory. They
 may be individual files or zipped up into archives (".zip"), and you may also create
 subdirectories if you like.
 
-We recommend creating a folder called Customs in the data/mechfiles directory. Then using this
+We recommend creating a folder called Customs in the data/mekfiles directory. Then using this
 folder to store all custom units.
 
 As of 0.49.13 We've removed the unsupported and unofficial folders. Over the years the

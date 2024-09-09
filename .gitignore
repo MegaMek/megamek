@@ -63,7 +63,7 @@ megamek/userdata/**
 /megamek/data/recordsheets/
 /megamek/data/splash/
 
-# mechfiles
+# mekfiles
 /megamek/data/mekfiles/units.cache
 /megamek/data/mekfiles/IrTech/
 /megamek/data/mekfiles/Special/

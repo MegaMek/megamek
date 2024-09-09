@@ -78,7 +78,7 @@ public final class Configuration {
     private static final String DEFAULT_DIR_NAME_BOARD_BACKGROUNDS = "board_backgrounds";
 
     /** The default unit files directory name (under the data directory). */
-    private static final String DEFAULT_DIR_NAME_UNITS = "mechfiles";
+    private static final String DEFAULT_DIR_NAME_UNITS = "mekfiles";
 
     /** The default scenarios directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_SCENARIOS = "scenarios";
@@ -448,12 +448,12 @@ public final class Configuration {
 
     public static File gameSummaryImagesBVDir() {
         return new File(PreferenceManager.getClientPreferences()
-        .getLogDirectory() + "/gameSummaries/board"); 
+        .getLogDirectory() + "/gameSummaries/board");
     }
 
     public static File gameSummaryImagesMMDir() {
         return new File(PreferenceManager.getClientPreferences()
-        .getLogDirectory() + "/gameSummaries/minimap"); 
+        .getLogDirectory() + "/gameSummaries/minimap");
     }
 
     /**

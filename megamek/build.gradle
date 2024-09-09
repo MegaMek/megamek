@@ -71,7 +71,7 @@ ext {
         '-Dsun.awt.disablegrab=true'
     ]
     data = 'data'
-    unitFiles = "${data}/mechfiles"
+    unitFiles = "${data}/mekfiles"
     rats = "${data}/rat"
     docs = "docs"
     lib = "lib"

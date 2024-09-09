@@ -18,15 +18,21 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
-import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CacheRebuildTest {
@@ -49,7 +55,8 @@ public class CacheRebuildTest {
         // Make sure no units failed loading
         assertTrue(cache.getFailedFiles().isEmpty());
         // Sanity check to make sure the loader thread didn't fail outright
-        assertTrue(cache.getAllMeks().length > 9000);
+        int allMekCount = cache.getAllMeks().length;
+        assertEquals(9299, allMekCount);
     }
 
     /**

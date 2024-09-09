@@ -27,6 +27,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -534,23 +535,32 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 // When the player clicks the same hex again, always ask for the elevation
                 finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
             } else {
-                var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
-                DialogResult result = dlg.showDialog();
-                if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
-                    if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
-                        finalElevation = showHighElevationChoiceDialog();
-                        if ((finalElevation == -1) || entity.isLocationProhibited(coords, finalElevation)) {
-                            return;
-                        }
-                    } else {
-                        finalElevation = dlg.getFirstChoice().elevation();
-                    }
+                ElevationOption elevationOption = showElevationChoiceDialog(elevationOptions);
+                if (elevationOption != null) {
                     lastHexDeploymentOptions.clear();
                     lastHexDeploymentOptions.addAll(elevationOptions);
-                    lastDeploymentOption = dlg.getFirstChoice();
+                    lastDeploymentOption = elevationOption;
+                    finalElevation = elevationOption.elevation();
                 } else {
                     return;
                 }
+//                var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
+//                DialogResult result = dlg.showDialog();
+//                if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
+//                    if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
+//                        finalElevation = showHighElevationChoiceDialog();
+//                        if ((finalElevation == -1) || entity.isLocationProhibited(coords, finalElevation)) {
+//                            return;
+//                        }
+//                    } else {
+//                        finalElevation = dlg.getFirstChoice().elevation();
+//                    }
+//                    lastHexDeploymentOptions.clear();
+//                    lastHexDeploymentOptions.addAll(elevationOptions);
+//                    lastDeploymentOption = dlg.getFirstChoice();
+//                } else {
+//                    return;
+//                }
             }
 
             if (entity.isAero()) {
@@ -635,6 +645,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         } finally {
             ToolTipManager.sharedInstance().setEnabled(true);
+        }
+    }
+
+    private @Nullable ElevationOption showElevationChoiceDialog(List<ElevationOption> elevationOptions) {
+        var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
+        DialogResult result = dlg.showDialog();
+        if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
+            if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
+                int elevation = showHighElevationChoiceDialog();
+                return (elevation == -1) ? null : new ElevationOption(elevation, DeploymentElevationType.ELEVATION);
+            } else {
+                return dlg.getFirstChoice();
+            }
+        } else {
+            return null;
         }
     }
 

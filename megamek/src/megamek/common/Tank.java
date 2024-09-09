@@ -734,12 +734,35 @@ public class Tank extends Entity {
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.JUNGLE))
-                        && hex.ceiling() > currElevation;
+                return isLocationProhibitedWiGE(c, currElevation);
             default:
                 return false;
         }
+    }
+
+    public boolean isLocationProhibitedWiGE(Coords c, int currElevation) {
+        Hex hex = game.getBoard().getHex(c);
+        if (hex.containsAnyTerrainOf(Terrains.IMPASSABLE, Terrains.SPACE, Terrains.SKY)) {
+            return true;
+        }
+
+        if (elevation < 0) {
+            return true;
+        }
+
+        if (hex.containsTerrain(Terrains.BUILDING) && (elevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            return true;
+        }
+
+        if (hex.containsTerrain(Terrains.INDUSTRIAL) && (elevation <= hex.terrainLevel(Terrains.INDUSTRIAL))) {
+            return true;
+        }
+
+        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (elevation <= hex.vegetationCeiling())) {
+            return true;
+        }
+
+        return false;
     }
 
     public void lockTurret(int turret) {

@@ -122,7 +122,7 @@ public class VTOL extends Tank implements IBomber {
             return true;
         }
 
-        if (hex.containsTerrain(Terrains.BUILDING) && (elevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+        if (hex.containsTerrain(BUILDING) && (elevation < hex.terrainLevel(BLDG_ELEV))) {
             return true;
         }
 
@@ -130,18 +130,18 @@ public class VTOL extends Tank implements IBomber {
             return true;
         }
 
-        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (elevation <= hex.vegetationCeiling())) {
+        if (hex.hasVegetation() && !hex.containsTerrain(ROAD) && (elevation <= hex.vegetationCeiling())) {
             return true;
         }
 
         if (isHidden()) {
-            if (hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) {
+            if (hex.containsTerrain(PAVEMENT) || hex.containsTerrain(ROAD)) {
                 return true;
             }
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex.terrainLevel(BRIDGE_ELEV) == elevation) && hex.containsTerrain(BRIDGE)) {
                 return true;
             }
-            if (hex.containsTerrain(Terrains.WATER) && (elevation == 0)) {
+            if (hex.containsTerrain(WATER) && (elevation == 0)) {
                 return true;
             }
             if (elevation > 0) {

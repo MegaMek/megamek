@@ -112,6 +112,21 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
+     * Warning Level Logging
+     *
+     * @param exception Exception that was caught via a try/catch block.
+     * @param message   Message to be written to the log file.
+     * @param args      Variable list of arguments for message to be
+     *                  passed to String.format()
+     *
+     */
+    public void warn(Throwable exception, String message, Object... args) {
+        Sentry.captureException(exception);
+        message = String.format(message, args);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message, exception);
+    }
+
+    /**
      * Debug Level Logging
      *
      * @param message Message to be written to the log file.
@@ -122,6 +137,21 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void debug(String message, Object... args) {
         message = String.format(message, args);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.DEBUG, null, message);
+    }
+
+    /**
+     * Debug Level Logging
+     *
+     * @param exception Exception that was caught via a try/catch block.
+     * @param message   Message to be written to the log file.
+     * @param args      Variable list of arguments for message to be
+     *                  passed to String.format()
+     *
+     */
+    public void debug(Throwable exception, String message, Object... args) {
+        Sentry.captureException(exception);
+        message = String.format(message, args);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message, exception);
     }
 
     /**
@@ -155,11 +185,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
      */
     public void error(Throwable exception, String message, String title) {
         error(exception, message);
-        
+
         try {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
             // if the message dialog crashes, we don't really care
         }
     }
@@ -173,11 +202,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
      */
     public void error(String message, String title) {
         error(message);
-        
+
         try {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
             // if the message dialog crashes, we don't really care
         }
     }

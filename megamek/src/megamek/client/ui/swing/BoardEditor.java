@@ -19,31 +19,29 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
-import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListenerAdapter;
-import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
-import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
-import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.boardview.*;
-import megamek.client.ui.swing.dialog.FloodDialog;
-import megamek.client.ui.swing.dialog.LevelChangeDialog;
-import megamek.client.ui.swing.dialog.MMConfirmDialog;
-import megamek.client.ui.swing.dialog.MultiIntSelectorDialog;
-import megamek.client.ui.swing.minimap.Minimap;
-import megamek.client.ui.swing.tileset.HexTileset;
-import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.util.*;
-import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.util.BoardUtilities;
-import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
+import static megamek.common.Terrains.*;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -53,17 +51,46 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
-import java.io.*;
-import java.util.List;
-import java.util.*;
 
-import static megamek.common.Terrains.*;
+import org.apache.logging.log4j.LogManager;
+
+import megamek.MMConstants;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListenerAdapter;
+import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
+import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.boardview.BoardEditorTooltip;
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
+import megamek.client.ui.swing.dialog.FloodDialog;
+import megamek.client.ui.swing.dialog.LevelChangeDialog;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.client.ui.swing.dialog.MultiIntSelectorDialog;
+import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.tileset.HexTileset;
+import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Configuration;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.MapSettings;
+import megamek.common.Terrain;
+import megamek.common.Terrains;
+import megamek.common.annotations.Nullable;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.util.BoardUtilities;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 // TODO: center map
 // TODO: background on the whole screen
@@ -78,7 +105,8 @@ public class BoardEditor extends JPanel
         DocumentListener, IMapSettingsObserver, IPreferenceChangeListener {
 
     /**
-     * Class to make terrains in JComboBoxes easier.  This enables keeping the terrain type int separate from the name
+     * Class to make terrains in JComboBoxes easier. This enables keeping the
+     * terrain type int separate from the name
      * that gets displayed and also provides a way to get tooltips.
      *
      * @author arlith
@@ -126,7 +154,8 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     * Class to make it easier to display a <code>Terrain</code> in a JList or JComboBox.
+     * Class to make it easier to display a <code>Terrain</code> in a JList or
+     * JComboBox.
      *
      * @author arlith
      */
@@ -166,8 +195,9 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     *  ListCellRenderer for rendering tooltips for each item in a list or combobox.  Code from SourceForge:
-     *  https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items
+     * ListCellRenderer for rendering tooltips for each item in a list or combobox.
+     * Code from SourceForge:
+     * https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items
      */
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
 
@@ -176,8 +206,8 @@ public class BoardEditor extends JPanel
 
         @Override
         public Component getListCellRendererComponent(final JList<?> list, final Object value,
-                                                      final int index, final boolean isSelected,
-                                                      final boolean cellHasFocus) {
+                final int index, final boolean isSelected,
+                final boolean cellHasFocus) {
             JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index,
                     isSelected, cellHasFocus);
             if ((-1 < index) && (value != null)) {
@@ -297,7 +327,10 @@ public class BoardEditor extends JPanel
     private boolean hasChanges = false;
     /** Tracks if the board can return to the last saved version. */
     private boolean canReturnToSaved = true;
-    /** The undo stack size at the last save. Used to track saved status of the board. */
+    /**
+     * The undo stack size at the last save. Used to track saved status of the
+     * board.
+     */
     private int savedUndoStackSize = 0;
 
     // Misc
@@ -328,7 +361,7 @@ public class BoardEditor extends JPanel
     };
 
     /**
-     * Flag that indicates whether hotkeys should be ignored or not.  This is
+     * Flag that indicates whether hotkeys should be ignored or not. This is
      * used for disabling hot keys when various dialogs are displayed.
      */
     private boolean ignoreHotKeys = false;
@@ -423,8 +456,8 @@ public class BoardEditor extends JPanel
 
                     // CORRECTION, click outside the board then drag inside???
                     if (hexLeveltoDraw != -1000) {
-                        LinkedList<Coords> allBrushHexes = getBrushCoords(c) ;
-                        for (Coords h: allBrushHexes) {
+                        LinkedList<Coords> allBrushHexes = getBrushCoords(c);
+                        for (Coords h : allBrushHexes) {
                             if (!buttonOOC.isSelected() || board.getHex(h).isClearHex()) {
                                 saveToUndo(h);
                                 relevelHex(h);
@@ -433,7 +466,8 @@ public class BoardEditor extends JPanel
                     }
                     // ------- End Raise/Lower Terrain
                 } else if (isLMB || (b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
-                    // 'isLMB' is true if a button 1 is associated to a click or release but not while dragging.
+                    // 'isLMB' is true if a button 1 is associated to a click or release but not
+                    // while dragging.
                     // The left button down mask is checked because we could be dragging.
 
                     // Normal texture paint
@@ -441,7 +475,7 @@ public class BoardEditor extends JPanel
                         setCurrentHex(board.getHex(b.getCoords()));
                     } else {
                         LinkedList<Coords> allBrushHexes = getBrushCoords(c);
-                        for (Coords h: allBrushHexes) {
+                        for (Coords h : allBrushHexes) {
                             // test if texture overwriting is active
                             if ((!buttonOOC.isSelected() || board.getHex(h).isClearHex())
                                     && curHex.isValid(null)) {
@@ -491,9 +525,9 @@ public class BoardEditor extends JPanel
         frame.setJMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             frame.setLocation(GUIPreferences.getInstance().getWindowPosX(),
-                              GUIPreferences.getInstance().getWindowPosY());
+                    GUIPreferences.getInstance().getWindowPosY());
             frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(),
-                          GUIPreferences.getInstance().getWindowSizeHeight());
+                    GUIPreferences.getInstance().getWindowSizeHeight());
         } else {
             frame.setSize(800, 600);
         }
@@ -523,10 +557,13 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     * Shows a prompt to save the current board. When the board is actually saved or the user presses
-     * "No" (don't want to save), returns DialogResult.CONFIRMED. In this case, the action (loading a board
+     * Shows a prompt to save the current board. When the board is actually saved or
+     * the user presses
+     * "No" (don't want to save), returns DialogResult.CONFIRMED. In this case, the
+     * action (loading a board
      * or leaving the board editor) that led to this prompt may be continued.
-     * In all other cases, returns DialogResult.CANCELLED, meaning the action should not be continued.
+     * In all other cases, returns DialogResult.CANCELLED, meaning the action should
+     * not be continued.
      *
      * @return DialogResult.CANCELLED (cancel action) or CONFIRMED (continue action)
      */
@@ -554,7 +591,7 @@ public class BoardEditor extends JPanel
     private ScalingIconButton prepareButton(String iconName, String buttonName,
             List<ScalingIconButton> bList, int width) {
         // Get the normal icon
-        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
+        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + ".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton == null) {
             imageButton = ImageUtil.failStandardImage();
@@ -562,16 +599,16 @@ public class BoardEditor extends JPanel
         ScalingIconButton button = new ScalingIconButton(imageButton, width);
 
         // Get the hover icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + "_H.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setRolloverImage(imageButton);
 
         // Get the disabled icon, if any
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png").getFile();
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + "_G.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setDisabledImage(imageButton);
 
-        String tt = Messages.getString("BoardEditor."+iconName+"TT");
+        String tt = Messages.getString("BoardEditor." + iconName + "TT");
         if (!tt.isBlank()) {
             button.setToolTipText(tt);
         }
@@ -743,7 +780,8 @@ public class BoardEditor extends JPanel
         // Mouse wheel behaviour for the BUILDINGS button
         // Always ADDS the building.
         buttonBu.addMouseWheelListener(e -> {
-            // If we don't have at least one of the building values, overwrite the current hex
+            // If we don't have at least one of the building values, overwrite the current
+            // hex
             if (!curHex.containsTerrain(Terrains.BLDG_CF)
                     && !curHex.containsTerrain(Terrains.BLDG_ELEV)
                     && !curHex.containsTerrain(Terrains.BUILDING)) {
@@ -766,7 +804,8 @@ public class BoardEditor extends JPanel
                     curHex.addTerrain(new Terrain(Terrains.BUILDING,
                             newLevel, curTerr.hasExitsSpecified(), curTerr.getExits()));
 
-                    // Set the CF to the appropriate standard value *IF* it is the appropriate value now,
+                    // Set the CF to the appropriate standard value *IF* it is the appropriate value
+                    // now,
                     // i.e. if the user has not manually set it to something else
                     int curCF = curHex.getTerrain(Terrains.BLDG_CF).getLevel();
                     if (curCF == Building.getDefaultCF(oldLevel)) {
@@ -799,7 +838,7 @@ public class BoardEditor extends JPanel
             if (e.isShiftDown()) {
                 terrainType = Terrains.BRIDGE_CF;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
-                newLevel = Math.max(10, oldLevel + wheelDir*10);
+                newLevel = Math.max(10, oldLevel + wheelDir * 10);
                 curHex.addTerrain(new Terrain(terrainType, newLevel));
             } else if (e.isControlDown()) {
                 Terrain terrain = curHex.getTerrain(Terrains.BRIDGE);
@@ -820,7 +859,8 @@ public class BoardEditor extends JPanel
 
         // Mouse wheel behaviour for the FUELTANKS button
         buttonFT.addMouseWheelListener(e -> {
-            // If we don't have at least one of the fuel tank values, overwrite the current hex
+            // If we don't have at least one of the fuel tank values, overwrite the current
+            // hex
             if (!curHex.containsTerrain(Terrains.FUEL_TANK)
                     && !curHex.containsTerrain(Terrains.FUEL_TANK_CF)
                     && !curHex.containsTerrain(Terrains.FUEL_TANK_ELEV)
@@ -835,11 +875,11 @@ public class BoardEditor extends JPanel
             if (e.isShiftDown()) {
                 terrainType = Terrains.FUEL_TANK_CF;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
-                newLevel = Math.max(10, oldLevel + wheelDir*10);
+                newLevel = Math.max(10, oldLevel + wheelDir * 10);
             } else if (e.isControlDown()) {
                 terrainType = Terrains.FUEL_TANK_MAGN;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
-                newLevel = Math.max(10, oldLevel + wheelDir*10);
+                newLevel = Math.max(10, oldLevel + wheelDir * 10);
             } else {
                 terrainType = Terrains.FUEL_TANK_ELEV;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
@@ -916,18 +956,19 @@ public class BoardEditor extends JPanel
         choTerrainType.addActionListener(e -> {
             if (!terrListBlocker) {
                 lisTerrain.clearSelection();
-                
+
                 // if we've selected DEPLOYMENT ZONE, disable the "exits" buttons
                 // and make the "exits" popup point to a multi-select list that lets
                 // the user choose which deployment zones will be flagged here
-                
-                // otherwise, re-enable all the buttons and reset the "exits" popup to its normal behavior
+
+                // otherwise, re-enable all the buttons and reset the "exits" popup to its
+                // normal behavior
                 if (((TerrainHelper) choTerrainType.getSelectedItem()).getTerrainType() == Terrains.DEPLOYMENT_ZONE) {
                     butExitUp.setEnabled(false);
                     butExitDown.setEnabled(false);
                     texTerrExits.setEnabled(false);
                     cheTerrExitSpecified.setEnabled(false);
-                    cheTerrExitSpecified.setText("Zones");//Messages.getString("BoardEditor.deploymentZoneIDs"));
+                    cheTerrExitSpecified.setText("Zones");// Messages.getString("BoardEditor.deploymentZoneIDs"));
                     butTerrExits.setActionCommand(CMD_EDIT_DEPLOYMENT_ZONES);
                 } else {
                     butExitUp.setEnabled(true);
@@ -947,7 +988,8 @@ public class BoardEditor extends JPanel
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified"));
         cheTerrExitSpecified.addActionListener(this);
-        butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null, BASE_ARROWBUTTON_ICON_WIDTH);
+        butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null,
+                BASE_ARROWBUTTON_ICON_WIDTH);
         texTerrExits = new EditorTextField("0", 2, 0);
         texTerrExits.addActionListener(this);
         texTerrExits.getDocument().addDocumentListener(this);
@@ -1097,7 +1139,7 @@ public class BoardEditor extends JPanel
 
     // Helper to shorten the code
     private void addManyActionListeners(JButton... buttons) {
-        for (JButton button: buttons) {
+        for (JButton button : buttons) {
             button.addActionListener(this);
         }
     }
@@ -1278,10 +1320,10 @@ public class BoardEditor extends JPanel
                     Messages.getString("BoardEditor.invalidTerrainTitle"),
                     JOptionPane.ERROR_MESSAGE);
             return;
-        } 
-        
+        }
+
         curHex.addTerrain(toAdd);
-        
+
         noTextFieldUpdate = true;
         refreshTerrainList();
         repaintWorkingHex();
@@ -1445,7 +1487,8 @@ public class BoardEditor extends JPanel
         }
     }
 
-    // When we resize a board, implant the old board's hexes where they should be in the new board
+    // When we resize a board, implant the old board's hexes where they should be in
+    // the new board
     public Board implantOldBoard(Game game, int west, int north, int east, int south) {
         Board oldBoard = game.getBoard();
         for (int x = 0; x < oldBoard.getWidth(); x++) {
@@ -1457,7 +1500,7 @@ public class BoardEditor extends JPanel
                     Hex oldHex = oldBoard.getHex(x, y);
                     Hex hex = board.getHex(newX, newY);
                     hex.removeAllTerrains();
-                        hex.setLevel(oldHex.getLevel());
+                    hex.setLevel(oldHex.getLevel());
                     int[] terrainTypes = oldHex.getTerrainTypes();
                     for (int terrainID : terrainTypes) {
                         if (!hex.containsTerrain(terrainID) && oldHex.containsTerrain(terrainID)) {
@@ -1502,7 +1545,7 @@ public class BoardEditor extends JPanel
             // flipBGVert/flipBGHoriz lists for the board, which is necessary
             // for the background image to work in the BoardEditor
             board = BoardUtilities.combine(board.getWidth(), board.getHeight(), 1, 1,
-                    new Board[]{ board }, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
+                    new Board[] { board }, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
             // BoardUtilities.combine does not preserve tags, so add them back
             for (String tag : boardTags) {
@@ -1667,7 +1710,7 @@ public class BoardEditor extends JPanel
         int returnVal = fc.showSaveDialog(frame);
         saveDialogSize(fc);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
-            || (fc.getSelectedFile() == null)) {
+                || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -1863,7 +1906,7 @@ public class BoardEditor extends JPanel
                     ignoreHotKeys = true;
                     JOptionPane.showMessageDialog(frame,
                             Messages.getString("BoardEditor.OpenFileError", curBoardFile.toString())
-                            + e.getMessage());
+                                    + e.getMessage());
                     LogManager.getLogger().error("", e);
                     ignoreHotKeys = false;
                 }
@@ -1904,15 +1947,15 @@ public class BoardEditor extends JPanel
             updateWhenSelected();
         } else if (ae.getSource().equals(butTerrExits)) {
             int exitsVal = 0;
-            
+
             if (ae.getActionCommand().equals(CMD_EDIT_DEPLOYMENT_ZONES)) {
-                var dlg = new MultiIntSelectorDialog(frame, "BoardEditor.deploymentZoneSelectorName", 
-                        "BoardEditor.deploymentZoneSelectorTitle", "BoardEditor.deploymentZoneSelectorDescription", 
+                var dlg = new MultiIntSelectorDialog(frame, "BoardEditor.deploymentZoneSelectorName",
+                        "BoardEditor.deploymentZoneSelectorTitle", "BoardEditor.deploymentZoneSelectorDescription",
                         Board.MAX_DEPLOYMENT_ZONE_NUMBER, Board.exitsAsIntList(texTerrExits.getNumber()));
                 dlg.setVisible(true);
                 exitsVal = Board.IntListAsExits(dlg.getSelectedItems());
                 texTerrExits.setNumber(exitsVal);
-            } else {            
+            } else {
                 ExitsDialog ed = new ExitsDialog(frame);
                 exitsVal = texTerrExits.getNumber();
                 ed.setExits(exitsVal);
@@ -2046,7 +2089,7 @@ public class BoardEditor extends JPanel
             } else {
                 HashSet<Hex> recentHexes = undoStack.pop();
                 HashSet<Hex> redoHexes = new HashSet<>();
-                for (Hex hex: recentHexes) {
+                for (Hex hex : recentHexes) {
                     // Retrieve the board hex for Redo
                     Hex rHex = board.getHex(hex.getCoords()).duplicate();
                     rHex.setCoords(hex.getCoords());
@@ -2072,7 +2115,7 @@ public class BoardEditor extends JPanel
             } else {
                 HashSet<Hex> recentHexes = redoStack.pop();
                 HashSet<Hex> undoHexes = new HashSet<>();
-                for (Hex hex: recentHexes) {
+                for (Hex hex : recentHexes) {
                     Hex rHex = board.getHex(hex.getCoords()).duplicate();
                     rHex.setCoords(hex.getCoords());
                     undoHexes.add(rHex);
@@ -2148,7 +2191,10 @@ public class BoardEditor extends JPanel
         endCurrentUndoSet();
     }
 
-    /** Asks for confirmation and clears the whole board (sets all hexes to clear level 0). */
+    /**
+     * Asks for confirmation and clears the whole board (sets all hexes to clear
+     * level 0).
+     */
     private void boardClear() {
         if (!MMConfirmDialog.confirm(frame,
                 Messages.getString("BoardEditor.clearTitle"), Messages.getString("BoardEditor.clearMsg"))) {
@@ -2167,7 +2213,8 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     * "Pushes" the current set of undoable hexes as a package to the stack, meaning that a
+     * "Pushes" the current set of undoable hexes as a package to the stack, meaning
+     * that a
      * paint or other action is finished.
      */
     private void endCurrentUndoSet() {
@@ -2189,7 +2236,10 @@ public class BoardEditor extends JPanel
         }
     }
 
-    /** Asks for a level delta and changes the level of all the board's hexes by that delta. */
+    /**
+     * Asks for a level delta and changes the level of all the board's hexes by that
+     * delta.
+     */
     private void boardChangeLevel() {
         var dlg = new LevelChangeDialog(frame);
         dlg.setVisible(true);
@@ -2211,7 +2261,10 @@ public class BoardEditor extends JPanel
         endCurrentUndoSet();
     }
 
-    /** Asks for flooding info and then floods the whole board with water up to a level. */
+    /**
+     * Asks for flooding info and then floods the whole board with water up to a
+     * level.
+     */
     private void boardFlood() {
         var dlg = new FloodDialog(frame);
         dlg.setVisible(true);
@@ -2259,7 +2312,7 @@ public class BoardEditor extends JPanel
             curHex.removeAllTerrains();
         }
         buttonUpDn.setSelected(false);
-        for (var terrain: terrains) {
+        for (var terrain : terrains) {
             curHex.addTerrain(terrain);
         }
         refreshTerrainList();
@@ -2267,7 +2320,10 @@ public class BoardEditor extends JPanel
         selectTerrain(terrains[0]);
     }
 
-    /** Selects the given terrain in the terrain list, if possible. All but terrain type is ignored. */
+    /**
+     * Selects the given terrain in the terrain list, if possible. All but terrain
+     * type is ignored.
+     */
     private void selectTerrain(Terrain terrain) {
         for (int i = 0; i < lisTerrain.getModel().getSize(); i++) {
             Terrain listEntry = lisTerrain.getModel().getElementAt(i).getTerrain();
@@ -2279,7 +2335,8 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     * Sets the "Use Exits" checkbox to newState and adapts the coloring of the textfield accordingly.
+     * Sets the "Use Exits" checkbox to newState and adapts the coloring of the
+     * textfield accordingly.
      * Use this instead of setting the checkbox state directly.
      */
     private void setExitsState(boolean newState) {
@@ -2445,8 +2502,8 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     *  Sets the Board Editor frame title, adding the current file name if any
-     *  and a "*" if the board has unsaved changes.
+     * Sets the Board Editor frame title, adding the current file name if any
+     * and a "*" if the board has unsaved changes.
      */
     private void setFrameTitle() {
         String title = (curBoardFile == null) ? Messages.getString("BoardEditor.title")
@@ -2475,7 +2532,6 @@ public class BoardEditor extends JPanel
         }
     }
 
-
     /**
      * Specialized field for the BoardEditor that supports
      * MouseWheel changes.
@@ -2491,7 +2547,7 @@ public class BoardEditor extends JPanel
          * specialized field for the BoardEditor that supports
          * MouseWheel changes.
          *
-         * @param text the initial text
+         * @param text    the initial text
          * @param columns as in JTextField
          *
          * @see javax.swing.JTextField#JTextField(String, int)
@@ -2523,11 +2579,11 @@ public class BoardEditor extends JPanel
          * specialized field for the BoardEditor that supports
          * MouseWheel changes.
          *
-         * @param text the initial text
+         * @param text    the initial text
          * @param columns as in JTextField
          * @param minimum a minimum value that the EditorTextField
-         * will generally adhere to when its own methods are used
-         * to change its value.
+         *                will generally adhere to when its own methods are used
+         *                to change its value.
          *
          * @see javax.swing.JTextField#JTextField(String, int)
          *
@@ -2543,14 +2599,14 @@ public class BoardEditor extends JPanel
          * specialized field for the BoardEditor that supports
          * MouseWheel changes.
          *
-         * @param text the initial text
+         * @param text    the initial text
          * @param columns as in JTextField
          * @param minimum a minimum value that the EditorTextField
-         * will generally adhere to when its own methods are used
-         * to change its value.
+         *                will generally adhere to when its own methods are used
+         *                to change its value.
          * @param maximum a maximum value that the EditorTextField
-         * will generally adhere to when its own methods are used
-         * to change its value.
+         *                will generally adhere to when its own methods are used
+         *                to change its value.
          *
          * @see javax.swing.JTextField#JTextField(String, int)
          *
@@ -2638,7 +2694,6 @@ public class BoardEditor extends JPanel
                 setRolloverIcon(null);
             }
 
-
             if (baseDisabledImage != null) {
                 realHeight = baseDisabledImage.getHeight(null) * realWidth / baseDisabledImage.getWidth(null);
                 setDisabledIcon(new ImageIcon(ImageUtil.getScaledImage(baseDisabledImage, realWidth, realHeight)));
@@ -2656,7 +2711,8 @@ public class BoardEditor extends JPanel
         }
 
         /**
-         * Sets the unscaled base image to use as a button disabled image for the button.
+         * Sets the unscaled base image to use as a button disabled image for the
+         * button.
          * image may be null. Passing null disables the button disabled image.
          */
         void setDisabledImage(@Nullable Image image) {
@@ -2665,7 +2721,8 @@ public class BoardEditor extends JPanel
     }
 
     /**
-     * A specialized JToggleButton that only shows an icon but scales that icon according
+     * A specialized JToggleButton that only shows an icon but scales that icon
+     * according
      * to the current GUI scaling when its rescale() method is called.
      */
     private static class ScalingIconToggleButton extends JToggleButton {
@@ -2713,7 +2770,8 @@ public class BoardEditor extends JPanel
         }
 
         /**
-         * Sets the unscaled base image to use as a "toggle button is selected" image for the button.
+         * Sets the unscaled base image to use as a "toggle button is selected" image
+         * for the button.
          * image may be null. Passing null disables the "is selected" image.
          */
         void setSelectedImage(@Nullable Image image) {

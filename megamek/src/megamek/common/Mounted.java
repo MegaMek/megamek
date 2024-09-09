@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -34,6 +32,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * This describes equipment mounted on a Mek.
@@ -42,6 +41,7 @@ import megamek.common.weapons.bayweapons.BayWeapon;
  * @since April 1, 2002, 1:29 PM
  */
 public class Mounted<T extends EquipmentType> implements Serializable, RoundUpdated, PhaseUpdated {
+    private static final MMLogger logger = MMLogger.create(Mounted.class);
 
     private static final long serialVersionUID = 6438017987074691566L;
     private boolean usedThisRound = false;
@@ -213,7 +213,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         if (type == null) {
-            LogManager.getLogger().error("Could not restore equipment type \"" + typeName + "\"");
+            String message = String.format("Could not restore equipment type \"%s\"", typeName);
+            logger.error(message);
         }
     }
 
@@ -525,7 +526,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (cargo != null) {
                 return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
             }
-            LogManager.getLogger().warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
+            logger.warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -1163,7 +1164,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             return 0;
         }
         // um, otherwise, I'm not sure
-        LogManager.getLogger().error("mounted: unable to determine explosion damage for " + typeName);
+        String message = String.format("mounted: unable to determine explosion damage for %s", typeName);
+        logger.error(message);
         return 0;
     }
 

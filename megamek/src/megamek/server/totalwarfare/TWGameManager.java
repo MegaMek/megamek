@@ -808,6 +808,8 @@ public class TWGameManager extends AbstractGameManager {
             case PLAYER_TEAM_CHANGE:
                 ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, getGame(), this);
                 break;
+            default:
+                break;
         }
     }
 

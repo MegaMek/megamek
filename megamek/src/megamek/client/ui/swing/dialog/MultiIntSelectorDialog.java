@@ -25,16 +25,7 @@ import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
 import java.awt.Container;
 import java.util.List;
 
-import javax.swing.AbstractListModel;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;

@@ -186,7 +186,7 @@ public class EquipmentType implements ITechnology {
      */
     public Vector<String> endTurnModes = new Vector<String>();
 
-    // static list of eq
+    // static list of equipment
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
 

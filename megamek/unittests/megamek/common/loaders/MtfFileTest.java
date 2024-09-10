@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.BipedMek;
@@ -39,6 +40,10 @@ import megamek.common.Mounted;
 import megamek.common.TripodMek;
 
 public class MtfFileTest {
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
 
     private MtfFile toMtfFile(Mek mek) throws EntityLoadingException {
         if (!mek.hasEngine() || mek.getEngine().getEngineType() == Engine.NONE) {
@@ -110,7 +115,8 @@ public class MtfFileTest {
     }
 
     // Exercises new MtfFile.java code
-    // We should be able to load a Size 24 CommsGear component into 12 Superheavy slots, filling
+    // We should be able to load a Size 24 CommsGear component into 12 Superheavy
+    // slots, filling
     // the Left torso.
     @Test
     public void loadSuperheavyVariableSizeSlot() throws Exception {
@@ -118,20 +124,21 @@ public class MtfFileTest {
         double varSize = 24.0;
         mek.setWeight(150.0);
         mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
-        EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mek.addEquipment(commo, Mek.LOC_LT, false);
+        EquipmentType commsGear = EquipmentType.get("CommsGear");
+        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LT, false);
         mount.setSize(varSize);
 
         MtfFile loader = toMtfFile(mek);
         CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
 
-        assertEquals(commo, slot.getMount().getType());
+        assertEquals(commsGear, slot.getMount().getType());
         assertEquals(varSize, slot.getMount().getSize());
         assertFalse(slot.getMount().isOmniPodMounted());
         assertFalse(slot.isArmored());
     }
 
-    // Should _not_ allow loading size 25 CommsGear; 25 / 2.0 -> 13 crits, 1 more than allowed
+    // Should _not_ allow loading size 25 CommsGear; 25 / 2.0 -> 13 crits, 1 more
+    // than allowed
     @Test
     public void ExceptionLoadSuperheavyVariableSizeSlot() throws Exception {
         Mek mek = new TripodMek();
@@ -145,12 +152,10 @@ public class MtfFileTest {
 
         Exception e = assertThrowsExactly(
                 Exception.class,
-                () -> loader.getEntity().getCritical(Mek.LOC_LT, 0)
-        );
+                () -> loader.getEntity().getCritical(Mek.LOC_LT, 0));
         assertEquals(
                 "java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12",
-                e.getMessage()
-        );
+                e.getMessage());
 
     }
 }

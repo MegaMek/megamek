@@ -183,7 +183,7 @@ public class ArmorType extends MiscType {
     };
 
     private int armorType = T_ARMOR_UNKNOWN;
-    private int figherSlots = 0;
+    private int fighterSlots = 0;
     private int patchworkSlotsMekSV = 0;
     private int patchworkSlotsCVFtr = 0;
     private double pptMultiplier = 1.0;
@@ -223,12 +223,12 @@ public class ArmorType extends MiscType {
      *         fighter.
      */
     public int getFighterSlots() {
-        return figherSlots;
+        return fighterSlots;
     }
 
     /**
      * Space required by patchwork armor for Meks and support vehicles
-     * 
+     *
      * @return The number of critical/item slots taken by the armor per location as
      *         patchwork armor.
      */
@@ -239,7 +239,7 @@ public class ArmorType extends MiscType {
     /**
      * Space required by patchwork armor for combat vehicles and
      * conventional/aerospace fighters
-     * 
+     *
      * @return The number of item/weapon slots taken by the armor per location as
      *         patchwork armor.
      */
@@ -335,14 +335,19 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Regular");
         armor.addLookupName("IS Standard Armor");
         armor.addLookupName("Clan Standard Armor");
-        armor.flags = armor.flags.or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
+        armor.flags = armor.flags.or(F_MEK_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT)
+                .or(F_VTOL_EQUIPMENT)
+                .or(F_FIGHTER_EQUIPMENT);
         armor.criticals = 0;
         armor.cost = 10000.0;
 
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                .setAdvancement(2460, 2470, 2470)
+                .setApproximate(true, false, false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.INTRO);
 
         armor.armorType = T_ARMOR_STANDARD;
@@ -493,7 +498,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Ferro-Aluminum");
         armor.addLookupName("IS Ferro-Aluminum Armor");
         armor.cost = 20000.0;
-        armor.figherSlots = 2;
+        armor.fighterSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -516,7 +521,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Ferro-Aluminum");
         armor.addLookupName("Clan Ferro-Aluminum Armor");
         armor.cost = 20000.0;
-        armor.figherSlots = 2;
+        armor.fighterSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -540,7 +545,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Light Ferro-Aluminum");
         armor.addLookupName("IS Light Ferro-Aluminum Armor");
         armor.cost = 15000.0;
-        armor.figherSlots = 1;
+        armor.fighterSlots = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -564,7 +569,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Heavy Ferro-Aluminum");
         armor.addLookupName("IS Heavy Ferro-Aluminum Armor");
         armor.cost = 25000.0;
-        armor.figherSlots = 4;
+        armor.fighterSlots = 4;
         armor.patchworkSlotsCVFtr = 2;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -588,7 +593,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Prototype Ferro-Aluminum");
         armor.addLookupName("IS Ferro-Alum Armor Prototype");
         armor.cost = 60000.0;
-        armor.figherSlots = 3;
+        armor.fighterSlots = 3;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
@@ -734,7 +739,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 14;
         armor.tankslots = 2;
         armor.svslots = 2;
-        armor.figherSlots = 3;
+        armor.fighterSlots = 3;
         armor.patchworkSlotsMekSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -764,7 +769,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 7;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.figherSlots = 1;
+        armor.fighterSlots = 1;
         armor.patchworkSlotsMekSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -793,7 +798,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.figherSlots = 1;
+        armor.fighterSlots = 1;
         armor.patchworkSlotsMekSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -822,7 +827,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 5;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.figherSlots = 1;
+        armor.fighterSlots = 1;
         armor.patchworkSlotsMekSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -904,7 +909,7 @@ public class ArmorType extends MiscType {
         armor.cost = 50000.0;
         armor.tankslots = 2;
         armor.svslots = 2;
-        armor.figherSlots = 2;
+        armor.fighterSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_STEALTH).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
@@ -933,7 +938,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 12;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.figherSlots = 2;
+        armor.fighterSlots = 2;
         armor.patchworkSlotsMekSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_LAMELLOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
@@ -1039,7 +1044,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.figherSlots = 2;
+        armor.fighterSlots = 2;
         armor.patchworkSlotsMekSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_BALLISTIC_REINFORCED).or(F_MEK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)

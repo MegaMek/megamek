@@ -90,7 +90,7 @@ body:
       value: |
         ## User Environment
 
-        For the next sections go to the logs folder inside MegaMe (usually called 'logs'). Find the MegaMek.log file, open it with a text editor. It will look like the image below. Fill the information you find there into the following sections:
+        For the next sections go to the logs folder inside MegaMek (usually called 'logs'). Find the MegaMek.log file, open it with a text editor. It will look like the image below. Fill the information you find there into the following sections:
 
         ![Example Screenshot](https://i.imgur.com/KD8cnvf.png)
 
@@ -112,7 +112,7 @@ body:
     id: java-version
     attributes:
       label: Java Version *
-      description: What version of Java is on your computer? You can find this information at the top of your MegaMekLab.log file.
+      description: What version of Java is on your computer? You can find this information at the top of your MegaMek.log file.
     validations:
       required: true
 
@@ -134,7 +134,7 @@ body:
   - type: input
     id: custom-megamek-version
     attributes:
-      label: Custom MegaMekLab Version
+      label: Custom MegaMek Version
       description: If you selected "Free Text" in the version dropdown, enter your MegaMek version here.
       placeholder: "Enter your MegaMek version here if it's not listed above."
 

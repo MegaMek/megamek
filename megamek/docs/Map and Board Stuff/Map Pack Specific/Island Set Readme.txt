@@ -13,7 +13,7 @@ IslandSetIndex001.bmp		}
 IslandSetIndex002.bmp		}Color Map guide
 IslandSetIndex003.bmp		}
 
-DeepWater01.board		Water Map	
+DeepWater01.board		Water Map
 DeepWater02.board		Water Map
 
 IslandSW.Board			SW corner of island
@@ -29,7 +29,7 @@ IslandN01CliffShore.board	Northern Coast/ Cliff
 IslandMultiple.board		A number of small islands
 IslandMultiple2.board		More small islands
 
-IslandSmall.board		Small Island	
+IslandSmall.board		Small Island
 IslandSmall2.board		Crecent-shaped Island
 IslandSmall3.board		A group of small islands
 
@@ -69,6 +69,6 @@ Have Fun!  I had fun making and testing these maps!
 
 Thanks to those who helped test them. (You know who you are.)
 
-Comment/questions/requests?   
-				riker1of3@yahoo.com  
-				cmdr_riker103@hotmail.com  
+Comment/questions/requests?
+				riker1of3@yahoo.com
+				cmdr_riker103@hotmail.com

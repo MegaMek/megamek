@@ -102,7 +102,7 @@ C. According to Field Manual: ComStar, combined arms units are the rule for Leve
 D. Several factions (ComStar, Marian Hegemony, and Taurian Concordat) use infantry platoon formations
    that do not have corresponding units in MegaMek at the time of this writing. In these cases, the closest
    Inner Sphere unit is used instead. Also, MegaMek does not have three-suit BA squads as used by the Society,
-   so BA uns are generated as standard Clan Points.     
+   so BA uns are generated as standard Clan Points.
 
 IV. Customizing the Formation Rules
 
@@ -142,13 +142,13 @@ This is the rule for a Mek regiment from the generic Inner Sphere ruleset. A lin
 
 1	<force eschelon="%REGIMENT%" eschName="Regiment" ifUnitType="Mek|Tank">
 2		<co>%COLONEL%</co>
-3		
+3
 4		<weightClass>
 5			<option weight="1">L</option>
 6			<option weight="2">M</option>
 7			<option weight="1">H</option>
 8		</weightClass>
-9		
+9
 10		<subforces>
 11			<subforceOption ifWeightClass="L">
 12				<option weightClass="H,L,L">%BATTALION%</option>
@@ -175,14 +175,14 @@ This is the rule for a Mek regiment from the generic Inner Sphere ruleset. A lin
 33				<option weightClass="A,M,L">%BATTALION%</option>
 34			</subforceOption>
 35		</subforces>
-36		
+36
 37		<attachedForces ifUnitType="Mek">
 38			<subforce unitType="Aero"
 39				name="Aerospace Support">%WING%</subforce>
 40			<subforce unitType="Tank"
 41				name="Armor Support">%BATTALION%</subforce>
 42			<subforce unitType="Infantry"
-43				name="Infantry Support">%REGIMENT%</subforce>			
+43				name="Infantry Support">%REGIMENT%</subforce>
 44		</attachedForces>
 45
 46		<attachedForces ifUnitType="Tank" ifDateBetween=",2550">
@@ -196,10 +196,10 @@ This is the rule for a Mek regiment from the generic Inner Sphere ruleset. A lin
 54				<option unitType="Mek" ifDateBetween="2520,2549">%BATTALION%</option>
 55			</subforceOption>
 56			<subforce unitType="Infantry"
-57				name="Infantry Support">%REGIMENT%</subforce>			
+57				name="Infantry Support">%REGIMENT%</subforce>
 58		</attachedForces>
 59	</force>
-	
+
 1: This rule will match any node that is designated as eschelon level 6 (the value of %REGIMENT%)
    and has a unit type of Mek or Tank. The default name of the unit is "Regiment".
 2: The rank of the commanding officer is colonel. This has no effect on MegaMek play, but will
@@ -277,7 +277,7 @@ ifDateBetween	A set of date ranges. The ranges are expressed two dates separated
                 range leaves the corresponding value blank: ifDateBetween="3050,3055" will match any
                 year from 3050-3055 (inclusive), while ifDateBetween=",3050" will match any year up to
                 and including 3050 and ifDateBetween="3050," will match any year from 3050 on. (Set)
-                
+
 augmented, topLevel, and index are boolean properties and can have the value 0 or 1. Properties that are
 identified as a set in the description above can have multiple values. All others have a single value.
 
@@ -327,14 +327,14 @@ directory (data/forcegenerator/faction_rules).
 	                 CLAN uses Keshik, FL, SL, Sol, PG. ROS uses SB, HS, PG, TP. If not provided, defaults
 	                 to IS.
 	                 ***FIXME: This really shouldn't be hard-coded.
-	                 
+
 2. The <ruleset> element contains the following child elements:
 	<defaults> [once]: Various default values for the faction as a whole
 	<customRanks> [optional]: Allows a faction to provide a unique rank system or customize certain rank names.
 	<toc> [optional]: Informs the UI which unit types are available, and which formations are appropriate
 	                  to certain unit types.
 	<force> [any number]: Provides the rules for generating each node of the force tree.
-	
+
 3. The <defaults> element can have one or more of any of the following child elements. Each can use predicate
    attributes to provide different default values based on other properties (usually the year).
 	<unitType>: selects the unit type to use in the root node if it has not been assigned.
@@ -342,7 +342,7 @@ directory (data/forcegenerator/faction_rules).
 	<rankSystem>: used for MekHQ integration. This should be the index used by MekHQ. Constants are provided
 	              for the various systems. If using any custom ranks, use the value %RANK_CUSTOM%.
 	<rating>: the default equipment rating to use for the generated unit if one has not been assigned.
-	
+
 4. The <customRanks> element has the following child elements:
 	<base>: the rank system that will provide any rank names that are not overridden.
 	<rank> [any number]: A rank level followed by one or more rank names. All fields are separated by a colon.
@@ -351,14 +351,14 @@ directory (data/forcegenerator/faction_rules).
 						 for all branches. Different rank names can be provided for different branches
 						 (e.g. Colonel for ground forces and Captain for naval) using the format used
 						 by MekHQ. See the ranks tab in the MekHQ campaign options for format details.
-						 
+
 5. The <toc> element has up to four child elements, each of which contains an arbitrary number of
    <option> elements. These are used by the user interface to show all available options to the user.
    The <option> elements can use predicates to restrict the list of available options based on various
    criteria. This is often the date (e.g. don't present BattleArmor before they are available to the faction)
    or unit type. <option> predicates that refer to other <toc> elements should only reference those that
    come earlier to prevent a set of conditions that make some alternatives inaccessible.
-   
+
    The possible child elements and the contents of their <option> elements are as follows:
    <unitType>: A comma-separated list of unit types. Anything that is legal as a unitType property is legal here.
    <eschelon>: A comma-separated list of all eschelon levels available. The eschelon level is a numeric
@@ -376,7 +376,7 @@ directory (data/forcegenerator/faction_rules).
    the force at each eschelon level. When generating a node, the force generator checks the ruleset
    matching the node's faction for the first <force> element that matches the node properties. If none
    is found, it will repeat the search using each parent faction until it finds a match.
-   
+
    The <force> element has the following attributes, in addition to the standard list of predicates:
        eschelon [required]: A numeric value indicating the tier of organization. While it is possible to
        						use any arbitrary value, it is recommended for purposes of clarity that the
@@ -385,7 +385,7 @@ directory (data/forcegenerator/faction_rules).
 	   eschName: A String value that is used by the user interface as a display name of the eschelon. It
 	             is also used to create a default name for the force node if no <name> element is present.
 	             If missing, the numeric value is used.
-	             
+
    The <force> element has the following child elements. Only the <co> element is required, and all may
    occur multiple times:
        <name>: Provides a name for the unit represented by the current force tree node.
@@ -397,8 +397,8 @@ directory (data/forcegenerator/faction_rules).
        <subforces>: Generates child nodes which inherit the current node's properties.
        <attachedForces>: Generates child nodes in the force tree, but is only processed if the user has
             support force generation enabled.
-            
-            
+
+
 	a. The <name> node can have any of the predicate attributes. Where multiple matches can occur the
 	   first match is used. The name can be simple text, but can also contain values that are evaluated
 	   based on the current node's position among its siblings or its parent's position. Values to be
@@ -407,14 +407,14 @@ directory (data/forcegenerator/faction_rules).
 	   are as follows:
 	   {cardinal}: A cardinal numeral (1, 2, 3, etc.)
 	   {ordinal}: An ordinal number (First, Second, Third, etc.)
-	   {roman}: Roman numerals (I, II, III, etc.) 
+	   {roman}: Roman numerals (I, II, III, etc.)
 	   {alpha}: Letters of the Latin alphabet (A, B, C, etc.)
 	   {phonetic}: The phonetic alphabet (Alpha, Bravo, Charlie, etc.)
 	   {greek}: Names of Greek letters (Alpha, Beta, Gamma, etc.)
 	   {latin}: Latin numbers (Prima, Secunda, Tertia, etc.)
 	   {parent}: The name of the parent formation.
 	   {formation}: A display-friendly name of the node's formation property.
-	   
+
 	   To use the position of the parent node among its siblings, you can append ":parent" to the expression.
 	   A portion of the parent name can be used by surrounding that portion with square brackets and using
 	   {name:parent} in the <name> tag of the child node. This is found in several Clan factions. In Snow
@@ -422,12 +422,12 @@ directory (data/forcegenerator/faction_rules).
 	   Stars are named "First Striker, Second Striker, Third Striker".
 	   Following the expression with ":distinct" will cause it to be used only if needed to prevent multiple
 	   subforces within the same node from having the same name.
-	   
+
 	   Example, from Clan Jade Falcon:
 	   		<name ifWeightClass="M">{phonetic:parent} Beak {cardinal:distinct}</name>
 		A medium Star in Trinary Alpha will be Alpha Beak. If it's in Trinary Bravo it will be Bravo Beak.
 		If there are two medium Stars in Trinary Bravo they will be Bravo Beak 1 and Bravo Beak 2.
-		
+
 	b. The <co> and <xo> elements have the same format. They can have any of the standard predicates and
 	   the content is a numeric value indicating the rank. Several common rank constants are provided. An XO
 	   is assigned only if an XO attribute that matches the node properties is present.
@@ -445,17 +445,17 @@ directory (data/forcegenerator/faction_rules).
 	       company. Both the <co> and <xo> elements have the attribute position="1".
 	   unitType: Places the CO or XO in the given unit type in a combined arms unit, such as a Capellan augmented
 	       lance. The special value of "other" is available for <xo> elements to match any unit type other
-	       than the one assigned to the CO. This allows Clan nova units to use either a mechwarrior or a
+	       than the one assigned to the CO. This allows Clan nova units to use either a mekwarrior or a
 	       BA pilot as the Nova Commander and assign a Star Commander to the other unit type.
 	   title: Assigns a title in addition to the rank title, such as "Aide-de-Camp"
-	       
+
 	c. Property rule elements change the properties of the current unit before the subforces
 	   are generated. The available property rule elements are <weightClass>, <unitType>, <chassis>, <variant>,
 	   <motive>, <formation>, <role>, <flags>, and <changeEschelon>. Each potentially changes the property
 	   with the same name. <changeEschelon> differs from the others in that it does not have the same name
 	   as the property to highlight the fact that if the property is changed the force generator immediately
 	   stops applying the current force rule and searches for a new matching rule to apply instead.
-	   
+
 	   With the exception of <role> and <flags>, which are property sets, and <changeEschelon>, which is a
 	   special case, property rule elements are ignored if they already have a value unless they also contain
 	   the matching predicate. So <weightClass> will be skipped if the weightClass property has previously
@@ -465,14 +465,14 @@ directory (data/forcegenerator/faction_rules).
 	   property). For example, <flags><option weightClass="L"/><option weightClass="M"/></flags> gives a 50%
 	   chance each of changing the weightClass property to L or M regardless of whether it has previously been
 	   set.
-	   
+
 	   Each property rule element can use the standard predicates as attributes, and any that do not match
 	   the current node's properties are skipped. The property rule element contains any number of
 	   <option> tags, which are used to determine the value for the property as described above (see
 	   E. The random element). The selected value is applied using the same rules as assertions. Other
 	   properties may also be changed by assertions that are found as attributes in the selected
 	   <option>.
-	   
+
 	   Property rule elements will be checked for matching properties before any of them are evaluated,
 	   so any changes to properties made by an earlier rule will not have an effect on whether a later
 	   rule matches. If it is necessary to evaluate one rule before determining whether to apply another,
@@ -502,7 +502,7 @@ directory (data/forcegenerator/faction_rules).
 	          other than as required by the rules for the particular formation. Weight classes are only
 	          used for individual units if the formation cannot be generated or the formation property is
 	          not set.
-	
+
 	   A <subforces> element can contain the following child elements:
 		<subforce>: Adds one or more child nodes to the force tree when the child nodes have the fixed
 		            properties.
@@ -515,7 +515,7 @@ directory (data/forcegenerator/faction_rules).
 			        only child node of a <subforces> element.
 		<asFaction>: Works like <asParent>, but allows the user to specify the faction to redirect to.
 		             The faction key is the content.
-		             
+
 		The subforces section can contain any number of <subforce> or <subforceOption> elements, in any
 		order. A <subforce> element can have any of the standard predicate or assertion attributes.
 		Assertions are applied to the generated subforce. The content is the eschelon level for the subforce,
@@ -523,7 +523,7 @@ directory (data/forcegenerator/faction_rules).
 		or understrength unit respectively. The + and - will affect the number of subforces generated by the
 		direct subforce. For example, if a regiment rule generates a %BATTALION%+, that battalion will
 		have four companies instead of three.
-		
+
 		The following additional attributes are available for the <subforce> element:
 		num: The number of subforce nodes to generate. If not present, defaults to one. So
 		     <subforce>%COMPANY%</subforce> will generate a single company, while <subforce num="3">%COMPANY%</subforce>
@@ -536,16 +536,14 @@ directory (data/forcegenerator/faction_rules).
 		             and it is an error to use both with different counts.
 		generate: Functions as the generate attribute of the <subforces> element, but is applied independently
 		          to each subforce node using that node's properties.
-		          
+
 		A <subforceOption> element can take any of the standard predicate attributes, as well as the
 		generate attribute. If present, the generate attribute is applied to the selected <option> in the
 		same way that it is applied to a <subforce> element. The <option> child elements use the same
 		attributes and content as the <subforce> element, with the exception of the generate attribute.
 		An <option> element can be empty, which results in a subforce node not being added.
-		
+
 	e. The <attachedForces> element has the same options for attributes and child elements as the
 	   <subforces> element, and they function in the same way. The difference is that <attachedForces>
 	   nodes are ignored if the user has disabled generation of support forces, and if generated the
 	   CO and XO (if present) are never assigned to attached forces.
-	   
-	   

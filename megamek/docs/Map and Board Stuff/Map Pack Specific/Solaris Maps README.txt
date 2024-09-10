@@ -18,7 +18,7 @@ Special Instructions:
  The Ishiyama set is made up of 49 boards of size 10x10. These are modular and
  are intended to be arranged randomly (by using the Surprise option). The
  recommended game size is 3x3 to 5x5 boards depending on the number and type
- of mechs. If playing with Double Blind rules (highly recommended!) it's best
+ of meks. If playing with Double Blind rules (highly recommended!) it's best
  not to go beyond 4x4 boards.
 
  The Colosseum set is made up of 20 boards, representing a variety of different

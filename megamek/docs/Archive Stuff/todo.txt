@@ -7,7 +7,7 @@ CODE IDEAS:
 - improve code readability, *commenting*; break up 80+ character lines, etc.
 
 BoardView1.java:
-- Board buffer should be slightly larger, to contain whole hexes, and only 
+- Board buffer should be slightly larger, to contain whole hexes, and only
   scroll in whole hex units
 
 - More server validation of client data
@@ -27,9 +27,9 @@ BoardView1.java:
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
-- In Mech Selection dialog, implement an "advanced filters and sorts" pane
+- In Mek Selection dialog, implement an "advanced filters and sorts" pane
 
-mechs:
+meks:
 -- Find out how to get M$ .exe to allow UTF-8 encoding.
 -- handle "slotless" equipment
 -- enforce ammo loading restrictions
@@ -48,7 +48,7 @@ physical attacks:
 - dfa should violate stacking, charging should not
 
 displacement issues:
-- domino effect: mechs with movement available can roll to step out of the way
+- domino effect: meks with movement available can roll to step out of the way
 
 infantry:
 - implement the following special rules:

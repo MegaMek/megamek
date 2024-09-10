@@ -1,6 +1,6 @@
 The "LargeTextures" tileset file is already updated to replace the current large texture tileset in the MegaMek client with all the textures used in this texture pack. It can be easily changed by name and then made accessible in the client graphics tileset options.
 
-To test the pack just drag/drop the 
+To test the pack just drag/drop the
 
 ../Ahne folder into ..data/images/hexes and also the largeTextures.Tileset file in the same place.
 

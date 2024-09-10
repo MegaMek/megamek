@@ -6,19 +6,19 @@
 # {chassis/exact} [model] [image filename]
 
 # Use exact to specify the unit exactly, for example:
-# exact "Marauder MAD-3R" ""mechs/marauder.png"
-# exact "Timber Wolf Prime" ""mechs/timberwolf.png"
+# exact "Marauder MAD-3R" ""meks/marauder.png"
+# exact "Timber Wolf Prime" ""meks/timberwolf.png"
 
 # You may also just specify a graphic for a chassis, for example:
-# chassis "Marauder" "mechs/marauder.png"
+# chassis "Marauder" "meks/marauder.png"
 
 # Images should be greyscale, 84x72 pixel GIF files with the chassis centered.
 # The tinting process is subtractive, so make images light.
 
-# As of v0.29.61, mechset files can include other mechset files.
+# As of v0.29.61, mekset files can include other mekset files.
 
 ### Add new entries between this and end ###
 ### End ###
 
 # Local Client moved here to support overrides of existing images!
-include localclient_mechset.txt
+include localclient_mekset.txt

@@ -1094,7 +1094,7 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(
                 mockShooter, mockShooterState, mockFighter, mockFighterState, 10, mockGame));
 
-        // Test industrial mechs.
+        // Test industrial meks.
         when(((Mek) mockShooter).hasAdvancedFireControl()).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_INDUSTRIAL);
@@ -1108,7 +1108,7 @@ public class FireControlTest {
         when(((Mek) mockShooter).getCockpitType()).thenReturn(Mek.COCKPIT_STANDARD);
         when(((Mek) mockShooter).hasAdvancedFireControl()).thenReturn(true);
 
-        // Test attacking a superheavy mech.
+        // Test attacking a superheavy mek.
         when(((Mek) mockTarget).getCockpitType()).thenReturn(Mek.COCKPIT_SUPERHEAVY);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_TAR_SUPER);
@@ -1319,7 +1319,7 @@ public class FireControlTest {
                 mockGame));
         mockTarget = mock(BipedMek.class);
 
-        // Firing at an ejected mechwarrior.
+        // Firing at an ejected mekwarrior.
         mockTarget = mock(MekWarrior.class);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_TAR_MW);
@@ -1444,7 +1444,7 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter,
                 mockShooterState, mockTarget, mockTargetState, PhysicalAttackType.LEFT_KICK, mockGame));
 
-        // Test a superheavy mech attempting a kick.
+        // Test a superheavy mek attempting a kick.
         when(((Mek) mockShooter).getCockpitType()).thenReturn(Mek.COCKPIT_SUPERHEAVY);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
@@ -1669,7 +1669,7 @@ public class FireControlTest {
                         PhysicalAttackType.LEFT_PUNCH,
                         mockGame));
 
-        // Test an attacker that is not a mech.
+        // Test an attacker that is not a mek.
         final Entity mockVee = mock(Tank.class);
         expected = new ToHitData(FireControl.TH_PHY_NOT_MEK);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockVee, null, mockTarget,
@@ -1982,7 +1982,7 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
                 mockShooterState, mockTarget, mockTargetState, mockWeapon, mockAmmo, mockGame));
 
-        // Test a prone mech w/ no arms.
+        // Test a prone mek w/ no arms.
         when(mockShooterState.isProne()).thenReturn(true);
         when(mockShooter.isLocationBad(Mek.LOC_RARM)).thenReturn(true);
         when(mockShooter.isLocationBad(Mek.LOC_LARM)).thenReturn(true);

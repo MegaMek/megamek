@@ -210,7 +210,7 @@ public class BasicPathRankerTest {
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
 
-        // Test an enemy mech 5 hexes away, in my LoS and unable to kick my flank.
+        // Test an enemy mek 5 hexes away, in my LoS and unable to kick my flank.
         Coords enemyCoords = new Coords(10, 15);
         int enemyMekId = 1;
         Entity mockEnemyMek = mock(BipedMek.class);
@@ -237,7 +237,7 @@ public class BasicPathRankerTest {
         actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
 
-        // Test an enemy mech 5 hexes away but not in my LoS.
+        // Test an enemy mek 5 hexes away but not in my LoS.
         enemyCoords = new Coords(10, 15);
         mockEnemyMek = mock(BipedMek.class);
         when(mockEnemyMek.getWeight()).thenReturn(50.0);
@@ -263,7 +263,7 @@ public class BasicPathRankerTest {
         actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
 
-        // Test an enemy mech 5 hexes away, not in my LoS and able to kick me.
+        // Test an enemy mek 5 hexes away, not in my LoS and able to kick me.
         enemyCoords = new Coords(10, 15);
         mockEnemyMek = mock(BipedMek.class);
         when(mockEnemyMek.getWeight()).thenReturn(50.0);
@@ -527,7 +527,7 @@ public class BasicPathRankerTest {
                 .when(testRanker)
                 .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
 
-        // Change the damage to enemy mech 1.
+        // Change the damage to enemy mek 1.
         evalForMockEnemyMek = new EntityEvaluationResponse();
         evalForMockEnemyMek.setMyEstimatedDamage(14.5);
         evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
@@ -584,7 +584,7 @@ public class BasicPathRankerTest {
                 .when(testRanker)
                 .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
 
-        // Change the damage done by enemy mech 1.
+        // Change the damage done by enemy mek 1.
         evalForMockEnemyMek = new EntityEvaluationResponse();
         evalForMockEnemyMek.setMyEstimatedDamage(14.5);
         evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
@@ -911,7 +911,7 @@ public class BasicPathRankerTest {
 
         assertEquals(enemyMek, testRanker.findClosestEnemy(me, position, mockGame, false));
 
-        // Add in an unmoved mech.
+        // Add in an unmoved mek.
         final Entity unmovedMek = mock(BipedMek.class);
         // Now the closest by position.
         when(unmovedMek.getPosition()).thenReturn(new Coords(9, 9));
@@ -1484,7 +1484,7 @@ public class BasicPathRankerTest {
         when(mockFinalHex.depth()).thenReturn(1);
         assertEquals(8595.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
-        // Test damaged 'mech walking hazard (should increase hazard as damage level
+        // Test damaged 'mek walking hazard (should increase hazard as damage level
         // increases)
         when(mockCrew.getPiloting()).thenReturn(5);
         when(mockPath.isJumping()).thenReturn(false);

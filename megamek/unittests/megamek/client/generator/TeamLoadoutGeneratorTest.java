@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.generator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -241,7 +259,7 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testReconfigureTeamOfMeks()  throws LocationFullException {
+    void testReconfigureTeamOfMeks() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         ReconfigurationParameters rp = new ReconfigurationParameters();
         Mek mockMek = createMek("Hunchback", "HBK-4G", "Boomstick");
@@ -254,14 +272,14 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        // Load ammo in 'meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         MunitionTree mt = new MunitionTree();
         HashMap<String, String> imperatives = new HashMap<>();
@@ -292,7 +310,7 @@ class TeamLoadoutGeneratorTest {
     }
 
     @Test
-    void testRandomReconfigureBotTeam()  throws LocationFullException {
+    void testRandomReconfigureBotTeam() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMek2 = createMek("Hunchback", "HBK-4J", "The Shade");
@@ -304,19 +322,19 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        // Load ammo in 'meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         // Just check that the bins are populated still
         tlg.randomizeBotTeamConfiguration(team, "FWL");
 
-        for (Mounted bin : List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
+        for (Mounted<?> bin : List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
         }
     }
@@ -334,22 +352,13 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
-
         MunitionTree original = new MunitionTree();
         original.loadEntityList(game.getPlayerEntities(player, false));
         tlg.randomizeBotTeamConfiguration(team, "CCY");
     }
 
     @Test
-    void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
+    void testReconfigureBotTeamNoEnemyInfo() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMek2 = createMek("Hunchback", "HBK-4J", "The Shade");
@@ -361,25 +370,25 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        // Load ammo in 'meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
+        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
+        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
 
         // Just check that the bins are populated still
         tlg.reconfigureTeam(team, "CL", "");
 
-        for (Mounted bin : List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
+        for (Mounted<?> bin : List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
         }
     }
 
     @Test
-    void testReconfigureBotTeamAllArtemis()  throws LocationFullException {
+    void testReconfigureBotTeamAllArtemis() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Warhammer", "WHM-6Rb", "Asgard");
         mockMek.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mek.LOC_RT);
@@ -394,17 +403,17 @@ class TeamLoadoutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'mechs; locations are for fun
-        Mounted bin1 = mockMek.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
-        Mounted bin2 = mockMek2.addEquipment(mockMML7LRMAmmoType, Mek.LOC_LT);
-        Mounted bin3 = mockMek2.addEquipment(mockMML7SRMAmmoType, Mek.LOC_LT);
-        Mounted bin4 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin5 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        // Load ammo in 'meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        Mounted<?> bin2 = mockMek2.addEquipment(mockMML7LRMAmmoType, Mek.LOC_LT);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockMML7SRMAmmoType, Mek.LOC_LT);
+        Mounted<?> bin4 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
 
         // Just check that the bins are populated still
         tlg.reconfigureTeam(team, "IS", "");
 
-        for (Mounted bin : List.of(bin1, bin2, bin3, bin4, bin5)) {
+        for (Mounted<?> bin : List.of(bin1, bin2, bin3, bin4, bin5)) {
             assertNotEquals("Standard", ((AmmoType) bin.getType()).getSubMunitionName());
             assertTrue(((AmmoType) bin.getType()).getSubMunitionName().contains("Artemis"));
         }
@@ -548,7 +557,8 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testClampAmmoShotsPositiveSmallFloatGivesOneShot() throws LocationFullException {
-        // LRM15s carry 8 shots, the clamp function should give 1 shot at 10% / 0.1f ratio
+        // LRM15s carry 8 shots, the clamp function should give 1 shot at 10% / 0.1f
+        // ratio
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
@@ -562,7 +572,8 @@ class TeamLoadoutGeneratorTest {
 
     @Test
     void testClampAmmoShotsSetToHalf() throws LocationFullException {
-        // LRM15s carry 8 shots, the clamp function should give 4 shot at 40% / 0.5f ratio
+        // LRM15s carry 8 shots, the clamp function should give 4 shot at 40% / 0.5f
+        // ratio
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");

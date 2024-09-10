@@ -105,13 +105,13 @@ public class PrincessTest {
     public void testCalculateMoveIndex() {
         final double TOLERANCE = 0.001;
         when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class)))
-               .thenCallRealMethod();
+                .thenCallRealMethod();
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
         when(mockPathRanker.distanceToClosestEnemy(any(Entity.class), nullable(Coords.class),
                 nullable(Game.class))).thenReturn(10.0);
 
-        // Test a 6/9/6 regular mech.
+        // Test a 6/9/6 regular mek.
         Entity mockMek = mock(BipedMek.class);
         when(mockMek.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
         when(mockMek.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
@@ -125,24 +125,24 @@ public class PrincessTest {
         double actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(1.111, actual, TOLERANCE);
 
-        // Make the mech prone.
+        // Make the mek prone.
         when(mockMek.isProne()).thenReturn(true);
         actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(1.222, actual, TOLERANCE);
 
-        // Make the mech flee.
+        // Make the mek flee.
         when(mockMek.isProne()).thenReturn(false);
         when(mockPrincess.isFallingBack(eq(mockMek))).thenReturn(true);
         actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(2.222, actual, TOLERANCE);
 
-        // Make the mech a commander.
+        // Make the mek a commander.
         when(mockPrincess.isFallingBack(eq(mockMek))).thenReturn(false);
         when(mockMek.isCommander()).thenReturn(true);
         actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
         assertEquals(0.555, actual, TOLERANCE);
 
-        // Make it a civilian mech.
+        // Make it a civilian mek.
         when(mockMek.isCommander()).thenReturn(false);
         when(mockMek.isMilitary()).thenReturn(false);
         actual = mockPrincess.calculateMoveIndex(mockMek, new StringBuilder());
@@ -280,7 +280,8 @@ public class PrincessTest {
         Entity pickedEntity = mockPrincess.getEntityToMove();
         assertEquals(mockBA, pickedEntity);
 
-        // Add the off-board artillery, which should be ignored. Otherwise it would be picked as the next to move.
+        // Add the off-board artillery, which should be ignored. Otherwise it would be
+        // picked as the next to move.
         testEntityList.add(mockOffBoardArty);
         pickedEntity = mockPrincess.getEntityToMove();
         assertEquals(mockBA, pickedEntity);
@@ -290,12 +291,13 @@ public class PrincessTest {
         pickedEntity = mockPrincess.getEntityToMove();
         assertEquals(mockTank, pickedEntity);
 
-        // Add the immobilized mech, which should be picked as the next to move.
+        // Add the immobilized mek, which should be picked as the next to move.
         testEntityList.add(mockImmobileMek);
         pickedEntity = mockPrincess.getEntityToMove();
         assertEquals(mockImmobileMek, pickedEntity);
 
-        // Replace the immobilized mech with the ejected mechwarrior, which should now be the next to move.
+        // Replace the immobilized mek with the ejected mekwarrior, which should now be
+        // the next to move.
         testEntityList.remove(mockImmobileMek);
         testEntityList.add(mockEjectedMekwarrior);
         pickedEntity = mockPrincess.getEntityToMove();
@@ -315,7 +317,8 @@ public class PrincessTest {
         when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(mockMek, new StringBuilder())).thenReturn(1.111);
 
-        // Test a list where everyone has moved except one unit with the lowest possible move index.
+        // Test a list where everyone has moved except one unit with the lowest possible
+        // move index.
         when(mockBA.isSelectableThisTurn()).thenReturn(false);
         when(mockTank.isSelectableThisTurn()).thenReturn(false);
         when(mockImmobileMek.isSelectableThisTurn()).thenReturn(false);
@@ -339,7 +342,8 @@ public class PrincessTest {
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
         when(mockPrincess.getFallBack()).thenReturn(false);
         when(mockPrincess.getFleeBoard()).thenReturn(false);
-        // Forced Withdrawal Enabled, Mek Undamaged, Fall Back disabled, Flee Board disabled
+        // Forced Withdrawal Enabled, Mek Undamaged, Fall Back disabled, Flee Board
+        // disabled
         // Should Not Fall Back
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
 
@@ -381,14 +385,14 @@ public class PrincessTest {
         when(mockBehavior.isForcedWithdrawal()).thenReturn(true);
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
-        // A normal undamaged mech.
+        // A normal undamaged mek.
         assertFalse(mockPrincess.isFallingBack(mockMek));
 
-        // A mobile mech that wants to fall back (for any reason).
+        // A mobile mek that wants to fall back (for any reason).
         when(mockMek.isCrippled(anyBoolean())).thenReturn(true);
         assertTrue(mockPrincess.isFallingBack(mockMek));
 
-        // A mech whose bot is set for a destination edge
+        // A mek whose bot is set for a destination edge
         when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NEAREST);
         assertTrue(mockPrincess.isFallingBack(mockMek));
     }
@@ -420,20 +424,22 @@ public class PrincessTest {
         // In its current state, the entity does not need to flee the board.
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
-        // Now the unit is falling back, but it should not flee the board unless fleeBoard is enabled
+        // Now the unit is falling back, but it should not flee the board unless
+        // fleeBoard is enabled
         // or the unit is crippled and forcedWithdrawal is enabled
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(true);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
-        // Even a crippled mech should not fall back unless fleeBoard or forcedWithdrawal is enabled
+        // Even a crippled mek should not fall back unless fleeBoard or forcedWithdrawal
+        // is enabled
         when(mockMek.isCrippled()).thenReturn(true);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
-        // Enabling forcedWithdrawal should cause fleeing, because mech is crippled
+        // Enabling forcedWithdrawal should cause fleeing, because mek is crippled
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
         assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
-        // But forcedWithdrawal without a crippled mech should not flee
+        // But forcedWithdrawal without a crippled mek should not flee
         when(mockMek.isCrippled()).thenReturn(false);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
@@ -478,7 +484,7 @@ public class PrincessTest {
 
         Coords mockPriorPosition = mock(Coords.class);
 
-        // Test a fully mobile mech.
+        // Test a fully mobile mek.
         Mek mockMek = mock(BipedMek.class);
         when(mockMek.getRunMP()).thenReturn(6);
         when(mockMek.isImmobile()).thenReturn(false);
@@ -492,20 +498,20 @@ public class PrincessTest {
         when(mockMek.getPriorPosition()).thenReturn(mockPriorPosition);
         when(mockMek.checkBogDown(any(MoveStep.class), any(EntityMovementType.class), eq(mockHex),
                 eq(mockPriorPosition), eq(mockPosition), anyInt(), anyBoolean()))
-               .thenReturn(mockPilotingRollData);
+                .thenReturn(mockPilotingRollData);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
-        // Test a shutdown mech.
+        // Test a shutdown mek.
         when(mockMek.isImmobile()).thenReturn(true);
         when(mockMek.isShutDown()).thenReturn(true);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
-        // Test an immobile mech that is not shut down.
+        // Test an immobile mek that is not shut down.
         when(mockMek.isImmobile()).thenReturn(true);
         when(mockMek.isShutDown()).thenReturn(false);
         assertTrue(mockPrincess.isImmobilized(mockMek));
 
-        // Test a mech with move 0.
+        // Test a mek with move 0.
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.getRunMP()).thenReturn(0);
         assertTrue(mockPrincess.isImmobilized(mockMek));
@@ -518,21 +524,23 @@ public class PrincessTest {
         when(mockTank.isShutDown()).thenReturn(false);
         assertFalse(mockPrincess.isImmobilized(mockTank));
 
-        // Test a prone mech that cannot stand up.
+        // Test a prone mek that cannot stand up.
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isShutDown()).thenReturn(false);
         when(mockMek.isProne()).thenReturn(true);
         when(mockMek.cannotStandUpFromHullDown()).thenReturn(true);
         assertTrue(mockPrincess.isImmobilized(mockMek));
 
-        // Test a prone mech whose chance to stand up is better than our fall tolerance threshold.
+        // Test a prone mek whose chance to stand up is better than our fall tolerance
+        // threshold.
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isShutDown()).thenReturn(false);
         when(mockMek.isProne()).thenReturn(true);
         when(mockMek.cannotStandUpFromHullDown()).thenReturn(false);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
-        // Test a prone mech whose chance to stand up is worse than our fall tolerance threshold.
+        // Test a prone mek whose chance to stand up is worse than our fall tolerance
+        // threshold.
         when(mockPilotingRollData.getValue()).thenReturn(12);
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isShutDown()).thenReturn(false);
@@ -540,7 +548,8 @@ public class PrincessTest {
         when(mockMek.cannotStandUpFromHullDown()).thenReturn(false);
         assertTrue(mockPrincess.isImmobilized(mockMek));
 
-        // Test a stuck mech whose chance to get unstuck is better than our fall tolerance threshold.
+        // Test a stuck mek whose chance to get unstuck is better than our fall
+        // tolerance threshold.
         when(mockPilotingRollData.getValue()).thenReturn(7);
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isShutDown()).thenReturn(false);
@@ -548,7 +557,8 @@ public class PrincessTest {
         when(mockMek.isStuck()).thenReturn(true);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
-        // Test a stuck mech whose chance to get unstuck is worse than our fall tolerance threshold.
+        // Test a stuck mek whose chance to get unstuck is worse than our fall tolerance
+        // threshold.
         when(mockPilotingRollData.getValue()).thenReturn(12);
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isShutDown()).thenReturn(false);
@@ -559,7 +569,8 @@ public class PrincessTest {
 
     @Test
     public void testCalcAmmoForDefaultAggressionLevel() throws megamek.common.LocationFullException {
-        // Expected toHitThresholds should equate to a TN of 12, 11, and 10 for ammo values
+        // Expected toHitThresholds should equate to a TN of 12, 11, and 10 for ammo
+        // values
         // of 7+, 3+, 1.
 
         // Set aggression to default level
@@ -568,33 +579,36 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMek();
-        Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted wpn1 = mech1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mek mek1 = new BipedMek();
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
 
         // Check default toHitThresholds
-        // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
+        // Default toHitThreshold for 7+ rounds for this level should allow firing on
+        // 12s
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
-        // Default toHitThreshold for 3+ rounds for this level should allow firing on 11s
+        // Default toHitThreshold for 3+ rounds for this level should allow firing on
+        // 11s
         target = Compute.oddsAbove(11) / 100.0;
         bin1.setShotsLeft(3);
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // Default toHitThreshold for 1 rounds for this level should allow firing on 10s
         target = Compute.oddsAbove(10) / 100.0;
         bin1.setShotsLeft(1);
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
     }
 
     @Test
     public void testCalcAmmoForMaxAggressionLevel() throws megamek.common.LocationFullException {
-        // Expected toHitThresholds should equate to a TN of 12, 12, and 10 for ammo values
+        // Expected toHitThresholds should equate to a TN of 12, 12, and 10 for ammo
+        // values
         // of 7+, 3+, 1.
 
         // Set aggression to default level
@@ -603,32 +617,35 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMek();
-        Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted wpn1 = mech1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mek mek1 = new BipedMek();
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
 
         // Check default toHitThresholds
-        // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
+        // Default toHitThreshold for 7+ rounds for this level should allow firing on
+        // 12s
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
-        // Default toHitThreshold for 3+ rounds for this level should allow firing on 12s
+        // Default toHitThreshold for 3+ rounds for this level should allow firing on
+        // 12s
         bin1.setShotsLeft(3);
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // Default toHitThreshold for 1 rounds for this level should allow firing on 10s
         target = Compute.oddsAbove(10) / 100.0;
         bin1.setShotsLeft(1);
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
     }
 
     @Test
     public void testCalcAmmoForZeroAggressionLevel() throws megamek.common.LocationFullException {
-        // Expected toHitThresholds should equate to a TN of 10, 9, and 7 for ammo values
+        // Expected toHitThresholds should equate to a TN of 10, 9, and 7 for ammo
+        // values
         // of 7+, 3+, 1.
 
         // Set aggression to default level
@@ -637,27 +654,29 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMek();
-        Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted wpn1 = mech1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mek mek1 = new BipedMek();
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
 
         // Check default toHitThresholds
-        // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
+        // Default toHitThreshold for 7+ rounds for this level should allow firing on
+        // 12s
         double target = Compute.oddsAbove(10) / 100.0;
         bin1.setShotsLeft(7);
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
-        // Default toHitThreshold for 3+ rounds for this level should allow firing on 11s
+        // Default toHitThreshold for 3+ rounds for this level should allow firing on
+        // 11s
         target = Compute.oddsAbove(9) / 100.0;
         bin1.setShotsLeft(3);
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // Default toHitThreshold for 1 rounds for this level should allow firing on 10s
         target = Compute.oddsAbove(7) / 100.0;
         bin1.setShotsLeft(1);
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
     }
 
@@ -669,25 +688,25 @@ public class PrincessTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         // Set up unit
-        Mek mech1 = new BipedMek();
-        Mounted wpn1 = mech1.addEquipment(mockRL20, Mek.LOC_LT);
+        Mek mek1 = new BipedMek();
+        Mounted<?> wpn1 = mek1.addEquipment(mockRL20, Mek.LOC_LT);
 
         // Check default toHitThresholds
         // For max aggro, shoot OS weapons at TN 10 or better
         double target = Compute.oddsAbove(8) / 100.0;
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // For default aggro, shoot OS weapons at TN 9 or better
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);
         target = Compute.oddsAbove(9) / 100.0;
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // For lowest aggro, shoot OS weapons at TN 8 or better
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(10);
         target = Compute.oddsAbove(10) / 100.0;
-        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
     }
 }

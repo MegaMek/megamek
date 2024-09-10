@@ -62,7 +62,7 @@ public class PhysicalInfoTest {
         when(mockFireControl.guessToHitModifierPhysical(any(Entity.class), any(EntityState.class),
                 any(Targetable.class), any(EntityState.class), any(PhysicalAttackType.class),
                 any(Game.class)))
-               .thenReturn(mockToHit);
+                .thenReturn(mockToHit);
         when(mockToHit.getValue()).thenReturn(7);
 
         Entity mockShooter = mock(BipedMek.class);
@@ -162,7 +162,7 @@ public class PhysicalInfoTest {
         assertEquals(0.0, testPhysicalInfo.getKillProbability(), TOLERANCE);
         assertEquals(0.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
-        // Test a non-mech.
+        // Test a non-mek.
         testPhysicalInfo.setShooter(mock(Tank.class));
         testPhysicalInfo.initDamage(punch, mockShooterState, mockTargetState, true, mockGame);
         assertEquals(0.0, testPhysicalInfo.getProbabilityToHit(), TOLERANCE);

@@ -1,16 +1,22 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.server.victory;
-
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.force.Forces;
-import megamek.common.options.GameOptions;
-import megamek.server.totalwarfare.TWGameManager;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -19,6 +25,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Vector;
+
+import org.junit.jupiter.api.Test;
+
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.force.Forces;
+import megamek.common.options.GameOptions;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class GameManagerTest {
 
@@ -45,12 +64,14 @@ public class GameManagerTest {
 
         Game testGame = createMockedGame();
 
-        // test whether the server.victory() returns false when mocking VictoryResult as false
+        // test whether the server.victory() returns false when mocking VictoryResult as
+        // false
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         gameManager.setGame(testGame);
         assertFalse(gameManager.victory());
 
-        // test whether the server.victory() returns true when mocking VictoryResult as true
+        // test whether the server.victory() returns true when mocking VictoryResult as
+        // true
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         gameManager.setGame(testGame);
         assertTrue(gameManager.victory());
@@ -123,7 +144,8 @@ public class GameManagerTest {
 
         assertSame(1, gameManager.getvPhaseReport().size());
 
-        // Second test server tests with both a team != TEAM_NONE and a player != PLAYER_NONE
+        // Second test server tests with both a team != TEAM_NONE and a player !=
+        // PLAYER_NONE
         // Two reports should be generated
         TWGameManager gameManager2 = new TWGameManager();
 

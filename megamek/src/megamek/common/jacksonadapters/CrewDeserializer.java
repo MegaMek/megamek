@@ -37,6 +37,7 @@ public class CrewDeserializer {
     private static final String GUNNERY = "gunnery";
     private static final String PILOTING = "piloting";
     private static final String NAME = "name";
+    private static final String CALLSIGN = "callsign";
     private static final String PORTRAIT = "portrait";
 
     public static void parseCrew(JsonNode entityNode, Entity entity) {
@@ -50,6 +51,7 @@ public class CrewDeserializer {
             assignGunnery(crew, crewNode);
             assignPiloting(crew, crewNode);
             assignName(crew, crewNode);
+            assignCallsign(crew, crewNode);
             assignPortrait(crew, crewNode);
         }
     }
@@ -87,6 +89,12 @@ public class CrewDeserializer {
     private static void assignName(Crew crew, JsonNode crewNode) {
         if (crewNode.has(NAME)) {
             crew.setName(crewNode.get(NAME).textValue(), 0);
+        }
+    }
+
+    private static void assignCallsign(Crew crew, JsonNode crewNode) {
+        if (crewNode.has(CALLSIGN)) {
+            crew.setNickname(crewNode.get(CALLSIGN).textValue(), 0);
         }
     }
 

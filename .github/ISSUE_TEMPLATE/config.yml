@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Questions
+    url: https://discord.gg/megamek
+    about: If you have questions about the above please ask on the Discord before selecting
+
+  - name: MegaMek Wiki
+    url: https://github.com/MegaMek/megamek/wiki
+    about: Before opening a new issue, please check the MegaMek Wiki for information.
+
+  - name: BattleTech Forums
+    url: https://bg.battletech.com/forums/index.php?board=29.0
+    about: Join the discussions and find more information on the official BattleTech Forums.

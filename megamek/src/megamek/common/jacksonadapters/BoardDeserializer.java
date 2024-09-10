@@ -18,7 +18,6 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,6 +25,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.board.postprocess.BoardProcessor;
 import megamek.common.util.BoardUtilities;
 import org.apache.logging.log4j.LogManager;
 
@@ -56,6 +56,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     private static final String RADAR = "radar";
     private static final String CAP_RADAR = "capitalradar";
     private static final String ID = "id";
+    private static final String PROCESS = "postprocess";
 
     protected BoardDeserializer(Class<?> vc) {
         super(vc);
@@ -120,6 +121,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             List<Board> surpriseBoardsList = parseMultipleBoards(mapNode.get(SURPRISE), basePath);
             Board board = Compute.randomListElement(surpriseBoardsList);
             parseBoardModifiers(board, mapNode);
+            parseBoardProcessors(board, mapNode);
             return board;
         }
 
@@ -146,7 +148,6 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                     board.setType(Board.T_SPACE);
                     break;
             }
-            return board;
         } else {
             // ground map
             // this is the only map type that allows combining multiple board files
@@ -164,15 +165,27 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             }
             List<Boolean> isRotatedList = new ArrayList<>();
             Collections.fill(isRotatedList, Boolean.FALSE);
-            return BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList, isRotatedList, Board.T_GROUND);
+            board = BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList, isRotatedList, Board.T_GROUND);
         }
+        parseBoardProcessors(board, mapNode);
+        return board;
     }
 
     private static Board parseBoardFileNode(JsonNode boardNode, File basePath, String fileName) {
         // map: as node with file: and optional rotate:
         Board board = loadBoard(fileName, basePath);
         parseBoardModifiers(board, boardNode);
+        parseBoardProcessors(board, boardNode);
         return board;
+    }
+
+    private static void parseBoardProcessors(Board board, JsonNode boardNode) {
+        if (boardNode.has(PROCESS)) {
+            List<BoardProcessor> processors = BoardProcessorDeserializer.parseNode(boardNode.get(PROCESS));
+            for (BoardProcessor processor : processors) {
+                processor.processBoard(board);
+            }
+        }
     }
 
     private static void parseBoardModifiers(Board board, JsonNode boardNode) {
@@ -216,7 +229,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     }
 
     @Override
-    public Board deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public Board deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return parse(p.getCodec().readTree(p), new File("")).get(0);
     }
 

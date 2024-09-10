@@ -42,11 +42,10 @@ import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.ServerBoardHelper;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -56,15 +55,15 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.math.RoundingMode;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static megamek.client.ui.Messages.getString;
 
@@ -91,9 +90,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         clientgui = cg;
         this.bv = bv;
         currentPlayerStartPos = cl.getLocalPlayer().getStartingPos();
-        if (currentPlayerStartPos > 10) {
-            currentPlayerStartPos -= 10;
-        }
 
         NumberFormat numFormat = NumberFormat.getIntegerInstance();
         numFormat.setGroupingUsed(false);
@@ -260,7 +256,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
-    private final TipButton[] butStartPos = new TipButton[11];
+    private final Map<Integer, TipButton> butStartPos = new HashMap<>(); 
 
     private final JFormattedTextField txtOffset;
     private final JFormattedTextField txtWidth;
@@ -716,71 +712,112 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private void setupStartGrid() {
         panStartButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
-        for (int i = 0; i < 11; i++) {
-            butStartPos[i] = new TipButton("");
-            butStartPos[i].addActionListener(listener);
+        // put these fixed zones in first
+        for (int i = 0; i < Board.NUM_ZONES; i++) {
+            butStartPos.put(i, new TipButton(""));
+            butStartPos.get(i).addActionListener(listener);
+            butStartPos.get(i).setActionCommand(((Integer) i).toString());
         }
-        panStartButtons.setLayout(new GridLayout(4, 3));
-        panStartButtons.add(butStartPos[1]);
-        panStartButtons.add(butStartPos[2]);
-        panStartButtons.add(butStartPos[3]);
-        panStartButtons.add(butStartPos[8]);
-        panStartButtons.add(butStartPos[10]);
-        panStartButtons.add(butStartPos[4]);
-        panStartButtons.add(butStartPos[7]);
-        panStartButtons.add(butStartPos[6]);
-        panStartButtons.add(butStartPos[5]);
-        panStartButtons.add(butStartPos[0]);
-        panStartButtons.add(butStartPos[9]);
+        
+        var currentBoard = ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true);
+        var deploymentZones = currentBoard.getCustomDeploymentZones();
+        int extraRowCount = (int) Math.ceil((double) deploymentZones.size() / 3.0);
+        
+        panStartButtons.setLayout(new GridLayout(4 + extraRowCount, 3));
+        panStartButtons.add(butStartPos.get(1));
+        panStartButtons.add(butStartPos.get(2));
+        panStartButtons.add(butStartPos.get(3));
+        panStartButtons.add(butStartPos.get(8));
+        panStartButtons.add(butStartPos.get(10));
+        panStartButtons.add(butStartPos.get(4));
+        panStartButtons.add(butStartPos.get(7));
+        panStartButtons.add(butStartPos.get(6));
+        panStartButtons.add(butStartPos.get(5));
+        panStartButtons.add(butStartPos.get(0));
+        panStartButtons.add(butStartPos.get(9));
+        panStartButtons.add(new JLabel("")); // extra spacer as custom deployment zones should start
+                                            // on next line to avoid confusion
+        
+        // now we build any custom deployment zones that the board has and add them as buttons
+        for (int zoneID : deploymentZones) {
+            TipButton buttonCustomZone = new TipButton("Zone " + zoneID);
+            
+            StringBuilder zoneBuilder = new StringBuilder();
+            zoneBuilder.append("Zone ");
+            zoneBuilder.append(zoneID);
+            zoneBuilder.append(": ");
+            for (Coords coords : currentBoard.getCustomDeploymentZone(zoneID)) {
+                zoneBuilder.append(coords.toFriendlyString());
+                zoneBuilder.append(", ");
+            }
+            
+            zoneBuilder.delete(zoneBuilder.length() - 2, zoneBuilder.length() - 2); // chop off last two characters
+            
+            buttonCustomZone.setToolTipText(zoneBuilder.toString());
+            // the custom zones should not overlap with the fixed zones
+            // this includes the deep zones
+            Integer internalZoneID = Board.encodeCustomDeploymentZoneID(zoneID);
+            
+            buttonCustomZone.setActionCommand(internalZoneID.toString());
+            buttonCustomZone.addActionListener(listener);
+            butStartPos.put(internalZoneID, buttonCustomZone);
+            panStartButtons.add(buttonCustomZone);
+        }
+        
         updateStartGrid();
     }
 
     /** Assigns texts and tooltips to the starting positions grid. */
     private void updateStartGrid() {
-        StringBuilder[] butText = new StringBuilder[11];
-        StringBuilder[] butTT = new StringBuilder[11];
-        boolean[] hasPlayer = new boolean[11];
+        Map<Integer, StringBuilder> butText = new HashMap<>();
+        Map<Integer, StringBuilder> butTT = new HashMap<>();
+        Map<Integer, Boolean> hasPlayer = new HashMap<>();
 
-        for (int i = 0; i < 11; i++) {
-            butText[i] = new StringBuilder();
-            butTT[i] = new StringBuilder();
+        for (int i : butStartPos.keySet()) {
+            butText.put(i,  new StringBuilder());
+            butTT.put(i, new StringBuilder());
         }
 
-        for (int i = 0; i < 11; i++) {
-            butText[i].append("<HTML><P ALIGN=CENTER>");
+        for (int i : butStartPos.keySet()) {
+            butText.get(i).append("<HTML><P ALIGN=CENTER>");
             if (!isValidStartPos(client.getGame(), client.getLocalPlayer(), i)) {
-                butText[i].append(guiScaledFontHTML(uiYellow()));
-                butTT[i].append(Messages.getString("PlayerSettingsDialog.invalidStartPosTT"));
+                butText.get(i).append(guiScaledFontHTML(uiYellow()));
+                butTT.get(i).append(Messages.getString("PlayerSettingsDialog.invalidStartPosTT"));
             } else {
-                butText[i].append(guiScaledFontHTML());
+                butText.get(i).append(guiScaledFontHTML());
             }
-            butText[i].append(IStartingPositions.START_LOCATION_NAMES[i]).append("</FONT><BR>");
+            
+            if (i <= Board.NUM_ZONES) {
+                butText.get(i).append(IStartingPositions.START_LOCATION_NAMES[i]);
+            } else {
+                butText.get(i).append("Zone " + Board.decodeCustomDeploymentZoneID(i));
+            }
+            butText.get(i).append("</FONT><BR>");
         }
 
-        for (Player player : client.getGame().getPlayersVector()) {
+        for (Player player : client.getGame().getPlayersList()) {
             int pos = player.getStartingPos();
-            if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) {
-                int index = pos > 10 ? pos - 10 : pos;
-                butText[index].append(guiScaledFontHTML(teamColor(player, client.getLocalPlayer())));
-                butText[index].append("\u25A0</FONT>");
-                if (!hasPlayer[index]) {
-                    if (butTT[index].length() > 0) {
-                        butTT[index].append("<BR><BR>");
+            if (!player.equals(client.getLocalPlayer()) && (pos != Board.START_ANY)) {
+                butText.get(pos).append(guiScaledFontHTML(teamColor(player, client.getLocalPlayer())));
+                butText.get(pos).append("\u25A0</FONT>");
+                if (!hasPlayer.containsKey(pos)) {
+                    if (butTT.get(pos).length() > 0) {
+                        butTT.get(pos).append("<BR><BR>");
                     }
-                    butTT[index].append(Messages.getString("PlayerSettingsDialog.deployingHere"));
-                    hasPlayer[index] = true;
+                    butTT.get(pos).append(Messages.getString("PlayerSettingsDialog.deployingHere"));
+                    hasPlayer.put(pos, true);
                 }
-                butTT[index].append("<BR>").append(player.getName());
+                butTT.get(pos).append("<BR>").append(player.getName());
             }
         }
 
-        butText[currentPlayerStartPos].append(guiScaledFontHTML(GUIPreferences.getInstance().getMyUnitColor()));
-        butText[currentPlayerStartPos].append("\u2B24</FONT>");
+        butText.get(currentPlayerStartPos).append(guiScaledFontHTML(GUIPreferences.getInstance().getMyUnitColor()));
+        butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
 
-        for (int i = 0; i < 11; i++) {
-            butStartPos[i].setText(butText[i].toString());
-            if (butTT[i].length() > 0) {
-                butStartPos[i].setToolTipText(butTT[i].toString());
+        for (int i : butStartPos.keySet()) {
+            butStartPos.get(i).setText(butText.get(i).toString());
+            if (butTT.get(i).length() > 0) {
+                butStartPos.get(i).setToolTipText(butTT.get(i).toString());
             }
         }
     }
@@ -789,10 +826,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Deployment buttons
-            for (int i = 0; i < 11; i++) {
-                if (butStartPos[i].equals(e.getSource())) {
-                    currentPlayerStartPos = i;
+            for (int i : butStartPos.keySet()) {
+                if (butStartPos.get(i).equals(e.getSource())) {
+                    currentPlayerStartPos = Integer.parseInt(butStartPos.get(i).getActionCommand());                    
                     updateStartGrid();
+                    return; // an action event is unlikely to have come from two separate sources
                 }
             }
 
@@ -807,64 +845,49 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 rp.isPirate = getFactionCode().equalsIgnoreCase("PIR");
                 rp.nukesBannedForMe = chkBanNukes.isSelected();
                 ArrayList<Entity> entities = clientgui.getClient().getGame().getPlayerEntities(player, false);
-                munitionTree = tlg.generateMunitionTree(rp, entities, "");
-            }
-
-            if (butRandomize.equals(e.getSource())) {
+                munitionTree = TeamLoadoutGenerator.generateMunitionTree(rp, entities, "");
+                return;
+            } else if (butRandomize.equals(e.getSource())) {
                 // Randomize team loadout
                 butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(true);
                 butRandomize.setEnabled(false);
                 tlg.setTrueRandom(chkTrulyRandom.isSelected());
                 munitionTree = TeamLoadoutGenerator.generateRandomizedMT();
-            }
-
-            if (cmbFaction.equals(e.getSource())) {
+            } else if (cmbFaction.equals(e.getSource())) {
                 // Reset autoconfigure button if user changes faction
                 butAutoconfigure.setEnabled(true);
-            }
-
-            if (butSaveADF.equals(e.getSource())) {
+            } else if (butSaveADF.equals(e.getSource())) {
                 // Save current MunitionTree off as an ADF file
                 if (null != munitionTree) {
                     saveLoadout(munitionTree);
                 } else if (null != originalMT) {
                     saveLoadout(originalMT);
                 }
-            }
-
-            if (butLoadADF.equals(e.getSource())) {
+            } else if (butLoadADF.equals(e.getSource())) {
                 // Load a MunitionTree into munitionTree variable.
                 MunitionTree mt = loadLoadout();
                 if (null != mt) {
                     munitionTree = mt;
                     butRestoreMT.setEnabled(true);
                 }
-            }
-
-            if (butRestoreMT.equals(e.getSource())) {
+            } else if (butRestoreMT.equals(e.getSource())) {
                 if (null != originalMT) {
                     munitionTree = originalMT;
                 }
-
-            }
-
             // Bot settings button
-            if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
+            } else if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
                 BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
                 var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior, clientgui);
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
-            }
-            
-            if (e.getActionCommand().equals(CMD_ADD_GROUND_OBJECT)) {
+            } else if (e.getActionCommand().equals(CMD_ADD_GROUND_OBJECT)) {
             	addGroundObject();
-            }
-            
-            if (e.getActionCommand().contains(CMD_REMOVE_GROUND_OBJECT_PREFIX)) {
+            } else if(e.getActionCommand().contains(CMD_REMOVE_GROUND_OBJECT_PREFIX)) {
             	removeGroundObject(e.getActionCommand());
+            	return;
             }
         }
     };

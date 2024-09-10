@@ -21,7 +21,7 @@ MMSVersion: 2
 name: To Save a Prince
 planet: Mallory's World
 description: >
-  Prince Ian Davion commands the Fourth Davion Guards in an attempt to repel the Combine invasion on 
+  Prince Ian Davion commands the Fourth Davion Guards in an attempt to repel the Combine invasion on
   Mallory's World. After Kurita successes against the planetary defenders, the prince summoned a Kell
   Hounds Regiment.
 
@@ -281,25 +281,25 @@ messages:
       ## Mallory's World, Desolate Pass
       ## Federated Suns
       ## October 3013
-      
-      In a wave of assaults by House Kurita forces on Mallory's World, the Second Sword of Light 
-      Regiment, backed by the Twenty-fourth Dieron Regulars, landed and clashed with the defending Seventeenth 
-      Avalon Hussars. Prince Ian Davion, leading the Fourth Davion Guards, swiftly responded to the Combine's 
-      invasion. 
-      
-      Despite early victories by Davion's forces, the Kurita units inflicted heavy damage on the 
-      Seventeenth Avalon Hussars, exposing the Fourth Guards to significant danger. In response, Prince Ian 
+
+      In a wave of assaults by House Kurita forces on Mallory's World, the Second Sword of Light
+      Regiment, backed by the Twenty-fourth Dieron Regulars, landed and clashed with the defending Seventeenth
+      Avalon Hussars. Prince Ian Davion, leading the Fourth Davion Guards, swiftly responded to the Combine's
+      invasion.
+
+      Despite early victories by Davion's forces, the Kurita units inflicted heavy damage on the
+      Seventeenth Avalon Hussars, exposing the Fourth Guards to significant danger. In response, Prince Ian
       called for reinforcements from the Kell Hounds Regiment, stationed ten days away on Mara.
-      
-      By the time the Kell Hounds reached the battlefield, the situation for the defenders had grown dire. The 
-      Twenty-fourth Dieron Regulars had severed the Fourth Davion Guards' lines of communication and driven them 
-      into the desert, the Second Sword of Light Regiment in pursuit. At last, at Desolate Pass, Prince Ian turned 
-      his battered Atlas to confront the Warhammer of Yorinaga Kurita, commander of the Second Sword. 
-      
+
+      By the time the Kell Hounds reached the battlefield, the situation for the defenders had grown dire. The
+      Twenty-fourth Dieron Regulars had severed the Fourth Davion Guards' lines of communication and driven them
+      into the desert, the Second Sword of Light Regiment in pursuit. At last, at Desolate Pass, Prince Ian turned
+      his battered Atlas to confront the Warhammer of Yorinaga Kurita, commander of the Second Sword.
+
       In a desperate last stand Prince Ian Davion bought his regiment precious time to retreat, but did not
       survive the fight. Right before other Kurita forces could seize his body, the long-awaited Kell Hounds arrived.
-      
-      *This scenario is based on Battlecorps Scenario 3013, "To Save a Prince", originally published in 
+
+      *This scenario is based on Battlecorps Scenario 3013, "To Save a Prince", originally published in
       the "Kell Hounds" sourcebook, FASA 01652.*
     image: tosaveaprince_splash.png
     trigger:
@@ -308,13 +308,13 @@ messages:
   - header: Attacker's Task
     text: |
       ## Attacker's Task
-      
-      In this scenario, it is your task to break through the Kell Hounds defense line and exit at least half your 
-      Meks off the southern map edge by the end of round 15. 
-      
-      The temperature in this desert area is at 70°C, adding heat to all Meks. 
-      
-      *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory. 
+
+      In this scenario, it is your task to break through the Kell Hounds defense line and exit at least half your
+      Meks off the southern map edge by the end of round 15.
+
+      The temperature in this desert area is at 70°C, adding heat to all Meks.
+
+      *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory.
       If you do this, Princess will be sad.*
     image: tosaveaprince_map.png
     trigger:
@@ -345,12 +345,12 @@ messages:
   - header:  Defeat
     text: |
       ## Defeat
-      
-      The Kell Hounds managed to drive off the Second Sword of Light, enabling the Fourth Davion 
+
+      The Kell Hounds managed to drive off the Second Sword of Light, enabling the Fourth Davion
       Guards to step in reclaim Prince Ian's body.
-      
+
       Yorinaga Kurita is not pleased.
-      
+
     image: tosaveaprince_splash.png
     trigger:
       type: fledunits
@@ -361,11 +361,11 @@ messages:
   - header: Victory
     text: |
       ## Victory
-      
+
       The Second Sword of Light successfully broke through the line of the Davion defenses. They will not
       recover their Prince's body. This will be a heavy blow to their morale.
-      
-      Yorinaga Kurita commends your performance by not being displeased. 
+
+      Yorinaga Kurita commends your performance by not being displeased.
 
     image: tosaveaprince_splash.png
     trigger:
@@ -386,4 +386,3 @@ end:
   - trigger:
       type: roundend
       round: 15
-

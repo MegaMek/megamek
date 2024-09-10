@@ -8,13 +8,13 @@ Maps=Map Set 2/16x17 BattleTech,Map Set 2/16x17 BattleTech
 Factions=BlackVision,1stSomersetStrikers
 Location_BlackVision=any
 Location_1stSomersetStrikers=any
-# Black Vision, Falcon Star: 
+# Black Vision, Falcon Star:
 Unit_BlackVision_1=Vulture (Mad Dog) Prime,Star Colonel Kristen Redmond,2,2,S,08,04
-Unit_BlackVision_2=Mad Cat (Timber Wolf) Prime,Mechwarrior Jentry,3,4,S,01,11
-Unit_BlackVision_3=Mad Cat (Timber Wolf) Prime,Mechwarrior Fatha,3,4,S,01,09
-Unit_BlackVision_4=Vulture (Mad Dog) Prime,Mechwarrior Korthan,3,4,S,01,12
-Unit_BlackVision_5=Hunchback IIC (Standard),Mechwarrior Damil,3,4,S,01,08
-# Strikers Lance: 
+Unit_BlackVision_2=Mad Cat (Timber Wolf) Prime,MekWarrior Jentry,3,4,S,01,11
+Unit_BlackVision_3=Mad Cat (Timber Wolf) Prime,MekWarrior Fatha,3,4,S,01,09
+Unit_BlackVision_4=Vulture (Mad Dog) Prime,MekWarrior Korthan,3,4,S,01,12
+Unit_BlackVision_5=Hunchback IIC (Standard),MekWarrior Damil,3,4,S,01,08
+# Strikers Lance:
 Unit_1stSomersetStrikers_1=Axman AXM-2N,Major Adam Steiner,2,2,SW,17,09
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,3,4,SW,17,08
 Unit_1stSomersetStrikers_3=Centurion CN9-D,Captain Valten Ryder,4,3,SW,17,07

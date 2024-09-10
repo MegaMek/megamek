@@ -24,7 +24,7 @@ messages:
   - header: Scenario Messages
     text: |
       In this test setup scenario, several messages are shown at various points of the game.
-      
+
       This is supposed to be a test for the message system and the trigger system.
     trigger:
       type: gamestart
@@ -42,8 +42,3 @@ messages:
       type: roundend
       round: 3
       modify: once
-
-
-
-
-

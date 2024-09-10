@@ -13,7 +13,7 @@ WARNING - August 2016
 
 Individuals not used to including aerospace units in their games are often surprised at some of the odd ways the
 rules for damage work. SRMs do damage in 5-point clusters, LRM20s mounted in weapon bays on DropShips can actually
-head cap mechs, UAC20s do one hit for 20 points of damage and another for 10 points of damage, medium laser lasers
+head cap meks, UAC20s do one hit for 20 points of damage and another for 10 points of damage, medium laser lasers
 and PPCs do the same amount of capital scale damage, an entire fighter squadron can train its weapons on a single
 fighter in the other squadron, and so forth. Most of these issues stem from the difficulty in trying to merge rules
 from the old BattleSpace rules with capital class vessels and fighter squadrons with the ground game in Battletech.

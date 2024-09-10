@@ -41,7 +41,7 @@ Notes:
 
 And including these older maps:
 
-	55x55 Mech Rush
+	55x55 Mek Rush
 	55x55 Desert Crags
 	55x55 Hemlock Pass
 	55x55 Abysmal Flats

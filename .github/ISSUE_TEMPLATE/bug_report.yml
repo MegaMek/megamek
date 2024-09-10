@@ -90,7 +90,7 @@ body:
       value: |
         ## User Environment
 
-        For the next sections go to the logs folder inside MegaMe (usually called 'logs'). Find the MegaMek.log file, open it with a text editor. It will look like the image below. Fill the information you find there into the following sections:
+        For the next sections go to the logs folder inside MegaMek (usually called 'logs'). Find the MegaMek.log file, open it with a text editor. It will look like the image below. Fill the information you find there into the following sections:
 
         ![Example Screenshot](https://i.imgur.com/KD8cnvf.png)
 

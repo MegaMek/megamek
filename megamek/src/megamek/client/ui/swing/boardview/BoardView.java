@@ -2673,15 +2673,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
-     * the old sprite with the new! Try to prevent annoying
-     * ConcurrentModificationExceptions
-     */
-    public void redrawEntity(Entity entity) {
-        redrawEntity(entity, null);
-    }
-
-    /**
      * Convenience method for returning a Key value for the entitySpriteIds and isometricSprite
      * maps. The List contains as the first element the Entity ID and as the second element its
      * location ID: either -1 if the Entity has no secondary locations, or the index of its
@@ -2705,11 +2696,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * DropShips taking off (airborne DropShips lose their secondary hexes). Try
      * to prevent annoying ConcurrentModificationExceptions
      */
-    public void redrawEntity(Entity entity, Entity oldEntity) {
+    public void redrawEntity(Entity entity) {
         Integer entityId = entity.getId();
-        if (oldEntity == null) {
-            oldEntity = entity;
-        }
 
         // Remove sprites from backing sprite collections before modifying the
         // entitySprites and isometricSprites.  Otherwise orphaned overTerrainSprites
@@ -2778,7 +2766,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             isoSprites.remove(isoSprite);
         }
 
-        for (int secondaryPos : oldEntity.getSecondaryPositions().keySet()) {
+        for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
             sprite = entitySpriteIds.get(getIdAndLoc(entityId, secondaryPos));
             if (sprite != null) {
                 newSprites.remove(sprite);

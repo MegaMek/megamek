@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -26,9 +44,12 @@ import megamek.common.MekSummary;
 import megamek.common.UnitRole;
 
 /**
- * Shows a table of all units matching the chosen faction/unit type/era parameters and
- * general criteria for a formation along with data relevant to the formation constraints.
- * User can select combinations of additional criteria to see which units meet those criteria
+ * Shows a table of all units matching the chosen faction/unit type/era
+ * parameters and
+ * general criteria for a formation along with data relevant to the formation
+ * constraints.
+ * User can select combinations of additional criteria to see which units meet
+ * those criteria
  * as well.
  *
  * @author Neoancient
@@ -58,7 +79,8 @@ public class AnalyzeFormationDialog extends JDialog {
         JPanel panAvailable = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        //Add to a set to avoid duplicates, but dump into a list so the table can have an ordered collection
+        // Add to a set to avoid duplicates, but dump into a list so the table can have
+        // an ordered collection
         Set<MekSummary> unitSet = new HashSet<>();
         params.forEach(p -> {
             UnitTable table = UnitTable.findTable(p);
@@ -213,7 +235,7 @@ public class AnalyzeFormationDialog extends JDialog {
     }
 
     private void filter() {
-        List<RowFilter<UnitTableModel,Integer>> filters = new ArrayList<>();
+        List<RowFilter<UnitTableModel, Integer>> filters = new ArrayList<>();
         for (int i = 0; i < allConstraints.size(); i++) {
             if (otherCriteriaChecks.get(i).isSelected()) {
                 filters.add(new UnitTableRowFilter(allConstraints.get(i)));
@@ -250,10 +272,10 @@ public class AnalyzeFormationDialog extends JDialog {
 
     private int getNetworkMask(MekSummary ms) {
         ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
-        return mRec == null? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
+        return mRec == null ? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
     }
 
-    class UnitTableRowFilter extends RowFilter<UnitTableModel,Integer> {
+    class UnitTableRowFilter extends RowFilter<UnitTableModel, Integer> {
         FormationType.Constraint constraint;
 
         public UnitTableRowFilter(FormationType.Constraint constraint) {
@@ -261,7 +283,7 @@ public class AnalyzeFormationDialog extends JDialog {
         }
 
         @Override
-        public boolean include(Entry<? extends UnitTableModel,? extends Integer> entry) {
+        public boolean include(Entry<? extends UnitTableModel, ? extends Integer> entry) {
             return constraint.matches(units.get(entry.getIdentifier()));
         }
     }
@@ -314,7 +336,8 @@ public class AnalyzeFormationDialog extends JDialog {
                 case COL_NAME:
                     return ms.getName();
                 case COL_WEIGHT_CLASS:
-                    return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
+                    return EntityWeightClass
+                            .getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
                 case COL_MOVEMENT:
                     StringBuilder sb = new StringBuilder();
                     sb.append(ms.getWalkMp()).append("/").append(ms.getRunMp());
@@ -330,8 +353,8 @@ public class AnalyzeFormationDialog extends JDialog {
                         return mr.getMekSummary().getRole().toString();
                     }
                 default:
-                    Function<MekSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
-                    return metric == null? "?" : metric.apply(ms);
+                    Function<MekSummary, ?> metric = formationType.getReportMetric(colNames.get(columnIndex));
+                    return metric == null ? "?" : metric.apply(ms);
             }
         }
     }

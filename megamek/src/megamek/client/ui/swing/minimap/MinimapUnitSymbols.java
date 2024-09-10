@@ -41,7 +41,7 @@ public class MinimapUnitSymbols {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     public static final Path2D STRAT_BASERECT;
     public static final Path2D STRAT_INFANTRY;
-    public static final Path2D STRAT_MECH;
+    public static final Path2D STRAT_MEK;
     public static final Path2D STRAT_VTOL;
     public static final Path2D STRAT_TANKTRACKED;
     public static final Path2D STRAT_AERO;
@@ -49,12 +49,12 @@ public class MinimapUnitSymbols {
     public static final Path2D STRAT_HOVER;
     public static final Path2D STRAT_WHEELED;
     public static final Path2D STRAT_NAVAL;
-    public static final Path2D STD_MECH;
+    public static final Path2D STD_MEK;
     public static final Path2D STD_TANK;
     public static final Path2D STD_VTOL;
     public static final Path2D STD_AERO;
     public static final Path2D STD_INFANTRY;
-    public static final Path2D STD_MECHWARRIOR;
+    public static final Path2D STD_MEKWARRIOR;
     public static final Path2D STD_NAVAL;
     public static final Path2D STD_SPHEROID;
     public static final Dimension STRAT_SYMBOLSIZE = new Dimension(167, 103);
@@ -64,116 +64,116 @@ public class MinimapUnitSymbols {
     private static final double PIHALF = PI / 2;
 
     static {
-        STD_MECH = new Path2D.Double();
-        STD_MECH.moveTo(-25,  45);
-        STD_MECH.lineTo( 25,  45);
-        STD_MECH.lineTo( 45, -45);
-        STD_MECH.lineTo(-45, -45);
-        STD_MECH.closePath();
+        STD_MEK = new Path2D.Double();
+        STD_MEK.moveTo(-25, 45);
+        STD_MEK.lineTo(25, 45);
+        STD_MEK.lineTo(45, -45);
+        STD_MEK.lineTo(-45, -45);
+        STD_MEK.closePath();
 
         STD_TANK = new Path2D.Double();
         STD_TANK.moveTo(-25, -50);
-        STD_TANK.lineTo( 25, -50);
-        STD_TANK.lineTo( 25,  50);
-        STD_TANK.lineTo(-25,  50);
+        STD_TANK.lineTo(25, -50);
+        STD_TANK.lineTo(25, 50);
+        STD_TANK.lineTo(-25, 50);
         STD_TANK.closePath();
 
         STD_NAVAL = new Path2D.Double();
         STD_NAVAL.moveTo(-15, -50);
-        STD_NAVAL.lineTo( 15, -50);
-        STD_NAVAL.curveTo(25,  0,  25,  0,  15,  50);
-        STD_NAVAL.lineTo(-15,  50);
-        STD_NAVAL.curveTo(-25, 0, -25,  0, -15, -50);
+        STD_NAVAL.lineTo(15, -50);
+        STD_NAVAL.curveTo(25, 0, 25, 0, 15, 50);
+        STD_NAVAL.lineTo(-15, 50);
+        STD_NAVAL.curveTo(-25, 0, -25, 0, -15, -50);
         STD_NAVAL.closePath();
 
         STD_VTOL = new Path2D.Double();
         int ofs = 10;
-        STD_VTOL.moveTo(-50,   0);
-        STD_VTOL.curveTo(-ofs,  ofs, -ofs,  ofs,   0,  50);
-        STD_VTOL.curveTo( ofs,  ofs,  ofs,  ofs,  50,   0);
-        STD_VTOL.curveTo( ofs, -ofs,  ofs, -ofs,   0, -50);
-        STD_VTOL.curveTo(-ofs, -ofs, -ofs, -ofs, -50,   0);
+        STD_VTOL.moveTo(-50, 0);
+        STD_VTOL.curveTo(-ofs, ofs, -ofs, ofs, 0, 50);
+        STD_VTOL.curveTo(ofs, ofs, ofs, ofs, 50, 0);
+        STD_VTOL.curveTo(ofs, -ofs, ofs, -ofs, 0, -50);
+        STD_VTOL.curveTo(-ofs, -ofs, -ofs, -ofs, -50, 0);
         STD_VTOL.closePath();
 
         STD_AERO = new Path2D.Double();
-        STD_AERO.moveTo(-30,  40);
-        STD_AERO.lineTo(  0, -50);
-        STD_AERO.lineTo( 30,  40);
-        STD_AERO.lineTo( 30,  50);
-        STD_AERO.lineTo(-30,  50);
+        STD_AERO.moveTo(-30, 40);
+        STD_AERO.lineTo(0, -50);
+        STD_AERO.lineTo(30, 40);
+        STD_AERO.lineTo(30, 50);
+        STD_AERO.lineTo(-30, 50);
         STD_AERO.closePath();
 
         STD_SPHEROID = new Path2D.Double();
         double rad = 50;
         double r72 = toRadians(72);
-        STD_SPHEROID.moveTo(rad * cos(PIHALF),           -rad * sin(PIHALF));
-        STD_SPHEROID.lineTo(rad * cos(PIHALF + r72),     -rad * sin(PIHALF + r72));
+        STD_SPHEROID.moveTo(rad * cos(PIHALF), -rad * sin(PIHALF));
+        STD_SPHEROID.lineTo(rad * cos(PIHALF + r72), -rad * sin(PIHALF + r72));
         STD_SPHEROID.lineTo(rad * cos(PIHALF + 2 * r72), -rad * sin(PIHALF + 2 * r72));
         STD_SPHEROID.lineTo(rad * cos(PIHALF + 3 * r72), -rad * sin(PIHALF + 3 * r72));
         STD_SPHEROID.lineTo(rad * cos(PIHALF + 4 * r72), -rad * sin(PIHALF + 4 * r72));
         STD_SPHEROID.closePath();
 
         STD_INFANTRY = new Path2D.Double();
-        STD_INFANTRY.moveTo(-50,   0);
-        STD_INFANTRY.curveTo(0,  20,  0,  20,  50,   0);
-        STD_INFANTRY.curveTo(0, -20,  0, -20, -50,   0);
+        STD_INFANTRY.moveTo(-50, 0);
+        STD_INFANTRY.curveTo(0, 20, 0, 20, 50, 0);
+        STD_INFANTRY.curveTo(0, -20, 0, -20, -50, 0);
         STD_INFANTRY.closePath();
 
-        STD_MECHWARRIOR = new Path2D.Double();
-        STD_MECHWARRIOR.moveTo(-30,   0);
-        STD_MECHWARRIOR.curveTo(0,  15,  0,  15,  30,   0);
-        STD_MECHWARRIOR.curveTo(0, -15,  0, -15, -30,   0);
-        STD_MECHWARRIOR.closePath();
+        STD_MEKWARRIOR = new Path2D.Double();
+        STD_MEKWARRIOR.moveTo(-30, 0);
+        STD_MEKWARRIOR.curveTo(0, 15, 0, 15, 30, 0);
+        STD_MEKWARRIOR.curveTo(0, -15, 0, -15, -30, 0);
+        STD_MEKWARRIOR.closePath();
 
         // Base rectangle for all units (StratOps)
         STRAT_BASERECT = new Path2D.Double();
         STRAT_BASERECT.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
-        STRAT_BASERECT.lineTo( STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
-        STRAT_BASERECT.lineTo( STRAT_SYMBOLSIZE.getWidth() / 2,  STRAT_SYMBOLSIZE.getHeight() / 2);
-        STRAT_BASERECT.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 2,  STRAT_SYMBOLSIZE.getHeight() / 2);
+        STRAT_BASERECT.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
+        STRAT_BASERECT.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, STRAT_SYMBOLSIZE.getHeight() / 2);
+        STRAT_BASERECT.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 2, STRAT_SYMBOLSIZE.getHeight() / 2);
         STRAT_BASERECT.closePath();
 
         // Infantry Symbol
         STRAT_INFANTRY = new Path2D.Double();
         STRAT_INFANTRY.append(STRAT_BASERECT, false);
         STRAT_INFANTRY.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
-        STRAT_INFANTRY.lineTo( STRAT_SYMBOLSIZE.getWidth() / 2,  STRAT_SYMBOLSIZE.getHeight() / 2);
-        STRAT_INFANTRY.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2,  STRAT_SYMBOLSIZE.getHeight() / 2);
-        STRAT_INFANTRY.lineTo( STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
+        STRAT_INFANTRY.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, STRAT_SYMBOLSIZE.getHeight() / 2);
+        STRAT_INFANTRY.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2, STRAT_SYMBOLSIZE.getHeight() / 2);
+        STRAT_INFANTRY.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
 
         STRAT_VTOL = new Path2D.Double();
         STRAT_VTOL.append(STRAT_BASERECT, false);
         STRAT_VTOL.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 4, -STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_VTOL.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 4,  STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_VTOL.lineTo( 0,  0);
+        STRAT_VTOL.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 4, STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_VTOL.lineTo(0, 0);
         STRAT_VTOL.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 4, -STRAT_SYMBOLSIZE.getHeight() / 4);
 
-        STRAT_VTOL.moveTo( STRAT_SYMBOLSIZE.getWidth() / 4,  STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_VTOL.lineTo( STRAT_SYMBOLSIZE.getWidth() / 4, -STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_VTOL.lineTo( 0, 0);
+        STRAT_VTOL.moveTo(STRAT_SYMBOLSIZE.getWidth() / 4, STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_VTOL.lineTo(STRAT_SYMBOLSIZE.getWidth() / 4, -STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_VTOL.lineTo(0, 0);
         STRAT_VTOL.closePath();
 
         STRAT_TANKTRACKED = new Path2D.Double();
         STRAT_TANKTRACKED.append(STRAT_BASERECT, false);
         double small = STRAT_SYMBOLSIZE.getWidth() / 20;
         STRAT_TANKTRACKED.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 3 + small, -STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_TANKTRACKED.lineTo( STRAT_SYMBOLSIZE.getWidth() / 3 - small, -STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_TANKTRACKED.lineTo( STRAT_SYMBOLSIZE.getWidth() / 3,       -STRAT_SYMBOLSIZE.getHeight() / 4 + small);
-        STRAT_TANKTRACKED.lineTo( STRAT_SYMBOLSIZE.getWidth() / 3,        STRAT_SYMBOLSIZE.getHeight() / 4 - small);
-        STRAT_TANKTRACKED.lineTo( STRAT_SYMBOLSIZE.getWidth() / 3 - small,  STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_TANKTRACKED.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3 + small,  STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_TANKTRACKED.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3,        STRAT_SYMBOLSIZE.getHeight() / 4 - small);
-        STRAT_TANKTRACKED.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3,       -STRAT_SYMBOLSIZE.getHeight() / 4 + small);
+        STRAT_TANKTRACKED.lineTo(STRAT_SYMBOLSIZE.getWidth() / 3 - small, -STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_TANKTRACKED.lineTo(STRAT_SYMBOLSIZE.getWidth() / 3, -STRAT_SYMBOLSIZE.getHeight() / 4 + small);
+        STRAT_TANKTRACKED.lineTo(STRAT_SYMBOLSIZE.getWidth() / 3, STRAT_SYMBOLSIZE.getHeight() / 4 - small);
+        STRAT_TANKTRACKED.lineTo(STRAT_SYMBOLSIZE.getWidth() / 3 - small, STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_TANKTRACKED.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3 + small, STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_TANKTRACKED.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3, STRAT_SYMBOLSIZE.getHeight() / 4 - small);
+        STRAT_TANKTRACKED.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3, -STRAT_SYMBOLSIZE.getHeight() / 4 + small);
         STRAT_TANKTRACKED.closePath();
 
-        STRAT_MECH = new Path2D.Double();
-        STRAT_MECH.append(STRAT_BASERECT, false);
+        STRAT_MEK = new Path2D.Double();
+        STRAT_MEK.append(STRAT_BASERECT, false);
 
-        STRAT_MECH.moveTo(-STRAT_CX - 1.5 * small, -STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_MECH.lineTo(-STRAT_CX - 3.0 * small,  STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_MECH.lineTo(-STRAT_CX + 3.0 * small,  STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_MECH.lineTo(-STRAT_CX + 1.5 * small, -STRAT_SYMBOLSIZE.getHeight() / 4);
-        STRAT_MECH.closePath();
+        STRAT_MEK.moveTo(-STRAT_CX - 1.5 * small, -STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_MEK.lineTo(-STRAT_CX - 3.0 * small, STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_MEK.lineTo(-STRAT_CX + 3.0 * small, STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_MEK.lineTo(-STRAT_CX + 1.5 * small, -STRAT_SYMBOLSIZE.getHeight() / 4);
+        STRAT_MEK.closePath();
 
         STRAT_AERO = new Path2D.Double();
         STRAT_AERO.append(STRAT_BASERECT, false);
@@ -188,13 +188,13 @@ public class MinimapUnitSymbols {
         STRAT_AERO.lineTo(-STRAT_CX + rad / 3 * cos(PIHALF + 4 * r72), rad / 3 * sin(PIHALF + 4 * r72));
         STRAT_AERO.lineTo(-STRAT_CX + rad * cos(PIHALF + 4 * r72), -rad * sin(PIHALF + 4 * r72));
         STRAT_AERO.lineTo(-STRAT_CX + rad / 3 * cos(PIHALF + 3 * r72), rad / 3 * sin(PIHALF + 3 * r72));
-        STRAT_AERO.lineTo(-STRAT_CX + rad * cos(PIHALF),       -rad * sin(PIHALF));
+        STRAT_AERO.lineTo(-STRAT_CX + rad * cos(PIHALF), -rad * sin(PIHALF));
         STRAT_AERO.closePath();
 
         STRAT_SPHEROID = new Path2D.Double();
         STRAT_SPHEROID.append(STRAT_BASERECT, false);
-        STRAT_SPHEROID.moveTo(rad * cos(PIHALF),           -rad * sin(PIHALF));
-        STRAT_SPHEROID.lineTo(rad * cos(PIHALF + r72),     -rad * sin(PIHALF + r72));
+        STRAT_SPHEROID.moveTo(rad * cos(PIHALF), -rad * sin(PIHALF));
+        STRAT_SPHEROID.lineTo(rad * cos(PIHALF + r72), -rad * sin(PIHALF + r72));
         STRAT_SPHEROID.lineTo(rad * cos(PIHALF + 2 * r72), -rad * sin(PIHALF + 2 * r72));
         STRAT_SPHEROID.lineTo(rad * cos(PIHALF + 3 * r72), -rad * sin(PIHALF + 3 * r72));
         STRAT_SPHEROID.lineTo(rad * cos(PIHALF + 4 * r72), -rad * sin(PIHALF + 4 * r72));
@@ -202,21 +202,21 @@ public class MinimapUnitSymbols {
 
         STRAT_HOVER = new Path2D.Double();
         STRAT_HOVER.append(STRAT_BASERECT, false);
-        STRAT_HOVER.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 3,  small);
+        STRAT_HOVER.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 3, small);
         STRAT_HOVER.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 3, -small);
-        STRAT_HOVER.lineTo( STRAT_SYMBOLSIZE.getWidth() / 3, -small);
-        STRAT_HOVER.lineTo( STRAT_SYMBOLSIZE.getWidth() / 3,  small);
+        STRAT_HOVER.lineTo(STRAT_SYMBOLSIZE.getWidth() / 3, -small);
+        STRAT_HOVER.lineTo(STRAT_SYMBOLSIZE.getWidth() / 3, small);
 
         STRAT_HOVER.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 6, -small);
         STRAT_HOVER.lineTo(-STRAT_SYMBOLSIZE.getWidth() / 6, +small);
         STRAT_HOVER.moveTo(0, -small);
         STRAT_HOVER.lineTo(0, +small);
-        STRAT_HOVER.moveTo( STRAT_SYMBOLSIZE.getWidth() / 6, -small);
-        STRAT_HOVER.lineTo( STRAT_SYMBOLSIZE.getWidth() / 6, +small);
+        STRAT_HOVER.moveTo(STRAT_SYMBOLSIZE.getWidth() / 6, -small);
+        STRAT_HOVER.lineTo(STRAT_SYMBOLSIZE.getWidth() / 6, +small);
 
         STRAT_WHEELED = new Path2D.Double();
         STRAT_WHEELED.append(STRAT_BASERECT, false);
-        double smallr = STRAT_SYMBOLSIZE.getWidth()/17;
+        double smallr = STRAT_SYMBOLSIZE.getWidth() / 17;
         STRAT_WHEELED.moveTo(-STRAT_CX - smallr * 2, -smallr);
         STRAT_WHEELED.lineTo(+STRAT_CX + smallr * 2, -smallr);
         STRAT_WHEELED.moveTo(-STRAT_CX, -smallr);
@@ -224,10 +224,10 @@ public class MinimapUnitSymbols {
         STRAT_WHEELED.lineTo(-STRAT_CX, +smallr);
         STRAT_WHEELED.lineTo(-STRAT_CX + smallr, 0);
         STRAT_WHEELED.closePath();
-        STRAT_WHEELED.moveTo( STRAT_CX, -smallr);
-        STRAT_WHEELED.lineTo( STRAT_CX - smallr, 0);
-        STRAT_WHEELED.lineTo( STRAT_CX, +smallr);
-        STRAT_WHEELED.lineTo( STRAT_CX + smallr, 0);
+        STRAT_WHEELED.moveTo(STRAT_CX, -smallr);
+        STRAT_WHEELED.lineTo(STRAT_CX - smallr, 0);
+        STRAT_WHEELED.lineTo(STRAT_CX, +smallr);
+        STRAT_WHEELED.lineTo(STRAT_CX + smallr, 0);
         STRAT_WHEELED.closePath();
         STRAT_WHEELED.moveTo(0, -smallr);
         STRAT_WHEELED.lineTo(-smallr, 0);
@@ -238,18 +238,18 @@ public class MinimapUnitSymbols {
         STRAT_NAVAL = new Path2D.Double();
         STRAT_NAVAL.append(STRAT_BASERECT, false);
         STRAT_NAVAL.moveTo(0, -STRAT_SYMBOLSIZE.getHeight() / 3);
-        STRAT_NAVAL.lineTo(0,  STRAT_SYMBOLSIZE.getHeight() / 3);
+        STRAT_NAVAL.lineTo(0, STRAT_SYMBOLSIZE.getHeight() / 3);
         STRAT_NAVAL.moveTo(-STRAT_CX / 2, -STRAT_SYMBOLSIZE.getHeight() / 5);
-        STRAT_NAVAL.lineTo( STRAT_CX / 2, -STRAT_SYMBOLSIZE.getHeight() / 5);
+        STRAT_NAVAL.lineTo(STRAT_CX / 2, -STRAT_SYMBOLSIZE.getHeight() / 5);
 
         STRAT_NAVAL.moveTo(rad, 0);
         STRAT_NAVAL.curveTo(
-                rad*0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
-                rad*0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
+                rad * 0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
+                rad * 0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
                 0, STRAT_SYMBOLSIZE.getHeight() / 3);
         STRAT_NAVAL.curveTo(
-                -rad*0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
-                -rad*0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
+                -rad * 0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
+                -rad * 0.8, STRAT_SYMBOLSIZE.getHeight() / 3 * 0.8,
                 -rad, 0);
     }
 
@@ -258,11 +258,11 @@ public class MinimapUnitSymbols {
         boolean stratOps = GUIP.getMmSymbol();
 
         if ((entity instanceof Mek) || (entity instanceof ProtoMek)) {
-            return stratOps ? STRAT_MECH : STD_MECH;
+            return stratOps ? STRAT_MEK : STD_MEK;
         } else if (entity instanceof VTOL) {
             return stratOps ? STRAT_VTOL : STD_VTOL;
         } else if (entity instanceof MekWarrior) {
-            return stratOps ? STRAT_INFANTRY : STD_MECHWARRIOR;
+            return stratOps ? STRAT_INFANTRY : STD_MEKWARRIOR;
         } else if (entity instanceof Tank) {
             if (entity.getMovementMode() == EntityMovementMode.HOVER) {
                 return stratOps ? STRAT_HOVER : STD_TANK;

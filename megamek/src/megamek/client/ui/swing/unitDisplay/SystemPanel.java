@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.unitDisplay;
 
 import java.awt.BorderLayout;
@@ -38,9 +56,10 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * This class shows the critical hits and systems for a mech
+ * This class shows the critical hits and systems for a mek
  */
-class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSelectionListener, IPreferenceChangeListener {
+class SystemPanel extends PicMap
+        implements ItemListener, ActionListener, ListSelectionListener, IPreferenceChangeListener {
 
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
@@ -276,7 +295,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                     Messages.getString("MekDisplay.SelectMulti.title"),
                     Messages.getString("MekDisplay.SelectMulti.question"),
                     new String[] { cs.getMount().getName(),
-                            cs.getMount2().getName() }, true);
+                            cs.getMount2().getName() },
+                    true);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
                 // load up the choices
@@ -300,7 +320,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
     }
 
     /**
-     * updates fields for the specified mech
+     * updates fields for the specified mek
      */
     public void displayMek(Entity newEntity) {
         en = newEntity;
@@ -346,8 +366,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
 
     private void displaySlots() {
         int loc = locList.getSelectedIndex();
-        DefaultListModel<String> slotModel =
-                ((DefaultListModel<String>) slotList.getModel());
+        DefaultListModel<String> slotModel = ((DefaultListModel<String>) slotList.getModel());
         slotModel.removeAllElements();
 
         // Display all Equipment
@@ -387,7 +406,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                         if (cs.isBreached()) {
                             sb.append("x");
                         }
-                        // Protomechs have different system names.
+                        // Protomeks have different system names.
                         if (en instanceof ProtoMek) {
                             sb.append(ProtoMek.systemNames[cs.getIndex()]);
                         } else {
@@ -528,11 +547,11 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                     if (nMode >= 0) {
                         if ((cs.getIndex() == Mek.SYSTEM_COCKPIT)
                                 && en.hasEiCockpit() && (en instanceof Mek)) {
-                            Mek mech = (Mek) en;
-                            mech.setCockpitStatus(nMode);
+                            Mek mek = (Mek) en;
+                            mek.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
                                     en.getId(), Mek.SYSTEM_COCKPIT, nMode);
-                            if (mech.getCockpitStatus() == mech.getCockpitStatusNextRound()) {
+                            if (mek.getCockpitStatus() == mek.getCockpitStatusNextRound()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.switched",
                                         "Cockpit", m_chMode.getSelectedItem()));
                             } else {
@@ -726,7 +745,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 if ((en instanceof Mek)
                         && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
                                 || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
-                                .getExteriorUnitAt(Mek.LOC_RT, true) != null))) {
+                                        .getExteriorUnitAt(Mek.LOC_RT, true) != null))) {
                     carryingBAsOnBack = true;
                 }
 
@@ -752,8 +771,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
-                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND)
-                                <= client.getGame().getRoundCount())
+                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
+                                .getGame().getRoundCount())
                         && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner
@@ -783,20 +802,22 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             && m.getType().hasFlag(MiscType.F_STEALTH)
                             && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
-                    }// if the maxtech eccm option is not set then the ECM
-                     // should not show anything.
+                    } // if the maxtech eccm option is not set then the ECM
+                      // should not show anything.
                     if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
                             && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
-                                    || client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
+                                    || client.getGame().getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()
                             .getModes(); e.hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
-                        //Hack to prevent showing an option that is disabled by the server, but would
+                        // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
                         if (em.equals("HotLoad") && en instanceof Mek
-                                && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
+                                && !client.getGame().getOptions()
+                                        .booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                             continue;
                         }
                         m_chMode.addItem(em.getDisplayableName());

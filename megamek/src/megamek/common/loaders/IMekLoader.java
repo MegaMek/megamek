@@ -17,8 +17,10 @@ package megamek.common.loaders;
 import megamek.common.Entity;
 
 /**
- * Classes implementing this interface are expected to be able to return a mech with the getMek
- * method or throw an EntityLoadingException. Implementing classes will probably be constructed with
+ * Classes implementing this interface are expected to be able to return a mek
+ * with the getMek
+ * method or throw an EntityLoadingException. Implementing classes will probably
+ * be constructed with
  * a file, or file location as an argument.
  *
  * @author Ben
@@ -26,8 +28,10 @@ import megamek.common.Entity;
  */
 public interface IMekLoader {
     /**
-     * @return A valid mech, matching the file to the best of MegaMek's current capabilities
-     * @throws Exception when the file type isn't understood or the file can't be parsed.
+     * @return A valid mek, matching the file to the best of MegaMek's current
+     *         capabilities
+     * @throws Exception when the file type isn't understood or the file can't be
+     *                   parsed.
      */
     Entity getEntity() throws Exception;
 }

@@ -36,26 +36,26 @@ import megamek.common.MekSummaryCache;
  */
 public class GenerateGenericIconList implements MekSummaryCache.Listener {
 
-    private static MekSummaryCache mechSummaryCache = null;
+    private static MekSummaryCache mekSummaryCache = null;
 
     public static void main(String[] args) {
         GenerateGenericIconList gen = new GenerateGenericIconList();
         System.out.println("Loading Cache...");
-        mechSummaryCache = MekSummaryCache.getInstance(true);
-        mechSummaryCache.addListener(gen);
+        mekSummaryCache = MekSummaryCache.getInstance(true);
+        mekSummaryCache.addListener(gen);
     }
 
     @Override
     public void doneLoading() {
         Map<String, List<String>> chassisUsing = new HashMap<>();
         Map<String, List<String>> genericsUsing = new HashMap<>();
-        for (MekSummary mechSummary : mechSummaryCache.getAllMeks()) {
-            if (!mechSummary.isCanon()) {
+        for (MekSummary mekSummary : mekSummaryCache.getAllMeks()) {
+            if (!mekSummary.isCanon()) {
                 continue;
             }
-            Entity entity = mechSummary.loadEntity();
+            Entity entity = mekSummary.loadEntity();
             if (entity == null) {
-                System.out.println("Couldn't load entity for: " + mechSummary);
+                System.out.println("Couldn't load entity for: " + mekSummary);
                 continue;
             }
             if (MMStaticDirectoryManager.getMekTileset().hasOnlyChassisMatch(entity) && !entity.getModel().isBlank()) {

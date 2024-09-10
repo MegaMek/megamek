@@ -49,6 +49,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number
+     * 
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -78,9 +79,9 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
         ToHitData toHit;
 
-        // non-mechs can't grapple or be grappled
+        // non-meks can't grapple or be grappled
         if (!(ae instanceof Mek) && !(ae instanceof ProtoMek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only meks and protomeks can be grappled");
         }
 
         if (ae.getGrappled() != target.getId()) {
@@ -130,7 +131,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
             if (ae.hasFunctionalArmAES(Mek.LOC_RARM) && ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
-                toHit.addModifier(-1,"AES modifer");
+                toHit.addModifier(-1, "AES modifer");
             }
         }
         Entity te = (Entity) target;

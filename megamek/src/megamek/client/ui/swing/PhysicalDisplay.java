@@ -977,7 +977,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Make a protomech physical attack on the target.
+     * Make a protoMek physical attack on the target.
      */
     private void proto() {
         ToHitData proto = ProtoMekPhysicalAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
@@ -1305,7 +1305,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         .toHit(clientgui.getClient().getGame());
                 setThrashEnabled(thrash.getValue() != TargetRoll.IMPOSSIBLE);
 
-                // make a Protomech physical attack?
+                // make a ProtoMek physical attack?
                 ToHitData proto = ProtoMekPhysicalAttackAction.toHit(clientgui
                         .getClient().getGame(), currentEntity, target);
                 setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);

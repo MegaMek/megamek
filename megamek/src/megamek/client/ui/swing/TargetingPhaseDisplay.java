@@ -299,7 +299,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
-        // mech display.
+        // Mek display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
     }
 

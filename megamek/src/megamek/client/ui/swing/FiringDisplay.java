@@ -219,7 +219,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         setupButtonPanel();
 
-        // mech display.
+        // mek display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
 
         ash = new AimedShotHandler(this);
@@ -1663,7 +1663,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     /**
-     * A VTOL or LAM in airmech mode making a bombing or strafing attack already has
+     * A VTOL or LAM in airmek mode making a bombing or strafing attack already has
      * the target set
      * during the movement phase.
      */

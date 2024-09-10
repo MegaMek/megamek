@@ -75,14 +75,14 @@ public class ThrashAttackAction extends AbstractAttackAction {
             }
         }
 
-        // Non-mechs can't thrash.
+        // Non-meks can't thrash.
         if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can thrash at infantry");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only meks can thrash at infantry");
         }
 
         // Mek must be prone.
         if (!ae.isProne()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only prone mechs can thrash at infantry");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only prone meks can thrash at infantry");
         }
 
         // Can't thrash against non-infantry

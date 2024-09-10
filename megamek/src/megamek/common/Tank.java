@@ -2193,7 +2193,7 @@ public class Tank extends Entity {
     /**
      * Convenience function that determines if this tank can issue an "unjam weapon"
      * command.
-     * 
+     *
      * @return True if there are any jammed weapons and the crew isn't stunned
      */
     public boolean canUnjamWeapon() {
@@ -2203,7 +2203,7 @@ public class Tank extends Entity {
     /**
      * Convenience function that determines if this tank can issue a "clear turret"
      * command.
-     * 
+     *
      * @return True if there are any jammed turrets and the crew isn't stunned
      */
     public boolean canClearTurret() {
@@ -2563,7 +2563,7 @@ public class Tank extends Entity {
     }
 
     /**
-     * Checks if a mech has an armed MASC system. Note that the mech will have
+     * Checks if a mek has an armed MASC system. Note that the mek will have
      * to exceed its normal run to actually engage the MASC system
      */
     public boolean hasArmedMASC() {

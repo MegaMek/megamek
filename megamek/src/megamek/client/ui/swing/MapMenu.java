@@ -1029,7 +1029,7 @@ public class MapMenu extends JPopupMenu {
                     || ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_MEK));
             menu.add(item);
             if (((LandAirMek) myEntity).getLAMType() == LandAirMek.LAM_STANDARD) {
-                item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
+                item = createConvertMenuItem("MovementDisplay.moveModeAirMek",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                         currentMode == LandAirMek.CONV_MODE_AIRMEK);
                 item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIRMEK

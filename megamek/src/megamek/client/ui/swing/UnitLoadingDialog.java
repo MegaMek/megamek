@@ -45,7 +45,7 @@ public class UnitLoadingDialog extends JDialog {
 
     boolean loadingDone = false;
 
-    private MekSummaryCache.Listener mechSummaryCacheListener = () -> {
+    private MekSummaryCache.Listener mekSummaryCacheListener = () -> {
         loadingDone = true;
         setVisible(false);
     };
@@ -79,7 +79,7 @@ public class UnitLoadingDialog extends JDialog {
                 }
             }
         };
-        MekSummaryCache.getInstance().addListener(mechSummaryCacheListener);
+        MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
         Thread t = new Thread(r, "Unit Loader Dialog");
         t.start();
     }

@@ -42,14 +42,14 @@ public interface IBomber {
      * Set count of internal bombs used; this is used to reset, revert, or increase
      * count
      * of internal bombs a unit has dropped during a turn.
-     * 
+     *
      * @param b
      */
     void setUsedInternalBombs(int b);
 
     /**
      * Increase count of internal bombs used this turn.
-     * 
+     *
      * @param b
      */
     void increaseUsedInternalBombs(int b);
@@ -106,7 +106,7 @@ public interface IBomber {
 
     /**
      * Sets the bomb type selections for external mounts.
-     * 
+     *
      * @param bc An array with the count of each bomb type as the value of the bomb
      *           type's index
      */
@@ -125,7 +125,7 @@ public interface IBomber {
 
     /**
      * Backwards compatibility bomb choice setter that only affects external stores.
-     * 
+     *
      * @param ebc
      */
     default void setBombChoices(int[] ebc) {
@@ -151,7 +151,7 @@ public interface IBomber {
     int availableBombLocation(int cost);
 
     /**
-     * Used by VTOLs and LAMs in airmech mode to declare the target hex for a bomb
+     * Used by VTOLs and LAMs in airmek mode to declare the target hex for a bomb
      * attack during the movement
      * phase.
      */
@@ -288,7 +288,7 @@ public interface IBomber {
 
     /**
      * Helper to apply equipment-type bombs, either externally or internally.
-     * 
+     *
      * @param type     of bomb equipment.
      * @param loc      location where mounted.
      * @param internal mounted internally or not.
@@ -306,7 +306,7 @@ public interface IBomber {
 
     /**
      * Helper to apply weapon-type bombs, either externally or internally.
-     * 
+     *
      * @param type     of bomb equipment.
      * @param loc      location where mounted.
      * @param internal mounted internally or not.

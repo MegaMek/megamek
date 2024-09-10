@@ -14,10 +14,14 @@
 package megamek.common;
 
 /**
- * Represents a section of a Mek torso where a protomech equipped with the magnetic clamp system
- * can attach itself for transport. A mech has two of these, one front and one rear. An ultraheavy
- * protomech can only be carried on the front mount, and if carried this way the rear cannot be
- * used. The two mounts are not aware of each other and it is the responsibility of the code that
+ * Represents a section of a Mek torso where a protomek equipped with the
+ * magnetic clamp system
+ * can attach itself for transport. A mek has two of these, one front and one
+ * rear. An ultraheavy
+ * protomek can only be carried on the front mount, and if carried this way the
+ * rear cannot be
+ * used. The two mounts are not aware of each other and it is the responsibility
+ * of the code that
  * handles loading to enforce this limitation.
  *
  * @author Neoancient
@@ -27,8 +31,8 @@ public class ProtoMekClampMount extends BattleArmorHandles {
 
     private final boolean rear;
 
-    private static final String NO_VACANCY_STRING = "A protomech is loaded";
-    private static final String HAVE_VACANCY_STRING = "One protomech";
+    private static final String NO_VACANCY_STRING = "A protomek is loaded";
+    private static final String HAVE_VACANCY_STRING = "One protomek";
 
     public ProtoMekClampMount(boolean rear) {
         this.rear = rear;
@@ -74,6 +78,6 @@ public class ProtoMekClampMount extends BattleArmorHandles {
 
     @Override
     public String toString() {
-        return "Protomech clamp mount:" + carriedUnit;
+        return "Protomek clamp mount:" + carriedUnit;
     }
 }

@@ -40,7 +40,7 @@ import megamek.common.options.OptionsConstants;
  * This is designed for use in both MegaMek and MHQ so don't go messing things
  * up for MHQ by
  * changing a bunch of stuff
- * 
+ *
  * @author Jay Lawson (jaylawson39 at yahoo.com)
  */
 public class UnitEditorDialog extends JDialog {
@@ -367,7 +367,7 @@ public class UnitEditorDialog extends JDialog {
     private void initSystemPanel() {
 
         // systems are the hard part, because these are all unit specific
-        // lets start with a mech
+        // lets start with a mek
         panSystem = new JPanel(new GridBagLayout());
         panSystem.setBorder(BorderFactory.createTitledBorder(Messages.getString("UnitEditorDialog.system")));
 

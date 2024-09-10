@@ -47,7 +47,8 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 /**
- * PrephaseDisplay for revealing hidden units. This occurs before Move and Firing
+ * PrephaseDisplay for revealing hidden units. This occurs before Move and
+ * Firing
  */
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -55,7 +56,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the Prephase.  Each command has a string
+     * carried out during the Prephase. Each command has a string
      * for the command plus a flag that determines what unit type it is
      * appropriate for.
      */
@@ -98,7 +99,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         public String getHotKeyDesc() {
             String result = "";
 
-            String msg_next= Messages.getString("Next");
+            String msg_next = Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
 
             if (this == PREPHASE_NEXT) {
@@ -121,7 +122,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     protected final ClientGUI clientgui;
 
     /**
-     * Creates and lays out a new Prefiring or PreMovement phase display for the specified
+     * Creates and lays out a new Prefiring or PreMovement phase display for the
+     * specified
      * clientgui.getClient().
      */
     public PrephaseDisplay(final ClientGUI clientgui, GamePhase phase) {
@@ -184,7 +186,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
-        // mech display.
+        // Mek display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
     }
 
@@ -220,8 +222,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             if (null == ce().getPosition()) {
 
                 // Walk through the list of entities for this player.
-                for (int nextId = client.getNextEntityNum(en); nextId != en;
-                     nextId = client.getNextEntityNum(nextId)) {
+                for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
 
                     if (null != clientgui.getClient().getGame()
                             .getEntity(nextId).getPosition()) {
@@ -255,13 +256,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     private void refreshButtons() {
         final Entity ce = ce();
 
-        if ( ce == null || ce.isDone() ) {
+        if (ce == null || ce.isDone()) {
             // how get here?
             disableButtons();
             return;
         }
 
-        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
+        setStatusBarText(
+                Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
 
         boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();
         setRevealEnabled(!isRevealing);
@@ -339,6 +341,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         // or could send change of state
         clientgui.getClient().sendActivateHidden(cen, GamePhase.UNKNOWN);
     }
+
     /**
      * Refreshes all displays.
      */
@@ -397,8 +400,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
-        // On simultaneous phases, each player ending their turn will generate a turn change
-        // We want to ignore turns from other players and only listen to events we generated
+        // On simultaneous phases, each player ending their turn will generate a turn
+        // change
+        // We want to ignore turns from other players and only listen to events we
+        // generated
         // Except on the first turn
         if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
@@ -428,7 +433,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    //GameListener
+    // GameListener
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
@@ -448,17 +453,17 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    //GameListener
+    // GameListener
     @Override
     public void gameEntityChange(GameEntityChangeEvent event) {
         if (!event.getEntity().equals(ce())) {
             return;
         }
 
-        // Reviewers: Is this the right place to catch the change applied by a server packet
+        // Reviewers: Is this the right place to catch the change applied by a server
+        // packet
         // that changes an entity from done to not-done?
-        if (ce().isDone())
-        {
+        if (ce().isDone()) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
 
@@ -503,7 +508,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         buttons.get(PrephaseCommand.PREPHASE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PrephaseCommand.PREPHASE_NEXT.getCmd(), enabled);
     }
-
 
     @Override
     public void clear() {
@@ -576,6 +580,5 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
     }
-
 
 }

@@ -34,13 +34,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
     /**
      * Common checking whether is it possible to physically attack the target
      *
-     * @param game The current {@link Game}
-     * @param ae the attacking {@link Entity}, which may be null
+     * @param game   The current {@link Game}
+     * @param ae     the attacking {@link Entity}, which may be null
      * @param target the attack's target
      * @return reason the attack is impossible, or null if it is possible
      */
     protected static @Nullable String toHitIsImpossible(Game game, @Nullable Entity ae,
-                                                        Targetable target) {
+            Targetable target) {
         if (target == null) {
             return "target is null";
         }
@@ -48,10 +48,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
             }
         }
@@ -68,7 +68,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // can't make physical attacks if loading/unloading cargo
         if (ae.endOfTurnCargoInteraction()) {
-        	return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
+            return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -113,7 +113,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            // can't physically attack mechs making dfa attacks
+            // can't physically attack meks making dfa attacks
             if (te.isMakingDfa()) {
                 return "Target is making a DFA attack";
             }
@@ -121,8 +121,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // Can't target woods or ignite a building with a physical.
         if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-            || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-            || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return "Invalid attack";
         }
 
@@ -163,7 +163,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         if ((ae instanceof Mek) && ae.isSuperHeavy()) {
-            toHit.addModifier(1, "attacker is superheavy mech");
+            toHit.addModifier(1, "attacker is superheavy mek");
         }
 
         if ((ae instanceof TripodMek) && ae.getCrew().hasDedicatedPilot()) {
@@ -175,9 +175,9 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // It gets a =4 penalty for being blind!
         if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+                    Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                 Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+                    Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Sensors Completely Destroyed for Torso-Mounted Cockpit");
@@ -210,7 +210,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
             }
 
-            if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+            if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne()
+                    && !te.isSpaceborne()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
             }
 

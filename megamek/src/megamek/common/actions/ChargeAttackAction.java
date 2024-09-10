@@ -33,16 +33,17 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
     public ChargeAttackAction(Entity attacker, Targetable target) {
         this(attacker.getId(), target.getTargetType(), target.getId(),
-             target.getPosition());
+                target.getPosition());
     }
 
     public ChargeAttackAction(int entityId, int targetType, int targetId,
-                              Coords targetPos) {
+            Coords targetPos) {
         super(entityId, targetType, targetId, targetPos);
     }
 
     /**
      * To-hit number for a charge, assuming that movement has been handled
+     * 
      * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game) {
@@ -52,17 +53,18 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     public ToHitData toHit(Game game, boolean skid) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()),
-                     entity.getPosition(), entity.getElevation(), entity.moved,
-                     skid, false);
+                entity.getPosition(), entity.getElevation(), entity.moved,
+                skid, false);
     }
 
     /**
      * To-hit number for a charge, assuming that movement has been handled
+     * 
      * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game, Targetable target, Coords src,
-                           int elevation, EntityMovementType movement, boolean skid,
-                           boolean gotUp) {
+            int elevation, EntityMovementType movement, boolean skid,
+            boolean gotUp) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -87,10 +89,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (!skid && (target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "A friendly unit can never be the target of a direct attack.");
             }
@@ -102,7 +104,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // will end up in
         // the target's hex
 
-        // If the charge is coming across a bridge, we want the elevation above the bridge rather
+        // If the charge is coming across a bridge, we want the elevation above the
+        // bridge rather
         // than the underlying terrain.
         final int attackerElevation;
         if (srcHex.containsTerrain(Terrains.BRIDGE)
@@ -164,7 +167,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
 
-        // mechs can only charge standing mechs
+        // meks can only charge standing meks
         if ((ae instanceof Mek) && !skid) {
             if (!(te instanceof Mek)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a 'Mek");
@@ -183,11 +186,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // target must be within 1 elevation level
         if ((attackerElevation > targetHeight)
-            || (attackerHeight < targetElevation)) {
+                || (attackerHeight < targetElevation)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
 
-        // can't attack mech making a different displacement attack
+        // can't attack mek making a different displacement attack
         if (te.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
@@ -201,13 +204,13 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // can't attack the target of another displacement attack
         if (te.isTargetOfDisplacementAttack()
-            && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
+                && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }
 
         // Can't target units in buildings (from the outside).
         if ((null != bldg) && (!targIsBuilding)
-            && Compute.isInBuilding(game, te)) {
+                && Compute.isInBuilding(game, te)) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside building");
             } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(bldg)) {
@@ -247,7 +250,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         if ((ae instanceof Mek) && ((Mek) ae).isSuperHeavy()) {
-            toHit.addModifier(+1, "attacker is superheavy mech");
+            toHit.addModifier(+1, "attacker is superheavy mek");
         }
 
         // attacker is spotting
@@ -305,7 +308,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit.setSideTable(te.sideTable(src));
 
         // all charges resolved against full-body table, except vehicles
-        // and charges against mechs in water partial cover
+        // and charges against meks in water partial cover
         if ((targHex.terrainLevel(Terrains.WATER) == te.height())
                 && (te.getElevation() == -1) && (te.height() > 0)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
@@ -347,6 +350,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
     /**
      * Checks if a charge can hit the target, taking account of movement
+     * 
      * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game, MovePath md) {
@@ -380,7 +384,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // determine last valid step
         md.compile(game, ae);
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
@@ -425,11 +429,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
                 chargeStep.getMovementType(true),
                 false,
                 md.contains(MoveStepType.GET_UP)
-                || md.contains(MoveStepType.CAREFUL_STAND));
+                        || md.contains(MoveStepType.CAREFUL_STAND));
     }
 
     /**
-     * Damage that a mech does with a successful charge. Assumes that
+     * Damage that a mek does with a successful charge. Assumes that
      * delta_distance is correct.
      */
     public static int getDamageFor(Entity entity) {
@@ -441,35 +445,38 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageFor(Entity entity, Entity target,
-                                   boolean tacops, int mos) {
+            boolean tacops, int mos) {
         return ChargeAttackAction.getDamageFor(entity, target, tacops, mos, entity.delta_distance);
     }
 
     public static int getDamageFor(Entity entity, Entity target,
-                                   boolean tacops, int mos, int hexesMoved) {
+            boolean tacops, int mos, int hexesMoved) {
         if (!tacops) {
             if (hexesMoved == 0) {
                 hexesMoved = 1;
             }
             return (int) Math
                     .ceil((entity.getWeight() / 10.0)
-                          * (hexesMoved - 1)
-                          * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
-                                                                                        : 1));
+                            * (hexesMoved - 1)
+                            * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
+                                    : 1));
         }
         return (int) Math
                 .floor(((((target.getWeight() * entity.getWeight()) * hexesMoved) / (target
-                                                                                             .getWeight() + entity
-                                                                                             .getWeight())) / 10) +
-                       mos);
+                        .getWeight()
+                        + entity
+                                .getWeight()))
+                        / 10) +
+                        mos);
     }
 
     /**
-     * Damage that a mech suffers after a successful charge.
+     * Damage that a mek suffers after a successful charge.
      */
     public static int getDamageTakenBy(Entity entity, Building bldg,
-                                       Coords coords) {
-        // Charges against targets that have no tonnage use the attacker's tonnage to compute damage.
+            Coords coords) {
+        // Charges against targets that have no tonnage use the attacker's tonnage to
+        // compute damage.
         return getDamageTakenBy(entity, entity, false, entity.delta_distance);
     }
 
@@ -478,22 +485,22 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target,
-                                       boolean tacops) {
+            boolean tacops) {
         return ChargeAttackAction.getDamageTakenBy(entity, target, tacops, entity.delta_distance);
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target,
-                                       boolean tacops, int distance) {
+            boolean tacops, int distance) {
         if (!tacops) {
             return (int) Math
                     .ceil((target.getWeight()
-                           / 10.0)
-                          * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
-                                                                                        : 1));
+                            / 10.0)
+                            * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
+                                    : 1));
         }
         return (int) Math
                 .floor((((target.getWeight() * entity.getWeight()) * distance) / (target
-                                                                                          .getWeight() + entity.getWeight())) / 10);
+                        .getWeight() + entity.getWeight())) / 10);
     }
 
     @Override

@@ -425,7 +425,7 @@ public class EntityListFile {
                         + "=\"true\"/>\n");
             }
 
-            // Protomechs only have system slots,
+            // ProtoMeks only have system slots,
             // so we have to handle the ammo specially.
             if (entity instanceof ProtoMek) {
                 for (Mounted<?> mount : entity.getAmmo()) {

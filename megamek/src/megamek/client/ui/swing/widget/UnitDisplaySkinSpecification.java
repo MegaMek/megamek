@@ -47,7 +47,7 @@ public class UnitDisplaySkinSpecification {
     private String topRightCorner = "tr_corner.gif";
     private String bottomRightCorner = "br_corner.gif";
 
-    private String mechOutline = "bg_mech.gif";
+    private String mekOutline = "bg_mek.gif";
 
     public String getGeneralTabIdle() {
         return generalTabIdle;
@@ -234,11 +234,11 @@ public class UnitDisplaySkinSpecification {
     }
 
     public String getMekOutline() {
-        return mechOutline;
+        return mekOutline;
     }
 
-    public void setMekOutline(String mechOutline) {
-        this.mechOutline = mechOutline;
+    public void setMekOutline(String mekOutline) {
+        this.mekOutline = mekOutline;
     }
 
 }

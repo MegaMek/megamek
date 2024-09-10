@@ -46,13 +46,13 @@ public class ArmlessMek extends BipedMek {
     }
 
     /**
-     * Sets the internal structure for the mech.
+     * Sets the internal structure for the mek.
      *
      * @param head head
-     * @param ct center torso
-     * @param t right/left torso
-     * @param arm right/left arm
-     * @param leg right/left leg
+     * @param ct   center torso
+     * @param t    right/left torso
+     * @param arm  right/left arm
+     * @param leg  right/left leg
      */
     @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
@@ -72,7 +72,8 @@ public class ArmlessMek extends BipedMek {
     }
 
     /**
-     * Checks if the entity is getting up. If so, returns the target roll for the piloting skill
+     * Checks if the entity is getting up. If so, returns the target roll for the
+     * piloting skill
      * check.
      */
     @Override
@@ -88,7 +89,8 @@ public class ArmlessMek extends BipedMek {
     @Override
     public HitData getTransferLocation(HitData hit) {
         return ((hit.getLocation() == LOC_LARM) || (hit.getLocation() == LOC_RARM))
-                ? new HitData(LOC_NONE) : super.getTransferLocation(hit);
+                ? new HitData(LOC_NONE)
+                : super.getTransferLocation(hit);
     }
 
     @Override

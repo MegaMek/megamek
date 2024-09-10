@@ -46,7 +46,7 @@ public class EquipmentType implements ITechnology {
      * Default value for support vehicle slot cost. Those that differ from `Meks
      * are assigned a value >= 0
      */
-    private static final int MECH_SLOT_COST = -1;
+    private static final int MEK_SLOT_COST = -1;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;
@@ -149,7 +149,7 @@ public class EquipmentType implements ITechnology {
     protected double tonnage = 0;
     protected int criticals = 0;
     protected int tankslots = 1;
-    protected int svslots = MECH_SLOT_COST;
+    protected int svslots = MEK_SLOT_COST;
 
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
@@ -390,7 +390,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public int getSupportVeeSlots(Entity entity) {
-        if (svslots == MECH_SLOT_COST) {
+        if (svslots == MEK_SLOT_COST) {
             return getCriticals(entity);
         }
         return svslots;
@@ -545,7 +545,7 @@ public class EquipmentType implements ITechnology {
         }
 
         // Avoid Concurrent Modification exception with this one simple trick!
-        for (Iterator<EquipmentMode> iterator = modes.iterator(); iterator.hasNext(); ) {
+        for (Iterator<EquipmentMode> iterator = modes.iterator(); iterator.hasNext();) {
             if (iterator.next().getName().equals(modeType)) {
                 return true;
             }
@@ -838,7 +838,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is mech
+     * Convenience method to test whether an EquipmentType instance is mek
      * structure. This works by comparing the results of {@link #getName()} to the
      * structure names array and returning {@code true} if there is a match.
      *

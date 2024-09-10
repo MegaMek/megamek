@@ -50,7 +50,10 @@ class EntitySprite extends Sprite {
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
     private static Color LABEL_BACK;
-    enum Positioning { LEFT, RIGHT }
+
+    enum Positioning {
+        LEFT, RIGHT
+    }
 
     // Individuals
     final Entity entity;
@@ -70,7 +73,10 @@ class EntitySprite extends Sprite {
     // Keep track of ECM state, as it's too expensive to compute on the fly.
     private boolean isAffectedByECM = false;
 
-    /** Generic terms that can be removed from the end of vehicle names to create a chassis name. */
+    /**
+     * Generic terms that can be removed from the end of vehicle names to create a
+     * chassis name.
+     */
     private static final Set<String> REMOVABLE_NAME_PARTS = Set.of(
             "Defense", "Heavy", "Medium", "Light", "Artillery", "Tank",
             "Wheeled", "Command", "Standard", "Hover", "Hovercraft", "Mechanized",
@@ -81,7 +87,7 @@ class EntitySprite extends Sprite {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public EntitySprite(BoardView boardView1, final Entity entity,
-                        int secondaryPos, Image radarBlipImage) {
+            int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
@@ -204,9 +210,9 @@ class EntitySprite extends Sprite {
         bounds.add(labelRect);
         // Add space for 4 little status boxes
         if (labelPos == Positioning.RIGHT) {
-            bounds.add(-4*(labelRect.height+2)+labelRect.x, labelRect.y);
+            bounds.add(-4 * (labelRect.height + 2) + labelRect.x, labelRect.y);
         } else {
-            bounds.add(4*(labelRect.height+2)+labelRect.x+labelRect.width, labelRect.y);
+            bounds.add(4 * (labelRect.height + 2) + labelRect.x + labelRect.width, labelRect.y);
         }
 
         // Move to board position, save this origin for correct drawing
@@ -346,10 +352,10 @@ class EntitySprite extends Sprite {
 
         Rectangle stR = new Rectangle(labelRect.x, labelRect.y, labelRect.height, labelRect.height);
         if (labelPos == Positioning.LEFT) {
-            stR.translate(labelRect.width-labelRect.height, 0);
+            stR.translate(labelRect.width - labelRect.height, 0);
         }
 
-        for (Status curStatus: statusStrings) {
+        for (Status curStatus : statusStrings) {
             if (curStatus.small) {
                 if (labelPos == Positioning.RIGHT) {
                     stR.translate(-labelRect.height - 2, 0);
@@ -373,7 +379,8 @@ class EntitySprite extends Sprite {
         }
 
         if ((bv.scale < 0.55) && criticalStatus) {
-            // When zoomed far out, status wouldn't be readable, therefore draw a big "!" (and the label is red)
+            // When zoomed far out, status wouldn't be readable, therefore draw a big "!"
+            // (and the label is red)
             Font bigFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (42 * bv.scale));
             new StringDrawer("!").at(bv.hex_size.width / 2, bv.hex_size.height / 2)
                     .color(GUIP.getWarningColor()).outline(Color.WHITE, 1).center().font(bigFont).draw(g);
@@ -590,7 +597,7 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getWarningColor(), "CrewDead"));
             }
 
-            if (crewStunned > 0)  {
+            if (crewStunned > 0) {
                 stStr.add(new Status(GUIP.getCautionColor(), "STUNNED", new Object[] { crewStunned }));
             }
 
@@ -655,7 +662,7 @@ class EntitySprite extends Sprite {
             // Unit Label
             // no scaling for the label, its size is changed by varying
             // the font size directly => better control
-            graph.scale(1/bv.scale, 1/bv.scale);
+            graph.scale(1 / bv.scale, 1 / bv.scale);
 
             // Label background
             if (!getAdjShortName().isBlank()) {
@@ -670,7 +677,8 @@ class EntitySprite extends Sprite {
                 // Draw a label border with player colors or team coloring
                 if (GUIP.getUnitLabelBorder()) {
                     if (GUIP.getTeamColoring()) {
-                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
+                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer()
+                                .getTeam();
                         boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
                         if (isLocalPlayer) {
                             graph.setColor(GUIP.getMyUnitColor());
@@ -752,7 +760,7 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            // determine secondary facing for non-mechs & flipped arms
+            // determine secondary facing for non-meks & flipped arms
             int secFacing = entity.getFacing();
             if (!((entity instanceof Mek) || (entity instanceof ProtoMek))
                     || (entity instanceof QuadVee)) {
@@ -803,7 +811,7 @@ class EntitySprite extends Sprite {
             int pipOption = GUIP.getTMMPipMode();
             if ((pipOption != 0) && !isGunEmplacement && !entity.isAero()
                     && ((entity.isDone() && bv.game.getPhase().isMovement())
-                    || bv.game.getPhase().isFiring())) {
+                            || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = (pipOption == 1) ? Color.WHITE : GUIP.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
@@ -813,14 +821,16 @@ class EntitySprite extends Sprite {
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i < tmm ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1,
+                                TMM_PIP_SIZE - 1);
                     }
                 } else {
                     // draw pips right to left for negative TMM
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1,
+                                TMM_PIP_SIZE - 1);
                     }
                 }
             }
@@ -830,7 +840,8 @@ class EntitySprite extends Sprite {
     }
 
     /**
-     * Returns true when an indicator should be shown that a unit with the same facing
+     * Returns true when an indicator should be shown that a unit with the same
+     * facing
      * as this unit is stacked below it and can still move.
      */
     private boolean shouldIndicateNotDone() {
@@ -858,7 +869,7 @@ class EntitySprite extends Sprite {
 
     /**
      * We only want to show double-blind visibility indicators on our own
-     * mechs and teammates mechs (assuming team vision option).
+     * meks and teammates meks (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
         return EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(bv.getLocalPlayer(), e);
@@ -926,7 +937,10 @@ class EntitySprite extends Sprite {
         }
     }
 
-    /** Returns if the entity is marked as selected for movement etc., recoloring the label */
+    /**
+     * Returns if the entity is marked as selected for movement etc., recoloring the
+     * label
+     */
     public boolean getSelected() {
         return isSelected;
     }

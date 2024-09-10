@@ -13,20 +13,10 @@
  */
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
+
+import megamek.common.*;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The attacker brushes the target off.
@@ -54,7 +44,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Damage that the specified mech does with a brush off attack. This equals
+     * Damage that the specified mek does with a brush off attack. This equals
      * the damage done by a punch from the same arm.
      *
      * @param entity - the <code>Entity</code> brushing off the swarm.
@@ -116,10 +106,10 @@ public class BrushOffAttackAction extends AbstractAttackAction {
                 : Mek.LOC_LARM;
         ToHitData toHit;
 
-        // non-mechs can't BrushOff
+        // non-meks can't BrushOff
         if (!(ae instanceof Mek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only mechs can brush off swarming infantry or iNarc Pods");
+                    "Only meks can brush off swarming infantry or iNarc Pods");
         }
 
         // arguments legal?
@@ -165,7 +155,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
                     "Weapons fired from arm this turn");
         }
 
-        // can't physically attack mechs making dfa attacks
+        // can't physically attack meks making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is making a DFA attack");

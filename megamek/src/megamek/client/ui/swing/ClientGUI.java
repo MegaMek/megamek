@@ -269,7 +269,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
-    private MegaMekUnitSelectorDialog mechSelectorDialog;
+    private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private PlanetaryConditionsDialog conditionsDialog;
@@ -291,7 +291,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private MiniReportDisplay miniReportDisplay;
     private MiniReportDisplayDialog miniReportDisplayDialog;
 
-    /** Boolean indicating whether client should be disconnected without a pop-up warning **/
+    /**
+     * Boolean indicating whether client should be disconnected without a pop-up
+     * warning
+     **/
     private boolean disconnectQuietly = false;
 
     /**
@@ -603,9 +606,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (!MekSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
+        mekSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
-        new Thread(mechSelectorDialog, Messages.getString("ClientGUI.mechSelectorDialog")).start();
+        new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
         frame.setVisible(true);
         GUIP.addPreferenceChangeListener(this);
     }
@@ -652,7 +655,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             URL helpUrl = new URL(helpPath.toString());
 
             // Launch the help dialog.
-            HelpDialog helpDialog = new HelpDialog(Messages.getString("ClientGUI.skinningHelpPath.title"), helpUrl, frame);
+            HelpDialog helpDialog = new HelpDialog(Messages.getString("ClientGUI.skinningHelpPath.title"), helpUrl,
+                    frame);
             helpDialog.setVisible(true);
         } catch (MalformedURLException ex) {
             LogManager.getLogger().error("", ex);
@@ -744,7 +748,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
         }
         if (getForceDisplayDialog() != null) {
-            getForceDisplayDialog().setBounds(0, 0, getForceDisplayPanel().getWidth(), getForceDisplayPanel().getHeight());
+            getForceDisplayDialog().setBounds(0, 0, getForceDisplayPanel().getWidth(),
+                    getForceDisplayPanel().getHeight());
         }
         if (getMiniReportDisplayDialog() != null) {
             getMiniReportDisplayDialog().setBounds(0, 0, getMiniReportDisplayDialog().getWidth(),
@@ -842,7 +847,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case FILE_REFRESH_CACHE:
                 MekSummaryCache.refreshUnitData(false);
-                new Thread(mechSelectorDialog, Messages.getString("ClientGUI.mechSelectorDialog")).start();
+                new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
                 break;
             case VIEW_CLIENT_SETTINGS:
                 showSettings();
@@ -1112,7 +1117,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public MegaMekUnitSelectorDialog getMekSelectorDialog() {
-        return mechSelectorDialog;
+        return mekSelectorDialog;
     }
 
     public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
@@ -1582,9 +1587,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Shows or hides the Unit Display based on the given visible. This works independently
-     * of the current menu setting, so it should be used only when the Unit Display is to
-     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby
+     * Shows or hides the Unit Display based on the given visible. This works
+     * independently
+     * of the current menu setting, so it should be used only when the Unit Display
+     * is to
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the
+     * lobby
      * or a report phase. Does not change the menu setting.
      */
     public void setUnitDisplayVisible(boolean visible) {
@@ -1933,7 +1941,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         entity.setDone(true);
                         entity.setUnloaded(true);
                         if (entity instanceof IBomber && (client.getGame().getPhase() != GamePhase.LOUNGE)) {
-                            // Only apply bombs when we're going straight into the game; doing this in the lounge
+                            // Only apply bombs when we're going straight into the game; doing this in the
+                            // lounge
                             // breaks the bombs completely.
                             ((IBomber) entity).applyBombs();
                         }
@@ -1952,8 +1961,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
             }
 
-
-            // If we've added reinforcements, then we need to set the round deployment up again.
+            // If we've added reinforcements, then we need to set the round deployment up
+            // again.
             if (addedUnits && reinforce) {
                 client.getGame().setupDeployment();
                 client.sendResetRoundDeployment();
@@ -2115,7 +2124,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     /**
      * Loads a preview image of the unit into the BufferedPanel.
      *
-     * @param bp The JLabel to set the image as icon to
+     * @param bp     The JLabel to set the image as icon to
      * @param entity The unit
      */
     public void loadPreviewImage(JLabel bp, Entity entity) {
@@ -2169,7 +2178,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
-            if(!disconnectQuietly) {
+            if (!disconnectQuietly) {
                 doAlertDialog(Messages.getString("ClientGUI.Disconnected.message"),
                         Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE);
             }
@@ -2812,8 +2821,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
-     * the view and the "current panel" which has different controls based on the phase.
+     * The ClientGUI is split into the main panel (view) at the top, which takes up
+     * the majority of
+     * the view and the "current panel" which has different controls based on the
+     * phase.
      *
      * @return the panel for the current phase
      */
@@ -2868,12 +2879,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is
+     * Shows the movement envelope in the BoardView for the given entity. The
+     * movement envelope data is
      * a map of move end Coords to movement points used.
      *
-     * @param entity The entity for which the movement envelope is
+     * @param entity    The entity for which the movement envelope is
      * @param mvEnvData The movement envelope data
-     * @param gear The move gear, MovementDisplay.GEAR_LAND or GEAR_JUMP
+     * @param gear      The move gear, MovementDisplay.GEAR_LAND or GEAR_JUMP
      */
     public void showMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int gear) {
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, entity.getWalkMP(),
@@ -2888,8 +2900,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Removes all temporary sprites from the board, such as pending actions, movement envelope,
-     * collapse warnings etc. Does not remove game-state sprites such as units or flares.
+     * Removes all temporary sprites from the board, such as pending actions,
+     * movement envelope,
+     * collapse warnings etc. Does not remove game-state sprites such as units or
+     * flares.
      */
     public void clearTemporarySprites() {
         clearMovementEnvelope();
@@ -2910,7 +2924,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Shows the sensor/visual ranges for the given entity on its own position in the BoardView
+     * Shows the sensor/visual ranges for the given entity on its own position in
+     * the BoardView
      *
      * @param entity The entity that is looking/sensing
      */
@@ -2919,10 +2934,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Shows the sensor/visual ranges for the given entity in the BoardView. The ranges are centered on
+     * Shows the sensor/visual ranges for the given entity in the BoardView. The
+     * ranges are centered on
      * the given assumedPosition rather than the entity's own position.
      *
-     * @param entity The entity that is looking/sensing
+     * @param entity          The entity that is looking/sensing
      * @param assumedPosition The position to center all ranges on
      */
     public void showSensorRanges(Entity entity, Coords assumedPosition) {
@@ -2944,7 +2960,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * @param groundObjectList The list of coordinates to show
      */
     public void showGroundObjects(Map<Coords, List<ICarryable>> groundObjectList) {
-    	groundObjectSpriteHandler.setGroundObjectSprites(groundObjectList);
+        groundObjectSpriteHandler.setGroundObjectSprites(groundObjectList);
     }
 
     /**
@@ -2961,19 +2977,25 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * @return The unit currently shown in the Unit Display. Note: This can be a another unit than the one that
-     * is selected to move or fire.
+     * @return The unit currently shown in the Unit Display. Note: This can be a
+     *         another unit than the one that
+     *         is selected to move or fire.
      */
-    @Nullable public Entity getDisplayedUnit() {
+    @Nullable
+    public Entity getDisplayedUnit() {
         return unitDisplay.getCurrentEntity();
     }
 
     /**
-     * Returns the weapon that is currently selected in the Unit Display. The selection can be void for various
+     * Returns the weapon that is currently selected in the Unit Display. The
+     * selection can be void for various
      * reasons, therefore this returns it as an Optional.
-     * Note: this method does some additional checks to avoid bugs where the weapon of the same ID on the unit
-     * is different from the selected weapon or is not even present on the unit. Also, the displayed unit
-     * is checked to be an active unit (i.e. can be found in game.getEntity()). It will log an error and return
+     * Note: this method does some additional checks to avoid bugs where the weapon
+     * of the same ID on the unit
+     * is different from the selected weapon or is not even present on the unit.
+     * Also, the displayed unit
+     * is checked to be an active unit (i.e. can be found in game.getEntity()). It
+     * will log an error and return
      * null otherwise. Using the returned weapon should be fairly safe.
      *
      * @return The weapon that is currently selected in the Unit Display, if any
@@ -3005,24 +3027,29 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Updates the shown firing arc. The given entity should be the one that has taken an action
-     * such as moving or torso twisting or the unit whose selected weapon has changed.
-     * This method will check if the given unit is the one displayed in the unit viewer and/or
+     * Updates the shown firing arc. The given entity should be the one that has
+     * taken an action
+     * such as moving or torso twisting or the unit whose selected weapon has
+     * changed.
+     * This method will check if the given unit is the one displayed in the unit
+     * viewer and/or
      * the currently acting unit and update or remove the firinc arcs accordingly.
      *
-     * @param entity The unit that has acted or is otherwise the origin of the update
+     * @param entity The unit that has acted or is otherwise the origin of the
+     *               update
      */
     public void updateFiringArc(Entity entity) {
         if ((entity == null) || (getDisplayedUnit() == null) || getDisplayedWeapon().isEmpty()) {
-            // with no unit given or no unit displayed or no weapon selected, clear the firing arcs
+            // with no unit given or no unit displayed or no weapon selected, clear the
+            // firing arcs
             clearFieldOfFire();
             return;
 
         } else if (!entity.equals(getDisplayedUnit())) {
-            // the update is not for the displayed unit; therefore do not update the firing arc
+            // the update is not for the displayed unit; therefore do not update the firing
+            // arc
             return;
         }
-
 
         if (curPanel instanceof MovementDisplay) {
             MovementDisplay md = (MovementDisplay) curPanel;
@@ -3038,7 +3065,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Removes the field of fire from the BoardView and clears the cached values in the sprite handler.
+     * Removes the field of fire from the BoardView and clears the cached values in
+     * the sprite handler.
      */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
@@ -3046,6 +3074,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     /**
      * Return the Current Hex, used by client commands for the visually impaired
+     *
      * @return the current Hex
      */
     public Coords getCurrentHex() {

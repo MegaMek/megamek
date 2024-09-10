@@ -26,8 +26,10 @@ import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.pathfinder.BoardClusterTracker.MovementType;
 
 /**
- * An extension of the MovePath class that stores information about terrain that needs
+ * An extension of the MovePath class that stores information about terrain that
+ * needs
  * to be destroyed in order to move along the specified route.
+ * 
  * @author NickAragua
  */
 public class BulldozerMovePath extends MovePath {
@@ -46,7 +48,8 @@ public class BulldozerMovePath extends MovePath {
 
     /**
      * Any additional costs of this move paths, such as stepping into water or
-     * other factors that would increase the number of turns to complete it without increasing the actual MP used.
+     * other factors that would increase the number of turns to complete it without
+     * increasing the actual MP used.
      */
     public int getAdditionalCost() {
         int totalCost = 0;
@@ -72,15 +75,15 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Override of the MovePath.addStep method, calculates leveling and other extra costs
+     * Override of the MovePath.addStep method, calculates leveling and other extra
+     * costs
      * associated with this bulldozer move path
      */
     @Override
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
         Hex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
-        int hexWaterDepth = ((hex != null) && hex.containsTerrain(Terrains.WATER)) ?
-                hex.depth() : Integer.MIN_VALUE;
+        int hexWaterDepth = ((hex != null) && hex.containsTerrain(Terrains.WATER)) ? hex.depth() : Integer.MIN_VALUE;
 
         if (!mp.isMoveLegal() && !mp.isJumping()) {
             // here, we will check if the step is illegal because the unit in question
@@ -95,24 +98,32 @@ public class BulldozerMovePath extends MovePath {
 
             // we want to make note of when we're going into water (if we are capable of it)
             // it may look cheaper, but it slows you down to max walking speed or worse,
-            // and we should flag it as costing extra, that extra being the difference between walking and running speed
+            // and we should flag it as costing extra, that extra being the difference
+            // between walking and running speed
             if (hexWaterDepth > 0) {
                 MovementType mType = MovementType.getMovementType(mp.getEntity());
-                if (mType == MovementType.Walker || mType == MovementType.WheeledAmphi || mType == MovementType.TrackedAmphi) {
+                if (mType == MovementType.Walker || mType == MovementType.WheeledAmphi
+                        || mType == MovementType.TrackedAmphi) {
                     additionalCosts.put(mp.getFinalCoords(), 1);
                 }
             }
         }
 
         if (mp.isJumping()) {
-            // if we are jumping, but not on top of a bridge (because jumping always goes to the top of a bridge)
-            // and are jumping into terrain that would impede jump jet functionality (aka water)
-            // then we are impeding future jump movement and should add an extra cost to this step
+            // if we are jumping, but not on top of a bridge (because jumping always goes to
+            // the top of a bridge)
+            // and are jumping into terrain that would impede jump jet functionality (aka
+            // water)
+            // then we are impeding future jump movement and should add an extra cost to
+            // this step
             if ((hex != null) && !hex.containsTerrain(Terrains.BRIDGE)) {
-                // special case - mech jumping into depth 1 water might not be all that bad, jump mp cost wise
+                // special case - mek jumping into depth 1 water might not be all that bad, jump
+                // mp cost wise
                 if (hexWaterDepth == 1) {
-                    additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
-                // jumping into water that submerges you entirely pretty much ruins jump MP for at least a turn while you clamber out
+                    additionalCosts.put(mp.getFinalCoords(),
+                            mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
+                    // jumping into water that submerges you entirely pretty much ruins jump MP for
+                    // at least a turn while you clamber out
                 } else if (hexWaterDepth > 1) {
                     additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP());
                 }
@@ -131,7 +142,8 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Removes the last step from the path and updates its internal data structures accordingly
+     * Removes the last step from the path and updates its internal data structures
+     * accordingly
      */
     @Override
     public void removeLastStep() {
@@ -166,8 +178,10 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Worker function that calculates the "MP cost" of moving into the given set of coords
-     * if we were to stand still for the number of turns required to reduce the terrain there
+     * Worker function that calculates the "MP cost" of moving into the given set of
+     * coords
+     * if we were to stand still for the number of turns required to reduce the
+     * terrain there
      * to a form through which the current unit can move
      */
     public static int calculateLevelingCost(Coords finalCoords, Entity entity) {
@@ -187,7 +201,8 @@ public class BulldozerMovePath extends MovePath {
 
         double damageNeeded = 0;
 
-        // tracked tanks can move through light woods, rough and rubble, so any terrain that can be reduced to that
+        // tracked tanks can move through light woods, rough and rubble, so any terrain
+        // that can be reduced to that
         // can eventually be moved through
         if (isTracked) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 0) {
@@ -205,7 +220,7 @@ public class BulldozerMovePath extends MovePath {
             }
         }
 
-        // mechs can't go through ultra-heavy terrain, so must reduce it to heavy terrain
+        // meks can't go through ultra-heavy terrain, so must reduce it to heavy terrain
         // may as well consider blowing buildings away
         if (isMek) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 2) {
@@ -223,7 +238,8 @@ public class BulldozerMovePath extends MovePath {
             }
         }
 
-        // hovertanks can move through rough and rubble, so any terrain that can be reduced to that
+        // hovertanks can move through rough and rubble, so any terrain that can be
+        // reduced to that
         // can eventually be moved through
         if (isHovercraft) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 0) {
@@ -240,17 +256,18 @@ public class BulldozerMovePath extends MovePath {
         }
 
         if (damageNeeded > 0) {
-            // basically, the MP cost of leveling this terrain is equal to how many turns we're going to waste
+            // basically, the MP cost of leveling this terrain is equal to how many turns
+            // we're going to waste
             // shooting at it instead of moving.
             levelingCost = (int) Math.round(damageNeeded / getMaxPointBlankDamage(entity)) * entity.getRunMP();
         }
-
 
         return levelingCost;
     }
 
     /**
-     * Helper function that lazy-calculates an entity's max damage at point blank range.
+     * Helper function that lazy-calculates an entity's max damage at point blank
+     * range.
      */
     private static double getMaxPointBlankDamage(Entity entity) {
         return FireControl.getMaxDamageAtRange(entity, 1, false, false);
@@ -264,7 +281,8 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * The coordinates which need to be leveled for this path to be performed by its unit
+     * The coordinates which need to be leveled for this path to be performed by its
+     * unit
      */
     public List<Coords> getCoordsToLevel() {
         return coordsToLevel;
@@ -277,7 +295,9 @@ public class BulldozerMovePath extends MovePath {
 
     /**
      * Comparator implementation useful in comparing two bulldozer move paths by
-     * how many MP it'll take to accomplish that path, including time wasted leveling any obstacles
+     * how many MP it'll take to accomplish that path, including time wasted
+     * leveling any obstacles
+     * 
      * @author NickAragua
      *
      */

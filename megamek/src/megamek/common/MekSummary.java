@@ -44,7 +44,8 @@ import megamek.common.options.IOptionInfo;
 import megamek.common.options.Quirks;
 
 /**
- * The MekSummary of a unit offers compiled information about the unit without having to load the file.
+ * The MekSummary of a unit offers compiled information about the unit without
+ * having to load the file.
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
 
@@ -73,7 +74,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int year;
     private int type;
     private int[] altTypes = new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
-            TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules levels
+            TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
+                                               // levels
     private double tons;
     private int bv;
 
@@ -117,9 +119,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int smallCraftDoors;
     private double smallCraftUnits;
     private int dockingCollars;
-    private int mechBays;
-    private int mechDoors;
-    private double mechUnits;
+    private int mekBays;
+    private int mekDoors;
+    private double mekUnits;
     private int heavyVehicleBays;
     private int heavyVehicleDoors;
     private double heavyVehicleUnits;
@@ -154,7 +156,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int internalsType;
 
     /**
-     * Each location can have a separate armor type, but this is used for search purposes. We really
+     * Each location can have a separate armor type, but this is used for search
+     * purposes. We really
      * only care about which types are present.
      */
     private final HashSet<Integer> armorTypeSet;
@@ -168,7 +171,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     /** A unique list of the names of the equipment mounted on this unit. */
     private Vector<String> equipmentNames;
 
-    /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
+    /**
+     * The number of times the piece of equipment in the corresponding
+     * equipmentNames list appears.
+     */
     private Vector<Integer> equipmentQuantities;
 
     private String quirkNames;
@@ -429,15 +435,15 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public int getMekBays() {
-        return mechBays;
+        return mekBays;
     }
 
     public int getMekDoors() {
-        return mechDoors;
+        return mekDoors;
     }
 
     public double getMekUnits() {
-        return mechUnits;
+        return mekUnits;
     }
 
     public int getHeavyVehicleBays() {
@@ -752,15 +758,15 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setMekBays(int i) {
-        mechBays = i;
+        mekBays = i;
     }
 
     public void setMekDoors(int i) {
-        mechDoors = i;
+        mekDoors = i;
     }
 
     public void setMekUnits(double d) {
-        mechUnits = d;
+        mekUnits = d;
     }
 
     public void setHeavyVehicleBays(int i) {
@@ -836,7 +842,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setDropshuttleBays(int i) {
-        dropshuttleBays = i; }
+        dropshuttleBays = i;
+    }
 
     public void setDropshuttleDoors(int i) {
         dropshuttleDoors = i;
@@ -1058,12 +1065,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      *
      * @param mountedList A collection of <code>Mounted</code> equipment
      */
-    public void setEquipment(List<Mounted<?>> mountedList)
-    {
+    public void setEquipment(List<Mounted<?>> mountedList) {
         equipmentNames = new Vector<>(mountedList.size());
         equipmentQuantities = new Vector<>(mountedList.size());
-        for (Mounted<?> mnt : mountedList)
-        {
+        for (Mounted<?> mnt : mountedList) {
             // Ignore weapon groups, as they aren't actually real equipment
             if (mnt.isWeaponGroup()) {
                 continue;
@@ -1074,7 +1079,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                 equipmentNames.add(eqName);
                 equipmentQuantities.add(1);
             } else { // We've seen this before, update count
-                equipmentQuantities.set(index, equipmentQuantities.get(index)+1);
+                equipmentQuantities.set(index, equipmentQuantities.get(index) + 1);
             }
         }
     }
@@ -1142,7 +1147,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * Takes the armor type at all locations and creates a set of the armor
      * types.
      *
-     * @param locsArmor  An array that stores the armor type at each location.
+     * @param locsArmor An array that stores the armor type at each location.
      */
     public void setArmorType(int[] locsArmor) {
         armorTypeSet.clear();
@@ -1219,9 +1224,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.suitWeight = suitWeight;
     }
 
-	public String getExtinctRange() {
-		return extinctRange;
-	}
+    public String getExtinctRange() {
+        return extinctRange;
+    }
 
     public void setAsUnitType(ASUnitType asUnitType) {
         this.asUnitType = asUnitType;
@@ -1295,9 +1300,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.role = role;
     }
 
-	public void setExtinctRange(String extinctRange) {
-		this.extinctRange = extinctRange;
-	}
+    public void setExtinctRange(String extinctRange) {
+        this.extinctRange = extinctRange;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -1329,7 +1334,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for this MekSummary. If the entity cannot be loaded, the error is logged
+     * Loads and returns the entity for this MekSummary. If the entity cannot be
+     * loaded, the error is logged
      * and null is returned.
      *
      * @return The loaded entity or null in case of an error
@@ -1344,8 +1350,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for the given full name. If the entity cannot be loaded, the error is logged
-     * and null is returned. This is a shortcut for first loading the MekSummary using
+     * Loads and returns the entity for the given full name. If the entity cannot be
+     * loaded, the error is logged
+     * and null is returned. This is a shortcut for first loading the MekSummary
+     * using
      * {@link MekSummaryCache#getMek(String)} and then {@link #loadEntity()}.
      *
      * @return The loaded entity or null in case of an error

@@ -70,9 +70,9 @@ public class TripAttackAction extends PhysicalAttackAction {
 
         ToHitData toHit;
 
-        // non-mechs can't trip or be tripped
+        // non-meks can't trip or be tripped
         if (!(ae instanceof Mek) || !(target instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can trip other mechs");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only meks can trip other meks");
         }
 
         // LAM AirMeks can only trip when grounded.

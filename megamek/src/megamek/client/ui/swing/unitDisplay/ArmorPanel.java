@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.unitDisplay;
 
 import java.awt.Dimension;
@@ -15,7 +33,7 @@ import megamek.common.*;
 class ArmorPanel extends PicMap {
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
-    private MekMapSet mech;
+    private MekMapSet mek;
     private InfantryMapSet infantry;
     private BattleArmorMapSet battleArmor;
     private ProtoMekMapSet proto;
@@ -63,7 +81,7 @@ class ArmorPanel extends PicMap {
     public void addNotify() {
         super.addNotify();
         tank = new TankMapSet(this, unitDisplay);
-        mech = new MekMapSet(this, unitDisplay);
+        mek = new MekMapSet(this, unitDisplay);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
         proto = new ProtoMekMapSet(this, unitDisplay);
@@ -84,12 +102,12 @@ class ArmorPanel extends PicMap {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(0,0);
+        return new Dimension(0, 0);
     }
 
     @Override
     public Dimension getMinimumSize() {
-        return new Dimension(0,0);
+        return new Dimension(0, 0);
     }
 
     @Override
@@ -106,14 +124,14 @@ class ArmorPanel extends PicMap {
     }
 
     /**
-     * updates fields for the specified mech
+     * updates fields for the specified mek
      */
     public void displayMek(Entity en) {
         // Look out for a race condition.
         if (en == null) {
             return;
         }
-        DisplayMapSet ams = mech;
+        DisplayMapSet ams = mek;
         removeAll();
         if (en instanceof QuadMek) {
             ams = quad;
@@ -134,7 +152,7 @@ class ArmorPanel extends PicMap {
             minBottomMargin = minMekBottomMargin;
             minRightMargin = minMekRightMargin;
         } else if (en instanceof Mek) {
-            ams = mech;
+            ams = mek;
             minLeftMargin = minMekLeftMargin;
             minTopMargin = minMekTopMargin;
             minBottomMargin = minMekBottomMargin;

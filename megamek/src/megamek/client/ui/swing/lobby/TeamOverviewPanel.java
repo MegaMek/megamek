@@ -62,16 +62,22 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
- * A JPanel that holds a table giving an overview of the current relative strength
- * of the teams of the game. The table does not listen to game changes and requires
- * being notified through {@link #refreshData()}. It accesses data through the stored
+ * A JPanel that holds a table giving an overview of the current relative
+ * strength
+ * of the teams of the game. The table does not listen to game changes and
+ * requires
+ * being notified through {@link #refreshData()}. It accesses data through the
+ * stored
  * ClientGUI.
  */
 public class TeamOverviewPanel extends JPanel {
 
     private static final long serialVersionUID = -4754010220963493049L;
 
-    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS }
+    private enum TOMCOLS {
+        TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS
+    }
+
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final TableColumnManager teamOverviewManager = new TableColumnManager(teamOverviewTable, false);
@@ -80,7 +86,10 @@ public class TeamOverviewPanel extends JPanel {
     private boolean isDetached;
     private int shownColumn;
 
-    /** Constructs the team overview panel; the given ClientGUI is used to access the game data. */
+    /**
+     * Constructs the team overview panel; the given ClientGUI is used to access the
+     * game data.
+     */
     public TeamOverviewPanel(ClientGUI cg) {
         clientGui = cg;
         setLayout(new GridLayout(1, 1));
@@ -272,7 +281,7 @@ public class TeamOverviewPanel extends JPanel {
                 return 2;
             } else if (entity instanceof Infantry) {
                 return 3;
-            } else { // Protomech
+            } else { // ProtoMek
                 return 4;
             }
         }
@@ -291,12 +300,12 @@ public class TeamOverviewPanel extends JPanel {
             return result;
         }
 
-        /** Finds and sets the required row height (max height of all cells plus margin). */
-        private void updateRowHeights()
-        {
+        /**
+         * Finds and sets the required row height (max height of all cells plus margin).
+         */
+        private void updateRowHeights() {
             int rowHeight = 0;
-            for (int row = 0; row < teamOverviewTable.getRowCount(); row++)
-            {
+            for (int row = 0; row < teamOverviewTable.getRowCount(); row++) {
                 for (int col = 0; col < teamOverviewTable.getColumnCount(); col++) {
                     // Consider the preferred height of the team members column
                     TableCellRenderer renderer = teamOverviewTable.getCellRenderer(row, col);
@@ -329,7 +338,8 @@ public class TeamOverviewPanel extends JPanel {
             switch (column) {
                 case TEAM:
                     boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
-                    Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
+                    Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor()
+                            : GUIPreferences.getInstance().getMyUnitColor();
                     result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
                     break;
@@ -391,8 +401,10 @@ public class TeamOverviewPanel extends JPanel {
         }
 
         /**
-         * Constructs and returns the string "(xx % of Team yy)". The provided values list
-         * is the data for the table column and the provided row is the row of current value.
+         * Constructs and returns the string "(xx % of Team yy)". The provided values
+         * list
+         * is the data for the table column and the provided row is the row of current
+         * value.
          * The reference value (that represents 100%) is taken from the selected row.
          * Returns an empty string if nothing is selected or the base value is 0.
          */
@@ -405,9 +417,11 @@ public class TeamOverviewPanel extends JPanel {
                     String selectedTeam = teamNames.get(selectedRow);
                     long percentage = 100 * values.get(row) / baseValue;
                     if (isDetached) {
-                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %%)", percentage);
+                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f)
+                                + String.format("(%d %%)", percentage);
                     } else {
-                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %% of %s)", percentage, selectedTeam);
+                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f)
+                                + String.format("(%d %% of %s)", percentage, selectedTeam);
                     }
                 }
             }

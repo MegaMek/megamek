@@ -31,11 +31,13 @@ import megamek.common.annotations.Nullable;
 /**
  * This class contains logic to evaluate the damage a unit could sustain from
  * moving a long a move path containing minefields
+ * 
  * @author NickAragua
  */
 public class MinefieldUtil {
     /**
-     * Calculate how much damage we'll take from stepping on mines over a particular path
+     * Calculate how much damage we'll take from stepping on mines over a particular
+     * path
      */
     public static double checkPathForMinefieldHazards(MovePath path) {
         double hazardAccumulator = 0;
@@ -45,13 +47,14 @@ public class MinefieldUtil {
                     path.isJumping(), step.equals(path.getLastStep()));
         }
 
-        //TODO: Teach bot to activate minesweepers
+        // TODO: Teach bot to activate minesweepers
 
         return hazardAccumulator;
     }
 
     /**
-     * Calculate how much damage we'll take from stepping on mines in a particular hex
+     * Calculate how much damage we'll take from stepping on mines in a particular
+     * hex
      */
     public static double calcMinefieldHazardForHex(@Nullable MoveStep step, Entity movingUnit,
             boolean isJumping, boolean lastStep) {
@@ -60,7 +63,8 @@ public class MinefieldUtil {
             return 0;
         }
 
-        // if our movement mode does not result in minefield detonation, no minefield hazard
+        // if our movement mode does not result in minefield detonation, no minefield
+        // hazard
         if (!movingUnit.getMovementMode().detonatesGroundMinefields()) {
             return 0;
         }
@@ -69,9 +73,7 @@ public class MinefieldUtil {
         // hovercraft and WIGEs grinding along the ground detonate minefields on a 12
         boolean hoverMovement = (movingUnit.getMovementMode() == EntityMovementMode.HOVER) ||
                 ((movingUnit.getMovementMode() == EntityMovementMode.WIGE) && (movingUnit.getElevation() == 0));
-        double hoverMovementMultiplier = hoverMovement ?
-                Compute.oddsAbove(Minefield.HOVER_WIGE_DETONATION_TARGET) : 1;
-
+        double hoverMovementMultiplier = hoverMovement ? Compute.oddsAbove(Minefield.HOVER_WIGE_DETONATION_TARGET) : 1;
 
         for (Minefield minefield : movingUnit.getGame().getMinefields(step.getPosition())) {
             switch (minefield.getType()) {
@@ -86,8 +88,8 @@ public class MinefieldUtil {
                     hazardAccumulator += minefield.getDensity() * hoverMovementMultiplier;
                     break;
                 case Minefield.TYPE_VIBRABOMB:
-                    // only mechs interact with VibraBombs
-                    // mechs > 10 tons the "setting" will set off VibraBombs before they
+                    // only meks interact with VibraBombs
+                    // meks > 10 tons the "setting" will set off VibraBombs before they
                     // get to them so we don't particularly care
                     if (movingUnit instanceof Mek && (!isJumping || lastStep) &&
                             (movingUnit.getWeight() >= minefield.getSetting()) &&

@@ -33,8 +33,10 @@ public class SharedUtility {
 
     @SuppressWarnings(value = "unchecked")
     public static List<TargetRoll> getPSRList(MovePath md) {
-        // certain types of entities, such as airborne aero units, do not require many of the checks
-        // carried out in the full PSR Check. So, we call a method that skips most of those.
+        // certain types of entities, such as airborne aero units, do not require many
+        // of the checks
+        // carried out in the full PSR Check. So, we call a method that skips most of
+        // those.
         if (md.getEntity().isAirborne() && md.getEntity().isAero()) {
             return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
         } else {
@@ -44,7 +46,8 @@ public class SharedUtility {
 
     /**
      * Function that carries out PSR checks specific only to airborne aero units
-     * @param md The path to check
+     * 
+     * @param md           The path to check
      * @param stringResult Whether to return the report as a string
      * @return Collection of PSRs that will be required for this activity
      */
@@ -338,14 +341,15 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // check if we've moved into swamp; skip Liquid Magma bog-down check if not jumping into the last hex
+            // check if we've moved into swamp; skip Liquid Magma bog-down check if not
+            // jumping into the last hex
             if (level != 2 || jumpedIntoMagma) {
                 rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
                         lastPos, curPos, lastElevation, isPavementStep);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Check if used more MPs than Mech/Vehicle would have w/o gravity
+            // Check if used more MPs than Mek/Vehicle would have w/o gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if ((entity instanceof Mek) || (entity instanceof Tank)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
@@ -398,11 +402,12 @@ public class SharedUtility {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
+            boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
-            // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
+            // Everything that does not have a 1 or 2 level drop shouldn't be handled as a
+            // cliff
             int stepHeight = curElevation + curHex.getLevel()
                     - (lastElevation + prevHex.getLevel());
             boolean isUpCliff = !lastPos.equals(curPos)
@@ -419,17 +424,17 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Mechs moving down a cliff
+            // Meks moving down a cliff
             // QuadVees in vee mode ignore PSRs to avoid falls, IO p.133
             // ProtoMeks as Meks
-            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Mechs moving up a cliff
-            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+            // Meks moving up a cliff
+            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
@@ -440,7 +445,7 @@ public class SharedUtility {
             if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.
                 Building bldg = null;
-                String reason ="entering";
+                String reason = "entering";
                 if ((buildingMove & 2) == 2) {
                     bldg = game.getBoard().getBuildingAt(curPos);
                 }
@@ -465,10 +470,14 @@ public class SharedUtility {
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
-                            .terrainLevel(Terrains.BRIDGE_ELEV) + curHex
-                            .getLevel()) == (prevHex.getLevel() + (prevHex
-                            .containsTerrain(Terrains.BRIDGE) ? prevHex
-                            .terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
+                                    .terrainLevel(Terrains.BRIDGE_ELEV)
+                                    + curHex
+                                            .getLevel()) == (prevHex.getLevel()
+                                                    + (prevHex
+                                                            .containsTerrain(Terrains.BRIDGE)
+                                                                    ? prevHex
+                                                                            .terrainLevel(Terrains.BRIDGE_ELEV)
+                                                                    : 0))))) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType), nagReport, psrList);
             }
@@ -499,7 +508,7 @@ public class SharedUtility {
 
             if (step.isTurning()) {
                 rollTarget = entity.checkTurnModeFailure(overallMoveType,
-                        prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
+                        prevStep == null ? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -526,7 +535,7 @@ public class SharedUtility {
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
 
-        //if we sprinted with MASC or a supercharger, then we need a PSR
+        // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType, md.getMpUsed());
         checkNag(rollTarget, nagReport, psrList);
 
@@ -615,7 +624,7 @@ public class SharedUtility {
      * @param psrList
      */
     private static void checkNag(PilotingRollData rollTarget, StringBuffer nagReport,
-                                 List<TargetRoll> psrList) {
+            List<TargetRoll> psrList) {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             psrList.add(rollTarget);
             nagReport.append(Messages.getString("MovementDisplay.addNag",
@@ -688,7 +697,8 @@ public class SharedUtility {
         if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
             return md;
         }
-        // Ejected crew/pilots and lifeboats can't move, so just add the inherited move steps and be done with it
+        // Ejected crew/pilots and lifeboats can't move, so just add the inherited move
+        // steps and be done with it
         if ((entity instanceof EjectedCrew)
                 || ((entity instanceof EscapePods) && (entity.getOriginalWalkMP() <= 0))) {
             return addSteps(md, client);
@@ -789,8 +799,9 @@ public class SharedUtility {
         MoveStep lastStep = md.getLastStep();
         if ((lastStep != null)
                 && ((lastStep.getType() == MoveStepType.LAUNCH) || (lastStep
-                        .getType() == MoveStepType.RECOVER) || (lastStep
-                        .getType() == MoveStepType.UNDOCK))) {
+                        .getType() == MoveStepType.RECOVER)
+                        || (lastStep
+                                .getType() == MoveStepType.UNDOCK))) {
             md.removeLastStep();
         }
 
@@ -910,7 +921,7 @@ public class SharedUtility {
     }
 
     public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets,
-                                                       @Nullable String chosenDisplayName) {
+            @Nullable String chosenDisplayName) {
         if ((chosenDisplayName == null) || (targets == null)) {
             return null;
         } else {

@@ -50,11 +50,11 @@ import megamek.common.UnitType;
  * @author Neoancient
  */
 class ForceGenerationOptionsPanel extends JPanel implements ActionListener, FocusListener {
-    //region Variable Declarations
+    // region Variable Declarations
     private static final long serialVersionUID = -3462304612643343012L;
 
     public enum Use {
-        RAT_GENERATOR, FORMATION_BUILDER //, FORCE_GENERATOR
+        RAT_GENERATOR, FORMATION_BUILDER // , FORCE_GENERATOR
     }
 
     private JTextField txtNumUnits = new JTextField(3);
@@ -71,15 +71,15 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     private int ratGenYear;
 
     private static final int[] UNIT_TYPES = {
-        UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
-        UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AEROSPACEFIGHTER, UnitType.SMALL_CRAFT,
-        UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
+            UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
+            UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AEROSPACEFIGHTER, UnitType.SMALL_CRAFT,
+            UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
     };
     private static final int EARLIEST_YEAR = 2398;
     private static final int LATEST_YEAR = 3160;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public ForceGenerationOptionsPanel(Use use) {
         setLayout(new GridBagLayout());
 
@@ -264,7 +264,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             panUnitTypeOptions.optionsChanged();
         }
     }
-    //endregion Constructors
+    // endregion Constructors
 
     public int getNumUnits() {
         return Integer.parseInt(txtNumUnits.getText());
@@ -352,7 +352,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 }
             }
             recs.sort(factionSorter);
-            cbSubfaction.addItem(null); //No specific subcommand.
+            cbSubfaction.addItem(null); // No specific subcommand.
             for (FactionRecord fRec : recs) {
                 cbSubfaction.addItem(fRec);
             }
@@ -363,7 +363,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     /**
-     * When faction or subfaction is changed, refresh ratings combo box with appropriate
+     * When faction or subfaction is changed, refresh ratings combo box with
+     * appropriate
      * values for selected faction.
      */
     public void updateRatingChoice() {
@@ -416,7 +417,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
     @Override
     public void focusGained(FocusEvent e) {
-        //ignored
+        // ignored
     }
 
     @Override
@@ -430,7 +431,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     ratGenYear = LATEST_YEAR;
                 }
             } catch (NumberFormatException ex) {
-                //ignore and restore to previous value
+                // ignore and restore to previous value
             }
             setYear(ratGenYear);
             RATGenerator.getInstance().loadYear(ratGenYear);
@@ -446,7 +447,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                      boolean isSelected, boolean cellHasFocus) {
+                boolean isSelected, boolean cellHasFocus) {
             if (value == null) {
                 setText("General");
             } else {
@@ -464,7 +465,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     };
 
     /**
-     * Additional options that are conditional on the selected unit type can be added
+     * Additional options that are conditional on the selected unit type can be
+     * added
      */
     abstract static class UnitTypeOptions extends JPanel {
         private static final long serialVersionUID = -7141802206126462796L;
@@ -697,7 +699,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3CC"),
                             ModelRecord.NETWORK_COMPANY_COMMAND);
                     addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3CCB"),
-                            ModelRecord.NETWORK_COMPANY_COMMAND|ModelRecord.NETWORK_BOOSTED);
+                            ModelRecord.NETWORK_COMPANY_COMMAND | ModelRecord.NETWORK_BOOSTED);
                     c.weighty = 1.0;
                     addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.Nova"),
                             ModelRecord.NETWORK_NOVA);
@@ -805,7 +807,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
 
         private void addNetworkButton(JPanel panel, GridBagConstraints constraints, ButtonGroup group,
-                                      String text, int mask) {
+                String text, int mask) {
             JRadioButton btn = new JRadioButton(text);
             btn.setActionCommand(String.valueOf(mask));
             btn.setSelected(mask == ModelRecord.NETWORK_NONE);
@@ -841,7 +843,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         public List<MissionRole> getSelectedRoles() {
             return roleChecks.stream().filter(AbstractButton::isSelected)
                     .map(chk -> MissionRole.parseRole(chk.getName()))
-                        .filter(Objects::nonNull).collect(Collectors.toList());
+                    .filter(Objects::nonNull).collect(Collectors.toList());
         }
 
         public int getRoleStrictness() {
@@ -880,7 +882,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         public void optionsChanged() {
             if (getUnitType() != null) {
                 ((CardLayout) getLayout()).show(this, (getUnitType() < UnitType.CONV_FIGHTER)
-                        ? "Ground" : "Air");
+                        ? "Ground"
+                        : "Air");
             }
             currentCard().updateUnitType(getUnitType());
         }
@@ -910,8 +913,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         @Override
         public Boolean getBooleanVal(String key) {
             switch (key) {
-                case "mechBA":
-                    return currentCard().mechBA();
+                case "mekBA":
+                    return currentCard().mekBA();
                 case "airLance":
                     return currentCard().airLance();
                 default:
@@ -938,8 +941,9 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         private static final long serialVersionUID = 1439149790457737700L;
 
-        private JRadioButton bSimpleFormation = new JRadioButton(Messages.getString("RandomArmyDialog.simpleFormation"));
-        private JRadioButton bMekBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
+        private JRadioButton bSimpleFormation = new JRadioButton(
+                Messages.getString("RandomArmyDialog.simpleFormation"));
+        private JRadioButton bMekBA = new JRadioButton(Messages.getString("RandomArmyDialog.mekBA"));
         private JRadioButton bAirLance = new JRadioButton(Messages.getString("RandomArmyDialog.airLance"));
         private JRadioButton bOtherUnitType = new JRadioButton(Messages.getString("RandomArmyDialog.otherUnitType"));
         private JComboBox<String> cbOtherUnitType = new JComboBox<>();
@@ -974,7 +978,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             // Sort main types alphabetically, and subtypes alphabetically within the main.
             List<FormationType> formations = FormationType.getAllFormations().stream()
                     .filter(ft -> ft.isGround() == groundUnit).collect(Collectors.toList());
-            Map<String,Set<String>> formationGroups = formations.stream()
+            Map<String, Set<String>> formationGroups = formations.stream()
                     .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
                             Collectors.mapping(FormationType::getName,
                                     Collectors.toCollection(TreeSet::new))));
@@ -1129,7 +1133,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             return null;
         }
 
-        public boolean mechBA() {
+        public boolean mekBA() {
             return bMekBA.isSelected();
         }
 
@@ -1174,7 +1178,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                         return;
                     }
                 }
-                //We shouldn't reach this point, but if we do the previous selection doesn't change.
+                // We shouldn't reach this point, but if we do the previous selection doesn't
+                // change.
             }
         }
 
@@ -1190,7 +1195,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             Parameters p = new UnitTable.Parameters(getFaction(),
                     getUnitType(), ratGenYear, (String) cbRating.getSelectedItem(),
                     IntStream.rangeClosed(ft.getMinWeightClass(), ft.getMaxWeightClass())
-                    .boxed().collect(Collectors.toList()),
+                            .boxed().collect(Collectors.toList()),
                     ModelRecord.NETWORK_NONE, EnumSet.noneOf(EntityMovementMode.class),
                     ft.getMissionRoles(),
                     2, getFaction());

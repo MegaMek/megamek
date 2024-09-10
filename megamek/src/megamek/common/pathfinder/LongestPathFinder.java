@@ -13,13 +13,26 @@
 */
 package megamek.common.pathfinder;
 
-import megamek.client.bot.princess.MinefieldUtil;
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 
-import java.util.*;
+import megamek.client.bot.princess.MinefieldUtil;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.Infantry;
+import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
+import megamek.common.Tank;
+import megamek.common.annotations.Nullable;
 
 /**
  * Path finder that specialises in finding paths that can enter a single hex
@@ -41,11 +54,11 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * distance ( since the last direction change ). This path finder also finds
      * (shorter) longest paths that require less mp to travel.
      *
-     * @param maxMP - the maximal movement points available for an entity
+     * @param maxMP    - the maximal movement points available for an entity
      * @param stepType - if equal to MoveStepType.BACKWARDS, then searcher also
-     *            includes backward steps. Otherwise only forward movement is
-     *            allowed
-     * @param game The current {@link Game}
+     *                 includes backward steps. Otherwise only forward movement is
+     *                 allowed
+     * @param game     The current {@link Game}
      * @return a longest path finder
      */
     public static LongestPathFinder newInstanceOfLongestPath(int maxMP, MoveStepType stepType, Game game) {
@@ -64,7 +77,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * heavy.
      *
      * @param maxMP - the maximal thrust points available for an aero
-     * @param game The current {@link Game}
+     * @param game  The current {@link Game}
      * @return a longest path finder for aeros
      */
     public static LongestPathFinder newInstanceOfAeroPath(int maxMP, Game game) {
@@ -96,23 +109,25 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             }
         }
     }
-    
+
     /**
      * Comparator that sorts MovePaths based on, in order, the following criteria:
      * Minefield hazard (stepping on less mines is better)
      * Least MP used
      * Most distance moved
      */
-    public static class MovePathMinefieldAvoidanceMinMPMaxDistanceComparator extends MovePathMinMPMaxDistanceComparator {
+    public static class MovePathMinefieldAvoidanceMinMPMaxDistanceComparator
+            extends MovePathMinMPMaxDistanceComparator {
         @Override
         public int compare(MovePath first, MovePath second) {
             double firstMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(first.getLastStep(),
                     first.getEntity(), first.isJumping(), false);
             double secondMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(second.getLastStep(),
                     second.getEntity(), second.isJumping(), false);
-               
+
             return (Double.compare(secondMinefieldScore, firstMinefieldScore) == 0)
-                    ? super.compare(first, second) : 0;
+                    ? super.compare(first, second)
+                    : 0;
         }
     }
 
@@ -120,7 +135,8 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Relaxer for longest path movement. Current implementation needs
      * Comparator that preserves MovePathMinMPMaxDistanceComparator contract.
      *
-     * It adds a path to 'interesting' paths in a hex when candidate travelled more hexes.
+     * It adds a path to 'interesting' paths in a hex when candidate traveled more
+     * hexes.
      */
     static public class LongestPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         @Override
@@ -131,10 +147,10 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             if (v == null) {
                 return new ArrayDeque<>(Collections.singleton(mpCandidate));
             }
-            while (!v.isEmpty()) { //we could get rid of this loop, since we require a proper comparator
+            while (!v.isEmpty()) { // we could get rid of this loop, since we require a proper comparator
                 MovePath topMP = v.getLast();
 
-                //standing up is always reasonable for mechs
+                // standing up is always reasonable for meks
                 boolean vprone = topMP.getFinalProne(), eprone = mpCandidate.getFinalProne();
                 if (vprone != eprone) {
                     if (vprone) {
@@ -256,7 +272,8 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
         }
 
         @Override
-        public @Nullable Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
+        public @Nullable Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate,
+                Comparator<MovePath> comparator) {
             Objects.requireNonNull(mpCandidate);
             if (v == null) {
                 return new ArrayDeque<>(Collections.singleton(mpCandidate));
@@ -295,11 +312,13 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             }
 
             if (!inAtmosphere) {
-                // there is no point considering hexes flown straight if we are not in atmosphere
+                // there is no point considering hexes flown straight if we are not in
+                // atmosphere
                 return null;
             }
 
-            // while in atmosphere we should consider paths that have higher thrust used but flew more hexes straight
+            // while in atmosphere we should consider paths that have higher thrust used but
+            // flew more hexes straight
             MoveStep topLastStep = topMP.getLastStep();
             MoveStep candidateLastStep = mpCandidate.getLastStep();
             int hs1 = topLastStep == null ? 0 : topLastStep.getNStraight();

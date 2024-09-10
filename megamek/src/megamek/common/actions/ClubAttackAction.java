@@ -13,26 +13,15 @@
  */
 package megamek.common.actions;
 
-import megamek.client.ui.Messages;
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
+import megamek.client.ui.Messages;
+import megamek.common.*;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.options.OptionsConstants;
+
 /**
- * The attacker makes a club attack on the target. This also covers mech melee
+ * The attacker makes a club attack on the target. This also covers mek melee
  * weapons like hatchets.
  *
  * @author Ben
@@ -289,9 +278,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
 
-        // non-mechs can't club
+        // non-meks can't club
         if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't club");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't club");
         }
 
         // if somehow carrying cargo while holding a club

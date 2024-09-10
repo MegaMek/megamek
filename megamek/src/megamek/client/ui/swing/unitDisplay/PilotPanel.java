@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.unitDisplay;
 
 import java.awt.Dimension;
@@ -18,7 +36,8 @@ import megamek.common.CrewType;
 import megamek.common.Entity;
 
 /**
- * The pilot panel contains all the information about the pilot/crew of this unit.
+ * The pilot panel contains all the information about the pilot/crew of this
+ * unit.
  */
 class PilotPanel extends PicMap {
     private static final long serialVersionUID = 8284603003897415518L;
@@ -55,7 +74,8 @@ class PilotPanel extends PicMap {
             }
         });
 
-        // Hack to keep controls at the top of the screen when the bottom one is not always visible.
+        // Hack to keep controls at the top of the screen when the bottom one is not
+        // always visible.
         // There is probably a better way to do this.
         gbc.gridy = 2;
         gbc.weighty = 1.0;
@@ -72,12 +92,12 @@ class PilotPanel extends PicMap {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(0,0);
+        return new Dimension(0, 0);
     }
 
     @Override
     public Dimension getMinimumSize() {
-        return new Dimension(0,0);
+        return new Dimension(0, 0);
     }
 
     @Override
@@ -94,7 +114,7 @@ class PilotPanel extends PicMap {
     }
 
     /**
-     * updates fields for the specified mech
+     * updates fields for the specified mek
      */
     public void displayMek(Entity en) {
         entity = en;

@@ -29,7 +29,7 @@ import megamek.common.Warship;
  */
 public class PartialRepairs extends AbstractOptions {
     private static final long serialVersionUID = 7618380522964885742L;
-    public static final String PART_REPAIRS  = "PartRepairs";
+    public static final String PART_REPAIRS = "PartRepairs";
 
     public PartialRepairs() {
         super();
@@ -37,7 +37,7 @@ public class PartialRepairs extends AbstractOptions {
 
     @Override
     public void initialize() {
-        //partial repairs
+        // partial repairs
         IBasicOptionGroup partRep = addGroup("part_repairs", PART_REPAIRS);
         addOption(partRep, "mek_reactor_3_crit", false);
         addOption(partRep, "mek_reactor_2_crit", false);
@@ -45,11 +45,11 @@ public class PartialRepairs extends AbstractOptions {
         addOption(partRep, "mek_gyro_1_crit", false);
         addOption(partRep, "mek_gyro_2_crit", false);
         addOption(partRep, "sensors_1_crit", false);
-        addOption(partRep, "mech_sensors_2_crit", false);
+        addOption(partRep, "mek_sensors_2_crit", false);
         addOption(partRep, "veh_stabilizer_crit", false);
         addOption(partRep, "veh_locked_turret", false);
         addOption(partRep, "mek_engine_replace", false);
-        addOption(partRep, "mech_gyro_replace", false);
+        addOption(partRep, "mek_gyro_replace", false);
         addOption(partRep, "aero_avionics_replace", false);
         addOption(partRep, "aero_cic_fcs_replace", false);
         addOption(partRep, "aero_gear_replace", false);
@@ -75,9 +75,9 @@ public class PartialRepairs extends AbstractOptions {
                     || quirk.getName().equals("mek_reactor_1_crit")
                     || quirk.getName().equals("mek_gyro_2_crit")
                     || quirk.getName().equals("mek_gyro_1_crit")
-                    || quirk.getName().equals("mech_sensors_2_crit")
+                    || quirk.getName().equals("mek_sensors_2_crit")
                     || quirk.getName().equals("mek_engine_replace")
-                    || quirk.getName().equals("mech_gyro_replace")
+                    || quirk.getName().equals("mek_gyro_replace")
                     || quirk.getName().equals("sensors_1_crit");
         } else if (en instanceof GunEmplacement) {
             return false;

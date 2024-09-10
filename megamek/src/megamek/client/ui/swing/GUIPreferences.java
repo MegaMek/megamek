@@ -179,11 +179,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_HEAT_VALUE_5 = "UnitDisplayHeatValue5";
     public static final String UNIT_DISPLAY_HEAT_VALUE_6 = "UnitDisplayHeatValue6";
     public static final String UNIT_DISPLAY_WEAPON_LIST_HEIGHT = "UnitDisplayWeaponListHeight";
-    public static final String UNIT_DISPLAY_MECH_ARMOR_LARGE_FONT_SIZE = "UnitDisplayMekArmorLargeFontSize";
-    public static final String UNIT_DISPLAY_MECH_ARMOR_MEDIUM_FONT_SIZE = "UnitDisplayMekArmorMediumFontSize";
-    public static final String UNIT_DISPLAY_MECH_ARMOR_SMALL_FONT_SIZE = "UnitDisplayMekArmorSmallFontSize";
-    public static final String UNIT_DISPLAY_MECH_LARGE_FONT_SIZE = "UnitDisplayMekLargeFontSize";
-    public static final String UNIT_DISPLAY_MECH_MEDIUM_FONT_SIZE = "UnitDisplayMekMediumFontSize";
+    public static final String UNIT_DISPLAY_MEK_ARMOR_LARGE_FONT_SIZE = "UnitDisplayMekArmorLargeFontSize";
+    public static final String UNIT_DISPLAY_MEK_ARMOR_MEDIUM_FONT_SIZE = "UnitDisplayMekArmorMediumFontSize";
+    public static final String UNIT_DISPLAY_MEK_ARMOR_SMALL_FONT_SIZE = "UnitDisplayMekArmorSmallFontSize";
+    public static final String UNIT_DISPLAY_MEK_LARGE_FONT_SIZE = "UnitDisplayMekLargeFontSize";
+    public static final String UNIT_DISPLAY_MEK_MEDIUM_FONT_SIZE = "UnitDisplayMekMediumFontSize";
 
     public static final String UNIT_TOOLTIP_SEENBYRESOLUTION = "UnitToolTipSeenByResolution";
     public static final String UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK = "UnitToolTipArmorMiniUnitsPerBlock";
@@ -225,10 +225,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String TURN_DETAILS_OVERLAY = "TurnDetailsOverlay";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
     public static final String FOV_HIGHLIGHT_ALPHA = "FovHighlightAlpha";
-    //Rings' sizes (measured in distance to center) separated by whitespace.
+    // Rings' sizes (measured in distance to center) separated by whitespace.
     public static final String FOV_HIGHLIGHT_RINGS_RADII = "FovHighlightRingsRadii";
-    //Rings' colors in the HSB format.
-    //Each hsb color is separated by a semicolon, particular h, s and b values are whitespace separated.
+    // Rings' colors in the HSB format.
+    // Each hsb color is separated by a semicolon, particular h, s and b values are
+    // whitespace separated.
     public static final String FOV_HIGHLIGHT_RINGS_COLORS_HSB = "FovHighlightRingsColorsInHSB";
     public static final String FOV_DARKEN = "FovDarken";
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
@@ -240,24 +241,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOBBY_MEKTABLE_PLAYER_WIDTH = "LobbyMektablePlayerWidth";
     public static final String LOBBY_MEKTABLE_BV_WIDTH = "LobbyMektableBVWidth";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
-    public static final String MECH_SELECTOR_INCLUDE_MODEL = "MekSelectorIncludeModel";
-    public static final String MECH_SELECTOR_INCLUDE_NAME = "MekSelectorIncludeName";
-    public static final String MECH_SELECTOR_INCLUDE_TONS = "MekSelectorIncludeTons";
-    public static final String MECH_SELECTOR_INCLUDE_BV = "MekSelectorIncludeBV";
-    public static final String MECH_SELECTOR_INCLUDE_YEAR = "MekSelectorIncludeYear";
-    public static final String MECH_SELECTOR_INCLUDE_LEVEL = "MekSelectorIncludeLevel";
-    public static final String MECH_SELECTOR_INCLUDE_COST = "MekSelectorIncludeCost";
-    public static final String MECH_SELECTOR_SHOW_ADVANCED = "MekSelectorShowAdvanced";
-    public static final String MECH_SELECTOR_UNIT_TYPE = "MekSelectorUnitType";
-    public static final String MECH_SELECTOR_WEIGHT_CLASS = "MekSelectorWeightClass";
-    public static final String MECH_SELECTOR_RULES_LEVELS = "MekSelectorRuleType";
-    public static final String MECH_SELECTOR_SORT_COLUMN = "MekSelectorSortColumn";
-    public static final String MECH_SELECTOR_SORT_ORDER = "MekSelectorSortOrder";
-    public static final String MECH_SELECTOR_SIZE_HEIGHT = "MekSelectorSizeHeight";
-    public static final String MECH_SELECTOR_SIZE_WIDTH = "MekSelectorSizeWidth";
-    public static final String MECH_SELECTOR_POS_X = "MekSelectorPosX";
-    public static final String MECH_SELECTOR_POS_Y = "MekSelectorPosY";
-    public static final String MECH_SELECTOR_SPLIT_POS = "MekSelectorSplitPos";
+    public static final String MEK_SELECTOR_INCLUDE_MODEL = "MekSelectorIncludeModel";
+    public static final String MEK_SELECTOR_INCLUDE_NAME = "MekSelectorIncludeName";
+    public static final String MEK_SELECTOR_INCLUDE_TONS = "MekSelectorIncludeTons";
+    public static final String MEK_SELECTOR_INCLUDE_BV = "MekSelectorIncludeBV";
+    public static final String MEK_SELECTOR_INCLUDE_YEAR = "MekSelectorIncludeYear";
+    public static final String MEK_SELECTOR_INCLUDE_LEVEL = "MekSelectorIncludeLevel";
+    public static final String MEK_SELECTOR_INCLUDE_COST = "MekSelectorIncludeCost";
+    public static final String MEK_SELECTOR_SHOW_ADVANCED = "MekSelectorShowAdvanced";
+    public static final String MEK_SELECTOR_UNIT_TYPE = "MekSelectorUnitType";
+    public static final String MEK_SELECTOR_WEIGHT_CLASS = "MekSelectorWeightClass";
+    public static final String MEK_SELECTOR_RULES_LEVELS = "MekSelectorRuleType";
+    public static final String MEK_SELECTOR_SORT_COLUMN = "MekSelectorSortColumn";
+    public static final String MEK_SELECTOR_SORT_ORDER = "MekSelectorSortOrder";
+    public static final String MEK_SELECTOR_SIZE_HEIGHT = "MekSelectorSizeHeight";
+    public static final String MEK_SELECTOR_SIZE_WIDTH = "MekSelectorSizeWidth";
+    public static final String MEK_SELECTOR_POS_X = "MekSelectorPosX";
+    public static final String MEK_SELECTOR_POS_Y = "MekSelectorPosY";
+    public static final String MEK_SELECTOR_SPLIT_POS = "MekSelectorSplitPos";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
@@ -346,8 +347,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
     public static final String RND_MAP_SIZE_WIDTH = "RndMapSizeWidth";
     public static final String RND_MAP_ADVANCED = "RndMapAdvanced";
-    public static final String LOS_MECH_IN_FIRST = "LOSMekInFirst";
-    public static final String LOS_MECH_IN_SECOND = "LOSMekInSecond";
+    public static final String LOS_MEK_IN_FIRST = "LOSMekInFirst";
+    public static final String LOS_MEK_IN_SECOND = "LOSMekInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
@@ -375,7 +376,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static String RAT_TECH_LEVEL = "RATTechLevel";
     public static String RAT_BV_MIN = "RATBVMin";
     public static String RAT_BV_MAX = "RATBVMax";
-    public static String RAT_NUM_MECHS = "RATNumMeks";
+    public static String RAT_NUM_MEKS = "RATNumMeks";
     public static String RAT_NUM_VEES = "RATNumVees";
     public static String RAT_NUM_BA = "RATNumBA";
     public static String RAT_NUM_INF = "RATNumInf";
@@ -397,7 +398,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_RED = new Color(196, 0, 0);
     private static final Color DEFAULT_GREEN = new Color(0, 212, 0);
     private static final Color DEFAULT_BLUE = new Color(64, 96, 228);
-    private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80);  // medium dark red
+    private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80); // medium dark red
     private static final Color DEFAULT_MEDIUM_YELLOW = new Color(180, 180, 100);
     private static final Color DEFAULT_ORANGE = new Color(248, 140, 0);
     private static final Color DEFAULT_YELLOW = new Color(216, 200, 0);
@@ -420,12 +421,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     // Report Color
     private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(73, 102, 230);
 
-
     // Map colors
     private static final Color DEFAULT_MAP_BRIGHT_GREEN = new Color(80, 230, 80);
-    private static final Color DEFAULT_MAP_BLUE = new Color(60, 140, 240);  // greenish blue
+    private static final Color DEFAULT_MAP_BLUE = new Color(60, 140, 240); // greenish blue
     private static final Color DEFAULT_MAP_RED = new Color(200, 40, 40); // red
-    private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40);  // light green
+    private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40); // light green
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -533,7 +533,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_BOMB_MISSES, true);
         store.setDefault(SHOW_BOMB_DRIFTS, false);
 
-
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
 
@@ -545,7 +544,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(USE_CAMO_OVERLAY, true);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
-        store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
+        store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB,
+                "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
         store.setDefault(FOV_HIGHLIGHT, false);
         store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
         store.setDefault(FOV_DARKEN, true);
@@ -599,11 +599,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_HEAT_VALUE_4, 12);
         store.setDefault(UNIT_DISPLAY_HEAT_VALUE_5, 13);
         store.setDefault(UNIT_DISPLAY_HEAT_VALUE_6, 14);
-        store.setDefault(UNIT_DISPLAY_MECH_ARMOR_LARGE_FONT_SIZE, 12);
-        store.setDefault(UNIT_DISPLAY_MECH_ARMOR_MEDIUM_FONT_SIZE, 10);
-        store.setDefault(UNIT_DISPLAY_MECH_ARMOR_SMALL_FONT_SIZE, 9);
-        store.setDefault(UNIT_DISPLAY_MECH_LARGE_FONT_SIZE, 12);
-        store.setDefault(UNIT_DISPLAY_MECH_MEDIUM_FONT_SIZE, 10);
+        store.setDefault(UNIT_DISPLAY_MEK_ARMOR_LARGE_FONT_SIZE, 12);
+        store.setDefault(UNIT_DISPLAY_MEK_ARMOR_MEDIUM_FONT_SIZE, 10);
+        store.setDefault(UNIT_DISPLAY_MEK_ARMOR_SMALL_FONT_SIZE, 9);
+        store.setDefault(UNIT_DISPLAY_MEK_LARGE_FONT_SIZE, 12);
+        store.setDefault(UNIT_DISPLAY_MEK_MEDIUM_FONT_SIZE, 10);
         setDefault(UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
 
         store.setDefault(UNIT_TOOLTIP_SEENBYRESOLUTION, 3);
@@ -644,24 +644,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
         store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
         store.setDefault(MAP_ZOOM_INDEX, 7);
-        store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
-        store.setDefault(MECH_SELECTOR_INCLUDE_NAME, true);
-        store.setDefault(MECH_SELECTOR_INCLUDE_TONS, true);
-        store.setDefault(MECH_SELECTOR_INCLUDE_BV, true);
-        store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
-        store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
-        store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
-        store.setDefault(MECH_SELECTOR_UNIT_TYPE, 0);
-        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS, 15);
-        store.setDefault(MECH_SELECTOR_RULES_LEVELS, "[0]");
-        store.setDefault(MECH_SELECTOR_SORT_COLUMN, 0);
-        store.setDefault(MECH_SELECTOR_SORT_ORDER, "ASCENDING");
-        store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
-        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT, 600);
-        store.setDefault(MECH_SELECTOR_SIZE_WIDTH, 800);
-        store.setDefault(MECH_SELECTOR_POS_X, 200);
-        store.setDefault(MECH_SELECTOR_POS_Y, 200);
-        store.setDefault(MECH_SELECTOR_SPLIT_POS, 300);
+        store.setDefault(MEK_SELECTOR_INCLUDE_MODEL, true);
+        store.setDefault(MEK_SELECTOR_INCLUDE_NAME, true);
+        store.setDefault(MEK_SELECTOR_INCLUDE_TONS, true);
+        store.setDefault(MEK_SELECTOR_INCLUDE_BV, true);
+        store.setDefault(MEK_SELECTOR_INCLUDE_YEAR, true);
+        store.setDefault(MEK_SELECTOR_INCLUDE_LEVEL, true);
+        store.setDefault(MEK_SELECTOR_INCLUDE_COST, true);
+        store.setDefault(MEK_SELECTOR_UNIT_TYPE, 0);
+        store.setDefault(MEK_SELECTOR_WEIGHT_CLASS, 15);
+        store.setDefault(MEK_SELECTOR_RULES_LEVELS, "[0]");
+        store.setDefault(MEK_SELECTOR_SORT_COLUMN, 0);
+        store.setDefault(MEK_SELECTOR_SORT_ORDER, "ASCENDING");
+        store.setDefault(MEK_SELECTOR_SHOW_ADVANCED, false);
+        store.setDefault(MEK_SELECTOR_SIZE_HEIGHT, 600);
+        store.setDefault(MEK_SELECTOR_SIZE_WIDTH, 800);
+        store.setDefault(MEK_SELECTOR_POS_X, 200);
+        store.setDefault(MEK_SELECTOR_POS_Y, 200);
+        store.setDefault(MEK_SELECTOR_SPLIT_POS, 300);
         store.setDefault(RND_ARMY_SIZE_HEIGHT, 600);
         store.setDefault(RND_ARMY_SIZE_WIDTH, 800);
         store.setDefault(RND_ARMY_POS_X, 200);
@@ -775,7 +775,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_TECH_LEVEL, 0);
         store.setDefault(RAT_BV_MIN, "5800");
         store.setDefault(RAT_BV_MAX, "6000");
-        store.setDefault(RAT_NUM_MECHS, "4");
+        store.setDefault(RAT_NUM_MEKS, "4");
         store.setDefault(RAT_NUM_VEES, "0");
         store.setDefault(RAT_NUM_BA, "0");
         store.setDefault(RAT_NUM_INF, "0");
@@ -812,7 +812,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(AOHEXSHADOWS);
     }
 
-    public boolean getHighQualityGraphics() { return store.getBoolean(HIGH_QUALITY_GRAPHICS); }
+    public boolean getHighQualityGraphics() {
+        return store.getBoolean(HIGH_QUALITY_GRAPHICS);
+    }
 
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
@@ -1011,23 +1013,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public int getUnitDisplayMekArmorLargeFontSize() {
-        return getInt(UNIT_DISPLAY_MECH_ARMOR_LARGE_FONT_SIZE);
+        return getInt(UNIT_DISPLAY_MEK_ARMOR_LARGE_FONT_SIZE);
     }
 
     public int getUnitDisplayMekArmorMediumFontSize() {
-        return getInt(UNIT_DISPLAY_MECH_ARMOR_MEDIUM_FONT_SIZE);
+        return getInt(UNIT_DISPLAY_MEK_ARMOR_MEDIUM_FONT_SIZE);
     }
 
     public int getUnitDisplayMekArmorSmallFontSize() {
-        return getInt(UNIT_DISPLAY_MECH_ARMOR_SMALL_FONT_SIZE);
+        return getInt(UNIT_DISPLAY_MEK_ARMOR_SMALL_FONT_SIZE);
     }
 
     public int getUnitDisplayMekLargeFontSize() {
-        return getInt(UNIT_DISPLAY_MECH_LARGE_FONT_SIZE);
+        return getInt(UNIT_DISPLAY_MEK_LARGE_FONT_SIZE);
     }
 
     public int getUnitDisplayMekMediumFontSize() {
-        return getInt(UNIT_DISPLAY_MECH_MEDIUM_FONT_SIZE);
+        return getInt(UNIT_DISPLAY_MEK_MEDIUM_FONT_SIZE);
     }
 
     public Color getUnitTooltipArmorMiniColorIntact() {
@@ -1085,6 +1087,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getTurnDetailsOverlay() {
         return store.getBoolean(TURN_DETAILS_OVERLAY);
     }
+
     public boolean getFovHighlight() {
         return store.getBoolean(FOV_HIGHLIGHT);
     }
@@ -1122,83 +1125,83 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public boolean getMekSelectorIncludeModel() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_MODEL);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_MODEL);
     }
 
     public boolean getMekSelectorIncludeName() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_NAME);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_NAME);
     }
 
     public boolean getMekSelectorIncludeTons() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_TONS);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_TONS);
     }
 
     public boolean getMekSelectorIncludeBV() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_BV);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_BV);
     }
 
     public boolean getMekSelectorIncludeYear() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_YEAR);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_YEAR);
     }
 
     public boolean getMekSelectorIncludeLevel() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_LEVEL);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_LEVEL);
     }
 
     public boolean getMekSelectorIncludeCost() {
-        return store.getBoolean(MECH_SELECTOR_INCLUDE_COST);
+        return store.getBoolean(MEK_SELECTOR_INCLUDE_COST);
     }
 
     public boolean getMekSelectorShowAdvanced() {
-        return store.getBoolean(MECH_SELECTOR_SHOW_ADVANCED);
+        return store.getBoolean(MEK_SELECTOR_SHOW_ADVANCED);
     }
 
     public int getMekSelectorUnitType() {
-        return store.getInt(MECH_SELECTOR_UNIT_TYPE);
+        return store.getInt(MEK_SELECTOR_UNIT_TYPE);
     }
 
     public int getMekSelectorWeightClass() {
-        return store.getInt(MECH_SELECTOR_WEIGHT_CLASS);
+        return store.getInt(MEK_SELECTOR_WEIGHT_CLASS);
     }
 
     public String getMekSelectorRulesLevels() {
-        return store.getString(MECH_SELECTOR_RULES_LEVELS);
+        return store.getString(MEK_SELECTOR_RULES_LEVELS);
     }
 
     public int getMekSelectorSortColumn() {
-        return store.getInt(MECH_SELECTOR_SORT_COLUMN);
+        return store.getInt(MEK_SELECTOR_SORT_COLUMN);
     }
 
     public int getMekSelectorDefaultSortColumn() {
-        return store.getDefaultInt(MECH_SELECTOR_SORT_COLUMN);
+        return store.getDefaultInt(MEK_SELECTOR_SORT_COLUMN);
     }
 
     public String getMekSelectorSortOrder() {
-        return store.getString(MECH_SELECTOR_SORT_ORDER);
+        return store.getString(MEK_SELECTOR_SORT_ORDER);
     }
 
     public String getMekSelectorDefaultSortOrder() {
-        return store.getDefaultString(MECH_SELECTOR_SORT_ORDER);
+        return store.getDefaultString(MEK_SELECTOR_SORT_ORDER);
     }
 
     public int getMekSelectorSizeHeight() {
-        return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
+        return store.getInt(MEK_SELECTOR_SIZE_HEIGHT);
     }
 
     public int getMekSelectorSizeWidth() {
-        return store.getInt(MECH_SELECTOR_SIZE_WIDTH);
+        return store.getInt(MEK_SELECTOR_SIZE_WIDTH);
     }
 
     public int getMekSelectorPosX() {
-        return store.getInt(MECH_SELECTOR_POS_X);
+        return store.getInt(MEK_SELECTOR_POS_X);
     }
 
     public int getMekSelectorPosY() {
-        return store.getInt(MECH_SELECTOR_POS_Y);
+        return store.getInt(MEK_SELECTOR_POS_Y);
     }
 
     public int getMekSelectorSplitPos() {
-        return store.getInt(MECH_SELECTOR_SPLIT_POS);
+        return store.getInt(MEK_SELECTOR_SPLIT_POS);
     }
 
     public int getRndArmySizeHeight() {
@@ -1526,11 +1529,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public boolean getMekInFirst() {
-        return store.getBoolean(LOS_MECH_IN_FIRST);
+        return store.getBoolean(LOS_MEK_IN_FIRST);
     }
 
     public boolean getMekInSecond() {
-        return store.getBoolean(LOS_MECH_IN_SECOND);
+        return store.getBoolean(LOS_MEK_IN_SECOND);
     }
 
     public boolean getShowMapsheets() {
@@ -1621,8 +1624,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
 
-
-
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
     }
@@ -1635,7 +1636,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(AOHEXSHADOWS, state);
     }
 
-    public void setHighQualityGraphics(boolean state) { store.setValue(HIGH_QUALITY_GRAPHICS, state); }
+    public void setHighQualityGraphics(boolean state) {
+        store.setValue(HIGH_QUALITY_GRAPHICS, state);
+    }
 
     public void setFloatingIso(boolean state) {
         store.setValue(FLOATINGISO, state);
@@ -1720,6 +1723,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setUnitDisplayNontabbedPosY(int i) {
         store.setValue(UNIT_DISPLAY_NONTABBED_POS_Y, i);
     }
+
     public void setUnitDisplayStartTabbed(boolean state) {
         store.setValue(UNIT_DISPLAY_START_TABBED, state);
     }
@@ -1781,7 +1785,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void toggleUnitDisplayLocation() {
-        store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION)+1)%2));
+        store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION) + 1) % 2));
     }
 
     public void setUnitDisplayLocation(int i) {
@@ -1841,23 +1845,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setUnitDisplayMekArmorLargeFontSize(int i) {
-        store.setValue(UNIT_DISPLAY_MECH_ARMOR_LARGE_FONT_SIZE, i);
+        store.setValue(UNIT_DISPLAY_MEK_ARMOR_LARGE_FONT_SIZE, i);
     }
 
     public void setUnitDisplayMekArmorMediumFontSize(int i) {
-        store.setValue(UNIT_DISPLAY_MECH_ARMOR_MEDIUM_FONT_SIZE, i);
+        store.setValue(UNIT_DISPLAY_MEK_ARMOR_MEDIUM_FONT_SIZE, i);
     }
 
     public void setUnitDisplayMekArmorSmallFontSize(int i) {
-        store.setValue(UNIT_DISPLAY_MECH_ARMOR_SMALL_FONT_SIZE, i);
+        store.setValue(UNIT_DISPLAY_MEK_ARMOR_SMALL_FONT_SIZE, i);
     }
 
     public void setUnitDisplayMekLargeFontSize(int i) {
-        store.setValue(UNIT_DISPLAY_MECH_LARGE_FONT_SIZE, i);
+        store.setValue(UNIT_DISPLAY_MEK_LARGE_FONT_SIZE, i);
     }
 
     public void setUnitDisplayMekMediumFontSize(int i) {
-        store.setValue(UNIT_DISPLAY_MECH_MEDIUM_FONT_SIZE, i);
+        store.setValue(UNIT_DISPLAY_MEK_MEDIUM_FONT_SIZE, i);
     }
 
     public void setUnitTooltipArmorminiColorIntact(Color c) {
@@ -1865,7 +1869,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setUnitTooltipArmorminiColorPartialDamage(Color c) {
-        store.setValue(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, getColorString(c));;
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, getColorString(c));
+        ;
     }
 
     public void setUnitTooltipArmorminiColorDamaged(Color c) {
@@ -1957,75 +1962,75 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMekSelectorIncludeModel(boolean includeModel) {
-        store.setValue(MECH_SELECTOR_INCLUDE_MODEL, includeModel);
+        store.setValue(MEK_SELECTOR_INCLUDE_MODEL, includeModel);
     }
 
     public void setMekSelectorIncludeName(boolean includeName) {
-        store.setValue(MECH_SELECTOR_INCLUDE_NAME, includeName);
+        store.setValue(MEK_SELECTOR_INCLUDE_NAME, includeName);
     }
 
     public void setMekSelectorIncludeTons(boolean includeTons) {
-        store.setValue(MECH_SELECTOR_INCLUDE_TONS, includeTons);
+        store.setValue(MEK_SELECTOR_INCLUDE_TONS, includeTons);
     }
 
     public void setMekSelectorIncludeBV(boolean includeBV) {
-        store.setValue(MECH_SELECTOR_INCLUDE_BV, includeBV);
+        store.setValue(MEK_SELECTOR_INCLUDE_BV, includeBV);
     }
 
     public void setMekSelectorIncludeYear(boolean includeYear) {
-        store.setValue(MECH_SELECTOR_INCLUDE_YEAR, includeYear);
+        store.setValue(MEK_SELECTOR_INCLUDE_YEAR, includeYear);
     }
 
     public void setMekSelectorIncludeLevel(boolean includeLevel) {
-        store.setValue(MECH_SELECTOR_INCLUDE_LEVEL, includeLevel);
+        store.setValue(MEK_SELECTOR_INCLUDE_LEVEL, includeLevel);
     }
 
     public void setMekSelectorIncludeCost(boolean includeCost) {
-        store.setValue(MECH_SELECTOR_INCLUDE_COST, includeCost);
+        store.setValue(MEK_SELECTOR_INCLUDE_COST, includeCost);
     }
 
     public void setMekSelectorShowAdvanced(boolean showAdvanced) {
-        store.setValue(MECH_SELECTOR_SHOW_ADVANCED, showAdvanced);
+        store.setValue(MEK_SELECTOR_SHOW_ADVANCED, showAdvanced);
     }
 
     public void setMekSelectorUnitType(int unitType) {
-        store.setValue(MECH_SELECTOR_UNIT_TYPE, unitType);
+        store.setValue(MEK_SELECTOR_UNIT_TYPE, unitType);
     }
 
     public void setMekSelectorWeightClass(int weightClass) {
-        store.setValue(MECH_SELECTOR_WEIGHT_CLASS, weightClass);
+        store.setValue(MEK_SELECTOR_WEIGHT_CLASS, weightClass);
     }
 
     public void setMekSelectorRulesLevels(String rulesLevels) {
-        store.setValue(MECH_SELECTOR_RULES_LEVELS, rulesLevels);
+        store.setValue(MEK_SELECTOR_RULES_LEVELS, rulesLevels);
     }
 
     public void setMekSelectorSortColumn(int columnId) {
-        store.setValue(MECH_SELECTOR_SORT_COLUMN, columnId);
+        store.setValue(MEK_SELECTOR_SORT_COLUMN, columnId);
     }
 
     public void setMekSelectorSortOrder(String order) {
-        store.setValue(MECH_SELECTOR_SORT_ORDER, order);
+        store.setValue(MEK_SELECTOR_SORT_ORDER, order);
     }
 
     public void setMekSelectorSizeHeight(int i) {
-        store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
+        store.setValue(MEK_SELECTOR_SIZE_HEIGHT, i);
     }
 
     public void setMekSelectorSizeWidth(int i) {
-        store.setValue(MECH_SELECTOR_SIZE_WIDTH, i);
+        store.setValue(MEK_SELECTOR_SIZE_WIDTH, i);
     }
 
     public void setMekSelectorPosX(int i) {
-        store.setValue(MECH_SELECTOR_POS_X, i);
+        store.setValue(MEK_SELECTOR_POS_X, i);
     }
 
     public void setMekSelectorSplitPos(int i) {
-        store.setValue(MECH_SELECTOR_SPLIT_POS, i);
+        store.setValue(MEK_SELECTOR_SPLIT_POS, i);
     }
 
     public void setMekSelectorPosY(int i) {
-        store.setValue(MECH_SELECTOR_POS_Y, i);
+        store.setValue(MEK_SELECTOR_POS_Y, i);
     }
 
     public void setRndArmySizeHeight(int i) {
@@ -2117,7 +2122,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void toggleMiniReportLocation() {
-        store.setValue(MINI_REPORT_LOCATION, ((getInt(MINI_REPORT_LOCATION)+1)%2));
+        store.setValue(MINI_REPORT_LOCATION, ((getInt(MINI_REPORT_LOCATION) + 1) % 2));
     }
 
     public void setMiniReportLocation(int i) {
@@ -2349,11 +2354,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMekInFirst(boolean b) {
-        store.setValue(LOS_MECH_IN_FIRST, b);
+        store.setValue(LOS_MEK_IN_FIRST, b);
     }
 
     public void setMekInSecond(boolean b) {
-        store.setValue(LOS_MECH_IN_SECOND, b);
+        store.setValue(LOS_MEK_IN_SECOND, b);
     }
 
     public void setShowMapsheets(boolean b) {
@@ -2437,11 +2442,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public String getRATNumMeks() {
-        return store.getString(RAT_NUM_MECHS);
+        return store.getString(RAT_NUM_MEKS);
     }
 
     public void setRATNumMeks(String v) {
-        store.setValue(RAT_NUM_MECHS, v);
+        store.setValue(RAT_NUM_MEKS, v);
     }
 
     public String getRATNumVees() {
@@ -2504,7 +2509,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARDEDIT_RNDDIALOG_START, b);
     }
 
-    //region Colours
+    // region Colours
     public Color getMyUnitColor() {
         return getColor(MY_UNIT_COLOR);
     }
@@ -2817,34 +2822,37 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_TRANSLUCENT_HIDDEN_UNITS, b);
     }
 
-    public void setShowArtilleryMisses(boolean b){
+    public void setShowArtilleryMisses(boolean b) {
         store.setValue(SHOW_ARTILLERY_MISSES, b);
     }
-    public boolean getShowArtilleryMisses(){
+
+    public boolean getShowArtilleryMisses() {
         return getBoolean(SHOW_ARTILLERY_MISSES);
     }
 
     public void setShowArtilleryDrifts(boolean b) {
         store.setValue(SHOW_ARTILLERY_DRIFTS, b);
     }
-    public boolean getShowArtilleryDrifts(){
+
+    public boolean getShowArtilleryDrifts() {
         return getBoolean(SHOW_ARTILLERY_DRIFTS);
     }
 
     public void setShowBombMisses(boolean b) {
         store.setValue(SHOW_BOMB_MISSES, b);
     }
-    public boolean getShowBombMisses(){
+
+    public boolean getShowBombMisses() {
         return getBoolean(SHOW_BOMB_MISSES);
     }
 
     public void setShowBombDrifts(boolean b) {
         store.setValue(SHOW_BOMB_DRIFTS, b);
     }
-    public boolean getShowBombDrifts(){
+
+    public boolean getShowBombDrifts() {
         return getBoolean(SHOW_BOMB_DRIFTS);
     }
-
 
     public int getTMMPipMode() {
         return getInt(BOARD_TMM_PIP_MODE);
@@ -2929,9 +2937,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getUnitToolTipArmorMiniFontSizeMod() {
         return getInt(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD);
     }
+
     public Color getUnitToolTipFGColor() {
         return getColor(UNIT_TOOLTIP_FGCOLOR);
     }
+
     public Color getToolTipLightFGColor() {
         return getColor(UNIT_TOOLTIP_LIGHT_FGCOLOR);
     }
@@ -3143,6 +3153,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setUnitToolTipFGColor(Color c) {
         store.setValue(UNIT_TOOLTIP_FGCOLOR, getColorString(c));
     }
+
     public void setUnitTooltipLightFGColor(Color c) {
         store.setValue(UNIT_TOOLTIP_LIGHT_FGCOLOR, getColorString(c));
     }
@@ -3266,7 +3277,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     /**
      * @return The color associated with a movement type
      */
-    public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger, boolean isBackwards) {
+    public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger,
+            boolean isBackwards) {
         if (movementType != EntityMovementType.MOVE_ILLEGAL) {
             if (isMASCOrSuperCharger) {
                 return getColor(BOARD_MOVE_MASC_COLOR);
@@ -3297,13 +3309,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         } else if (heat <= getUnitDisplayHeatValue3()) {
             return getColor(UNIT_DISPLAY_HEAT_COLOR_3);
         } else if (heat <= getUnitDisplayHeatValue4()) {
-            return  getColor(UNIT_DISPLAY_HEAT_COLOR_4);
+            return getColor(UNIT_DISPLAY_HEAT_COLOR_4);
         } else if (heat <= getUnitDisplayHeatValue5()) {
-            return  getColor(UNIT_DISPLAY_HEAT_COLOR_5);
+            return getColor(UNIT_DISPLAY_HEAT_COLOR_5);
         } else if (heat <= getUnitDisplayHeatValue6()) {
-            return  getColor(UNIT_DISPLAY_HEAT_COLOR_6);
+            return getColor(UNIT_DISPLAY_HEAT_COLOR_6);
         }
-        return  getColor(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT);
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT);
     }
 
     public void setUnitLabelStyle(LabelDisplayStyle style) {
@@ -3339,9 +3351,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
         return Color.BLUE;
     }
-    //endregion Colours
+    // endregion Colours
 
-    /** @return True when the MM suite supports the given laf, currently all formdev "Flat ..." and the system default. */
+    /**
+     * @return True when the MM suite supports the given laf, currently all formdev
+     *         "Flat ..." and the system default.
+     */
     public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
         return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev");
     }

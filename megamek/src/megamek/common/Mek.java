@@ -84,7 +84,7 @@ public abstract class Mek extends Entity {
 
     public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
+            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
 
     // locations
     public static final int LOC_HEAD = 0;
@@ -194,23 +194,24 @@ public abstract class Mek extends Entity {
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
     /**
-     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
+     * Contains a mapping of locations which are blocked when carrying cargo in the
+     * "key" location
      */
     public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
 
     static {
-    	BLOCKED_FIRING_LOCATIONS = new HashMap<>();
-    	BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LT);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_CT);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_RT);
+        BLOCKED_FIRING_LOCATIONS = new HashMap<>();
+        BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LT);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_CT);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_RT);
 
-    	BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_LT);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_CT);
-    	BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RT);
+        BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_LT);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_CT);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RT);
     }
 
     // jump types
@@ -265,7 +266,8 @@ public abstract class Mek extends Entity {
     protected int cockpitType = COCKPIT_STANDARD;
 
     /**
-     * Head armor provided by the Cowl quirk. Ignored when the unit doesn't have Cowl or quirks aren't used.
+     * Head armor provided by the Cowl quirk. Ignored when the unit doesn't have
+     * Cowl or quirks aren't used.
      */
     private int cowlArmor = 3;
 
@@ -294,9 +296,10 @@ public abstract class Mek extends Entity {
 
     private boolean fullHeadEject = false;
 
-    protected static int[] EMERGENCY_COOLANT_SYSTEM_FAILURE = {3, 5, 7, 10, 13, 13, 13};
+    protected static int[] EMERGENCY_COOLANT_SYSTEM_FAILURE = { 3, 5, 7, 10, 13, 13, 13 };
 
-    // nCoolantSystemLevel is the # of turns RISC emergency coolant system has been used previously
+    // nCoolantSystemLevel is the # of turns RISC emergency coolant system has been
+    // used previously
     protected int nCoolantSystemLevel = 0;
 
     protected boolean bCoolantWentUp = false;
@@ -401,15 +404,18 @@ public abstract class Mek extends Entity {
     public abstract boolean cannotStandUpFromHullDown();
 
     /**
-     * @return True if this Mek has the Cowl quirk and quirks are used in the present game.
+     * @return True if this Mek has the Cowl quirk and quirks are used in the
+     *         present game.
      */
     public boolean hasCowl() {
         return hasQuirk(OptionsConstants.QUIRK_POS_COWL);
     }
 
     /**
-     * Damages the remaining cowl armor, if any, by the given amount. Returns the amount of excess damage
-     * that is left after deducting cowl armor. This method tests if the unit has Cowl and quirks are
+     * Damages the remaining cowl armor, if any, by the given amount. Returns the
+     * amount of excess damage
+     * that is left after deducting cowl armor. This method tests if the unit has
+     * Cowl and quirks are
      * being used.
      *
      * @param amount The incoming damage
@@ -526,7 +532,8 @@ public abstract class Mek extends Entity {
         // otherwise clamp mounts
         // but first clear out whatever we have
         // Removed the removal of transporters so that loaded units don't get ditched
-        // This is an unofficial rule and it doesn't work well anyway as changing the option
+        // This is an unofficial rule and it doesn't work well anyway as changing the
+        // option
         // does not affect units that are in the game
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             addTransporter(new BattleArmorHandles());
@@ -538,7 +545,7 @@ public abstract class Mek extends Entity {
     public void setProtoMekClampMounts() {
         boolean front = false;
         boolean rear = false;
-        for (Transporter t: getTransports()) {
+        for (Transporter t : getTransports()) {
             if (t instanceof ProtoMekClampMount) {
                 front |= !((ProtoMekClampMount) t).isRear();
                 rear |= ((ProtoMekClampMount) t).isRear();
@@ -617,7 +624,6 @@ public abstract class Mek extends Entity {
 
         // Clear the coolant system flag
         bUsedCoolantSystem = false;
-
 
         setSecondaryFacing(getFacing());
 
@@ -703,7 +709,7 @@ public abstract class Mek extends Entity {
      * This function returns true iff the system is in perfect condition.
      *
      * @param system
-     *            the system to check
+     *               the system to check
      * @return false if the system is damaged.
      */
     public boolean isSystemIntact(int system) {
@@ -819,6 +825,7 @@ public abstract class Mek extends Entity {
 
     /**
      * Check for whether the Mek has triple strength myomer
+     * 
      * @param includePrototype Whether to include prototype TSM in the check.
      *                         Prototype TSM does not have a movement bonus or
      *                         a required heat level.
@@ -915,7 +922,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does this Mek have tracks? Used for tracks as industrial equipment; QuadVees return false.
+     * Does this Mek have tracks? Used for tracks as industrial equipment; QuadVees
+     * return false.
      *
      * @return
      */
@@ -960,7 +968,7 @@ public abstract class Mek extends Entity {
      * set this Mek's <code>Engine</code>
      *
      * @param e
-     *            the <code>Engine</code> to set
+     *          the <code>Engine</code> to set
      */
     @Override
     public void setEngine(Engine e) {
@@ -999,7 +1007,7 @@ public abstract class Mek extends Entity {
      */
     @Override
     public int getWalkHeat() {
-        int extra = bDamagedCoolantSystem?1:0;
+        int extra = bDamagedCoolantSystem ? 1 : 0;
         return extra + (hasEngine() ? getEngine().getWalkHeat(this) : 0);
     }
 
@@ -1027,14 +1035,14 @@ public abstract class Mek extends Entity {
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
         if (!mpBoosters.isNone()) {
-            String str = getRunMPwithoutMASC() + "(" + getRunMP()+")";
+            String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                    + (armed.hasMASC() ? "(" + getMASCTarget()+ "+)" : "(NA)") : "")
-                    + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                    + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+                        + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                        + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
+                                + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
             }
             return str;
         }
@@ -1046,7 +1054,7 @@ public abstract class Mek extends Entity {
      */
     @Override
     public int getRunHeat() {
-        int extra = bDamagedCoolantSystem?1:0;
+        int extra = bDamagedCoolantSystem ? 1 : 0;
         return extra + (hasEngine() ? getEngine().getRunHeat(this) : 0);
     }
 
@@ -1145,7 +1153,7 @@ public abstract class Mek extends Entity {
         return Math.max(mp, 0);
     }
 
-    public int getPartialWingJumpWeightClassBonus()  {
+    public int getPartialWingJumpWeightClassBonus() {
         return (getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) ? 2 : 1;
     }
 
@@ -1153,7 +1161,7 @@ public abstract class Mek extends Entity {
         return getPartialWingJumpAtmoBonus(MPCalculationSetting.STANDARD);
     }
 
-    public int getPartialWingJumpAtmoBonus(MPCalculationSetting mpCalculationSetting)  {
+    public int getPartialWingJumpAtmoBonus(MPCalculationSetting mpCalculationSetting) {
         int bonus;
 
         if (!mpCalculationSetting.ignoreWeather && (game != null)) {
@@ -1202,7 +1210,7 @@ public abstract class Mek extends Entity {
      * Gives the bonus to Jump MP conferred by a Mek partial wing.
      *
      * @param mount
-     *            The mounted location of the Wing
+     *              The mounted location of the Wing
      * @return The Jump MP bonus conferred by the wing
      */
     public int getPartialWingJumpBonus(Mounted<?> mount, MPCalculationSetting mpCalculationSetting) {
@@ -1283,7 +1291,7 @@ public abstract class Mek extends Entity {
     @Override
     public int getJumpHeat(int movedMP) {
 
-        int extra = bDamagedCoolantSystem?1:0;
+        int extra = bDamagedCoolantSystem ? 1 : 0;
 
         // don't count movement granted by Partial Wing
         for (Mounted<?> mount : getMisc()) {
@@ -1352,12 +1360,15 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on their mode,
-     * and Meks using tracks for movement do not have to make PSRs for damage to gyro or leg
+     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on
+     * their mode,
+     * and Meks using tracks for movement do not have to make PSRs for damage to
+     * gyro or leg
      * actuators.
      *
-     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg actuators
-     * @return              true if the Mek can fall due to failed PSR.
+     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg
+     *                      actuators
+     * @return true if the Mek can fall due to failed PSR.
      */
     @Override
     public boolean canFall(boolean gyroLegDamage) {
@@ -1403,10 +1414,10 @@ public abstract class Mek extends Entity {
      * much are engine HS.
      *
      * @param totalSinks
-     *            the amount of heatsinks to add to the engine
+     *                   the amount of heatsinks to add to the engine
      * @param sinkName
-     *            the <code>String</code> determining the type of heatsink to
-     *            add. must be a lookupname of a heatsinktype
+     *                   the <code>String</code> determining the type of heatsink to
+     *                   add. must be a lookupname of a heatsinktype
      */
     public void addEngineSinks(int totalSinks, String sinkName) {
         if (!hasEngine()) {
@@ -1429,10 +1440,10 @@ public abstract class Mek extends Entity {
      * add heat sinks into the engine
      *
      * @param sinkName
-     *            the <code>String</code> determining the type of heatsink to
-     *            add. must be a lookupname of a heatsinktype
+     *                   the <code>String</code> determining the type of heatsink to
+     *                   add. must be a lookupname of a heatsinktype
      * @param toAllocate
-     *            Number of hs to add to the Engine.
+     *                   Number of hs to add to the Engine.
      */
     public void addEngineSinks(String sinkName, int toAllocate) {
         // this relies on these being the correct internalNames for these items
@@ -1497,7 +1508,7 @@ public abstract class Mek extends Entity {
      * Returns the number of heat sinks, functional or not.
      *
      * @param countPrototypes
-     *            Set TRUE to include Prototype Heat Sinks in the total.
+     *                        Set TRUE to include Prototype Heat Sinks in the total.
      */
     public int heatSinks(boolean countPrototypes) {
         int sinks = 0;
@@ -1553,7 +1564,8 @@ public abstract class Mek extends Entity {
             }
         }
 
-        // if a Mek has no heat sink equipment, we pretend like it has standard heat sinks.
+        // if a Mek has no heat sink equipment, we pretend like it has standard heat
+        // sinks.
         return "Heat Sink";
     }
 
@@ -1598,7 +1610,7 @@ public abstract class Mek extends Entity {
                     ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
                             getEquipmentNum(mounted), Mek.LOC_RT) > 0)
                             || (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                            getEquipmentNum(mounted), Mek.LOC_LT) > 0))) {
+                                    getEquipmentNum(mounted), Mek.LOC_LT) > 0))) {
                 capacity += getPartialWingHeatBonus();
                 includePartialWing = false; // Only count the partial wing bonus
                                             // once.
@@ -1697,7 +1709,7 @@ public abstract class Mek extends Entity {
                 return "Jumped";
             case MOVE_SPRINT:
                 return "Sprinted";
-            //LAM AirMek modes
+            // LAM AirMek modes
             case MOVE_VTOL_WALK:
                 return "Cruised";
             case MOVE_VTOL_RUN:
@@ -1725,7 +1737,7 @@ public abstract class Mek extends Entity {
                 return "J";
             case MOVE_SPRINT:
                 return "Sp";
-            //LAM AirMek modes
+            // LAM AirMek modes
             case MOVE_VTOL_WALK:
                 return "C";
             case MOVE_VTOL_RUN:
@@ -1968,7 +1980,7 @@ public abstract class Mek extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int roll = -1;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
@@ -2590,15 +2602,15 @@ public abstract class Mek extends Entity {
      * Sets the internal structure for the Mek.
      *
      * @param head
-     *            head
+     *             head
      * @param ct
-     *            center torso
+     *             center torso
      * @param t
-     *            right/left torso
+     *             right/left torso
      * @param arm
-     *            right/left arm
+     *             right/left arm
      * @param leg
-     *            right/left leg
+     *             right/left leg
      */
     public abstract void setInternal(int head, int ct, int t, int arm, int leg);
 
@@ -2610,7 +2622,7 @@ public abstract class Mek extends Entity {
     public void autoSetInternal() {
         // stupid irregular table... grr.
         switch ((int) weight) {
-        // H, CT, TSO, ARM, LEG
+            // H, CT, TSO, ARM, LEG
             case 10:
                 setInternal(3, 4, 3, 1, 2);
                 break;
@@ -2758,9 +2770,11 @@ public abstract class Mek extends Entity {
 
     /**
      * Adds equipment without adding slots for it.
-     * Specifically for targeting computers, which when loaded from a file don't have a correct size and get loaded slot by slot
+     * Specifically for targeting computers, which when loaded from a file don't
+     * have a correct size and get loaded slot by slot
      */
-    public MiscMounted addTargCompWithoutSlots(MiscType etype, int loc, boolean omniPod, boolean armored) throws LocationFullException {
+    public MiscMounted addTargCompWithoutSlots(MiscType etype, int loc, boolean omniPod, boolean armored)
+            throws LocationFullException {
         MiscMounted mounted = (MiscMounted) MiscMounted.createMounted(this, etype);
         mounted.setOmniPodMounted(omniPod);
         mounted.setArmored(armored);
@@ -2769,7 +2783,7 @@ public abstract class Mek extends Entity {
     }
 
     public Mounted<?> addEquipment(EquipmentType etype, EquipmentType etype2,
-            int loc,  boolean omniPod, boolean armored) throws LocationFullException {
+            int loc, boolean omniPod, boolean armored) throws LocationFullException {
         Mounted<?> mounted = Mounted.createMounted(this, etype);
         Mounted<?> mounted2 = Mounted.createMounted(this, etype2);
         mounted.setOmniPodMounted(omniPod);
@@ -2833,7 +2847,7 @@ public abstract class Mek extends Entity {
                         || (mounted.getType() instanceof ACWeapon)
                         || (mounted.getType() instanceof UACWeapon)
                         || (mounted.getType() instanceof LBXACWeapon) || (mounted
-                            .getType() instanceof PPCWeapon))) {
+                                .getType() instanceof PPCWeapon))) {
             if (hasSystem(Mek.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }
@@ -2886,8 +2900,9 @@ public abstract class Mek extends Entity {
         }
     }
 
-    //From IO pg 50
-    public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial, int weightClass) {
+    // From IO pg 50
+    public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial,
+            int weightClass) {
         if ((etype & ETYPE_TRIPOD_MEK) != 0) {
             if (weightClass != EntityWeightClass.WEIGHT_SUPER_HEAVY) {
                 return new TechAdvancement(TECH_BASE_IS)
@@ -2915,9 +2930,9 @@ public abstract class Mek extends Entity {
                     .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial && (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass)) {
-            // Superheavy industrialmechs don't have a separate entry on the tech advancement
+            // Superheavy industrialmeks don't have a separate entry on the tech advancement
             // table in IO, but the dates for the superheavy tripod are based on the
-            // three-man digging machine, which is an industrialmech.
+            // three-man digging machine, which is an industrialmek.
             return new TechAdvancement(TECH_BASE_IS)
                     .setAdvancement(2930, 2940).setPrototypeFactions(F_FW)
                     .setProductionFactions(F_FW).setTechRating(RATING_D)
@@ -2958,139 +2973,140 @@ public abstract class Mek extends Entity {
 
     private static final TechAdvancement[] GYRO_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
-                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setStaticTechLevel(SimpleTechLevel.INTRO), //Standard
+                    .setApproximate(true, false, false).setPrototypeFactions(F_TA)
+                    .setProductionFactions(F_TH).setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.INTRO), // Standard
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
-                .setISApproximate(true, false, false).setPrototypeFactions(F_CS)
-                .setProductionFactions(F_CS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //XL
+                    .setISApproximate(true, false, false).setPrototypeFactions(F_CS)
+                    .setProductionFactions(F_CS).setTechRating(RATING_E)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // XL
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3068, 3072)
-                .setISApproximate(true, false, false).setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Compact
+                    .setISApproximate(true, false, false).setPrototypeFactions(F_FS, F_LC)
+                    .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Compact
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
-                .setISApproximate(true, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Heavy duty
+                    .setISApproximate(true, false, false).setPrototypeFactions(F_DC)
+                    .setProductionFactions(F_DC).setTechRating(RATING_E)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Heavy duty
             new TechAdvancement(TECH_BASE_IS).setAdvancement(DATE_NONE)
-                .setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //None (placeholder)
+                    .setTechRating(RATING_A)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // None (placeholder)
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
-                .setISApproximate(true, false).setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
+                    .setISApproximate(true, false).setPrototypeFactions(F_FW)
+                    .setProductionFactions(F_FW).setTechRating(RATING_D)
+                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
     };
 
     private static final TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
-                .setApproximate(true, false, false).setTechRating(RATING_D)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setStaticTechLevel(SimpleTechLevel.INTRO), //Standard
+                    .setApproximate(true, false, false).setTechRating(RATING_D)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.INTRO), // Standard
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
-                .setISApproximate(true, false, false)
-                .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
-                .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small
+                    .setISApproximate(true, false, false)
+                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Small
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
-                .setISApproximate(true, false, false, true, true)
-                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Cockpit command console
+                    .setISApproximate(true, false, false, true, true)
+                    .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setReintroductionFactions(F_FS).setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Cockpit command console
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
-                .setClanAdvancement(3055, 3080, 3100)
-                .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
-                .setApproximate(false, true, false).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Torso mounted
-            //FIXME: Dual is unofficial; these are stats for standard
+                    .setClanAdvancement(3055, 3080, 3100)
+                    .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
+                    .setApproximate(false, true, false).setTechRating(RATING_D)
+                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Torso mounted
+            // FIXME: Dual is unofficial; these are stats for standard
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
-                .setApproximate(true, false, false).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), //Dual
+                    .setApproximate(true, false, false).setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), // Dual
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2490)
-                .setApproximate(true, false, false).setTechRating(RATING_C)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Industrial
+                    .setApproximate(true, false, false).setTechRating(RATING_C)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Industrial
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2430, 2439)
-                .setApproximate(true, false).setTechRating(RATING_D)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Primitive
+                    .setApproximate(true, false).setTechRating(RATING_D)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
-                .setApproximate(true, false, false).setTechRating(RATING_C)
-                .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
-                .setAvailability(RATING_C, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Primitive industrial
+                    .setApproximate(true, false, false).setTechRating(RATING_C)
+                    .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
+                    .setAvailability(RATING_C, RATING_X, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive industrial
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
-                .setISApproximate(true, false).setTechRating(RATING_E)
-                .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
-                .setISApproximate(true, false).setTechRating(RATING_E)
-                .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
-                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy tripod
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
-                .setISApproximate(true, false).setTechRating(RATING_F)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Tripod
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3074).setClanAdvancement(3083)
-                .setApproximate(true).setTechRating(RATING_E)
-                .setPrototypeFactions(F_WB, F_CHH)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Cockpit interface
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
-                .setPrototypeFactions(F_FS, F_LC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //VRRP
-            new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3130, 3135)
-                .setClanApproximate(true, false).setTechRating(RATING_F)
-                .setPrototypeFactions(F_CHH).setProductionFactions(F_CHH)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //QuadVee
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
-                .setISApproximate(true, false).setTechRating(RATING_D)
-                .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
-                .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
-                .setISApproximate(true, false).setTechRating(RATING_E)
-                .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy command console
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
-                .setISApproximate(true, false, false)
-                .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
-                .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Small Command Console
+                    .setISApproximate(true, false).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
+                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
                     .setISApproximate(true, false).setTechRating(RATING_E)
                     .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
                     .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy tripod
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
                     .setISApproximate(true, false).setTechRating(RATING_F)
                     .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
                     .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Tripod
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3074).setClanAdvancement(3083)
+                    .setApproximate(true).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_WB, F_CHH)
+                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Cockpit interface
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
+                    .setPrototypeFactions(F_FS, F_LC).setTechRating(RATING_E)
+                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // VRRP
+            new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3130, 3135)
+                    .setClanApproximate(true, false).setTechRating(RATING_F)
+                    .setPrototypeFactions(F_CHH).setProductionFactions(F_CHH)
+                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // QuadVee
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
+                    .setISApproximate(true, false).setTechRating(RATING_D)
+                    .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
+                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy industrial
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
+                    .setISApproximate(true, false).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
+                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy command console
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
+                    .setISApproximate(true, false, false)
+                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Small Command Console
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
+                    .setISApproximate(true, false).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
+                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
+                    .setISApproximate(true, false).setTechRating(RATING_F)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
     };
 
-    // Advanced fire control for industrial Meks is implemented with a standard cockpit,
+    // Advanced fire control for industrial Meks is implemented with a standard
+    // cockpit,
     // but the tech progression is different.
     public static TechAdvancement getIndustrialAdvFireConTA() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2491)
@@ -3124,7 +3140,7 @@ public abstract class Mek extends Entity {
 
     public static TechAdvancement getFullHeadEjectAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL)
-                .setISAdvancement(DATE_NONE, 3020, 3023,DATE_NONE, DATE_NONE)
+                .setISAdvancement(DATE_NONE, 3020, 3023, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC)
                 .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
@@ -3151,18 +3167,19 @@ public abstract class Mek extends Entity {
         if (hasFullHeadEject()) {
             ctl.addComponent(getFullHeadEjectAdvancement());
         }
-        //FIXME: Clan interface cockpit has higher tech rating
-        //if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
-        //    techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
-        //}
+        // FIXME: Clan interface cockpit has higher tech rating
+        // if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
+        // techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(),
+        // RATING_F));
+        // }
     }
 
     /**
      * This method will return the number of contiguous criticals in the given
      * location, starting at the given critical slot
      *
-     * @param loc           The location on the unit to check slots on
-     * @param startingSlot  The critical slot to start at
+     * @param loc          The location on the unit to check slots on
+     * @param startingSlot The critical slot to start at
      * @return
      */
     private int getContiguousNumberOfCrits(int loc, int startingSlot) {
@@ -3174,7 +3191,7 @@ public abstract class Mek extends Entity {
             if (getCritical(loc, slot) == null) {
                 contiguousCrits++;
             } else {
-               break;
+                break;
             }
         }
         return contiguousCrits;
@@ -3290,7 +3307,7 @@ public abstract class Mek extends Entity {
         // Small/torso-mounted cockpit penalty?
         if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
                 && (!hasAbility(OptionsConstants.MD_BVDNI)
-                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
+                        && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
@@ -3306,7 +3323,8 @@ public abstract class Mek extends Entity {
                         "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         } else if (getCockpitType() == Mek.COCKPIT_DUAL) {
-            //Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner acting as pilot.
+            // Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner
+            // acting as pilot.
             if (getCrew().getCurrentPilotIndex() != getCrew().getCrewType().getPilotPos()) {
                 roll.addModifier(1, "dual cockpit without active pilot");
             } else if (getCrew().hasDedicatedGunner() || !isAttackingThisTurn()) {
@@ -3484,7 +3502,8 @@ public abstract class Mek extends Entity {
      */
     @Override
     public boolean isChameleonShieldActive() {
-        // TO pg 300 states that generates heat but doesn't operate if the unit has mounted BA
+        // TO pg 300 states that generates heat but doesn't operate if the unit has
+        // mounted BA
         if (!getLoadedUnits().isEmpty()) {
             return false;
         }
@@ -3502,8 +3521,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does the Mek Chameleon Light Polarization Field turned on?  This is used
-     * for heat generation purposes.  A CLPS can be on and generating heat but
+     * Does the Mek Chameleon Light Polarization Field turned on? This is used
+     * for heat generation purposes. A CLPS can be on and generating heat but
      * not providing any benefit if the unit has mechanized BattleArmor.
      */
     @Override
@@ -3529,10 +3548,10 @@ public abstract class Mek extends Entity {
      * Sub-classes are encouraged to override this method.
      *
      * @param range
-     *            - an <code>int</code> value that must match one of the
-     *            <code>Compute</code> class range constants.
+     *              - an <code>int</code> value that must match one of the
+     *              <code>Compute</code> class range constants.
      * @param ae
-     *            - entity making the attack
+     *              - entity making the attack
      * @return a <code>TargetRoll</code> value that contains the stealth
      *         modifier for the given range.
      */
@@ -3638,7 +3657,8 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean canCharge() {
-        // Meks can charge, unless they are Clan and the "no clan physicals" option is set
+        // Meks can charge, unless they are Clan and the "no clan physicals" option is
+        // set
         return super.canCharge()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
                         && getCrew().isClanPilot());
@@ -3757,7 +3777,7 @@ public abstract class Mek extends Entity {
 
     /**
      * @param autoEject
-     *            The autoEject to set.
+     *                  The autoEject to set.
      */
     public void setAutoEject(boolean autoEject) {
         this.autoEject = autoEject;
@@ -3825,8 +3845,8 @@ public abstract class Mek extends Entity {
         // if hitting front arc, need to swap them
 
         // Handle upper cover specially, as treating it as a bitmask will lead
-        //  to every location being covered
-        if (cover  == LosEffects.COVER_UPPER) {
+        // to every location being covered
+        if (cover == LosEffects.COVER_UPPER) {
             return (location != Mek.LOC_LLEG) && (location != Mek.LOC_RLEG);
         }
 
@@ -3844,7 +3864,8 @@ public abstract class Mek extends Entity {
                             || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
-            return ((cover & LosEffects.COVER_LEFT) != 0) && ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG));
+            return ((cover & LosEffects.COVER_LEFT) != 0)
+                    && ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG));
         } else {
             if (((cover & LosEffects.COVER_LOWLEFT) != 0)
                     && (location == Mek.LOC_LLEG)) {
@@ -3859,7 +3880,8 @@ public abstract class Mek extends Entity {
                             || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
-            return ((cover & LosEffects.COVER_RIGHT) != 0) && ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG));
+            return ((cover & LosEffects.COVER_RIGHT) != 0)
+                    && ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG));
         }
     }
 
@@ -4176,20 +4198,22 @@ public abstract class Mek extends Entity {
                 return true;
             }
         }
-        // Meks using tracks and QuadVees in vehicle mode (or converting to or from) have the same
-        // restrictions and combat vehicles with the exception that QuadVees can enter water hexes
+        // Meks using tracks and QuadVees in vehicle mode (or converting to or from)
+        // have the same
+        // restrictions and combat vehicles with the exception that QuadVees can enter
+        // water hexes
         // except during conversion.
         if (movementMode == EntityMovementMode.TRACKED
                 || (this instanceof QuadVee && convertingNow
                         && ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
-                return (hex.terrainLevel(Terrains.WOODS) > 1)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE)
-                                && (!(this instanceof QuadVee) || convertingNow))
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+            return (hex.terrainLevel(Terrains.WOODS) > 1)
+                    || ((hex.terrainLevel(Terrains.WATER) > 0)
+                            && !hex.containsTerrain(Terrains.ICE)
+                            && (!(this instanceof QuadVee) || convertingNow))
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                    || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                    || (hex.terrainLevel(Terrains.RUBBLE) > 5);
         }
         if (movementMode == EntityMovementMode.WHEELED
                 || (this instanceof QuadVee && convertingNow
@@ -4308,10 +4332,10 @@ public abstract class Mek extends Entity {
         sb.append(MtfFile.MASS).append((int) weight).append(newLine);
         sb.append(MtfFile.ENGINE);
         if (hasEngine()) {
-                sb.append(getEngine().getEngineName())
-                .append(" Engine")
-                .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
-                        : "");
+            sb.append(getEngine().getEngineName())
+                    .append(" Engine")
+                    .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
+                            : "");
         } else {
             sb.append("(none)");
         }
@@ -4345,7 +4369,6 @@ public abstract class Mek extends Entity {
             sb.append(newLine);
         }
 
-
         if (!standard) {
             sb.append(MtfFile.COCKPIT);
             sb.append(getCockpitTypeString());
@@ -4365,10 +4388,12 @@ public abstract class Mek extends Entity {
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
         Optional<MiscType> heatSink = getMisc().stream()
                 .filter(m -> m.getType().hasFlag(MiscType.F_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
+                        || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
                 .map(Mounted::getType).findFirst();
-        // If we didn't find any heat sinks we may have an ICE with no added sinks, or prototype
-        // doubles (which have a different flag). In the latter case, we want to put single
+        // If we didn't find any heat sinks we may have an ICE with no added sinks, or
+        // prototype
+        // doubles (which have a different flag). In the latter case, we want to put
+        // single
         // here, since this determines what's installed as engine-integrated heat sinks.
         if (heatSink.isEmpty()) {
             sb.append(MtfFile.HS_SINGLE);
@@ -4408,7 +4433,7 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.ARMOR).append(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
         } else {
             sb.append(MtfFile.ARMOR).append(EquipmentType.getArmorTypeName(getArmorType(0)))
-                .append("(").append(TechConstants.getTechName(getArmorTechLevel(0))).append(")");
+                    .append("(").append(TechConstants.getTechName(getArmorTechLevel(0))).append(")");
         }
         sb.append(newLine);
 
@@ -4853,7 +4878,8 @@ public abstract class Mek extends Entity {
         return true;
     }
 
-    //The location of critical is based on small cockpit, but since command console requires two cockpit slots the second Sensor is return to the location 4.
+    // The location of critical is based on small cockpit, but since command console
+    // requires two cockpit slots the second Sensor is return to the location 4.
     public boolean addSmallCommandConsole() {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
@@ -4877,8 +4903,8 @@ public abstract class Mek extends Entity {
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
      *
-     * @param vrpp  if this is a VRPP rather than a standard torso-mounted cockpit
-     * @return      false if insufficient critical space
+     * @param vrpp if this is a VRPP rather than a standard torso-mounted cockpit
+     * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit(boolean vrpp) {
         boolean success = true;
@@ -4927,6 +4953,7 @@ public abstract class Mek extends Entity {
 
     /**
      * Convenience function that returns the critical slot containing the cockpit
+     * 
      * @return
      */
     public List<CriticalSlot> getCockpit() {
@@ -4961,12 +4988,14 @@ public abstract class Mek extends Entity {
     /**
      * Determines which crew slot is associated with a particular cockpit critical.
      *
-     * @param cs    A cockpit critical slot
-     * @return      The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
+     * @param cs A cockpit critical slot
+     * @return The crew slot index associated with this critical slot, or -1 to
+     *         indicate the entire crew.
      */
     public int getCrewForCockpitSlot(int loc, CriticalSlot cs) {
-        //For those with split cockpits, count the cockpit criticals in the location until we reach the correct
-        //one.
+        // For those with split cockpits, count the cockpit criticals in the location
+        // until we reach the correct
+        // one.
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
@@ -4987,8 +5016,8 @@ public abstract class Mek extends Entity {
     @Override
     public boolean hasCommandConsoleBonus() {
         return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE)
-        || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
-        || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
+                || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+                || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
                 && getCrew().hasActiveCommandConsole()
                 && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
                 && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
@@ -5402,7 +5431,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * How many times TacOps coolant failure has occurred, which is also the reduction in heat
+     * How many times TacOps coolant failure has occurred, which is also the
+     * reduction in heat
      * sinking capacity
      */
     @Override
@@ -5411,9 +5441,12 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Modify the number of TacOps coolant failures. May be positive to indicate additional
-     * failures, or negative to indicate coolant being refreshed from an outside source.
-     * @param amount  Amount to change the value, typical value is 1
+     * Modify the number of TacOps coolant failures. May be positive to indicate
+     * additional
+     * failures, or negative to indicate coolant being refreshed from an outside
+     * source.
+     * 
+     * @param amount Amount to change the value, typical value is 1
      */
     @Override
     public void addCoolantFailureAmount(int amount) {
@@ -5505,7 +5538,7 @@ public abstract class Mek extends Entity {
     /**
      * set if this Mek should die at the end of turn because it's an IndustrialMek
      * without environmental sealing that moved into water last round and stayed
-      * there?
+     * there?
      *
      * @param moved
      */
@@ -5547,7 +5580,8 @@ public abstract class Mek extends Entity {
     @Override
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
         if (hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            vPhaseReport.add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("ICE-Engine Mek failed a PSR"));
+            vPhaseReport
+                    .add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("ICE-Engine Mek failed a PSR"));
 
             // Stall check is made against unmodified Piloting skill...
             PilotingRollData psr = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
@@ -5577,11 +5611,13 @@ public abstract class Mek extends Entity {
     @Override
     public void checkUnstall(Vector<Report> vPhaseReport) {
         if (stalled && !stalledThisTurn && hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            vPhaseReport.add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("unstall stalled ICE engine"));
+            vPhaseReport
+                    .add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("unstall stalled ICE engine"));
 
             // Unstall check is made against unmodified Piloting skill...
             PilotingRollData psr = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
-            // ...but dead or unconscious pilots should still auto-fail, same as for stalling.
+            // ...but dead or unconscious pilots should still auto-fail, same as for
+            // stalling.
             if (getCrew().isDead() || getCrew().isDoomed() || (getCrew().getHits() >= 6)) {
                 psr = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Pilot dead");
             } else if (!getCrew().isActive()) {
@@ -5756,7 +5792,10 @@ public abstract class Mek extends Entity {
 
     public abstract boolean hasMPReducingHardenedArmor();
 
-    /** @return The MP reduction due to hardened armor on this unit; 1 if it has HA, 0 if not. */
+    /**
+     * @return The MP reduction due to hardened armor on this unit; 1 if it has HA,
+     *         0 if not.
+     */
     protected int hardenedArmorMPReduction() {
         return hasMPReducingHardenedArmor() ? 1 : 0;
     }
@@ -6078,7 +6117,8 @@ public abstract class Mek extends Entity {
         }
         // there is room for debate here but I think most people would agree that a
         // legged biped Mek (and a double legged quad Mek) or a hipped Mek are not
-        // escapable, although technically they still have as much MP as foot infantry which
+        // escapable, although technically they still have as much MP as foot infantry
+        // which
         // can escape. We could also consider creating options to control this.
         if (((this instanceof BipedMek) && (legsDestroyed > 0))
                 || (legsDestroyed > 1) || (hipHits > 0)) {
@@ -6285,7 +6325,7 @@ public abstract class Mek extends Entity {
      * Check to see if a Mek has a claw in one of its arms
      *
      * @param location
-     *            (LOC_RARM or LOC_LARM)
+     *                 (LOC_RARM or LOC_LARM)
      * @return True/False
      */
     public boolean hasClaw(int location) {
@@ -6322,16 +6362,16 @@ public abstract class Mek extends Entity {
     public boolean hasIntactHeatDissipatingArmor() {
         for (int loc = 0; loc < locations(); ++loc) {
             if ((getArmor(loc) < 1)
-                || (getArmorType(loc) != EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                    || (getArmorType(loc) != EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 return false;
             }
         }
         return true;
     }
 
-
     /**
      * return if a RISC emergency coolant failed its roll
+     * 
      * @param vDesc
      * @param vCriticals
      * @return
@@ -6444,7 +6484,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(3.729 + 0.889*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(3.729 + 0.889 * Math.log(getWeight())));
     }
 
     @Override
@@ -6485,6 +6525,6 @@ public abstract class Mek extends Entity {
      */
     @Override
     protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
-    	return BLOCKED_FIRING_LOCATIONS;
+        return BLOCKED_FIRING_LOCATIONS;
     }
 }

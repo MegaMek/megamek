@@ -2039,8 +2039,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     String title = "MovementDisplay.ChargeDialog.title";
                     String msg = "MovementDisplay.ChargeDialog.message";
                     if (ce.isAirborneVTOLorWIGE()) {
-                        title = "MovementDisplay.AirmechRamDialog.title";
-                        msg = "MovementDisplay.AirmechRamDialog.message";
+                        title = "MovementDisplay.AirMekRamDialog.title";
+                        msg = "MovementDisplay.AirMekRamDialog.message";
                     }
                     // Ask the player if they want to charge.
                     if (clientgui.doYesNoDialog(Messages.getString(title, target.getDisplayName()),
@@ -3489,7 +3489,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     /**
      * Uses player input to find a legal hex where an EjectedCrew unit can be placed
-     * 
+     *
      * @param abandoned - The vessel we're escaping from
      * @return
      */

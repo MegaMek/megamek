@@ -48,7 +48,7 @@ public class KickAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * Damage that the specified mech does with a kick
+     * Damage that the specified mek does with a kick
      *
      * @return The kick damage for the 'Mek, or 0 for non-'Mek entities.
      */
@@ -168,9 +168,9 @@ public class KickAttackAction extends PhysicalAttackAction {
                     "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
         }
 
-        // non-mechs can't kick
+        // non-meks can't kick
         if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
         }
 
         // check if all legs are present & working

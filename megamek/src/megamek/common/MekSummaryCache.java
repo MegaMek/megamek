@@ -45,8 +45,8 @@ public class MekSummaryCache {
     public static final String FILENAME_UNITS_CACHE = "units.cache";
     public static final String FILENAME_LOOKUP = "name_changes.txt";
 
-    private static final List<String> SUPPORTED_FILE_EXTENSIONS =
-            List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb", ".hmp", ".zip");
+    private static final List<String> SUPPORTED_FILE_EXTENSIONS = List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb",
+            ".hmp", ".zip");
 
     private static MekSummaryCache instance;
     private static boolean disposeInstance = false;
@@ -90,7 +90,8 @@ public class MekSummaryCache {
     }
 
     /**
-     * Checks the unit files directory for any changes since the last time the unit cache was
+     * Checks the unit files directory for any changes since the last time the unit
+     * cache was
      * loaded. If there are any updates, the new cache is saved.
      *
      * @param ignoreUnofficial If true, skips unofficial directories
@@ -248,12 +249,13 @@ public class MekSummaryCache {
     }
 
     private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMeks,
-                                 Set<String> sKnownFiles, long lLastCheck) {
+            Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
         boolean bNeedsUpdate = loadMeksFromDirectory(vMeks, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
 
-        // Official units are in the internal dir, not in the user dirs or story arcs dir
+        // Official units are in the internal dir, not in the user dirs or story arcs
+        // dir
         if (!ignoreUnofficial) {
             // load units from the MM internal user data dir
             File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
@@ -270,14 +272,15 @@ public class MekSummaryCache {
 
             // load units from story arcs
             File storyarcsDir = Configuration.storyarcsDir();
-            if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+            if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
                 File[] storyArcsFiles = storyarcsDir.listFiles();
                 if (storyArcsFiles != null) {
                     for (File file : storyArcsFiles) {
                         if (file.isDirectory()) {
                             File storyArcUnitsDir = new File(file.getPath() + "/data/mekfiles");
                             if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
-                                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, storyArcUnitsDir, false);
+                                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, storyArcUnitsDir,
+                                        false);
                             }
                         }
                     }
@@ -356,14 +359,14 @@ public class MekSummaryCache {
         loadReport.append("Saving unit cache.\n");
         try (FileOutputStream fos = new FileOutputStream(
                 new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile());
-             BufferedOutputStream bos = new BufferedOutputStream(fos);
-             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(data.size());
             for (MekSummary element : data) {
                 oos.writeObject(element);
             }
         } catch (Exception ex) {
-            loadReport.append(" Unable to save mech cache\n");
+            loadReport.append(" Unable to save mek cache\n");
             LogManager.getLogger().error("", ex);
         }
     }
@@ -535,7 +538,7 @@ public class MekSummaryCache {
             if (((Mek) e).hasTSM(false)) {
                 ms.setMyomerName("Triple-Strength");
             } else if (((Mek) e).hasTSM(true)) {
-                    ms.setMyomerName("Prototype Triple-Strength");
+                ms.setMyomerName("Prototype Triple-Strength");
             } else if (((Mek) e).hasIndustrialTSM()) {
                 ms.setMyomerName("Industrial Triple-Strength");
             } else {
@@ -596,7 +599,7 @@ public class MekSummaryCache {
         double cbUnits = 0;
         int nrf = 0;
         int bah = 0;
-        Vector<Transporter>  trs = e.getTransports();
+        Vector<Transporter> trs = e.getTransports();
         for (Transporter t : trs) {
             if (t instanceof ASFBay) {
                 aBays++;
@@ -606,7 +609,7 @@ public class MekSummaryCache {
             if (t instanceof SmallCraftBay) {
                 scBays++;
                 scDoors += ((SmallCraftBay) t).getCurrentDoors();
-                scUnits +=  t.getUnused();
+                scUnits += t.getUnused();
             }
             if (t instanceof DockingCollar) {
                 dc++;
@@ -654,10 +657,10 @@ public class MekSummaryCache {
             if (t instanceof BattleArmorHandles) {
                 bah++;
             }
-            if (t instanceof  CargoBay) {
+            if (t instanceof CargoBay) {
                 cbUnits += t.getUnused();
             }
-            if (t instanceof  NavalRepairFacility) {
+            if (t instanceof NavalRepairFacility) {
                 nrf++;
             }
         }
@@ -724,14 +727,15 @@ public class MekSummaryCache {
     }
 
     /**
-     * Loading a complete {@link Entity} object for each summary is a bear and should be
+     * Loading a complete {@link Entity} object for each summary is a bear and
+     * should be
      * changed, but it lets me use the existing parsers
      *
-     * @param vMeks      List to add units to as they are loaded
+     * @param vMeks       List to add units to as they are loaded
      * @param sKnownFiles Files that have been processed so far and can be skipped
      * @param lLastCheck  The timestamp of the last time the cache was updated
      * @param fDir        The directory to load units from
-     * @return            Whether the list of units has changed, requiring rewriting the cache
+     * @return Whether the list of units has changed, requiring rewriting the cache
      */
     private boolean loadMeksFromDirectory(Vector<MekSummary> vMeks,
             Set<String> sKnownFiles, long lLastCheck, File fDir,
@@ -853,7 +857,8 @@ public class MekSummaryCache {
 
             if (zEntry.isDirectory()) {
                 if (zEntry.getName().equalsIgnoreCase("unsupported")) {
-                    loadReport.append(" Do not place special 'unsupported' type folders in zip files, they must \nbe uncompressed directories to work properly. Note that you may place \nzip files inside of 'unsupported' type folders, though.\n");
+                    loadReport.append(
+                            " Do not place special 'unsupported' type folders in zip files, they must \nbe uncompressed directories to work properly. Note that you may place \nzip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }
@@ -915,8 +920,8 @@ public class MekSummaryCache {
         File lookupNames = new MegaMekFile(getUnitCacheDir(), FILENAME_LOOKUP).getFile();
         if (lookupNames.exists()) {
             try (FileInputStream fis = new FileInputStream(lookupNames);
-                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                 BufferedReader br = new BufferedReader(isr)) {
+                    InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 String lookupName;
                 String entryName;

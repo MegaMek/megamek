@@ -167,9 +167,9 @@ public class MekFileParser {
                     loader = new BLKInfantryFile(bb);
                 } else if (sType.equals("BattleArmor")) {
                     loader = new BLKBattleArmorFile(bb);
-                } else if (sType.equals("ProtoMek") || sType.equals("ProtoMech")) {
+                } else if (sType.equals("ProtoMek") || sType.equals("ProtoMech")) { // Remove Milestone after 0.49.19
                     loader = new BLKProtoMekFile(bb);
-                } else if (sType.equals("Mek") || sType.equals("Mech")) {
+                } else if (sType.equals("Mek") || sType.equals("Mech")) { // Remove Milestone after 0.49.19
                     loader = new BLKMekFile(bb);
                 } else if (sType.equals("VTOL")) {
                     loader = new BLKVTOLFile(bb);
@@ -205,9 +205,6 @@ public class MekFileParser {
             } else {
                 loader = new BLKMekFile(bb);
             }
-        } else if (lowerName.endsWith(".dbm")) {
-            throw new EntityLoadingException(
-                    "In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
@@ -395,7 +392,7 @@ public class MekFileParser {
                 }
 
                 if (m.getLinked() == null) {
-                    // This mech has stealth armor but no ECM. Probably
+                    // This mek has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
                             "Unable to find an ECM Suite for " + ent.getShortName()
@@ -892,11 +889,6 @@ public class MekFileParser {
             System.out.println("The supported formats are:");
             System.out.println("\t.mtf    The native MegaMek format that your file will be converted into");
             System.out.println("\t.blk    Another native MegaMek format");
-            System.out.println("\t.hmp    Heavy Metal Pro (c) RCW Enterprises");
-            System.out.println("\t.mep    MechEngineer Pro (c) Howling Moon SoftWorks");
-            System.out.println("\t.xml    The Drawing Board (c) Blackstone Interactive");
-            System.out.println(
-                    "Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MekFileParser.getResponse("Press <enter> to exit...");
             return;
         }

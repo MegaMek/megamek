@@ -59,51 +59,51 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
             chassisType = dataFile.getDataAsInt("chassis_type")[0];
         }
 
-        Mek mech = null;
+        Mek mek = null;
 
         if (chassisType == 1) {
-            mech = new QuadMek();
+            mek = new QuadMek();
         } else {
-            mech = new BipedMek();
+            mek = new BipedMek();
         }
 
-        setBasicEntityData(mech);
+        setBasicEntityData(mek);
         // Do I even write the year for these??
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        mech.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
+        mek.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = 0;
-        if (mech.isClan()) {
+        if (mek.isClan()) {
             engineFlags = Engine.CLAN_ENGINE;
         }
         if (!dataFile.exists("walkingMP")) {
             throw new EntityLoadingException("Could not find walkingMP block.");
         }
-        int engineRating = dataFile.getDataAsInt("walkingMP")[0] * (int) mech.getWeight();
-        mech.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
+        int engineRating = dataFile.getDataAsInt("walkingMP")[0] * (int) mek.getWeight();
+        mek.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (!dataFile.exists("jumpingMP")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        mech.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
+        mek.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
-        // I keep internal(integral) heat sinks seperate...
+        // I keep internal(integral) heat sinks separate...
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], MiscType.F_HEAT_SINK);
+        mek.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], MiscType.F_HEAT_SINK);
 
         if (dataFile.exists("internal_type")) {
-            mech.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+            mek.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
-            mech.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+            mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
 
         boolean patchworkArmor = false;
@@ -111,18 +111,18 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
             if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
                 patchworkArmor = true;
             } else {
-                mech.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+                mek.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
             }
         } else {
-            mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+            mek.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
         if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            mech.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+            mek.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
         if (patchworkArmor) {
-            for (int i = 0; i < mech.locations(); i++) {
-                mech.setArmorType(dataFile.getDataAsInt(mech.getLocationName(i) + "_armor_type")[0], i);
-                mech.setArmorTechLevel(dataFile.getDataAsInt(mech.getLocationName(i) + "_armor_type")[0], i);
+            for (int i = 0; i < mek.locations(); i++) {
+                mek.setArmorType(dataFile.getDataAsInt(mek.getLocationName(i) + "_armor_type")[0], i);
+                mek.setArmorTechLevel(dataFile.getDataAsInt(mek.getLocationName(i) + "_armor_type")[0], i);
             }
         }
 
@@ -136,52 +136,52 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         }
         int[] armor = dataFile.getDataAsInt("Armor");
 
-        mech.initializeArmor(armor[BLKMekFile.HD], Mek.LOC_HEAD);
+        mek.initializeArmor(armor[BLKMekFile.HD], Mek.LOC_HEAD);
 
-        mech.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LARM);
-        mech.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RARM);
-        mech.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LLEG);
-        mech.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RLEG);
+        mek.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LARM);
+        mek.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RARM);
+        mek.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LLEG);
+        mek.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RLEG);
 
-        mech.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CT);
-        mech.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LT);
-        mech.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RT);
+        mek.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CT);
+        mek.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LT);
+        mek.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RT);
 
         // changed...
-        mech.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CT);
-        mech.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LT);
-        mech.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RT);
+        mek.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CT);
+        mek.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LT);
+        mek.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RT);
 
-        mech.recalculateTechAdvancement();
+        mek.recalculateTechAdvancement();
 
         if (!dataFile.exists("internal armor")) {
             // try to guess...
-            mech.setInternal(3, (armor[CF] + armor[CB]) / 2, (armor[LF] + armor[LB]) / 2, (armor[LA] / 2),
+            mek.setInternal(3, (armor[CF] + armor[CB]) / 2, (armor[LF] + armor[LB]) / 2, (armor[LA] / 2),
                     (armor[LL] / 2));
         } else {
             armor = dataFile.getDataAsInt("internal armor");
             // all the locations should be about the same...
-            mech.setInternal(armor[HD], armor[CT], armor[LT], armor[LA], armor[LL]);
+            mek.setInternal(armor[HD], armor[CT], armor[LT], armor[LA], armor[LL]);
         }
 
         // check for removed arm actuators...
 
         // no lower right arm
         if (!dataFile.getDataAsString("ra criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+            mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no right hand
         if (!dataFile.getDataAsString("ra criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mech.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
+            mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // no lower left arm
         if (!dataFile.getDataAsString("la criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+            mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no left hand
         if (!dataFile.getDataAsString("la criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mech.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
+            mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // load equipment stuff...
@@ -198,7 +198,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
 
         // prefix is "Clan " or "IS "
         String prefix;
-        if (mech.getTechLevel() == TechConstants.T_CLAN_TW) {
+        if (mek.getTechLevel() == TechConstants.T_CLAN_TW) {
             prefix = "Clan ";
         } else {
             prefix = "IS ";
@@ -244,23 +244,23 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                     critName = critName.substring(0, critName.length() - 4).trim();
                 }
                 if (critName.contains("Engine")) {
-                    mech.setCritical(loc, c,
+                    mek.setCritical(loc, c,
                             new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
-                    mech.setCritical(loc, c,
+                    mek.setCritical(loc, c,
                             new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
-                    mech.setCritical(loc, c,
+                    mek.setCritical(loc, c,
                             new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Cockpit")) {
-                    mech.setCritical(loc, c,
+                    mek.setCritical(loc, c,
                             new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Gyro")) {
-                    mech.setCritical(loc, c,
+                    mek.setCritical(loc, c,
                             new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, armored));
                     continue;
                 }
@@ -272,7 +272,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                 }
                 if (etype != null) {
                     try {
-                        Mounted<?> mount = mech.addEquipment(etype, loc,
+                        Mounted<?> mount = mek.addEquipment(etype, loc,
                                 rearMounted, BattleArmor.MOUNT_LOC_NONE, false,
                                 turretMounted);
                         mount.setOmniPodMounted(isOmniMounted);
@@ -300,13 +300,13 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         } // end of all crits
 
         if (dataFile.exists("omni")) {
-            mech.setOmni(true);
+            mek.setOmni(true);
         }
 
-        mech.setArmorTonnage(mech.getArmorWeight());
+        mek.setArmorTonnage(mek.getArmorWeight());
 
-        loadQuirks(mech);
-        return mech;
+        loadQuirks(mek);
+        return mek;
 
     }
 }

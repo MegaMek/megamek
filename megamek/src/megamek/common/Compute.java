@@ -194,7 +194,7 @@ public class Compute {
 
     /**
      * Input is in format "ndf", so this can handle 2d6 or 3d10
-     * 
+     *
      * @param number the number of dice to roll
      * @param faces  the number of faces on those dice
      * @return an Integer list of every dice roll, with index 0 containing the
@@ -218,7 +218,7 @@ public class Compute {
 
     /**
      * Input is in format "c ndf", so that this can handle 10 rolls of 3d6
-     * 
+     *
      * @param count  the count of sets of dice to roll
      * @param number the number of dice to roll per set
      * @param faces  the number of faces per die
@@ -262,7 +262,7 @@ public class Compute {
 
     /**
      * Selects a random element from a list
-     * 
+     *
      * @param list The list of items to select from
      * @return An element in the list
      * @param <T> The list type
@@ -285,7 +285,7 @@ public class Compute {
 
     /**
      * Sets the RNG to the specific instance.
-     * 
+     *
      * @param random A non-null instance of {@link MMRandom} to use
      *               for all random number generation.
      */
@@ -453,7 +453,7 @@ public class Compute {
                         elevation, climbMode, false);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
-            // mechs only occupy one level of a building
+            // meks only occupy one level of a building
             if (!Compute.isInBuilding(game, entering, coords)) {
                 thisHighStackingLevel += entering.height();
             }
@@ -500,10 +500,10 @@ public class Compute {
                         continue;
                     }
 
-                    // If the entering entity is a mech,
-                    // then any other mech in the hex is a violation.
+                    // If the entering entity is a mek,
+                    // then any other mek in the hex is a violation.
                     // Unless grappled (but chain whip grapples don't count)
-                    // grounded small craft are treated as mechs for purposes
+                    // grounded small craft are treated as meks for purposes
                     // of stacking
                     if (isMek
                             && (((inHex instanceof Mek) && (inHex
@@ -515,7 +515,7 @@ public class Compute {
 
                     // only inf can be in the same hex as a large support vee
                     // grounded dropships are treated as large support vees,
-                    // ditto for superheavy mechs
+                    // ditto for superheavy meks
                     if (isLargeSupport && !(inHex instanceof Infantry)) {
                         return inHex;
                     }
@@ -670,7 +670,7 @@ public class Compute {
                 && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         boolean vehicleAffectedByCliff = entity instanceof Tank
                 && !entity.isAirborneVTOLorWIGE();
-        boolean mechAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
+        boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                 && movementType != EntityMovementType.MOVE_JUMP
                 && !entity.isAero(); // LAM
         int stepHeight = destElevation + destHex.getLevel() - (srcElevation + srcHex.getLevel());
@@ -686,7 +686,7 @@ public class Compute {
 
         // Meks and Vehicles moving down a cliff
         // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
-        if ((mechAffectedByCliff || vehicleAffectedByCliff)
+        if ((mekAffectedByCliff || vehicleAffectedByCliff)
                 && !quadveeVehMode
                 && isDownCliff
                 && !isPavementStep) {
@@ -694,7 +694,7 @@ public class Compute {
         }
 
         // Meks moving up a cliff
-        if (mechAffectedByCliff
+        if (mekAffectedByCliff
                 && !quadveeVehMode
                 && isUpCliff
                 && !isPavementStep) {
@@ -1046,7 +1046,7 @@ public class Compute {
 
     /**
      * Worker function to determine if the target has been tagged.
-     * 
+     *
      * @param target The non-entity target to check
      * @param game   The current {@link Game}
      * @return Whether or not the given entity or other targetable is tagged.
@@ -1076,7 +1076,7 @@ public class Compute {
     /**
      * Worker function to determine if the target has been tagged by the specific
      * attacker.
-     * 
+     *
      * @param attacker The attacker.
      * @param target   The non-entity target to check
      * @param game     The current {@link Game}
@@ -1113,7 +1113,7 @@ public class Compute {
     /**
      * Gets the ToHitData associated with firing at an immobile target. Returns null
      * if target isn't.
-     * 
+     *
      * @param target     The target being considered for firing
      * @param aimingAt   The location of the unit being aimed at
      * @param aimingMode The aiming mode
@@ -1287,14 +1287,14 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Weapon underwater, but not target.");
             }
-            // special case: mechs can only fire upper body weapons at surface
+            // special case: meks can only fire upper body weapons at surface
             // naval
             if ((te != null)
                     && (te.getUnitType() == UnitType.NAVAL)
                     && (ae instanceof Mek) && (ae.height() > 0)
                     && (ae.getElevation() == -1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Partially submerged mech cannot fire leg weapons at surface naval vessels.");
+                        "Partially submerged mek cannot fire leg weapons at surface naval vessels.");
             }
         } else if (targetUnderwater) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -1919,7 +1919,7 @@ public class Compute {
 
     /**
      * Function that attempts to find one TAG spotter, or the best TAG spotter,
-     * 
+     *
      * @param game
      * @param attacker    should be an artillery unit
      * @param target      (if null, do not return a spotter!)
@@ -2128,7 +2128,7 @@ public class Compute {
     }
 
     /**
-     * Gets the modifiers, if any, that the mech receives from being prone.
+     * Gets the modifiers, if any, that the mek receives from being prone.
      *
      * @return any applicable modifiers due to being prone
      */
@@ -2314,9 +2314,9 @@ public class Compute {
                     break;
             }
 
-        } // End attacker-is-Protomech
+        } // End attacker-is-Protomek
 
-        // only mechs have arm actuators - for those, we check whether
+        // only meks have arm actuators - for those, we check whether
         // there is arm actuator damage
         else if (attacker instanceof Mek) {
             // split weapons need to account for arm actuator hits, too
@@ -2389,7 +2389,7 @@ public class Compute {
             if (attacker.getPartialRepairs().booleanOption("sensors_1_crit")) {
                 mods.addModifier(1, "sensor damage");
             }
-            if (attacker.getPartialRepairs().booleanOption("mech_sensors_2_crit")) {
+            if (attacker.getPartialRepairs().booleanOption("mek_sensors_2_crit")) {
                 mods.addModifier(2, "sensor damage");
             }
             if (attacker.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
@@ -2530,7 +2530,7 @@ public class Compute {
     }
 
     /**
-     * Damage that a mech does with a accidental fall from above.
+     * Damage that a mek does with a accidental fall from above.
      */
     public static int getAffaDamageFor(Entity entity) {
         return (int) entity.getWeight() / 10;
@@ -2862,8 +2862,8 @@ public class Compute {
         }
 
         boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
-        // Standard mechs (standing) report their height as 1, tanks as 0
-        // Standard mechs should not benefit from 1 level high woods
+        // Standard meks (standing) report their height as 1, tanks as 0
+        // Standard meks should not benefit from 1 level high woods
 
         boolean isAboveWoods = (entityTarget == null)
                 || (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV))
@@ -4484,7 +4484,7 @@ public class Compute {
     /**
      * Checks to see if target entity has already appeared on @detector's sensors
      * Used with Naval C3 to determine if @detector can fire weapons at @target
-     * 
+     *
      * @param detector - the entity making a sensor scan
      * @param targetId - the entity id of the scan target
      */
@@ -5832,7 +5832,7 @@ public class Compute {
                     && (attacker.moved == EntityMovementType.MOVE_JUMP)) {
                 data.addModifier(
                         TargetRoll.IMPOSSIBLE,
-                        "can't jump using mechanical jump booster and anti-mech attack in the same turn");
+                        "can't jump using mechanical jump booster and anti-mek attack in the same turn");
                 return data;
             }
         } else {
@@ -5868,7 +5868,7 @@ public class Compute {
         }
 
         if ((defender instanceof Mek) && ((Mek) defender).isIndustrial()) {
-            data.addModifier(-1, "targeting industrial mech");
+            data.addModifier(-1, "targeting industrial mek");
         }
 
         // protected/exposed actuator quirk may adjust target roll
@@ -5937,7 +5937,7 @@ public class Compute {
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
             toReturn = new ToHitData(inf.getCrew().getPiloting(),
-                    "anti-mech skill", ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
+                    "anti-mek skill", ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
             int men = inf.getShootingStrength();
             int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
@@ -5954,7 +5954,7 @@ public class Compute {
             // Non-BattleArmor infantry need many more men.
             Infantry inf = (Infantry) attacker;
             toReturn = new ToHitData(inf.getCrew().getPiloting(),
-                    "anti-mech skill", ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
+                    "anti-mek skill", ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
             int men = inf.getShootingStrength();
             int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
@@ -6038,7 +6038,7 @@ public class Compute {
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
-            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mek skill");
             int men = inf.getShootingStrength();
             int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
@@ -6051,7 +6051,7 @@ public class Compute {
         // Non-BattleArmor infantry need many more men.
         else if (attacker instanceof Infantry) {
             Infantry inf = (Infantry) attacker;
-            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mek skill");
             int men = inf.getShootingStrength();
             int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
@@ -7138,7 +7138,7 @@ public class Compute {
 
     /**
      * Builds a list of all adjacent units that can load the given Entity.
-     * 
+     *
      * @param en   The entity to load
      * @param pos  The coordinates of the hex to load from
      * @param elev The absolute elevation of the unit at the point of loading
@@ -7628,7 +7628,7 @@ public class Compute {
 
     /**
      * Get turns for an indirect or off-board round to hit with its current velocity
-     * 
+     *
      * @param game
      * @param ae       Attacker
      * @param target   Target hex/entity

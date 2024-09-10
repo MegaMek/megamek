@@ -19,7 +19,9 @@
 package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.Mounted;
+import megamek.common.ProtoMek;
+import megamek.common.WeaponType;
 import megamek.common.equipment.ArmorType;
 
 public class ProtoMekCostCalculator {
@@ -79,7 +81,7 @@ public class ProtoMekCostCalculator {
         }
         costs[idx++] = 2000 * sinks;
 
-        // Armor is linear on the armor value of the Protomech
+        // Armor is linear on the armor value of the ProtoMek
         costs[idx++] = protoMek.getTotalArmor() * ArmorType.forEntity(protoMek).getCost();
 
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(protoMek, ignoreAmmo);

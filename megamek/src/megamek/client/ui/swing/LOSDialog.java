@@ -36,7 +36,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil;
 
-/** Allows the player to select the type of entity in the hexes used by the LOS tool. */
+/**
+ * Allows the player to select the type of entity in the hexes used by the LOS
+ * tool.
+ */
 public class LOSDialog extends AbstractButtonDialog {
 
     private final boolean isMekFirst;
@@ -45,8 +48,9 @@ public class LOSDialog extends AbstractButtonDialog {
     private final JToggleButton[] toggles2 = new JToggleButton[2];
 
     /**
-     * Allows the player to select the height of the entities in the hexes used by the LOS tool.
-     * The dialog toggles are preset to the given mechInFirst and mechInSecond.
+     * Allows the player to select the height of the entities in the hexes used by
+     * the LOS tool.
+     * The dialog toggles are preset to the given mekInFirst and mekInSecond.
      */
     public LOSDialog(JFrame parent, boolean mekInFirst, boolean mekInSecond) {
         super(parent, "LOSDialog", "LOSDialog.title");
@@ -56,7 +60,8 @@ public class LOSDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Returns true if the unit in the first hex should be counted as having Mek height (2 levels) and
+     * Returns true if the unit in the first hex should be counted as having Mek
+     * height (2 levels) and
      * false if it should be counted as having Tank height (1 level).
      */
     public boolean getMekInFirst() {
@@ -64,7 +69,8 @@ public class LOSDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Returns true if the unit in the second hex should be counted as having Mek height (2 levels) and
+     * Returns true if the unit in the second hex should be counted as having Mek
+     * height (2 levels) and
      * false if it should be counted as having Tank height (1 level).
      */
     public boolean getMekInSecond() {

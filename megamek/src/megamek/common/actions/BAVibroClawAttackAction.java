@@ -13,9 +13,10 @@
  */
 package megamek.common.actions;
 
+import org.apache.logging.log4j.LogManager;
+
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * A BattleArmor uses its vibroclaws
@@ -70,7 +71,8 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
                             || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                                     && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                                     && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "A friendly unit can never be the target of a direct attack.");
             }
         }
 
@@ -131,7 +133,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
                     "Target elevation not in range");
         }
 
-        // can't physically attack mechs making dfa attacks
+        // can't physically attack meks making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is making a DFA attack");

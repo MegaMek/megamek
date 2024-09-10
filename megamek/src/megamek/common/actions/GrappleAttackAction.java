@@ -222,11 +222,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         final int targetElevation = target.getElevation() + targHex.getLevel();
         // final int targetHeight = targetElevation + target.getHeight();
 
-        // non-mechs can't grapple or be grappled
+        // non-meks can't grapple or be grappled
         if ((!(ae instanceof BipedMek) && !(ae instanceof ProtoMek))
                 || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only biped mechs can grapple 'Meks and ProtoMeks");
+                    "Only biped meks can grapple 'Meks and ProtoMeks");
         }
 
         Entity te = (Entity) target;

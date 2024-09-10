@@ -57,7 +57,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Displays the info for a mech. This is also a sort of interface for special
+ * Displays the info for a mek. This is also a sort of interface for special
  * movement and firing actions.
  */
 public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
@@ -114,12 +114,12 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
 
     /**
-     * Creates and lays out a new mech display.
+     * Creates and lays out a new mek display.
      *
      * @param clientgui
-     *            The ClientGUI for the GUI that is creating this UnitDisplay.
-     *            This could be null, if there is no ClientGUI, such as with
-     *            MekWars.
+     *                  The ClientGUI for the GUI that is creating this UnitDisplay.
+     *                  This could be null, if there is no ClientGUI, such as with
+     *                  MekWars.
      */
     public UnitDisplay(@Nullable ClientGUI clientgui) {
         this(clientgui, null);
@@ -134,7 +134,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
         tabStrip = new MekPanelTabStrip(this);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
-        Image tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+        Image tile = getToolkit()
+                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
@@ -254,8 +255,10 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
                         GUIP.setUnitDisplayPosY(unitDisplayDialog.getLocation().y);
                         GUIP.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
                         GUIP.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
-                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
-                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
+                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(),
+                                GUIP.getUnitDisplayNontabbedPosY());
+                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(),
+                                GUIP.getUnitDisplayNonTabbedSizeHeight());
                         setDisplayNonTabbed();
                     }
                 }
@@ -271,8 +274,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             setDisplayTabbed();
-        }
-        else {
+        } else {
             setDisplayNonTabbed();
         }
 
@@ -348,9 +350,9 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     }
 
     /**
-    * Save splitter locations to preferences
-    *
-    */
+     * Save splitter locations to preferences
+     *
+     */
     public void saveSplitterLoc() {
         GUIP.setUnitDisplaySplitABCLoc(splitABC.getDividerLocation());
         GUIP.setUnitDisplaySplitBCLoc(splitBC.getDividerLocation());
@@ -453,7 +455,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      */
     public void displayEntity(Entity en) {
         if ((en == null) || (currentlyDisplaying == en)) {
-            // Issue #5650 - this method should not be executed if the currently displayed entity hasn't changed.
+            // Issue #5650 - this method should not be executed if the currently displayed
+            // entity hasn't changed.
             return;
         }
         currentlyDisplaying = en;
@@ -511,6 +514,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Used to force the display to the Systems tab, on a specific location
+     * 
      * @param loc
      */
     public void showSpecificSystem(int loc) {
@@ -523,7 +527,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     }
 
     /**
-     * Adds the specified mech display listener to receive events from this
+     * Adds the specified mek display listener to receive events from this
      * view.
      *
      * @param listener the listener.
@@ -535,7 +539,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     /**
      * Notifies attached listeners of the event.
      *
-     * @param event the mech display event.
+     * @param event the mek display event.
      */
     void processMekDisplayEvent(MekDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
@@ -545,7 +549,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
                     lis.weaponSelected(event);
                     break;
                 default:
-                    LogManager.getLogger().error("Received unknown event " + event.getType() + " in processMekDisplayEvent");
+                    LogManager.getLogger()
+                            .error("Received unknown event " + event.getType() + " in processMekDisplayEvent");
                     break;
             }
         }
@@ -553,6 +558,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Returns the UnitDisplay's ClientGUI reference, which can be null.
+     * 
      * @return
      */
     @Nullable

@@ -39,7 +39,7 @@ public class PushAttackAction extends DisplacementAttackAction {
      * pushes are impossible when physical attacks are impossible, or a
      * retractable blade is extended
      *
-     * @param game The current {@link Game}
+     * @param game   The current {@link Game}
      * @param ae
      * @param target
      * @return
@@ -57,10 +57,10 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         // can't push if carrying any cargo per TW
         if ((ae instanceof Mek) &&
-        		!((Mek) ae).canFireWeapon(Mek.LOC_LARM) ||
-        		!((Mek) ae).canFireWeapon(Mek.LOC_LARM) ) {
-    		return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
-    	}
+                !((Mek) ae).canFireWeapon(Mek.LOC_LARM) ||
+                !((Mek) ae).canFireWeapon(Mek.LOC_LARM)) {
+            return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
+        }
 
         if ((ae instanceof Mek) && ((Mek) ae).hasExtendedRetractableBlade()) {
             return "Extended retractable blade";
@@ -70,7 +70,7 @@ public class PushAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * To-hit number for the mech to push another mech
+     * To-hit number for the mek to push another mek
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
@@ -115,9 +115,9 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target yourself");
         }
 
-        // non-mechs can't push
+        // non-meks can't push
         if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't push");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't push");
         }
 
         // Quads can't push
@@ -130,9 +130,9 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push while airborne");
         }
 
-        // Can only push mechs
+        // Can only push meks
         if (!(te instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a mech");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a mek");
         }
 
         // Can't push with flipped arms
@@ -175,14 +175,14 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not at same elevation");
         }
 
-        // can't push mech making non-pushing displacement attack
+        // can't push mek making non-pushing displacement attack
         if (te.hasDisplacementAttack() && !te.isPushing()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a charge/DFA attack");
         }
 
-        // can't push mech pushing another, different mech
+        // can't push mek pushing another, different mek
         if (te.isPushing() && (te.getDisplacementAttack().getTargetId() != ae.getId())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is pushing another mech");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is pushing another mek");
         }
 
         // can't do anything but counter-push if the target of another attack
@@ -212,7 +212,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        // can't push prone mechs
+        // can't push prone meks
         if (te.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
@@ -242,7 +242,7 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         String otherImpossible = toHitIsImpossible(game, ae, target);
         if (otherImpossible != null) {
-        	return new ToHitData(TargetRoll.IMPOSSIBLE, otherImpossible);
+            return new ToHitData(TargetRoll.IMPOSSIBLE, otherImpossible);
         }
 
         // Set the base BTH
@@ -286,7 +286,7 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        //evading
+        // evading
         if (te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
@@ -307,7 +307,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             }
         }
 
-        //Attacking Weight Class Modifier.
+        // Attacking Weight Class Modifier.
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
             if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");

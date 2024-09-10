@@ -83,17 +83,19 @@ public class WeaponFireInfo {
      * @param shooter The {@link megamek.common.Entity} doing the attacking.
      * @param target  The {@link megamek.common.Targetable} of the attack.
      * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param ammo    The {@link megamek.common.Mounted} ammo to use for the attack; may be null.
+     * @param ammo    The {@link megamek.common.Mounted} ammo to use for the attack;
+     *                may be null.
      * @param game    The current {@link Game}
-     * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param guess   Set TRUE to estimate the chance to hit rather than doing the
+     *                full calculation.
      */
     WeaponFireInfo(final Entity shooter,
-                   final Targetable target,
-                   final WeaponMounted weapon,
-                   final AmmoMounted ammo,
-                   final Game game,
-                   final boolean guess,
-                   final Princess owner) {
+            final Targetable target,
+            final WeaponMounted weapon,
+            final AmmoMounted ammo,
+            final Game game,
+            final boolean guess,
+            final Princess owner) {
         this(shooter, null, null, target, null, weapon, ammo, game, false, guess, owner, null);
     }
 
@@ -101,82 +103,110 @@ public class WeaponFireInfo {
      * Constructor including the shooter and target's state information.
      *
      * @param shooter      The {@link megamek.common.Entity} doing the attacking.
-     * @param shooterState The current {@link megamek.client.bot.princess.EntityState} of the attacker.
+     * @param shooterState The current
+     *                     {@link megamek.client.bot.princess.EntityState} of the
+     *                     attacker.
      * @param target       The {@link megamek.common.Targetable} of the attack.
-     * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon       The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param targetState  The current
+     *                     {@link megamek.client.bot.princess.EntityState} of the
+     *                     target.
+     * @param weapon       The {@link megamek.common.Mounted} weapon used for the
+     *                     attack.
      * @param game         The current {@link Game}
-     * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param guess        Set TRUE to estimate the chance to hit rather than doing
+     *                     the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
-                   final EntityState shooterState,
-                   final Targetable target,
-                   final EntityState targetState,
-                   final WeaponMounted weapon,
-                   final AmmoMounted ammo,
-                   final Game game,
-                   final boolean guess,
-                   final Princess owner) {
+            final EntityState shooterState,
+            final Targetable target,
+            final EntityState targetState,
+            final WeaponMounted weapon,
+            final AmmoMounted ammo,
+            final Game game,
+            final boolean guess,
+            final Princess owner) {
         this(shooter, shooterState, null, target, targetState, weapon, ammo, game, false, guess, owner, null);
     }
 
     /**
      * Constructor for aerospace units performing Strike attacks.
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
-     * @param shooterPath           The {@link megamek.common.MovePath} of the attacker.
-     * @param target                The {@link megamek.common.Targetable} of the attack.
-     * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param shooter               The {@link megamek.common.Entity} doing the
+     *                              attacking.
+     * @param shooterPath           The {@link megamek.common.MovePath} of the
+     *                              attacker.
+     * @param target                The {@link megamek.common.Targetable} of the
+     *                              attack.
+     * @param targetState           The current
+     *                              {@link megamek.client.bot.princess.EntityState}
+     *                              of the target.
+     * @param weapon                The {@link megamek.common.Mounted} weapon used
+     *                              for the attack.
      * @param game                  The current {@link Game}
-     * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
-     * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param assumeUnderFlightPath Set TRUE for aerial units performing
+     *                              air-to-ground attacks.
+     * @param guess                 Set TRUE to estimate the chance to hit rather
+     *                              than doing the full calculation.
      * @param owner                 Instance of the princess owner
-     * @param bombPayloads          The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads          The bomb payload, as described in
+     *                              WeaponAttackAction.setBombPayload
      */
     WeaponFireInfo(final Entity shooter,
-                   final MovePath shooterPath,
-                   final Targetable target,
-                   final EntityState targetState,
-                   final WeaponMounted weapon,
-                   final AmmoMounted ammo,
-                   final Game game,
-                   final boolean assumeUnderFlightPath,
-                   final boolean guess,
-                   final Princess owner,
-                   final HashMap<String, int[]> bombPayloads) {
-        this(shooter, null, shooterPath, target, targetState, weapon, ammo, game, assumeUnderFlightPath, guess, owner, bombPayloads);
+            final MovePath shooterPath,
+            final Targetable target,
+            final EntityState targetState,
+            final WeaponMounted weapon,
+            final AmmoMounted ammo,
+            final Game game,
+            final boolean assumeUnderFlightPath,
+            final boolean guess,
+            final Princess owner,
+            final HashMap<String, int[]> bombPayloads) {
+        this(shooter, null, shooterPath, target, targetState, weapon, ammo, game, assumeUnderFlightPath, guess, owner,
+                bombPayloads);
     }
 
     /**
-     * This constructs a WeaponFireInfo using the best guess of how likely an aerospace unit using a strike attack will
+     * This constructs a WeaponFireInfo using the best guess of how likely an
+     * aerospace unit using a strike attack will
      * hit, without actually constructing the {@link WeaponAttackAction}
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
-     * @param shooterState          The current {@link megamek.client.bot.princess.EntityState} of the attacker.
-     * @param shooterPath           The {@link megamek.common.MovePath} of the attacker.
-     * @param target                The {@link megamek.common.Targetable} of the attack.
-     * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param shooter               The {@link megamek.common.Entity} doing the
+     *                              attacking.
+     * @param shooterState          The current
+     *                              {@link megamek.client.bot.princess.EntityState}
+     *                              of the attacker.
+     * @param shooterPath           The {@link megamek.common.MovePath} of the
+     *                              attacker.
+     * @param target                The {@link megamek.common.Targetable} of the
+     *                              attack.
+     * @param targetState           The current
+     *                              {@link megamek.client.bot.princess.EntityState}
+     *                              of the target.
+     * @param weapon                The {@link megamek.common.Mounted} weapon used
+     *                              for the attack.
      * @param game                  The current {@link Game}
-     * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
-     * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
+     * @param assumeUnderFlightPath Set TRUE for aerial units performing
+     *                              air-to-ground attacks.
+     * @param guess                 Set TRUE to estimate the chance to hit rather
+     *                              than going through the full
      *                              calculation.
      * @param owner                 Instance of the princess owner
-     * @param bombPayloads          The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads          The bomb payload, as described in
+     *                              WeaponAttackAction.setBombPayload
      */
     private WeaponFireInfo(final Entity shooter,
-                           final EntityState shooterState,
-                           final MovePath shooterPath,
-                           final Targetable target,
-                           final EntityState targetState,
-                           final WeaponMounted weapon,
-                           final AmmoMounted ammo,
-                           final Game game,
-                           final boolean assumeUnderFlightPath,
-                           final boolean guess,
-                           final Princess owner,
-                           final HashMap<String, int[]> bombPayloads) {
+            final EntityState shooterState,
+            final MovePath shooterPath,
+            final Targetable target,
+            final EntityState targetState,
+            final WeaponMounted weapon,
+            final AmmoMounted ammo,
+            final Game game,
+            final boolean assumeUnderFlightPath,
+            final boolean guess,
+            final Princess owner,
+            final HashMap<String, int[]> bombPayloads) {
         this.owner = owner;
 
         setShooter(shooter);
@@ -280,18 +310,19 @@ public class WeaponFireInfo {
     }
 
     ToHitData calcToHit() {
-        return owner.getFireControl(getShooter()).guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
-                                                                  getTargetState(),
-                                                                  getWeapon(), getAmmo(), getGame());
+        return owner.getFireControl(getShooter()).guessToHitModifierForWeapon(getShooter(), getShooterState(),
+                getTarget(),
+                getTargetState(),
+                getWeapon(), getAmmo(), getGame());
     }
 
     private ToHitData calcToHit(final MovePath shooterPath,
-                                final boolean assumeUnderFlightPath) {
+            final boolean assumeUnderFlightPath) {
         return owner.getFireControl(getShooter()).guessAirToGroundStrikeToHitModifier(getShooter(), null, getTarget(),
-                                                                          getTargetState(),
-                                                                          shooterPath, getWeapon(),
-                                                                          getAmmo(), getGame(),
-                                                                          assumeUnderFlightPath);
+                getTargetState(),
+                shooterPath, getWeapon(),
+                getAmmo(), getGame(),
+                assumeUnderFlightPath);
     }
 
     private ToHitData calcRealToHit(final WeaponAttackAction weaponAttackAction) {
@@ -362,7 +393,7 @@ public class WeaponFireInfo {
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
             return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
-                                          getShooter().getEquipmentNum(getWeapon()));
+                    getShooter().getEquipmentNum(getWeapon()));
         } else {
             return new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
                     getShooter().getEquipmentNum(getWeapon()), getGame());
@@ -371,9 +402,9 @@ public class WeaponFireInfo {
 
     private WeaponAttackAction buildBombAttackAction(final HashMap<String, int[]> bombPayloads) {
         final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
-                                                                   getTarget().getTargetType(),
-                                                                   getTarget().getId(),
-                                                                   getShooter().getEquipmentNum(getWeapon()));
+                getTarget().getTargetType(),
+                getTarget().getId(),
+                getShooter().getEquipmentNum(getWeapon()));
 
         diveBomb.setBombPayloads(bombPayloads);
 
@@ -386,22 +417,27 @@ public class WeaponFireInfo {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
         }
 
-        // bay weapons require special consideration, by looping through all weapons and adding up the damage
-        // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
+        // bay weapons require special consideration, by looping through all weapons and
+        // adding up the damage
+        // A bay's weapons may have different ranges, most noticeable in laser bays,
+        // where the damage potential
         // varies with distance to target.
         if (!weapon.getBayWeapons().isEmpty()) {
             int bayDamage = 0;
-            for (WeaponMounted bayWeapon: weapon.getBayWeapons()) {
+            for (WeaponMounted bayWeapon : weapon.getBayWeapons()) {
                 WeaponType weaponType = bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                        ? weaponType.getExtremeRange() : weaponType.getLongRange();
+                        ? weaponType.getExtremeRange()
+                        : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
                 if (shooter.isAirborne() && target.isAirborne()) {
                     targetDistance /= 16;
                 }
 
-                // if the particular weapon is within range or we're an aircraft strafing a ground unit
-                // then we can count it. Otherwise, it's not going to contribute to damage, and we want
+                // if the particular weapon is within range or we're an aircraft strafing a
+                // ground unit
+                // then we can count it. Otherwise, it's not going to contribute to damage, and
+                // we want
                 // to avoid grossly overestimating damage.
                 if (targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
                     switch (weaponType.getDamage()) {
@@ -413,25 +449,28 @@ public class WeaponFireInfo {
                             break;
                         default:
                             bayDamage += weaponType.getDamage();
-                        }
                     }
                 }
+            }
             return bayDamage;
         }
 
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-            TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
+                TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
             return 7D;
         }
 
         // artillery and cluster table use the rack size as the base damage amount,
-        // but we'll roll an "average" cluster for the given weapon size to estimate damage.
+        // but we'll roll an "average" cluster for the given weapon size to estimate
+        // damage.
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
-           (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
-            // Assume average cluster size for this weapon, unless it has Streak capabilities
-            if (!List.of(AmmoType.T_SRM_STREAK, AmmoType.T_LRM_STREAK, AmmoType.T_IATM).contains(weaponType.getAmmoType())) {
+                (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
+            // Assume average cluster size for this weapon, unless it has Streak
+            // capabilities
+            if (!List.of(AmmoType.T_SRM_STREAK, AmmoType.T_LRM_STREAK, AmmoType.T_IATM)
+                    .contains(weaponType.getAmmoType())) {
                 int rs = weaponType.getRackSize();
                 return Compute.calculateClusterHitTableAmount(7, rs);
             }
@@ -441,8 +480,7 @@ public class WeaponFireInfo {
         // with # troopers counting as 1 for support vehicles
         if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
                 (weaponType instanceof InfantryWeapon)) {
-            int numTroopers = (shooter instanceof Infantry) ?
-                    ((Infantry) shooter).getShootingStrength() : 1;
+            int numTroopers = (shooter instanceof Infantry) ? ((Infantry) shooter).getShootingStrength() : 1;
             return InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers;
         }
 
@@ -454,12 +492,14 @@ public class WeaponFireInfo {
 
         // Give an estimation of the utility of TAGging a given target.
         if (weaponType.hasFlag(WeaponType.F_TAG)) {
-            // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
+            // Aero TAG usage needs to take into account incoming Indirect Fire shots from
+            // friendlies, homing
             // weapons, and the disutility of foregoing its own other weapons.
-            if (weapon.getEntity().isAero() && !target.isAero()){
+            if (weapon.getEntity().isAero() && !target.isAero()) {
                 return computeAeroExpectedTAGDamage();
             } else {
-                // Other taggers just need to know what hitting with the TAG can expect to deal, damage-wise.
+                // Other taggers just need to know what hitting with the TAG can expect to deal,
+                // damage-wise.
                 return computeExpectedTAGDamage(false);
             }
 
@@ -478,24 +518,28 @@ public class WeaponFireInfo {
     }
 
     /**
-     * Aerospace units need to think carefully before firing TAGs at ground targets, because this
+     * Aerospace units need to think carefully before firing TAGs at ground targets,
+     * because this
      * precludes firing _any_ other weapons this turn.
+     * 
      * @return expected damage of firing a TAG weapon, in light of other options.
      */
-    double computeAeroExpectedTAGDamage(){
-        // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
+    double computeAeroExpectedTAGDamage() {
+        // If TAG damage exceeds the attacking unit's own max damage capacity, go for
+        // it!
         return computeExpectedTAGDamage(true);
     }
 
     /**
-     * Generalized computation of hitting with TAG given current guidable muniitions in play
+     * Generalized computation of hitting with TAG given current guidable muniitions
+     * in play
+     * 
      * @param exclusiveWithOtherWeapons true if Aero, false otherwise.
      * @return
      */
-    double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons){
+    double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons) {
         boolean debug = LogManager.getLogger().isDebugEnabled();
-        final StringBuilder msg = (debug) ?
-                new StringBuilder("Assessing the expected max damage from ")
+        final StringBuilder msg = (debug) ? new StringBuilder("Assessing the expected max damage from ")
                 .append(shooter.getDisplayName())
                 .append(" using their TAG this turn")
                 : null;
@@ -511,10 +555,9 @@ public class WeaponFireInfo {
             }
         }
 
-        int incomingAttacksDamage =  owner.computeTeamTagUtility(
+        int incomingAttacksDamage = owner.computeTeamTagUtility(
                 target,
-                Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()))
-        );
+                Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition())));
         int utility = incomingAttacksDamage - myWeaponsDamage;
         if (debug) {
             msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
@@ -528,12 +571,15 @@ public class WeaponFireInfo {
      * Compute the heat output by firing a given weapon.
      * Contains special logic for bay weapons when using individual bay heat.
      * TODO: Make some kind of assumption about variable-heat weapons?
+     * 
      * @param weapon The weapon to check.
      * @return Generated heat.
      */
     int computeHeat(WeaponMounted weapon) {
-        // bay weapons require special consideration, by looping through all weapons and adding up the damage
-        // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
+        // bay weapons require special consideration, by looping through all weapons and
+        // adding up the damage
+        // A bay's weapons may have different ranges, most noticeable in laser bays,
+        // where the damage potential
         // varies with distance to target.
         if (!weapon.getBayWeapons().isEmpty()) {
             int bayHeat = 0;
@@ -549,15 +595,17 @@ public class WeaponFireInfo {
 
     /**
      * Worker function to compute expected bomb damage given the shooter
-     * @param shooter The unit making the attack.
-     * @param weapon The weapon being used in the attack.
+     * 
+     * @param shooter   The unit making the attack.
+     * @param weapon    The weapon being used in the attack.
      * @param bombedHex The target hex.
      * @return The expected damage of the attack.
      */
     private double computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final Coords bombedHex) {
-        double damage = 0D; //lol double damage I wish
+        double damage = 0D; // lol double damage I wish
 
-        // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
+        // for dive attacks, we can pretty much assume that we're going to drop
+        // everything we've got on the poor scrubs in this hex
         if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
                 final int damagePerShot = bomb.getType().getDamagePerShot();
@@ -592,23 +640,26 @@ public class WeaponFireInfo {
      * Helper function that calculates expected damage
      *
      * @param shooterPath The path the attacker has moved.
-     * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure the target is under their flight
-     *                              path.
-     * @param guess Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * 
+     * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure
+     * the target is under their flight
+     * path.
+     * 
+     * @param guess Set TRUE to estimate the chance to hit rather than doing the
+     * full calculation.
      */
     void initDamage(@Nullable final MovePath shooterPath,
-                    final boolean assumeUnderFlightPath,
-                    final boolean guess,
-                    final HashMap<String, int[]> bombPayloads) {
+            final boolean assumeUnderFlightPath,
+            final boolean guess,
+            final HashMap<String, int[]> bombPayloads) {
         boolean debugging = LogManager.getLogger().isDebugEnabled();
 
-        final StringBuilder msg =
-                debugging ?
-                        new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-                                                             .append(" firing ").append(getWeapon().getDesc())
-                                                             .append(" at ").append(getTarget().getDisplayName())
-                                                             .append(":") :
-                        null;
+        final StringBuilder msg = debugging
+                ? new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                        .append(" firing ").append(getWeapon().getDesc())
+                        .append(" at ").append(getTarget().getDisplayName())
+                        .append(":")
+                : null;
 
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayloads) || (0 == bombPayloads.get("external").length)) {
@@ -617,7 +668,8 @@ public class WeaponFireInfo {
             setAction(buildBombAttackAction(bombPayloads));
         }
 
-        // Set ammoId here so we can tell toHitCalc which ammo to use for calculations; later overwritten.
+        // Set ammoId here so we can tell toHitCalc which ammo to use for calculations;
+        // later overwritten.
         getWeaponAttackAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
 
         if (!guess) {
@@ -632,9 +684,8 @@ public class WeaponFireInfo {
             if (debugging) {
                 LogManager.getLogger().debug(
                         msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
-                            .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
-                                .append((guess) ? " [guess]" : " [real]")
-                );
+                                .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
+                                .append((guess) ? " [guess]" : " [real]"));
             }
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -656,7 +707,8 @@ public class WeaponFireInfo {
         }
 
         // now that we've calculated hit odds, if we're shooting
-        // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
+        // a weapon capable of rapid fire, it's time to decide whether we're going to
+        // spin it up
         String currentFireMode = getWeapon().curMode().getName();
         int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinUpThreshold());
         if (!currentFireMode.equals(getWeapon().curMode().getName())) {
@@ -678,10 +730,12 @@ public class WeaponFireInfo {
             msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(expectedDamageOnHit));
         }
 
-        // If expected damage from Aero tagging is zero, return out - save attacks for later.
+        // If expected damage from Aero tagging is zero, return out - save attacks for
+        // later.
         if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
             if (debugging) {
-                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
+                LogManager.getLogger()
+                        .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             }
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -733,9 +787,10 @@ public class WeaponFireInfo {
             int hitLocation = i;
 
             while (targetMek.isLocationBad(hitLocation) &&
-                   (Mek.LOC_CT != hitLocation)) {
+                    (Mek.LOC_CT != hitLocation)) {
 
-                // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
+                // Head shots don't travel inward if the head is removed. Instead, a new roll
+                // gets made.
                 if (Mek.LOC_HEAD == hitLocation) {
                     headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mek.LOC_HEAD);
                     break;
@@ -744,10 +799,9 @@ public class WeaponFireInfo {
                 // Get the next most inward location.
                 hitLocation = Mek.getInnerLocation(hitLocation);
             }
-            double hitLocationProbability =
-                    ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
+            double hitLocationProbability = ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
 
-            // Account for the possibility of re-rolling a head hit on a headless mech.
+            // Account for the possibility of re-rolling a head hit on a headless mek.
             hitLocationProbability += (hitLocationProbability * headlessOdds);
 
             // Get the armor and internals for this location.
@@ -760,15 +814,15 @@ public class WeaponFireInfo {
                 if (Mek.LOC_CT == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 } else if ((Mek.LOC_HEAD == hitLocation) &&
-                           (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {
+                        (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 }
 
                 // If the armor can be breached, but the location not destroyed...
             } else if (getExpectedDamageOnHit() > (targetArmor)) {
                 setExpectedCriticals(getExpectedCriticals() +
-                                             (hitLocationProbability * getProbabilityToHit() *
-                                                     expectedCriticalHitCount));
+                        (hitLocationProbability * getProbabilityToHit() *
+                                expectedCriticalHitCount));
             }
         }
 
@@ -798,12 +852,13 @@ public class WeaponFireInfo {
         // Set the ammoId for calcs.
         getAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
         setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
-                                              getShooterState().hasNaturalAptGun()) / 100.0);
+                getShooterState().hasNaturalAptGun()) / 100.0);
         return getAction();
     }
 
     String getDebugDescription() {
-        String ammoClause = (getAmmo() == null) ? "" : ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
+        String ammoClause = (getAmmo() == null) ? ""
+                : ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
         return getWeapon().getName() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
                 + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
                 + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())

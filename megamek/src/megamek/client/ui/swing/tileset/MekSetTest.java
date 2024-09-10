@@ -44,7 +44,8 @@ import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
  */
 public class MekSetTest {
 
-    private MekSetTest() { }
+    private MekSetTest() {
+    }
 
     public static class StringCompCaseInsensitive implements Comparator<String> {
         @Override
@@ -63,7 +64,7 @@ public class MekSetTest {
     }
 
     /**
-     * Reads the *set file in the given directory and filename.  It looks at the
+     * Reads the *set file in the given directory and filename. It looks at the
      * given image file and prints a message if the file cannot be opened and
      * if the case does not match.
      */
@@ -114,8 +115,8 @@ public class MekSetTest {
     }
 
     public static void main(String[] args) throws IOException {
-        File mechDir = Configuration.unitImagesDir();
-        testFile(mechDir, "mechset.txt");
+        File mekDir = Configuration.unitImagesDir();
+        testFile(mekDir, "mekset.txt");
 
         File wreckDir = new File(Configuration.unitImagesDir(), TilesetManager.DIR_NAME_WRECKS);
         testFile(wreckDir, "wreckset.txt");

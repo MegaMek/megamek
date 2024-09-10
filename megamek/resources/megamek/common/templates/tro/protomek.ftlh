@@ -10,11 +10,11 @@
 </#if>
 	<p>
 	<b>Type:</b> ${chassis} <#if configurationDesc??>(${configurationDesc})</#if><br/>
-	<b>Technology Base:</b> ${techBase}<br/> 
+	<b>Technology Base:</b> ${techBase}<br/>
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-	
+
 	<table>
 	<tr><th>Equipment</th><th/><th>Mass (kg)</th></tr>
 	<tr><td>Internal Structure</td><td></td><td align="center">${isMass}</td></tr>
@@ -73,14 +73,14 @@
 			</#if>
 		</tr>
 	</table>
-	
+
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Mass (kg)</th></tr>
 		<#list equipment as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.mass}</td></tr>
 		</#list>
 	</table>
-	
+
 	<#if quirks??>
 		<p>
 		Features the following design quirks: ${quirks}

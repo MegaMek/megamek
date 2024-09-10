@@ -5,7 +5,7 @@ ${fullName}
 </#if>
 
 Type: ${chassis}
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Tonnage: ${tonnage}
 Battle Value: ${battleValue}
 
@@ -56,7 +56,7 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 
 <#if isOmni>
 Weight and Space Allocation
-${formatBasicDataRow("Location", "Fixed", "Space Remaining")}	
+${formatBasicDataRow("Location", "Fixed", "Space Remaining")}
 <#list fixedEquipment as row>
 ${formatBasicDataRow(row.location, row.equipment, row.remaining)}
 </#list>
@@ -68,11 +68,11 @@ Left Arm Actuators: ${leftArmActuators}
 
 </#if>
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Critical", "Heat", "Tonnage")}	
+${formatEquipmentRow("and Ammo", "Location", "Critical", "Heat", "Tonnage")}
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.slots, eq.heat, eq.tonnage)}
 </#list>
-	
+
 <#if quirks??>
 Features the following design quirks: ${quirks}
 </#if>

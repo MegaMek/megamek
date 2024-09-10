@@ -10,10 +10,10 @@
   	<b>Type: </b>${typeDesc}<br/>
 </#if>
   	<b>Mass: </b>${massDesc} tons<br/>
-<#if use??>  	
+<#if use??>
   	<b>Use:</b> ${use}<br/>
 </#if>
-	<b>Technology Base:</b> ${techBase}<br/> 
+	<b>Technology Base:</b> ${techBase}<br/>
   	<b>Introduced:</b> ${year}<br/>
 	<b>Mass:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
@@ -27,7 +27,7 @@
 	<#if dimensions.width??>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Width:</b> ${dimensions.width}<br/></#if>
 	<#if dimensions.height??>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Height:</b> ${dimensions.height}<br/></#if>
 	</p>
-</#if>	
+</#if>
 	<p>
 	<b>Fuel:</b> ${fuelMass} tons (${fuelPoints})<br/>
 	<b>Safe Thrust:</b> ${safeThrust}<br/>
@@ -47,7 +47,7 @@
 	<p>
 	<b>Armor</b><br/>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Nose:</b> ${armorValues.NOS}<br/>
-<#if armorValues.RS??>	
+<#if armorValues.RS??>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Sides:</b> ${armorValues.RS}<br/>
 <#else>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Fore Sides:</b> ${armorValues.FRS}<br/>
@@ -84,12 +84,12 @@
 	${row.shots} rounds of ${row.name} ammunition (${row.tonnage} tons)<#if row?has_next>, </#if>
 <#else>
 	None
-</#list>		
+</#list>
 	<br/>
 	</p>
 	<p>
 <#if miscEquipment?? && miscEquipment?size gt 0>
-	<b>Notes: </b> Equipped with 
+	<b>Notes: </b> Equipped with
 	<#list miscEquipment as eq>
 		${eq}<#if miscEquipment?size gt 1>,</#if>
 	</#list>
@@ -118,11 +118,11 @@
 		<#list equipment as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage}</td><td>${eq.heat}</td><td>${eq.srv}</td><td>${eq.mrv}</td><td>${eq.lrv}</td><td>${eq.erv}</td></tr>
 		<#else>
-		None			
+		None
 		</#list>
 	</table>
 </#if>
-	
+
 	<#if quirks??>
 		<p>
 		Features the following design quirks: ${quirks}

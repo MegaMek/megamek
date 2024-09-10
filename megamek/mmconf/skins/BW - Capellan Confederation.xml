@@ -239,7 +239,7 @@
 		<bl_corner>Bloodwolf/Parts/unit/BLC.gif</bl_corner>
 		<tr_corner>Bloodwolf/Parts/unit/TRC.gif</tr_corner>
 		<br_corner>Bloodwolf/Parts/unit/BRC.gif</br_corner>
-		<mech_outline>Bloodwolf/Parts/unit/bg_mech.gif</mech_outline>
+		<mek_outline>Bloodwolf/Parts/unit/bg_mek.gif</mek_outline>
 	</UI_Element>
 
 </skin>

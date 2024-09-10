@@ -11,11 +11,11 @@
 
 	<p>
 	<b>Type:</b> ${chassis}<br/>
-	<b>Technology Base:</b> ${techBase}<br/> 
+	<b>Technology Base:</b> ${techBase}<br/>
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-	
+
 	<table>
 	<tr><th>Equipment</th><th/><th>Mass</th></tr>
 	<#if !isFighterSquadron>
@@ -53,7 +53,7 @@
 			<#if patchworkByLoc??><td>${patchworkByLoc.AFT}</td></#if>
 		</tr>
 	</table>
-	
+
 	<#if isOmni>
 	<b>Fixed Equipment</b><br/>
 		<#if fixedTonnage gt 0>
@@ -69,14 +69,14 @@
 			None
 		</#if>
 	</#if>
-	
+
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Tonnage</th><th>Heat</th><th>SRV</th><th>MRV</th><th>LRV</th><th>ERV</th></tr>
 		<#list equipment as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage}</td><td>${eq.heat}</td><td>${eq.srv}</td><td>${eq.mrv}</td><td>${eq.lrv}</td><td>${eq.erv}</td></tr>
 		</#list>
 	</table>
-	
+
 	<#if quirks??>
 		<p>
 		Features the following design quirks: ${quirks}

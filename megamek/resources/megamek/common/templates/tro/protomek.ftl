@@ -4,10 +4,10 @@ ${fullName}
 </#if>
 
 Type: ${chassis} <#if configurationDesc??>(${configurationDesc})</#if>
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Tonnage: ${tonnage}
 Battle Value: ${battleValue}
-	
+
 ${formatBasicDataRow("Equipment", "", "Mass (kg)")}
 ${formatBasicDataRow("Internal Structure", "", isMass)}
 ${formatBasicDataRow("Engine", engineRating, engineMass)}
@@ -44,9 +44,9 @@ ${formatBasicDataRow("Armor Factor" + armorType + ":", armorFactor, armorMass)}
 <#else>
      ${formatArmorRow("Main Gun", "-", "-")}
 </#if>
-	
+
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Mass")}	
+${formatEquipmentRow("and Ammo", "Location", "Mass")}
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.mass)}
 </#list>

@@ -5,7 +5,7 @@ ${fullName}
 </#if>
 
 Type: ${chassis}
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Movement Type: ${moveType}
 Tonnage: ${tonnage}
 Battle Value: ${battleValue}
@@ -38,7 +38,7 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 <#if isSuperheavy && !isVTOL>
      ${formatArmorRow("Front R/L Side", structureValues.FRRS, armorValues.FRRS)}<#if patchworkByLoc??> ${patchworkByLoc.FRRS}</#if>
      ${formatArmorRow("Rear R/L Side", structureValues.RRRS, armorValues.RRRS)}<#if patchworkByLoc??> ${patchworkByLoc.RRRS}</#if>
-<#else>     
+<#else>
      ${formatArmorRow("R/L Side", structureValues.RS, armorValues.RS)}<#if patchworkByLoc??> ${patchworkByLoc.RS}</#if>
 </#if>
      ${formatArmorRow("Rear", structureValues.RR, armorValues.RR)}<#if patchworkByLoc??> ${patchworkByLoc.RR}</#if>
@@ -55,7 +55,7 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 <#if isOmni>
 Fixed Equipment
 	<#if fixedTonnage gt 0>
-${formatBasicDataRow("Location", "Fixed", "Tonnage")}	
+${formatBasicDataRow("Location", "Fixed", "Tonnage")}
 	<#list fixedEquipment as row>
 		<#if row.equipment != "None">
 ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
@@ -67,11 +67,11 @@ None
 </#if>
 
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Tonnage")}	
+${formatEquipmentRow("and Ammo", "Location", "Tonnage")}
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.tonnage)}
 </#list>
-	
+
 <#if quirks??>
 Features the following design quirks: ${quirks}
 </#if>

@@ -360,7 +360,7 @@ public class RandomUnitGenerator implements Serializable {
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
             } catch (Exception ex) {
-                logger.error(ex, "Unable to load " + ratFile.getName(), ex);
+                logger.error(ex, "Unable to load " + ratFile.getName());
             }
         }
     }

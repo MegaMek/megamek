@@ -2711,6 +2711,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             oldEntity = entity;
         }
 
+        // Remove sprites from backing sprite collections before modifying the
+        // entitySprites and isometricSprites.  Otherwise orphaned overTerrainSprites
+        // or behindTerrainHexSprites can result.
+        removeSprites(entitySprites);
+        removeSprites(isometricSprites);
+
         // If the entity we are updating doesn't have a position, ensure we
         // remove all of its old sprites
         if (entity.getPosition() == null) {
@@ -2821,8 +2827,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Update Sprite state with new collections
-        removeSprites(entitySprites);
-        removeSprites(isometricSprites);
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
         isometricSprites = isoSprites;

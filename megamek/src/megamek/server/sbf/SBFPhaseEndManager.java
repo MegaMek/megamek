@@ -125,46 +125,10 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                 gameManager.changePhase(GamePhase.END);
                 break;
             case TARGETING:
-                // vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
-                // resolveAllButWeaponAttacks();
-                // resolveOnlyWeaponAttacks();
-                // handleAttacks();
                 goToDependingOnReport(GamePhase.TARGETING_REPORT, GamePhase.PREMOVEMENT);
-                //
-                // sendSpecialHexDisplayPackets();
-                // for (Enumeration<Player> i = gameManager.getGame().getPlayers();
-                // i.hasMoreElements(); ) {
-                // Player player = i.nextElement();
-                // int connId = player.getId();
-                // send(connId, createArtilleryPacket(player));
-                // }
-                //
                 gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
             case OFFBOARD:
-                // // write Offboard Attack Phase header
-                // addReport(new Report(1100, Report.PUBLIC));
-                // resolveAllButWeaponAttacks(); // torso twist or flip arms
-                // // possible
-                // resolveOnlyWeaponAttacks(); // should only be TAG at this point
-                // handleAttacks();
-                // for (Enumeration<Player> i = gameManager.getGame().getPlayers();
-                // i.hasMoreElements(); ) {
-                // Player player = i.nextElement();
-                // int connId = player.getId();
-                // send(connId, createArtilleryPacket(player));
-                // }
-                // applyBuildingDamage();
-                // checkForPSRFromDamage();
-                // addReport(resolvePilotingRolls());
-                //
-                // cleanupDestroyedNarcPods();
-                // checkForFlawedCooling();
-                //
-                // sendSpecialHexDisplayPackets();
-                // sendTagInfoUpdates();
-                //
-                // check reports
                 if (gameManager.getPendingReports().size() > 1) {
                     gameManager.getGame().addReports(gameManager.getPendingReports());
                     gameManager.changePhase(GamePhase.OFFBOARD_REPORT);

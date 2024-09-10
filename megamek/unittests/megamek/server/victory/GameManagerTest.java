@@ -47,7 +47,6 @@ public class GameManagerTest {
         when(testGame.getGameListeners()).thenReturn(new Vector<>());
         when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
         when(testGame.getEntitiesVector()).thenReturn(Collections.emptyList());
-        when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
         when(testGame.getPlayersList()).thenReturn(Collections.emptyList());
         when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
         when(testGame.getAttacksVector()).thenReturn(new Vector<>());

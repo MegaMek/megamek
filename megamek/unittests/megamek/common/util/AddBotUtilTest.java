@@ -77,7 +77,6 @@ public class AddBotUtilTest {
 
                 mockGame = mock(Game.class);
                 when(mockGame.getPlayersList()).thenReturn(playerVector);
-                when(mockGame.getPlayers()).thenReturn(playerEnumeration);
                 doNothing().when(mockGame).addGameListener(any(GameListener.class));
 
                 mockClient = mock(Client.class);

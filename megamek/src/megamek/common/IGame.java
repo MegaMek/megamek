@@ -204,10 +204,6 @@ public interface IGame {
     @Nullable
     Player getPlayer(int id);
 
-    /** @return An enumeration of {@link Player players} in the game. */
-    @Deprecated
-    Enumeration<Player> getPlayers();
-
     /**
      * @return The current players as a list. Implementations should make sure that
      *         this list can be safely modified.

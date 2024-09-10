@@ -261,8 +261,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // remove ghosts
         List<Player> ghosts = new ArrayList<>();
-        for (Enumeration<Player> players = getGame().getPlayers(); players.hasMoreElements();) {
-            Player p = players.nextElement();
+        for (Player p : getGame().getPlayersList()) {
             if (p.isGhost()) {
                 ghosts.add(p);
             } else {
@@ -431,8 +430,7 @@ public class TWGameManager extends AbstractGameManager {
      * observers during the lounge phase.
      */
     public void checkForObservers() {
-        for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements();) {
-            Player p = e.nextElement();
+        for (Player p : getGame().getPlayersList()) {
             p.setObserver(
                     (!p.isGameMaster()) && (getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
@@ -1203,9 +1201,8 @@ public class TWGameManager extends AbstractGameManager {
             vAllUnits.addElement(i.nextElement());
         }
 
-        for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements();) {
+        for (Player p : game.getPlayersList()) {
             // Record the player.
-            Player p = i.nextElement();
             sb.append("++++++++++ ").append(p.getName()).append(" ++++++++++\n");
 
             // Record the player's alive, retreated, or salvageable units.
@@ -1791,8 +1788,7 @@ public class TWGameManager extends AbstractGameManager {
 
     @Override
     public void calculatePlayerInitialCounts() {
-        for (final Enumeration<Player> players = game.getPlayers(); players.hasMoreElements();) {
-            final Player player = players.nextElement();
+        for (Player player : game.getPlayersList()) {
             player.setInitialEntityCount(Math.toIntExact(game.getPlayerEntities(player, false).stream()
                     .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count()));
             player.setInitialBV(player.getBV());
@@ -2370,8 +2366,7 @@ public class TWGameManager extends AbstractGameManager {
             evenMask += EntityClassTurn.CLASS_PROTOMEK;
         }
         // Reset all of the Players' turn category counts
-        for (Enumeration<Player> loop = game.getPlayers(); loop.hasMoreElements();) {
-            final Player player = loop.nextElement();
+        for (Player player : game.getPlayersList()) {
             player.resetEvenTurns();
             player.resetMultiTurns();
             player.resetOtherTurns();
@@ -7540,9 +7535,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         game.removeMinefield(mf);
 
-        Enumeration<Player> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            Player player = players.nextElement();
+        for (Player player : game.getPlayersList()) {
             removeMinefield(player, mf);
         }
     }
@@ -25535,8 +25528,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Deal with players who can see all.
-        for (Enumeration<Player> p = game.getPlayers(); p.hasMoreElements();) {
-            Player player = p.nextElement();
+        for (Player player : game.getPlayersList()) {
             if (player.canIgnoreDoubleBlind() && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }

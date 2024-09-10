@@ -26,7 +26,7 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * This command exists to print entity information to the chat window.
  * It is primarily intended for visually impaired users.
- * 
+ *
  * @author dirk
  */
 public class ShowEntityCommand extends ServerCommand {

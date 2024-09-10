@@ -52,8 +52,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
@@ -91,6 +89,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 // TODO: center map
 // TODO: background on the whole screen
@@ -103,6 +102,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class BoardEditor extends JPanel
         implements ItemListener, ListSelectionListener, ActionListener,
         DocumentListener, IMapSettingsObserver, IPreferenceChangeListener {
+    private final static MMLogger logger = MMLogger.create(BoardEditor.class);
 
     /**
      * Class to make terrains in JComboBoxes easier. This enables keeping the
@@ -1563,7 +1563,7 @@ public class BoardEditor extends JPanel
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "loadBoard");
             showBoardLoadError(ex);
             initializeBoardIfEmpty();
         }
@@ -1616,7 +1616,7 @@ public class BoardEditor extends JPanel
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileImage);
         } catch (IOException e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "boardSaveImage");
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());
@@ -1653,7 +1653,7 @@ public class BoardEditor extends JPanel
             setFrameTitle();
             return true;
         } catch (IOException e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "boardSave");
             return false;
         }
     }
@@ -1907,7 +1907,7 @@ public class BoardEditor extends JPanel
                     JOptionPane.showMessageDialog(frame,
                             Messages.getString("BoardEditor.OpenFileError", curBoardFile.toString())
                                     + e.getMessage());
-                    LogManager.getLogger().error("", e);
+                    logger.error(e, "actionPerformed");
                     ignoreHotKeys = false;
                 }
             }
@@ -2527,7 +2527,7 @@ public class BoardEditor extends JPanel
                     setCurrentHex(pastedHex);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "pasteFromClipboard");
             }
         }
     }

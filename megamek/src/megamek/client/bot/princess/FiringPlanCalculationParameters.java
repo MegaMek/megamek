@@ -18,24 +18,26 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.Entity;
-import megamek.common.Targetable;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.WeaponMounted;
-import org.apache.logging.log4j.LogManager;
+import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GET;
+import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GUESS;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GET;
-import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GUESS;
+import megamek.common.Entity;
+import megamek.common.Targetable;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.WeaponMounted;
+import megamek.logging.MMLogger;
 
 /**
- * This data structure contains parameters that may be passed to the "determineBestFiringPlan()"
+ * This data structure contains parameters that may be passed to the
+ * "determineBestFiringPlan()"
  */
 public final class FiringPlanCalculationParameters {
+    private final static MMLogger logger = MMLogger.create(FiringPlanCalculationParameters.class);
 
-    //The type of firing plan calculation to carry out
+    // The type of firing plan calculation to carry out
     public enum FiringPlanCalculationType {
         /**
          * We're guessing the firing plan based on our estimate of enemy movement
@@ -108,7 +110,7 @@ public final class FiringPlanCalculationParameters {
          */
         public Builder setMaxHeat(final int value) {
             if (value < 0) {
-                LogManager.getLogger().warn("Invalid max heat: " + value);
+                logger.warn("Invalid max heat: " + value);
                 maxHeat = 0;
                 return this;
             }
@@ -147,27 +149,27 @@ public final class FiringPlanCalculationParameters {
         }
 
         public FiringPlanCalculationParameters buildGuess(final Entity shooter,
-                                                          @Nullable final EntityState shooterState,
-                                                          final Targetable target,
-                                                          @Nullable final EntityState targetState,
-                                                          final int maxHeat,
-                                                          @Nullable final Map<WeaponMounted, Double> ammoConservation) {
+                @Nullable final EntityState shooterState,
+                final Targetable target,
+                @Nullable final EntityState targetState,
+                final int maxHeat,
+                @Nullable final Map<WeaponMounted, Double> ammoConservation) {
             return setShooter(shooter).setShooterState(shooterState)
-                                      .setTarget(target)
-                                      .setTargetState(targetState)
-                                      .setMaxHeat(maxHeat)
-                                      .setAmmoConservation(ammoConservation)
-                                      .setCalculationType(FiringPlanCalculationType.GUESS)
-                                      .build();
+                    .setTarget(target)
+                    .setTargetState(targetState)
+                    .setMaxHeat(maxHeat)
+                    .setAmmoConservation(ammoConservation)
+                    .setCalculationType(FiringPlanCalculationType.GUESS)
+                    .build();
         }
 
         public FiringPlanCalculationParameters buildExact(final Entity shooter,
-                                                          final Targetable target,
-                                                          final Map<WeaponMounted, Double> ammoConservation) {
+                final Targetable target,
+                final Map<WeaponMounted, Double> ammoConservation) {
             return setShooter(shooter).setTarget(target)
-                                      .setAmmoConservation(ammoConservation)
-                                      .setCalculationType(GET)
-                                      .build();
+                    .setAmmoConservation(ammoConservation)
+                    .setCalculationType(GET)
+                    .build();
         }
 
     }
@@ -240,8 +242,9 @@ public final class FiringPlanCalculationParameters {
         if (targetState != null ? !targetState.equals(that.targetState) : that.targetState != null) {
             return false;
         }
-        //noinspection SimplifiableIfStatement
-        if (ammoConservation != null ? !ammoConservation.equals(that.ammoConservation) : that.ammoConservation != null) {
+        // noinspection SimplifiableIfStatement
+        if (ammoConservation != null ? !ammoConservation.equals(that.ammoConservation)
+                : that.ammoConservation != null) {
             return false;
         }
         return calculationType == that.calculationType;
@@ -262,13 +265,13 @@ public final class FiringPlanCalculationParameters {
     @Override
     public String toString() {
         return "FiringPlanCalculationParameters{" +
-               "shooter=" + shooter +
-               ", shooterState=" + shooterState +
-               ", target=" + target +
-               ", targetState=" + targetState +
-               ", maxHeat=" + maxHeat +
-               ", ammoConservation=" + ammoConservation +
-               ", calculationType=" + calculationType +
-               '}';
+                "shooter=" + shooter +
+                ", shooterState=" + shooterState +
+                ", target=" + target +
+                ", targetState=" + targetState +
+                ", maxHeat=" + maxHeat +
+                ", ammoConservation=" + ammoConservation +
+                ", calculationType=" + calculationType +
+                '}';
     }
 }

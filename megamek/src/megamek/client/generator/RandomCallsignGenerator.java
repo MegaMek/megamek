@@ -27,10 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.common.util.weightedMaps.WeightedIntMap;
+import megamek.logging.MMLogger;
 
 /**
  * Save File Formatting:
@@ -39,7 +38,9 @@ import megamek.common.util.weightedMaps.WeightedIntMap;
  * Weight is an integer weight that is used during generation
  */
 public class RandomCallsignGenerator implements Serializable {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(RandomCallsignGenerator.class);
+
+    // region Variable Declarations
     private static final long serialVersionUID = 4721410214327210288L;
 
     private static WeightedIntMap<String> weightedCallsigns;
@@ -47,15 +48,15 @@ public class RandomCallsignGenerator implements Serializable {
     private static RandomCallsignGenerator rcg;
 
     private static volatile boolean initialized = false; // volatile to ensure readers get the current version
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     protected RandomCallsignGenerator() {
 
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public static WeightedIntMap<String> getWeightedCallsigns() {
         return weightedCallsigns;
     }
@@ -63,9 +64,9 @@ public class RandomCallsignGenerator implements Serializable {
     public static void setWeightedCallsigns(final WeightedIntMap<String> weightedCallsigns) {
         RandomCallsignGenerator.weightedCallsigns = weightedCallsigns;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region Synchronization
+    // region Synchronization
     /**
      * @return the instance of the RandomCallsignGenerator to use
      */
@@ -79,23 +80,23 @@ public class RandomCallsignGenerator implements Serializable {
         // when getInstance returns, rcg will always be non-null
         return rcg;
     }
-    //endregion Synchronization
+    // endregion Synchronization
 
-    //region Generation
+    // region Generation
     public String generate() {
         String callsign = "";
 
         if (initialized) {
             callsign = getWeightedCallsigns().randomItem();
         } else {
-            LogManager.getLogger().warn("Attempted to generate a callsign before the list was initialized.");
+            logger.warn("Attempted to generate a callsign before the list was initialized.");
         }
 
         return callsign;
     }
-    //endregion Generation
+    // endregion Generation
 
-    //region Initialization
+    // region Initialization
     private void runThreadLoader() {
         Thread loader = new Thread(() -> rcg.populateCallsigns(), "Random Callsign Generator initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
@@ -123,7 +124,7 @@ public class RandomCallsignGenerator implements Serializable {
         int lineNumber = 0;
 
         try (InputStream is = new FileInputStream(file);
-             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+                Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
             // skip the first line, as that's the header
             lineNumber++;
             input.nextLine();
@@ -134,14 +135,14 @@ public class RandomCallsignGenerator implements Serializable {
                 if (values.length == 2) {
                     callsigns.put(values[0], Integer.parseInt(values[1]));
                 } else if (values.length < 2) {
-                    LogManager.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
+                    logger.error("Not enough fields in " + file + " on " + lineNumber);
                 } else {
-                    LogManager.getLogger().error("Too many fields in " + file + " on " + lineNumber);
+                    logger.error("Too many fields in " + file + " on " + lineNumber);
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to populate callsigns from " + file, e);
+            logger.error(e, "Failed to populate callsigns from " + file);
         }
     }
-    //endregion Initialization
+    // endregion Initialization
 }

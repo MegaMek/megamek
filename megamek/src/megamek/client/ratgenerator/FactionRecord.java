@@ -13,16 +13,23 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.common.UnitType;
-import megamek.common.annotations.Nullable;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Node;
-
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.StringJoiner;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import org.apache.commons.text.StringEscapeUtils;
+import org.w3c.dom.Node;
+
+import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /**
  * Stores data about factions used for building RATs, including
@@ -34,6 +41,8 @@ import java.util.stream.Collectors;
  * @author Neoancient
  */
 public class FactionRecord {
+    private final static MMLogger logger = MMLogger.create(FactionRecord.class);
+
     /**
      * Proportions of omni/Clan/upgraded tech are given for each faction
      * by the field manual series.
@@ -42,13 +51,16 @@ public class FactionRecord {
         OMNI, CLAN, IS_ADVANCED, // Used for Meks, and also used for ASFs or vees if no other value is present.
         OMNI_AERO, CLAN_AERO, IS_ADVANCED_AERO,
         CLAN_VEE, IS_ADVANCED_VEE;
-        /* omni vees do not see the widespread use of Meks and ASFs and do not get
+        /*
+         * omni vees do not see the widespread use of Meks and ASFs and do not get
          * a separate percentage value
          */
 
         /**
          * If no value is provided for ASFs or Vees, use the base value.
-         * @return The base category if the desired one has no value, or null if this is the base.
+         *
+         * @return The base category if the desired one has no value, or null if this is
+         *         the base.
          */
         TechCategory fallthrough() {
             switch (this) {
@@ -78,13 +90,20 @@ public class FactionRecord {
     private HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
     private HashMap<Integer, HashMap<String, Integer>> salvage;
     /*
-     * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals are
-     * less precise, giving omni percentages for Clans and (in FM:3085) upgrade percentage
-     * for IS and Periphery factions. In order to use the values that are available without
-     * either forcing conformity to guesses for later eras or suddenly removing constraints,
-     * we extrapolate some values but provide a margin of conformity that grows as we
-     * get farther from known values. upgradeMargin applies the percentage of units that
-     * are late-SW IS tech. techMargin applies to both Clan and advanced (SL and post-Clan) tech.
+     * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals
+     * are
+     * less precise, giving omni percentages for Clans and (in FM:3085) upgrade
+     * percentage
+     * for IS and Periphery factions. In order to use the values that are available
+     * without
+     * either forcing conformity to guesses for later eras or suddenly removing
+     * constraints,
+     * we extrapolate some values but provide a margin of conformity that grows as
+     * we
+     * get farther from known values. upgradeMargin applies the percentage of units
+     * that
+     * are late-SW IS tech. techMargin applies to both Clan and advanced (SL and
+     * post-Clan) tech.
      */
     private HashMap<Integer, Integer> omniMargin;
     private HashMap<Integer, Integer> techMargin;
@@ -171,9 +190,12 @@ public class FactionRecord {
     }
 
     /**
-     * Checks the faction parent hierarchy as necessary to find a set of ratings with at
-     * least two values. If ratingLevels is empty, this faction inherits the parent's system.
-     * If ratingLevels has one member, it indicates a set value for this faction within
+     * Checks the faction parent hierarchy as necessary to find a set of ratings
+     * with at
+     * least two values. If ratingLevels is empty, this faction inherits the
+     * parent's system.
+     * If ratingLevels has one member, it indicates a set value for this faction
+     * within
      * the parent faction's system.
      *
      * @return The list of available equipment ratings for the faction.
@@ -233,7 +255,7 @@ public class FactionRecord {
      * Check for whether the faction is active in a given year
      *
      * @param year The year to check
-     * @return     Whether the faction is active
+     * @return Whether the faction is active
      * @see #isInEra(int)
      */
     public boolean isActiveInYear(int year) {
@@ -247,9 +269,13 @@ public class FactionRecord {
 
     /**
      * Sets one or more ranges of years the faction is active.
-     * @param str The range of years the faction is active. The format is YYYY-YYYY. Either the start
-     *            or end year (or both) can be omitted to make the range open at that end. Factions that
-     *            vanish and reappear can provide multiple ranges separated by a comma.
+     *
+     * @param str The range of years the faction is active. The format is YYYY-YYYY.
+     *            Either the start
+     *            or end year (or both) can be omitted to make the range open at
+     *            that end. Factions that
+     *            vanish and reappear can provide multiple ranges separated by a
+     *            comma.
      * @throws ParseException If the date range format is invalid
      */
     public void setYears(String str) throws ParseException {
@@ -290,7 +316,7 @@ public class FactionRecord {
         if (salvage.containsKey(era) && !salvage.get(era).isEmpty()) {
             return salvage.get(era);
         }
-        HashMap<String,Integer> retVal = new HashMap<>();
+        HashMap<String, Integer> retVal = new HashMap<>();
         if (!parentFactions.isEmpty()) {
             for (String pKey : parentFactions) {
                 FactionRecord fRec = RATGenerator.getInstance().getFaction(pKey);
@@ -299,7 +325,7 @@ public class FactionRecord {
                         retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
                     }
                 } else {
-                    LogManager.getLogger().debug("RATGenerator: could not locate salvage faction " + pKey
+                    logger.debug("RATGenerator: could not locate salvage faction " + pKey
                             + " for " + key);
                 }
             }
@@ -366,7 +392,8 @@ public class FactionRecord {
      *
      * @param category The category (omni, clan, SL/upgraded)
      * @param era      The year for which to set the tech percentage
-     * @param str      A comma-separated list of percentages from the highest unit rating to the lowest.
+     * @param str      A comma-separated list of percentages from the highest unit
+     *                 rating to the lowest.
      */
     public void setPctTech(TechCategory category, int era, String str) {
         if (!pctTech.containsKey(category)) {
@@ -378,7 +405,7 @@ public class FactionRecord {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
-                    LogManager.getLogger().error("Failed to parse tech percent while loading faction data for " + key, ex);
+                    logger.error(ex, "Failed to parse tech percent while loading faction data for " + key);
                 }
             }
         }
@@ -391,7 +418,8 @@ public class FactionRecord {
      * @param category The category (omni, clan, SL/upgraded)
      * @param era      The year for which to set the tech percentage
      * @param rating   The unit rating for which to set the tech percentage
-     * @param pct      The percentage of the force that should match the given tech category
+     * @param pct      The percentage of the force that should match the given tech
+     *                 category
      */
     public void setPctTech(TechCategory category, int era, int rating, int pct) {
         pctTech.putIfAbsent(category, new HashMap<>());
@@ -511,7 +539,7 @@ public class FactionRecord {
                 try {
                     retVal.setYears(wn.getTextContent());
                 } catch (ParseException ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "createFromXML");
                 }
             } else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
                 retVal.setRatings(wn.getTextContent());
@@ -528,7 +556,8 @@ public class FactionRecord {
             switch (wn.getNodeName()) {
                 case "pctOmni":
                     if ((wn.getAttributes().getNamedItem("unitType") != null)
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("AeroSpaceFighter")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent()
+                                    .equalsIgnoreCase("AeroSpaceFighter")) {
                         setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
                     } else {
                         setPctTech(TechCategory.OMNI, era, wn.getTextContent());
@@ -536,10 +565,12 @@ public class FactionRecord {
                     break;
                 case "pctClan":
                     if ((wn.getAttributes().getNamedItem("unitType") != null)
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("AeroSpaceFighter")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent()
+                                    .equalsIgnoreCase("AeroSpaceFighter")) {
                         setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
                     } else if ((wn.getAttributes().getNamedItem("unitType") != null)
-                                && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent()
+                                    .equalsIgnoreCase("Vehicle")) {
                         setPctTech(TechCategory.CLAN_VEE, era, wn.getTextContent());
                     } else {
                         setPctTech(TechCategory.CLAN, era, wn.getTextContent());
@@ -547,10 +578,12 @@ public class FactionRecord {
                     break;
                 case "pctSL":
                     if ((wn.getAttributes().getNamedItem("unitType") != null)
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("AeroSpaceFighter")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent()
+                                    .equalsIgnoreCase("AeroSpaceFighter")) {
                         setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
                     } else if ((wn.getAttributes().getNamedItem("unitType") != null)
-                                && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent()
+                                    .equalsIgnoreCase("Vehicle")) {
                         setPctTech(TechCategory.IS_ADVANCED_VEE, era, wn.getTextContent());
                     } else {
                         setPctTech(TechCategory.IS_ADVANCED, era, wn.getTextContent());
@@ -580,10 +613,11 @@ public class FactionRecord {
                     break;
                 case "weightDistribution":
                     try {
-                        int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
+                        int unitType = ModelRecord
+                                .parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
                         setWeightDistribution(era, unitType, wn.getTextContent());
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("RATGenerator: error parsing weight distributions for " + key + ", " + era);
+                        logger.error(ex, "RATGenerator: error parsing weight distributions for " + key + ", " + era);
                     }
                     break;
             }
@@ -603,11 +637,13 @@ public class FactionRecord {
         pw.print(getYearsAsString());
         pw.println("</years>");
         if (!ratingLevels.isEmpty()) {
-            pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(String.join(",", ratingLevels)) + "</ratingLevels>");
+            pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(String.join(",", ratingLevels))
+                    + "</ratingLevels>");
         }
 
         if ((parentFactions != null) && !parentFactions.isEmpty()) {
-            pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(String.join(",", parentFactions)) + "</parentFaction>");
+            pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(String.join(",", parentFactions))
+                    + "</parentFaction>");
         }
         pw.println("\t</faction>");
     }
@@ -620,7 +656,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctOmni>%s</pctOmni>\n",
                             pctTech.get(TechCategory.OMNI).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (pctTech.containsKey(TechCategory.CLAN)
@@ -629,7 +665,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctClan>%s</pctClan>\n",
                             pctTech.get(TechCategory.CLAN).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (pctTech.containsKey(TechCategory.IS_ADVANCED)
@@ -638,7 +674,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctSL>%s</pctSL>\n",
                             pctTech.get(TechCategory.IS_ADVANCED).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (pctTech.containsKey(TechCategory.OMNI_AERO)
@@ -647,7 +683,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctOmni unitType='Aero'>%s</pctOmni>\n",
                             pctTech.get(TechCategory.OMNI_AERO).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (pctTech.containsKey(TechCategory.CLAN_AERO)
@@ -656,7 +692,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctClan unitType='Aero'>%s</pctClan>\n",
                             pctTech.get(TechCategory.CLAN_AERO).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (pctTech.containsKey(TechCategory.IS_ADVANCED_AERO)
@@ -665,7 +701,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctSL unitType='Aero'>%s</pctSL>\n",
                             pctTech.get(TechCategory.IS_ADVANCED_AERO).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
         if (pctTech.containsKey(TechCategory.CLAN_VEE)
                 && pctTech.get(TechCategory.CLAN_VEE).containsKey(era)
@@ -673,7 +709,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctClan unitType='Vehicle'>%s</pctClan>\n",
                             pctTech.get(TechCategory.CLAN_VEE).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (pctTech.containsKey(TechCategory.IS_ADVANCED_VEE)
@@ -682,7 +718,7 @@ public class FactionRecord {
             factionRecordBuilder.append(
                     String.format("\t\t<pctSL unitType='Vehicle'>%s</pctSL>\n",
                             pctTech.get(TechCategory.IS_ADVANCED_VEE).get(era).stream().map(Object::toString)
-                                .collect(Collectors.joining(","))));
+                                    .collect(Collectors.joining(","))));
         }
 
         if (era > 3067) {
@@ -716,7 +752,7 @@ public class FactionRecord {
                 sj.add(faction + ":" + salvage.get(era).get(faction));
             }
             factionRecordBuilder.append("\t\t<salvage pct='").append(pct).append("'>")
-                .append(sj).append("</salvage>\n");
+                    .append(sj).append("</salvage>\n");
         }
         final int[] unitWeightKeys = { UnitType.MEK, UnitType.TANK, UnitType.AEROSPACEFIGHTER };
         if (weightDistribution.containsKey(era)) {
@@ -744,9 +780,11 @@ public class FactionRecord {
     }
 
     /**
-     * Checks whether the faction is active at any point from the given year to the next reference
+     * Checks whether the faction is active at any point from the given year to the
+     * next reference
+     *
      * @param era The era start year
-     * @return    Whether the faction is active
+     * @return Whether the faction is active
      * @see #isActiveInYear(int)
      */
     public boolean isInEra(int era) {
@@ -769,7 +807,8 @@ public class FactionRecord {
     }
 
     /**
-     * @return CSV of all names of the faction, with the original name given first followed by name
+     * @return CSV of all names of the faction, with the original name given first
+     *         followed by name
      *         changes in the format year:name
      */
     public Object getNamesAsString() {
@@ -798,9 +837,9 @@ public class FactionRecord {
     /**
      * Formats the weight distribution for a given unit type in an era as a String.
      *
-     * @param era        The game year
-     * @param unitType   The type of unit
-     * @return           A formatted String
+     * @param era      The game year
+     * @param unitType The type of unit
+     * @return A formatted String
      */
     public String getWeightDistributionAsString(int era, int unitType) {
         StringJoiner sj = new StringJoiner(",");

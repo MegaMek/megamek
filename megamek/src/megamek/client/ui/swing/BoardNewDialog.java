@@ -31,14 +31,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
+import megamek.logging.MMLogger;
 
 /**
  * a quick class for the new map dialogue box
  */
 public class BoardNewDialog extends JDialog implements ActionListener {
+    private final static MMLogger logger = MMLogger.create(BoardNewDialog.class);
+
     private int xvalue;
     private int yvalue;
     private JLabel labWidth;
@@ -105,7 +106,7 @@ public class BoardNewDialog extends JDialog implements ActionListener {
                 xvalue = Integer.decode(texWidth.getText());
                 yvalue = Integer.decode(texHeight.getText());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "actionPerformed");
             }
             setVisible(false);
         } else if (evt.getSource().equals(butCancel)) {

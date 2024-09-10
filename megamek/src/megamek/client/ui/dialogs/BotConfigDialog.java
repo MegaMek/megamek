@@ -54,8 +54,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -80,11 +78,14 @@ import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
 /** A dialog box to configure (Princess) bot properties. */
 public class BotConfigDialog extends AbstractButtonDialog implements ActionListener,
         ListSelectionListener, ChangeListener {
+    private final static MMLogger logger = MMLogger.create(BotConfigDialog.class);
+
     private static final String OK_ACTION = "Ok_Action";
 
     private transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
@@ -676,7 +677,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error(e, "copyFromOtherBot");
             }
         }
     }

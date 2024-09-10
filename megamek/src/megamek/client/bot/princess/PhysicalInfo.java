@@ -22,8 +22,6 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.bot.PhysicalOption;
 import megamek.common.BipedMek;
 import megamek.common.Compute;
@@ -37,12 +35,15 @@ import megamek.common.TripodMek;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
+import megamek.logging.MMLogger;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:29 PM
  */
 public class PhysicalInfo {
+    private final static MMLogger logger = MMLogger.create(PhysicalInfo.class);
+
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
@@ -76,17 +77,24 @@ public class PhysicalInfo {
     /**
      * Constructor including the shooter and target's state information.
      *
-     * @param shooter            The {@link megamek.common.Entity} doing the attacking.
-     * @param shooterState       The current {@link megamek.client.bot.princess.EntityState} of the attacker.
-     * @param target             The {@link megamek.common.Targetable} of the attack.
-     * @param targetState        The current {@link megamek.client.bot.princess.EntityState} of the target.
+     * @param shooter            The {@link megamek.common.Entity} doing the
+     *                           attacking.
+     * @param shooterState       The current
+     *                           {@link megamek.client.bot.princess.EntityState} of
+     *                           the attacker.
+     * @param target             The {@link megamek.common.Targetable} of the
+     *                           attack.
+     * @param targetState        The current
+     *                           {@link megamek.client.bot.princess.EntityState} of
+     *                           the target.
      * @param physicalAttackType The type of attack being made.
      * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.
-     * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param guess              Set TRUE to estimate the chance to hit rather than
+     *                           doing the full calculation.
      */
     PhysicalInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
-                 PhysicalAttackType physicalAttackType, Game game, Princess owner, boolean guess) {
+            PhysicalAttackType physicalAttackType, Game game, Princess owner, boolean guess) {
 
         this.owner = owner;
 
@@ -120,15 +128,18 @@ public class PhysicalInfo {
     /**
      * Basic constructor.
      *
-     * @param shooter            The {@link megamek.common.Entity} doing the attacking.
-     * @param target             The {@link megamek.common.Targetable} of the attack.
+     * @param shooter            The {@link megamek.common.Entity} doing the
+     *                           attacking.
+     * @param target             The {@link megamek.common.Targetable} of the
+     *                           attack.
      * @param physicalAttackType The type of attack being made.
      * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.
-     * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param guess              Set TRUE to estimate the chance to hit rather than
+     *                           doing the full calculation.
      */
     PhysicalInfo(Entity shooter, Targetable target, PhysicalAttackType physicalAttackType, Game game, Princess owner,
-                 boolean guess) {
+            boolean guess) {
         this(shooter, null, target, null, physicalAttackType, game, owner, guess);
     }
 
@@ -136,16 +147,15 @@ public class PhysicalInfo {
      * Helper function to determine damage and criticals
      */
     protected void initDamage(PhysicalAttackType physicalAttackType, EntityState shooterState, EntityState targetState,
-                              boolean guess, Game game) {
-        StringBuilder msg =
-                new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-                                                             .append(" ").append(physicalAttackType.toString())
-                                                             .append(" at ").append(getTarget().getDisplayName())
-                                                             .append(":");
+            boolean guess, Game game) {
+        StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                .append(" ").append(physicalAttackType.toString())
+                .append(" at ").append(getTarget().getDisplayName())
+                .append(":");
 
         // Only meks do physical attacks.
         if (!(getShooter() instanceof Mek)) {
-            LogManager.getLogger().warn(msg.append("\n\tNot a mek!").toString());
+            logger.warn(msg.append("\n\tNot a mek!").toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -163,14 +173,14 @@ public class PhysicalInfo {
 
         // Build the to hit data.
         if (guess) {
-            setHitData(owner.getFireControl(getShooter()).guessToHitModifierPhysical(getShooter(), shooterState, getTarget(),
-                                                                         targetState, getAttackType(), game));
+            setHitData(owner.getFireControl(getShooter()).guessToHitModifierPhysical(getShooter(), shooterState,
+                    getTarget(),
+                    targetState, getAttackType(), game));
         } else {
             PhysicalAttackAction action = buildAction(physicalAttackType, getShooter().getId(), getTarget());
             setAction(action);
-            setHitData(physicalAttackType.isPunch() ?
-                       ((PunchAttackAction) action).toHit(game) :
-                       ((KickAttackAction) action).toHit(game));
+            setHitData(physicalAttackType.isPunch() ? ((PunchAttackAction) action).toHit(game)
+                    : ((KickAttackAction) action).toHit(game));
         }
 
         // Get the attack direction.
@@ -178,7 +188,8 @@ public class PhysicalInfo {
 
         // If we can't hit, set all values to 0 and return.
         if (getHitData().getValue() > 12) {
-            LogManager.getLogger().info(msg.append("\n\tImpossible toHit: ").append(getHitData().getValue()).toString());
+            logger
+                    .info(msg.append("\n\tImpossible toHit: ").append(getHitData().getValue()).toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -193,7 +204,7 @@ public class PhysicalInfo {
                 setMaxDamage((int) Math.ceil(getShooter().getWeight() / 10.0));
             } else {
                 // Only bipeds & tripods can punch.
-                LogManager.getLogger().warn(msg.append("\n\tnon-biped/tripod trying to punch!").toString());
+                logger.warn(msg.append("\n\tnon-biped/tripod trying to punch!").toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
                 setExpectedCriticals(0);
@@ -228,8 +239,8 @@ public class PhysicalInfo {
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
             while (targetMek.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CT)
-                    // Need to account for still-active 'Meks with destroyed
-                    // heads so as not to spin into an endless loop.
+            // Need to account for still-active 'Meks with destroyed
+            // heads so as not to spin into an endless loop.
                     && (hitLoc != Mek.LOC_HEAD)) {
                 if (hitLoc > 7) {
                     hitLoc = 0;
@@ -261,15 +272,16 @@ public class PhysicalInfo {
                 // If the armor can be breached, but the location not destroyed...
             } else if (getExpectedDamageOnHit() > (targetArmor)) {
                 setExpectedCriticals(getExpectedCriticals() +
-                                     hitLocationProbability *
-                                     ProbabilityCalculator.getExpectedCriticalHitCount() *
-                                     getProbabilityToHit());
+                        hitLocationProbability *
+                                ProbabilityCalculator.getExpectedCriticalHitCount() *
+                                getProbabilityToHit());
             }
         }
     }
 
     /**
-     * Current bot code requires physical attacks to be given as 'physical option'. This does the necessary conversion
+     * Current bot code requires physical attacks to be given as 'physical option'.
+     * This does the necessary conversion
      */
     public PhysicalOption getAsPhysicalOption() {
         int optionInteger = 0;
@@ -391,10 +403,10 @@ public class PhysicalInfo {
 
     String getDebugDescription() {
         return getAttackType().toString() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
-               + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
-               + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
-               + ", Num Criticals: " + LOG_DEC.format(getExpectedCriticals())
-               + ", Kill Prob: " + LOG_PER.format(getKillProbability());
+                + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
+                + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
+                + ", Num Criticals: " + LOG_DEC.format(getExpectedCriticals())
+                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
     }
 }

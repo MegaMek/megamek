@@ -32,8 +32,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
@@ -47,11 +45,14 @@ import megamek.common.WeaponType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * @author Neoancient
  */
 public class BayMunitionsChoicePanel extends JPanel {
+    private final static MMLogger logger = MMLogger.create(BayMunitionsChoicePanel.class);
+
     private static final long serialVersionUID = -7741380967676720496L;
 
     private final Entity entity;
@@ -68,7 +69,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         gbc.insets = new Insets(10, 0, 10, 0);
 
         for (WeaponMounted bay : entity.getWeaponBayList()) {
-            Map<List<Integer>,List<AmmoMounted>> ammoByType = new HashMap<>();
+            Map<List<Integer>, List<AmmoMounted>> ammoByType = new HashMap<>();
             for (AmmoMounted ammo : bay.getBayAmmo()) {
                 List<Integer> key = new ArrayList<>(2);
                 key.add(ammo.getType().getAmmoType());
@@ -86,8 +87,10 @@ public class BayMunitionsChoicePanel extends JPanel {
     }
 
     /**
-     * Change the munition types of the bay ammo mounts to the selected values. If there are more
-     * munition types than there were originally, additional ammo bin mounts will be added. If fewer,
+     * Change the munition types of the bay ammo mounts to the selected values. If
+     * there are more
+     * munition types than there were originally, additional ammo bin mounts will be
+     * added. If fewer,
      * the unneeded ones will have their shot count zeroed.
      */
     public void apply() {
@@ -104,7 +107,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
                         } catch (LocationFullException e) {
-                            LogManager.getLogger().error("", e);
+                            logger.error(e, "apply");
                         }
 
                     } else {
@@ -127,7 +130,8 @@ public class BayMunitionsChoicePanel extends JPanel {
                 mount.setShotsLeft(0);
                 mountIndex++;
             }
-            // If the unit is assigned less ammo than the capacity, assign remaining weight to first mount
+            // If the unit is assigned less ammo than the capacity, assign remaining weight
+            // to first mount
             // and adjust original shots.
             if (remainingWeight > 0) {
                 AmmoMounted m = row.ammoMounts.get(0);
@@ -162,19 +166,20 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.rackSize = rackSize;
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
-            Dimension spinnerSize =new Dimension(55, 25);
+            Dimension spinnerSize = new Dimension(55, 25);
 
             final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
                     .map(Mounted::getType).findAny();
 
             // set the bay's tech base to that of any weapon in the bay
-            // an assumption is made here that bays don't mix clan-only and IS-only tech base
+            // an assumption is made here that bays don't mix clan-only and IS-only tech
+            // base
             this.techBase = wtype.map(EquipmentType::getTechBase).orElse(WeaponType.TECH_BASE_ALL);
 
             munitions = AmmoType.getMunitionsFor(at).stream()
                     .filter(this::includeMunition).collect(Collectors.toList());
             tonnage = ammoMounts.stream().mapToDouble(Mounted::getSize).sum();
-            Map<String,Integer> starting = new HashMap<>();
+            Map<String, Integer> starting = new HashMap<>();
             ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
             for (AmmoType atype : munitions) {
                 JSpinner spn = new JSpinner(new SpinnerNumberModel(starting.getOrDefault(atype.getInternalName(), 0),
@@ -224,7 +229,8 @@ public class BayMunitionsChoicePanel extends JPanel {
         }
 
         private boolean includeMunition(AmmoType atype) {
-            if (!atype.canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
+            if (!atype
+                    .canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
                     || (atype.getAmmoType() != at)
                     || (atype.getRackSize() != rackSize)
                     || ((atype.getTechBase() != techBase)
@@ -256,14 +262,15 @@ public class BayMunitionsChoicePanel extends JPanel {
             if (atype.getAmmoType() == AmmoType.T_MML) {
                 EnumSet<AmmoType.Munitions> artemisCapable = EnumSet.of(
                         AmmoType.Munitions.M_ARTEMIS_CAPABLE,
-                        AmmoType.Munitions.M_ARTEMIS_V_CAPABLE
-                );
+                        AmmoType.Munitions.M_ARTEMIS_V_CAPABLE);
                 if (atype.getMunitionType().stream().noneMatch(artemisCapable::contains)) {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
-                            ? "CustomMekDialog.LRM" : "CustomMekDialog.SRM");
+                            ? "CustomMekDialog.LRM"
+                            : "CustomMekDialog.SRM");
                 } else {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
-                            ? "CustomMekDialog.LRMArtemis" : "CustomMekDialog.SRMArtemis");
+                            ? "CustomMekDialog.LRMArtemis"
+                            : "CustomMekDialog.SRMArtemis");
                 }
             }
 

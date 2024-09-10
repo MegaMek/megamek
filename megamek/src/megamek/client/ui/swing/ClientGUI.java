@@ -45,8 +45,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -93,9 +91,12 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, IPreferenceChangeListener, MekDisplayListener {
+    private final static MMLogger logger = MMLogger.create(ClientGUI.class);
+
     // region Variable Declarations
     // region action commands
     // region main menu
@@ -561,7 +562,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             bv.addBoardViewListener(this);
         } catch (Exception ex) {
-            LogManager.getLogger().fatal("", ex);
+            logger.fatal(ex, "initialize");
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + ex);
             die();
@@ -659,7 +660,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     frame);
             helpDialog.setVisible(true);
         } catch (MalformedURLException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "showSkinningHowTo");
             doAlertDialog(ex.getMessage(), Messages.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -1015,7 +1016,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 // Save the destroyed entities to the file.
                 EntityListFile.saveTo(unitFile, destroyed);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "doSaveUnit");
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
@@ -1957,7 +1958,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     addedUnits = true;
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "loadListFile");
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
             }
 
@@ -2057,7 +2058,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "saveListFile");
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
@@ -2101,7 +2102,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, getClient());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "saveVictoryList");
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
@@ -2308,7 +2309,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     // Save the destroyed entities to the file.
                     EntityListFile.saveTo(unitFile, destroyed);
                 } catch (IOException ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "gameEnd");
                     doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
                 }
             }
@@ -2624,7 +2625,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to save board!", ex);
+            logger.error(ex, "Failed to save board!");
         }
     }
 
@@ -2651,7 +2652,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), CG_FILEFORMATNAMEPNG, curfileBoardImage);
         } catch (IOException e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "boardSaveImage");
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());
@@ -3010,7 +3011,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (weaponOnUnit == weapon) {
             return Optional.of(weapon);
         } else {
-            LogManager.getLogger().error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",
+            logger.error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",
                     unitDisplay.wPan.getSelectedWeaponNum(), getDisplayedUnit());
             return Optional.empty();
         }

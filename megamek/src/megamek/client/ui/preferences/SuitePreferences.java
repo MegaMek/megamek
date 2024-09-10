@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
@@ -67,7 +65,7 @@ public class SuitePreferences {
 
     // region Write To File
     public void saveToFile(final String filePath) {
-        LogManager.getLogger().debug("Saving nameToPreferencesMap to: " + filePath);
+        logger.debug("Saving nameToPreferencesMap to: " + filePath);
         final JsonFactory factory = new JsonFactory();
         try (FileOutputStream output = new FileOutputStream(filePath);
                 JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {

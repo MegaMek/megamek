@@ -13,6 +13,29 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
+
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -26,14 +49,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.awt.event.ItemListener;
-import java.util.List;
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
  * This class builds the Equipment Panel for use in MegaMek and MekHQ
@@ -43,6 +59,8 @@ import java.util.*;
  * @since 2012-05-20
  */
 public class EquipChoicePanel extends JPanel {
+    private final static MMLogger logger = MMLogger.create(EquipChoicePanel.class);
+
     private static final long serialVersionUID = 672299770230285567L;
 
     private final Entity entity;
@@ -854,7 +872,7 @@ public class EquipChoicePanel extends JPanel {
                 newWeap.setAPMMounted(true);
             } catch (LocationFullException ex) {
                 // This shouldn't happen for BA...
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         }
 
@@ -958,7 +976,7 @@ public class EquipChoicePanel extends JPanel {
                 m_Manipmounted.setBaMountLoc(baMountLoc);
             } catch (LocationFullException ex) {
                 // This shouldn't happen for BA...
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         }
 

@@ -37,8 +37,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -55,11 +53,14 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
+import megamek.logging.MMLogger;
 
 /**
  * Context menu for the board.
  */
 public class MapMenu extends JPopupMenu {
+    private final static MMLogger logger = MMLogger.create(MapMenu.class);
+
     private Coords coords;
     Game game;
     Component currentPanel;
@@ -218,7 +219,7 @@ public class MapMenu extends JPopupMenu {
                         ((MovementDisplay) currentPanel).actionPerformed(evt);
                     }
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
 
@@ -316,7 +317,7 @@ public class MapMenu extends JPopupMenu {
                     ((PhysicalDisplay) currentPanel).selectEntity(selectedEntity.getId());
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -334,7 +335,7 @@ public class MapMenu extends JPopupMenu {
                 GUIPreferences.getInstance().setUnitDisplayEnabled(true);
                 gui.getUnitDisplay().displayEntity(selectedEntity);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -351,7 +352,7 @@ public class MapMenu extends JPopupMenu {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
                 LobbyUtility.mekReadout(selectedEntity, 0, false, gui.getFrame());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -516,7 +517,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     ((MovementDisplay) currentPanel).actionPerformed(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
             menu.add(item);
@@ -527,7 +528,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     ((MovementDisplay) currentPanel).actionPerformed(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
             menu.add(item);
@@ -538,7 +539,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     ((MovementDisplay) currentPanel).actionPerformed(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
             menu.add(item);
@@ -549,7 +550,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     ((MovementDisplay) currentPanel).actionPerformed(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
 
@@ -562,7 +563,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         ((MovementDisplay) currentPanel).actionPerformed(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -575,7 +576,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         ((MovementDisplay) currentPanel).actionPerformed(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -588,7 +589,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         ((MovementDisplay) currentPanel).actionPerformed(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -603,7 +604,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         ((MovementDisplay) currentPanel).actionPerformed(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -615,7 +616,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     plotCourse(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
 
@@ -627,7 +628,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     plotCourse(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
 
@@ -640,7 +641,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         plotCourse(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -653,7 +654,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     plotCourse(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
 
@@ -665,7 +666,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     plotCourse(evt);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             });
 
@@ -678,7 +679,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         plotCourse(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -693,7 +694,7 @@ public class MapMenu extends JPopupMenu {
                     try {
                         plotCourse(evt);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                     }
                 });
                 menu.add(item);
@@ -712,7 +713,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         menu.add(item);
@@ -723,7 +724,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         menu.add(item);
@@ -736,7 +737,7 @@ public class MapMenu extends JPopupMenu {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         menu.add(item);
@@ -770,7 +771,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((FiringDisplay) currentPanel).nextWeapon();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -810,7 +811,7 @@ public class MapMenu extends JPopupMenu {
                     }
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -828,7 +829,7 @@ public class MapMenu extends JPopupMenu {
                 int id = Integer.parseInt(evt.getActionCommand());
                 display.updateFlipArms(!game.getEntity(id).getArmsFlipped());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -841,7 +842,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((FiringDisplay) currentPanel).fire();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -972,7 +973,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -986,7 +987,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -999,7 +1000,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1058,7 +1059,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(evt);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1306,7 +1307,7 @@ public class MapMenu extends JPopupMenu {
                     ((FiringDisplay) currentPanel).torsoTwist(twistDir);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1324,7 +1325,7 @@ public class MapMenu extends JPopupMenu {
                     ((FiringDisplay) currentPanel).torsoTwist(coord);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1466,7 +1467,7 @@ public class MapMenu extends JPopupMenu {
                 equip.setMode(modePosition);
                 client.sendModeChange(myEntity.getId(), weaponNum, modePosition);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1478,7 +1479,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).punch();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1490,7 +1491,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).kick();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1502,7 +1503,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).push();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1514,7 +1515,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).vibroclawatt();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1526,7 +1527,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).jumpjetatt();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1538,7 +1539,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).thrash();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1550,7 +1551,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).doGrapple();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1562,7 +1563,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).trip();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1574,7 +1575,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((PhysicalDisplay) currentPanel).dodge();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;
@@ -1601,7 +1602,7 @@ public class MapMenu extends JPopupMenu {
                         Integer.parseInt(evt.getActionCommand()));
                 ((PhysicalDisplay) currentPanel).club(club);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
         return item;

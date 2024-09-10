@@ -19,21 +19,21 @@
  */
 package megamek.client.bot;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class BotConfiguration {
+import megamek.logging.MMLogger;
 
+public class BotConfiguration {
+    private final static MMLogger logger = MMLogger.create(BotConfiguration.class);
     static Properties BotProperties = new Properties();
 
     static {
         try (InputStream is = new FileInputStream("mmconf/bot.properties")) {
             BotProperties.load(is);
         } catch (Exception e) {
-            LogManager.getLogger().error("Bot properties could not be loaded, will use defaults", e);
+            logger.error(e, "Bot properties could not be loaded, will use defaults");
         }
     }
 

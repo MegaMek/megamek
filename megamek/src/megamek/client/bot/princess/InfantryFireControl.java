@@ -18,15 +18,15 @@
 */
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is intended to help the bot calculate firing plans for infantry
@@ -35,6 +35,7 @@ import java.util.List;
  * @author NickAragua
  */
 public class InfantryFireControl extends FireControl {
+    private final static MMLogger logger = MMLogger.create(InfantryFireControl.class);
 
     private enum InfantryFiringPlanType {
         Standard,
@@ -48,14 +49,16 @@ public class InfantryFireControl extends FireControl {
     }
 
     /**
-     * Calculates the maximum damage a unit can do at a given range. Chance to hit is not a factor.
-     * @param range The range to be checked.
+     * Calculates the maximum damage a unit can do at a given range. Chance to hit
+     * is not a factor.
+     *
+     * @param range           The range to be checked.
      * @param useExtremeRange Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
     public double getMaxDamageAtRange(final MovePath shooterPath, final MovePath targetPath,
-                                      final int range, final boolean useExtremeRange,
-                                      final boolean useLOSRange) {
+            final int range, final boolean useExtremeRange,
+            final boolean useLOSRange) {
         double maxFGDamage = 0;
         double maxInfantryWeaponDamage = 0;
         Entity shooter = shooterPath.getEntity();
@@ -99,7 +102,8 @@ public class InfantryFireControl extends FireControl {
             // weapon damage, multiply by building dmg reduction.
             // 4. Shooter is non-infantry, target is infantry in "cover". Use
             // "directBlowInfantryDamage".
-            // 5. Shooter is infantry with field gun / field artillery and needs special damage calc.
+            // 5. Shooter is infantry with field gun / field artillery and needs special
+            // damage calc.
             // 6. Shooter is non-infantry, target is non-infantry. Use base class.
 
             // case 1
@@ -142,7 +146,7 @@ public class InfantryFireControl extends FireControl {
                     // other than turning, so we only get here if infantry has not used MP.
                     // All valid Infantry Field Weapons can consider rackSize as their damage.
                     maxFGDamage += weaponType.rackSize;
-                // Case 6: all other unit types / weapons
+                    // Case 6: all other unit types / weapons
                 } else {
                     maxFGDamage += weaponType.getDamage();
                 }
@@ -153,19 +157,21 @@ public class InfantryFireControl extends FireControl {
     }
 
     /**
-     * Guesses the 'best' firing plan under a certain heat, except this is infantry so we ignore heat
+     * Guesses the 'best' firing plan under a certain heat, except this is infantry
+     * so we ignore heat
      *
      * @param shooter
-     *            The unit doing the shooting.
+     *                     The unit doing the shooting.
      * @param shooterState
-     *            The current state of the shooting unit.
+     *                     The current state of the shooting unit.
      * @param target
-     *            The unit being shot at.
+     *                     The unit being shot at.
      * @param targetState
-     *            The current state of the target unit.
+     *                     The current state of the target unit.
      * @param maxHeat
-     *            How much heat we're willing to tolerate. Ignored, since infantry doesn't track heat.
-     * @param game The current {@link Game}
+     *                     How much heat we're willing to tolerate. Ignored, since
+     *                     infantry doesn't track heat.
+     * @param game         The current {@link Game}
      * @return the 'best' firing plan under a certain heat.
      */
     @Override
@@ -176,15 +182,16 @@ public class InfantryFireControl extends FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard()
                 || !game.getBoard().contains(shooter.getPosition())) {
-            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
+            logger.error("Shooter's position is NULL/Off Board!");
             return bestPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            LogManager.getLogger().error("Target's position is NULL/Off Board!");
+            logger.error("Target's position is NULL/Off Board!");
             return bestPlan;
         }
 
-        // if it's not infantry, then we shouldn't be here, let's redirect to the base method.
+        // if it's not infantry, then we shouldn't be here, let's redirect to the base
+        // method.
         if (!(shooter instanceof Infantry)) {
             return super.guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
         }
@@ -197,7 +204,8 @@ public class InfantryFireControl extends FireControl {
         }
 
         // Infantry can do the following things, which are mutually exclusive:
-        // 1. Fire standard infantry weapons, including "need to stay still" support weapons
+        // 1. Fire standard infantry weapons, including "need to stay still" support
+        // weapons
         // 2. Fire field guns - the unit needs to remain still to fire these
         // 3. Swarm
         // 4. Leg Attack
@@ -205,21 +213,25 @@ public class InfantryFireControl extends FireControl {
         List<FiringPlan> firingPlans = new ArrayList<>();
 
         // case 1: infantry weapons
-        FiringPlan standardPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.Standard);
+        FiringPlan standardPlan = guessFiringPlan(shooter, shooterState, target, targetState, game,
+                InfantryFiringPlanType.Standard);
         firingPlans.add(standardPlan);
 
         // case 2: field guns if we didn't move
         if (shooterState.getHexesMoved() == 0) {
-            FiringPlan fieldGunPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.FieldGuns);
+            FiringPlan fieldGunPlan = guessFiringPlan(shooter, shooterState, target, targetState, game,
+                    InfantryFiringPlanType.FieldGuns);
             firingPlans.add(fieldGunPlan);
         }
 
         // case 3: leg attack
-        FiringPlan legPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.Leg);
+        FiringPlan legPlan = guessFiringPlan(shooter, shooterState, target, targetState, game,
+                InfantryFiringPlanType.Leg);
         firingPlans.add(legPlan);
 
         // case 4: swarm attack
-        FiringPlan swarmPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.Swarm);
+        FiringPlan swarmPlan = guessFiringPlan(shooter, shooterState, target, targetState, game,
+                InfantryFiringPlanType.Swarm);
         firingPlans.add(swarmPlan);
 
         // now we'll pick the best of the plans
@@ -237,18 +249,19 @@ public class InfantryFireControl extends FireControl {
      * not change facing.
      *
      * @param shooter
-     *            The unit doing the shooting.
+     *                     The unit doing the shooting.
      * @param shooterState
-     *            The current state of the shooter.
+     *                     The current state of the shooter.
      * @param target
-     *            The unit being fired on.
+     *                     The unit being fired on.
      * @param targetState
-     *            The current state of the target.
-     * @param game The current {@link Game}
+     *                     The current state of the target.
+     * @param game         The current {@link Game}
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     private FiringPlan guessFiringPlan(final Entity shooter, @Nullable EntityState shooterState,
-            final Targetable target, @Nullable EntityState targetState, final Game game, InfantryFiringPlanType firingPlanType) {
+            final Targetable target, @Nullable EntityState targetState, final Game game,
+            InfantryFiringPlanType firingPlanType) {
 
         final FiringPlan myPlan = new FiringPlan(target);
 
@@ -261,8 +274,7 @@ public class InfantryFireControl extends FireControl {
                         null, game, true);
                 // Choose best expected damage shot, not best to-hit
                 if (null == bestShoot ||
-                        (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
-                ){
+                        (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())) {
                     bestShoot = shoot;
                 }
 
@@ -280,7 +292,8 @@ public class InfantryFireControl extends FireControl {
     }
 
     /**
-     * Helper method that determines whether a weapon type is appropriate for a given firing plan type,
+     * Helper method that determines whether a weapon type is appropriate for a
+     * given firing plan type,
      * e.g. field guns cannot be fired when we're going to do a swarm attack, etc.
      */
     private boolean weaponIsAppropriate(WeaponMounted weapon, InfantryFiringPlanType firingPlanType) {

@@ -18,14 +18,21 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.util.UIUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.logging.MMLogger;
 
 /**
  * This is a basic help dialog that can display HTML pages and also reacts to
@@ -35,6 +42,7 @@ import java.net.URL;
  * @author Simon (Juliez)
  */
 public class HelpDialog extends JDialog {
+    private final static MMLogger logger = MMLogger.create(HelpDialog.class);
 
     protected static final String CLOSE_ACTION = "closeAction";
 
@@ -49,7 +57,7 @@ public class HelpDialog extends JDialog {
         try {
             mainView.setPage(helpURL);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
 
@@ -60,7 +68,7 @@ public class HelpDialog extends JDialog {
                     mainView.setPage(e.getURL());
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         });

@@ -25,8 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -44,8 +42,11 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
+import megamek.logging.MMLogger;
 
 public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, ListSelectionListener {
+    private final static MMLogger logger = MMLogger.create(FiringDisplay.class);
+
     private static final long serialVersionUID = -5586388490027013723L;
 
     /**
@@ -408,7 +409,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
                 // We were *supposed* to have found an on-board entity.
                 if (ce().getPosition() == null) {
-                    LogManager.getLogger().error("Could not find an on-board entity " + en);
+                    logger.error("Could not find an on-board entity " + en);
                     return;
                 }
             }
@@ -462,7 +463,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
             }
         } else {
-            LogManager.getLogger().error("Tried to select non-existent entity " + en);
+            logger.error("Tried to select non-existent entity " + en);
         }
 
         clientgui.showFiringSolutions(ce());

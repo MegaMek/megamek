@@ -19,20 +19,21 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import megamek.common.Board;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Arrays;
-import java.util.Iterator;
+import megamek.logging.MMLogger;
 
 /**
  * This contains useful classes and functions for geometric questions
  * the bot algorithm might have
  */
 public class BotGeometry {
+    private final static MMLogger logger = MMLogger.create(BotGeometry.class);
 
     /**
      * The combination of a coordinate and a facing
@@ -107,18 +108,18 @@ public class BotGeometry {
      * Coords stores x and y values. Since these are hexes, coordinates with odd x
      * values are a half-hex down. Directions work clockwise around the hex,
      * starting with zero at the top.
-     *        -y
-     *        0
-     *      _____
-     *   5 /     \ 1
-     * -x /       \ +x
-     *    \       /
-     *   4 \_____/ 2
-     *        3
-     *        +y
+     * -y
+     * 0
+     * _____
+     * 5 / \ 1
+     * -x / \ +x
+     * \ /
+     * 4 \_____/ 2
+     * 3
+     * +y
      * ------------------------------
      * Direction is stored as above, but the meaning of 'intercept' depends
-     * on the direction.  For directions 0, 3, intercept means the y=0 intercept
+     * on the direction. For directions 0, 3, intercept means the y=0 intercept
      * for directions 1, 2, 4, 5 intercept is the x=0 intercept
      */
     public static class HexLine {
@@ -164,7 +165,7 @@ public class BotGeometry {
             boolean flip = getDirection() > 2;
             HexLine[] edges = a.getEdges();
             if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
-                LogManager.getLogger().error("Detection of NULL edges in ConvexBoardArea: " + a);
+                logger.error("Detection of NULL edges in ConvexBoardArea: " + a);
                 return 0;
             }
             if (edges[getDirection()].getIntercept() == getIntercept()) {
@@ -193,10 +194,10 @@ public class BotGeometry {
                 return 0;
             }
             if ((getDirection() == 1) || (getDirection() == 4)) {
-                return getIntercept() - ((x + 1) / 2); //halfs round down
+                return getIntercept() - ((x + 1) / 2); // halfs round down
             }
             // direction==5||direction==2
-            return getIntercept() + ((x) / 2);     //halfs round down
+            return getIntercept() + ((x) / 2); // halfs round down
         }
 
         /**
@@ -225,7 +226,7 @@ public class BotGeometry {
          * line to another point
          */
         public Coords getClosestPoint(Coords c) {
-            if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
+            if ((getDirection() == 0) || (getDirection() == 3)) { // technically two points are equidistant,
                 // but who's counting
                 return new Coords(getIntercept(), c.getY());
             } else if ((getDirection() == 1) || (getDirection() == 4)) {
@@ -250,7 +251,7 @@ public class BotGeometry {
             if (getDirection() != hexLine.getDirection()) {
                 return false;
             }
-            //noinspection RedundantIfStatement
+            // noinspection RedundantIfStatement
             if (getIntercept() != hexLine.getIntercept()) {
                 return false;
             }
@@ -293,8 +294,8 @@ public class BotGeometry {
      */
     public static class ConvexBoardArea {
         // left/right indicates whether it's the small x or large x line
-        //     HexLine[] left = new HexLine[3];
-        //     HexLine[] right = new HexLine[3];
+        // HexLine[] left = new HexLine[3];
+        // HexLine[] right = new HexLine[3];
         // edge points to the previous lines in the right order
         private HexLine[] edges = new HexLine[6];
         private Coords[] vertices = new Coords[6];
@@ -313,7 +314,7 @@ public class BotGeometry {
 
             ConvexBoardArea that = (ConvexBoardArea) o;
 
-            //noinspection RedundantIfStatement
+            // noinspection RedundantIfStatement
             if (!Arrays.equals(edges, that.edges)) {
                 return false;
             }
@@ -392,7 +393,7 @@ public class BotGeometry {
 
             HexLine[] edges = getEdges();
             if (edges[i] == null || edges[(i + 1) % 6] == null) {
-                LogManager.getLogger().error("Edge[" + i + "] is NULL.");
+                logger.error("Edge[" + i + "] is NULL.");
                 return null;
             }
 
@@ -484,9 +485,8 @@ public class BotGeometry {
             passed = true;
             for (int i = 0; i < 6; i++) {
                 if ((lines[i].judgePoint(center.translated(i)) != 0) || (lines[i].judgePoint(center.translated((i +
-                                                                                                                3) %
-                                                                                                               6)) !=
-                                                                         0)) {
+                        3) %
+                        6)) != 0)) {
                     passed = false;
                 }
             }
@@ -518,7 +518,7 @@ public class BotGeometry {
             area.expandToInclude(areapt1);
             area.expandToInclude(areapt2);
             area.expandToInclude(areapt3);
-            LogManager.getLogger().debug("Checking area contains proper points... ");
+            logger.debug("Checking area contains proper points... ");
             msg.append("\n\tChecking area contains proper points... ");
             if (!area.contains(new Coords(1, 1))) {
                 passed = false;
@@ -584,7 +584,7 @@ public class BotGeometry {
             msg.append(passed ? PASSED : FAILED);
 
         } finally {
-            LogManager.getLogger().debug(msg.toString());
+            logger.debug(msg.toString());
         }
     }
 }

@@ -28,8 +28,6 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
@@ -39,6 +37,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * Notes: check out
@@ -48,6 +47,7 @@ import megamek.common.options.OptionsConstants;
  */
 
 public class TeamLoadOutGenerator {
+    private final static MMLogger logger = MMLogger.create(TeamLoadOutGenerator.class);
 
     // region Constants
     // XML file containing flat list of weights; if not found, defaults used. If
@@ -58,8 +58,8 @@ public class TeamLoadOutGenerator {
         try (InputStream is = new FileInputStream(LOAD_OUT_SETTINGS_PATH)) {
             weightProperties.loadFromXML(is);
         } catch (Exception e) {
-            LogManager.getLogger().warn("Munition weight properties could not be loaded!  Using defaults...", e);
-            LogManager.getLogger().debug(LOAD_OUT_SETTINGS_PATH + " was not loaded: ", e);
+            logger.warn(e, "Munition weight properties could not be loaded!  Using defaults...");
+            logger.debug(e, LOAD_OUT_SETTINGS_PATH + " was not loaded: ");
         }
     }
 
@@ -1233,7 +1233,6 @@ public class TeamLoadOutGenerator {
      */
     private void iterativelyLoadAmmo(
             Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String techBase, String faction) {
-        Logger logger = LogManager.getLogger();
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
         HashMap<String, Integer> counts = new HashMap<String, Integer>(
                 mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName));

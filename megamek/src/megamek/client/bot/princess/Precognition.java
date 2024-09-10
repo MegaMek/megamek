@@ -26,8 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -45,6 +43,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
 /**
@@ -53,6 +52,7 @@ import megamek.server.SmokeCloud;
  * and do most of the work when the opponent is moving
  */
 public class Precognition implements Runnable {
+    private final static MMLogger logger = MMLogger.create(Precognition.class);
 
     private final Princess owner;
 
@@ -109,17 +109,18 @@ public class Precognition implements Runnable {
 
     /**
      * Pared down version of Client.handlePacket; essentially it's only looking
-     * for packets that update Game.  This ensures that Precognition's Game
+     * for packets that update Game. This ensures that Precognition's Game
      * instance stays up-to-date with Princess's instance of Game.
+     *
      * @param c The packet to be handled.
      */
     @SuppressWarnings("unchecked")
     void handlePacket(Packet c) {
         if (c == null) {
-            LogManager.getLogger().warn("Client: got null packet");
+            logger.warn("Client: got null packet");
             return;
         }
-        // Game isn't thread safe; other threads shouldn't use  game while
+        // Game isn't thread safe; other threads shouldn't use game while
         // it may be being updated
         GAME_LOCK.lock();
         try {
@@ -304,14 +305,14 @@ public class Precognition implements Runnable {
                 case LOAD_SAVEGAME:
                 case SENDING_AVAILABLE_MAP_SIZES:
                 case SCRIPTED_MESSAGE:
-                    LogManager.getLogger().debug("Intentionally ignoring PacketCommand: {}", c.getCommand().name());
+                    logger.debug("Intentionally ignoring PacketCommand: {}", c.getCommand().name());
                     break;
                 default:
-                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand: {}", c.getCommand().name());
+                    logger.error("Attempted to parse unknown PacketCommand: {}", c.getCommand().name());
                     break;
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "handlePacket");
         } finally {
             GAME_LOCK.unlock();
         }
@@ -323,7 +324,7 @@ public class Precognition implements Runnable {
     @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
         Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             getGame().setEntity(entity.getId(), entity);
         }
     }
@@ -372,8 +373,8 @@ public class Precognition implements Runnable {
                     continue;
                 }
                 if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
-                     || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
-                                             .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
+                        || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
+                                .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
                     markUnitAsDirty(entity.getId());
                 }
             }
@@ -386,9 +387,9 @@ public class Precognition implements Runnable {
                 Integer entityId = getDirtyUnits().pollFirst();
                 Entity entity = getGame().getEntity(entityId);
                 if (entity != null) {
-                    LogManager.getLogger().debug("recalculating paths for " + entity.getDisplayName());
+                    logger.debug("recalculating paths for " + entity.getDisplayName());
                     getPathEnumerator().recalculateMovesFor(entity);
-                    LogManager.getLogger().debug("finished recalculating paths for " + entity.getDisplayName());
+                    logger.debug("finished recalculating paths for " + entity.getDisplayName());
                 }
             }
         } catch (Exception ignored) {
@@ -399,7 +400,8 @@ public class Precognition implements Runnable {
     @Override
     public void run() {
         try {
-            // todo There's probably a better way to handle this than a loop that only exits on an error.
+            // todo There's probably a better way to handle this than a loop that only exits
+            // on an error.
             while (!getDone().get()) {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
@@ -409,9 +411,9 @@ public class Precognition implements Runnable {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if ((entity != null) && isEntityOnMap(entity)) {
                         unPause();
-                        LogManager.getLogger().debug("recalculating paths for " + entity.getDisplayName());
+                        logger.debug("recalculating paths for " + entity.getDisplayName());
                         getPathEnumerator().recalculateMovesFor(entity);
-                        LogManager.getLogger().debug("finished recalculating paths for " + entity.getDisplayName());
+                        logger.debug("finished recalculating paths for " + entity.getDisplayName());
                     }
                 } else if (getWaitWhenDone().get()) {
                     waitForUnpause(); // paused for a reason
@@ -434,12 +436,12 @@ public class Precognition implements Runnable {
     private synchronized void waitForUnpause() {
         try {
             while (!getDone().get() &&
-                   (getWaitWhenDone().get() ||
-                    (getEventsToProcess().isEmpty() &&
-                     getDirtyUnits().isEmpty()))) {
-                LogManager.getLogger().debug("waitWhenDone = " + getWaitWhenDone() +
-                               " :: eventsToProcess = " + getEventsToProcess().size() +
-                               " :: dirtyUnits = " + getDirtyUnits().size());
+                    (getWaitWhenDone().get() ||
+                            (getEventsToProcess().isEmpty() &&
+                                    getDirtyUnits().isEmpty()))) {
+                logger.debug("waitWhenDone = " + getWaitWhenDone() +
+                        " :: eventsToProcess = " + getEventsToProcess().size() +
+                        " :: dirtyUnits = " + getDirtyUnits().size());
                 getWaiting().set(true);
                 try {
                     wait();
@@ -464,12 +466,12 @@ public class Precognition implements Runnable {
             LinkedList<GameEvent> eventsToProcessIterator = new LinkedList<>(getEventsToProcess());
             int numEvents = eventsToProcessIterator.size();
             for (int count = 0; count < numEvents; count++) {
-                LogManager.getLogger().debug("Processing event " + (count + 1) + " out of " + numEvents);
+                logger.debug("Processing event " + (count + 1) + " out of " + numEvents);
                 GameEvent event = eventsToProcessIterator.get(count);
                 if (event == null) {
                     continue;
                 }
-                LogManager.getLogger().debug("Processing " + event);
+                logger.debug("Processing " + event);
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // Ignore entity changes that don't happen during movement
@@ -498,13 +500,13 @@ public class Precognition implements Runnable {
                     if (position.equals(getPathEnumerator().getLastKnownCoords(entity.getId()))) {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
-                    LogManager.getLogger().debug("Received entity change event for "
-                                    + changeEvent.getEntity().getDisplayName()
-                                    + " (ID " + entity.getId() + ")");
+                    logger.debug("Received entity change event for "
+                            + changeEvent.getEntity().getDisplayName()
+                            + " (ID " + entity.getId() + ")");
                     markUnitAsDirty(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
-                    LogManager.getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());
+                    logger.debug("Phase change detected: " + phaseChange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
                     if (phaseChange.getNewPhase().isMovement()) {
@@ -517,7 +519,7 @@ public class Precognition implements Runnable {
                     }
                 }
             }
-            LogManager.getLogger().debug("Events still to process: " + getEventsToProcess().size());
+            logger.debug("Events still to process: " + getEventsToProcess().size());
         } finally {
             GAME_LOCK.unlock();
         }
@@ -586,7 +588,7 @@ public class Precognition implements Runnable {
                             msg.append("\n  ").append(e.getDisplayName());
                         }
                     }
-                    LogManager.getLogger().debug(msg.toString());
+                    logger.debug(msg.toString());
                 }
                 getDirtyUnits().addAll(toDirty);
             }
@@ -606,21 +608,21 @@ public class Precognition implements Runnable {
     PathEnumerator getPathEnumerator() {
         PATH_ENUMERATOR_LOCK.readLock().lock();
         try {
-            LogManager.getLogger().debug("PATH_ENUMERATOR_LOCK read locked.");
+            logger.debug("PATH_ENUMERATOR_LOCK read locked.");
             return pathEnumerator;
         } finally {
             PATH_ENUMERATOR_LOCK.readLock().unlock();
-            LogManager.getLogger().debug("PATH_ENUMERATOR_LOCK read unlocked.");
+            logger.debug("PATH_ENUMERATOR_LOCK read unlocked.");
         }
     }
 
     private void setPathEnumerator(PathEnumerator pathEnumerator) {
         PATH_ENUMERATOR_LOCK.writeLock().lock();
         try {
-            LogManager.getLogger().debug("PATH_ENUMERATOR_LOCK write locked.");
+            logger.debug("PATH_ENUMERATOR_LOCK write locked.");
             this.pathEnumerator = pathEnumerator;
         } finally {
-            LogManager.getLogger().debug("PATH_ENUMERATOR_LOCK write unlocked.");
+            logger.debug("PATH_ENUMERATOR_LOCK write unlocked.");
             PATH_ENUMERATOR_LOCK.writeLock().unlock();
         }
     }
@@ -656,22 +658,22 @@ public class Precognition implements Runnable {
     void resetGame() {
         GAME_LOCK.lock();
         try {
-            LogManager.getLogger().debug("GAME_LOCK write locked.");
+            logger.debug("GAME_LOCK write locked.");
             game.reset();
         } finally {
             GAME_LOCK.unlock();
-            LogManager.getLogger().debug("GAME_LOCK write unlocked.");
+            logger.debug("GAME_LOCK write unlocked.");
         }
     }
 
     private Game getGame() {
         GAME_LOCK.lock();
         try {
-            LogManager.getLogger().debug("GAME_LOCK read locked.");
+            logger.debug("GAME_LOCK read locked.");
             return game;
         } finally {
             GAME_LOCK.unlock();
-            LogManager.getLogger().debug("GAME_LOCK read unlocked.");
+            logger.debug("GAME_LOCK read unlocked.");
         }
     }
 
@@ -871,7 +873,7 @@ public class Precognition implements Runnable {
                 e.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "receiveEntityNovaNetworkModeChange");
         }
     }
 

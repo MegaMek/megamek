@@ -18,37 +18,42 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JTextFieldPreference monitors the selected state of a JToggleButton (which JCheckbox extends).
+ * JTextFieldPreference monitors the selected state of a JToggleButton (which
+ * JCheckbox extends).
  * It sets the saved value when a dialog is loaded and changes it as it changes.
  *
- * Call preferences.manage(new JToggleButtonPreference(JToggleButton)) to use this preference, on a
+ * Call preferences.manage(new JToggleButtonPreference(JToggleButton)) to use
+ * this preference, on a
  * JToggleButton that has called setName
  */
 public class JToggleButtonPreference extends PreferenceElement implements ChangeListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JToggleButtonPreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JToggleButton> weakReference;
     private boolean selected;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JToggleButtonPreference(final JToggleButton toggleButton) throws Exception {
         super(toggleButton.getName());
         setSelected(toggleButton.isSelected());
         weakReference = new WeakReference<>(toggleButton);
         toggleButton.addChangeListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JToggleButton> getWeakReference() {
         return weakReference;
     }
@@ -60,9 +65,9 @@ public class JToggleButtonPreference extends PreferenceElement implements Change
     public void setSelected(final boolean selected) {
         this.selected = selected;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return Boolean.toString(isSelected());
@@ -71,7 +76,7 @@ public class JToggleButtonPreference extends PreferenceElement implements Change
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JToggleButtonPreference because of a null or blank input value");
+            logger.error("Cannot create a JToggleButtonPreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -92,9 +97,9 @@ public class JToggleButtonPreference extends PreferenceElement implements Change
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region ChangeListener
+    // region ChangeListener
     @Override
     public void stateChanged(final ChangeEvent evt) {
         final JToggleButton element = getWeakReference().get();
@@ -102,5 +107,5 @@ public class JToggleButtonPreference extends PreferenceElement implements Change
             setSelected(element.isSelected());
         }
     }
-    //endregion ChangeListener
+    // endregion ChangeListener
 }

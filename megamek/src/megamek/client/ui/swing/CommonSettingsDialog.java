@@ -49,8 +49,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import org.apache.logging.log4j.LogManager;
-
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 
 import megamek.MMConstants;
@@ -71,6 +69,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map
@@ -78,10 +77,11 @@ import megamek.common.preference.PreferenceManager;
  */
 public class CommonSettingsDialog extends AbstractButtonDialog implements ItemListener,
         FocusListener, ListSelectionListener, ChangeListener {
+    private final static MMLogger logger = MMLogger.create(CommonSettingsDialog.class);
 
     /**
      * A class for storing information about an GUIPreferences advanced option.
-     * 
+     *
      * @author arlith
      */
     private static class AdvancedOptionData implements Comparable<AdvancedOptionData> {
@@ -1707,7 +1707,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             URL helpFile = new File(MMConstants.USER_DIR_README_FILE).toURI().toURL();
             userDirHelp.addActionListener(e -> new HelpDialog(helpTitle, helpFile, getFrame()).setVisible(true));
         } catch (MalformedURLException e) {
-            LogManager.getLogger().error("Could not find the user data directory readme file at "
+            logger.error(e, "Could not find the user data directory readme file at "
                     + MMConstants.USER_DIR_README_FILE);
         }
         row = new ArrayList<>();
@@ -2352,12 +2352,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         try {
             GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setPlayersRemainingToShow(Integer.parseInt(playersRemainingToShow.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
 
         GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
@@ -2373,24 +2373,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         try {
             GUIP.setMoveFontSize(Integer.parseInt(moveFontSize.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         GUIP.setMoveFontStyle(fontStyleChooserMoveFont.getSelectedIndex());
 
         try {
             GUIP.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         GUIP.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
         CP.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
@@ -2412,7 +2412,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         try {
             CP.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
 
         GUIP.setGetFocus(getFocus.isSelected());
@@ -2644,66 +2644,66 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         try {
             GUIP.setUnitDisplayHeatColorValue1(Integer.parseInt(unitDisplayHeatLevel1Text.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setUnitDisplayHeatColorValue2(Integer.parseInt(unitDisplayHeatLevel2Text.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setUnitDisplayHeatColorValue3(Integer.parseInt(unitDisplayHeatLevel3Text.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setUnitDisplayHeatColorValue4(Integer.parseInt(unitDisplayHeatLevel4Text.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setUnitDisplayHeatColorValue5(Integer.parseInt(unitDisplayHeatLevel5Text.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
         try {
             GUIP.setUnitDisplayHeatColorValue6(Integer.parseInt(unitDisplayHeatLevel6Text.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "okAction");
         }
 
         GUIP.setUnitToolTipSeenByResolution(unitTooltipSeenbyCbo.getSelectedIndex());
         try {
             GUIP.setUnitDisplayWeaponListHeight(Integer.parseInt(unitDisplayWeaponListHeightText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
 
         try {
             GUIP.setUnitDisplayMekArmorLargeFontSize(Integer.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
         try {
             GUIP.setUnitDisplayMekArmorMediumFontSize(
                     Integer.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
         try {
             GUIP.setUnitDisplayMekArmorSmallFontSize(Integer.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
         try {
             GUIP.setUnitDisplayMekLargeFontSize(Integer.parseInt(unitDisplayMekLargeFontSizeText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
         try {
             GUIP.setUnitDisplayMekMediumFontSize(Integer.parseInt(unitDisplayMekMediumFontSizeText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
 
         GUIP.setUnitToolTipFGColor(csbUnitTooltipFGColor.getColour());
@@ -2734,12 +2734,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setUnitTooltipArmorMiniUnitsPerBlock(
                     Integer.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
         try {
             GUIP.setUnitToolTipArmorMiniFontSize(Integer.parseInt(unitTooltipArmorMiniFontSizeModText.getText()));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
 
         GUIP.setReportLinkColor(csbReportLinkColor.getColour());
@@ -3430,13 +3430,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     public static List<String> filteredFilesWithSubDirs(File path, String fileEnding) {
         if (!path.exists()) {
-            LogManager.getLogger().warn("Path " + path + " does not exist.");
+            logger.warn("Path " + path + " does not exist.");
             return new ArrayList<>();
         }
         try (Stream<Path> entries = Files.walk(path.toPath())) {
             return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
         } catch (IOException e) {
-            LogManager.getLogger().warn("Error while reading " + fileEnding + " files from " + path, e);
+            logger.warn(e, "Error while reading " + fileEnding + " files from " + path);
             return new ArrayList<>();
         }
     }

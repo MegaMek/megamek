@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -39,6 +37,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
+import megamek.logging.MMLogger;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -48,6 +47,8 @@ import megamek.common.weapons.infantry.InfantryWeaponHandler;
  * @since 11/24/14 2:50 PM
  */
 public class WeaponFireInfo {
+    private static final MMLogger logger = MMLogger.create(WeaponFireInfo.class);
+
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
@@ -521,7 +522,7 @@ public class WeaponFireInfo {
      * Aerospace units need to think carefully before firing TAGs at ground targets,
      * because this
      * precludes firing _any_ other weapons this turn.
-     * 
+     *
      * @return expected damage of firing a TAG weapon, in light of other options.
      */
     double computeAeroExpectedTAGDamage() {
@@ -533,36 +534,30 @@ public class WeaponFireInfo {
     /**
      * Generalized computation of hitting with TAG given current guidable muniitions
      * in play
-     * 
+     *
      * @param exclusiveWithOtherWeapons true if Aero, false otherwise.
      * @return
      */
     double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons) {
-        boolean debug = LogManager.getLogger().isDebugEnabled();
-        final StringBuilder msg = (debug) ? new StringBuilder("Assessing the expected max damage from ")
+        final StringBuilder msg = new StringBuilder("Assessing the expected max damage from ")
                 .append(shooter.getDisplayName())
-                .append(" using their TAG this turn")
-                : null;
+                .append(" using their TAG this turn");
 
         int myWeaponsDamage = 0;
         if (exclusiveWithOtherWeapons) {
             // We need to know what we're giving up if we fire this TAG...
             myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
-            if (debug) {
-                msg.append("\nThe unit will be giving up ")
-                        .append(myWeaponsDamage)
-                        .append(" damage from other weapons");
-            }
+            msg.append("\nThe unit will be giving up ")
+                    .append(myWeaponsDamage)
+                    .append(" damage from other weapons");
         }
 
         int incomingAttacksDamage = owner.computeTeamTagUtility(
                 target,
                 Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition())));
         int utility = incomingAttacksDamage - myWeaponsDamage;
-        if (debug) {
-            msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
-            LogManager.getLogger().debug(msg.toString());
-        }
+        msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
+        logger.debug(msg.toString());
 
         return Math.max(utility, 0);
     }
@@ -571,7 +566,7 @@ public class WeaponFireInfo {
      * Compute the heat output by firing a given weapon.
      * Contains special logic for bay weapons when using individual bay heat.
      * TODO: Make some kind of assumption about variable-heat weapons?
-     * 
+     *
      * @param weapon The weapon to check.
      * @return Generated heat.
      */
@@ -595,7 +590,7 @@ public class WeaponFireInfo {
 
     /**
      * Worker function to compute expected bomb damage given the shooter
-     * 
+     *
      * @param shooter   The unit making the attack.
      * @param weapon    The weapon being used in the attack.
      * @param bombedHex The target hex.
@@ -640,11 +635,11 @@ public class WeaponFireInfo {
      * Helper function that calculates expected damage
      *
      * @param shooterPath The path the attacker has moved.
-     * 
+     *
      * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure
      * the target is under their flight
      * path.
-     * 
+     *
      * @param guess Set TRUE to estimate the chance to hit rather than doing the
      * full calculation.
      */
@@ -652,14 +647,11 @@ public class WeaponFireInfo {
             final boolean assumeUnderFlightPath,
             final boolean guess,
             final HashMap<String, int[]> bombPayloads) {
-        boolean debugging = LogManager.getLogger().isDebugEnabled();
 
-        final StringBuilder msg = debugging
-                ? new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-                        .append(" firing ").append(getWeapon().getDesc())
-                        .append(" at ").append(getTarget().getDisplayName())
-                        .append(":")
-                : null;
+        final StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                .append(" firing ").append(getWeapon().getDesc())
+                .append(" at ").append(getTarget().getDisplayName())
+                .append(":");
 
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayloads) || (0 == bombPayloads.get("external").length)) {
@@ -681,12 +673,10 @@ public class WeaponFireInfo {
         }
         // If we can't hit, set everything zero and return...
         if (12 < getToHit().getValue()) {
-            if (debugging) {
-                LogManager.getLogger().debug(
-                        msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
-                                .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
-                                .append((guess) ? " [guess]" : " [real]"));
-            }
+            logger.debug(
+                    msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
+                            .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
+                            .append((guess) ? " [guess]" : " [real]"));
             setProbabilityToHit(0);
             setMaxDamage(0);
             setHeat(0);
@@ -696,15 +686,13 @@ public class WeaponFireInfo {
             return;
         }
 
-        if (debugging && getShooterState().hasNaturalAptGun()) {
+        if (getShooterState().hasNaturalAptGun()) {
             msg.append("\n\tAttacker has Natural Aptitude Gunnery");
         }
 
         setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
 
-        if (debugging) {
-            msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
-        }
+        msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
         // now that we've calculated hit odds, if we're shooting
         // a weapon capable of rapid fire, it's time to decide whether we're going to
@@ -717,26 +705,20 @@ public class WeaponFireInfo {
 
         setHeat(computeHeat(weapon));
 
-        if (debugging) {
-            msg.append("\n\tHeat: ").append(getHeat());
-        }
+        msg.append("\n\tHeat: ").append(getHeat());
 
         setMaxDamage(computeExpectedDamage());
         // Expected damage is the chance of hitting * the max damage
         setExpectedDamageOnHit(getProbabilityToHit() * getMaxDamage());
 
-        if (debugging) {
-            msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
-            msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(expectedDamageOnHit));
-        }
+        msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+        msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(expectedDamageOnHit));
 
         // If expected damage from Aero tagging is zero, return out - save attacks for
         // later.
         if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
-            if (debugging) {
-                LogManager.getLogger()
-                        .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
-            }
+            logger
+                    .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setHeat(0);
@@ -772,9 +754,7 @@ public class WeaponFireInfo {
         }
         // No target Mek found; nothing to do
         if (null == targetMek) {
-            if (debugging) {
-                LogManager.getLogger().debug(msg.toString());
-            }
+            logger.debug(msg.toString());
             return;
         }
 
@@ -826,9 +806,7 @@ public class WeaponFireInfo {
             }
         }
 
-        if (debugging) {
-            LogManager.getLogger().debug(msg.toString());
-        }
+        logger.debug(msg.toString());
     }
 
     WeaponAttackAction getWeaponAttackAction() {

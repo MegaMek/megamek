@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.ForceAssignable;
 import megamek.common.InGameObject;
@@ -41,12 +39,13 @@ import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.util.ImageUtil;
+import megamek.logging.MMLogger;
 
 /**
  * This is the game client for Strategic BattleForce games, as one would think.
  */
 public class SBFClient extends AbstractClient {
-
+    private final static MMLogger logger = MMLogger.create(SBFClient.class);
     /**
      * The game object that holds all game information. This object is persistent,
      * i.e. it is never replaced
@@ -142,7 +141,7 @@ public class SBFClient extends AbstractClient {
 
     private String assembleAndAddImages(List<SBFReportEntry> reports) {
         if (reports == null) {
-            LogManager.getLogger().error("Received a null list of reports!");
+            logger.error("Received a null list of reports!");
             return "";
         }
 

@@ -32,8 +32,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -71,6 +69,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
 /**
@@ -78,6 +77,7 @@ import megamek.server.SmokeCloud;
  * client. non-local clients are not also instantiated on the local server.
  */
 public class Client extends AbstractClient {
+    private final static MMLogger logger = MMLogger.create(Client.class);
 
     /**
      * The game state object: this object is not ever replaced during a game, only
@@ -100,7 +100,7 @@ public class Client extends AbstractClient {
         try {
             tilesetManager = new TilesetManager(game);
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            logger.error(e, "Unknown Exception");
         }
     }
 
@@ -853,7 +853,7 @@ public class Client extends AbstractClient {
             fw.flush();
             fw.close();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "saveEntityStatus");
         }
     }
 
@@ -1040,11 +1040,11 @@ public class Client extends AbstractClient {
                 if (!sDir.exists()) {
                     try {
                         if (!sDir.mkdir()) {
-                            LogManager.getLogger().error("Failed to create savegames directory.");
+                            logger.error("Failed to create savegames directory.");
                             return true;
                         }
                     } catch (Exception ex) {
-                        LogManager.getLogger().error("Unable to create savegames directory.", ex);
+                        logger.error(ex, "Unable to create savegames directory.");
                     }
                 }
 
@@ -1056,7 +1056,8 @@ public class Client extends AbstractClient {
                     }
                     bos.flush();
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("Unable to save file " + sFinalFile, ex);
+                    String message = String.format("Unable to save file %s", sFinalFile);
+                    logger.error(ex, message);
                 }
                 break;
             case LOAD_SAVEGAME:
@@ -1064,7 +1065,8 @@ public class Client extends AbstractClient {
                 try {
                     sendLoadGame(new File(MMConstants.SAVEGAME_DIR, loadFile));
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("Unable to load savegame file: " + loadFile, ex);
+                    String message = String.format("Unable to load savegame file: %s", loadFile);
+                    logger.error(ex, message);
                 }
                 break;
             case SENDING_SPECIAL_HEX_DISPLAY:
@@ -1137,7 +1139,7 @@ public class Client extends AbstractClient {
                 e.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to process Entity Nova Network mode change", ex);
+            logger.error(ex, "Failed to process Entity Nova Network mode change");
         }
     }
 
@@ -1365,7 +1367,8 @@ public class Client extends AbstractClient {
             game.reset();
             send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getLoadSaveGameXStream().fromXML(gzi)));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Can't find the local savegame " + f, ex);
+            String message = String.format("Can't find the local savegame %s", f);
+            logger.error(ex, message);
         }
     }
 }

@@ -37,15 +37,22 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 public abstract class PathRanker implements IPathRanker {
-    // TODO: Introduce PathRankerCacheHelper class that contains "global" path ranker state
-    // TODO: Introduce FireControlCacheHelper class that contains "global" Fire Control state
-    // PathRanker classes should be pretty stateless, except pointers to princess and such
+    private final static MMLogger logger = MMLogger.create(PathRanker.class);
+
+    // TODO: Introduce PathRankerCacheHelper class that contains "global" path
+    // ranker state
+    // TODO: Introduce FireControlCacheHelper class that contains "global" Fire
+    // Control state
+    // PathRanker classes should be pretty stateless, except pointers to princess
+    // and such
 
     /**
      * The possible path ranker types.
-     * If you're adding a new one, add it here then make sure to add it to Princess.InitializePathRankers
+     * If you're adding a new one, add it here then make sure to add it to
+     * Princess.InitializePathRankers
      */
     public enum PathRankerType {
         Basic,
@@ -60,26 +67,28 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     protected abstract RankedPath rankPath(MovePath path, Game game, int maxRange,
-                                           double fallTolerance, List<Entity> enemies,
-                                           Coords friendsCoords);
+            double fallTolerance, List<Entity> enemies,
+            Coords friendsCoords);
 
     @Override
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
-                                           double fallTolerance, List<Entity> enemies,
-                                           List<Entity> friends) {
+            double fallTolerance, List<Entity> enemies,
+            List<Entity> friends) {
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // the cached path probability data is really only relevant for one iteration through this method
+        // the cached path probability data is really only relevant for one iteration
+        // through this method
         getPathRankerState().getPathSuccessProbabilities().clear();
 
         // Let's try to whittle down this list.
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
-        LogManager.getLogger().debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
+        logger.debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
 
-        // If the heat map of friendly activity has sufficient data, use the nearest hot spot as
+        // If the heat map of friendly activity has sufficient data, use the nearest hot
+        // spot as
         // the anchor point
         Coords allyCenter = owner.getFriendlyHotSpot(movePaths.get(0).getEntity().getPosition());
         if (allyCenter == null) {
@@ -102,7 +111,8 @@ public abstract class PathRanker implements IPathRanker {
 
                 returnPaths.add(rankedPath);
 
-                // we want to keep track of if any of the paths we've considered have some kind of damage potential
+                // we want to keep track of if any of the paths we've considered have some kind
+                // of damage potential
                 pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
 
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
@@ -120,7 +130,8 @@ public abstract class PathRanker implements IPathRanker {
             boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage
                     && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
 
-            // if we're trying to fight, but aren't going to be doing any damage no matter how we move
+            // if we're trying to fight, but aren't going to be doing any damage no matter
+            // how we move
             // then let's try to get closer
             if (noDamageButCanDoDamage
                     && (behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged)) {
@@ -129,16 +140,15 @@ public abstract class PathRanker implements IPathRanker {
                         game, maxRange, fallTolerance, enemies, friends);
             }
         } catch (Exception ignored) {
-            LogManager.getLogger().error(ignored.getMessage(), ignored);
+            logger.error(ignored, ignored.getMessage());
             return returnPaths;
         }
-
 
         return returnPaths;
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
-                                         double fallTolerance) {
+            double fallTolerance) {
         if (startingPathList.isEmpty()) {
             // Nothing to validate here, might as well return the empty list
             // straight away.
@@ -167,7 +177,8 @@ public abstract class PathRanker implements IPathRanker {
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path);
 
             try {
-                // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
+                // if we are an aero unit on the ground map, we want to discard paths that keep
+                // us at altitude 1 with no bombs
                 if (isAirborneAeroOnGroundMap) {
                     // if we have no bombs, we want to make sure our altitude is above 1
                     // if we do have bombs, we may consider altitude bombing (in the future)
@@ -182,10 +193,12 @@ public abstract class PathRanker implements IPathRanker {
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
-                // also skip this part if I'm attempting to retreat, as engagement is not the point here
+                // also skip this part if I'm attempting to retreat, as engagement is not the
+                // point here
                 if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
+                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
+                            inRange);
                     if (!StringUtility.isNullOrBlank(validation)) {
                         msg.append("\n\t").append(validation);
                         continue;
@@ -215,11 +228,12 @@ public abstract class PathRanker implements IPathRanker {
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
             } finally {
-                LogManager.getLogger().debug(msg.toString());
+                logger.debug(msg.toString());
             }
         }
 
-        // If we've eliminated all valid paths, let's try to pick out a long range path instead
+        // If we've eliminated all valid paths, let's try to pick out a long range path
+        // instead
         if (returnPaths.isEmpty()) {
             return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
         }
@@ -239,7 +253,8 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     /**
-     * Performs initialization to help speed later calls of rankPath for this unit on this turn.
+     * Performs initialization to help speed later calls of rankPath for this unit
+     * on this turn.
      * Rankers that extend this class should override this function
      */
     @Override
@@ -256,13 +271,15 @@ public abstract class PathRanker implements IPathRanker {
      */
     @Override
     public Targetable findClosestEnemy(Entity me, Coords position, Game game,
-                                       boolean includeStrategicTargets) {
+            boolean includeStrategicTargets) {
         int range = 9999;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         for (Entity e : enemies) {
-            // Skip airborne aero units as they're further away than they seem and hard to catch.
-            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected
+            // Skip airborne aero units as they're further away than they seem and hard to
+            // catch.
+            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and
+            // ejected
             // MekWarriors
             if (e.isAirborneAeroOnGroundMap() ||
                     getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(),
@@ -301,7 +318,8 @@ public abstract class PathRanker implements IPathRanker {
      * Returns the probability of success of a move path
      */
     protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
-        // introduced a caching mechanism, as the success probability was being calculated at least twice
+        // introduced a caching mechanism, as the success probability was being
+        // calculated at least twice
         if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
             return getPathRankerState().getPathSuccessProbabilities().get(movePath.getKey());
         }
@@ -365,7 +383,7 @@ public abstract class PathRanker implements IPathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game The current {@link Game}
+     * @param game     The current {@link Game}
      * @return The distance to the unit's home edge.
      */
     @Override
@@ -392,7 +410,7 @@ public abstract class PathRanker implements IPathRanker {
                 break;
             }
             default: {
-                LogManager.getLogger().warn("Invalid home edge. Defaulting to NORTH.");
+                logger.warn("Invalid home edge. Defaulting to NORTH.");
                 distance = position.getY();
             }
         }
@@ -401,12 +419,13 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     private String validRange(Coords finalCoords, Targetable target, int startingTargetDistance,
-                              int maxRange, boolean inRange) {
+            int maxRange, boolean inRange) {
         if (target == null) {
             return null;
         }
 
-        // If I am not currently in range, discard any path that takes me further away from my target.
+        // If I am not currently in range, discard any path that takes me further away
+        // from my target.
         int finalDistanceToTarget = finalCoords.distance(target.getPosition());
         if (!inRange) {
             if (finalDistanceToTarget > startingTargetDistance) {
@@ -422,9 +441,12 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     /**
-     * Check the path being moved to see if there is a danger of building collapse. Allows a margin
-     * of error of 10 tons in case someone decides to shoot at the building. If jumping, only the
-     * landing point is checked. For all other move types, the entire path is checked.
+     * Check the path being moved to see if there is a danger of building collapse.
+     * Allows a margin
+     * of error of 10 tons in case someone decides to shoot at the building. If
+     * jumping, only the
+     * landing point is checked. For all other move types, the entire path is
+     * checked.
      * TODO : reread the rules on basement collapse
      * TODO : skip basement check if random basement option is turned off
      * TODO : incorporate test for building damage just from moving through building
@@ -447,7 +469,8 @@ public abstract class PathRanker implements IPathRanker {
                 return false;
             }
 
-            // Give ourselves a 10-ton margin of error in case someone shoots at the building.
+            // Give ourselves a 10-ton margin of error in case someone shoots at the
+            // building.
             double mass = path.getEntity().getWeight() + 10;
 
             // Add the mass of anyone else standing in/on this building.
@@ -456,7 +479,8 @@ public abstract class PathRanker implements IPathRanker {
             return (mass > building.getCurrentCF(finalCoords));
         }
 
-        // If we're not jumping, check each building to see if it will collapse if it has a basement.
+        // If we're not jumping, check each building to see if it will collapse if it
+        // has a basement.
         final double mass = path.getEntity().getWeight() + 10;
         final Enumeration<MoveStep> steps = path.getSteps();
         while (steps.hasMoreElements()) {
@@ -516,7 +540,7 @@ public abstract class PathRanker implements IPathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
-            LogManager.getLogger().error("Center of ally group " + center.toFriendlyString()
+            logger.error("Center of ally group " + center.toFriendlyString()
                     + " not within board boundaries.");
             return null;
         }
@@ -530,6 +554,7 @@ public abstract class PathRanker implements IPathRanker {
 
     /**
      * Convenience property to access bot-wide state information.
+     *
      * @return the owner's path ranker state
      */
     protected PathRankerState getPathRankerState() {

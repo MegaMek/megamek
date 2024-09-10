@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.*;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
@@ -50,6 +48,7 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.UnitType;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * Controls to set options for force generator.
@@ -57,6 +56,8 @@ import megamek.common.options.OptionsConstants;
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
+    private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
+
     private int currentYear;
     private Consumer<ForceDescriptor> onGenerate;
 
@@ -664,7 +665,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                LogManager.getLogger().warn("No unit type node found.");
+                logger.warn("No unit type node found.");
                 cbUnitType.addItem(null);
             }
         } else {
@@ -739,7 +740,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            LogManager.getLogger().warn("No eschelon node found.");
+            logger.warn("No eschelon node found.");
         }
 
         if (hasCurrent) {
@@ -783,7 +784,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                LogManager.getLogger().warn("No rating found.");
+                logger.warn("No rating found.");
             }
         }
 
@@ -1095,7 +1096,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } catch (InterruptedException ignored) {
 
             } catch (ExecutionException ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             } finally {
                 btnGenerate.setEnabled(true);
             }

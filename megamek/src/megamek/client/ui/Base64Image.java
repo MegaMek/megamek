@@ -18,12 +18,7 @@
  */
 package megamek.client.ui;
 
-import megamek.common.annotations.Nullable;
-import megamek.common.util.ImageUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,15 +26,26 @@ import java.io.Serializable;
 import java.util.Base64;
 import java.util.Objects;
 
+import javax.imageio.ImageIO;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.util.ImageUtil;
+import megamek.logging.MMLogger;
+
 /**
- * This is a form of an Image that is based on a base64-encoded form, e.g. loaded from file. The base64 is retained
- * and the actual image only created when {@link #getImage()} is called. This class is serializable;
- * the internal Image object is transient and the base64 String is used for serialization.
+ * This is a form of an Image that is based on a base64-encoded form, e.g.
+ * loaded from file. The base64 is retained
+ * and the actual image only created when {@link #getImage()} is called. This
+ * class is serializable;
+ * the internal Image object is transient and the base64 String is used for
+ * serialization.
  * Decoding the base64 image uses {@link ImageIO#read(InputStream)}.
  *
- * @implNote Threadsafe; Immutable. The displayable Image is created only when needed and uses synchronized access
+ * @implNote Threadsafe; Immutable. The displayable Image is created only when
+ *           needed and uses synchronized access
  */
 public class Base64Image implements Serializable {
+    private final static MMLogger logger = MMLogger.create(Base64Image.class);
 
     /** The base64 representation of the image. */
     private final String base64encodedImage;
@@ -62,25 +68,30 @@ public class Base64Image implements Serializable {
     }
 
     /**
-     * Creates a Base64Image from the given image. The given image itself is not stored.
+     * Creates a Base64Image from the given image. The given image itself is not
+     * stored.
      */
     public Base64Image(@Nullable Image image) {
         this.base64encodedImage = ImageUtil.base64TextEncodeImage(image);
     }
 
-    /** @return True when there is no image, i.e. the base64 encoded form is blank. */
+    /**
+     * @return True when there is no image, i.e. the base64 encoded form is blank.
+     */
     public boolean isEmpty() {
         return base64encodedImage.isBlank();
     }
 
-    /** @return The base64 representation of the image.  */
+    /** @return The base64 representation of the image. */
     public String getBase64String() {
         return base64encodedImage;
     }
 
     /**
-     * Returns the image in displayable form. When first called, the base64 representation is converted to an Image.
-     * When conversion fails, returns {@link ImageUtil#failStandardImage()}. When the base64 representation is
+     * Returns the image in displayable form. When first called, the base64
+     * representation is converted to an Image.
+     * When conversion fails, returns {@link ImageUtil#failStandardImage()}. When
+     * the base64 representation is
      * blank, returns null.
      *
      * @return The image in displayable form
@@ -95,7 +106,7 @@ public class Base64Image implements Serializable {
                     try (ByteArrayInputStream inStreambj = new ByteArrayInputStream(imageBytes)) {
                         image = ImageIO.read(inStreambj);
                     } catch (IOException ex) {
-                        LogManager.getLogger().warn("Could not convert base64 to image", ex);
+                        logger.warn(ex, "Could not convert base64 to image");
                         image = ImageUtil.failStandardImage();
                     }
                 }

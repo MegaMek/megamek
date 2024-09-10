@@ -24,10 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-
-import org.apache.logging.log4j.LogManager;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -56,8 +53,10 @@ import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 public abstract class AbstractClient implements IClient {
+    private final static MMLogger logger = MMLogger.create(AbstractClient.class);
 
     // Server connection information
     protected String name;
@@ -158,11 +157,11 @@ public abstract class AbstractClient implements IClient {
             try {
                 log.close();
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to close the client game log file.", ex);
+                logger.error(ex, "Failed to close the client game log file.");
             }
         }
 
-        LogManager.getLogger().info(getName() + " client shutdown complete.");
+        logger.info("%s client shutdown complete.", getName());
     }
 
     /** The client has become disconnected from the server */
@@ -276,9 +275,9 @@ public abstract class AbstractClient implements IClient {
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            LogManager.getLogger().error("Memory dump " + where
-                    + " ".repeat(Math.max(0, 25 - where.length())) + ": used (" + used
-                    + ") + free (" + free + ") = " + total);
+            String message = String.format("Memory dump %s%s : used(%d) + free(%d) = %d", where,
+                    " ".repeat(Math.max(0, 25 - where.length())), used, free, total);
+            logger.error(message);
         }
     }
 
@@ -351,7 +350,7 @@ public abstract class AbstractClient implements IClient {
      */
     protected void handlePacket(Packet packet) {
         if (packet == null) {
-            LogManager.getLogger().error("Client: Received null packet!");
+            logger.error("Client: Received null packet!");
             return;
         }
         try {
@@ -367,11 +366,13 @@ public abstract class AbstractClient implements IClient {
                 boolean isHandled = handleGameIndependentPacket(packet);
                 isHandled |= handleGameSpecificPacket(packet);
                 if (!isHandled) {
-                    LogManager.getLogger().error("Unknown PacketCommand of {}", packet.getCommand().name());
+                    String message = String.format("Unknown PacketCommand of {}", packet.getCommand().name());
+                    logger.error(message);
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse Packet command {}", packet.getCommand(), ex);
+            String message = String.format("Failed to parse Packet command of {}", packet.getCommand());
+            logger.error(ex, message);
         }
     }
 
@@ -420,9 +421,7 @@ public abstract class AbstractClient implements IClient {
                         "Failed to connect to the server at %s because of version differences. " +
                                 "Cannot connect to a server running %s with a %s install.",
                         getHost(), serverVersion, MMConstants.VERSION);
-                JOptionPane.showMessageDialog(null, message,
-                        "Connection Failure: Version Difference", JOptionPane.ERROR_MESSAGE);
-                LogManager.getLogger().error(message);
+                logger.error(message, "Connection Failure: Version Difference");
                 disconnected();
                 break;
             case LOCAL_PN:

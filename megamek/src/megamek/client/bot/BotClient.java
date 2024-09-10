@@ -19,6 +19,26 @@
  */
 package megamek.client.bot;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
@@ -29,21 +49,23 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.event.*;
+import megamek.common.event.GameCFREvent;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.Report;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.io.*;
-import java.util.*;
+import megamek.logging.MMLogger;
 
 public abstract class BotClient extends Client {
+    private final static MMLogger logger = MMLogger.create(BotClient.class);
+
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
     private List<Entity> currentTurnEnemyEntities;
@@ -53,7 +75,8 @@ public abstract class BotClient extends Client {
     public JFrame frame;
 
     /**
-     * Keeps track of whether this client has started to calculate a turn this phase.
+     * Keeps track of whether this client has started to calculate a turn this
+     * phase.
      */
     boolean calculatedTurnThisPhase = false;
     int calculatedTurnsThisPhase = 0;
@@ -88,8 +111,10 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                // On simultaneous phases, each player ending their turn will generate a turn change
-                // We want to ignore turns from other players and only listen to events we generated
+                // On simultaneous phases, each player ending their turn will generate a turn
+                // change
+                // We want to ignore turns from other players and only listen to events we
+                // generated
                 boolean ignoreSimTurn = getGame().getPhase().isSimultaneous(getGame())
                         && (e.getPreviousPlayerId() != localPlayerNumber)
                         && calculatedTurnThisPhase;
@@ -99,13 +124,13 @@ public abstract class BotClient extends Client {
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),
-                            getName() + " Turn " + game.getTurnIndex() + " Calc Thread"
-                    );
+                            getName() + " Turn " + game.getTurnIndex() + " Calc Thread");
                     worker.start();
                     calculatedTurnsThisPhase++;
                 }
 
-                // unloading "stranded" units happens as part of a game turn change, so that's where we do it.
+                // unloading "stranded" units happens as part of a game turn change, so that's
+                // where we do it.
                 if (canUnloadStranded()) {
                     sendUnloadStranded(getStrandedEntities());
                 }
@@ -115,9 +140,9 @@ public abstract class BotClient extends Client {
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
-                    LogManager.getLogger().info(String.format("%s: Calculated %d / %d turns for phase %s",
+                    logger.info("%s: Calculated %d / %d turns for phase %s",
                             getName(), calculatedTurnsThisPhase,
-                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase()));
+                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase());
                 }
                 calculatedTurnsThisPhase = 0;
             }
@@ -143,19 +168,20 @@ public abstract class BotClient extends Client {
                         break;
                     case CFR_AMS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
-                        //  essentially same as if the auto_ams option was on
+                        // essentially same as if the auto_ams option was on
                         WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
                     case CFR_APDS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
-                        //  essentially same as if the auto_ams option was on
+                        // essentially same as if the auto_ams option was on
                         waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
                     case CFR_HIDDEN_PBS:
                         try {
-                            Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
+                            Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(),
+                                    evt.getTargetId());
 
                             if (pointBlankShots.isEmpty()) {
                                 sendHiddenPBSCFRResponse(null);
@@ -198,7 +224,8 @@ public abstract class BotClient extends Client {
     protected abstract void initFiring();
 
     /**
-     * Determines which entity should be moved next and then calls to {@link #continueMovementFor(Entity)}
+     * Determines which entity should be moved next and then calls to
+     * {@link #continueMovementFor(Entity)}
      * with that entity.
      *
      * @return The calculated move path.
@@ -210,7 +237,8 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment() throws Exception;
 
-    protected void initTargeting() { }
+    protected void initTargeting() {
+    }
 
     /**
      * Calculates the targeting/off board turn
@@ -264,7 +292,9 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Helper function that determines which of this bot's entities are stranded inside immobilized transports.
+     * Helper function that determines which of this bot's entities are stranded
+     * inside immobilized transports.
+     *
      * @return Array of entity IDs.
      */
     public int[] getStrandedEntities() {
@@ -274,7 +304,9 @@ public abstract class BotClient extends Client {
         // And if the entity happens to be in a disabled transport, then we unload it
         // unless doing so would kill it or be illegal due to stacking violation
         for (Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
-            Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
+            Entity transport = currentEntity.getTransportId() != Entity.NONE
+                    ? getGame().getEntity(currentEntity.getTransportId())
+                    : null;
 
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
                 boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(),
@@ -301,7 +333,7 @@ public abstract class BotClient extends Client {
         ArrayList<Entity> result = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(getLocalPlayer())
-                && (entity.getPosition() != null) && !entity.isOffBoard()) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()) {
                 result.add(entity);
             }
         }
@@ -320,15 +352,16 @@ public abstract class BotClient extends Client {
 
     /**
      * Lazy-loaded list of enemy entities that we should consider firing at.
-     * Only good for the current entity turn calculation, as this list can change between individual entity turns.
+     * Only good for the current entity turn calculation, as this list can change
+     * between individual entity turns.
      */
     public List<Entity> getEnemyEntities() {
         if (currentTurnEnemyEntities == null) {
             currentTurnEnemyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                    && (entity.getPosition() != null) && !entity.isOffBoard()
-                    && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+                        && (entity.getPosition() != null) && !entity.isOffBoard()
+                        && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
 
                     currentTurnEnemyEntities.add(entity);
                 }
@@ -340,14 +373,15 @@ public abstract class BotClient extends Client {
 
     /**
      * Lazy-loaded list of friendly entities.
-     * Only good for the current entity turn calculation, as this list can change between individual entity turns.
+     * Only good for the current entity turn calculation, as this list can change
+     * between individual entity turns.
      */
     public List<Entity> getFriendEntities() {
         if (currentTurnFriendlyEntities == null) {
             currentTurnFriendlyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
-                    && !entity.isOffBoard()) {
+                        && !entity.isOffBoard()) {
                     currentTurnFriendlyEntities.add(entity);
                 }
             }
@@ -372,19 +406,20 @@ public abstract class BotClient extends Client {
                 case PREMOVEMENT:
                     break;
                 case MOVEMENT:
-                    /* Do not uncomment this. It is so that bots stick around till end of game
+                    /*
+                     * Do not uncomment this. It is so that bots stick around till end of game
                      * for proper salvage. If the bot dies out here, the salvage for all but the
                      * last bot disappears for some reason
-                    if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
-                        sendChat(Messages.getString("BotClient.HowAbout"));
-                        die();
-                    }
+                     * if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
+                     * sendChat(Messages.getString("BotClient.HowAbout"));
+                     * die();
+                     * }
                      */
                     // if the game is not double blind and I can't see anyone
                     // else on the board I should kill myself.
                     if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND))
-                        && ((game.getEntitiesOwnedBy(getLocalPlayer())
-                             - game.getNoOfEntities()) == 0)) {
+                            && ((game.getEntitiesOwnedBy(getLocalPlayer())
+                                    - game.getNoOfEntities()) == 0)) {
                         die();
                     }
 
@@ -412,7 +447,8 @@ public abstract class BotClient extends Client {
                     // can't do this
                     toggleStealth();
                     endOfTurnProcessing();
-                    // intentional fallthrough: all reports must click "done", otherwise the game never moves on.
+                    // intentional fallthrough: all reports must click "done", otherwise the game
+                    // never moves on.
                 case TARGETING_REPORT:
                 case INITIATIVE_REPORT:
                 case MOVEMENT_REPORT:
@@ -430,7 +466,7 @@ public abstract class BotClient extends Client {
                     break;
             }
         } catch (Throwable t) {
-            LogManager.getLogger().error("", t);
+            logger.error(t, "changePhase");
         }
     }
 
@@ -439,7 +475,7 @@ public abstract class BotClient extends Client {
         ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
 
         // Be sure to include all units that have retreated.
-        for (Enumeration<Entity> iter = game.getRetreatedEntities(); iter.hasMoreElements(); ) {
+        for (Enumeration<Entity> iter = game.getRetreatedEntities(); iter.hasMoreElements();) {
             Entity ent = iter.nextElement();
             if (ent.getOwnerId() == getLocalPlayer().getId()) {
                 living.add(ent);
@@ -453,7 +489,7 @@ public abstract class BotClient extends Client {
         String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
         File logDir = new File(sLogDir);
         if (!logDir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
+            // noinspection ResultOfMethodCallIgnored
             logDir.mkdir();
         }
         String fileName = "Bot_" + getLocalPlayer().getName() + ".mul";
@@ -465,7 +501,7 @@ public abstract class BotClient extends Client {
             // Save the entities to the file.
             EntityListFile.saveTo(unitFile, living);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "runEndGame");
             doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
         }
     }
@@ -483,7 +519,8 @@ public abstract class BotClient extends Client {
 
     /**
      * Calculate what to do on my turn.
-     * Has a retry mechanism for when the turn calculation fails due to concurrency issues
+     * Has a retry mechanism for when the turn calculation fails due to concurrency
+     * issues
      */
     private synchronized void calculateMyTurn() {
         int retryCount = 0;
@@ -501,7 +538,7 @@ public abstract class BotClient extends Client {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error("", e);
+                    logger.error(e, "calculateMyTune");
                 }
             }
         }
@@ -565,7 +602,7 @@ public abstract class BotClient extends Client {
 
             return true;
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "calculateMyTurnWorker");
             return false;
         }
     }
@@ -595,7 +632,7 @@ public abstract class BotClient extends Client {
      * that does not have a stacking violation.
      */
     protected @Nullable Coords getFirstValidCoords(Entity deployedUnit,
-                                                   List<Coords> possibleDeployCoords) {
+            List<Coords> possibleDeployCoords) {
         // Check all of the hexes in order.
         for (Coords dest : possibleDeployCoords) {
             Entity violation = Compute.stackingViolation(game, deployedUnit,
@@ -617,7 +654,7 @@ public abstract class BotClient extends Client {
             return dest;
         }
 
-        LogManager.getLogger().error("Returning no deployment position; THIS IS BAD!");
+        logger.error("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
     }
@@ -639,8 +676,8 @@ public abstract class BotClient extends Client {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent)
-                    && !deployed_ent.isLocationProhibited(c)
-                    && !deployed_ent.isLocationDeadly(c)) {
+                        && !deployed_ent.isLocationProhibited(c)
+                        && !deployed_ent.isLocationDeadly(c)) {
                     validCoords.add(new RankedCoords(c, 0));
                 }
             }
@@ -672,9 +709,9 @@ public abstract class BotClient extends Client {
         for (Mounted<?> mounted : deployed_ent.getWeaponList()) {
             WeaponType weaponType = (WeaponType) mounted.getType();
             if ((!weaponType.getName().equals("ATM 3"))
-                && (!weaponType.getName().equals("ATM 6"))
-                && (!weaponType.getName().equals("ATM 9"))
-                && (!weaponType.getName().equals("ATM 12"))) {
+                    && (!weaponType.getName().equals("ATM 6"))
+                    && (!weaponType.getName().equals("ATM 9"))
+                    && (!weaponType.getName().equals("ATM 12"))) {
                 if (deployed_ent.getC3Master() != null) {
                     av_range += weaponType.getLongRange() * 1.25;
                 } else {
@@ -706,14 +743,14 @@ public abstract class BotClient extends Client {
         av_range = av_range / weapon_count;
 
         // Calculate ideal elevation as a factor of average range of 18 being
-        // highest elevation.  Fast, non-jumping units should deploy towards
+        // highest elevation. Fast, non-jumping units should deploy towards
         // the middle elevations to avoid getting stuck up a cliff.
         if ((deployed_ent.getJumpMP() == 0) &&
-            (deployed_ent.getWalkMP() > 5)) {
+                (deployed_ent.getWalkMP() > 5)) {
             ideal_elev = lowest_elev + ((highest_elev - lowest_elev) / 3.0);
         } else {
             ideal_elev = lowest_elev
-                         + ((av_range / 18) * (highest_elev - lowest_elev));
+                    + ((av_range / 18) * (highest_elev - lowest_elev));
         }
         if (ideal_elev > highest_elev) {
             ideal_elev = highest_elev;
@@ -724,26 +761,26 @@ public abstract class BotClient extends Client {
         for (RankedCoords coord : validCoords) {
 
             // Calculate the fitness factor for each hex and save it to the array
-            // -> Absolute difference between hex elevation and ideal elevation decreases fitness
+            // -> Absolute difference between hex elevation and ideal elevation decreases
+            // fitness
             coord.setFitness(-1 * (Math.abs(ideal_elev - board.getHex(coord.getX(), coord.getY()).getLevel())));
 
             total_damage = 0.0;
             deployed_ent.setPosition(coord.getCoords());
 
             // Create a list of potential attackers/targets for this location
-            List<Entity> potentialAttackers =
-                    game.getValidTargets(deployed_ent);
+            List<Entity> potentialAttackers = game.getValidTargets(deployed_ent);
             valid_attackers = new Vector<>(potentialAttackers.size());
             for (Entity e : potentialAttackers) {
 
                 // Unit must be deployed and not off board, with valid position
                 if ((e.isDeployed()) && !e.isOffBoard()
-                    && e.getPosition() != null) {
+                        && e.getPosition() != null) {
                     int dist = deployed_ent.getPosition().distance(
                             e.getPosition());
                     // Approximation of effective range, we could use av_range,
-                    //  however that could bad if deploy_ent is short ranged
-                    //  and a potential  target is long range
+                    // however that could bad if deploy_ent is short ranged
+                    // and a potential target is long range
                     if (dist < 18) {
                         valid_attackers.add(e);
                     }
@@ -755,10 +792,10 @@ public abstract class BotClient extends Client {
             for (Entity test_ent : valid_attackers) {
                 for (Mounted<?> mounted : test_ent.getWeaponList()) {
                     test_attack = new WeaponAttackAction(test_ent.getId(),
-                                                         deployed_ent.getId(),
-                                                         test_ent.getEquipmentNum(mounted));
+                            deployed_ent.getId(),
+                            test_ent.getEquipmentNum(mounted));
                     adjusted_damage = BotClient.getDeployDamage(game,
-                                                                test_attack, allECMInfo);
+                            test_attack, allECMInfo);
                     total_damage += adjusted_damage;
                 }
             }
@@ -773,10 +810,10 @@ public abstract class BotClient extends Client {
                 max_damage = 0.0;
                 for (Entity test_ent : valid_attackers) {
                     test_attack = new WeaponAttackAction(deployed_ent.getId(),
-                                                         test_ent.getId(),
-                                                         deployed_ent.getEquipmentNum(mounted));
+                            test_ent.getId(),
+                            deployed_ent.getEquipmentNum(mounted));
                     adjusted_damage = BotClient.getDeployDamage(game,
-                                                                test_attack, allECMInfo);
+                            test_attack, allECMInfo);
                     if (adjusted_damage > max_damage) {
                         max_damage = adjusted_damage;
                     }
@@ -803,7 +840,7 @@ public abstract class BotClient extends Client {
                 }
                 // If building, make sure not too heavy to safely move out of
                 coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
-                                                         deployed_ent);
+                        deployed_ent);
             }
 
             // Infantry
@@ -828,7 +865,7 @@ public abstract class BotClient extends Client {
                 highestHex = coord.getCoords();
                 for (Entity test_ent : game.getEntitiesVector(highestHex)) {
                     if ((deployed_ent.getOwner().equals(test_ent.getOwner()))
-                        && !deployed_ent.equals(test_ent)) {
+                            && !deployed_ent.equals(test_ent)) {
                         if (test_ent instanceof Infantry) {
                             coord.fitness += 2;
                             break;
@@ -841,8 +878,8 @@ public abstract class BotClient extends Client {
                     highestHex = coord.getCoords().translated(x);
                     for (Entity test_ent : game.getEntitiesVector(highestHex)) {
                         if ((owner.equals(test_ent.getOwner()))
-                            && !deployed_ent.equals(test_ent)
-                            && (test_ent instanceof Infantry)) {
+                                && !deployed_ent.equals(test_ent)
+                                && (test_ent instanceof Infantry)) {
 
                             coord.fitness += 1;
                             foundAdj = true;
@@ -904,8 +941,10 @@ public abstract class BotClient extends Client {
             }
         }
 
-        // now, we double check: did we get a bunch of coordinates with a value way below 0?
-        // This indicates that we do not have a way of getting to the opposite board edge,
+        // now, we double check: did we get a bunch of coordinates with a value way
+        // below 0?
+        // This indicates that we do not have a way of getting to the opposite board
+        // edge,
         // even when considering terrain destruction
         // attempt to deploy in the biggest area this unit can access instead
         if (highestFitness < -10) {
@@ -926,8 +965,10 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Determines if the given entity has reasonable access to the "opposite" edge of the board from its
-     * current position. Returns 0 if this can be accomplished without destroying any terrain,
+     * Determines if the given entity has reasonable access to the "opposite" edge
+     * of the board from its
+     * current position. Returns 0 if this can be accomplished without destroying
+     * any terrain,
      * -50 if this can be accomplished but terrain must be destroyed,
      * -100 if this cannot be accomplished at all
      */
@@ -966,9 +1007,9 @@ public abstract class BotClient extends Client {
     // Missile hits table
     // Some of these are interpolated for odd weapons sizes found in Protos and
     // new BAs
-    private static float[] expectedHitsByRackSize = {0.0f, 1.0f, 1.58f, 2.0f,
-                                                     2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
-                                                     8.59f, 9.04f, 9.5f, 0.0f, 0.0f, 0.0f, 0.0f, 12.7f};
+    private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f,
+            2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
+            8.59f, 9.04f, 9.5f, 0.0f, 0.0f, 0.0f, 0.0f, 12.7f };
 
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
@@ -1004,7 +1045,7 @@ public abstract class BotClient extends Client {
 
             float fHits;
             if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
-                || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+                    || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
             } else if ((wt.getRackSize() == 40) || (wt.getRackSize() == 30)) {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
@@ -1125,8 +1166,8 @@ public abstract class BotClient extends Client {
         String message = null;
 
         try (FileInputStream fis = new FileInputStream("./mmconf/botmessages.txt"); // TODO : Remove inline file path
-             InputStreamReader isr = new InputStreamReader(fis);
-             BufferedReader br = new BufferedReader(isr)) {
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr)) {
             while (br.ready()) {
                 message = br.readLine();
                 if (Compute.randomInt(10) == 1) {
@@ -1137,7 +1178,7 @@ public abstract class BotClient extends Client {
             // Don't do anything, just return a null and allow the bot to remain silent
             return null;
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error while reading ./mmconf/botmessages.txt", ex);
+            logger.error(ex, "Error while reading ./mmconf/botmessages.txt");
             return null;
         }
 
@@ -1162,13 +1203,13 @@ public abstract class BotClient extends Client {
     @Override
     protected void correctName(Packet inP) {
         // If we have a clientGUI, it keeps track of a Name -> Client map, and
-        //  we need to update that map with this name change.
+        // we need to update that map with this name change.
         if (getClientGUI() != null) {
             Map<String, AbstractClient> bots = getClientGUI().getLocalBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
             if (!this.equals(bots.get(oldName))) {
-                LogManager.getLogger().error("Name correction arrived at incorrect BotClient!");
+                logger.error("Name correction arrived at incorrect BotClient!");
                 return;
             }
             bots.remove(oldName);
@@ -1263,7 +1304,7 @@ public abstract class BotClient extends Client {
             if (Double.compare(coords1.fitness, fitness) != 0) {
                 return false;
             }
-            //noinspection RedundantIfStatement
+            // noinspection RedundantIfStatement
             if (!coords.equals(coords1.coords)) {
                 return false;
             }

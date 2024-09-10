@@ -555,7 +555,7 @@ Star Lord JumpShip (Standard)|Star Lord JumpShip (2590)
 Tramp JumpShip (Standard)|Tramp JumpShip (2754)
 Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 
-#Mechs
+#Meks
 Adder (Puma) A|Puma (Adder) A
 Adder (Puma) B|Puma (Adder) B
 Adder (Puma) C|Puma (Adder) C
@@ -720,7 +720,7 @@ Warhawk (Masakari) B|Masakari (Warhawk) B
 Warhawk (Masakari) C|Masakari (Warhawk) C
 Warhawk (Masakari) Prime|Masakari (Warhawk) Prime
 
-#Protomechs
+#ProtoMeks
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
 Boggart (Quad) 2|Boggart Ultraheavy ProtoMech 2
 Procyon ProtoMech (Quad)|Procyon (Quad)

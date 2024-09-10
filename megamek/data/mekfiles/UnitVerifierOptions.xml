@@ -1,6 +1,6 @@
 <!-- Sample Entity Test options file -->
 <entityverifier>
-  <mech>
+  <mek>
     <ceilWeight>
       <engine>HALFTON</engine>
       <structure>HALFTON</structure>
@@ -11,46 +11,46 @@
       <gyro>HALFTON</gyro>
     </ceilWeight>
     <showOverweighted>
-    true
+      true
     </showOverweighted>
     <maxOverweight>
-    0
+      0
     </maxOverweight>
     <showUnderweighted>
-    false
+      false
     </showUnderweighted>
     <minUnderweight>
-    1.0
+      1.0
     </minUnderweight>
     <ignoreFailedEquipment>
-    Claw (THB), CC Sensors, Command Console, Dual Cockpit
+      Claw (THB), CC Sensors, Command Console, Dual Cockpit
     </ignoreFailedEquipment>
     <skip>
-    false
+      false
     </skip>
     <targCompCrits>
-    0
+      0
     </targCompCrits>
     <printSize>
-    70
+      70
     </printSize>
     <showCorrectArmorPlacement>
-    true
+      true
     </showCorrectArmorPlacement>
     <showCorrectCriticalAllocation>
-    true
+      true
     </showCorrectCriticalAllocation>
     <showFailedEquip>
-    true
+      true
     </showFailedEquip>
     <showIncorrectIntroYear>
-    true
+      true
     </showIncorrectIntroYear>
     <introYearMargin>
-    5
+      5
     </introYearMargin>
-  </mech>
-  <protomech>
+  </mek>
+  <protomek>
     <ceilWeight>
       <engine>KILO</engine>
       <structure>KILO</structure>
@@ -61,44 +61,44 @@
       <gyro>KILO</gyro>
     </ceilWeight>
     <showOverweighted>
-    true
+      true
     </showOverweighted>
     <maxOverweight>
-    0
+      0
     </maxOverweight>
     <showUnderweighted>
-    false
+      false
     </showUnderweighted>
     <minUnderweight>
-    0
+      0
     </minUnderweight>
     <ignoreFailedEquipment>
     </ignoreFailedEquipment>
     <skip>
-    false
+      false
     </skip>
     <targCompCrits>
-    0
+      0
     </targCompCrits>
     <printSize>
-    70
+      70
     </printSize>
     <showCorrectArmorPlacement>
-    true
+      true
     </showCorrectArmorPlacement>
     <showCorrectCriticalAllocation>
-    true
+      true
     </showCorrectCriticalAllocation>
     <showFailedEquip>
-    true
+      true
     </showFailedEquip>
     <showIncorrectIntroYear>
-    true
+      true
     </showIncorrectIntroYear>
     <introYearMargin>
-    5
+      5
     </introYearMargin>
-  </protomech>
+  </protomek>
   <tank>
     <ceilWeight>
       <engine>HALFTON</engine>
@@ -112,27 +112,27 @@
       <poweramp>HALFTON</poweramp>
     </ceilWeight>
     <showOverweighted>
-    true
+      true
     </showOverweighted>
     <maxOverweight>
-    0
+      0
     </maxOverweight>
     <showUnderweighted>
-    false
+      false
     </showUnderweighted>
     <minUnderweight>
-    1.0
+      1.0
     </minUnderweight>
     <ignoreFailedEquipment>
     </ignoreFailedEquipment>
     <skip>
-    false
+      false
     </skip>
     <showIncorrectIntroYear>
-    true
+      true
     </showIncorrectIntroYear>
     <introYearMargin>
-    5
+      5
     </introYearMargin>
   </tank>
 </entityverifier>

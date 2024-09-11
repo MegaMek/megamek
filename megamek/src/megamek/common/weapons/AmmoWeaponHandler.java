@@ -15,17 +15,26 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.CriticalSlot;
+import megamek.common.Game;
+import megamek.common.HitData;
+import megamek.common.IBomber;
+import megamek.common.Mounted;
+import megamek.common.Report;
+import megamek.common.Roll;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Andrew Hunter
  * @since Sep 24, 2004
  */
 public class AmmoWeaponHandler extends WeaponHandler {
+    private static final MMLogger logger = MMLogger.create(AmmoWeaponHandler.class);
 
     private static final long serialVersionUID = -4934490646657484486L;
     Mounted<?> ammo;
@@ -44,7 +53,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         checkAmmo();
         if (ammo == null) {
             // Can't happen. w/o legal ammo, the weapon *shouldn't* fire.
-            LogManager.getLogger().error("Handler can't find any ammo! Oh no!", new Exception());
+            logger.error("Handler can't find any ammo! Oh no!", new Exception());
             return;
         }
 

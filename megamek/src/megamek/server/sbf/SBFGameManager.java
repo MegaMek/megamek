@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.IGame;
 import megamek.common.InGameObject;
 import megamek.common.Player;
@@ -41,6 +39,7 @@ import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFRuleOptionsUser;
 import megamek.common.strategicBattleSystems.SBFTurn;
+import megamek.logging.MMLogger;
 import megamek.server.AbstractGameManager;
 import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
@@ -50,6 +49,7 @@ import megamek.server.commands.ServerCommand;
  * construction.
  */
 public final class SBFGameManager extends AbstractGameManager implements SBFRuleOptionsUser {
+    private static final MMLogger logger = MMLogger.create(SBFGameManager.class);
 
     private SBFGame game;
 
@@ -84,8 +84,8 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 break;
         }
 
-        LogManager.getLogger().info("Leaving handle packet: {}", packet.getCommand());
-        LogManager.getLogger().info(pendingPackets);
+        logger.info("Leaving handle packet: {}", packet.getCommand());
+        logger.info(pendingPackets);
         sendPendingPackets();
     }
 
@@ -133,7 +133,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     @Override
     public void setGame(IGame g) {
         if (!(g instanceof SBFGame)) {
-            LogManager.getLogger().fatal("Attempted to set game to incorrect class.");
+            logger.fatal("Attempted to set game to incorrect class.");
             return;
         }
         game = (SBFGame) g;
@@ -254,19 +254,19 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
     @Override
     protected void endCurrentPhase() {
-        LogManager.getLogger().info("Ending phase {}", game.getPhase());
+        logger.info("Ending phase {}", game.getPhase());
         phaseEndManager.managePhase();
     }
 
     @Override
     protected void prepareForCurrentPhase() {
-        LogManager.getLogger().info("Preparing phase {}", game.getPhase());
+        logger.info("Preparing phase {}", game.getPhase());
         phasePreparationManager.managePhase();
     }
 
     @Override
     protected void executeCurrentPhase() {
-        LogManager.getLogger().info("Executing phase {}", game.getPhase());
+        logger.info("Executing phase {}", game.getPhase());
         switch (game.getPhase()) {
             case EXCHANGE:
                 resetPlayersDone();
@@ -436,7 +436,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // var message = mailer.newReportMessage(game, reports, player);
         // mailer.send(message);
         // } catch (Exception ex) {
-        // LogManager.getLogger().error("Error sending round report", ex);
+        // logger.error("Error sending round report", ex);
         // }
         // }
         // }
@@ -457,12 +457,12 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         movePath.restore(game);
         Optional<SBFFormation> formationInfo = game.getFormation(movePath.getEntityId());
         if (formationInfo.isEmpty()) {
-            LogManager.getLogger().error("Malformed packet {}", packet);
+            logger.error("Malformed packet {}", packet);
             return;
         }
         SBFTurn turn = game.getTurn();
         if ((turn == null) || !turn.isValid(connId, formationInfo.get(), game)) {
-            LogManager.getLogger().error("It is not player {}'s turn! ", connId);
+            logger.error("It is not player {}'s turn! ", connId);
             return;
         }
 
@@ -555,7 +555,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
         if (formationInfo.isEmpty()
                 || !attacks.stream().map(EntityAction::getEntityId).allMatch(id -> id == formationId)) {
-            LogManager.getLogger().error("Invalid formation ID or diverging attacker IDs");
+            logger.error("Invalid formation ID or diverging attacker IDs");
             repeatTurn(connId); // TODO: This is untested; questionable if this can save a game after an error
             return;
         }
@@ -570,7 +570,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // is this the right phase?
         if (!getGame().getPhase().isFiring() && !getGame().getPhase().isPhysical()
                 && !getGame().getPhase().isTargeting() && !getGame().getPhase().isOffboard()) {
-            LogManager.getLogger().error("Server got attack packet in wrong phase");
+            logger.error("Server got attack packet in wrong phase");
             return;
         }
 
@@ -582,12 +582,12 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // TODO unify firing/movement validity
         Optional<SBFFormation> formationInfo = game.getFormation(action.getEntityId());
         if (formationInfo.isEmpty()) {
-            LogManager.getLogger().error("Incorrect formation ID {}", action.getEntityId());
+            logger.error("Incorrect formation ID {}", action.getEntityId());
             return false;
         }
         SBFTurn turn = game.getTurn();
         if ((turn == null) || !turn.isValid(connId, formationInfo.get(), game)) {
-            LogManager.getLogger().error("It is not player {}'s turn! ", connId);
+            logger.error("It is not player {}'s turn! ", connId);
             return false;
         }
 

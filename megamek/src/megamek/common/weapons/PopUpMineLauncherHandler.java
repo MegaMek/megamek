@@ -15,13 +15,14 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(PopUpMineLauncherHandler.class);
+
     private static final long serialVersionUID = -6179453250580148965L;
 
     /**
@@ -96,7 +97,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                         entityTarget,
                         hit.getLocation(), hit.isRear(),
                         entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
-                                : 0, 4);
+                                : 0,
+                        4);
 
         // Replace "no effect" results with 4 points of damage.
         if ((specialDamageReport.lastElement()).messageId == 6005) {
@@ -110,14 +112,15 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                             damage,
                             false,
                             ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
+                                    : damageType,
+                            false, false, throughFront,
                             underWater);
         } else {
             // add newline _before_ last report
             try {
                 (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
             } catch (Exception ignored) {
-                LogManager.getLogger().error("No previous report when trying to add newline");
+                logger.error("No previous report when trying to add newline");
             }
         }
         // Report the result

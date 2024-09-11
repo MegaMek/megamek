@@ -18,15 +18,15 @@
  */
 package megamek.server.sbf;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MegaMek;
 import megamek.common.InGameObject;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.logging.MMLogger;
 
 record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGameManagerHelper {
+    private static final MMLogger logger = MMLogger.create(SBFPhasePreparationManager.class);
 
     void managePhase() {
         clearActions();
@@ -76,7 +76,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 //
                 // bvReports(true);
 
-                LogManager.getLogger().info("Round {} memory usage: {}",
+                logger.info("Round {} memory usage: {}",
                         game().getCurrentRound(), MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
@@ -206,7 +206,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 // );
                 // mailer.send(message);
                 // } catch (Exception ex) {
-                // LogManager.getLogger().error("Error sending email" + ex);
+                // logger.error("Error sending email" + ex);
                 // }
                 // }
                 // }

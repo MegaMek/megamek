@@ -13,18 +13,20 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
 
 /**
  * @author arlith
  */
 public class MekMortarAirburstHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(MekMortarAirburstHandler.class);
+
     private static final long serialVersionUID = -2073773899108954657L;
 
     public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
@@ -42,7 +44,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST))) {
-            LogManager.getLogger().error("Not using airburst ammo!");
+            logger.error("Not using airburst ammo!");
             return true;
         }
 

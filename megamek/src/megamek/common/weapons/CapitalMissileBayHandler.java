@@ -13,21 +13,23 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
 
 /**
  * @author Jay Lawson
  */
 public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(CapitalMissileBayHandler.class);
+
     private static final long serialVersionUID = -1618484541772117621L;
     boolean advancedPD = false;
 
@@ -727,7 +729,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
                     } else {
-                        LogManager.getLogger().error("bayWHandler " + bayWHandler.getClass()
+                        logger.error("bayWHandler " + bayWHandler.getClass()
                                 + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }

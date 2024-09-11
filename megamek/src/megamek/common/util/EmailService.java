@@ -14,15 +14,6 @@
 */
 package megamek.common.util;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.Report;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -30,7 +21,23 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.logging.MMLogger;
+
 public class EmailService {
+    private static final MMLogger logger = MMLogger.create(EmailService.class);
+
     private static class RoundReportMessage extends MimeMessage {
 
         private RoundReportMessage(InternetAddress from,
@@ -190,7 +197,7 @@ public class EmailService {
                 // All good, just shut down
                 running = false;
             } catch (Exception ex) {
-                LogManager.getLogger().error("Error sending email", ex);
+                logger.error("Error sending email", ex);
             }
         }
     }

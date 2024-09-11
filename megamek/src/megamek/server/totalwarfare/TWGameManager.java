@@ -26,8 +26,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.GUIPreferences;
@@ -72,6 +70,7 @@ import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
@@ -80,6 +79,7 @@ import megamek.server.victory.VictoryResult;
  * Manages the Game and processes player actions.
  */
 public class TWGameManager extends AbstractGameManager {
+    private static final MMLogger logger = MMLogger.create(TWGameManager.class);
 
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -205,7 +205,7 @@ public class TWGameManager extends AbstractGameManager {
     @Override
     public void setGame(IGame g) {
         if (!(g instanceof Game)) {
-            LogManager.getLogger().error("Attempted to set game to incorrect class.");
+            logger.error("Attempted to set game to incorrect class.");
             return;
         }
         game = (Game) g;
@@ -280,7 +280,7 @@ public class TWGameManager extends AbstractGameManager {
         resetPlayersDone();
 
         // Write end of game to stdout so controlling scripts can rotate logs.
-        LogManager.getLogger().info(LocalDateTime.now() + " END OF GAME");
+        logger.info(LocalDateTime.now() + " END OF GAME");
 
         if (Server.getServerInstance().getEmailService() != null) {
             Server.getServerInstance().getEmailService().reset();
@@ -416,7 +416,7 @@ public class TWGameManager extends AbstractGameManager {
         sendServerChat(player.getName() + " disconnected.");
 
         // log it
-        LogManager.getLogger().info("s: removed player " + player.getName());
+        logger.info("s: removed player " + player.getName());
 
         // Reset the game after Elvis has left the building.
         if (0 == getGame().getNoOfPlayers()) {
@@ -1309,7 +1309,7 @@ public class TWGameManager extends AbstractGameManager {
             try {
                 removed = game.removeFirstTurnFor(entityUsed);
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
             entityUsed.setDone(true);
             turnsChanged = true;
@@ -1718,7 +1718,7 @@ public class TWGameManager extends AbstractGameManager {
             try {
                 etr = UnitToolTip.getEntityTipReport(e).toString();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
             r.add(etr);
             reports.add(r);
@@ -2296,7 +2296,7 @@ public class TWGameManager extends AbstractGameManager {
                 .collect(Collectors.joining(";"));
 
         if (!noInitiative.isEmpty()) {
-            LogManager.getLogger().error("No Initiative rolled for: " + noInitiative);
+            logger.error("No Initiative rolled for: " + noInitiative);
         }
 
         // Now, generate the global order of all teams' turns.
@@ -2993,7 +2993,7 @@ public class TWGameManager extends AbstractGameManager {
         try {
             loader.load(unit, checkElevation, bayNumber);
         } catch (IllegalArgumentException e) {
-            LogManager.getLogger().info(e.getMessage());
+            logger.info(e.getMessage());
             sendServerChat(e.getMessage());
             return;
         }
@@ -3736,7 +3736,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // is this the right phase?
         if (!getGame().getPhase().isMovement()) {
-            LogManager.getLogger().error("Server got movement packet in wrong phase");
+            logger.error("Server got movement packet in wrong phase");
             return;
         }
 
@@ -3753,7 +3753,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 msg += ", Entity was null!";
             }
-            LogManager.getLogger().error(msg);
+            logger.error(msg);
             return;
         }
 
@@ -4582,7 +4582,7 @@ public class TWGameManager extends AbstractGameManager {
             if (null == nextPos) {
                 // But I don't trust the assumption fully.
                 // Report the error and try to continue.
-                LogManager.getLogger().error("The skid of " + entity.getShortName()
+                logger.error("The skid of " + entity.getShortName()
                         + " should displace " + target.getShortName()
                         + " in hex " + curPos.getBoardNum()
                         + " but there is nowhere to go.");
@@ -5718,7 +5718,7 @@ public class TWGameManager extends AbstractGameManager {
                 carrier.setSwarmAttackerId(Entity.NONE);
                 rider.setSwarmTargetId(Entity.NONE);
             } else if (!unloadUnit(carrier, rider, curPos, curFacing, 0)) {
-                LogManager.getLogger().error("Server was told to unload "
+                logger.error("Server was told to unload "
                         + rider.getDisplayName() + " from "
                         + carrier.getDisplayName() + " into "
                         + curPos.getBoardNum());
@@ -5774,12 +5774,12 @@ public class TWGameManager extends AbstractGameManager {
                     final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
                     if (!cfrType.isCFRHiddenPBS()) {
-                        LogManager.getLogger().error("Expected a CFR_HIDDEN_PBS CFR packet, received: " + cfrType);
+                        logger.error("Expected a CFR_HIDDEN_PBS CFR packet, received: " + cfrType);
                         continue;
                     }
                     // Check packet came from right ID
                     if (rp.getConnectionId() != hidden.getOwnerId()) {
-                        LogManager.getLogger().error(String.format(
+                        logger.error(String.format(
                                 "Expected a CFR_HIDDEN_PBS CFR packet from player %d, but instead it came from player %d",
                                 hidden.getOwnerId(), rp.getConnectionId()));
                         continue;
@@ -5880,12 +5880,12 @@ public class TWGameManager extends AbstractGameManager {
                 final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
                 if (!cfrType.isCFRTeleguidedTarget()) {
-                    LogManager.getLogger().error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
+                    logger.error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LogManager.getLogger().error(String.format(
+                    logger.error(String.format(
                             "Expected a CFR_TELEGUIDED_TARGET CFR packet from player %d, but instead it came from player %d",
                             playerId, rp.getConnectionId()));
                     continue;
@@ -5911,12 +5911,12 @@ public class TWGameManager extends AbstractGameManager {
                 final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
                 if (!cfrType.isCFRTagTarget()) {
-                    LogManager.getLogger().error("Expected a CFR_TAG_TARGET CFR packet, received: " + cfrType);
+                    logger.error("Expected a CFR_TAG_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LogManager.getLogger().error(String.format(
+                    logger.error(String.format(
                             "Expected a CFR_TAG_TARGET CFR packet from player %d but instead it came from player %d",
                             playerId, rp.getConnectionId()));
                     continue;
@@ -8635,7 +8635,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Handle null hexes.
         if ((srcHex == null) || (destHex == null)) {
-            LogManager.getLogger().error("Can not displace " + entity.getShortName()
+            logger.error("Can not displace " + entity.getShortName()
                     + " from " + src + " to " + dest + ".");
             return vPhaseReport;
         }
@@ -8819,7 +8819,7 @@ public class TWGameManager extends AbstractGameManager {
                             final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                             // Make sure we got the right type of response
                             if (!cfrType.isCFRDominoEffect()) {
-                                LogManager.getLogger()
+                                logger
                                         .error("Excepted a CFR_DOMINO_EFFECT CFR packet, received: " + cfrType);
                                 throw new IllegalStateException();
                             }
@@ -8970,7 +8970,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // is this the right phase?
         if (!game.getPhase().isDeployment()) {
-            LogManager.getLogger().error("Server got deployment packet in wrong phase");
+            logger.error("Server got deployment packet in wrong phase");
             return;
         }
 
@@ -8992,7 +8992,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 msg += ", Entity was null!";
             }
-            LogManager.getLogger().error(msg);
+            logger.error(msg);
             send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket(turn.playerId()));
             return;
@@ -9034,7 +9034,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 msg += ", Entity was null!";
             }
-            LogManager.getLogger().error(msg);
+            logger.error(msg);
             return;
         }
 
@@ -9051,7 +9051,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 msg += ", Entity was null!";
             }
-            LogManager.getLogger().error(msg);
+            logger.error(msg);
             send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket(connId));
             return;
@@ -9087,7 +9087,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (loaded.getPosition() != null) {
                 // Something is fishy in Denmark.
-                LogManager.getLogger().error(entity + " can not load entity #" + loaded);
+                logger.error(entity + " can not load entity #" + loaded);
                 break;
             }
             // Have the deployed unit load the indicated unit.
@@ -9238,7 +9238,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // is this the right phase?
         if (!game.getPhase().isSetArtilleryAutohitHexes()) {
-            LogManager.getLogger().error("Server got set artyautohithexespacket in wrong phase");
+            logger.error("Server got set artyautohithexespacket in wrong phase");
             return;
         }
         game.getPlayer(playerId).setArtyAutoHitHexes(artyAutoHitHexes);
@@ -9280,7 +9280,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // is this the right phase?
         if (!getGame().getPhase().isDeployMinefields()) {
-            LogManager.getLogger().error("Server got deploy minefields packet in wrong phase");
+            logger.error("Server got deploy minefields packet in wrong phase");
             return;
         }
 
@@ -9353,7 +9353,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // is this the right phase?
         if (!getGame().getPhase().isPrefiring() && !getGame().getPhase().isPremovement()) {
-            LogManager.getLogger().error("Server got Prephase packet in wrong phase " + game.getPhase());
+            logger.error("Server got Prephase packet in wrong phase " + game.getPhase());
             return;
         }
 
@@ -9363,7 +9363,7 @@ public class TWGameManager extends AbstractGameManager {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            LogManager.getLogger().error(String.format(
+            logger.error(String.format(
                     "Server got invalid packet from Connection %s, Entity %s, %s Turn",
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
@@ -9395,7 +9395,7 @@ public class TWGameManager extends AbstractGameManager {
         // is this the right phase?
         if (!getGame().getPhase().isFiring() && !getGame().getPhase().isPhysical()
                 && !getGame().getPhase().isTargeting() && !getGame().getPhase().isOffboard()) {
-            LogManager.getLogger().error("Server got attack packet in wrong phase");
+            logger.error("Server got attack packet in wrong phase");
             return;
         }
 
@@ -9405,7 +9405,7 @@ public class TWGameManager extends AbstractGameManager {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            LogManager.getLogger().error(String.format(
+            logger.error(String.format(
                     "Server got invalid attack packet from Connection %s, Entity %s, %s Turn",
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
@@ -9441,7 +9441,7 @@ public class TWGameManager extends AbstractGameManager {
         for (EntityAction ea : vector) {
             // is this the right entity?
             if (ea.getEntityId() != entity.getId()) {
-                LogManager.getLogger().error("Attack packet has wrong attacker");
+                logger.error("Attack packet has wrong attacker");
                 continue;
             }
             if (ea instanceof PushAttackAction) {
@@ -9656,7 +9656,7 @@ public class TWGameManager extends AbstractGameManager {
         // If a telemissile is still on the board and its original target is not, just
         // return.
         if (target == null) {
-            LogManager.getLogger().info("Telemissile has no target. AMS not assigned.");
+            logger.info("Telemissile has no target. AMS not assigned.");
             return;
         }
 
@@ -9684,7 +9684,7 @@ public class TWGameManager extends AbstractGameManager {
             // TODO : Yeah, I know there's an exploit here, but better able to shoot some
             // ArrowIVs than none, right?
             if (game.getEntity(waa.getEntityId()) == null) {
-                LogManager.getLogger().info("Can't Assign AMS: Artillery firer is null!");
+                logger.info("Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
 
@@ -9850,7 +9850,7 @@ public class TWGameManager extends AbstractGameManager {
                     final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
                     if (!cfrType.isCFRAPDSAssign()) {
-                        LogManager.getLogger().error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
+                        logger.error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
                         throw new IllegalStateException();
                     }
                     Integer waaIndex = (Integer) rp.getPacket().getData()[1];
@@ -9927,7 +9927,7 @@ public class TWGameManager extends AbstractGameManager {
                         final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                         // Make sure we got the right type of response
                         if (!cfrType.isCFRAMSAssign()) {
-                            LogManager.getLogger().error("Expected a CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
+                            logger.error("Expected a CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
                             throw new IllegalStateException();
                         }
                         Integer waaIndex = (Integer) rp.getPacket().getData()[1];
@@ -10195,7 +10195,7 @@ public class TWGameManager extends AbstractGameManager {
                     triggerAPPod(entity, tapa.getPodId());
                     triggerPodActions.addElement(tapa);
                 } else {
-                    LogManager.getLogger().error("AP Pod #" + tapa.getPodId() + " on "
+                    logger.error("AP Pod #" + tapa.getPodId() + " on "
                             + entity.getDisplayName() + " was already triggered this round!!");
                 }
             } else if (ea instanceof TriggerBPodAction) {
@@ -10206,7 +10206,7 @@ public class TWGameManager extends AbstractGameManager {
                     triggerBPod(entity, tba.getPodId(), game.getEntity(tba.getTargetId()));
                     triggerPodActions.addElement(tba);
                 } else {
-                    LogManager.getLogger().error("B Pod #" + tba.getPodId() + " on "
+                    logger.error("B Pod #" + tba.getPodId() + " on "
                             + entity.getDisplayName() + " was already triggered this round!!");
                 }
             } else if (ea instanceof SearchlightAttackAction) {
@@ -10221,7 +10221,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(entity);
                     addReport(r);
                 } else {
-                    LogManager.getLogger().error("Non-Tank tried to unjam turret");
+                    logger.error("Non-Tank tried to unjam turret");
                 }
             } else if (ea instanceof RepairWeaponMalfunctionAction) {
                 if (entity instanceof Tank) {
@@ -10234,7 +10234,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(m.getName());
                     addReport(r);
                 } else {
-                    LogManager.getLogger().error("Non-Tank tried to repair weapon malfunction");
+                    logger.error("Non-Tank tried to repair weapon malfunction");
                 }
             } else if (ea instanceof DisengageAction) {
                 MovePath path = new MovePath(game, entity);
@@ -10452,14 +10452,14 @@ public class TWGameManager extends AbstractGameManager {
 
         // Confirm that this is, indeed, an AP Pod.
         if (null == mount) {
-            LogManager.getLogger()
+            logger
                     .error("Expecting to find an AP Pod at " + podId + " on the unit, " + entity.getDisplayName()
                             + " but found NO equipment at all!!!");
             return;
         }
         EquipmentType equip = mount.getType();
         if (!(equip instanceof MiscType) || !equip.hasFlag(MiscType.F_AP_POD)) {
-            LogManager.getLogger()
+            logger
                     .error("Expecting to find an AP Pod at " + podId + " on the unit, " + entity.getDisplayName()
                             + " but found " + equip.getName() + " instead!!!");
             return;
@@ -10472,7 +10472,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean canFire = mount.canFire();
         mount.setUsedThisRound(oldFired);
         if (!canFire) {
-            LogManager.getLogger().error("Can not trigger the AP Pod at " + podId + " on the unit, "
+            logger.error("Can not trigger the AP Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + "!!!");
             return;
         }
@@ -10526,13 +10526,13 @@ public class TWGameManager extends AbstractGameManager {
 
         // Confirm that this is, indeed, an Anti-BA Pod.
         if (null == mount) {
-            LogManager.getLogger().error("Expecting to find an B Pod at " + podId + " on the unit, "
+            logger.error("Expecting to find an B Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + " but found NO equipment at all!!!");
             return;
         }
         EquipmentType equip = mount.getType();
         if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponType.F_B_POD)) {
-            LogManager.getLogger().error("Expecting to find an B Pod at " + podId + " on the unit, "
+            logger.error("Expecting to find an B Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + " but found " + equip.getName() + " instead!!!");
             return;
         }
@@ -10544,7 +10544,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean canFire = mount.canFire();
         mount.setUsedThisRound(oldFired);
         if (!canFire) {
-            LogManager.getLogger().error("Can not trigger the B Pod at " + podId + " on the unit, "
+            logger.error("Can not trigger the B Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + "!!!");
             return;
         }
@@ -11148,7 +11148,7 @@ public class TWGameManager extends AbstractGameManager {
                     allowed--;
                 }
             } else {
-                LogManager.getLogger().error("Removing duplicate phys attack for id#" + entityId
+                logger.error("Removing duplicate phys attack for id#" + entityId
                         + "\n\t\taction was " + action);
             }
         }
@@ -14999,7 +14999,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (entity instanceof Aero) {
                     radicalHSBonus = ((Aero) entity).getHeatSinks();
                 } else {
-                    LogManager.getLogger().error("Radical heat sinks mounted on non-mek, non-aero Entity!");
+                    logger.error("Radical heat sinks mounted on non-mek, non-aero Entity!");
                 }
 
                 // RHS activation report
@@ -20335,7 +20335,7 @@ public class TWGameManager extends AbstractGameManager {
         AreaEffectHelper.NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
 
         if (nukeStats == null) {
-            LogManager.getLogger().error("Illegal nuke not listed in HS:3070");
+            logger.error("Illegal nuke not listed in HS:3070");
         }
 
         doNuclearExplosion(position, nukeStats.baseDamage, nukeStats.degradation, nukeStats.secondaryRadius,
@@ -21978,7 +21978,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (js == null) {
                     break;
                 } else if (js.getTotalGravDeck() <= 0) {
-                    LogManager.getLogger().error("Cannot handle a grav deck crit for a JumpShip with no grav decks");
+                    logger.error("Cannot handle a grav deck crit for a JumpShip with no grav decks");
                     break;
                 }
                 int choice = Compute.randomInt(js.getTotalGravDeck());
@@ -24203,7 +24203,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         // is this already destroyed?
         if (mounted.isDestroyed()) {
-            LogManager.getLogger().error("Called on destroyed equipment(" + mounted.getName() + ")");
+            logger.error("Called on destroyed equipment(" + mounted.getName() + ")");
             return vDesc;
         }
 
@@ -24605,7 +24605,7 @@ public class TWGameManager extends AbstractGameManager {
                     && (entity.getElevation() == 0) && (bldg.getBasementCollapsed(fallPos))) {
 
                 if (fallHex.depth(true) == 0) {
-                    LogManager.getLogger().error("Entity " + entity.getDisplayName() + " is falling into a depth "
+                    logger.error("Entity " + entity.getDisplayName() + " is falling into a depth "
                             + fallHex.depth(true) + " basement -- not allowed!!");
                     return vPhaseReport;
                 }
@@ -25335,7 +25335,7 @@ public class TWGameManager extends AbstractGameManager {
                             sizes.add(Board.getSize(query_file));
                         }
                     } catch (Exception e) {
-                        LogManager.getLogger().error("Error parsing board: " + query_file.getAbsolutePath(), e);
+                        logger.error("Error parsing board: " + query_file.getAbsolutePath(), e);
                     }
                 }
             }
@@ -25397,10 +25397,10 @@ public class TWGameManager extends AbstractGameManager {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {
-                LogManager.getLogger()
+                logger
                         .error("S: attempted to send entity update for out of game entity, id was " + nEntityID);
             } else {
-                LogManager.getLogger().error("S: attempted to send entity update for null entity, id was " + nEntityID);
+                logger.error("S: attempted to send entity update for null entity, id was " + nEntityID);
             }
 
             return; // do not send the update it will crash the client
@@ -25831,7 +25831,7 @@ public class TWGameManager extends AbstractGameManager {
     private Report filterReport(Report r, Player p, boolean omitCheck) {
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER) && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
-            LogManager.getLogger().error("Attempting to filter a Report object that is not public yet "
+            logger.error("Attempting to filter a Report object that is not public yet "
                     + "but has no subject.\n\t\tmessageId: " + r.messageId);
             return r;
         }
@@ -25853,7 +25853,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if ((r.type != Report.PLAYER) && !omitCheck
                 && ((entity == null) || (owner == null))) {
-            LogManager.getLogger().error("Attempting to filter a report object that is not public but has a subject ("
+            logger.error("Attempting to filter a report object that is not public but has a subject ("
                     + entity + ") with owner (" + owner + ").\n\tmessageId: " + r.messageId);
             return r;
         }
@@ -26027,7 +26027,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (testEntity.correctEntity(sb, TechConstants.getGameTechLevel(game, entity.isClan()))) {
                     entity.setDesignValid(true);
                 } else {
-                    LogManager.getLogger().error(sb.toString());
+                    logger.error(sb.toString());
                     if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS)) {
                         entity.setDesignValid(false);
                     } else {
@@ -26284,7 +26284,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void receiveEntitiesUpdate(Packet c, int connIndex) {
         if (!getGame().getPhase().isLounge()) {
-            LogManager.getLogger().error("Multi entity updates should not be used outside the lobby phase!");
+            logger.error("Multi entity updates should not be used outside the lobby phase!");
         }
         Set<Entity> newEntities = new HashSet<>();
         @SuppressWarnings("unchecked")
@@ -26428,21 +26428,21 @@ public class TWGameManager extends AbstractGameManager {
                 if (!m.setMode(mode)) {
                     String message = e.getShortName() + ": " + m.getName() + ": " + e.getLocationName(m.getLocation())
                             + " trying to compensate";
-                    LogManager.getLogger().error(message);
+                    logger.error(message);
                     sendServerChat(message);
                     e.setGameOptions();
 
                     if (!m.setMode(mode)) {
                         message = e.getShortName() + ": " + m.getName() + ": " + e.getLocationName(m.getLocation())
                                 + " unable to compensate";
-                        LogManager.getLogger().error(message);
+                        logger.error(message);
                         sendServerChat(message);
                     }
 
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -26484,7 +26484,7 @@ public class TWGameManager extends AbstractGameManager {
         GamePhase phase = (GamePhase) c.getObject(1);
         Entity e = game.getEntity(entityId);
         if (connIndex != e.getOwnerId()) {
-            LogManager.getLogger().error("Player " + connIndex
+            logger.error("Player " + connIndex
                     + " tried to activate a hidden unit owned by Player " + e.getOwnerId());
             return;
         }
@@ -26513,7 +26513,7 @@ public class TWGameManager extends AbstractGameManager {
             // by the clients possible input.
             e.setNewRoundNovaNetworkString(networkID);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -26594,12 +26594,12 @@ public class TWGameManager extends AbstractGameManager {
 
         // Did we receive a request for a valid Entity?
         if (null == e) {
-            LogManager.getLogger().error("Could not find entity# " + entityId);
+            logger.error("Could not find entity# " + entityId);
             return;
         }
         Player player = game.getPlayer(connIndex);
         if ((null != player) && (e.getOwner() != player)) {
-            LogManager.getLogger()
+            logger
                     .error("Player " + player.getName() + " does not own the entity " + e.getDisplayName());
             return;
         }
@@ -26609,21 +26609,21 @@ public class TWGameManager extends AbstractGameManager {
         AmmoMounted mAmmo = (AmmoMounted) e.getEquipment(ammoId);
         AmmoMounted oldAmmo = (mWeap == null) ? null : mWeap.getLinkedAmmo();
         if (null == mAmmo) {
-            LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
+            logger.error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;
         }
         if (null == mWeap) {
-            LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
+            logger.error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
             return;
         }
         if (((WeaponType) mWeap.getType()).getAmmoType() == AmmoType.T_NA) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
+            logger.error("Item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
         if (mWeap.getType().hasFlag(WeaponType.F_ONESHOT)
                 && !mWeap.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
+            logger.error("Item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;
         }
@@ -26764,7 +26764,7 @@ public class TWGameManager extends AbstractGameManager {
                 message.append(player.getName());
             }
             message.append(" is not allowed to ask for a reroll at this time.");
-            LogManager.getLogger().error(message.toString());
+            logger.error(message.toString());
             sendServerChat(message.toString());
             return;
         }
@@ -26788,7 +26788,7 @@ public class TWGameManager extends AbstractGameManager {
         Player player = game.getPlayer(connId);
         // Check player
         if (null == player) {
-            LogManager.getLogger().error("Server does not recognize player at connection " + connId);
+            logger.error("Server does not recognize player at connection " + connId);
             return false;
         }
 
@@ -27176,7 +27176,7 @@ public class TWGameManager extends AbstractGameManager {
                     var message = mailer.newReportMessage(game, reports, player);
                     mailer.send(message);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("Error sending round report", ex);
+                    logger.error("Error sending round report", ex);
                 }
             }
         }
@@ -27676,7 +27676,7 @@ public class TWGameManager extends AbstractGameManager {
                 numLoads++;
             }
             if (numLoads < 1) {
-                LogManager.getLogger().error("Check for collapse: hex " + coords
+                logger.error("Check for collapse: hex " + coords
                         + " has no bridge or building");
                 return false;
             }
@@ -27888,12 +27888,12 @@ public class TWGameManager extends AbstractGameManager {
                 switch (bldg.getBasement(coords)) {
                     case NONE:
                     case ONE_DEEP_NORMAL_INFANTRY_ONLY:
-                        LogManager.getLogger()
+                        logger
                                 .error(entity.getDisplayName() + " is not falling into " + coords.toString());
                         break;
                     case TWO_DEEP_HEAD:
                     case TWO_DEEP_FEET:
-                        LogManager.getLogger()
+                        logger
                                 .info(entity.getDisplayName() + " is falling 2 floors into " + coords.toString());
                         // Damage is determined by the depth of the basement, so a fall of 0
                         // elevation is correct in this case
@@ -27902,7 +27902,7 @@ public class TWGameManager extends AbstractGameManager {
                         runningCFTotal -= cfDamage * 2;
                         break;
                     default:
-                        LogManager.getLogger()
+                        logger
                                 .info(entity.getDisplayName() + " is falling 1 floor into " + coords.toString());
                         // Damage is determined by the depth of the basement, so a fall of 0
                         // elevation is correct in this case
@@ -28600,7 +28600,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Is this the right phase?
         if (!getGame().getPhase().isMovement()) {
-            LogManager.getLogger().error("Server got unload stranded packet in wrong phase");
+            logger.error("Server got unload stranded packet in wrong phase");
             return;
         }
 
@@ -28608,14 +28608,14 @@ public class TWGameManager extends AbstractGameManager {
         if (getGame().getTurn() instanceof UnloadStrandedTurn) {
             turn = (UnloadStrandedTurn) getGame().getTurn();
         } else {
-            LogManager.getLogger().error("Server got unload stranded packet out of sequence");
+            logger.error("Server got unload stranded packet out of sequence");
             sendServerChat(player.getName() + " should not be sending 'unload stranded entity' packets at this time.");
             return;
         }
 
         // Can this player act right now?
         if (!turn.isValid(connId, getGame())) {
-            LogManager.getLogger().error("Server got unload stranded packet from invalid player");
+            logger.error("Server got unload stranded packet from invalid player");
             sendServerChat(player.getName() + " should not be sending 'unload stranded entity' packets.");
             return;
         }
@@ -28628,7 +28628,7 @@ public class TWGameManager extends AbstractGameManager {
         while (pending.hasMoreElements()) {
             action = (UnloadStrandedAction) pending.nextElement();
             if (action.getPlayerId() == connId) {
-                LogManager.getLogger().error("Server got multiple unload stranded packets from player");
+                logger.error("Server got multiple unload stranded packets from player");
                 sendServerChat(player.getName() + " should not send multiple 'unload stranded entity' packets.");
                 return;
             }
@@ -28645,7 +28645,7 @@ public class TWGameManager extends AbstractGameManager {
         for (int index = 0; (null != entityIds) && (index < entityIds.length); index++) {
             entity = game.getEntity(entityIds[index]);
             if (!game.getTurn().isValid(connId, entity, game)) {
-                LogManager.getLogger().error("Server got unload stranded packet for invalid entity");
+                logger.error("Server got unload stranded packet for invalid entity");
                 StringBuilder message = new StringBuilder();
                 message.append(player.getName()).append(" can not unload stranded entity ");
                 if (null == entity) {
@@ -28693,7 +28693,7 @@ public class TWGameManager extends AbstractGameManager {
                 entity = game.getEntity(action.getEntityId());
                 if (null == entity) {
                     // After all this, we couldn't find the entity!!!
-                    LogManager.getLogger().error("Server could not find stranded entity #"
+                    logger.error("Server could not find stranded entity #"
                             + action.getEntityId() + " to unload!!!");
                 } else {
                     // Unload the entity. Get the unit's transporter.
@@ -29023,7 +29023,7 @@ public class TWGameManager extends AbstractGameManager {
             resolveBAVibroClawAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
-            LogManager.getLogger().error("Unknown attack action declared.");
+            logger.error("Unknown attack action declared.");
         }
         // Not all targets are Entities.
         Targetable target = game.getTarget(aaa.getTargetType(), aaa.getTargetId());
@@ -29081,7 +29081,7 @@ public class TWGameManager extends AbstractGameManager {
                                 step, moveType));
                     }
                 } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                    LogManager.getLogger().debug("Gravity move check jump: "
+                    logger.debug("Gravity move check jump: "
                             + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
                     int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
                     int gravWalkMP = entity.getWalkMP();
@@ -29383,7 +29383,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             // Cannot abandon if there is no legal hex. This shouldn't have been allowed
             if (legalPosition == null) {
-                LogManager.getLogger().error("Vehicle crews cannot abandon if there is no legal hex!");
+                logger.error("Vehicle crews cannot abandon if there is no legal hex!");
                 return vDesc;
             }
             crew.setPosition(legalPosition);
@@ -29639,7 +29639,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Cannot abandon if there is no legal hex. This shoudln't have
                 // been allowed
                 if (legalPosition == null) {
-                    LogManager.getLogger().error("Spacecraft crews cannot abandon if there is no legal hex!");
+                    logger.error("Spacecraft crews cannot abandon if there is no legal hex!");
                     return vDesc;
                 }
                 crew.setPosition(legalPosition);
@@ -29807,7 +29807,7 @@ public class TWGameManager extends AbstractGameManager {
                     guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon
                             .get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error("", ex);
                 }
                 guerrilla.setDeployed(true);
                 guerrilla.setDone(true);
@@ -30108,11 +30108,11 @@ public class TWGameManager extends AbstractGameManager {
             Entity entity = stuckEntities.next();
             if (entity.getPosition() == null) {
                 if (entity.isDeployed()) {
-                    LogManager.getLogger().info("Entity #" + entity.getId() + " does not know its position.");
+                    logger.info("Entity #" + entity.getId() + " does not know its position.");
                 } else { // If the Entity isn't deployed, then something goofy
                     // happened. We'll just unstuck the Entity
                     entity.setStuck(false);
-                    LogManager.getLogger().info(
+                    logger.info(
                             "Entity #" + entity.getId() + " was stuck in a swamp, but not deployed. Stuck state reset");
                 }
                 continue;

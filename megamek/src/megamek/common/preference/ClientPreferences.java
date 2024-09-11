@@ -19,12 +19,13 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.common.MovePath;
+import megamek.logging.MMLogger;
 
 public class ClientPreferences extends PreferenceStoreProxy {
+    private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
+
     // region Variable Declarations
     public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
     public static final String LAST_CONNECT_PORT = "LastConnectPort";
@@ -368,7 +369,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
                 mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
                 mekHitLocLog.println("Table\tSide\tRoll");
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
                 mekHitLocLog = null;
             }
         }

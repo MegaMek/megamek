@@ -34,8 +34,6 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
 import megamek.common.*;
@@ -46,6 +44,7 @@ import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
+import megamek.logging.MMLogger;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -53,6 +52,7 @@ import megamek.common.verifier.EntityVerifier;
  * @author Neoancient
  */
 public class TROView {
+    private static final MMLogger logger = MMLogger.create(TROView.class);
 
     private Template template;
     private final Map<String, Object> model = new HashMap<>();
@@ -93,7 +93,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(formatting == ViewFormatting.HTML));
             } catch (final IOException e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
             view.initModel(view.verifier);
         }
@@ -132,7 +132,7 @@ public class TROView {
                 template.process(model, out);
                 return os.toString();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
         return null;
@@ -614,7 +614,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                LogManager.getLogger().warn("Could not determine bay type for " + bay);
+                logger.warn("Could not determine bay type for " + bay);
             }
         }
         setModelData("bays", bays);

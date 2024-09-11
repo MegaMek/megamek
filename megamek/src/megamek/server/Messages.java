@@ -21,11 +21,12 @@ package megamek.server;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MegaMek;
+import megamek.logging.MMLogger;
 
 public class Messages {
+    private static final MMLogger logger = MMLogger.create(Messages.class);
+
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.server.messages",
             MegaMek.getMMOptions().getLocale());
 
@@ -37,7 +38,7 @@ public class Messages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            LogManager.getLogger().error("Missing i18n entry with key " + key);
+            logger.error("Missing i18n entry with key " + key);
             return '!' + key + '!';
         }
     }

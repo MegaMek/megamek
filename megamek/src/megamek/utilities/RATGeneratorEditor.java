@@ -42,8 +42,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ratgenerator.AbstractUnitRecord;
 import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.FactionRecord;
@@ -58,15 +56,29 @@ import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 import megamek.common.eras.Eras;
+import megamek.logging.MMLogger;
 
 /**
  * @author neoancient
  */
 public class RATGeneratorEditor extends JFrame {
+    private static final MMLogger logger = MMLogger.create(RATGeneratorEditor.class);
+
     private static final String[] MOVEMENT_TYPE_NAMES = {
-            "Leg", "Tracked", "Wheeled", "Hover", "WiGE", "VTOL",
-            "Naval", "Underwater", "Jump", "Motorized", "Atmospheric",
-            "Aerospace", "Space", "None"
+            "Leg",
+            "Tracked",
+            "Wheeled",
+            "Hover",
+            "WiGE",
+            "VTOL",
+            "Naval",
+            "Underwater",
+            "Jump",
+            "Motorized",
+            "Atmospheric",
+            "Aerospace",
+            "Space",
+            "None"
     };
 
     private static final FactionRecord GENERAL_FACTION = new FactionRecord("General", "General");
@@ -1572,7 +1584,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (dir.exists() && dir.isDirectory()) {
                     ui = new RATGeneratorEditor(dir);
                 } else {
-                    LogManager.getLogger().info(args[0] + " is not a valid directory name");
+                    logger.info(args[0] + " is not a valid directory name");
                     ui = new RATGeneratorEditor();
                 }
             } else {

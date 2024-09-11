@@ -13,6 +13,12 @@
  */
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -20,15 +26,15 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
 
 /**
  * @author Sebastian Brocks
  */
 public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(ArtilleryBayWeaponIndirectFireHandler.class);
+
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
 
@@ -57,7 +63,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                LogManager.getLogger().debug("Handler can't find any ammo! Oh no!");
+                logger.debug("Handler can't find any ammo! Oh no!");
                 return;
             }
 
@@ -160,7 +166,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
         Entity bestSpotter = null;
         if (ae == null) {
-            LogManager.getLogger().error("Artillery Entity is null!");
+            logger.error("Artillery Entity is null!");
             return true;
         }
 

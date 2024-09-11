@@ -13,18 +13,27 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.List;
+
+import megamek.common.Aero;
+import megamek.common.BombType;
+import megamek.common.Entity;
+import megamek.common.FighterSquadron;
+import megamek.common.Game;
+import megamek.common.HitData;
+import megamek.common.Mounted;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
  * @since Sep 23, 2004
  */
 public class SpaceBombAttackHandler extends WeaponHandler {
+    private static final MMLogger logger = MMLogger.create(SpaceBombAttackHandler.class);
+
     private static final long serialVersionUID = -2439937071168853215L;
 
     /**
@@ -109,7 +118,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                     }
 
                     if (iterations > activeFighters.size()) {
-                        LogManager.getLogger().error("Couldn't find ammo for a dropped bomb");
+                        logger.error("Couldn't find ammo for a dropped bomb");
                     }
                 }
                 // Now remove a bomb from the squadron

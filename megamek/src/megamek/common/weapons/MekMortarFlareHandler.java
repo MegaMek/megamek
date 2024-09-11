@@ -13,18 +13,27 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.*;
+import java.util.Vector;
+
+import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.Mounted;
+import megamek.common.Report;
+import megamek.common.TargetRoll;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
 
 /**
  * @author arlith
  */
 public class MekMortarFlareHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(MekMortarFlareHandler.class);
+
     private static final long serialVersionUID = -2073773899108954657L;
 
     public MekMortarFlareHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
@@ -47,7 +56,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || !ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
-            LogManager.getLogger().error("Trying to use a Mek Mortar Flare with non-flare ammo");
+            logger.error("Trying to use a Mek Mortar Flare with non-flare ammo");
             return true;
         }
 

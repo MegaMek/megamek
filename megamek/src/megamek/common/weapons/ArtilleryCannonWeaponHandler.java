@@ -14,18 +14,20 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
 
 /**
  * @author Numien, based work by Sebastian Brocks
  */
 public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(ArtilleryCannonWeaponHandler.class);
+
     private static final long serialVersionUID = 1L;
     boolean handledAmmoAndReport = false;
 
@@ -46,7 +48,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
         if (ae == null) {
-            LogManager.getLogger().error("Artillery Entity is null!");
+            logger.error("Artillery Entity is null!");
             return true;
         }
 

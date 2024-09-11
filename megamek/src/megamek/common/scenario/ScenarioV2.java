@@ -18,10 +18,20 @@
  */
 package megamek.common.scenario;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
@@ -31,19 +41,20 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
-import megamek.common.jacksonadapters.*;
+import megamek.common.jacksonadapters.BoardDeserializer;
+import megamek.common.jacksonadapters.CarryableDeserializer;
+import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.jacksonadapters.MessageDeserializer;
+import megamek.common.jacksonadapters.TriggerDeserializer;
+import megamek.common.jacksonadapters.VictoryDeserializer;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.scriptedevent.GameEndTriggeredEvent;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ScenarioV2 implements Scenario {
+    private static final MMLogger logger = MMLogger.create(ScenarioV2.class);
 
     private static final String DEPLOY = "deploy";
     private static final String DEPLOY_EDGE = "edge";
@@ -62,8 +73,7 @@ public class ScenarioV2 implements Scenario {
     private final JsonNode node;
     private final File scenariofile;
 
-    private static final ObjectMapper yamlMapper =
-            new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 
     ScenarioV2(File scenariofile) throws IOException {
         this.scenariofile = scenariofile;
@@ -112,7 +122,7 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public IGame createGame() throws IOException, ScenarioLoaderException {
-        LogManager.getLogger().info("Loading scenario from {}", scenariofile);
+        logger.info("Loading scenario from {}", scenariofile);
         IGame game = selectGameType();
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
@@ -138,13 +148,15 @@ public class ScenarioV2 implements Scenario {
             validateSBFGame((SBFGame) game);
         }
 
-        // TODO: check the game for inconsistencies such as units outside board coordinates
+        // TODO: check the game for inconsistencies such as units outside board
+        // coordinates
         return game;
     }
 
     private void parsePlanetaryConditions(PlanetaryConditionsUsing plGame) throws JsonProcessingException {
         if (node.has(MMS_PLANETCOND)) {
-            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANETCOND), PlanetaryConditions.class);
+            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANETCOND),
+                    PlanetaryConditions.class);
             conditions.determineWind();
             plGame.setPlanetaryConditions(conditions);
         }
@@ -228,7 +240,7 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public void applyDamage(IGameManager gameManager) {
-        //TODO
+        // TODO
     }
 
     private List<Player> readPlayers(IGame game) throws ScenarioLoaderException, IOException {
@@ -240,7 +252,7 @@ public class ScenarioV2 implements Scenario {
         int teamId = 0;
         final PlayerColour[] colours = PlayerColour.values();
 
-        for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
+        for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext();) {
             JsonNode playerNode = it.next();
             MMUReader.requireFields("Player", playerNode, NAME);
 
@@ -268,7 +280,7 @@ public class ScenarioV2 implements Scenario {
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
 
-            //TODO minefields
+            // TODO minefields
 
             // Carryables
             if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
@@ -303,7 +315,8 @@ public class ScenarioV2 implements Scenario {
                             entityId++;
                         }
                         twGame.addEntity(unit);
-                        // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                        // Grounded DropShips don't set secondary positions unless they're part of a
+                        // game and can verify
                         // they're not on a space map.
                         if (unit.isLargeCraft() && !unit.isAirborne()) {
                             unit.setAltitude(0);
@@ -314,7 +327,7 @@ public class ScenarioV2 implements Scenario {
                             int realId = Force.NO_FORCE;
                             boolean topLevel = true;
 
-                            for (Force force: forceList) {
+                            for (Force force : forceList) {
                                 if (!forceMapping.containsKey(force.getId())) {
                                     if (topLevel) {
                                         realId = game.getForces().addTopLevelForce(force, unit.getOwner());
@@ -348,7 +361,8 @@ public class ScenarioV2 implements Scenario {
                     }
                 }
             }
-            // TODO: look at unit individual camo and see if it's a file in the scenario directory; the entity parsers
+            // TODO: look at unit individual camo and see if it's a file in the scenario
+            // directory; the entity parsers
             // cannot handle this as they don't know it's a scenario
         }
 
@@ -378,7 +392,7 @@ public class ScenarioV2 implements Scenario {
             mapNode = node.get(MAPS);
         }
 
-        //TODO: currently, the first parsed board is used
+        // TODO: currently, the first parsed board is used
         return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
     }
 

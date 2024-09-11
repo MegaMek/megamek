@@ -13,21 +13,23 @@
  */
 package megamek.common.weapons.infantry;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.WeaponHandler;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
  * @since Sept 24, 2004
  */
 public class InfantryWeaponHandler extends WeaponHandler {
+    private static final MMLogger logger = MMLogger.create(InfantryWeaponHandler.class);
+
     private static final long serialVersionUID = 1425176802065536326L;
 
     /**
@@ -180,7 +182,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                LogManager.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
+                logger.error(String.format("Handler can't find any ammo for %s firing %s",
                         ae.getShortName(), weapon.getName()));
                 return;
             }

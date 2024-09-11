@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -57,6 +55,7 @@ import megamek.utilities.xml.MMXMLUtility;
 @XmlRootElement(name = "entityverifier")
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class EntityVerifier implements MekSummaryCache.Listener {
+
     public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml";
 
     private static EntityVerifier instance = null;
@@ -335,7 +334,7 @@ public class EntityVerifier implements MekSummaryCache.Listener {
             try {
                 entity = new MekFileParser(f, entityName).getEntity();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
                 return;
             }
 

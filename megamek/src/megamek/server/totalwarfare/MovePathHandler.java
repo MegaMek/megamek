@@ -22,8 +22,6 @@ package megamek.server.totalwarfare;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.AirMekRamAttackAction;
@@ -35,6 +33,7 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.UnjamAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
 
@@ -42,6 +41,7 @@ import megamek.server.SmokeCloud;
  * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
  */
 class MovePathHandler extends AbstractTWRuleHandler {
+    private static final MMLogger logger = MMLogger.create(MovePathHandler.class);
 
     private final Entity entity;
     private final MovePath md;
@@ -1755,7 +1755,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             Entity fighter = getGame().getEntity(fighterId);
                             if (!gameManager.launchUnit(entity, fighter, curPos, curFacing, step.getVelocity(),
                                     step.getAltitude(), step.getVectors(), bonus)) {
-                                LogManager.getLogger().error("Server was told to unload "
+                                logger.error("Server was told to unload "
                                         + fighter.getDisplayName() + " from " + entity.getDisplayName()
                                         + " into " + curPos.getBoardNum());
                             }
@@ -1790,7 +1790,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             if (!gameManager.launchUnit(entity, ds, curPos, curFacing,
                                     step.getVelocity(), step.getAltitude(),
                                     step.getVectors(), 0)) {
-                                LogManager.getLogger().error("Error! Server was told to unload "
+                                logger.error("Error! Server was told to unload "
                                         + ds.getDisplayName() + " from "
                                         + entity.getDisplayName() + " into "
                                         + curPos.getBoardNum());
@@ -1941,7 +1941,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName() +
                                 " is attempting to charge a null target!";
-                        LogManager.getLogger().info(message);
+                        logger.info(message);
                         gameManager.sendServerChat(message);
                         return;
                     }
@@ -1960,7 +1960,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName()
                                 + " is attempting to charge a null target!";
-                        LogManager.getLogger().info(message);
+                        logger.info(message);
                         gameManager.sendServerChat(message);
                         return;
                     }
@@ -2000,7 +2000,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         String errorMessage = "Illegal DFA by " + entity.getDisplayName()
                                 + " against non-existent entity at " + step.getTargetPosition();
                         gameManager.sendServerChat(errorMessage);
-                        LogManager.getLogger().error(errorMessage);
+                        logger.error(errorMessage);
                         targetID = Entity.NONE;
                         // doesn't really matter, DFA processing will cut out early if target resolves
                         // as null
@@ -2846,7 +2846,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // unit and the other should be able to have a turn.
                         if (!entity.canLoad(loaded) || !loaded.isLoadableThisTurn()) {
                             // Something is fishy in Denmark.
-                            LogManager.getLogger()
+                            logger
                                     .error(entity.getShortName() + " can not load " + loaded.getShortName());
                             loaded = null;
                         } else {
@@ -2866,7 +2866,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // We were supposed to find someone to load.
                 if (loaded == null) {
-                    LogManager.getLogger()
+                    logger
                             .error("Could not find unit for " + entity.getShortName() + " to load in " + curPos);
                 }
 
@@ -2881,7 +2881,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // This should never ever happen, but just in case...
                 if (loaded == null) {
-                    LogManager.getLogger().error("Could not find unit for " + entity.getShortName() + " to tow.");
+                    logger.error("Could not find unit for " + entity.getShortName() + " to tow.");
                     continue;
                 }
 
@@ -2895,7 +2895,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // streamlined?
                 if (!entity.canTow(loaded.getId())) {
                     // Something is fishy in Denmark.
-                    LogManager.getLogger().error(entity.getShortName() + " can not tow " + loaded.getShortName());
+                    logger.error(entity.getShortName() + " can not tow " + loaded.getShortName());
                 } else {
                     // Have the deployed unit load the indicated unit.
                     gameManager.towUnit(entity, loaded);
@@ -2909,7 +2909,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     Entity dropShip = (Entity) mountee;
                     if (!dropShip.canLoad(entity)) {
                         // Something is fishy in Denmark.
-                        LogManager.getLogger()
+                        logger
                                 .error(dropShip.getShortName() + " can not load " + entity.getShortName());
                     } else {
                         // Have the indicated unit load this unit.
@@ -2968,12 +2968,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         gameManager.sendGroundObjectUpdate();
                         break;
                     } else {
-                        LogManager.getLogger().warn(entity.getShortName()
+                        logger.warn(entity.getShortName()
                                 + " attempted to pick up object but it is too heavy. Carry capacity: "
                                 + entity.maxGroundObjectTonnage() + ", object weight: " + pickupTarget.getTonnage());
                     }
                 } else {
-                    LogManager.getLogger()
+                    logger
                             .warn(entity.getShortName() + " attempted to pick up non existent object at coords "
                                     + step.getPosition() + ", index " + cargoPickupIndex);
                 }
@@ -3089,7 +3089,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,
                         step.getElevation())) {
-                    LogManager.getLogger().error("Server was told to unload "
+                    logger.error("Server was told to unload "
                             + unloaded.getDisplayName() + " from "
                             + entity.getDisplayName() + " into "
                             + curPos.getBoardNum());
@@ -3141,7 +3141,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     unloadPos = step.getTargetPosition();
                 }
                 if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
-                    LogManager.getLogger().error(String.format(
+                    logger.error(String.format(
                             "Server was told to disconnect %s from %s into %s",
                             unloaded.getDisplayName(), entity.getDisplayName(), curPos.getBoardNum()));
                 }

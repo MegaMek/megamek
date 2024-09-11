@@ -18,10 +18,7 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.*;
-import megamek.common.equipment.AmmoMounted;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 
 public class BattleArmorBVCalculator extends BVCalculator {
 
@@ -50,7 +50,6 @@ public class BattleArmorBVCalculator extends BVCalculator {
      *
      * @return The BV of a single trooper of this BattleArmor
      */
-    @SuppressWarnings("unused")
     public int singleTrooperBattleValue() {
         reset();
         bvReport = new DummyCalculationReport();

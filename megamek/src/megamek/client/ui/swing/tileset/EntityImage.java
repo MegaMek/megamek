@@ -185,12 +185,10 @@ public class EntityImage {
         }
     }
 
-    @SuppressWarnings("unused") // Used by MHQ
     public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
         this(base, null, camouflage, entity, -1, true);
     }
 
-    @SuppressWarnings("unused") // Used by MHQ
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
             Entity entity, int secondaryPos) {
         this(base, wreck, camouflage, entity, secondaryPos, false);

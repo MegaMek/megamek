@@ -997,7 +997,6 @@ public class BattleArmor extends Infantry {
      *
      * @return True if this BA can use a detachable weapon pack
      */
-    @SuppressWarnings("unused")
     public boolean canMountDWP() {
         return (getOriginalWalkMP() >= 2)
                 && (getWeightClass() >= EntityWeightClass.WEIGHT_MEDIUM);

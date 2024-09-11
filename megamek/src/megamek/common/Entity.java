@@ -8968,7 +8968,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the DockingCollar with the given ID or null
      */
     @Nullable
-    @SuppressWarnings("unused") // Used in MHQ
     public DockingCollar getCollarById(int collarNumber) {
         return getDockingCollars().stream()
                 .filter(dc -> dc.getCollarNumber() == collarNumber)
@@ -9283,7 +9282,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     @Override
-    @SuppressWarnings("unused") // Used in MHQ
     public void resetTransporter() {
         transports.forEach(Transporter::resetTransporter);
     }

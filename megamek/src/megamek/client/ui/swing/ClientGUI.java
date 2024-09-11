@@ -465,7 +465,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      *
      * @param quietly When true, the client will disconnect without visible warning
      */
-    @SuppressWarnings("unused") // Used in MHQ
     public void setDisconnectQuietly(boolean quietly) {
         disconnectQuietly = quietly;
     }

@@ -98,7 +98,6 @@ public final class FluffImageHelper {
      * @param unit The unit
      * @return a fluff image or null, if no match is found
      */
-    @SuppressWarnings("unused") // used in MML
     public static @Nullable Image getRecordSheetFluffImage(@Nullable BTObject unit) {
         return getFluffImage(unit, true);
     }

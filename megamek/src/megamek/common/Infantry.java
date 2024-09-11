@@ -1214,7 +1214,6 @@ public class Infantry extends Entity {
      *
      * @return The Anti-Mek skill
      */
-    @SuppressWarnings("unused") // used in MHQ
     public int getAntiMekSkill() {
         return (getCrew() == null) ? (hasAntiMekGear() ? 5 : ANTI_MEK_SKILL_NO_GEAR) : getCrew().getPiloting();
     }

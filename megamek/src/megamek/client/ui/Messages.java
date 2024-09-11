@@ -22,7 +22,7 @@ import megamek.MegaMek;
 import megamek.logging.MMLogger;
 
 public class Messages {
-    private final static MMLogger logger = MMLogger.create(Messages.class);
+    private static final MMLogger logger = MMLogger.create(Messages.class);
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.messages",
             MegaMek.getMMOptions().getLocale());

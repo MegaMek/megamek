@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
@@ -56,7 +57,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
 public abstract class AbstractClient implements IClient {
-    private final static MMLogger logger = MMLogger.create(AbstractClient.class);
+    private static final MMLogger logger = MMLogger.create(AbstractClient.class);
 
     // Server connection information
     protected String name;
@@ -336,7 +337,6 @@ public abstract class AbstractClient implements IClient {
      * @param l
      *          the game listener.
      */
-    @SuppressWarnings("unused")
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
     }
@@ -366,12 +366,12 @@ public abstract class AbstractClient implements IClient {
                 boolean isHandled = handleGameIndependentPacket(packet);
                 isHandled |= handleGameSpecificPacket(packet);
                 if (!isHandled) {
-                    String message = String.format("Unknown PacketCommand of {}", packet.getCommand().name());
+                    String message = String.format("Unknown PacketCommand of %s", packet.getCommand().name());
                     logger.error(message);
                 }
             }
         } catch (Exception ex) {
-            String message = String.format("Failed to parse Packet command of {}", packet.getCommand());
+            String message = String.format("Failed to parse Packet command of %s", packet.getCommand());
             logger.error(ex, message);
         }
     }
@@ -413,14 +413,14 @@ public abstract class AbstractClient implements IClient {
                 disconnected();
                 break;
             case SERVER_VERSION_CHECK:
-                send(new Packet(PacketCommand.CLIENT_VERSIONS, MMConstants.VERSION, MegaMek.getMegaMekSHA256()));
+                send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, MegaMek.getMegaMekSHA256()));
                 break;
             case ILLEGAL_CLIENT_VERSION:
                 final Version serverVersion = (Version) packet.getObject(0);
                 final String message = String.format(
                         "Failed to connect to the server at %s because of version differences. " +
                                 "Cannot connect to a server running %s with a %s install.",
-                        getHost(), serverVersion, MMConstants.VERSION);
+                        getHost(), serverVersion, SuiteConstants.VERSION);
                 logger.error(message, "Connection Failure: Version Difference");
                 disconnected();
                 break;

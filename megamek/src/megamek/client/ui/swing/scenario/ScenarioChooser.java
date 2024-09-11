@@ -134,6 +134,12 @@ public class ScenarioChooser extends AbstractButtonDialog {
             File subDir = new File(userDir, Configuration.scenariosDir().toString());
             scenarios.addAll(parseScenariosInDirectory(subDir));
         }
+
+        // Add testdata scenarios - these should not be present in releases
+        File testdataDir = new File("testresources/data/scenarios/test_setups");
+        if (testdataDir.exists() && testdataDir.isDirectory()) {
+            scenarios.addAll(parseScenariosInDirectory(testdataDir));
+        }
         return scenarios;
     }
 

@@ -1031,7 +1031,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Debugging method that renders a hex in the approximate direction
      * from the selected entity to the selected hex, of both exist.
-     * 
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -1052,7 +1052,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Debugging method that renders the bounding hex of a unit's movement envelope.
      * Warning: very slow when rendering the bounding hex for really fast units.
-     * 
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -1095,7 +1095,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Debugging method that renders a hex donut around the given coordinates, with
      * the given radius.
-     * 
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -1112,7 +1112,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Debugging method that renders a obnoxious pink lines around hexes in "Board
      * Clusters"
-     * 
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -2728,15 +2728,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
-     * the old sprite with the new! Try to prevent annoying
-     * ConcurrentModificationExceptions
-     */
-    public void redrawEntity(Entity entity) {
-        redrawEntity(entity, null);
-    }
-
-    /**
      * Convenience method for returning a Key value for the entitySpriteIds and
      * isometricSprite
      * maps. The List contains as the first element the Entity ID and as the second
@@ -2764,11 +2755,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * DropShips taking off (airborne DropShips lose their secondary hexes). Try
      * to prevent annoying ConcurrentModificationExceptions
      */
-    public void redrawEntity(Entity entity, Entity oldEntity) {
+    public void redrawEntity(Entity entity) {
         Integer entityId = entity.getId();
-        if (oldEntity == null) {
-            oldEntity = entity;
-        }
+
+        // Remove sprites from backing sprite collections before modifying the
+        // entitySprites and isometricSprites. Otherwise orphaned overTerrainSprites
+        // or behindTerrainHexSprites can result.
+        removeSprites(entitySprites);
+        removeSprites(isometricSprites);
 
         // If the entity we are updating doesn't have a position, ensure we
         // remove all of its old sprites
@@ -2831,7 +2825,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             isoSprites.remove(isoSprite);
         }
 
-        for (int secondaryPos : oldEntity.getSecondaryPositions().keySet()) {
+        for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
             sprite = entitySpriteIds.get(getIdAndLoc(entityId, secondaryPos));
             if (sprite != null) {
                 newSprites.remove(sprite);
@@ -2880,8 +2874,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Update Sprite state with new collections
-        removeSprites(entitySprites);
-        removeSprites(isometricSprites);
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
         isometricSprites = isoSprites;
@@ -3185,7 +3177,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /**
      * Centers the board to a point
-     * 
+     *
      * @param xrel the x position relative to board width.
      * @param yrel the y position relative to board height.
      *             Both xrel and yrel should be between 0 and 1.
@@ -3209,7 +3201,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /**
      * Returns the currently visible area of the board.
-     * 
+     *
      * @return an array of 4 double values indicating the relative size,
      *         where the first two values indicate the x and y position of the upper
      *         left
@@ -5029,7 +5021,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /**
      * Clear a specific list of Coords from the hex image cache.
-     * 
+     *
      * @param coords
      */
     public void clearHexImageCache(Set<Coords> coords) {

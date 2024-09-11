@@ -490,24 +490,24 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public Object getChild(Object parent, int index) {
-            if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor) parent).getAllChildren().get(index);
+            if (parent instanceof ForceDescriptor forceDescriptor) {
+                return forceDescriptor.getAllChildren().get(index);
             }
             return null;
         }
 
         @Override
         public int getChildCount(Object parent) {
-            if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor) parent).getAllChildren().size();
+            if (parent instanceof ForceDescriptor forceDescriptor) {
+                return forceDescriptor.getAllChildren().size();
             }
             return 0;
         }
 
         @Override
         public int getIndexOfChild(Object parent, Object child) {
-            if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor) parent).getAllChildren().indexOf(child);
+            if (parent instanceof ForceDescriptor forceDescriptor) {
+                return forceDescriptor.getAllChildren().indexOf(child);
             }
             return 0;
         }
@@ -520,9 +520,9 @@ public class ForceGeneratorViewUi implements ActionListener {
         @Override
         public boolean isLeaf(Object node) {
             return (getChildCount(node) == 0)
-                    || ((node instanceof ForceDescriptor)
-                            && (((ForceDescriptor) node).getEschelon() != null)
-                            && (((ForceDescriptor) node).getEschelon() == 0));
+                    || ((node instanceof ForceDescriptor forceDescriptor)
+                            && (forceDescriptor.getEschelon() != null)
+                            && (forceDescriptor.getEschelon() == 0));
         }
 
         @Override

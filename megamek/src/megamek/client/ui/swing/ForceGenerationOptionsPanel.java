@@ -943,7 +943,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         private JRadioButton bSimpleFormation = new JRadioButton(
                 Messages.getString("RandomArmyDialog.simpleFormation"));
-        private JRadioButton bMekBA = new JRadioButton(Messages.getString("RandomArmyDialog.mekBA"));
+        private JRadioButton bMechanizedBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
         private JRadioButton bAirLance = new JRadioButton(Messages.getString("RandomArmyDialog.airLance"));
         private JRadioButton bOtherUnitType = new JRadioButton(Messages.getString("RandomArmyDialog.otherUnitType"));
         private JComboBox<String> cbOtherUnitType = new JComboBox<>();
@@ -1049,8 +1049,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.fill = GridBagConstraints.NONE;
             c.weightx = 0.0;
             c.weighty = 0.0;
-            panOtherOptions.add(bMekBA, c);
-            btnGroup.add(bMekBA);
+            panOtherOptions.add(bMechanizedBA, c);
+            btnGroup.add(bMechanizedBA);
 
             c.gridy++;
             c.gridwidth = 2;
@@ -1134,7 +1134,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
 
         public boolean mekBA() {
-            return bMekBA.isSelected();
+            return bMechanizedBA.isSelected();
         }
 
         public boolean airLance() {

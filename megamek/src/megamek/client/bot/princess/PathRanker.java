@@ -29,7 +29,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
@@ -118,7 +117,7 @@ public abstract class PathRanker implements IPathRanker {
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                         .round(new MathContext(0, RoundingMode.DOWN));
                 if (percent.compareTo(interval) >= 0) {
-                    if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.INFO)) {
+                    if (logger.isLevelLessSpecificThan(Level.INFO)) {
                         getOwner().sendChat("... " + percent.intValue() + "% complete.");
                     }
                     interval = percent.add(new BigDecimal(5));

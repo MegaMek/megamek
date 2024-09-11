@@ -22,15 +22,16 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Enumeration;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
+import megamek.logging.MMLogger;
 
 /**
  * This panel contains the armor readout display.
  */
 class ArmorPanel extends PicMap {
+    private static final MMLogger logger = MMLogger.create(ArmorPanel.class);
+
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
     private MekMapSet mek;
@@ -241,7 +242,7 @@ class ArmorPanel extends PicMap {
         }
 
         if (ams == null) {
-            LogManager.getLogger().error("The armor panel is null");
+            logger.error("The armor panel is null");
             return;
         }
         ams.setEntity(en);

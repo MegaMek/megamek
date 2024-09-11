@@ -22,7 +22,6 @@ import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -35,6 +34,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
@@ -43,6 +43,8 @@ import megamek.utilities.xml.MMXMLUtility;
  * @author Ben
  */
 public class GameOptions extends BasicGameOptions {
+    private static final MMLogger logger = MMLogger.create(GameOptions.class);
+
     private static final long serialVersionUID = 4916321960852747706L;
     private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml";
 
@@ -326,9 +328,9 @@ public class GameOptions extends BasicGameOptions {
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print, logMessages));
             }
-            LogManager.getLogger().info(logMessages.toString());
+            logger.info(logMessages.toString());
         } catch (Exception e) {
-            LogManager.getLogger().error("Error loading XML for game options: " + e.getMessage(), e);
+            logger.error("Error loading XML for game options: " + e.getMessage(), e);
         }
 
         return changedOptions;
@@ -368,12 +370,12 @@ public class GameOptions extends BasicGameOptions {
 
                         option = tempOption;
                     } catch (Exception ex) {
-                        LogManager.getLogger().error(String.format(
+                        logger.error(String.format(
                                 "Error trying to load option '%s' with a value of '%s'!", name, value));
                     }
                 }
             } else {
-                LogManager.getLogger().warn("Invalid option '" + name + "' when trying to load options file!");
+                logger.warn("Invalid option '" + name + "' when trying to load options file!");
             }
         }
 
@@ -401,11 +403,12 @@ public class GameOptions extends BasicGameOptions {
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
 
-            JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
+            JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class,
+                    new GameOptionsXML(options));
 
             marshaller.marshal(element, new File(file));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed writing Game Options XML", ex);
+            logger.error("Failed writing Game Options XML", ex);
         }
     }
 
@@ -457,18 +460,18 @@ public class GameOptions extends BasicGameOptions {
         }
     }
 
-    //region MekHQ I/O
+    // region MekHQ I/O
     /**
      * This is used by MekHQ to write the game options to the standard file
      *
-     * @param pw the PrintWriter to write to
+     * @param pw     the PrintWriter to write to
      * @param indent the indent to write at
      */
     public void writeToXML(final PrintWriter pw, int indent) {
         MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOptions");
-        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
+        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements();) {
             final IOptionGroup group = groups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
                 final IOption option = options.nextElement();
                 MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOption");
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
@@ -480,14 +483,16 @@ public class GameOptions extends BasicGameOptions {
     }
 
     /**
-     * This is used to fill a GameOptions object from an XML node list written using writeToXML.
+     * This is used to fill a GameOptions object from an XML node list written using
+     * writeToXML.
+     *
      * @param nl the node list to parse
      */
     public void fillFromXML(final NodeList nl) {
         for (int x = 0; x < nl.getLength(); x++) {
             try {
                 final Node wn = nl.item(x);
-                if ((wn.getNodeType() != Node.ELEMENT_NODE) || !wn.hasChildNodes())  {
+                if ((wn.getNodeType() != Node.ELEMENT_NODE) || !wn.hasChildNodes()) {
                     continue;
                 }
 
@@ -527,9 +532,9 @@ public class GameOptions extends BasicGameOptions {
                     }
                 }
             } catch (Exception e) {
-                LogManager.getLogger().error("Failed to parse Game Option Node", e);
+                logger.error("Failed to parse Game Option Node", e);
             }
         }
     }
-    //endregion MekHQ I/O
+    // endregion MekHQ I/O
 }

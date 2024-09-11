@@ -13,15 +13,12 @@
  */
 package megamek.common.actions;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.logging.log4j.LogManager;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -50,11 +47,14 @@ import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Represents intention to fire a weapon at the target.
  */
-public class WeaponAttackAction extends AbstractAttackAction implements Serializable {
+public class WeaponAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(WeaponAttackAction.class);
+
     public static int DEFAULT_VELOCITY = 50;
     private static final long serialVersionUID = -9096603813317359351L;
     public static int UNASSIGNED = -1;
@@ -345,7 +345,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final WeaponType wtype = weapon.getType();
 
         if (target == null) {
-            LogManager.getLogger().error(attackerId + "Attempting to attack null target");
+            logger.error(attackerId + "Attempting to attack null target");
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
         }
 
@@ -4011,10 +4011,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // any heavy lasers
                 if (wtype.getAtClass() == WeaponType.CLASS_LASER &&
                         weapon.getBayWeapons().stream()
-                        .map(WeaponMounted::getType)
-                        .map(WeaponType::getInternalName)
-                        .anyMatch(i -> i.startsWith("CLHeavyLaser"))) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
+                                .map(WeaponMounted::getType)
+                                .map(WeaponType::getInternalName)
+                                .anyMatch(i -> i.startsWith("CLHeavyLaser"))) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
                 }
                 // barracuda missiles
                 else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
@@ -5648,7 +5648,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     @Override
     public String toAccessibilityDescription(Client client) {
         if (null == client || null == getTarget(client.getGame())) {
-            LogManager.getLogger().warn("Unable to construct WAA displayable string due to null reference");
+            logger.warn("Unable to construct WAA displayable string due to null reference");
             return "Attacking Null Target with id " + getTargetId() + " using Weapon with id " + weaponId;
         }
         return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " +

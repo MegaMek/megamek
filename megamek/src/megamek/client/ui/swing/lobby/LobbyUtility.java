@@ -37,8 +37,6 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
@@ -53,13 +51,16 @@ import megamek.common.force.Force;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides static helper functions for the Lobby aka ChatLounge.
+ *
  * @author Simon
  *
  */
 public class LobbyUtility {
+    private static final MMLogger logger = MMLogger.create(LobbyUtility.class);
 
     /**
      * Returns true when the starting position of the given player is valid
@@ -67,19 +68,22 @@ public class LobbyUtility {
      * and "Exclusive Starting Positions" are on and the starting position overlaps
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
-     * <P>See also {@link #startPosOverlap(Player, Player)}
+     * <P>
+     * See also {@link #startPosOverlap(Player, Player)}
      */
     static boolean isValidStartPos(Game game, Player player) {
         return isValidStartPos(game, player, player.getStartingPos());
     }
 
     /**
-     * Returns true when the given starting position pos is valid for the given player
+     * Returns true when the given starting position pos is valid for the given
+     * player
      * in the given game. This is not the case only when the options "Double Blind"
      * and "Exclusive Starting Positions" are on and the starting position overlaps
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
-     * <P>See also {@link #startPosOverlap(Player, Player)}
+     * <P>
+     * See also {@link #startPosOverlap(Player, Player)}
      */
     static boolean isValidStartPos(Game game, Player player, int pos) {
         if (!isExclusiveDeployment(game)) {
@@ -88,7 +92,8 @@ public class LobbyUtility {
             final GameOptions gOpts = game.getOptions();
             List<Player> players = game.getPlayersList();
 
-            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot()
+                    && player.getId() != 0) {
                 return true;
             }
 
@@ -146,13 +151,17 @@ public class LobbyUtility {
         return entities.stream().mapToInt(e -> e.getOwner().getId()).distinct().count() == 1;
     }
 
-    /** Returns true if any of the given entities are embarked (transported by something). */
+    /**
+     * Returns true if any of the given entities are embarked (transported by
+     * something).
+     */
     static boolean containsTransportedUnit(Collection<Entity> entities) {
         return entities.stream().anyMatch(e -> e.getTransportId() != Entity.NONE);
     }
 
     /**
-     * Returns true when the given board name does not start with one of the control strings
+     * Returns true when the given board name does not start with one of the control
+     * strings
      * of MapSettings signalling a random, generated or surprise board.
      */
     @SuppressWarnings("deprecation")
@@ -162,7 +171,10 @@ public class LobbyUtility {
                 && !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
 
-    /** Returns a formatted and colored tooltip string warning that a board is invalid. */
+    /**
+     * Returns a formatted and colored tooltip string warning that a board is
+     * invalid.
+     */
     static String invalidBoardTip() {
         return UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())
                 + Messages.getString("ChatLounge.map.invalidTip") + "</FONT>";
@@ -177,7 +189,8 @@ public class LobbyUtility {
             return;
         }
         UIUtil.setHighQualityRendering(g);
-        // The text size may grow with the width of the image, but no bigger than 16*guiscale
+        // The text size may grow with the width of the image, but no bigger than
+        // 16*guiscale
         // to avoid huge text
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
         Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, fontSize);
@@ -185,7 +198,8 @@ public class LobbyUtility {
         FontMetrics fm = g.getFontMetrics(font);
         int th = fm.getAscent() + fm.getDescent(); // The text height
         int cx = (w - fm.stringWidth(text)) / 2; // The left edge for centered text
-        // When the text is wider than the image, let the text start close to the left edge
+        // When the text is wider than the image, let the text start close to the left
+        // edge
         cx = Math.max(w / 20, cx);
         int cy = h - th / 2;
         Color col = new Color(250, 250, 250, 140);
@@ -198,7 +212,7 @@ public class LobbyUtility {
             col = GUIPreferences.getInstance().getWarningColor();
         }
         g.setColor(col);
-        g.fillRoundRect(cx - 3, cy - fm.getAscent(), w - 2 * cx + 6, th, fontSize/2, fontSize/2);
+        g.fillRoundRect(cx - 3, cy - fm.getAscent(), w - 2 * cx + 6, th, fontSize / 2, fontSize / 2);
         // Clip the text to inside the image with a margin of w/20
         g.setClip(w / 20, 0, w - w / 10, h);
         g.setColor(Color.BLACK);
@@ -207,8 +221,10 @@ public class LobbyUtility {
     }
 
     /**
-     * Removes the board size ("16x17") and file path from the given board name if it is
-     * a board file. Also, reconstructs the text if it's a surprise map or generated map.
+     * Removes the board size ("16x17") and file path from the given board name if
+     * it is
+     * a board file. Also, reconstructs the text if it's a surprise map or generated
+     * map.
      */
     public static String cleanBoardName(String boardName, MapSettings mapSettings) {
         // Remove the file path
@@ -245,7 +261,8 @@ public class LobbyUtility {
 
     /**
      * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
-     * Ignores entity ids that don't exist. The resulting list may be empty but not null.
+     * Ignores entity ids that don't exist. The resulting list may be empty but not
+     * null.
      */
     public static HashSet<Entity> getEntities(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
@@ -262,7 +279,8 @@ public class LobbyUtility {
 
     /**
      * Converts an id list of the form 1,2,4,12 to a set of corresponding forces.
-     * Ignores force ids that don't exist. The resulting list may be empty but not null.
+     * Ignores force ids that don't exist. The resulting list may be empty but not
+     * null.
      */
     public static HashSet<Force> getForces(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
@@ -279,7 +297,8 @@ public class LobbyUtility {
 
     /**
      * Returns true if a and b share at least one non-hierarchic C3 system
-     * (C3i, Naval C3, Nova CEWS). Symmetrical (the order of a and b does not matter).
+     * (C3i, Naval C3, Nova CEWS). Symmetrical (the order of a and b does not
+     * matter).
      */
     public static boolean sameNhC3System(Entity a, Entity b) {
         return (a.hasC3i() && b.hasC3i())
@@ -304,12 +323,14 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true when the entities can embark onto loader given the other constraints.
+     * Returns true when the entities can embark onto loader given the other
+     * constraints.
      * If false, the passed errorMsg contains a suitable error message for display.
      */
     static boolean validateLobbyLoad(Collection<Entity> entities, Entity loader, int bayNumber,
             boolean loadRear, StringBuilder errorMsg) {
-        // ProtoMek loading uses only 1 entity, get that (doesn't matter if it's something else)
+        // ProtoMek loading uses only 1 entity, get that (doesn't matter if it's
+        // something else)
         Entity soleProtoMek = entities.stream().findAny().get();
         double capacity;
         boolean hasEnoughCargoCapacity;
@@ -389,7 +410,7 @@ public class LobbyUtility {
                     // Loading using mag clamps; user can specify front or rear.
                     // Make use of bayNumber field
                     if ((loaderType & Entity.ETYPE_MEK) != 0) {
-                        bayNumber = loadRear? 1 : 0;
+                        bayNumber = loadRear ? 1 : 0;
                     }
                 } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
                     entityType = Entity.ETYPE_DROPSHIP;
@@ -484,7 +505,8 @@ public class LobbyUtility {
 
     /**
      * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
-     * Ignores entity ids that don't exist. The resulting list may be empty but not null.
+     * Ignores entity ids that don't exist. The resulting list may be empty but not
+     * null.
      */
     public static HashSet<Entity> getEntities(String idList, AbstractTableModel utm) {
         StringTokenizer st = new StringTokenizer(idList, ",");
@@ -495,7 +517,7 @@ public class LobbyUtility {
 
             try {
                 id = Integer.parseInt(st.nextToken());
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
             }
 
             MekSummary ms = null;
@@ -504,7 +526,7 @@ public class LobbyUtility {
                 ms = ((RandomArmyDialog.UnitTableModel) utm).getUnitAt(id);
             } else if (utm instanceof RandomArmyDialog.RATTableModel) {
                 ms = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
-            }  else if (utm instanceof ForceGeneratorViewUi.ChosenEntityModel) {
+            } else if (utm instanceof ForceGeneratorViewUi.ChosenEntityModel) {
                 ms = ((ForceGeneratorViewUi.ChosenEntityModel) utm).getUnitAt(id);
             }
 
@@ -514,8 +536,8 @@ public class LobbyUtility {
                     e.setId(id);
                     result.add(e);
                 } catch (EntityLoadingException ex) {
-                    LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
-                            ms.getSourceFile(), ms.getEntryName()), ex);
+                    logger.error(ex, String.format("Unable to load Mek: %s: %s",
+                            ms.getSourceFile(), ms.getEntryName()));
                 }
             }
         }
@@ -539,7 +561,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the unit summaries for the given units, but not for hidden units (blind drop)
+     * Shows the unit summaries for the given units, but not for hidden units (blind
+     * drop)
      * and not for more than 10 units at a time (because that's likely a misclick).
      */
     public static void mekReadoutAction(Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
@@ -557,7 +580,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the unit summary for the given unit. Moves the dialog a bit depending on index
+     * Shows the unit summary for the given unit. Moves the dialog a bit depending
+     * on index
      * so that multiple dialogs dont appear exactly on top of each other.
      */
     public static void mekReadout(Entity entity, int index, boolean modal, JFrame frame) {
@@ -568,7 +592,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the battle value calculation for the given units, but not for hidden units (blind drop)
+     * Shows the battle value calculation for the given units, but not for hidden
+     * units (blind drop)
      * and not for more than 10 units at a time (because that's likely a misclick).
      *
      * @param entities The units to the bv report for
@@ -586,7 +611,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the cost calculation for the given units, but not for hidden units (blind drop)
+     * Shows the cost calculation for the given units, but not for hidden units
+     * (blind drop)
      * and not for more than 10 units at a time (because that's likely a misclick).
      *
      * @param entities The units to the cost report for
@@ -604,7 +630,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns a command string token containing the IDs of the given entities and a leading |
+     * Returns a command string token containing the IDs of the given entities and a
+     * leading |
      * E.g. |2,14,44,22
      */
     public static String enToken(Collection<Integer> entities) {

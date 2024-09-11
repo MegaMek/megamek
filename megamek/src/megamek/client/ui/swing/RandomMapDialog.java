@@ -13,6 +13,32 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
+
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
@@ -20,23 +46,14 @@ import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.List;
-import java.util.Set;
+import megamek.logging.MMLogger;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/13/14 2:41 PM
  */
 public class RandomMapDialog extends JDialog implements ActionListener {
+    private static final MMLogger logger = MMLogger.create(RandomMapDialog.class);
 
     private static final long serialVersionUID = 7758433698878123806L;
 
@@ -71,7 +88,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JButton saveButton = new JButton(Messages.getString("RandomMapDialog.Save"));
     private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
     private final JCheckBox showAtStartButton = new JCheckBox(Messages.getString("RandomMapDialog.ShowAtStart"));
-    
+
     // Return value
     private boolean userCancel;
 
@@ -79,29 +96,35 @@ public class RandomMapDialog extends JDialog implements ActionListener {
      * Constructor for this dialog.
      *
      * @param parent              The parent {@link JFrame} invoking this dialog.
-     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
+     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which
+     *                            the map setting will be passed if
      *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     * @param client              The {@link Client} that will send the map settings
+     *                            to the server if this is a
      *                            server-based game.
-     * @param mapSettings         The {@link MapSettings} describing the map to be generated.
+     * @param mapSettings         The {@link MapSettings} describing the map to be
+     *                            generated.
      */
     public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
-                           MapSettings mapSettings) {
+            MapSettings mapSettings) {
         this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
     }
-    
+
     /**
      * Constructor for this dialog.
      *
      * @param parent              The parent {@link JFrame} invoking this dialog.
-     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
+     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which
+     *                            the map setting will be passed if
      *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     * @param client              The {@link Client} that will send the map settings
+     *                            to the server if this is a
      *                            server-based game.
-     * @param mapSettings         The {@link MapSettings} describing the map to be generated.
+     * @param mapSettings         The {@link MapSettings} describing the map to be
+     *                            generated.
      */
     public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
-                           MapSettings mapSettings, String title) {
+            MapSettings mapSettings, String title) {
         super(parent, title, true);
         this.mapSettings = mapSettings;
         PARENT = parent;
@@ -115,7 +138,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) { closeWithoutNewMap(); }
+            public void windowClosing(WindowEvent e) {
+                closeWithoutNewMap();
+            }
         });
 
         pack();
@@ -255,10 +280,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
     private JPanel setupControlsPanel() {
         JPanel outerpanel = new JPanel(new BorderLayout());
-        
+
         // The left-side panel contains only the Show on startup option
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
-       
+
         // Add the option only when in the Map Editor
         if (CLIENT == null) {
             showAtStartButton.addActionListener(this);
@@ -266,10 +291,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             showAtStartButton.setSelected(guip.getBoardEdRndStart());
             leftPanel.add(showAtStartButton);
         }
-        
+
         // The main panel with the Okay, Cancel etc. buttons
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
-        
+
         loadButton.addActionListener(this);
         loadButton.setMnemonic(loadButton.getText().charAt(0));
         panel.add(loadButton);
@@ -281,7 +306,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         okayButton.addActionListener(this);
         okayButton.setMnemonic(okayButton.getText().charAt(0));
         panel.add(okayButton);
-        
+
         cancelButton.addActionListener(this);
         cancelButton.setMnemonic(cancelButton.getText().charAt(0));
         panel.add(cancelButton);
@@ -293,7 +318,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
-                             final String description, boolean isSave) {
+            final String description, boolean isSave) {
 
         // Create a new instance of the file chooser.
         JFileChooser fileChooser = new JFileChooser(targetDir);
@@ -340,7 +365,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
                 return fileChooser.getSelectedFile();
             } else {
                 return new File(fileChooser.getSelectedFile() + extension);
-            }            
+            }
         }
         return null;
     }
@@ -349,7 +374,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
+                "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
 
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
@@ -359,15 +384,15 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Cache the selected boards if they exist, so we can restore them
         List<String> selectedBoards = mapSettings != null ? mapSettings.getBoardsSelectedVector() : null;
 
-        // Load the file.  If there is an error, log it and return.
+        // Load the file. If there is an error, log it and return.
         try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "");
             return;
         }
 
-        if(selectedBoards != null) {
+        if (selectedBoards != null) {
             mapSettings.setBoardsSelectedVector(selectedBoards);
         }
 
@@ -387,7 +412,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(
                 Messages.getString("RandomMapDialog.FileSaveDialog"), "data"
-                        + File.separator + "mapgen", null, ".xml", "(*.xml)",
+                        + File.separator + "mapgen",
+                null, ".xml", "(*.xml)",
                 true);
 
         // If no file was selected, we're done.
@@ -399,7 +425,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         try (OutputStream os = new FileOutputStream(selectedFile)) {
             mapSettings.save(os);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
         return true;
     }
@@ -434,7 +460,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         MAP_SETTINGS_OBSERVER.updateMapSettings(newMapSettings);
         return true;
     }
-    
+
     public boolean activateDialog(Set<String> themeList) {
         for (String s : themeList) {
             choTheme.addItem(s);
@@ -444,7 +470,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         setVisible(true);
         return userCancel;
     }
-    
+
     private void closeWithoutNewMap() {
         userCancel = true;
         setVisible(false);
@@ -472,7 +498,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             guip.setBoardEdRndStart(showAtStartButton.isSelected());
         }
     }
-    
+
     @Override
     public void setVisible(boolean b) {
         if (b) {
@@ -494,12 +520,12 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         guip.setValue(GUIPreferences.RND_MAP_SIZE_HEIGHT, getSize().height);
         guip.setValue(GUIPreferences.RND_MAP_ADVANCED, advancedButton.isSelected());
     }
-    
+
     private void loadWindowSettings() {
         GUIPreferences guip = GUIPreferences.getInstance();
-        setSize(guip.getInt(GUIPreferences.RND_MAP_SIZE_WIDTH), 
+        setSize(guip.getInt(GUIPreferences.RND_MAP_SIZE_WIDTH),
                 guip.getInt(GUIPreferences.RND_MAP_SIZE_HEIGHT));
-        setLocation(guip.getInt(GUIPreferences.RND_MAP_POS_X), 
+        setLocation(guip.getInt(GUIPreferences.RND_MAP_POS_X),
                 guip.getInt(GUIPreferences.RND_MAP_POS_Y));
         // Restore the advanced view if it was used last
         if (guip.getBoolean(GUIPreferences.RND_MAP_ADVANCED)) {
@@ -512,6 +538,6 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
 
     private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tileset.MekTileset.MekEntry;
@@ -52,6 +50,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * Handles loading and manipulating images from both the mek tileset and the
@@ -60,6 +59,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * @author Ben
  */
 public class TilesetManager implements IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(TilesetManager.class);
 
     public static final String DIR_NAME_WRECKS = "wrecks";
     public static final String DIR_NAME_BOTTOM_DECALS = "bottomdecals";
@@ -127,12 +127,12 @@ public class TilesetManager implements IPreferenceChangeListener {
             hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            LogManager.getLogger().error("Error loading tileset "
+            logger.error("Error loading tileset "
                     + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
             if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()) {
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
-                LogManager.getLogger().fatal("Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
+                logger.fatal("Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
             }
         }
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
@@ -164,7 +164,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image iconFor(Entity entity) {
         EntityImage entityImage = getFromCache(entity, -1);
         if (entityImage == null) {
-            LogManager.getLogger().error("Unable to load icon for entity: " + entity.getShortNameRaw());
+            logger.error("Unable to load icon for entity: " + entity.getShortNameRaw());
             Image generic = getGenericImage(entity, -1);
             return (generic != null) ? ImageUtil.getScaledImage(generic, 56, 48) : null;
         }
@@ -175,7 +175,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image wreckMarkerFor(Entity entity, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            LogManager.getLogger().error("Unable to load wreck image for entity: " + entity.getShortNameRaw());
+            logger.error("Unable to load wreck image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, wreckTileset);
         }
         return entityImage.getWreckFacing(entity.getFacing());
@@ -314,7 +314,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image imageFor(Entity entity, int facing, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            LogManager.getLogger().error("Unable to load image for entity: " + entity.getShortNameRaw());
+            logger.error("Unable to load image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1);
         }
         // get image rotated for facing
@@ -330,7 +330,7 @@ public class TilesetManager implements IPreferenceChangeListener {
 
         // Image could be null, for example with double blind
         if (result == null) {
-            LogManager.getLogger().info("Loading image on the fly: " + entity.getShortNameRaw());
+            logger.info("Loading image on the fly: " + entity.getShortNameRaw());
             loadImage(entity, secondaryPos);
             result = mekImages.get(temp);
         }
@@ -494,7 +494,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     public static Image LoadSpecificImage(File path, String name) {
         Image result = ImageUtil.loadImageFromFile(new MegaMekFile(path, name).toString());
         if ((result == null) || (result.getWidth(null) <= 0) || (result.getHeight(null) <= 0)) {
-            LogManager.getLogger().error("Error opening image: " + name);
+            logger.error("Error opening image: " + name);
         }
         return result;
     }

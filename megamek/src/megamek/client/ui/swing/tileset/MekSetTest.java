@@ -30,11 +30,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides a utility to read in the current MekSet and test to make
@@ -43,6 +42,7 @@ import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
  * @author arlith
  */
 public class MekSetTest {
+    private static final MMLogger logger = MMLogger.create(MekSetTest.class);
 
     private MekSetTest() {
     }
@@ -82,7 +82,7 @@ public class MekSetTest {
                         try {
                             testFile(dir, tokens.get(1));
                         } catch (IOException e) {
-                            LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
+                            logger.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else {
                         testImageName(dir, tokens.get(2), tokens.toString());

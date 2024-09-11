@@ -24,10 +24,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
+import megamek.logging.MMLogger;
 
 /**
  * Implementation of MovePathFinder designed to find the shortest path between
@@ -36,6 +35,7 @@ import megamek.common.MovePath.MoveStepType;
  * @author Saginatio
  */
 public class ShortestPathFinder extends MovePathFinder<MovePath> {
+    private static final MMLogger logger = MMLogger.create(ShortestPathFinder.class);
 
     /**
      * Returns true if last processed move path had final position equal to
@@ -280,7 +280,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     /**
      * See {@link newInstanceOfOneToAll} - this returns a customized
      * ShortestPathFinder to support Aerodyne units.
-     * 
+     *
      * @param maxMP    maximum MP that entity can use
      * @param stepType
      * @param game     The current {@link Game}
@@ -401,7 +401,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         Hex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
-            LogManager.getLogger().debug("getLevelDiff: currHex was null!" +
+            logger.debug("getLevelDiff: currHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ncurrHex:  " + mp.getFinalCoords() +
                     "\nPath: " + mp);
@@ -409,7 +409,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         Hex destHex = board.getHex(dest);
         if (destHex == null) {
-            LogManager.getLogger().debug("getLevelDiff: destHex was null!" +
+            logger.debug("getLevelDiff: destHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ndestHex: " + dest +
                     "\nPath: " + mp);

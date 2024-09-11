@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
@@ -48,8 +46,10 @@ import megamek.common.strategicBattleSystems.SBFFormationTurn;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMovePathFinder;
+import megamek.logging.MMLogger;
 
 public class SBFMovementDisplay extends SBFActionPhaseDisplay {
+    private static final MMLogger logger = MMLogger.create(SBFMovementDisplay.class);
 
     private enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext"),
@@ -105,7 +105,8 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         setupButtonPanel();
         registerKeyCommands();
         game().addGameListener(this);
-        //TODO: rather have clientgui take BVListeners and forward all events -> dont have to deal with changing
+        // TODO: rather have clientgui take BVListeners and forward all events -> dont
+        // have to deal with changing
         // boardviews
         clientgui.boardViews().forEach(b -> b.addBoardViewListener(this));
     }
@@ -160,7 +161,8 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     /**
-     * Resets the planned movement for the current formation, if any. This also validates the current
+     * Resets the planned movement for the current formation, if any. This also
+     * validates the current
      * formation and does some extra checks to avoid errors.
      */
     private void resetPlannedMovement() {
@@ -223,7 +225,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     private DialogResult planJump(SBFFormation formation) {
-        //TODO SBFRULES Can you use JUMP if you remain in the hex?
+        // TODO SBFRULES Can you use JUMP if you remain in the hex?
         if (formation.getJumpMove() > 0) {
             List<Integer> choices = Stream.iterate(0, n -> n + 1).limit(formation.getJumpMove() + 1).toList();
             SBFJumpChoiceDialog jumpChoiceDialog = new SBFJumpChoiceDialog(clientgui.getFrame(), choices);
@@ -234,7 +236,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
                 plannedMovement.setJumpUsed(jumpChoiceDialog.getFirstChoice());
             }
             return result;
-       } else {
+        } else {
             plannedMovement.setJumpUsed(0);
             return DialogResult.CONFIRMED;
         }
@@ -262,7 +264,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         if (GUIP.getAutoSelectNextUnit()) {
             clientgui.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
         }
-//            clientgui.bingMyTurn();
+        // clientgui.bingMyTurn();
         startTimer();
     }
 
@@ -273,7 +275,8 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     private void updateButtonStatus() {
         boolean myTurn = isMyTurn();
         boolean turnIsFormationTurn = game().getTurn() instanceof SBFFormationTurn;
-        boolean hasAvailableUnits = turnIsFormationTurn && game().hasEligibleFormation((SBFFormationTurn) game().getTurn());
+        boolean hasAvailableUnits = turnIsFormationTurn
+                && game().hasEligibleFormation((SBFFormationTurn) game().getTurn());
 
         buttons.get(MoveCommand.MOVE_NEXT).setEnabled(myTurn && hasAvailableUnits);
         buttons.get(MoveCommand.MOVE_MORE).setEnabled(myTurn && (numButtonGroups > 1));
@@ -297,40 +300,47 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             endMyTurn();
         }
 
-//        String s = getRemainingPlayerWithTurns();
-//        setStatusBarText(s);
+        // String s = getRemainingPlayerWithTurns();
+        // setStatusBarText(s);
 
         // if all our entities are actually done, don't start up the turn.
-//        if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
-//                .stream().allMatch(Entity::isDone)) {
-//            setStatusBarTextOthersTurn(e.getPlayer(), s);
-//            clientgui.bingOthersTurn();
-//            return;
-//        }
-//        String playerName;
-//
-//        if (e.getPlayer() != null) {
-//            playerName = e.getPlayer().getName();
-//        } else {
-//            playerName = "Unknown";
-//        }
-//        if (isMyTurn()) {
-//            if (currentUnit == SBFFormation.NONE) {
-//                setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
-//            }
-//                beginMyTurn();
-//        } else {
-//            endMyTurn();
-//            setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
-////            clientgui.bingOthersTurn();
-//        }
+        // if
+        // (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(),
+        // false)
+        // .stream().allMatch(Entity::isDone)) {
+        // setStatusBarTextOthersTurn(e.getPlayer(), s);
+        // clientgui.bingOthersTurn();
+        // return;
+        // }
+        // String playerName;
+        //
+        // if (e.getPlayer() != null) {
+        // playerName = e.getPlayer().getName();
+        // } else {
+        // playerName = "Unknown";
+        // }
+        // if (isMyTurn()) {
+        // if (currentUnit == SBFFormation.NONE) {
+        // setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
+        // }
+        // beginMyTurn();
+        // } else {
+        // endMyTurn();
+        // setStatusBarText(Messages.getString("FiringDisplay.its_others_turn",
+        // playerName) + s);
+        //// clientgui.bingOthersTurn();
+        // }
     }
 
     /**
-     * Computes all of the possible moves for an Entity in a particular gear. The Entity can either
-     * be a suggested Entity or the currently selected one. If there is a selected entity (which
-     * implies it's the current players turn), then the current gear is used (which is set by the
-     * user). If there is no selected entity, then the current gear is invalid, and it defaults to
+     * Computes all of the possible moves for an Entity in a particular gear. The
+     * Entity can either
+     * be a suggested Entity or the currently selected one. If there is a selected
+     * entity (which
+     * implies it's the current players turn), then the current gear is used (which
+     * is set by the
+     * user). If there is no selected entity, then the current gear is invalid, and
+     * it defaults to
      * GEAR_LAND (standard "walk forward").
      *
      */
@@ -338,9 +348,9 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         if ((formation == null) || (formation.getPosition() == null) || !formation.isDeployed()) {
             return;
         }
-//        if (en.isDone()) {
-//            return;
-//        }
+        // if (en.isDone()) {
+        // return;
+        // }
 
         Map<BoardLocation, SBFMovePath> mvEnvData;
         SBFMovePath mp = new SBFMovePath(formation.getId(), formation.getPosition(), game());
@@ -386,12 +396,13 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             return;
         }
         if (currentPath == null) {
-            currentPath = new SBFMovePath(currentFormation, game().getFormation(currentFormation).get().getPosition(), game());
+            currentPath = new SBFMovePath(currentFormation, game().getFormation(currentFormation).get().getPosition(),
+                    game());
         }
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
         SBFMovePathFinder pf = SBFMovePathFinder.aStarFinder(dest, game());
-        AbstractPathFinder.StopConditionTimeout<SBFMovePath> timeoutCondition =
-                new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
+        AbstractPathFinder.StopConditionTimeout<SBFMovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(
+                timeLimit);
         pf.addStopCondition(timeoutCondition);
         pf.run(SBFMovePath.createMovePathShallow(currentPath));
         SBFMovePath finPath = pf.getComputedPath(dest);
@@ -401,7 +412,9 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             clientgui.showMovePath(plannedMovement);
         } else {
             resetPlannedMovement();
-            LogManager.getLogger().error("Unable to find a move path for formation {} to {}!", currentFormation, dest);
+            String message = String.format("Unable to find a move path for formation %s to %s!", currentFormation,
+                    dest);
+            logger.error(message);
         }
         updateDonePanel();
     }

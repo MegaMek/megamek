@@ -21,8 +21,6 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -39,6 +37,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.weapons.AttackHandler;
+import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
@@ -50,6 +49,8 @@ import megamek.server.victory.VictoryResult;
  * keep it synched.
  */
 public final class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
+    private static final MMLogger logger = MMLogger.create(Game.class);
+
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -303,7 +304,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setOptions(final @Nullable GameOptions options) {
         if (options == null) {
-            LogManager.getLogger().error("Can't set the game options to null!");
+            logger.error("Can't set the game options to null!");
         } else {
             this.options = options;
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -1105,7 +1106,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     return null;
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
             return null;
         }
     }
@@ -1470,7 +1471,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
-                        LogManager.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
+                        logger.error(e.getDisplayName() + " is not in " + c + "!");
                     }
                 }
             }
@@ -1480,7 +1481,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Convenience function that gets a list of all off-board enemy entities.
-     * 
+     *
      * @param player
      * @return
      */
@@ -1519,7 +1520,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Determine if the given set of coordinates has a gun emplacement on the roof
      * of a building.
-     * 
+     *
      * @param c The coordinates to check
      */
     public boolean hasRooftopGunEmplacement(Coords c) {
@@ -2340,7 +2341,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * This is used to send all telemissile attacks to the client.
-     * 
+     *
      * @return an unmodifiable list of pending telemissile attacks.
      */
     public List<AttackAction> getTeleMissileAttacksVector() {
@@ -2528,7 +2529,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Adds the given reports vector to the GameReport collection.
-     * 
+     *
      * @param v the reports vector
      */
     public void addReports(List<Report> v) {
@@ -2978,7 +2979,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) throws RuntimeException {
         if (ip == null) {
             var ex = new RuntimeException("Illuminated Positions is null.");
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw ex;
         }
         illuminatedPositions = ip;
@@ -3170,7 +3171,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     @Override
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
-            LogManager.getLogger().error("Can't set the planetary conditions to null!");
+            logger.error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -3286,7 +3287,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         if ((entitiesInCacheCount != entityVectorSize) && !getPhase().isDeployment()
                 && !getPhase().isExchange() && !getPhase().isLounge()
                 && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
-            LogManager.getLogger().warn("Entities vector has " + inGameTWEntities().size()
+            logger.warn("Entities vector has " + inGameTWEntities().size()
                     + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
             List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
@@ -3294,14 +3295,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     missingIds.add(id);
                 }
             }
-            LogManager.getLogger().info("Missing ids: " + missingIds);
+            logger.info("Missing ids: " + missingIds);
         }
         for (Entity e : inGameTWEntities()) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
                 HashSet<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
-                    LogManager.getLogger().warn("Entity " + e.getId() + " is in "
+                    logger.warn("Entity " + e.getId() + " is in "
                             + e.getPosition() + " however the position cache "
                             + "does not have it in that position!");
                 }
@@ -3315,7 +3316,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 }
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
-                    LogManager.getLogger().warn("Entity Position Cache thinks Entity " + eId
+                    logger.warn("Entity Position Cache thinks Entity " + eId
                             + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
                 }
             }

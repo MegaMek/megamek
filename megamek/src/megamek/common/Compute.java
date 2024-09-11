@@ -17,8 +17,6 @@ package megamek.common;
 
 import java.util.*;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
@@ -39,6 +37,7 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 
@@ -47,6 +46,7 @@ import megamek.server.SmokeCloud;
  * entities moving, firing, etc.
  */
 public class Compute {
+    private static final MMLogger logger = MMLogger.create(Compute.class);
 
     public static final int ARC_360 = 0;
     public static final int ARC_FORWARD = 1;
@@ -1753,7 +1753,7 @@ public class Compute {
             final @Nullable Targetable target,
             final boolean useGroundDistance) {
         if (target == null) {
-            LogManager.getLogger().error("Attempted to determine the effective distance to a null target");
+            logger.error("Attempted to determine the effective distance to a null target");
             return 0;
         } else if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
@@ -1931,12 +1931,10 @@ public class Compute {
         if (target == null) {
             return null;
         }
-        boolean debug = LogManager.getLogger().isDebugEnabled();
-        StringBuilder msg = (debug) ? new StringBuilder("Looking for TAG spotter for ")
+        StringBuilder msg = new StringBuilder("Looking for TAG spotter for ")
                 .append(attacker.getDisplayName())
                 .append(" targeting ")
-                .append(target.getDisplayName())
-                : null;
+                .append(target.getDisplayName());
 
         Entity spotter = null;
         int distance = -1;
@@ -1972,11 +1970,10 @@ public class Compute {
             // Friend has to be as close as their max running speed * flight time, + TAG
             // range, + 8
             int taggingRange = ((1 + Compute.turnsTilHit(ownRange)) * friend.getWalkMP()) + range + 8;
-            if (debug) {
-                msg.append("\n").append(friend.getDisplayName()).append(" has TAG at ")
-                        .append(friendRange).append(" from target; must be within ")
-                        .append(taggingRange).append(" to be able to TAG this target for us.");
-            }
+
+            msg.append("\n").append(friend.getDisplayName()).append(" has TAG at ")
+                    .append(friendRange).append(" from target; must be within ")
+                    .append(taggingRange).append(" to be able to TAG this target for us.");
 
             // Need a target hex within 8 of the main target, and within shooting distance
             // of the spotter.
@@ -1987,9 +1984,7 @@ public class Compute {
             // is this guy a better spotter?
             if ((spotter == null)
                     || range < distance) {
-                if (debug) {
-                    msg.append("\n").append(friend.getDisplayName()).append(" is a good candidate.");
-                }
+                msg.append("\n").append(friend.getDisplayName()).append(" is a good candidate.");
                 spotter = friend;
                 distance = friendRange;
                 if (stopAtFirst) {
@@ -1997,12 +1992,10 @@ public class Compute {
                 }
             }
         }
-        if (debug) {
-            msg.append("\nFinal result: ")
-                    .append((spotter == null) ? "no TAG friendly in range" : spotter.getDisplayName())
-                    .append("!");
-            LogManager.getLogger().debug(msg.toString());
-        }
+        msg.append("\nFinal result: ")
+                .append((spotter == null) ? "no TAG friendly in range" : spotter.getDisplayName())
+                .append("!");
+        logger.debug(msg.toString());
 
         return spotter;
     }
@@ -4083,7 +4076,7 @@ public class Compute {
                     if (null != hex) {
                         tPosV.add(hex);
                     } else {
-                        LogManager.getLogger().warn(
+                        logger.warn(
                                 "Entity " + ((Entity) target).getDisplayName() + " has null secondary location!");
                     }
                 }
@@ -7692,16 +7685,13 @@ public class Compute {
      */
     public static Coords calculateArtilleryLead(Coords targetPoint, int direction, int leadAmount) {
         Coords newPoint = targetPoint.translated(direction, leadAmount);
-        if (LogManager.getLogger().isDebugEnabled()) {
-            StringBuilder msg = new StringBuilder("Computed coordinates ( ")
-                    .append(newPoint.toString())
-                    .append(" ) for target point ( ").append(targetPoint.toString())
-                    .append(" ), direction ").append(direction)
-                    .append(", lead range ").append(leadAmount);
+        StringBuilder msg = new StringBuilder("Computed coordinates ( ")
+                .append(newPoint.toString())
+                .append(" ) for target point ( ").append(targetPoint.toString())
+                .append(" ), direction ").append(direction)
+                .append(", lead range ").append(leadAmount);
 
-            LogManager.getLogger().debug(msg.toString());
-        }
+        logger.debug(msg);
         return newPoint;
     }
-
 } // End public class Compute

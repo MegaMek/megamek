@@ -13,12 +13,11 @@
  */
 package megamek.common.actions;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * The attacker makes a club attack on the target. This also covers mek melee
@@ -28,6 +27,8 @@ import megamek.common.options.OptionsConstants;
  * @since April 3, 2002, 2:37 PM
  */
 public class ClubAttackAction extends PhysicalAttackAction {
+    private static final MMLogger logger = MMLogger.create(ClubAttackAction.class);
+
     private static final long serialVersionUID = -8744665286254604559L;
     private MiscMounted club;
     private int aiming;
@@ -256,11 +257,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
         MiscType clubType;
         // arguments legal?
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         if (club == null) {

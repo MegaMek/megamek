@@ -15,21 +15,28 @@
 */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * This class loads the custom weapon orders lists from the
@@ -38,6 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Arlith
  */
 public class WeaponOrderHandler {
+    private static final MMLogger logger = MMLogger.create(WeaponOrderHandler.class);
 
     public static class WeaponOrder {
         public WeaponSortOrder orderType = WeaponSortOrder.DEFAULT;
@@ -89,16 +97,16 @@ public class WeaponOrderHandler {
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new MegaMekFile(Configuration.configDir(), path).getFile();
         if (file.exists() && !file.canWrite()) {
-            LogManager.getLogger().error("Could not save custom weapon orders from " + path);
+            logger.error("Could not save custom weapon orders from " + path);
             return;
         }
 
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file)));
 
-         // Output the doctype and header stuff.
+        // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\"?>\n");
-        output.write("<" + CUSTOM_WEAPON_ORDER +">\n");
+        output.write("<" + CUSTOM_WEAPON_ORDER + ">\n");
 
         // Create the UNIT_ID tag for each chassis/model id
         for (String unitId : weaponOrderMap.keySet()) {
@@ -122,28 +130,28 @@ public class WeaponOrderHandler {
 
             // Write out XML
             output.write("\t");
-            output.write("<" + UNIT +">");
+            output.write("<" + UNIT + ">");
             output.write("\n\t\t");
-            output.write("<" + ID +">");
+            output.write("<" + ID + ">");
             output.write(unitId);
-            output.write("</" + ID +">");
+            output.write("</" + ID + ">");
             output.write("\n\t\t");
-            output.write("<" + ORDER_TYPE +">");
+            output.write("<" + ORDER_TYPE + ">");
             output.write(weapOrder.orderType.name());
-            output.write("</" + ORDER_TYPE +">");
+            output.write("</" + ORDER_TYPE + ">");
             output.write("\n\t\t");
-            output.write("<" + WEAPON_LIST +">");
+            output.write("<" + WEAPON_LIST + ">");
             output.write(weaponList.toString());
-            output.write("</" + WEAPON_LIST +">");
+            output.write("</" + WEAPON_LIST + ">");
             output.write("\n\t\t");
-            output.write("<" + ORDER_LIST +">");
+            output.write("<" + ORDER_LIST + ">");
             output.write(orderList.toString());
-            output.write("</" + ORDER_LIST +">");
+            output.write("</" + ORDER_LIST + ">");
             output.write("\n\t");
-            output.write("</" + UNIT +">");
+            output.write("</" + UNIT + ">");
         }
 
-        output.write("\n</" + CUSTOM_WEAPON_ORDER +">");
+        output.write("\n</" + CUSTOM_WEAPON_ORDER + ">");
 
         output.close();
     }
@@ -154,14 +162,13 @@ public class WeaponOrderHandler {
      * @return
      * @throws IOException
      */
-    private synchronized static Map<String, WeaponOrder>
-        loadWeaponOrderFile() throws IOException {
+    private synchronized static Map<String, WeaponOrder> loadWeaponOrderFile() throws IOException {
         Map<String, WeaponOrder> weapOrderMap = new HashMap<>();
 
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new MegaMekFile(Configuration.configDir(), path).getFile();
         if (!file.exists() || !file.isFile()) {
-            LogManager.getLogger().warn("Could not load custom weapon orders from " + path);
+            logger.warn("Could not load custom weapon orders from " + path);
             return weapOrderMap;
         }
 
@@ -234,7 +241,7 @@ public class WeaponOrderHandler {
         } catch (Exception ex) {
             throw new IOException(ex);
         } finally {
-            LogManager.getLogger().info(log);
+            logger.info(log);
         }
     }
 
@@ -253,12 +260,11 @@ public class WeaponOrderHandler {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to load custom weapon order file", ex);
+                logger.error("Failed to load custom weapon order file", ex);
                 return null;
             }
         }
         WeaponOrder newWeapOrder = new WeaponOrder();
-
 
         // Build the unit ID from the chassis and model.
         String unitId = chassis;
@@ -290,14 +296,14 @@ public class WeaponOrderHandler {
      * @param customWeapOrder
      */
     public synchronized static void setWeaponOrder(String chassis, String model,
-                                                   WeaponSortOrder type,
-                                                   Map<Integer, Integer> customWeapOrder) {
+            WeaponSortOrder type,
+            Map<Integer, Integer> customWeapOrder) {
         if (!initialized.get() || (null == weaponOrderMap)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
             } catch (Exception e) {
-                LogManager.getLogger().error("Failed to load custom weapon order file", e);
+                logger.error("Failed to load custom weapon order file", e);
             }
         }
 

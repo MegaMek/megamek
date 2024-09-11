@@ -19,6 +19,16 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
@@ -26,18 +36,16 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import megamek.logging.MMLogger;
 
 /**
  * Fighter squadrons are basically "containers" for a bunch of fighters.
- * 
+ *
  * @author Jay Lawson
  */
 public class FighterSquadron extends AeroSpaceFighter {
+    private static final MMLogger logger = MMLogger.create(FighterSquadron.class);
+
     private static final long serialVersionUID = 3491212296982370726L;
 
     public static final int MAX_SIZE = 6;
@@ -115,7 +123,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      * Per SO, fighter squadrons can't actually be crippled
      * Individual crippled fighters should be detached and sent home, but it isn't
      * required by the rules
-     * 
+     *
      * @see megamek.common.Aero#isCrippled()
      */
     @Override
@@ -395,7 +403,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                         newmount.setNWeapons(groups.get(key));
                         weaponGroups.put(key, getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        LogManager.getLogger().error("Unable to compile weapon groups.", ex);
+                        logger.error("Unable to compile weapon groups.", ex);
                         return;
                     }
                 } else if (!Objects.equals(name, "0")) {
@@ -721,14 +729,14 @@ public class FighterSquadron extends AeroSpaceFighter {
     public EntityMovementMode getMovementMode() {
         List<Entity> entities = getSubEntities();
 
-        if (entities.size() < 1) {
+        if (entities.isEmpty()) {
             return EntityMovementMode.NONE;
         }
 
         EntityMovementMode moveMode = entities.get(0).getMovementMode();
         for (Entity fighter : entities) {
             if (moveMode != fighter.getMovementMode()) {
-                LogManager.getLogger().error("Error: Fighter squadron movement mode doesn't agree!");
+                logger.error("Error: Fighter squadron movement mode doesn't agree!");
                 return EntityMovementMode.NONE;
             }
         }
@@ -769,7 +777,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      * Override of Entity method.
      * This needs to be set or we can't do a reverse lookup from a Capital Fighter
      * to its Squadron.
-     * 
+     *
      * @param transportId - the <code>int</code> ID of our transport. The ID is
      *                    <b>not</b> validated. This value should be
      *                    <code>Entity.NONE</code> if this unit has been unloaded.
@@ -786,7 +794,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      * This matches up the individual fighter's weapons and critical slots and
      * damages those
      * for MHQ resolution
-     * 
+     *
      * @param loc - Int corresponding to the location struck
      */
     public void damageCapFighterWeapons(int loc) {

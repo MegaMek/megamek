@@ -28,8 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Board;
 import megamek.common.Compute;
@@ -47,11 +45,14 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.preference.IPreferenceChangeListener;
+import megamek.logging.MMLogger;
 
 /**
  * A helper class for highlighting and darkening hexes.
  */
 class FovHighlightingAndDarkening {
+    private static final MMLogger logger = MMLogger.create(FovHighlightingAndDarkening.class);
+
     private final BoardView boardView1;
     private java.util.List<Color> ringsColors = new ArrayList<>();
     private java.util.List<Integer> ringsRadii = new ArrayList<>();
@@ -315,8 +316,8 @@ class FovHighlightingAndDarkening {
                 int rr = Integer.parseInt(rrRaw.trim());
                 ringsRadii.add(Math.min(rr, max_dist));
             } catch (Exception e) {
-                LogManager.getLogger().error(String.format("Cannot parse %s parameter '%s'",
-                        GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw), e);
+                logger.error(e, String.format("Cannot parse %s parameter '%s'",
+                        GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw));
                 break;
             }
         }
@@ -330,8 +331,8 @@ class FovHighlightingAndDarkening {
                 Color tc = new Color(Color.HSBtoRGB(h, s, b));
                 ringsColors.add(new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), highlight_alpha));
             } catch (Exception e) {
-                LogManager.getLogger().error(String.format("Cannot parse %s parameter '%s'",
-                        GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr), e);
+                logger.error(e, String.format("Cannot parse %s parameter '%s'",
+                        GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr));
                 break;
             }
         }
@@ -359,12 +360,12 @@ class FovHighlightingAndDarkening {
         Board board = this.boardView1.game.getBoard();
         Hex srcHex = board.getHex(src);
         if (srcHex == null) {
-            LogManager.getLogger().error("Cannot process line of sight effects with a null source hex.");
+            logger.error("Cannot process line of sight effects with a null source hex.");
             return null;
         }
         Hex dstHex = board.getHex(dest);
         if (dstHex == null) {
-            LogManager.getLogger().error("Cannot process line of sight effects with a null destination hex.");
+            logger.error("Cannot process line of sight effects with a null destination hex.");
             return null;
         }
 

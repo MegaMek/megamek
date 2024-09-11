@@ -15,16 +15,20 @@
  */
 package megamek.client.ui.swing.widget;
 
-import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.MediaTracker;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.border.EtchedBorder;
+
+import megamek.common.Configuration;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * A Border that has an image for each corner as well as images for the line
@@ -36,24 +40,26 @@ import java.util.ArrayList;
  * @author arlith
  */
 public class MegaMekBorder extends EtchedBorder {
+    private static final MMLogger logger = MMLogger.create(MegaMekBorder.class);
+
     private static final long serialVersionUID = 1L;
 
     // Abbreviations: tl = top left, tr = top right,
-    //  bl = bottom left, br = bottom right
+    // bl = bottom left, br = bottom right
     protected ImageIcon tlCorner, trCorner, blCorner, brCorner;
     protected ArrayList<ImageIcon> leftLine, topLine, rightLine, bottomLine;
     // We need to know whether each tile in each edge should be tiled or static
     public ArrayList<Boolean> leftShouldTile, topShouldTile;
     public ArrayList<Boolean> rightShouldTile, bottomShouldTile;
     // Keep track of the total number of space taken up by static (non-tiled)
-    //  icons for each edge
+    // icons for each edge
     protected int leftStaticSpace, topStaticSpace;
     protected int rightStaticSpace, bottomStaticSpace;
     // Keep track of the number of tiled icons we have in each edge
     protected int leftNumTiledIcons, topNumTiledIcons;
     protected int rightNumTiledIcons, bottomNumTiledIcons;
 
-    boolean iconsLoaded =  false;
+    boolean iconsLoaded = false;
 
     /**
      * Flag that determines whether a border should be drawn or not.
@@ -89,7 +95,7 @@ public class MegaMekBorder extends EtchedBorder {
         imgURL = file.toURI();
         icon = new ImageIcon(imgURL.toURL());
         if (!file.exists()) {
-            LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+            logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
             iconsLoaded = false;
         }
         return icon;
@@ -99,8 +105,8 @@ public class MegaMekBorder extends EtchedBorder {
      * Use the given skin specification to create ImageIcons for each of the
      * files specified in the skin specification.
      *
-     * @param skin  The skin specification that specifies which icons should be
-     *                 used where
+     * @param skin The skin specification that specifies which icons should be
+     *             used where
      */
     public void loadIcons(SkinSpecification skin) {
         // Assume they're loaded until something fails
@@ -133,7 +139,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.leftEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 leftLine.add(new ImageIcon(imgURL.toURL()));
@@ -152,7 +158,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.rightEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 rightLine.add(new ImageIcon(imgURL.toURL()));
@@ -171,7 +177,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.topEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 topLine.add(new ImageIcon(imgURL.toURL()));
@@ -190,7 +196,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.bottomEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 bottomLine.add(new ImageIcon(imgURL.toURL()));
@@ -232,7 +238,7 @@ public class MegaMekBorder extends EtchedBorder {
                 insets = new Insets(5, 5, 5, 5);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error: loading icons for a MegaMekBorder!", ex);
+            logger.error("Error: loading icons for a MegaMekBorder!", ex);
             iconsLoaded = false;
         }
     }
@@ -272,8 +278,8 @@ public class MegaMekBorder extends EtchedBorder {
 
         // Draw Bottom Right Corner Icon
         if (brCorner.getImageLoadStatus() == MediaTracker.COMPLETE) {
-        paintCorner(c, g, width - brCorner.getIconWidth(),
-                height-brCorner.getIconHeight(), brCorner);
+            paintCorner(c, g, width - brCorner.getIconWidth(),
+                    height - brCorner.getIconHeight(), brCorner);
         }
 
         // Compute the width and height for the border edges
@@ -310,17 +316,17 @@ public class MegaMekBorder extends EtchedBorder {
     }
 
     /**
-     * Paints an edge for the border given a list of icons to paint.  We need
+     * Paints an edge for the border given a list of icons to paint. We need
      * to know whether each icon should be tiled, how many tiled icons there
      * are and how much space (width/height) needs to be filled by tiled icons.
      *
-     * @param c  The Component to pain on
-     * @param g  The Graphics object to paint with
-     * @param isLeftRight Are we drawing a left or right edge?
-     * @param icons The ImageIcons to draw
-     * @param shouldTile  Denotes whether each icon should be tiled or not
+     * @param c             The Component to pain on
+     * @param g             The Graphics object to paint with
+     * @param isLeftRight   Are we drawing a left or right edge?
+     * @param icons         The ImageIcons to draw
+     * @param shouldTile    Denotes whether each icon should be tiled or not
      * @param numTiledIcons The number of tiled icons we have to draw with
-     * @param staticSpace How much space needs to be filled with tiledi cons
+     * @param staticSpace   How much space needs to be filled with tiledi cons
      */
     private void paintEdge(Component c, Graphics g, ArrayList<ImageIcon> icons,
             int x, int y, int width, int height, boolean isLeftRight,
@@ -328,8 +334,7 @@ public class MegaMekBorder extends EtchedBorder {
         g = g.create(x, y, width, height);
 
         // Determine how much width/height a tiled icons will get to consume
-        int tiledWidth = isLeftRight ? width :
-                (int) ((width - staticSpace + 0.0) / numTiledIcons + 0.5);
+        int tiledWidth = isLeftRight ? width : (int) ((width - staticSpace + 0.0) / numTiledIcons + 0.5);
         int tiledHeight = isLeftRight ? (int) ((height - staticSpace + 0.0)
                 / numTiledIcons + 0.5) : height;
 
@@ -354,9 +359,9 @@ public class MegaMekBorder extends EtchedBorder {
                 // Draw static icons once
                 icons.get(i).paintIcon(c, g, x, y);
                 if (isLeftRight) {
-                    y+= icon.getIconHeight();
+                    y += icon.getIconHeight();
                 } else {
-                    x+= icon.getIconWidth();
+                    x += icon.getIconWidth();
                 }
             }
         }
@@ -366,15 +371,15 @@ public class MegaMekBorder extends EtchedBorder {
     /**
      * Paints a tiled icon.
      *
-     * @param c            The Component to paint onto
-     * @param g            The Graphics to paint with
-     * @param icon        The icon to paint
-     * @param sX        The starting x location to paint the icon at
-     * @param sY        The starting y location to paint the icon at
-     * @param width     The width of the space that needs to be filled with
-     *                     the tiled icon
-     * @param height    The height of the space that needs to be filled with
-     *                     the tiled icon
+     * @param c      The Component to paint onto
+     * @param g      The Graphics to paint with
+     * @param icon   The icon to paint
+     * @param sX     The starting x location to paint the icon at
+     * @param sY     The starting y location to paint the icon at
+     * @param width  The width of the space that needs to be filled with
+     *               the tiled icon
+     * @param height The height of the space that needs to be filled with
+     *               the tiled icon
      */
     private void paintTiledIcon(Component c, Graphics g, ImageIcon icon,
             int sX, int sY, int width, int height) {

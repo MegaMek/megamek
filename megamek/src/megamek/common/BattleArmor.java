@@ -17,8 +17,6 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.cost.BattleArmorCostCalculator;
@@ -32,6 +30,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * This class represents a squad or point of battle armor equipped infantry,
@@ -42,10 +41,12 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * This was originally coded using the legacy programming style of putting
  * constants first in tests
  * so the compiler catches the "= for ==" errors.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class BattleArmor extends Infantry {
+    private static final MMLogger logger = MMLogger.create(BattleArmor.class);
+
     private static final long serialVersionUID = 4594311535026187825L;
     /*
      * Infantry have no critical slot limitations. IS squads usually have 4 men,
@@ -1323,7 +1324,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has reactive armor
-     * 
+     *
      * @return
      */
     public boolean isReactive() {
@@ -1504,7 +1505,7 @@ public class BattleArmor extends Infantry {
     public boolean isCrippled() {
         double activeTroopPercent = (double) getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+            logger.debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
         } else {

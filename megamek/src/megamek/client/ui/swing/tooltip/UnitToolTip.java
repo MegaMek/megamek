@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -50,8 +48,10 @@ import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.SwarmAttack;
 import megamek.common.weapons.SwarmWeaponAttack;
+import megamek.logging.MMLogger;
 
 public final class UnitToolTip {
+    private static final MMLogger logger = MMLogger.create(UnitToolTip.class);
 
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
@@ -1487,7 +1487,7 @@ public final class UnitToolTip {
         if (entity.getSwarmAttackerId() != Entity.NONE) {
             final Entity swarmAttacker = game.getEntity(entity.getSwarmAttackerId());
             if (swarmAttacker == null) {
-                LogManager.getLogger().error(String.format(
+                logger.error(String.format(
                         "Entity %s is currently swarmed by an unknown attacker with id %s",
                         entity.getId(), entity.getSwarmAttackerId()));
             }

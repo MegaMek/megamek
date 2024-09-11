@@ -28,8 +28,6 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.event.ListSelectionEvent;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -47,6 +45,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * This display is used for when hidden units are taking pointblank shots.
@@ -55,6 +54,8 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
  *
  */
 public class PointblankShotDisplay extends FiringDisplay {
+    private static final MMLogger logger = MMLogger.create(PointblankShotDisplay.class);
+
     private static final long serialVersionUID = -58785096133753153L;
 
     /**
@@ -305,7 +306,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
         } else {
-            LogManager.getLogger().error("Tried to select non-existent entity " + en);
+            logger.error("Tried to select non-existent entity " + en);
         }
 
         clientgui.clearTemporarySprites();

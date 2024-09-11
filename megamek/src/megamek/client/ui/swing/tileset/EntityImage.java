@@ -37,8 +37,6 @@ import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
@@ -55,9 +53,11 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.ImageFileFactory;
+import megamek.logging.MMLogger;
 
 /** Handles the rotated and damaged and preview images for a unit. */
 public class EntityImage {
+    private static final MMLogger logger = MMLogger.create(EntityImage.class);
 
     // Control values for applying bigger and smaller smoke
     private static final int SMOKE_THREE = 70;
@@ -112,7 +112,7 @@ public class EntityImage {
                 grabImagePixels(overlay.getImage(), pOverlays[i]);
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to grab pixels for the camo overlay." + e.getMessage());
+            logger.error("Failed to grab pixels for the camo overlay." + e.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class EntityImage {
             DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
-            LogManager.getLogger().warn("Failed to find the damage decal images." + e.getMessage());
+            logger.warn("Failed to find the damage decal images." + e.getMessage());
         }
         dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
@@ -391,7 +391,7 @@ public class EntityImage {
                 grabImagePixels(getCamouflage().getImage(), pCamo);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo.", ex);
+            logger.error(ex, "Failed to grab pixels for an image to apply the camo.");
             return image;
         }
 
@@ -563,7 +563,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
+            logger.error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
 
@@ -604,7 +604,7 @@ public class EntityImage {
 
         // Get the smoke image for heavier damage; is transparent for lighter damage
         if (smoke == null) {
-            LogManager.getLogger().error("Smoke decal image is null.");
+            logger.error("Smoke decal image is null.");
             return image;
         }
 
@@ -648,7 +648,7 @@ public class EntityImage {
                     return null;
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Could not load decal image.", e);
+            logger.error(e, "Could not load decal image.");
         }
 
         return null;
@@ -685,7 +685,7 @@ public class EntityImage {
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0);
         } catch (Exception e) {
-            LogManager.getLogger().error("Could not load smoke/fire image.", e);
+            logger.error(e, "Could not load smoke/fire image.");
         }
         return null;
     }

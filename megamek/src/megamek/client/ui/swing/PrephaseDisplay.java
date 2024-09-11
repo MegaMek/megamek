@@ -31,8 +31,6 @@ import java.util.Map;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -45,6 +43,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.logging.MMLogger;
 
 /**
  * PrephaseDisplay for revealing hidden units. This occurs before Move and
@@ -52,6 +51,8 @@ import megamek.common.event.GameTurnChangeEvent;
  */
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
+    private static final MMLogger logger = MMLogger.create(PrephaseDisplay.class);
+
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
@@ -234,7 +235,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
                 // We were *supposed* to have found an on-board entity.
                 if (null == ce().getPosition()) {
-                    LogManager.getLogger().error("Could not find an on-board entity: " + en);
+                    logger.error("Could not find an on-board entity: " + en);
                     return;
                 }
             }
@@ -249,7 +250,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
         } else {
-            LogManager.getLogger().error("Tried to select non-existent entity: " + en);
+            logger.error("Tried to select non-existent entity: " + en);
         }
     }
 

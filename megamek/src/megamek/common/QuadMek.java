@@ -23,17 +23,19 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 public class QuadMek extends Mek {
+    private static final MMLogger logger = MMLogger.create(QuadMek.class);
+
     private static final long serialVersionUID = 7183093787457804717L;
 
-    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
+    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso",
+            "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
 
     private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "FRL", "FLL", "RRL", "RLL" };
 
@@ -93,7 +95,8 @@ public class QuadMek extends Mek {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        // A Mek using tracks has its movement reduced by 25% per leg or track destroyed.
+        // A Mek using tracks has its movement reduced by 25% per leg or track
+        // destroyed.
         if (movementMode == EntityMovementMode.TRACKED) {
             for (Mounted<?> m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
@@ -109,7 +112,8 @@ public class QuadMek extends Mek {
                     if (!isLocationBad(i)) {
                         if (legHasHipCrit(i)) {
                             hipHits++;
-                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                            if ((game == null) || !game.getOptions()
+                                    .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -131,7 +135,8 @@ public class QuadMek extends Mek {
             }
             if (mp > 0) {
                 if (hipHits > 0) {
-                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                    if ((game != null)
+                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         mp = mp - (2 * hipHits);
                     } else {
                         for (int i = 0; i < hipHits; i++) {
@@ -172,7 +177,8 @@ public class QuadMek extends Mek {
         if (((heat >= 9) || mpCalculationSetting.forceTSM) && hasTSM(false) && (legsDestroyed < 2)
                 && !movementMode.isTracked() && !movementMode.isWheeled()) {
             if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
-                // When forcing TSM but ignoring heat we must assume heat to be 9 to activate TSM, this adds -1 MP!
+                // When forcing TSM but ignoring heat we must assume heat to be 9 to activate
+                // TSM, this adds -1 MP!
                 mp += 1;
             } else {
                 mp += 2;
@@ -184,7 +190,7 @@ public class QuadMek extends Mek {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.getWeather().isClear()
                     && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
@@ -202,7 +208,7 @@ public class QuadMek extends Mek {
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         if (countBadLegs() <= 1
                 || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
-                && !convertingNow)) {
+                        && !convertingNow)) {
             return super.getRunMP(mpCalculationSetting);
         } else {
             return getWalkMP(mpCalculationSetting);
@@ -277,15 +283,15 @@ public class QuadMek extends Mek {
      * Sets the internal structure for the Mek.
      *
      * @param head
-     *            head
+     *             head
      * @param ct
-     *            center torso
+     *             center torso
      * @param t
-     *            right/left torso
+     *             right/left torso
      * @param arm
-     *            right/left arm
+     *             right/left arm
      * @param leg
-     *            right/left leg
+     *             right/left leg
      */
     @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
@@ -421,7 +427,8 @@ public class QuadMek extends Mek {
 
     @Override
     public String joinLocationAbbr(List<Integer> locations, int limit) {
-        // If we need to abbreviate something that occupies all leg locations, simply return "Legs"
+        // If we need to abbreviate something that occupies all leg locations, simply
+        // return "Legs"
         if ((locations.size() > limit) && (locations.size() == 4) && locations.stream().allMatch(this::locationIsLeg)) {
             return "Legs";
         } else {
@@ -431,7 +438,7 @@ public class QuadMek extends Mek {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
@@ -455,7 +462,7 @@ public class QuadMek extends Mek {
                         pw.println(roll);
                     }
                 } catch (Throwable t) {
-                    LogManager.getLogger().error("", t);
+                    logger.error("", t);
                 }
 
                 if (side == ToHitData.SIDE_FRONT) {
@@ -463,7 +470,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, false));
@@ -499,7 +506,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
@@ -535,7 +542,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_LT, cover, false));
@@ -571,7 +578,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_RT, cover, false));
@@ -619,7 +626,7 @@ public class QuadMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -717,7 +724,7 @@ public class QuadMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             boolean left = (roll <= 3);
@@ -760,7 +767,7 @@ public class QuadMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Swarm attack locations.
             switch (roll) {
@@ -808,8 +815,8 @@ public class QuadMek extends Mek {
         // treat front legs like legs not arms.
 
         // Handle upper cover specially, as treating it as a bitmask will lead
-        //  to every location being covered
-        if (cover  == LosEffects.COVER_UPPER) {
+        // to every location being covered
+        if (cover == LosEffects.COVER_UPPER) {
             if ((location == LOC_LLEG) || (location == LOC_RLEG)
                     || (location == LOC_LARM) || (location == LOC_RARM)) {
                 return false;
@@ -823,47 +830,47 @@ public class QuadMek extends Mek {
         if (side == ToHitData.SIDE_FRONT) {
             if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
                     ((location == Mek.LOC_LARM) ||
-                     (location == Mek.LOC_LLEG))) {
+                            (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
                     ((location == Mek.LOC_RARM) ||
-                     (location == Mek.LOC_RLEG))) {
+                            (location == Mek.LOC_RLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0) &&
                     ((location == Mek.LOC_LARM) ||
-                     (location == Mek.LOC_LT) ||
-                     (location == Mek.LOC_LLEG))) {
+                            (location == Mek.LOC_LT) ||
+                            (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0) &&
                     ((location == Mek.LOC_RARM) ||
-                     (location == Mek.LOC_RT) ||
-                     (location == Mek.LOC_RLEG))) {
+                            (location == Mek.LOC_RT) ||
+                            (location == Mek.LOC_RLEG))) {
                 return true;
             }
         } else {
             if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
                     ((location == Mek.LOC_LARM) ||
-                     (location == Mek.LOC_LLEG))) {
+                            (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
                     ((location == Mek.LOC_RARM) ||
-                     (location == Mek.LOC_RLEG))) {
+                            (location == Mek.LOC_RLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0) &&
                     ((location == Mek.LOC_LARM) ||
-                     (location == Mek.LOC_LT) ||
-                     (location == Mek.LOC_LLEG))) {
+                            (location == Mek.LOC_LT) ||
+                            (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0) &&
                     ((location == Mek.LOC_RARM) ||
-                     (location == Mek.LOC_RT) ||
-                     (location == Mek.LOC_RLEG))) {
+                            (location == Mek.LOC_RT) ||
+                            (location == Mek.LOC_RLEG))) {
                 return true;
             }
         }
@@ -914,8 +921,8 @@ public class QuadMek extends Mek {
         // check the locations
         int[] locations = { Mek.LOC_RARM, Mek.LOC_LARM, Mek.LOC_LLEG, Mek.LOC_RLEG };
         int badLocs = 0;
-        for ( int loc = locations.length - 1; loc >= 0; loc--) {
-            if ( isLocationBad(locations[loc]) || isLocationDoomed(locations[loc])) {
+        for (int loc = locations.length - 1; loc >= 0; loc--) {
+            if (isLocationBad(locations[loc]) || isLocationDoomed(locations[loc])) {
                 badLocs++;
             }
         }
@@ -925,6 +932,7 @@ public class QuadMek extends Mek {
 
     /**
      * Is the passed in location an arm?
+     *
      * @param loc
      * @return
      */

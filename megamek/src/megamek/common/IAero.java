@@ -22,10 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * Methods shared by Aero and LandAirMek
@@ -34,6 +33,8 @@ import megamek.common.options.OptionsConstants;
  *
  */
 public interface IAero {
+
+    static final MMLogger logger = MMLogger.create(IAero.class);
 
     int getCurrentThrust();
 
@@ -242,7 +243,7 @@ public interface IAero {
                             newmount.setNWeapons(groups.get(key));
                             getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
                         } catch (LocationFullException ex) {
-                            LogManager.getLogger().error("Unable to compile weapon groups", ex);
+                            logger.error("Unable to compile weapon groups", ex);
                             return;
                         }
                     } else if (!"0".equals(name)) {

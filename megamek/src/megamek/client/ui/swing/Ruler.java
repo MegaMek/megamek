@@ -33,8 +33,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -50,11 +48,14 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.logging.MMLogger;
 
 /**
  * @author Ken Nguyen (kenn)
  */
 public class Ruler extends JDialog implements BoardViewListener, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(Ruler.class);
+
     private static final long serialVersionUID = -4820402626782115601L;
     public static Color color1 = Color.cyan;
     public static Color color2 = Color.magenta;
@@ -88,10 +89,8 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private JLabel heightLabel2;
     private JTextField height2 = new JTextField();
 
-    private JCheckBox cboIsMek1 =
-        new JCheckBox(Messages.getString("Ruler.isMek"));
-    private JCheckBox cboIsMek2 =
-        new JCheckBox(Messages.getString("Ruler.isMek"));
+    private JCheckBox cboIsMek1 = new JCheckBox(Messages.getString("Ruler.isMek"));
+    private JCheckBox cboIsMek2 = new JCheckBox(Messages.getString("Ruler.isMek"));
 
     public Ruler(JFrame f, Client c, BoardView b, Game g) {
         super(f, Messages.getString("Ruler.title"), false);
@@ -112,7 +111,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             jbInit();
             pack();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
     }
 
@@ -309,7 +308,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         if (start == null) {
             start = c;
             if (entFound) {
-                height1.setText(absHeight+"");
+                height1.setText(absHeight + "");
                 cboIsMek1.setSelected(isMek);
             }
         } else if (start.equals(c)) {
@@ -319,7 +318,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             end = c;
             distance = start.distance(end);
             if (entFound) {
-                height2.setText(absHeight+"");
+                height2.setText(absHeight + "");
                 cboIsMek2.setSelected(isMek);
             }
             setText();
@@ -350,11 +349,13 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         if (flip) {
             thd = LosEffects.calculateLos(game,
                     buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
-                            cboIsMek2.isSelected())).losModifiers(game);
+                            cboIsMek2.isSelected()))
+                    .losModifiers(game);
         } else {
             thd = LosEffects.calculateLos(game,
                     buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
-                            cboIsMek1.isSelected())).losModifiers(game);
+                            cboIsMek1.isSelected()))
+                    .losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = ";
@@ -364,11 +365,13 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         if (flip) {
             thd = LosEffects.calculateLos(game,
                     buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
-                            cboIsMek1.isSelected())).losModifiers(game);
+                            cboIsMek1.isSelected()))
+                    .losModifiers(game);
         } else {
             thd = LosEffects.calculateLos(game,
                     buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
-                            cboIsMek2.isSelected())).losModifiers(game);
+                            cboIsMek2.isSelected()))
+                    .losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = ";
@@ -420,27 +423,27 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
 
     @Override
     public void hexCursor(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void boardHexHighlighted(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void hexSelected(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void firstLOSHex(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void secondLOSHex(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     void butFlip_actionPerformed() {
@@ -487,12 +490,12 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
 
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void unitSelected(BoardViewEvent b) {
-        //ignored
+        // ignored
     }
 
     private void adaptToGUIScale() {

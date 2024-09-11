@@ -33,8 +33,6 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -62,8 +60,11 @@ import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 public class MovementDisplay extends ActionPhaseDisplay {
+    private static final MMLogger logger = MMLogger.create(MovementDisplay.class);
+
     private static final long serialVersionUID = -7246715124042905688L;
 
     // Defines for the different flags
@@ -491,7 +492,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void performToggleConversionMode() {
         final Entity ce = ce();
         if (ce == null) {
-            LogManager.getLogger().error("Cannot execute a conversion mode command for a null entity.");
+            logger.error("Cannot execute a conversion mode command for a null entity.");
             return;
         }
         EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
@@ -643,7 +644,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // hmm, sometimes this gets called when there's no ready entities?
         if (ce == null) {
-            LogManager.getLogger().error("Tried to select non-existant entity with id " + en);
+            logger.error("Tried to select non-existant entity with id " + en);
             return;
         }
 
@@ -743,7 +744,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
         final Entity ce = ce();
         if (ce == null) {
-            LogManager.getLogger().error("Cannot update buttons based on a null entity");
+            logger.error("Cannot update buttons based on a null entity");
             return;
         }
         boolean isMEK = (ce instanceof Mek);
@@ -1340,7 +1341,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.removeLastStep();
         final Entity entity = ce();
         if (entity == null) {
-            LogManager.getLogger().warn("Cannot process removeLastStep for a null entity.");
+            logger.warn("Cannot process removeLastStep for a null entity.");
             return;
         } else if (cmd.length() == 0) {
             clear();
@@ -3026,7 +3027,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Handle error condition.
         if (mountableUnits.isEmpty()) {
-            LogManager.getLogger().error("Called getMountedUnits without any mountable units.");
+            logger.error("Called getMountedUnits without any mountable units.");
         } else if (mountableUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
@@ -3093,7 +3094,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Handle error condition.
         if (choices.isEmpty()) {
-            LogManager.getLogger().error("getLoadedUnit called without loadable units.");
+            logger.error("getLoadedUnit called without loadable units.");
             return null;
         }
 
@@ -3210,7 +3211,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Handle error condition.
         if (choices.isEmpty()) {
-            LogManager.getLogger().debug("Method called without towable units.");
+            logger.debug("Method called without towable units.");
             return null;
         }
 
@@ -3347,7 +3348,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Handle error condition.
         if (ce.getAllTowedUnits().isEmpty()) {
-            LogManager.getLogger().debug("Method called without any towed units.");
+            logger.debug("Method called without any towed units.");
             return null;
         } else if (ce.getAllTowedUnits().size() > 1) {
             // If we have multiple choices, display a selection dialog.
@@ -3387,7 +3388,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity ce = ce();
         Entity choice = null;
         if (unloadableUnits.isEmpty()) {
-            LogManager.getLogger().error("No loaded units");
+            logger.error("No loaded units");
         } else if (unloadableUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(
@@ -3691,7 +3692,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if ((launchableFighters.size() <= 0)
                 && (launchableSmallCraft.size() <= 0)
                 && (launchableDropships.size() <= 0)) {
-            LogManager.getLogger().error("MovementDisplay#getLaunchedUnits() called without loaded units.");
+            logger.error("MovementDisplay#getLaunchedUnits() called without loaded units.");
             return choices;
         }
 
@@ -3806,7 +3807,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if ((launchableFighters.size() <= 0)
                 && (launchableSmallCraft.size() <= 0)
                 && (launchableDropships.size() <= 0)) {
-            LogManager.getLogger().error("Method called without loaded units.");
+            logger.error("Method called without loaded units.");
         } else {
             // cycle through the docking collars
             int i = 0;
@@ -3883,7 +3884,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void loadPassengerAtLaunch(SmallCraft craft) {
         final Entity currentEntity = ce();
         if (currentEntity == null) {
-            LogManager.getLogger().error("Cannot load passenger at launch for a null current entity.");
+            logger.error("Cannot load passenger at launch for a null current entity.");
             return;
         }
 
@@ -3931,14 +3932,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private TreeMap<Integer, Vector<Integer>> getDroppedUnits() {
         Entity ce = ce();
         if (ce == null) {
-            LogManager.getLogger().error("Cannot get dropped units for a null current entity");
+            logger.error("Cannot get dropped units for a null current entity");
             return new TreeMap<>();
         }
 
         Vector<Entity> droppableUnits = ce.getDroppableUnits();
 
         if (droppableUnits.isEmpty()) {
-            LogManager.getLogger().error("Cannot get dropped units when no units are droppable.");
+            logger.error("Cannot get dropped units when no units are droppable.");
             return new TreeMap<>();
         }
 
@@ -4568,7 +4569,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             computeMovementEnvelope(entity);
             updateMove();
         } catch (Exception e) {
-            LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
+            logger.error(e, "An error occured trying to compute the move envelope for an Aero.");
         } finally {
             // Reset the bird's velocity back to original velocity no-matter-what. It will
             // be updated when

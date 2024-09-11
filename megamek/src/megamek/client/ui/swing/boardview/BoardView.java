@@ -33,15 +33,12 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
-
-import org.apache.logging.log4j.LogManager;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
@@ -89,12 +86,14 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
 public final class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
         IPreferenceChangeListener, KeyBindReceiver {
+    private static final MMLogger logger = MMLogger.create(BoardView.class);
 
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
@@ -726,7 +725,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 try {
                     SwingUtilities.invokeLater(redrawWorker);
                 } catch (Exception ie) {
-                    LogManager.getLogger().error("Ignoring error: " + ie.getMessage());
+                    logger.error("Ignoring error: " + ie.getMessage());
                 }
             }
         };
@@ -738,7 +737,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         try {
             SwingUtilities.invokeLater(redrawWorker);
         } catch (Exception ie) {
-            LogManager.getLogger().error("Ignoring error: " + ie.getMessage());
+            logger.error("Ignoring error: " + ie.getMessage());
         }
     }
 
@@ -830,7 +829,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             g.setColor(theme.getControlTextColor());
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
             if (!tileManager.isStarted()) {
-                LogManager.getLogger().info("Loading images for board");
+                logger.info("Loading images for board");
                 tileManager.loadNeededImages(game);
             }
             // wait 1 second, then repaint
@@ -869,7 +868,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                                     rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(),
                                     rasterBounds.getHeight(),
                                     xRem, yRem, w - xRem, h - yRem);
-                            LogManager.getLogger().error(errorData);
+                            logger.error(errorData);
                         }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
@@ -2085,7 +2084,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Exception, probably can't load file.", e);
+            logger.error(e, "Exception, probably can't load file.");
             drawCenteredString("Loading Error", 0, (int) (50 * scale), font_note, g);
             return;
         }
@@ -2381,19 +2380,19 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     4);
 
             if ((p1.y + fudge) < 0) {
-                LogManager.getLogger().info("Negative Y value (Fudge)!: " + (p1.y + fudge));
+                logger.info("Negative Y value (Fudge)!: " + (p1.y + fudge));
             }
 
             if ((p2.y + fudge) < 0) {
-                LogManager.getLogger().info("Negative Y value (Fudge)!: " + (p2.y + fudge));
+                logger.info("Negative Y value (Fudge)!: " + (p2.y + fudge));
             }
 
             if ((p2.y + fudge + scaledDelta) < 0) {
-                LogManager.getLogger().info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
+                logger.info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
             }
 
             if ((p1.y + fudge + scaledDelta) < 0) {
-                LogManager.getLogger().info("Negative Y value!: " + (p1.y + fudge + scaledDelta));
+                logger.info("Negative Y value!: " + (p1.y + fudge + scaledDelta));
             }
             g.setColor(color);
             g.drawPolygon(p);
@@ -4324,7 +4323,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 try {
                     ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             }
 
@@ -4674,7 +4673,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (!bvSkinSpec.backgrounds.isEmpty()) {
                 file = new MegaMekFile(Configuration.widgetsDir(), bvSkinSpec.backgrounds.get(0)).getFile();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(file.getAbsolutePath());
                     bvBgShouldTile = bvSkinSpec.tileBackground;
@@ -4683,13 +4682,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (bvSkinSpec.backgrounds.size() > 1) {
                 file = new MegaMekFile(Configuration.widgetsDir(), bvSkinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     scrollPaneBgImg = ImageUtil.loadImageFromFile(file.getAbsolutePath());
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error loading BoardView background images!", ex);
+            logger.error(ex, "Error loading BoardView background images!");
         }
 
         // Place the board viewer in a set of scrollbars.
@@ -4909,7 +4908,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 try {
                     tracker.waitForID(0);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error("", e);
+                    logger.error(e, "");
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -4929,7 +4928,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             try {
                 tracker.waitForID(1);
             } catch (InterruptedException e) {
-                LogManager.getLogger().error("", e);
+                logger.error(e, "");
             }
             tracker.removeImage(scaled);
             // Cache the image if the flag is set

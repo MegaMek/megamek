@@ -21,8 +21,6 @@ import java.util.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -50,6 +48,7 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is
@@ -57,6 +56,8 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
  * with something else
  */
 public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSelectionListener {
+    private static final MMLogger logger = MMLogger.create(TargetingPhaseDisplay.class);
+
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
@@ -357,7 +358,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
                 // We were *supposed* to have found an on-board entity.
                 if (null == ce().getPosition()) {
-                    LogManager.getLogger().error("Could not find an on-board entity: " + en);
+                    logger.error("Could not find an on-board entity: " + en);
                     return;
                 }
             }
@@ -384,7 +385,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 clientgui.showFiringSolutions(ce());
             }
         } else {
-            LogManager.getLogger().error("Tried to select non-existent entity: " + en);
+            logger.error("Tried to select non-existent entity: " + en);
         }
     }
 

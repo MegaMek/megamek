@@ -24,12 +24,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import com.thoughtworks.xstream.XStream;
 
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /**
  * Class to encapsulate a map that maps old image paths to the subsequent
@@ -48,6 +47,8 @@ import megamek.common.annotations.Nullable;
  * @author arlith
  */
 public class ImageAtlasMap {
+    private static final MMLogger logger = MMLogger.create(ImageAtlasMap.class);
+
     Map<String, String> imgFileToAtlasMap = new HashMap<>();
 
     public ImageAtlasMap() {
@@ -109,7 +110,7 @@ public class ImageAtlasMap {
                 Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             xstream.toXML(imgFileToAtlasMap, writer);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
             return false;
         }
         return true;
@@ -125,7 +126,7 @@ public class ImageAtlasMap {
             XStream xstream = new XStream();
             return new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
             return null;
         }
     }

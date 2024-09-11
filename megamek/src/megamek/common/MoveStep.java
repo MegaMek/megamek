@@ -26,23 +26,24 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.logging.MMLogger;
 
 /**
  * A single step in the entity's movement. Since the path planner uses shallow
  * copies of MovePaths, multiple paths may share the same MoveStep, so this
  * class needs to be agnostic of what path it belongs to.
- * 
+ *
  * @since Aug 28, 2003
  */
 public class MoveStep implements Serializable {
+    private static final MMLogger logger = MMLogger.create(MoveStep.class);
+
     private static final long serialVersionUID = -6075640793056182285L;
     /**
      * When supplying additional int data, use this to key the index of the cargo
@@ -3329,11 +3330,11 @@ public class MoveStep implements Serializable {
 
         if (null == dest) {
             var ex = new IllegalStateException("Step has no position");
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw ex;
         } else if (src.distance(dest) > 1) {
             var ex = new IllegalArgumentException("Coordinates " + src + " and " + dest + " are not adjacent.");
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw ex;
         }
 

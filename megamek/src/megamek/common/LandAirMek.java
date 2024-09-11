@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -29,8 +27,11 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.logging.MMLogger;
 
 public class LandAirMek extends BipedMek implements IAero, IBomber {
+    private static final MMLogger logger = MMLogger.create(LandAirMek.class);
+
     private static final long serialVersionUID = -8118673802295814548L;
 
     public static final int CONV_MODE_MEK = 0;
@@ -210,7 +211,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
-            LogManager.getLogger()
+            logger
                     .error("Attempted to get LAM Type string for unknown type " + lamType + " returning standard.");
             return LAM_STRING[LAM_STANDARD];
         }
@@ -2036,7 +2037,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     protected void addBomb(Mounted<?> mounted, int loc) throws LocationFullException {
         if ((loc < 0) || (loc >= crits.length)) {
-            LogManager.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
+            logger.error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
             return;
         }
 

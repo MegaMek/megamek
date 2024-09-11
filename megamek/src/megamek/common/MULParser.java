@@ -26,7 +26,6 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,6 +40,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
@@ -50,6 +50,8 @@ import megamek.utilities.xml.MMXMLUtility;
  * @author arlith
  */
 public class MULParser {
+    private static final MMLogger logger = MMLogger.create(MULParser.class);
+
     public static final String VERSION = "version";
 
     /**
@@ -413,13 +415,13 @@ public class MULParser {
 
         // Finally, output the warning if there is any
         if (hasWarningMessage()) {
-            LogManager.getLogger().warn(getWarningMessage());
+            logger.warn(getWarningMessage());
         }
     }
 
     /**
      * Parse a Unit tag. Unit tags will contain a list of Entity tags.
-     * 
+     *
      * @param unitNode the node containing the unit tag
      */
     private void parseRecord(final Element unitNode, final @Nullable GameOptions options) {
@@ -462,7 +464,7 @@ public class MULParser {
 
     /**
      * Parse a Unit tag. Unit tags will contain a list of Entity tags.
-     * 
+     *
      * @param unitNode the node containing the unit tag
      * @param options  the game options to parse using
      * @param list     the list to add found entities to
@@ -494,7 +496,7 @@ public class MULParser {
 
     /**
      * Parse a kills tag.
-     * 
+     *
      * @param killNode
      */
     private void parseKills(Element killNode) {
@@ -676,7 +678,7 @@ public class MULParser {
                 try {
                     newEntity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error("", ex);
                     warning.append("Unable to load mek: ")
                             .append(ms.getSourceFile()).append(": ")
                             .append(ms.getEntryName()).append(": ")
@@ -1452,7 +1454,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    LogManager.getLogger().error("Error in loading MUL, issues with extraData elements!");
+                    logger.error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         }
@@ -2018,7 +2020,7 @@ public class MULParser {
             entity.setSecondaryFacing(turDir);
             ((Tank) entity).lockTurret(((Tank) entity).getLocTurret());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             warning.append("Invalid turret lock direction value in movement tag.\n");
         }
     }
@@ -2036,7 +2038,7 @@ public class MULParser {
             ((Tank) entity).setDualTurretOffset(turDir);
             ((Tank) entity).lockTurret(((Tank) entity).getLocTurret2());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             warning.append("Invalid turret2 lock direction value in movement tag.\n");
         }
     }
@@ -2179,7 +2181,7 @@ public class MULParser {
 
     /**
      * Parse a dropCrit tag for the given <code>Entity</code>.
-     * 
+     *
      * @param dropCritTag
      * @param entity
      */
@@ -2370,7 +2372,7 @@ public class MULParser {
                     String link = currEle.getAttribute(ATTR_LINK);
                     int pos = entity.getFreeC3iUUID();
                     if (!link.isBlank() && (pos != -1)) {
-                        LogManager.getLogger().info("Loading C3i UUID " + pos + ": " + link);
+                        logger.info("Loading C3i UUID " + pos + ": " + link);
                         entity.setC3iNextUUIDAsString(pos, link);
                     }
                 }
@@ -2401,7 +2403,7 @@ public class MULParser {
                     String link = currEle.getAttribute(ATTR_LINK);
                     int pos = entity.getFreeNC3UUID();
                     if (!link.isBlank() && (pos != -1)) {
-                        LogManager.getLogger().info("Loading NC3 UUID " + pos + ": " + link);
+                        logger.info("Loading NC3 UUID " + pos + ": " + link);
                         entity.setNC3NextUUIDAsString(pos, link);
                     }
                 }
@@ -2636,7 +2638,7 @@ public class MULParser {
             mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());
             mountedManip.setBaMountLoc(baMountLoc);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -2699,7 +2701,7 @@ public class MULParser {
             newWeap.setLinked(apMount);
             newWeap.setAPMMounted(true);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -2708,7 +2710,7 @@ public class MULParser {
      * critical index
      * of a weapons bay in the given location and attempts to add the ammo type
      * there.
-     * 
+     *
      * @param entity   The entity we're working on loading
      * @param loc      The location index on the entity
      * @param type     The ammo type string
@@ -2763,7 +2765,7 @@ public class MULParser {
      * called after <code>parse</code>. This is for entities that we want to be
      * loaded
      * into the chat lounge, so functional
-     * 
+     *
      * @return
      */
     public Vector<Entity> getEntities() {
@@ -2781,7 +2783,7 @@ public class MULParser {
      * Returns a list of all of the salvaged Entity's parsed from the input, should
      * be
      * called after <code>parse</code>.
-     * 
+     *
      * @return
      */
     public Vector<Entity> getSurvivors() {
@@ -2791,7 +2793,7 @@ public class MULParser {
     /**
      * Returns a list of all of the allied Entity's parsed from the input, should be
      * called after <code>parse</code>.
-     * 
+     *
      * @return
      */
     public Vector<Entity> getAllies() {
@@ -2802,7 +2804,7 @@ public class MULParser {
      * Returns a list of all of the salvaged Entity's parsed from the input, should
      * be
      * called after <code>parse</code>.
-     * 
+     *
      * @return
      */
     public Vector<Entity> getSalvage() {
@@ -2813,7 +2815,7 @@ public class MULParser {
      * Returns a list of all of the enemy retreated entities parsed from the input,
      * should be
      * called after <code>parse</code>.
-     * 
+     *
      * @return
      */
     public Vector<Entity> getRetreated() {
@@ -2824,7 +2826,7 @@ public class MULParser {
      * Returns a list of all of the devastated Entity's parsed from the input,
      * should be
      * called after <code>parse</code>.
-     * 
+     *
      * @return
      */
     public Vector<Entity> getDevastated() {

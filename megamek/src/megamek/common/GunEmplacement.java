@@ -17,7 +17,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
  * hex is reduced.
  */
 public class GunEmplacement extends Tank {
+    private static final MMLogger logger = MMLogger.create(GunEmplacement.class);
 
     private static final long serialVersionUID = 8561738092216598248L;
 
@@ -269,10 +270,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
+            logger.debug(getDisplayName() + " CRIPPLED: Crew dead.");
             return true;
         } else if (isMilitary() && !hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            logger.debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
             return true;
         } else {
             return false;

@@ -30,21 +30,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
+import megamek.logging.MMLogger;
 
 /**
  * MekTileset is a misleading name, as this matches any unit, not just Meks
- * with the appropriate image. It requires mekset.txt (in the unit images directory), the
+ * with the appropriate image. It requires mekset.txt (in the unit images
+ * directory), the
  * format of which is explained in that file.
  *
  * @author Ben
  */
 public class MekTileset {
+    private static final MMLogger logger = MMLogger.create(MekTileset.class);
 
     public static final String CHASSIS_KEY = "chassis";
     public static final String MODEL_KEY = "exact";
@@ -185,7 +186,7 @@ public class MekTileset {
         MekEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
-            LogManager.getLogger().warn("Entry is null, please make sure that there is a default entry for "
+            logger.warn("Entry is null, please make sure that there is a default entry for "
                     + entity.getShortNameRaw() + " in both mekset.txt and wreckset.txt. Defaulting to "
                     + LIGHT_STRING);
             entry = default_light;
@@ -201,7 +202,7 @@ public class MekTileset {
      * Returns the MekEntry corresponding to the entity
      */
     public MekEntry entryFor(Entity entity, int secondaryPos) {
-        //Some entities (QuadVees, LAMs) use different sprites depending on mode.
+        // Some entities (QuadVees, LAMs) use different sprites depending on mode.
         String mode = entity.getTilesetModeString().toUpperCase();
 
         String addendum = (secondaryPos == -1) ? "" : "_" + secondaryPos;
@@ -231,7 +232,8 @@ public class MekTileset {
             return default_tripod;
         } else if (entity instanceof QuadVee) {
             return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
-                    ? default_quadvee_vehicle : default_quadvee;
+                    ? default_quadvee_vehicle
+                    : default_quadvee;
         } else if (entity instanceof LandAirMek) {
             switch (entity.getConversionMode()) {
                 case LandAirMek.CONV_MODE_FIGHTER:
@@ -364,7 +366,7 @@ public class MekTileset {
     }
 
     public void loadFromFile(String filename) throws IOException {
-        LogManager.getLogger().info("Loading unit icons from {}", filename);
+        logger.info("Loading unit icons from {}", filename);
         try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()))) {
             StandardTextfileStreamTokenizer tokenizer = new StandardTextfileStreamTokenizer(r);
             while (true) {
@@ -376,7 +378,7 @@ public class MekTileset {
                         try {
                             loadFromFile(tokens.get(1));
                         } catch (IOException e) {
-                            LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
+                            logger.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.get(0).equals(CHASSIS_KEY)) {
                         chassis.put(tokens.get(1).toUpperCase(), new MekEntry(tokens.get(2)));
@@ -384,7 +386,7 @@ public class MekTileset {
                         exact.put(tokens.get(1).toUpperCase(), new MekEntry(tokens.get(2)));
                     }
                 } else {
-                    LogManager.getLogger().warn("Malformed line in {}: {}", filename, tokens.toString());
+                    logger.warn("Malformed line in {}: {}", filename, tokens.toString());
                 }
             }
         }
@@ -470,8 +472,7 @@ public class MekTileset {
             File fin = new MegaMekFile(dir, imageFile).getFile();
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
-                LogManager.getLogger().warn("Received null image from ImageUtil.loadImageFromFile! File: "
-                        + fin);
+                logger.warn("Received null image from ImageUtil.loadImageFromFile! File: %s", fin);
             }
         }
     }

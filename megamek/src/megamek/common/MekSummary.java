@@ -26,8 +26,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Base64Image;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.ASArcSummary;
@@ -42,12 +40,14 @@ import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionInfo;
 import megamek.common.options.Quirks;
+import megamek.logging.MMLogger;
 
 /**
  * The MekSummary of a unit offers compiled information about the unit without
  * having to load the file.
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
+    private static final MMLogger logger = MMLogger.create(MekSummary.class);
 
     private String name;
     private String chassis;
@@ -1344,7 +1344,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         try {
             return new MekFileParser(sourceFile, entryName).getEntity();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return null;
         }
     }
@@ -1364,10 +1364,11 @@ public class MekSummary implements Serializable, ASCardDisplayable {
             if (ms != null) {
                 return new MekFileParser(ms.sourceFile, ms.entryName).getEntity();
             } else {
-                LogManager.getLogger().error("MekSummary entry not found for {}", fullName);
+                String message = String.format("MekSummary entry not found for %s", fullName);
+                logger.error(message);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
         return null;
     }

@@ -30,16 +30,17 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.TimerSingleton;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener {
+    private static final MMLogger logger = MMLogger.create(SkinEditorMainGUI.class);
+
     private static final long serialVersionUID = 5625499617779156289L;
 
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
@@ -53,7 +54,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener {
     // A menu bar to contain all actions.
     private JDialog skinSpecEditorD;
     private SkinSpecEditor skinSpecEditor;
-
 
     public SkinEditorMainGUI() {
         super(new BorderLayout());
@@ -185,12 +185,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener {
         try {
             frame.dispose();
         } catch (Throwable t) {
-            LogManager.getLogger().error("", t);
+            logger.error(t, "");
         }
 
         TimerSingleton.getInstance().killTimer();
     }
-
 
     /**
      * Sets the visibility of the entity display window

@@ -19,16 +19,6 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.ProtoMekCostCalculator;
-import megamek.common.enums.AimingMode;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +27,22 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.ProtoMekCostCalculator;
+import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.ArmorType;
+import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
+
 /**
  * ProtoMeks. Level 2 Clan equipment.
  */
 public class ProtoMek extends Entity {
+    private static final MMLogger logger = MMLogger.create(ProtoMek.class);
+
     private static final long serialVersionUID = -1376410042751538158L;
 
     public static final int NUM_PROTOMEK_LOCATIONS = 7;
@@ -742,7 +744,7 @@ public class ProtoMek extends Entity {
                 pw.println(roll);
             }
         } catch (Throwable t) {
-            LogManager.getLogger().error("", t);
+            logger.error("", t);
         }
 
         switch (roll) {
@@ -1411,7 +1413,7 @@ public class ProtoMek extends Entity {
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
+                logger.debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             }
             return true;
         }
@@ -1423,7 +1425,7 @@ public class ProtoMek extends Entity {
         }
 
         if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            logger.debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
         }
         return true;
     }

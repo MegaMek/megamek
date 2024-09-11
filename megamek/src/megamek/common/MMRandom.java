@@ -13,19 +13,21 @@
  */
 package megamek.common;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.util.Random;
+
+import megamek.logging.MMLogger;
 
 /**
  * Used by Compute to generate random numbers, usually dice rolls. The base
  * class is abstract, having a number of concrete subclasses that it will give
  * using the generate() method.
- * 
+ *
  * @author Ben
  * @since April 27, 2003, 11:29 PM
  */
 public abstract class MMRandom {
+    private static final MMLogger logger = MMLogger.create(MMRandom.class);
+
     public static final int R_DEFAULT = 1;
 
     public static final int R_SUN = 0;
@@ -37,7 +39,7 @@ public abstract class MMRandom {
      * errors.
      */
     static MMRandom generate(int type) {
-        LogManager.getLogger().info("Generating RNG type #" + type);
+        logger.info("Generating RNG type #" + type);
         try {
             switch (type) {
                 case R_CRYPTO:
@@ -49,17 +51,17 @@ public abstract class MMRandom {
                     return new SunRandom();
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to create desired RNG " + type + ", using SunRandom instead.", ex);
+            logger.error("Failed to create desired RNG " + type + ", using SunRandom instead.", ex);
             return new SunRandom();
         }
     }
 
     /**
      * Simulates six-sided die rolls.
-     * 
+     *
      * @param nDice - the <code>int</code> number of dice to roll. If this
-     *            value is less than or equal to zero, an
-     *            <code>IllegalArgumentException</code> will be thrown.
+     *              value is less than or equal to zero, an
+     *              <code>IllegalArgumentException</code> will be thrown.
      * @return a <code>Roll</code> object containing the roll results.
      * @throws IllegalArgumentException will be thrown if the input is &lt;= 0.
      */
@@ -90,7 +92,7 @@ public abstract class MMRandom {
         }
         return roll;
     }
-    
+
     /**
      * A single die
      */
@@ -101,15 +103,16 @@ public abstract class MMRandom {
     /**
      * Returns a random <code>int</code> in the range from 0 to one less than
      * the supplied max value.
-     * 
+     *
      * @param maxValue - the smallest <code>int</code> value which will exceed
-     *            any random number returned by this method.
+     *                 any random number returned by this method.
      * @return a random <code>int</code> from the value set [0, maxValue).
      */
     public abstract int randomInt(int maxValue);
 
     /**
      * Returns a random <code>float</code> in the range of 0 to 1
+     *
      * @return a random <code>float</code> from the value set [0, 1]
      */
     public abstract float randomFloat();

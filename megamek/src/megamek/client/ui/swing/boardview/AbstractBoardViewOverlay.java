@@ -13,6 +13,19 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -28,17 +41,15 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import megamek.logging.MMLogger;
 
 /**
- * This is a framework for boardview overlays that can show a list of data, conditions etc.
+ * This is a framework for boardview overlays that can show a list of data,
+ * conditions etc.
  */
 public abstract class AbstractBoardViewOverlay implements IDisplayable, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(AbstractBoardViewOverlay.class);
+
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
     private static final float FADE_SPEED = 0.2f;
@@ -71,7 +82,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     public AbstractBoardViewOverlay(BoardView boardView, Font font) {
         this.font = font;
-        visible =  getVisibilityGUIPreference();
+        visible = getVisibilityGUIPreference();
         this.boardView = Objects.requireNonNull(boardView);
         clientGui = boardView.clientgui;
         currentGame = Objects.requireNonNull(boardView.game);
@@ -88,7 +99,10 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         }
     }
 
-    /** Override to return the localized header text, possibly including the current keyboard shortcut to toggle it. */
+    /**
+     * Override to return the localized header text, possibly including the current
+     * keyboard shortcut to toggle it.
+     */
     protected abstract String getHeaderText();
 
     @Override
@@ -120,7 +134,8 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
                 // draw a semi-transparent background rectangle
                 Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
-                intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), GUIP.getPlanetaryConditionsBackgroundTransparency()));
+                intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(),
+                        GUIP.getPlanetaryConditionsBackgroundTransparency()));
                 intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_Y);
 
                 // The coordinates to write the texts to
@@ -162,10 +177,16 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         return new Rectangle(width, height);
     }
 
-    /** Override to return a List of all text lines to be shown. Use {@link #addHeader(List)}. */
+    /**
+     * Override to return a List of all text lines to be shown. Use
+     * {@link #addHeader(List)}.
+     */
     protected abstract List<String> assembleTextLines();
 
-    /** Returns the color encoded in the given line if there is one; the standard text color otherwise. */
+    /**
+     * Returns the color encoded in the given line if there is one; the standard
+     * text color otherwise.
+     */
     private Color lineColor(String line) {
         Color textColor = getTextColor();
         // Extract a color code from the start of the line
@@ -176,13 +197,15 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
                 int blu = Integer.parseInt(line.substring(5, 7), 16);
                 textColor = new Color(red, grn, blu);
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error(e, "");
             }
         }
         return textColor;
     }
 
-    /** Returns the line but without the color code at the start if there was one. */
+    /**
+     * Returns the line but without the color code at the start if there was one.
+     */
     private String cleanedLine(String line) {
         if (line.startsWith("#") && line.length() > 7) {
             return line.substring(7);
@@ -192,7 +215,8 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     }
 
     /**
-     * Activates or deactivates the overlay, fading it in or out. Also saves the visibility to the GUIPreferences so
+     * Activates or deactivates the overlay, fading it in or out. Also saves the
+     * visibility to the GUIPreferences so
      * MegaMek remembers it.
      */
     public void setVisible(boolean vis) {
@@ -267,18 +291,18 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     protected abstract boolean getVisibilityGUIPreference();
 
-    protected abstract int getDistTop(Rectangle clipBounds,  int overlayHeight);
+    protected abstract int getDistTop(Rectangle clipBounds, int overlayHeight);
 
     protected abstract int getDistSide(Rectangle clipBounds, int overlayWidth);
 
     public static String colorToHex(Color color) {
-        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(),color.getBlue());
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     public static String colorToHex(Color color, float brightnessMultiplier) {
         return String.format("#%02X%02X%02X",
-                (int)(color.getRed() * brightnessMultiplier), (int)(color.getGreen() * brightnessMultiplier),
-                (int)(color.getBlue() * brightnessMultiplier));
+                (int) (color.getRed() * brightnessMultiplier), (int) (color.getGreen() * brightnessMultiplier),
+                (int) (color.getBlue() * brightnessMultiplier));
     }
 
     @Override

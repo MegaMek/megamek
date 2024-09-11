@@ -34,8 +34,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.common.Board;
 import megamek.common.Configuration;
@@ -52,12 +50,15 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * Matches each hex with an appropriate image.
+ *
  * @author Ben
  */
 public class HexTileset implements BoardListener {
+    private static final MMLogger logger = MMLogger.create(HexTileset.class);
 
     /** The image width of a hex image. */
     public static final int HEX_W = 84;
@@ -279,7 +280,7 @@ public class HexTileset implements BoardListener {
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int) st.nval;
                 } else {
-                    if (st.ttype == 62) {  // ">"
+                    if (st.ttype == 62) { // ">"
                         if (st.nextToken() == StreamTokenizer.TT_NUMBER) { // e.g. ">4"
                             elevation = (int) (Terrain.ATLEAST + st.nval);
                         }
@@ -309,7 +310,7 @@ public class HexTileset implements BoardListener {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    LogManager.getLogger().debug("Including " + incFile);
+                    logger.debug("Including " + incFile);
                     loadFromFile(incFile);
                 }
             }
@@ -320,10 +321,10 @@ public class HexTileset implements BoardListener {
 
         String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images",
                 bases.size(), supers.size(), orthos.size());
-        LogManager.getLogger().debug(loadInfo);
+        logger.debug(loadInfo);
 
         if (incDepth == 0) {
-            LogManager.getLogger().info("HexTileset " + filename + " loaded in " + (endTime - startTime) + "ms.");
+            logger.info("HexTileset " + filename + " loaded in " + (endTime - startTime) + "ms.");
         }
         incDepth--;
     }
@@ -432,7 +433,7 @@ public class HexTileset implements BoardListener {
      * Match the two hexes using the "base" formula.
      *
      * @return a value indicating how close of a match the original hex is to the
-     * comparison hex. 0 means no match, 1 means perfect match.
+     *         comparison hex. 0 means no match, 1 means perfect match.
      */
     private double baseMatch(Hex org, Hex com) {
         double elevation;
@@ -537,14 +538,13 @@ public class HexTileset implements BoardListener {
 
         public void loadImage() {
             images = new Vector<>();
-            for (String filename: filenames) {
+            for (String filename : filenames) {
                 File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if (null != image) {
                     images.add(image);
                 } else {
-                    LogManager.getLogger().error("Received null image from "
-                            + "ImageUtil.loadImageFromFile! File: " + imgFile);
+                    logger.error("Received null image from ImageUtil.loadImageFromFile! File: " + imgFile);
                 }
             }
         }
@@ -584,7 +584,7 @@ public class HexTileset implements BoardListener {
     @Override
     public void boardNewBoard(BoardEvent b) {
         clearAllHexes();
-   }
+    }
 
     @Override
     public void boardChangedHex(BoardEvent b) {

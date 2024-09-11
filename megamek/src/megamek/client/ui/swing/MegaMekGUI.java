@@ -50,7 +50,6 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,6 +57,7 @@ import org.w3c.dom.NodeList;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.Client;
 import megamek.client.IClient;
@@ -95,6 +95,7 @@ import megamek.common.scenario.ScenarioLoader;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
@@ -102,6 +103,8 @@ import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(MegaMekGUI.class);
+
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
@@ -134,7 +137,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to set look and feel!", ex);
+            logger.error(ex, "Failed to set look and feel!");
         }
 
         // TODO : Move ToolTip setup to MegaMek::initializeSuiteSetups as part of
@@ -338,8 +341,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.gridy++;
         addBag(connectSBF, gridbag, c);
         c.gridy++;
-//        addBag(botB, gridbag, c);
-//        c.gridy++;
+        // addBag(botB, gridbag, c);
+        // c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(skinEditB, gridbag, c);
@@ -424,9 +427,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
-                               @Nullable String metaServer, @Nullable String mailPropertiesFileName,
-                               @Nullable File saveGameFile) {
-        return startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, saveGameFile, GameType.TW);
+            @Nullable String metaServer, @Nullable String mailPropertiesFileName,
+            @Nullable File saveGameFile) {
+        return startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, saveGameFile,
+                GameType.TW);
     }
 
     public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
@@ -436,7 +440,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to start Server", ex);
+            logger.error(ex, "Failed to start Server");
             frame.setVisible(true);
             return false;
         }
@@ -449,14 +453,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 mailProperties.load(propsReader);
                 mailer = new EmailService(mailProperties);
             } catch (Exception ex) {
-                LogManager.getLogger().error(
-                        "Error: could not load mail properties file \"" +
-                                propsFile.getAbsolutePath() + "\"",
-                        ex);
-                JOptionPane.showMessageDialog(frame,
+                logger.error(ex,
                         Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                        Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-                frame.setVisible(true);
+                        Messages.getString("MegaMek.LoadGameAlert.title"));
                 return false;
             }
         }
@@ -468,32 +467,19 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             gameManager = getGameManager(gameType);
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
-        } catch (IOException ex) {
-            LogManager.getLogger().error("Could not create server socket on port " + port, ex);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(true);
-            return false;
         } catch (Exception ex) {
-            LogManager.getLogger().error("Could not create server", ex);
-            JOptionPane.showMessageDialog(frame,
+            logger.error(ex,
                     Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(true);
+                    Messages.getString("MegaMek.LoadGameAlert.title"));
             return false;
         }
 
-        if (saveGameFile != null) {
-            if (!server.loadGame(saveGameFile)) {
-                JOptionPane.showMessageDialog(frame,
-                        Messages.getFormattedString("MegaMek.LoadGameAlert.message", saveGameFile.getAbsolutePath()),
-                        Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-                server.die();
-                server = null;
-                frame.setVisible(true);
-                return false;
-            }
+        if (saveGameFile != null && !server.loadGame(saveGameFile)) {
+            logger.error(Messages.getFormattedString("MegaMek.LoadGameAlert.message", saveGameFile.getAbsolutePath()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"));
+            server.die();
+            server = null;
+            return false;
         }
 
         return true;
@@ -501,9 +487,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IGameManager getGameManager(GameType gameType) {
         return switch (gameType) {
-            /* Not implemented:
-            case AS-> new ASGameManager();
-            case BF-> new BFGameManager();
+            /*
+             * Not implemented:
+             * case AS-> new ASGameManager();
+             * case BF-> new BFGameManager();
              */
             case SBF -> new SBFGameManager();
             default -> new TWGameManager();
@@ -512,9 +499,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IClientGUI getClientGUI(GameType gameType, IClient client, MegaMekController controller) {
         return switch (gameType) {
-            /* Not implemented:
-            case AS-> new ASGameManager();
-            case BF-> new BFGameManager();
+            /*
+             * Not implemented:
+             * case AS-> new ASGameManager();
+             * case BF-> new BFGameManager();
              */
             case SBF -> new SBFClientGUI((SBFClient) client, controller);
             default -> new ClientGUI((Client) client, controller);
@@ -523,9 +511,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IClient getClient(GameType gameType, String playerName, String host, int port) {
         return switch (gameType) {
-            /* Not implemented:
-            case AS-> new ASClient();
-            case BF-> new BFClient();
+            /*
+             * Not implemented:
+             * case AS-> new ASClient();
+             * case BF-> new BFClient();
              */
             case SBF -> new SBFClient(playerName, host, port);
             default -> new Client(playerName, host, port);
@@ -542,11 +531,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             serverAddress = Server.validateServerAddress(serverAddress);
             port = Server.validatePort(port);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to start client", ex);
-            JOptionPane.showMessageDialog(frame,
+            logger.error(ex,
                     Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(true);
+                    Messages.getString("MegaMek.LoadGameAlert.title"));
             return;
         }
 
@@ -559,12 +546,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            logger.error(Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
+                    Messages.getString("MegaMek.LoadGameAlert.title"));
             client.die();
             gui.die();
-            frame.setVisible(true);
             return;
         }
 
@@ -603,8 +588,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         final Vector<String> playerNames = new Vector<>();
 
-        // Handrolled extraction, as we require Server initialization to use XStream and don't need
-        // the additional overhead of initializing everything twice
+        // Handrolled extraction, as we require Server initialization to use XStream and
+        // don't need the additional overhead of initializing everything twice
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {
             InputStream gzi;
 
@@ -643,12 +628,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Unable to load file: " + fc.getSelectedFile().getAbsolutePath(), ex);
-            JOptionPane.showMessageDialog(frame,
+            logger.error(ex,
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message",
                             fc.getSelectedFile().getAbsolutePath()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"),
-                    JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.LoadGameAlert.title"));
             return;
         }
 
@@ -668,11 +651,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (!n.hasChildNodes()) {
             final String message = String.format(
                     Messages.getString("MegaMek.LoadGameMissingVersion.message"),
-                    MMConstants.VERSION);
+                    SuiteConstants.VERSION);
             JOptionPane.showMessageDialog(frame, message,
                     Messages.getString("MegaMek.LoadGameAlert.title"),
                     JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error(message);
+            logger.error(message);
             return false;
         }
 
@@ -706,15 +689,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         final Version version = new Version(release, major, minor, snapshot);
-        if (MMConstants.VERSION.is(version)) {
+        if (SuiteConstants.VERSION.is(version)) {
             return true;
         } else {
             final String message = String.format(
                     Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
-                    version, MMConstants.VERSION);
-            JOptionPane.showMessageDialog(frame, message,
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error(message);
+                    version, SuiteConstants.VERSION);
+            logger.error(message, Messages.getString("MegaMek.LoadGameAlert.title"));
             return false;
         }
     }
@@ -790,18 +771,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             scenario = sl.load();
             game = scenario.createGame();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
-                    Messages.getString("MegaMek.HostScenarioAlert.title"),
-                    JOptionPane.ERROR_MESSAGE);
+            logger.error(e, Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
+                    Messages.getString("MegaMek.HostScenarioAlert.title"));
             return;
         }
 
         // popup options dialog
         if (!scenario.hasFixedGameOptions() && game instanceof Game) {
-            GameOptionsDialog god = new GameOptionsDialog(frame, ((Game)game).getOptions(), false);
-            god.update(((Game)game).getOptions());
+            GameOptionsDialog god = new GameOptionsDialog(frame, ((Game) game).getOptions(), false);
+            god.update(((Game) game).getOptions());
             god.setEditable(true);
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {
@@ -881,7 +859,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (scenario.getGameType() == GameType.TW) {
             for (int x = 0; x < pa.length; x++) {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
-                    LogManager.getLogger().info("Adding bot " + pa[x].getName() + " as Princess");
+                    logger.info("Adding bot " + pa[x].getName() + " as Princess");
                     BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
                     c.getGame().addGameListener(new BotGUI(frame, c));
                     c.connect();
@@ -889,7 +867,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
 
-        // If he didn't have a name when hasSlot was set, then the host should be an observer.
+        // If he didn't have a name when hasSlot was set, then the host should be an
+        // observer.
         if (!hasSlot) {
             for (Player player : server.getGame().getPlayersList()) {
                 if (player.getName().equals(localName)) {
@@ -975,7 +954,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     helpUrl, frame);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e);
         }
     }
 
@@ -996,13 +975,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     static void quit() {
-        MegaMek.getMMPreferences().saveToFile(MMConstants.MM_PREFERENCES_FILE);
+        MegaMek.getMMPreferences().saveToFile(SuiteConstants.MM_PREFERENCES_FILE);
         PreferenceManager.getInstance().save();
 
         try {
             WeaponOrderHandler.saveWeaponOrderFile();
         } catch (IOException e) {
-            LogManager.getLogger().error("Error saving custom weapon orders!", e);
+            logger.error(e, "Error saving custom weapon orders!");
         }
         System.exit(0);
     }
@@ -1125,7 +1104,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     SwingUtilities.updateComponentTreeUI(w);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         }
     }
@@ -1165,12 +1144,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         String filename = determineSplashScreen(splashScreens, screenWidth, screenHeight);
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {
-            LogManager.getLogger().error("MainMenu Error: Splash screen doesn't exist: " + file.getAbsolutePath());
+            logger.error("MainMenu Error: Splash screen doesn't exist: " + file.getAbsolutePath());
             file = new MegaMekFile(Configuration.widgetsDir(), FILENAME_MEGAMEK_SPLASH).getFile();
         }
 
         if (!file.exists()) {
-            LogManager.getLogger()
+            logger
                     .error("MainMenu Error: Backup splash screen doesn't exist: " + file.getAbsolutePath());
             return null;
         }
@@ -1211,7 +1190,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         for (String filename : filenames) {
             File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
             if (!file.exists()) {
-                LogManager.getLogger()
+                logger
                         .error("MainMenu Error: background icon doesn't exist: " + file.getAbsolutePath());
             } else {
                 BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
@@ -1226,8 +1205,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         }
-        BaseMultiResolutionImage multiResolutionImage = new BaseMultiResolutionImage(images.toArray(new Image[0]));
-
-        return multiResolutionImage;
+        return new BaseMultiResolutionImage(images.toArray(new Image[0]));
     }
 }

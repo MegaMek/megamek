@@ -19,11 +19,11 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.ArrayList;
+import megamek.logging.MMLogger;
 
 /**
  * This is a large support vehicle
@@ -31,6 +31,8 @@ import java.util.ArrayList;
  * @author beerockxs
  */
 public class LargeSupportTank extends SupportTank {
+    private static final MMLogger logger = MMLogger.create(LargeSupportTank.class);
+
     private static final long serialVersionUID = -3177191060629774478L;
 
     public static final int LOC_FRONTRIGHT = 2;
@@ -339,31 +341,31 @@ public class LargeSupportTank extends SupportTank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTRIGHT) < 1) && (getOArmor(LOC_FRONTRIGHT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTLEFT) < 1) && (getOArmor(LOC_FRONTLEFT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARRIGHT) < 1) && (getOArmor(LOC_REARRIGHT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARLEFT) < 1) && (getOArmor(LOC_REARLEFT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(LOC_TURRET) < 1) && (getOArmor(LOC_TURRET) > 0))) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(LOC_TURRET_2) < 1) && (getOArmor(LOC_TURRET_2) > 0))) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            logger.debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -376,7 +378,7 @@ public class LargeSupportTank extends SupportTank {
         // weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            logger.debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;

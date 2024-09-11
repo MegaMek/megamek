@@ -25,8 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
@@ -35,6 +33,7 @@ import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Terrains;
+import megamek.logging.MMLogger;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths
@@ -43,6 +42,8 @@ import megamek.common.Terrains;
  * @author NickAragua
  */
 public class InfantryPathFinder {
+    private static final MMLogger logger = MMLogger.create(InfantryPathFinder.class);
+
     private Game game;
     private List<MovePath> infantryPaths;
 
@@ -112,9 +113,9 @@ public class InfantryPathFinder {
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
 
-            LogManager.getLogger().error(memoryMessage, e);
+            logger.error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
+            logger.error("", e); // do something, don't just swallow the exception, good lord
         }
     }
 

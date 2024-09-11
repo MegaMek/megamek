@@ -13,15 +13,16 @@
  */
 package megamek.common.actions;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * A BattleArmor uses its vibroclaws
  */
 public class BAVibroClawAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(BAVibroClawAttackAction.class);
+
     private static final long serialVersionUID = 1432011536091665084L;
 
     public BAVibroClawAttackAction(int entityId, int targetId) {
@@ -51,11 +52,11 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         Entity te = null;
         // arguments legal?
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 

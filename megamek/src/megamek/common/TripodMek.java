@@ -23,15 +23,16 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 public class TripodMek extends Mek {
+    private static final MMLogger logger = MMLogger.create(TripodMek.class);
+
     /**
      *
      */
@@ -1092,7 +1093,7 @@ public class TripodMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -1363,7 +1364,7 @@ public class TripodMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -1473,7 +1474,7 @@ public class TripodMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
@@ -1531,7 +1532,7 @@ public class TripodMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Swarm attack locations.
             switch (roll) {
@@ -1588,7 +1589,7 @@ public class TripodMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Hits from above.
             switch (roll) {
@@ -1628,7 +1629,7 @@ public class TripodMek extends Mek {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Hits from below.
             switch (roll) {

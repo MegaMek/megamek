@@ -51,8 +51,6 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
@@ -74,14 +72,16 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * Obviously, displays the map in scaled-down size.
  * TBD: -move the buttons from graphics to real Swing
  * buttons -clean up listenercode.. -initializecolors is fugly
- *  -uses break-to-label -uses while-true
+ * -uses break-to-label -uses while-true
  */
 public final class Minimap extends JPanel implements IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(Minimap.class);
 
     private static final Color[] terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
@@ -90,15 +90,15 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static Color SINKHOLE;
     private static Color SMOKE_AND_FIRE;
 
-    private static final int[] FONT_SIZE = {6, 6, 8, 10, 12, 14, 16};
-    private static final int[] HEX_SIDE = {2, 3, 5, 6, 8, 10, 12};
-    private static final int[] HEX_SIDE_BY_COS30 = {2, 3, 4, 5, 7, 9, 10};
-    private static final int[] HEX_SIDE_BY_SIN30 = {1, 2, 2, 3, 4, 5, 6};
-    private static final int[] HALF_ROAD_WIDTH_BY_COS30 = {0, 0, 0, 1, 2, 2, 3};
-    private static final int[] HALF_ROAD_WIDTH_BY_SIN30 = {0, 0, 0, 1, 1, 1, 2};
-    private static final int[] HALF_ROAD_WIDTH = {0, 0, 0, 1, 2, 3, 3};
-    private static final int[] UNIT_SIZES = {4, 5, 6, 7, 8, 9, 10};
-    private static final int[] UNIT_SCALE = {7, 8, 9, 11, 12, 14, 16};
+    private static final int[] FONT_SIZE = { 6, 6, 8, 10, 12, 14, 16 };
+    private static final int[] HEX_SIDE = { 2, 3, 5, 6, 8, 10, 12 };
+    private static final int[] HEX_SIDE_BY_COS30 = { 2, 3, 4, 5, 7, 9, 10 };
+    private static final int[] HEX_SIDE_BY_SIN30 = { 1, 2, 2, 3, 4, 5, 6 };
+    private static final int[] HALF_ROAD_WIDTH_BY_COS30 = { 0, 0, 0, 1, 2, 2, 3 };
+    private static final int[] HALF_ROAD_WIDTH_BY_SIN30 = { 0, 0, 0, 1, 1, 1, 2 };
+    private static final int[] HALF_ROAD_WIDTH = { 0, 0, 0, 1, 2, 3, 3 };
+    private static final int[] UNIT_SIZES = { 4, 5, 6, 7, 8, 9, 10 };
+    private static final int[] UNIT_SCALE = { 7, 8, 9, 11, 12, 14, 16 };
     private static final int MIM_ZOOM = 0;
     private static final int MAX_ZOOM = HEX_SIDE.length - 1;
     private static final int MIM_ZOOM_FOR_HEIGHT = 4;
@@ -117,7 +117,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final int MARGIN = 3;
     private static final int BUTTON_HEIGHT = 14;
 
-    /** The minimap zoom at which game summary images are saved regardless of the ingame minimap setting. */
+    /**
+     * The minimap zoom at which game summary images are saved regardless of the
+     * ingame minimap setting.
+     */
     private static final int GAME_SUMMARY_ZOOM = 4;
 
     private static final String ACTION_ZOOM_IN = "ZOOM_IN";
@@ -142,10 +145,13 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private int margin = MARGIN;
     private int topMargin;
     private int leftMargin;
-    //This value is variable.
-    //if the container m_dialog is an instance of JDialog, it is 14. otherwise 0.
+    // This value is variable.
+    // if the container m_dialog is an instance of JDialog, it is 14. otherwise 0.
     private int buttonHeight = 0;
-    /** Indicates if the minimap has been rolled up using the wide green button. Can only be true when in a dialog. */
+    /**
+     * Indicates if the minimap has been rolled up using the wide green button. Can
+     * only be true when in a dialog.
+     */
     private boolean minimized = false;
     /** Stores the (non-minimized) height of the minimap when it is minimized. */
     private int heightBuffer;
@@ -172,11 +178,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Returns a non-modal dialog with a minimap for the given game.
-
+     *
      * @param parent The frame to use as parent frame for the dialog
-     * @param bv Optional: A boardview showing the map
-     * @param game A game containing at least the board, but not necessarily anything else
-     * @param cg Optional: A ClientGUI object housing this minimap
+     * @param bv     Optional: A boardview showing the map
+     * @param game   A game containing at least the board, but not necessarily
+     *               anything else
+     * @param cg     Optional: A ClientGUI object housing this minimap
      */
     public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
@@ -194,7 +201,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         result.pack();
         return result;
     }
-
 
     /** Returns a minimap image of the given board at the maximum zoom index. */
     public static BufferedImage getMinimapImageMaxZoom(Board board) {
@@ -224,17 +230,20 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "");
             return ImageUtil.failStandardImage();
         }
     }
 
     /**
-     * Creates a minimap panel. The only required parameter is a game that contains the board
+     * Creates a minimap panel. The only required parameter is a game that contains
+     * the board
      * to display. When the dialog is not null, it is assumed that this minimap will
      * be visible for a while and it will register itself to various objects
-     * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
-     * used to create a snapshot image. When a boardview is given, the visible area is shown.
+     * as a listener to changes. When the dialog is null, it is assumed that the
+     * minimap is only
+     * used to create a snapshot image. When a boardview is given, the visible area
+     * is shown.
      */
     private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
         game = Objects.requireNonNull(g);
@@ -254,7 +263,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
-    /** Registers the minimap as listener to the given game, board, boardview (that are not null). */
+    /**
+     * Registers the minimap as listener to the given game, board, boardview (that
+     * are not null).
+     */
     private void initializeListeners() {
         game.addGameListener(gameListener);
         board.addBoardListener(boardListener);
@@ -264,7 +276,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         GUIP.addPreferenceChangeListener(this);
     }
 
-    /** Adds listeners to the dialog to manipulate the minimap if it has an assoicated dialog. */
+    /**
+     * Adds listeners to the dialog to manipulate the minimap if it has an
+     * assoicated dialog.
+     */
     private void initializeDialog() {
         if (dialog != null) {
             dialog.addMouseListener(mouseListener);
@@ -306,7 +321,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         terrainColors[BRIDGE] = new Color(109, 55, 25);
         terrainColors[ICE] = new Color(204, 204, 255);
         terrainColors[MAGMA] = new Color(200, 0, 0);
-        //m_terrainColors[MUD] = new Color(218, 160, 100);
+        // m_terrainColors[MUD] = new Color(218, 160, 100);
         terrainColors[JUNGLE] = new Color(180, 230, 130);
         terrainColors[FIELDS] = new Color(250, 255, 205);
         terrainColors[INDUSTRIAL] = new Color(112, 138, 144);
@@ -331,8 +346,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             st.quoteChar('"');
             st.commentChar('#');
 
-            scan:
-            while (true) {
+            scan: while (true) {
                 red = 0;
                 green = 0;
                 blue = 0;
@@ -407,7 +421,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
         } catch (Exception e) {
             // Fall back to the default colors
-            LogManager.getLogger().error("", e);
+            logger.error(e, "");
         }
     }
 
@@ -428,8 +442,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         leftMargin = margin;
         int requiredWidth = (board.getWidth() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
                 + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
-        int requiredHeight = minimized ? BUTTON_HEIGHT : (((2 * board.getHeight()) + 1)
-                * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
+        int requiredHeight = minimized ? BUTTON_HEIGHT
+                : (((2 * board.getHeight()) + 1)
+                        * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
         if (dialog != null) {
             setSize(new Dimension(requiredWidth, requiredHeight));
@@ -476,7 +491,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     SwingUtilities.invokeLater(drawMapable);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error(t, "");
             }
         }
     };
@@ -579,7 +594,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     }
                 }
 
-
                 if ((client != null) && (client.getArtilleryAutoHit() != null)) {
                     for (int i = 0; i < client.getArtilleryAutoHit().size(); i++) {
                         drawAutoHit(g, client.getArtilleryAutoHit().get(i));
@@ -616,21 +630,24 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
-    /** Draws a box showing the portion of the board that is currently visible in the boardview. */
+    /**
+     * Draws a box showing the portion of the board that is currently visible in the
+     * boardview.
+     */
     private void paintVisibleSection(Graphics g) {
         if (minimized || (bv == null)) {
             return;
         }
         double[] relSize = bv.getVisibleArea();
-        for (int i = 0; i < 4; i++)  {
+        for (int i = 0; i < 4; i++) {
             // keep between 0 and 1 to not fall outside the minimap
             relSize[i] = Math.min(1, Math.max(0, relSize[i]));
         }
 
         int x1 = (int) (relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
         int y1 = (int) (relSize[1] * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()) + topMargin;
-        int x2 = (int) ((relSize[2]-relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
-        int y2 = (int) ((relSize[3]-relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
+        int x2 = (int) ((relSize[2] - relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
+        int y2 = (int) ((relSize[3] - relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
 
         // thicker but translucent rectangle
         g.setColor(new Color(100, 100, 160, 80));
@@ -849,14 +866,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         g.drawPolygon(xPoints, yPoints, 6);
     }
 
-
     private void paintSpaceCoord(Graphics g, int x, int y) {
         int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
         int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        // alpha to tone down borders and stars at low zoom so they don't overwhelm the image
+        // alpha to tone down borders and stars at low zoom so they don't overwhelm the
+        // image
         int alpha = Math.min(250, 20 * HEX_SIDE[zoom]);
         g.setColor(new Color(20, 20, 60, alpha));
         g.drawPolygon(xPoints, yPoints, 6);
@@ -1004,7 +1021,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);
-        placement.scale(UNIT_SCALE[zoom]/100.0d, UNIT_SCALE[zoom]/100.0d);
+        placement.scale(UNIT_SCALE[zoom] / 100.0d, UNIT_SCALE[zoom] / 100.0d);
         g2.transform(placement);
 
         // Add a position shift if multiple units are present in this hex
@@ -1211,7 +1228,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private void addRoadElements(Hex hex, int boardX, int boardY) {
         if (hex.containsAnyTerrainOf(ROAD, BRIDGE)) {
             var terrain = hex.getAnyTerrainOf(ROAD, BRIDGE);
-            roadHexes.add(new int[] { boardX, boardY, terrain.getExits() } );
+            roadHexes.add(new int[] { boardX, boardY, terrain.getExits() });
         }
     }
 
@@ -1225,10 +1242,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         // Check for Smoke and Fire - this overrides any other colors
         if (hex.containsTerrain(SMOKE) && hex.containsTerrain(FIRE)) {
             terrColor = SMOKE_AND_FIRE;
-        // Check for Fire - this overrides any other colors
+            // Check for Fire - this overrides any other colors
         } else if (hex.containsTerrain(FIRE)) {
             terrColor = terrainColors[FIRE];
-        } else { // Otherwise, color based on terrains - higher valued terrains take color precedence
+        } else { // Otherwise, color based on terrains - higher valued terrains take color
+                 // precedence
             for (int j = terrainColors.length - 1; j >= 0; j--) {
                 if ((hex.getTerrain(j) != null) && (terrainColors[j] != null)) {
                     if ((j == ROAD) || (j == BRIDGE)) {
@@ -1296,7 +1314,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (restY < HEX_SIDE_BY_COS30[zoom]) {
             if (evenColumn) {
                 if (restX < ((((restY - HEX_SIDE_BY_COS30[zoom])
-                               * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
+                        * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
                     gridX--;
                     gridY--;
                 }
@@ -1310,12 +1328,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         } else {
             if (evenColumn) {
                 if (restX < (((restY - HEX_SIDE_BY_COS30[zoom])
-                              * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom])) {
+                        * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom])) {
                     gridX--;
                 }
             } else {
                 if (restX < ((((restY - (2 * HEX_SIDE_BY_COS30[zoom]))
-                               * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
+                        * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
                     gridX--;
                 }
             }
@@ -1406,7 +1424,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         initializeMap();
     }
 
-    /** Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel coordinates. */
+    /**
+     * Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel
+     * coordinates.
+     */
     private void centerOnPos(double x, double y) {
         bv.centerOnPointRel(
                 ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
@@ -1423,7 +1444,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void boardChangedHex(BoardEvent b) {
-            // This must be tolerant since it might be called without notifying us of the boardsize first
+            // This must be tolerant since it might be called without notifying us of the
+            // boardsize first
             int x = b.getCoords().getX();
             int y = b.getCoords().getY();
             if ((x >= dirty.length) || (y >= dirty[x].length)) {
@@ -1452,7 +1474,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             }
             refreshMap();
@@ -1582,34 +1604,40 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             String msg_zoom = Messages.getString("Minimap.menu.Zoom");
             JMenu zoomMenu = new JMenu(msg_zoom + " " + zoom);
             String msg_zoomin = Messages.getString("Minimap.menu.ZoomIn");
-            zoomMenu.add(menuItem(msg_zoomin, ACTION_ZOOM_IN, zoom!=MAX_ZOOM, listener, false));
+            zoomMenu.add(menuItem(msg_zoomin, ACTION_ZOOM_IN, zoom != MAX_ZOOM, listener, false));
             String msg_zoomout = Messages.getString("Minimap.menu.ZoomOut");
-            zoomMenu.add(menuItem(msg_zoomout, ACTION_ZOOM_OUT, zoom!=MIM_ZOOM, listener, false));
+            zoomMenu.add(menuItem(msg_zoomout, ACTION_ZOOM_OUT, zoom != MIM_ZOOM, listener, false));
             popup.add(zoomMenu);
             String msg_showheight = Messages.getString("Minimap.menu.ShowHeight");
             JMenu heightMenu = new JMenu(msg_showheight);
             String msg_showheightnone = Messages.getString("Minimap.menu.ShowHeightNone");
-            heightMenu.add(menuItem(msg_showheightnone, ACTION_HEIGHT_NONE, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode==SHOW_NO_HEIGHT));
+            heightMenu.add(menuItem(msg_showheightnone, ACTION_HEIGHT_NONE, zoom >= MIM_ZOOM_FOR_HEIGHT, listener,
+                    heightDisplayMode == SHOW_NO_HEIGHT));
             String msg_showheightground = Messages.getString("Minimap.menu.ShowHeightGround");
-            heightMenu.add(menuItem(msg_showheightground, ACTION_HEIGHT_GROUND, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode==SHOW_GROUND_HEIGHT));
+            heightMenu.add(menuItem(msg_showheightground, ACTION_HEIGHT_GROUND, zoom >= MIM_ZOOM_FOR_HEIGHT, listener,
+                    heightDisplayMode == SHOW_GROUND_HEIGHT));
             String msg_showheightbuilding = Messages.getString("Minimap.menu.ShowHeightBuilding");
-            heightMenu.add(menuItem(msg_showheightbuilding, ACTION_HEIGHT_BUILDING, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode==SHOW_BUILDING_HEIGHT));
+            heightMenu.add(menuItem(msg_showheightbuilding, ACTION_HEIGHT_BUILDING, zoom >= MIM_ZOOM_FOR_HEIGHT,
+                    listener, heightDisplayMode == SHOW_BUILDING_HEIGHT));
             String msg_showheighttotal = Messages.getString("Minimap.menu.ShowHeightTotal");
-            heightMenu.add(menuItem(msg_showheighttotal, ACTION_HEIGHT_TOTAL, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode==SHOW_TOTAL_HEIGHT));
+            heightMenu.add(menuItem(msg_showheighttotal, ACTION_HEIGHT_TOTAL, zoom >= MIM_ZOOM_FOR_HEIGHT, listener,
+                    heightDisplayMode == SHOW_TOTAL_HEIGHT));
             popup.add(heightMenu);
             String msg_showsymbols = Messages.getString("Minimap.menu.ShowSymbols");
             JMenu symbolsMenu = new JMenu(msg_showsymbols);
             String msg_showsymbolsnosymbols = Messages.getString("Minimap.menu.ShowSymbolsNoSymbols");
-            symbolsMenu.add(menuItem(msg_showsymbolsnosymbols, ACTION_SYMBOLS_NO, true, listener, symbolsDisplayMode==SHOW_NO_SYMBOLS));
+            symbolsMenu.add(menuItem(msg_showsymbolsnosymbols, ACTION_SYMBOLS_NO, true, listener,
+                    symbolsDisplayMode == SHOW_NO_SYMBOLS));
             String msg_showsymbolssymbols = Messages.getString("Minimap.menu.ShowSymbolsSymbols");
-            symbolsMenu.add(menuItem(msg_showsymbolssymbols, ACTION_SYMBOLS_SHOW, true, listener, symbolsDisplayMode==SHOW_SYMBOLS));
+            symbolsMenu.add(menuItem(msg_showsymbolssymbols, ACTION_SYMBOLS_SHOW, true, listener,
+                    symbolsDisplayMode == SHOW_SYMBOLS));
             popup.add(symbolsMenu);
 
             popup.show(me.getComponent(), me.getX(), me.getY());
         }
 
-        public JCheckBoxMenuItem  menuItem(String text, String cmd, boolean enabled,
-                                         ActionListener listener, boolean checked) {
+        public JCheckBoxMenuItem menuItem(String text, String cmd, boolean enabled,
+                ActionListener listener, boolean checked) {
             JCheckBoxMenuItem result = new JCheckBoxMenuItem(text);
             result.setActionCommand(cmd);
             result.addActionListener(listener);

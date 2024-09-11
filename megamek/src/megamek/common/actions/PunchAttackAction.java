@@ -13,16 +13,17 @@
  */
 package megamek.common.actions;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * The attacker punches the target.
  */
 public class PunchAttackAction extends PhysicalAttackAction {
+    private static final MMLogger logger = MMLogger.create(PunchAttackAction.class);
+
     private static final long serialVersionUID = 3684646558944678180L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -182,11 +183,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
             Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         String impossible = PunchAttackAction.toHitIsImpossible(game, ae, target, arm);

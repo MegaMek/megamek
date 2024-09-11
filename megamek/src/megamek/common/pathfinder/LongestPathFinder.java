@@ -22,8 +22,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.Coords;
 import megamek.common.Game;
@@ -33,6 +31,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /**
  * Path finder that specialises in finding paths that can enter a single hex
@@ -41,6 +40,8 @@ import megamek.common.annotations.Nullable;
  * @author Saginatio
  */
 public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
+    private static final MMLogger logger = MMLogger.create(LongestPathFinder.class);
+
     private boolean aero = false;
 
     protected LongestPathFinder(EdgeRelaxer<Deque<MovePath>, MovePath> edgeRelaxer,
@@ -183,7 +184,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                      * Current implementation of doRelax() assumes that v is
                      * sorted in such way that this situation is impossible.
                      */
-                    LogManager.getLogger().error(
+                    logger.error(
                             "Top Move Path uses more MPs than Move Path Candidate.",
                             new IllegalStateException());
                     return null;
@@ -290,7 +291,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                LogManager.getLogger().error(
+                logger.error(
                         "Top Move Path moved more than Move Path Candidate.",
                         new IllegalStateException());
             }
@@ -306,7 +307,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                LogManager.getLogger().error(
+                logger.error(
                         "Top Move Path uses more MPs than Move Path Candidate while traveling the same distance",
                         new IllegalStateException());
             }
@@ -327,7 +328,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
             if (-dHS > 0) {
                 if (dMP >= 0) {
-                    LogManager.getLogger().error(
+                    logger.error(
                             "Top Move Path uses more MPs than Move Path Candidate and Top Move Path moves a shorter straight line distance.",
                             new IllegalStateException());
                 }

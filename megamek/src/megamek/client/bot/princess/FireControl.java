@@ -24,7 +24,6 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 
 import megamek.common.*;
 import megamek.common.actions.EntityAction;
@@ -842,12 +841,10 @@ public class FireControl {
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
         }
-        if (null != targetEntity) {
-            if (targetHex.containsTerrain(Terrains.WATER)
-                    && (1 == targetHex.terrainLevel(Terrains.WATER))
-                    && (0 < targetEntity.height())) {
-                losEffects.setTargetCover(losEffects.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            }
+        if (null != targetEntity && targetHex.containsTerrain(Terrains.WATER)
+                && (1 == targetHex.terrainLevel(Terrains.WATER))
+                && (0 < targetEntity.height())) {
+            losEffects.setTargetCover(losEffects.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
 
         // Can we still hit after taking into account LoS?
@@ -969,6 +966,7 @@ public class FireControl {
                             msg.append("\nUnfortunately we have no friends near the target...");
                             toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
                         }
+
                         logger.debug(msg.toString());
                     }
                 }
@@ -1102,7 +1100,7 @@ public class FireControl {
 
         // Is the weapon loaded?
         AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
-        if (AmmoType.T_NA != ((WeaponType) weapon.getType()).ammoType) {
+        if (AmmoType.T_NA != (weapon.getType()).ammoType) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
             }
@@ -1171,7 +1169,7 @@ public class FireControl {
 
         // This really should only be done for debugging purposes. Regular play should
         // avoid the overhead.
-        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
+        if (logger.isLevelMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
@@ -1214,7 +1212,7 @@ public class FireControl {
             final PhysicalAttackType attackType, final Game game) {
         // This really should only be done for debugging purposes. Regular play should
         // avoid the overhead.
-        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
+        if (logger.isLevelMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
@@ -1255,7 +1253,7 @@ public class FireControl {
     String checkAllGuesses(final Entity shooter, final Game game) {
         // This really should only be done for debugging purposes. Regular play should
         // avoid the overhead.
-        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
+        if (logger.isLevelMoreSpecificThan(Level.INFO)) {
             return null;
         }
 

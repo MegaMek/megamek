@@ -15,8 +15,20 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package megamek.client.ui.swing.lobby;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
@@ -30,15 +42,11 @@ import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import java.awt.*;
-import java.awt.event.MouseEvent;
+import megamek.logging.MMLogger;
 
 /** A specialized renderer for the Mek Force tree. */
 public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
+    private static final MMLogger logger = MMLogger.create(MekForceTreeRenderer.class);
 
     private static final long serialVersionUID = -2002064111324279609L;
     private final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
@@ -61,19 +69,19 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
         localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
         selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
-        
+
         if (isSelected) {
             setBackground(new Color(selectionColor.getRGB()));
         } else {
             setForeground(null);
             setBackground(null);
         }
-        
+
         if (value instanceof Entity) {
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
             setFont(scaledFont);
             entity = (Entity) value;
-            this.row = row; 
+            this.row = row;
             Player owner = entity.getOwner();
             if (lobby.isCompact()) {
                 setText(LobbyMekCellFormatter.formatUnitCompact(entity, lobby, true));
@@ -106,7 +114,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             }
             setIcon(null);
         }
-        return this; 
+        return this;
     }
 
     @Override
@@ -126,7 +134,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             int width = height * image.getWidth(null) / image.getHeight(null);
             setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
         } else {
-            LogManager.getLogger().error("Trying to resize a unit icon of height or width 0!");
+            logger.error("Trying to resize a unit icon of height or width 0!");
             setIcon(null);
         }
     }

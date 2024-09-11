@@ -14,8 +14,6 @@
  */
 package megamek.common.loaders;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -24,12 +22,15 @@ import megamek.common.FuelType;
 import megamek.common.LargeSupportTank;
 import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
+import megamek.logging.MMLogger;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
+    private static final MMLogger logger = MMLogger.create(BLKLargeSupportTankFile.class);
+
     public BLKLargeSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -190,9 +191,9 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                LogManager.getLogger().error("While loading " + t.getShortNameRaw()
-                                + ": Could not parse ICE fuel type "
-                                + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading " + t.getShortNameRaw()
+                        + ": Could not parse ICE fuel type "
+                        + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

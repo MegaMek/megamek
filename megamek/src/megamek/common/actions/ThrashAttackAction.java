@@ -13,15 +13,16 @@
  */
 package megamek.common.actions;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * The prone attacker thrashes at the target.
  */
 public class ThrashAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(ThrashAttackAction.class);
+
     private static final long serialVersionUID = -1527653560370040648L;
 
     public ThrashAttackAction(int entityId, int targetId) {
@@ -50,11 +51,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
         final Targetable target = getTarget(game);
         // arguments legal?
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 

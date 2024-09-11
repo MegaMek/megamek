@@ -29,8 +29,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.SuiteConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.MekCostCalculator;
@@ -47,11 +45,14 @@ import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * You know what Meks are, silly.
  */
 public abstract class Mek extends Entity {
+    private static final MMLogger logger = MMLogger.create(Mek.class);
+
     private static final long serialVersionUID = -1929593228891136561L;
 
     // system designators for critical hits
@@ -825,7 +826,7 @@ public abstract class Mek extends Entity {
 
     /**
      * Check for whether the Mek has triple strength myomer
-     * 
+     *
      * @param includePrototype Whether to include prototype TSM in the check.
      *                         Prototype TSM does not have a movement bonus or
      *                         a required heat level.
@@ -1426,7 +1427,7 @@ public abstract class Mek extends Entity {
         EquipmentType sinkType = EquipmentType.get(sinkName);
 
         if (sinkType == null) {
-            LogManager.getLogger().info("Mek: can't find heat sink to add to engine");
+            logger.info("Mek: can't find heat sink to add to engine");
         }
 
         int toAllocate = Math.min(
@@ -1450,7 +1451,7 @@ public abstract class Mek extends Entity {
         EquipmentType sinkType = EquipmentType.get(sinkName);
 
         if (sinkType == null) {
-            LogManager.getLogger().info("Mek: can't find heat sink to add to engine");
+            logger.info("Mek: can't find heat sink to add to engine");
         }
 
         for (int i = 0; i < toAllocate; i++) {
@@ -2003,7 +2004,7 @@ public abstract class Mek extends Entity {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -2244,7 +2245,7 @@ public abstract class Mek extends Entity {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -2354,7 +2355,7 @@ public abstract class Mek extends Entity {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
@@ -2401,7 +2402,7 @@ public abstract class Mek extends Entity {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Swarm attack locations.
             switch (roll) {
@@ -2456,7 +2457,7 @@ public abstract class Mek extends Entity {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Hits from above.
             switch (roll) {
@@ -2496,7 +2497,7 @@ public abstract class Mek extends Entity {
                     pw.println(roll);
                 }
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
             }
             // Hits from below.
             switch (roll) {
@@ -4953,7 +4954,7 @@ public abstract class Mek extends Entity {
 
     /**
      * Convenience function that returns the critical slot containing the cockpit
-     * 
+     *
      * @return
      */
     public List<CriticalSlot> getCockpit() {
@@ -5445,7 +5446,7 @@ public abstract class Mek extends Entity {
      * additional
      * failures, or negative to indicate coolant being refreshed from an outside
      * source.
-     * 
+     *
      * @param amount Amount to change the value, typical value is 1
      */
     @Override
@@ -6000,33 +6001,33 @@ public abstract class Mek extends Entity {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (countInternalDamagedLimbs() >= 3) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
+            logger.debug(getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
+            logger.debug(getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
             return true;
         }
 
         if (isLocationBad(LOC_LT)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Left Torso destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Left Torso destroyed.");
             return true;
         }
 
         if (isLocationBad(LOC_RT)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Right Torso destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Right Torso destroyed.");
             return true;
         }
 
         if (getEngineHits() >= 2) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: 2 or more Engine Hits.");
+            logger.debug(getDisplayName() + " CRIPPLED: 2 or more Engine Hits.");
             return true;
 
         }
 
         if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
+            logger.debug(getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
             return true;
         }
 
@@ -6036,18 +6037,18 @@ public abstract class Mek extends Entity {
             if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
                     || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                             SYSTEM_SENSORS, LOC_CT) > 0)) {
-                LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Sensors destroyed.");
+                logger.debug(getDisplayName() + " CRIPPLED: Sensors destroyed.");
                 return true;
             }
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
+            logger.debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             return true;
         }
 
         if (isPermanentlyImmobilized(checkCrew)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            logger.debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -6060,7 +6061,7 @@ public abstract class Mek extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            logger.debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -6151,37 +6152,37 @@ public abstract class Mek extends Entity {
     @Override
     public boolean isDmgHeavy() {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.33) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 1/3 head armor remaining");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Less than 1/3 head armor remaining");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.25) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% armor remaining");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% armor remaining");
             return true;
         }
 
         if (countInternalDamagedLimbs() == 2) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Two limbs with internal damage");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Two limbs with internal damage");
             return true;
         }
 
         if (countInternalDamagedTorsos() == 1) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Torso internal damage");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Torso internal damage");
             return true;
         }
 
         if (getEngineHits() == 1) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Engine hit");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Engine hit");
             return true;
         }
 
         if (getGyroHits() == 1) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Gyro hit");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Gyro hit");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 3)) {
-            LogManager.getLogger().debug(getDisplayName() + " Three crew hits");
+            logger.debug(getDisplayName() + " Three crew hits");
             return true;
         }
 
@@ -6198,7 +6199,7 @@ public abstract class Mek extends Entity {
             }
         }
         if (((double) totalInoperable / totalWeapons) >= 0.75) {
-            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% weapons operable");
+            logger.debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% weapons operable");
             return true;
         }
         return false;
@@ -6207,22 +6208,22 @@ public abstract class Mek extends Entity {
     @Override
     public boolean isDmgModerate() {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.67) {
-            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 2/3 head armor");
+            logger.debug(getDisplayName() + " MODERATE DAMAGE: Less than 2/3 head armor");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.5) {
-            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% armor");
+            logger.debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% armor");
             return true;
         }
 
         if (countInternalDamagedLimbs() == 1) {
-            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Limb with internal damage");
+            logger.debug(getDisplayName() + " MODERATE DAMAGE: Limb with internal damage");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 2)) {
-            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: 2 crew hits");
+            logger.debug(getDisplayName() + " MODERATE DAMAGE: 2 crew hits");
             return true;
         }
 
@@ -6240,7 +6241,7 @@ public abstract class Mek extends Entity {
         }
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
-            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% weapons operable");
+            logger.debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% weapons operable");
             return true;
         }
         return false;
@@ -6249,17 +6250,17 @@ public abstract class Mek extends Entity {
     @Override
     public boolean isDmgLight() {
         if (getArmor(LOC_HEAD) < getOArmor(LOC_HEAD)) {
-            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: head armor damaged");
+            logger.debug(getDisplayName() + " LIGHT DAMAGE: head armor damaged");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.75) {
-            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: less than 75% armor remaining");
+            logger.debug(getDisplayName() + " LIGHT DAMAGE: less than 75% armor remaining");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 1)) {
-            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: crew hit");
+            logger.debug(getDisplayName() + " LIGHT DAMAGE: crew hit");
             return true;
         }
 
@@ -6277,7 +6278,7 @@ public abstract class Mek extends Entity {
         }
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
-            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: Less than 75% weapons operable");
+            logger.debug(getDisplayName() + " LIGHT DAMAGE: Less than 75% weapons operable");
             return true;
         }
         return false;
@@ -6371,7 +6372,7 @@ public abstract class Mek extends Entity {
 
     /**
      * return if a RISC emergency coolant failed its roll
-     * 
+     *
      * @param vDesc
      * @param vCriticals
      * @return

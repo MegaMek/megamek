@@ -28,8 +28,6 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -43,11 +41,13 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.logging.MMLogger;
 
 /**
  * Shows force display
  */
 public class ForceDisplayPanel extends JPanel implements GameListener, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(ForceDisplayPanel.class);
 
     private ForceDisplayMekTreeModel forceTreeModel;
     JTree forceTree;
@@ -97,7 +97,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         // Refresh the force tree and restore selection/expand status
         HashSet<Object> selections = new HashSet<>();
         if (!forceTree.isSelectionEmpty()) {
-            for (TreePath path: forceTree.getSelectionPaths()) {
+            for (TreePath path : forceTree.getSelectionPaths()) {
                 Object sel = path.getLastPathComponent();
                 if (sel instanceof Force || sel instanceof Entity) {
                     selections.add(path.getLastPathComponent());
@@ -125,7 +125,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         } finally {
             forceTree.updateUI();
         }
-        for (int id: expandedForces) {
+        for (int id : expandedForces) {
             if (!forces.contains(id)) {
                 continue;
             }
@@ -133,7 +133,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         }
 
         forceTree.clearSelection();
-        for (Object sel: selections) {
+        for (Object sel : selections) {
             forceTree.addSelectionPath(getPath(sel));
         }
     }
@@ -141,7 +141,8 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
     /**
      * Returns a TreePath in the force tree for a possibly outdated entity
      * or force. Outdated means a new object of the type was sent by the server
-     * and has replaced this object. Also works for the game's current objects though.
+     * and has replaced this object. Also works for the game's current objects
+     * though.
      * Uses the force's/entity's id to get the
      * game's real object with the same id. Used to reconstruct the selection
      * and expansion state of the force tree after an update.
@@ -157,7 +158,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
             Object[] pathObjs = new Object[chain.size() + 1];
             int index = 0;
             pathObjs[index++] = forceTreeModel.getRoot();
-            for (Force force: chain) {
+            for (Force force : chain) {
                 pathObjs[index++] = force;
             }
             return new TreePath(pathObjs);
@@ -170,7 +171,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
             Object[] pathObjs = new Object[chain.size() + 2];
             int index = 0;
             pathObjs[index++] = forceTreeModel.getRoot();
-            for (Force force: chain) {
+            for (Force force : chain) {
                 pathObjs[index++] = force;
             }
             pathObjs[index++] = game.getEntity(entityId);
@@ -190,7 +191,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                 Entity entity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
                 LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
         });
 
@@ -244,22 +245,22 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
 
     @Override
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gamePlayerChat(GamePlayerChatEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
@@ -274,68 +275,69 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
 
     @Override
     public void gameReport(GameReportEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameEnd(GameEndEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameBoardNew(GameBoardNewEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameMapQuery(GameMapQueryEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameEntityNew(GameEntityNewEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameEntityRemove(GameEntityRemoveEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameEntityChange(GameEntityChangeEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameNewAction(GameNewActionEvent e) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameClientFeedbackRequest(GameCFREvent evt) {
-        //noaction default
+        // noaction default
     }
 
     @Override
     public void gameVictory(GameVictoryEvent e) {
-        //noaction default
+        // noaction default
     }
+
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
     }

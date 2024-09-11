@@ -29,8 +29,6 @@ import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
@@ -44,9 +42,12 @@ import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /** A specialized renderer for the Mek Force tree. */
 public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
+    private static final MMLogger logger = MMLogger.create(ForceDisplayMekTreeRenderer.class);
+
     private final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();
 
@@ -119,7 +120,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             int width = height * image.getWidth(null) / image.getHeight(null);
             setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
         } else {
-            LogManager.getLogger().error("Trying to resize a unit icon of height or width 0!");
+            logger.error("Trying to resize a unit icon of height or width 0!");
             setIcon(null);
         }
     }

@@ -34,8 +34,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -45,18 +43,23 @@ import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
+import megamek.logging.MMLogger;
 
 public final class UIUtil {
+    private static final MMLogger logger = MMLogger.create(UIUtil.class);
 
     // The standard pixels-per-inch to compare against for display scaling
     private static final int DEFAULT_DISPLAY_PPI = 96;
 
-    /** The width for a tooltip displayed to the side of a dialog using one of TipXX classes. */
+    /**
+     * The width for a tooltip displayed to the side of a dialog using one of TipXX
+     * classes.
+     */
     private static final int TOOLTIP_WIDTH = 300;
 
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
-    public final static int FONT_SCALE1 = 14;
-    public final static int FONT_SCALE2 = 17;
+    public static final int FONT_SCALE1 = 14;
+    public static final int FONT_SCALE2 = 17;
     public final static String ECM_SIGN = " \u24BA ";
     public final static String LOADED_SIGN = " \u26DF ";
     public final static String UNCONNECTED_SIGN = " \u26AC";
@@ -65,7 +68,6 @@ public final class UIUtil {
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
-
 
     public static void showMUL(int mulId, Component parent) {
         browse(MMConstants.MUL_URL_PREFIX + mulId, parent);
@@ -77,7 +79,7 @@ public final class UIUtil {
                 Desktop.getDesktop().browse(new URL(url).toURI());
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             JOptionPane.showMessageDialog(parent, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -129,12 +131,14 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a span of the given CSS class with opening and closing tag and the content in between.
-     * The class should be defined in the header styles block, e.g. as <code>.myspan { ... }</code>,
+     * Returns a span of the given CSS class with opening and closing tag and the
+     * content in between.
+     * The class should be defined in the header styles block, e.g. as
+     * <code>.myspan { ... }</code>,
      * then it can be given as "myspan" here.
      *
      * @param cssClass the class as defined in CSS styles
-     * @param content the text to go in the span
+     * @param content  the text to go in the span
      * @return the complete span block
      */
     public static String spanCSS(String cssClass, String content) {
@@ -142,12 +146,14 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a div of the given CSS class with opening and closing tag and the content in between.
-     * The class should be defined in the header styles block, e.g. as <code>.mydiv { ... }</code>,
+     * Returns a div of the given CSS class with opening and closing tag and the
+     * content in between.
+     * The class should be defined in the header styles block, e.g. as
+     * <code>.mydiv { ... }</code>,
      * then it can be given as "mydiv" here.
      *
      * @param cssClass the class as defined in CSS styles
-     * @param content the text to go in the div
+     * @param content  the text to go in the div
      * @return the complete div block
      */
     public static String divCSS(String cssClass, String content) {
@@ -155,12 +161,14 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between.
-     * The class should be defined in the header styles block, e.g. as <code>.mycell { ... }</code>, then it
+     * Returns a TD table cell of the given CSS class with opening and closing tag
+     * and the content in between.
+     * The class should be defined in the header styles block, e.g. as
+     * <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
      *
      * @param cssClass the class as defined in CSS styles
-     * @param content the text to go in the table cell
+     * @param content  the text to go in the table cell
      * @return the complete TD block
      */
     public static String tdCSS(String cssClass, String content) {
@@ -168,13 +176,15 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between
+     * Returns a TD table cell of the given CSS class with opening and closing tag
+     * and the content in between
      * (as text).
-     * The class should be defined in the header styles block, e.g. as <code>.mycell { ... }</code>, then it
+     * The class should be defined in the header styles block, e.g. as
+     * <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
      *
      * @param cssClass the class as defined in CSS styles
-     * @param content the text to go in the table cell
+     * @param content  the text to go in the table cell
      * @return the complete TD block
      */
     public static String tdCSS(String cssClass, int content) {
@@ -185,7 +195,8 @@ public final class UIUtil {
      * Helper method to place Strings in lines according to length. The Strings
      * in origList will be added to one line with separator sep between them as
      * long as the total length does not exceed maxLength. If it exceeds maxLength,
-     * a new line is begun. All lines but the last will end with sep if sepAtEnd is true.
+     * a new line is begun. All lines but the last will end with sep if sepAtEnd is
+     * true.
      */
     public static ArrayList<String> arrangeInLines(List<String> origList, int maxLength,
             String sep, boolean sepAtEnd) {
@@ -195,7 +206,7 @@ public final class UIUtil {
             return result;
         }
         String currLine = "";
-        for (String curr: origList) {
+        for (String curr : origList) {
             // Skip empty strings to avoid double separators
             if (curr.isEmpty()) {
                 continue;
@@ -234,7 +245,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a UIManager Color that can be used as an alternate row color in a table
+     * Returns a UIManager Color that can be used as an alternate row color in a
+     * table
      * to offset each other row.
      */
     public static Color alternateTableBGColor() {
@@ -444,26 +456,34 @@ public final class UIUtil {
         return new Color(red, green, blue, color.getAlpha());
     }
 
-    /** Returns the given String str enclosed in HTML tags and with a font tag according to the guiScale. */
+    /**
+     * Returns the given String str enclosed in HTML tags and with a font tag
+     * according to the guiScale.
+     */
     public static String scaleStringForGUI(String str) {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + str + "</FONT></HTML>";
     }
 
-    /** Returns the given String str enclosed in HTML tags and with a font tag according to the guiScale. */
+    /**
+     * Returns the given String str enclosed in HTML tags and with a font tag
+     * according to the guiScale.
+     */
     public static String scaleMessageForGUI(String str) {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
 
-    /** Call this for {@link #adjustContainer(Container, int)} with a dialog as parameter. */
+    /**
+     * Call this for {@link #adjustContainer(Container, int)} with a dialog as
+     * parameter.
+     */
     public static void adjustDialog(JDialog dialog, int fontSize) {
         adjustContainer(dialog.getContentPane(), fontSize);
     }
 
     /** calculate the max row height in a table + pad */
-    public static int calRowHeights(JTable table, int sf, int pad)
-    {
+    public static int calRowHeights(JTable table, int sf, int pad) {
         int rowHeight = sf;
-        for (int row = 0; row < table.getRowCount(); row++)         {
+        for (int row = 0; row < table.getRowCount(); row++) {
             for (int col = 0; col < table.getColumnCount(); col++) {
                 // Consider the preferred height of the column
                 TableCellRenderer renderer = table.getCellRenderer(row, col);
@@ -476,7 +496,7 @@ public final class UIUtil {
     }
 
     /** set font size for the TitledBorder */
-     public static void setTitledBorder(Border border, int sf) {
+    public static void setTitledBorder(Border border, int sf) {
         if ((border instanceof TitledBorder)) {
             ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
         }
@@ -485,14 +505,15 @@ public final class UIUtil {
     /**
      * Applies the current gui scale to a given Container.
      * For a dialog, pass getContentPane(). This can work well for simple dialogs,
-     * but it is of course "experimental". Complex dialogs must be hand-adapted to the
+     * but it is of course "experimental". Complex dialogs must be hand-adapted to
+     * the
      * gui scale.
      */
     public static void adjustContainer(Container parentCon, int fontSize) {
         int sf = scaleForGUI(fontSize);
         int pad = 3;
 
-        for (Component comp: parentCon.getComponents()) {
+        for (Component comp : parentCon.getComponents()) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
@@ -518,7 +539,7 @@ public final class UIUtil {
                     comp.setFont(comp.getFont().deriveFont((float) sf));
                 }
                 JTabbedPane tabbedPane = (JTabbedPane) comp;
-                for (int i=0; i < tabbedPane.getTabCount();i++) {
+                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
                     Component subComp = tabbedPane.getTabComponentAt(i);
                     if (subComp instanceof JPanel) {
                         adjustContainer((JPanel) subComp, fontSize);
@@ -539,9 +560,12 @@ public final class UIUtil {
         }
     }
 
-    /** Adapt a JPopupMenu to the GUI scaling. Use after all menu items have been added. */
+    /**
+     * Adapt a JPopupMenu to the GUI scaling. Use after all menu items have been
+     * added.
+     */
     public static void scaleMenu(final JComponent popup) {
-        for (Component comp: popup.getComponents()) {
+        for (Component comp : popup.getComponents()) {
             if ((comp instanceof JMenuItem)) {
                 comp.setFont(getScaledFont());
                 scaleJMenuItem((JMenuItem) comp);
@@ -605,7 +629,8 @@ public final class UIUtil {
 
     /**
      *
-     * @return an image with the same aspect ratio that fits within the given bounds, or the existing image if it already does
+     * @return an image with the same aspect ratio that fits within the given
+     *         bounds, or the existing image if it already does
      */
     public static Image constrainImageSize(Image image, ImageObserver observer, int maxWidth, int maxHeight) {
         int w = image.getWidth(observer);
@@ -615,26 +640,28 @@ public final class UIUtil {
             return image;
         }
 
-        //choose resize that fits in bounds
-        double scaleW = maxWidth / (double)w;
-        double scaleH = maxHeight / (double)h;
-        if (scaleW < scaleH ) {
-            return ImageUtil.getScaledImage(image, maxWidth, (int)(h*scaleW));
+        // choose resize that fits in bounds
+        double scaleW = maxWidth / (double) w;
+        double scaleH = maxHeight / (double) h;
+        if (scaleW < scaleH) {
+            return ImageUtil.getScaledImage(image, maxWidth, (int) (h * scaleW));
         } else {
-            return ImageUtil.getScaledImage(image, (int)(w*scaleH), maxHeight);
+            return ImageUtil.getScaledImage(image, (int) (w * scaleH), maxHeight);
         }
     }
 
     /**
      *
-     * @param multiResImageMap a collection of widths matched with corresponding image file path
-     * @param parent component
+     * @param multiResImageMap a collection of widths matched with corresponding
+     *                         image file path
+     * @param parent           component
      * @return a JLabel setup to the correct size to act as a splash screen
      */
     public static JLabel createSplashComponent(TreeMap<Integer, String> multiResImageMap, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize( parent.getGraphicsConfiguration().getDevice().getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(
+                parent.getGraphicsConfiguration().getDevice().getDisplayMode());
         Image imgSplash = parent.getToolkit().getImage(multiResImageMap.floorEntry(scaledMonitorSize.width).getValue());
 
         // wait for splash image to load completely
@@ -652,13 +679,14 @@ public final class UIUtil {
     /**
      *
      * @param imgSplashFile path to an image on disk
-     * @param parent component
+     * @param parent        component
      * @return a JLabel setup to the correct size to act as a splash screen
      */
     public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration().getDevice().getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(
+                parent.getGraphicsConfiguration().getDevice().getDisplayMode());
 
         Image imgSplash = parent.getToolkit().getImage(imgSplashFile);
 
@@ -676,9 +704,10 @@ public final class UIUtil {
 
     /**
      *
-     * @param imgSplash an image
-     * @param observer An imageObserver
-     * @param scaledMonitorSize the dimensions of the monitor taking into account display scaling
+     * @param imgSplash         an image
+     * @param observer          An imageObserver
+     * @param scaledMonitorSize the dimensions of the monitor taking into account
+     *                          display scaling
      * @return a JLabel setup to the correct size to act as a splash screen
      */
     public static JLabel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {
@@ -706,7 +735,6 @@ public final class UIUtil {
         return splash;
     }
 
-
     public static void keepOnScreen(JFrame component) {
 
         DisplayMode currentMonitor = component.getGraphicsConfiguration().getDevice().getDisplayMode();
@@ -717,7 +745,7 @@ public final class UIUtil {
         Rectangle r = new Rectangle(scaledScreenSize);
 
         // center and size if out of bounds
-        if ( (pos.x < 0) || (pos.y < 0) ||
+        if ((pos.x < 0) || (pos.y < 0) ||
                 (pos.x + size.width > scaledScreenSize.width) ||
                 (pos.y + size.height > scaledScreenSize.getHeight())) {
             component.setLocationRelativeTo(null);
@@ -725,7 +753,8 @@ public final class UIUtil {
     }
 
     /**
-     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     * Activates anti-aliasing and other high-quality settings for the given
+     * Graphics.
      *
      * @param graph Graphics context to use hq rendering for
      */
@@ -733,9 +762,11 @@ public final class UIUtil {
         if (GUIPreferences.getInstance().getHighQualityGraphics()) {
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         }
     }
 
@@ -818,7 +849,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JLabel with a specialized tooltip display. Displays the tooltip to the right side
+     * A JLabel with a specialized tooltip display. Displays the tooltip to the
+     * right side
      * of the parent dialog, not following the mouse.
      * Used in the player settings and planetary settings dialogs.
      */
@@ -854,7 +886,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JButton with a specialized tooltip display. Displays the tooltip to the right side
+     * A JButton with a specialized tooltip display. Displays the tooltip to the
+     * right side
      * of the parent dialog, not following the mouse.
      * Used in the player settings and planetary settings dialogs.
      */
@@ -886,8 +919,9 @@ public final class UIUtil {
     }
 
     /**
-     * A MMComboBox with a specialized tooltip display. Displays the tooltip to the right side
-
+     * A MMComboBox with a specialized tooltip display. Displays the tooltip to the
+     * right side
+     *
      * of the parent dialog, not following the mouse.
      * Used in the player settings dialog.
      */
@@ -927,7 +961,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JList with a specialized tooltip display. Displays the tooltip to the right side
+     * A JList with a specialized tooltip display. Displays the tooltip to the right
+     * side
      * of the parent dialog, not following the mouse.
      */
     public static class TipList<E> extends JList<E> {
@@ -962,7 +997,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JTextField with a specialized tooltip display. Displays the tooltip to the right side
+     * A JTextField with a specialized tooltip display. Displays the tooltip to the
+     * right side
      * of the parent dialog, not following the mouse. Can also display a hint text
      * such as "..., ..." when empty.
      * Used in the player settings and planetary settings dialogs.
@@ -1049,7 +1085,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JPanel with a specialized tooltip display. Displays the tooltip to the right side
+     * A JPanel with a specialized tooltip display. Displays the tooltip to the
+     * right side
      * of the parent dialog, not following the mouse.
      */
     public static class TipPanel extends JPanel {
@@ -1084,7 +1121,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JSlider with a specialized tooltip display. Displays the tooltip to the right side
+     * A JSlider with a specialized tooltip display. Displays the tooltip to the
+     * right side
      * of the parent window (dialog), not following the mouse.
      * Implement the missing super constructors as necessary.
      */
@@ -1116,7 +1154,8 @@ public final class UIUtil {
     }
 
     /**
-     * A MMToggleButton with a specialized tooltip display. Displays the tooltip to the right side
+     * A MMToggleButton with a specialized tooltip display. Displays the tooltip to
+     * the right side
      * of the parent window (dialog), not following the mouse.
      */
     public static class TipMMToggleButton extends MMToggleButton {
@@ -1217,7 +1256,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size is based on
+     * Returns a Font object using the "Dialog" logic font. The font size is based
+     * on
      * size 14 and scaled with the current gui scaling.
      */
     public static Font getScaledFont() {
@@ -1225,7 +1265,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a vertical spacer Swing component ({@link Box#createVerticalStrut(int)}) with the given height
+     * Returns a vertical spacer Swing component
+     * ({@link Box#createVerticalStrut(int)}) with the given height
      * scaled by the current GUI scaling.
      */
     public static Component scaledVerticalSpacer(int unscaledHeight) {
@@ -1233,7 +1274,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a horizontal spacer Swing component ({@link Box#createHorizontalStrut(int)}) with the given width
+     * Returns a horizontal spacer Swing component
+     * ({@link Box#createHorizontalStrut(int)}) with the given width
      * scaled by the current GUI scaling.
      */
     public static Component scaledHorizontalSpacer(int unscaledHeight) {
@@ -1241,34 +1283,46 @@ public final class UIUtil {
     }
 
     /**
-     * This class is a subclass of EmptyBorder. The given top, left, right, bottom values are scaled with the
+     * This class is a subclass of EmptyBorder. The given top, left, right, bottom
+     * values are scaled with the
      * current GUI scale.
      */
     public static class ScaledEmptyBorder extends EmptyBorder {
 
         /**
-         * Creates a version of EmptyBorder where top, left, right, bottom values are scaled with the current GUI scale.
+         * Creates a version of EmptyBorder where top, left, right, bottom values are
+         * scaled with the current GUI scale.
          */
         public ScaledEmptyBorder(int top, int left, int bottom, int right) {
-            super(UIUtil.scaleForGUI(top), UIUtil.scaleForGUI(left), UIUtil.scaleForGUI(bottom), UIUtil.scaleForGUI(right));
+            super(UIUtil.scaleForGUI(top), UIUtil.scaleForGUI(left), UIUtil.scaleForGUI(bottom),
+                    UIUtil.scaleForGUI(right));
         }
     }
 
-    /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
+    /**
+     * Returns true when a modal dialog such as the Camo Chooser or a Load Force
+     * dialog is currently shown.
+     */
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
     }
 
     /**
-     *  Automatically determines the correct row heights for each row of the given JTable and sets it.
-     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
-     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
-     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
-     *  {@link javax.swing.event.RowSorterListener} to be effective.
-     *  Note: For tables of more than about 200 entries or with slow renderers this will become noticeably slow
-     *  when drag-resizing the table. When the table has uniform row heights, better use
-     *  {@link #updateRowHeightsForEqualHeights(JTable)}.
+     * Automatically determines the correct row heights for each row of the given
+     * JTable and sets it.
+     * Note: Just calling this after a data change or after
+     * {@link #adjustDialog(JDialog, int)} will
+     * typically not work well. Instead, it must be called from a
+     * {@link javax.swing.event.TableModelListener},
+     * a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is
+     * used) a
+     * {@link javax.swing.event.RowSorterListener} to be effective.
+     * Note: For tables of more than about 200 entries or with slow renderers this
+     * will become noticeably slow
+     * when drag-resizing the table. When the table has uniform row heights, better
+     * use
+     * {@link #updateRowHeightsForEqualHeights(JTable)}.
      */
     public static void updateRowHeights(JTable table) {
         for (int row = 0; row < table.getRowCount(); row++) {
@@ -1282,12 +1336,16 @@ public final class UIUtil {
     }
 
     /**
-     *  Automatically determines the correct row height for the given JTable and sets it, assuming it has a
-     *  uniform row height for all rows.
-     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
-     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
-     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
-     *  {@link javax.swing.event.RowSorterListener} to be effective.
+     * Automatically determines the correct row height for the given JTable and sets
+     * it, assuming it has a
+     * uniform row height for all rows.
+     * Note: Just calling this after a data change or after
+     * {@link #adjustDialog(JDialog, int)} will
+     * typically not work well. Instead, it must be called from a
+     * {@link javax.swing.event.TableModelListener},
+     * a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is
+     * used) a
+     * {@link javax.swing.event.RowSorterListener} to be effective.
      */
     public static void updateRowHeightsForEqualHeights(JTable table) {
         if (table.getRowCount() > 0) {
@@ -1326,7 +1384,10 @@ public final class UIUtil {
     private final static Color LIGHTUI_WHITE = new Color(255, 255, 255);
     private final static Color DARKUI_WHITE = new Color(255, 255, 255);
 
-    /** Returns an HTML FONT Size String, according to GUIScale (e.g. "style=font-size:22"). */
+    /**
+     * Returns an HTML FONT Size String, according to GUIScale (e.g.
+     * "style=font-size:22").
+     */
     private static String sizeString() {
         int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);
         return " style=font-size:" + fontSize + " ";
@@ -1347,7 +1408,10 @@ public final class UIUtil {
         return " style=font-size:" + fontSize + " ";
     }
 
-    /** Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given color. */
+    /**
+     * Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given
+     * color.
+     */
     public static String colorString(Color col) {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
     }
@@ -1384,8 +1448,9 @@ public final class UIUtil {
     }
 
     /**
-     * @return the 'virtual bounds' of the screen. That is, the union of the displayable space on
-     * all available screen devices.
+     * @return the 'virtual bounds' of the screen. That is, the union of the
+     *         displayable space on
+     *         all available screen devices.
      */
     @Deprecated
     public static Rectangle getVirtualBounds() {
@@ -1430,13 +1495,14 @@ public final class UIUtil {
      * Calculates center of view port for a given point
      */
     public static int calculateCenter(int vh, int h, int th, int y) {
-        y = Math.max(0, y - ((vh - th)/2));
+        y = Math.max(0, y - ((vh - th) / 2));
         y = Math.min(y, h - vh);
         return y;
     }
 
     /**
-     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red. Includes the #.
+     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red.
+     * Includes the #.
      * Does not include any alpha components.
      *
      * @param color The color to convert
@@ -1446,5 +1512,6 @@ public final class UIUtil {
         return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
     }
 
-    private UIUtil() { }
+    private UIUtil() {
+    }
 }

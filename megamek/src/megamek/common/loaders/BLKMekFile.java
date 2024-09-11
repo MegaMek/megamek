@@ -16,16 +16,16 @@ package megamek.common.loaders;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
+import megamek.logging.MMLogger;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKMekFile extends BLKFile implements IMekLoader {
+    private static final MMLogger logger = MMLogger.create(BLKMekFile.class);
 
     // armor locatioms
     public static final int HD = 0;
@@ -131,7 +131,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         }
 
         if (dataFile.getDataAsInt("armor").length < 11) {
-            LogManager.getLogger().error("Read armor array doesn't match my armor array...");
+            logger.error("Read armor array doesn't match my armor array...");
             throw new EntityLoadingException("Could not find block.");
         }
         int[] armor = dataFile.getDataAsInt("Armor");

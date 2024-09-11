@@ -30,10 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
+import megamek.logging.MMLogger;
 
 /**
  * This class represents mtf files which are used to store Meks. The class
@@ -44,6 +43,7 @@ import megamek.common.*;
  * @author Simon (Juliez)
  */
 public class MtfFile implements IMekLoader {
+    private static final MMLogger logger = MMLogger.create(MtfFile.class);
 
     private String chassis;
     private String model;
@@ -160,13 +160,13 @@ public class MtfFile implements IMekLoader {
             critData = new String[9][12];
             readLines(r);
         } catch (IOException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
@@ -512,7 +512,7 @@ public class MtfFile implements IMekLoader {
 
             return mek;
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw new Exception(ex);
         }
     }

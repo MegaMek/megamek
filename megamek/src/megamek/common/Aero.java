@@ -13,6 +13,17 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.Vector;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -20,15 +31,14 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import org.apache.logging.log4j.LogManager;
-
-import java.text.NumberFormat;
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
 public abstract class Aero extends Entity implements IAero, IBomber {
+    private static final MMLogger logger = MMLogger.create(Aero.class);
+
     private static final long serialVersionUID = 7196307097459255187L;
 
     // locations
@@ -2573,27 +2583,27 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (isEjecting()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
+            logger.debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
             return true;
         } else if (getInternalRemainingPercent() < 0.5) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+            logger.debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(getInternalRemainingPercent())
                     + " internals remaining.");
             return true;
         } else if (getEngineHits() > 0) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
+            logger.debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
         } else if (fuelTankHit()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
+            logger.debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
         } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
+            logger.debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
             return true;
         } else if (getFCSHits() >= 3) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
+            logger.debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
             return true;
         } else if (getCICHits() >= 3) {
-            LogManager.getLogger()
+            logger
                     .debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
             return true;
         }
@@ -2604,7 +2614,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         }
 
         if (!hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
+            logger.debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
             return true;
         } else {
             return false;
@@ -2614,17 +2624,17 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgHeavy() {
         if (getArmorRemainingPercent() <= 0.33) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Heavily Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.67.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 3)) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + "Moderately Damaged: The crew has taken a minimum of three hits.");
             return true;
         }
@@ -2648,17 +2658,17 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgModerate() {
         if (getArmorRemainingPercent() <= 0.5) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.50.");
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Moderately Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.75.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 2)) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Moderately Damaged: The crew has taken a minimum of two hits.");
             return true;
         }
@@ -2681,17 +2691,17 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgLight() {
         if (getArmorRemainingPercent() <= 0.75) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.75.");
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Lightly Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.9.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 1)) {
-            LogManager.getLogger().debug(getDisplayName()
+            logger.debug(getDisplayName()
                     + " Lightly Damaged: The crew has taken a minimum of one hit.");
             return true;
         }
@@ -2805,7 +2815,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Returns the number of passengers on this unit
      * Intended for spacecraft, where we want to get the crews of transported units
      * plus actual passengers assigned to quarters
-     * 
+     *
      * @return
      */
     @Override
@@ -2815,7 +2825,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Returns the list of Entity IDs used by this ship as escape craft
-     * 
+     *
      * @return
      */
     public Set<String> getEscapeCraft() {
@@ -2825,7 +2835,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Adds an Escape Craft. Used by MHQ to track where escaped crew and passengers
      * end up.
-     * 
+     *
      * @param id The Entity ID of the ship to add.
      */
     public void addEscapeCraft(String id) {
@@ -2835,7 +2845,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Removes an Escape Craft. Used by MHQ to track where escaped crew and
      * passengers end up.
-     * 
+     *
      * @param id The Entity ID of the ship to remove.
      */
     public void removeEscapeCraft(String id) {
@@ -2861,7 +2871,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Returns our list of unique individuals being transported as marines
-     * 
+     *
      * @return
      */
     public Map<UUID, Integer> getMarines() {
@@ -2871,7 +2881,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Adds a marine. Used by MHQ to track where a given person ends up.
      * Also used by MM to move marines around between ships
-     * 
+     *
      * @param personId   The unique ID of the person to add.
      * @param pointValue The marine point value of the person being added
      */
@@ -2882,7 +2892,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Removes a marine. Used by MHQ to track where a given person ends up.
      * Also used by MM to move marines around between ships
-     * 
+     *
      * @param personId The unique ID of the person to remove.
      */
     public void removeMarine(UUID personId) {
@@ -2892,7 +2902,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Returns the number of marines assigned to a unit
      * Used for abandoning a unit
-     * 
+     *
      * @return
      */
     public int getMarineCount() {
@@ -2902,7 +2912,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Convenience method that compiles the total number of people aboard a ship -
      * Crew, Marines, Passengers...
-     * 
+     *
      * @return An integer representing everyone aboard
      */
     public int getTotalAboard() {
@@ -2918,7 +2928,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Convenience method to return the number of escape pods remaining
-     * 
+     *
      * @return
      */
     public int getPodsLeft() {
@@ -2941,7 +2951,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Updates the total number of escape pods launched so far
-     * 
+     *
      * @param n The number to change
      */
     public void setLaunchedEscapePods(int n) {
@@ -2956,7 +2966,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Convenience method to return the number of life boats remaining
-     * 
+     *
      * @return
      */
     public int getLifeBoatsLeft() {
@@ -2965,7 +2975,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Updates the total number of life boats launched so far
-     * 
+     *
      * @param n The number to change
      */
     public void setLaunchedLifeBoats(int n) {
@@ -2989,7 +2999,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * 0.1 tons/person
      * (Taken from Infantry.getWeight() - foot trooper + .015t for the spacesuit
      * everyone aboard is wearing ;) )
-     * 
+     *
      * @return The total escape count for the unit
      */
     public int getEscapeCapacity() {
@@ -3028,7 +3038,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Fighters may carry external ordnance;
      * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may
      * carry bombs internally.
-     * 
+     *
      * @return boolean
      */
     @Override
@@ -3201,7 +3211,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Is autoejection enabled for ammo explosions?
-     * 
+     *
      * @return
      */
     public boolean isCondEjectAmmo() {
@@ -3211,7 +3221,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Used by Conditional Auto Ejection - will we eject when an ammo explosion is
      * triggered?
-     * 
+     *
      * @param condEjectAmmo Sets autoejection for ammo explosions
      */
     public void setCondEjectAmmo(boolean condEjectAmmo) {
@@ -3220,7 +3230,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Is autoejection enabled for fuel explosions?
-     * 
+     *
      * @return
      */
     public boolean isCondEjectFuel() {
@@ -3230,7 +3240,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Used by Conditional Auto Ejection - will we eject when a fuel explosion is
      * triggered?
-     * 
+     *
      * @param condEjectFuel Sets autoejection for fuel tank explosions
      */
     public void setCondEjectFuel(boolean condEjectFuel) {
@@ -3239,7 +3249,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Is autoejection enabled for SI destruction (Fighter only)?
-     * 
+     *
      * @return
      */
     public boolean isCondEjectSIDest() {
@@ -3249,7 +3259,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * Used by Conditional Auto Ejection - will we eject when structural integrity
      * is reduced to 0?
-     * 
+     *
      * @param condEjectSIDest Sets autoejection for structural integrity destruction
      */
     public void setCondEjectSIDest(boolean condEjectSIDest) {
@@ -3258,7 +3268,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Intended for large craft. Indicates that the ship is being abandoned.
-     * 
+     *
      * @return
      */
     public boolean isEjecting() {
@@ -3267,7 +3277,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Changes the ejecting flag when the order to abandon ship is given
-     * 
+     *
      * @param ejecting Change to the ejecting status of this ship
      */
     public void setEjecting(boolean ejecting) {

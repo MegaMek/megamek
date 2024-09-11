@@ -22,8 +22,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.logging.log4j.LogManager;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import megamek.MMConstants;
@@ -82,6 +80,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
@@ -90,6 +89,9 @@ import megamek.utilities.xml.MMXMLUtility;
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
         PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable {
+
+    private static final MMLogger logger = MMLogger.create(Entity.class);
+
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
@@ -1071,7 +1073,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             Player player = game.getPlayer(ownerId);
             if (null == player) {
-                LogManager.getLogger().error("Entity can't find player #" + ownerId);
+                logger.error("Entity can't find player #" + ownerId);
             } else {
                 setOwner(player);
             }
@@ -4054,7 +4056,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
                 && !(mounted instanceof WeaponMounted)) {
-            LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
+            logger.error("Trying to add plain Mounted class {} on {}!", mounted, this);
         }
     }
 
@@ -4069,7 +4071,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             shots = 1;
         }
         if (ammo == null) {
-            LogManager.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
+            logger.error("Equipment lookup failed for ammo for " + mounted.getName());
             return;
         }
         Mounted<?> m = Mounted.createMounted(this, ammo);
@@ -5198,7 +5200,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
             if (m == null) {
-                LogManager.getLogger().error("Null Equipment found in equipment list of entity " + this);
+                logger.error("Null Equipment found in equipment list of entity " + this);
                 return 0;
             }
             if ((this instanceof Mek) && m.is(EquipmentTypeLookup.SCM)) {
@@ -10247,7 +10249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (phase.isDeployment() == isDeployed()) {
             if (!isDeployed() && phase.isSetArtilleryAutohitHexes()
                     && isEligibleForArtyAutoHitHexes()) {
-                LogManager.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
+                logger.debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
             }
@@ -11085,7 +11087,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
-                    LogManager.getLogger().error("", e);
+                    logger.error("", e);
                 }
             }
         }
@@ -11107,7 +11109,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
-                    LogManager.getLogger().error("", e);
+                    logger.error("", e);
                 }
             }
         }
@@ -11133,7 +11135,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
-                    LogManager.getLogger().error("", e);
+                    logger.error("", e);
                 }
             }
         }
@@ -11652,10 +11654,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (!isElevationValid(getElevation(), game.getBoard().getHex(getPosition()))) {
-            LogManager.getLogger().error(String.format("%s in hex %s is at invalid elevation %s",
+            logger.error(String.format("%s in hex %s is at invalid elevation %s",
                     getDisplayName(), HexTarget.coordsToId(getPosition()), getElevation()));
             setElevation(0 - game.getBoard().getHex(getPosition()).depth());
-            LogManager.getLogger().error(" moved to elevation " + getElevation());
+            logger.error(" moved to elevation " + getElevation());
             return true;
         }
         return false;
@@ -13550,7 +13552,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (isSpaceborne()) {
             // This happens so often that reporting it blows up the log; ideally it
             // shouldn't happen at all in space
-            // LogManager.getLogger().warn("Altitude retrieved for a spaceborne unit!");
+            // logger.warn("Altitude retrieved for a spaceborne unit!");
             return 0;
         } else {
             return altitude;
@@ -14715,7 +14717,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (StringUtility.isNullOrBlank(quirkEntry.getLocation())) {
                 // Activate the unit quirk.
                 if (getQuirks().getOption(quirkEntry.getQuirk()) == null) {
-                    LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+                    logger.warn(String.format("%s failed for %s %s - Invalid quirk!",
                             quirkEntry, getChassis(), getModel()));
                     continue;
                 }
@@ -14747,7 +14749,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (cs != null) {
             return cs.getMount();
         } else {
-            LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
+            logger.warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
                     quirkEntry, getChassis(), getModel(), quirkEntry.getLocation(), quirkEntry.getSlot()));
             return null;
         }
@@ -14756,14 +14758,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected void assignWeaponQuirk(QuirkEntry quirkEntry) {
         Mounted<?> m = getEquipmentForWeaponQuirk(quirkEntry);
         if (m == null) {
-            LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
+            logger.warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
                     quirkEntry, getChassis(), getModel(), quirkEntry.getLocation(), quirkEntry.getSlot()));
             return;
         }
 
         // Make sure this is a weapon.
         if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
-            LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
+            logger.warn(String.format("%s failed for %s %s - %s is not a weapon!",
                     quirkEntry, getChassis(), getModel(), m.getName()));
             return;
         }
@@ -14780,14 +14782,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (!matchFound) {
-            LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
+            logger.warn(String.format("%s failed for %s %s - %s != %s",
                     quirkEntry, getChassis(), getModel(), m.getType().getName(), quirkEntry.getWeaponName()));
             return;
         }
 
         // Activate the weapon quirk.
         if (m.getQuirks().getOption(quirkEntry.getQuirk()) == null) {
-            LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+            logger.warn(String.format("%s failed for %s %s - Invalid quirk!",
                     quirkEntry, getChassis(), getModel()));
             return;
         }

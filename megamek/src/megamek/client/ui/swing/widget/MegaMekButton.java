@@ -27,10 +27,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * A subclass of JButton that supports specifying the look and feel of the
@@ -39,6 +38,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * @author arlith
  */
 public class MegaMekButton extends JButton implements MouseListener {
+    private static final MMLogger logger = MMLogger.create(MegaMekButton.class);
 
     private static final long serialVersionUID = -3271105050872007863L;
 
@@ -106,23 +106,23 @@ public class MegaMekButton extends JButton implements MouseListener {
     private Font specificFont;
 
     /**
-    *
-    * @param text
-    *            The button text
-    * @param component
-    *            The name of the SkinSpecification entry
-    */
-   public MegaMekButton(String text, String component, boolean defaultToPlain) {
-       super(text);
-       initialize(component, defaultToPlain);
-   }
+     *
+     * @param text
+     *                  The button text
+     * @param component
+     *                  The name of the SkinSpecification entry
+     */
+    public MegaMekButton(String text, String component, boolean defaultToPlain) {
+        super(text);
+        initialize(component, defaultToPlain);
+    }
 
     /**
      *
      * @param text
-     *            The button text
+     *                  The button text
      * @param component
-     *            The name of the SkinSpecification entry
+     *                  The name of the SkinSpecification entry
      */
     public MegaMekButton(String text, String component) {
         super(text);
@@ -154,7 +154,7 @@ public class MegaMekButton extends JButton implements MouseListener {
      * the given string.
      *
      * @param component
-     *            String key to get the SkinSpecification.
+     *                  String key to get the SkinSpecification.
      */
     private void initialize(String component) {
         initialize(component, false);
@@ -165,7 +165,7 @@ public class MegaMekButton extends JButton implements MouseListener {
      * the given string.
      *
      * @param component
-     *            String key to get the SkinSpecification.
+     *                  String key to get the SkinSpecification.
      */
     private void initialize(String component, boolean defaultToPlain) {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
@@ -215,7 +215,7 @@ public class MegaMekButton extends JButton implements MouseListener {
         // Otherwise, try to load in all of the images.
         try {
             if (spec.backgrounds.size() < 2) {
-                LogManager.getLogger().error(
+                logger.error(
                         "Skin specification for a MegamekButton does not contain at least 2 background images!");
                 iconsLoaded = false;
             }
@@ -226,7 +226,7 @@ public class MegaMekButton extends JButton implements MouseListener {
                     spec.backgrounds.get(1)).getFile().toURI();
             backgroundPressedIcon = new ImageIcon(imgURL.toURL());
         } catch (Exception ex) {
-            LogManager.getLogger().error("Loading background icons for a MegamekButton!", ex);
+            logger.error("Loading background icons for a MegamekButton!", ex);
             iconsLoaded = false;
         }
     }

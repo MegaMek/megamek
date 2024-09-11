@@ -32,8 +32,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
@@ -48,11 +46,14 @@ import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
+import megamek.logging.MMLogger;
 
 /**
  * Switches between the various type-specific parsers depending on suffix
  */
 public class MekFileParser {
+    private static final MMLogger logger = MMLogger.create(MekFileParser.class);
+
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
     public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; // TODO : Remove inline filename
@@ -67,7 +68,7 @@ public class MekFileParser {
             try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
                 parse(is, f.getName());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
                 } else {
@@ -84,7 +85,7 @@ public class MekFileParser {
             } catch (NullPointerException npe) {
                 throw new NullPointerException();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
                 throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
         }
@@ -94,10 +95,10 @@ public class MekFileParser {
         try {
             parse(is, fileName);
         } catch (EntityLoadingException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw new EntityLoadingException(ex.getMessage());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
         }
     }
@@ -222,7 +223,7 @@ public class MekFileParser {
         try {
             ent.loadDefaultCustomWeaponOrder();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error in postLoadInit for " + ent.getDisplayName(), ex);
+            logger.error("Error in postLoadInit for " + ent.getDisplayName(), ex);
         }
 
         // add any sensors to the entity's vector of sensors
@@ -933,7 +934,7 @@ public class MekFileParser {
     private static boolean getResponse(String prompt) {
         String response = null;
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        LogManager.getLogger().info(prompt);
+        logger.info(prompt);
         try {
             response = in.readLine();
         } catch (IOException ignored) {
@@ -948,7 +949,7 @@ public class MekFileParser {
         try {
             entity = new MekFileParser(f, entityName).getEntity();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
         return entity;
     }

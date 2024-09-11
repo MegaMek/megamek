@@ -24,22 +24,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Game;
 import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+import megamek.logging.MMLogger;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths
  * for infantry units.
  * This includes both foot and jump paths.
- * 
+ *
  * @author NickAragua
  */
 public class NewtonianAerospacePathFinder {
+    private static final MMLogger logger = MMLogger.create(NewtonianAerospacePathFinder.class);
+
     private Game game;
     protected List<MovePath> aerospacePaths;
     protected MovePath offBoardPath;
@@ -108,9 +109,9 @@ public class NewtonianAerospacePathFinder {
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
 
-            LogManager.getLogger().error(memoryMessage, e);
+            logger.error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
+            logger.error("", e); // do something, don't just swallow the exception, good lord
         }
     }
 
@@ -123,7 +124,7 @@ public class NewtonianAerospacePathFinder {
      * beginning of a path
      * Has side effect of updating the visited coordinates map and adding it to the
      * list of generated paths
-     * 
+     *
      * @return List of all possible "starting" paths
      */
     protected List<MovePath> generateStartingPaths(MovePath startingEdge) {
@@ -148,7 +149,7 @@ public class NewtonianAerospacePathFinder {
      * Eliminates paths to hexes we've already visited.
      * Generates *shortest* paths to destination hexes, because, look, infantry
      * isn't going to get beyond a move 1 mod anyway.
-     * 
+     *
      * @param startingPath
      * @return
      */
@@ -204,7 +205,7 @@ public class NewtonianAerospacePathFinder {
      * be.
      * This mainly applies to aero paths that have not used all their velocity.
      * For newtonian space flight, it is never an intermediate path.
-     * 
+     *
      * @param path The move path to consider.
      * @return Whether it is an intermediate path or not.
      */
@@ -215,7 +216,7 @@ public class NewtonianAerospacePathFinder {
     /**
      * Worker function to determine whether we should discard the current path
      * (due to it being illegal or redundant) or keep generating child nodes
-     * 
+     *
      * @param path The move path to consider
      * @return Whether to keep or dicsard.
      */
@@ -241,7 +242,7 @@ public class NewtonianAerospacePathFinder {
      * given move path, there will be
      * "too much turning", where a turn of 180 degrees or more is considered too
      * much (we can yaw instead)
-     * 
+     *
      * @param path     The move path to consider
      * @param stepType The step type to consider
      * @return Whether we're turning too much

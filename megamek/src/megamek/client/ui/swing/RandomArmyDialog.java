@@ -52,8 +52,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -89,13 +87,16 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
+import megamek.logging.MMLogger;
 
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
-    private static final int TAB_BV_MATCHING       = 0;
-    private static final int TAB_RAT               = 1;
-    private static final int TAB_RAT_GENERATOR     = 2;
+    private static final MMLogger logger = MMLogger.create(RandomArmyDialog.class);
+
+    private static final int TAB_BV_MATCHING = 0;
+    private static final int TAB_RAT = 1;
+    private static final int TAB_RAT_GENERATOR = 2;
     private static final int TAB_FORMATION_BUILDER = 3;
-    private static final int TAB_FORCE_GENERATOR   = 4;
+    private static final int TAB_FORCE_GENERATOR = 4;
 
     private static final String CARD_PREVIEW = "card_preview";
     private static final String CARD_FORCE_TREE = "card_force_tree";
@@ -249,7 +250,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         m_pRightPane.add(m_pPreview, CARD_PREVIEW);
         m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
-        m_pRightPane.setMinimumSize(new Dimension(0,0));
+        m_pRightPane.setMinimumSize(new Dimension(0, 0));
 
         m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
         m_pSplit.setOneTouchExpandable(false);
@@ -454,21 +455,21 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.insets = new java.awt.Insets(5, 5, 5, 5);
 
         m_treeRAT.setRootVisible(false);
-        m_treeRAT.getSelectionModel().setSelectionMode
-                (TreeSelectionModel.SINGLE_TREE_SELECTION);
+        m_treeRAT.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         m_treeRAT.addTreeSelectionListener(this);
-        //m_treeRAT.setPreferredSize(new Dimension(200, 100));
+        // m_treeRAT.setPreferredSize(new Dimension(200, 100));
 
         JScrollPane treeViewRAT = new JScrollPane(m_treeRAT);
         treeViewRAT.setPreferredSize(new Dimension(300, 200));
         m_pRAT.add(treeViewRAT, c);
     }
 
-    private void createRATGenPanel () {
+    private void createRATGenPanel() {
         GameOptions gameOptions = m_client.getGame().getOptions();
         // construct the RAT Generator panel
         m_pRATGen.setLayout(new GridBagLayout());
-        //put the general options and the unit-specific options into a single panel so they scroll together.
+        // put the general options and the unit-specific options into a single panel so
+        // they scroll together.
         JPanel pRATGenTop = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -639,7 +640,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weighty = 0.0;
         c.fill = GridBagConstraints.NONE;
         m_pPreview.add(m_lArmyBVTotal, c);
-        m_pPreview.setMinimumSize(new Dimension(0,0));
+        m_pPreview.setMinimumSize(new Dimension(0, 0));
     }
 
     @Override
@@ -658,11 +659,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     }
 
-    private int calculateTotal(JTable t, int col){
+    private int calculateTotal(JTable t, int col) {
         int total = 0;
-        for(int i = 0; i < t.getRowCount(); i++) {
+        for (int i = 0; i < t.getRowCount(); i++) {
             try {
-                total += Integer.parseInt(t.getValueAt(i, col)+"");
+                total += Integer.parseInt(t.getValueAt(i, col) + "");
             } catch (Exception ignored) {
             }
         }
@@ -716,13 +717,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         }
                         entities.add(e);
                     } catch (EntityLoadingException ex) {
-                        LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
-                                ms.getSourceFile(), ms.getEntryName()), ex);
+                        logger.error(ex, String.format("Unable to load Mek: %s: %s",
+                                ms.getSourceFile(), ms.getEntryName()));
                         return;
                     }
                 }
                 c.sendAddEntity(entities);
-                msg = m_clientgui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + m_chPlayer.getSelectedItem() + " [" + entities.size() + " units]";
+                msg = m_clientgui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
+                        + m_chPlayer.getSelectedItem() + " [" + entities.size() + " units]";
                 m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
                 armyModel.clearData();
                 unitsModel.clearData();
@@ -754,8 +756,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_lUnitsBVTotal.setText(msg_bvtotal + "0");
             m_lArmyBVTotal.setText(msg_bvtotal + "0");
         } else if (ev.getSource().equals(m_bCancel)) {
-             armyModel.clearData();
-             unitsModel.clearData();
+            armyModel.clearData();
+            unitsModel.clearData();
             m_lUnitsBVTotal.setText(msg_bvtotal + "0");
             m_lArmyBVTotal.setText(msg_bvtotal + "0");
             setVisible(false);
@@ -775,11 +777,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy, 1));
         } else if (ev.getSource().equals(m_bAdvSearch)) {
             asd.showDialog();
-            searchFilter=asd.getTWAdvancedSearch().getMekSearchFilter();
-            m_bAdvSearchClear.setEnabled(searchFilter!=null);
+            searchFilter = asd.getTWAdvancedSearch().getMekSearchFilter();
+            m_bAdvSearchClear.setEnabled(searchFilter != null);
         } else if (ev.getSource().equals(m_bAdvSearchClear)) {
             asd.clearSearches();
-            searchFilter=null;
+            searchFilter = null;
             m_bAdvSearchClear.setEnabled(false);
         } else if (ev.getSource().equals(m_bRoll)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -794,12 +796,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                         unitsModel.setData(generatedRAT.generateUnits(units));
                     }
-                    //generateUnits removes salvage entries that have no units meeting criteria
+                    // generateUnits removes salvage entries that have no units meeting criteria
                     ratModel.refreshData();
                 } else if (m_pMain.getSelectedIndex() == TAB_FORMATION_BUILDER) {
                     ArrayList<MekSummary> unitList = new ArrayList<>();
                     FactionRecord fRec = m_pFormationOptions.getFaction();
-                    FormationType ft = FormationType.getFormationType(m_pFormationOptions.getStringOption("formationType"));
+                    FormationType ft = FormationType
+                            .getFormationType(m_pFormationOptions.getStringOption("formationType"));
                     List<UnitTable.Parameters> params = new ArrayList<>();
                     params.add(new UnitTable.Parameters(fRec,
                             m_pFormationOptions.getUnitType(),
@@ -821,15 +824,18 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                     EnumSet.noneOf(MissionRole.class), 0, fRec));
                             numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                         } else if (m_pFormationOptions.getBooleanOption("mekBA")) {
-                            // Make sure at least a number units equals to the number of BA points/squads are omni
+                            // Make sure at least a number units equals to the number of BA points/squads
+                            // are omni
                             numUnits.set(0, Math.min(m_pFormationOptions.getIntegerOption("numOtherUnits"),
                                     m_pFormationOptions.getNumUnits()));
-                            if (m_pFormationOptions.getNumUnits() > m_pFormationOptions.getIntegerOption("numOtherUnits")) {
+                            if (m_pFormationOptions.getNumUnits() > m_pFormationOptions
+                                    .getIntegerOption("numOtherUnits")) {
                                 params.add(params.get(0).copy());
-                                numUnits.add(m_pFormationOptions.getNumUnits() - m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                                numUnits.add(m_pFormationOptions.getNumUnits()
+                                        - m_pFormationOptions.getIntegerOption("numOtherUnits"));
                             }
                             params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
-                            //BA do not count for formation rules; add as a separate formation
+                            // BA do not count for formation rules; add as a separate formation
                         }
                     }
 
@@ -849,7 +855,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                         m_pFormationOptions.getIntegerOption("numOtherUnits"),
                                         ModelRecord.NETWORK_NONE, true);
                                 if (ba.isEmpty()) {
-                                    ba = UnitTable.findTable(p).generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                                    ba = UnitTable.findTable(p)
+                                            .generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                                 }
                                 unitList.addAll(ba);
                             } else if (m_pFormationOptions.getBooleanOption("airLance")) {
@@ -867,7 +874,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                             }
                         }
                     } else {
-                        LogManager.getLogger().error("Could not find formation type " + m_pFormationOptions.getStringOption("formationType"));
+                        logger.error("Could not find formation type "
+                                + m_pFormationOptions.getStringOption("formationType"));
                     }
                     unitsModel.setData(unitList);
                     m_pFormationOptions.updateGeneratedUnits(unitList);
@@ -1099,7 +1107,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
             // Traverse children
             if (node.getChildCount() >= 0) {
-                for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
+                for (Enumeration<?> e = node.children(); e.hasMoreElements();) {
                     TreeNode n = (TreeNode) e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = findNextNode(path, nodes, depth + 1);
@@ -1198,7 +1206,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     /** Shows the right-click menu on the mek table */
     private static void showPopup(MouseEvent e, ActionListener listener) {
-        if (e.getSource() instanceof  JTable) {
+        if (e.getSource() instanceof JTable) {
             JTable sTable = (JTable) e.getSource();
 
             if (sTable.getSelectedRowCount() == 0) {
@@ -1221,7 +1229,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     }
 
     /**
-     * This class now listens for game settings changes and updates the RAT year whenever
+     * This class now listens for game settings changes and updates the RAT year
+     * whenever
      * the game year changes. Well, whenever any game settings changes.
      */
     private GameListener gameListener = new GameListenerAdapter() {

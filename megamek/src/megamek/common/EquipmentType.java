@@ -21,14 +21,13 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and
@@ -38,6 +37,8 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * @since April 1, 2002, 1:35 PM
  */
 public class EquipmentType implements ITechnology {
+    private static final MMLogger logger = MMLogger.create(EquipmentType.class);
+
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
@@ -1106,7 +1107,7 @@ public class EquipmentType implements ITechnology {
             w.flush();
             w.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1222,7 +1223,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1370,7 +1371,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1510,7 +1511,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1624,7 +1625,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 

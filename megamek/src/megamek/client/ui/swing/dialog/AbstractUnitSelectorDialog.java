@@ -45,8 +45,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
@@ -70,6 +68,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.sorter.NaturalOrderComparator;
+import megamek.logging.MMLogger;
 
 /**
  * This is a heavily reworked version of the original MekSelectorDialog which
@@ -79,6 +78,8 @@ import megamek.common.util.sorter.NaturalOrderComparator;
  */
 public abstract class AbstractUnitSelectorDialog extends JDialog implements Runnable, KeyListener,
         ActionListener, ListSelectionListener {
+    private static final MMLogger logger = MMLogger.create(AbstractUnitSelectorDialog.class);
+
     // region Variable Declarations
     private static final long serialVersionUID = 8144354264100884817L;
 
@@ -182,7 +183,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             sortList.add(new SortKey(GUIP.getMekSelectorSortColumn(),
                     SortOrder.valueOf(GUIP.getMekSelectorSortOrder())));
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
+            logger.error(e, "Failed to set based on user preferences, attempting to use default");
 
             sortList.add(new SortKey(GUIP.getMekSelectorDefaultSortColumn(),
                     SortOrder.valueOf(GUIP.getMekSelectorDefaultSortOrder())));
@@ -616,7 +617,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This is used to create the bottom row of buttons for the interface
-     * 
+     *
      * @return the panel containing the buttons to place in the interface
      */
     protected abstract JPanel createButtonsPanel();
@@ -625,7 +626,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This is the function to add a unit to the current interface. That could be a
      * purchase (MekHQ),
      * addition (MekHQ), or unit selection (MegaMek/MegaMekLab)
-     * 
+     *
      * @param modifier a boolean to modify how the function will work. In MegaMek
      *                 this is used to
      *                 close the dialog, in MekHQ to GM add.
@@ -735,8 +736,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             // print so this sets the source file to the full path.
             return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            LogManager.getLogger().error("Unable to load mek: " + ms.getSourceFile() + ": " + ms.getEntryName()
-                    + ": " + e.getMessage(), e);
+            logger.error(e, "Unable to load mek: " + ms.getSourceFile() + ": " + ms.getEntryName()
+                    + ": " + e.getMessage());
             return null;
         }
     }
@@ -762,7 +763,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         // break out if there are no units to filter
         if (meks == null) {
-            LogManager.getLogger().error("No meks were loaded");
+            logger.error("No meks were loaded");
         } else {
             SwingUtilities.invokeLater(() -> unitModel.setData(meks));
         }
@@ -792,7 +793,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles processing windows events
-     * 
+     *
      * @param e the event to process
      */
     @Override
@@ -814,7 +815,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles key released events
-     * 
+     *
      * @param ke the key that was released
      */
     @Override
@@ -823,7 +824,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles key pressed events
-     * 
+     *
      * @param ke the pressed key
      */
     @Override
@@ -840,7 +841,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * Searches the table for any entity with a name that starts with the search
      * string
-     * 
+     *
      * @param search the search parameters
      */
     private void searchFor(String search) {
@@ -857,7 +858,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles key typed events
-     * 
+     *
      * @param ke the typed key
      */
     @Override
@@ -867,7 +868,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * This handles the primary action events (any that can come from buttons in
      * this class)
-     * 
+     *
      * @param ev the event containing the performed action
      */
     @Override
@@ -910,7 +911,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * This handles list selection events, which are only thrown by
      * MegaMek/MegaMekLab
-     * 
+     *
      * @param evt the event to process
      */
     @Override

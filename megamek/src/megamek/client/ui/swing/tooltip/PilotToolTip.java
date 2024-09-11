@@ -28,8 +28,6 @@ import java.util.stream.StreamSupport;
 
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
@@ -42,14 +40,16 @@ import megamek.common.MekWarrior;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
+import megamek.logging.MMLogger;
 
 public final class PilotToolTip {
+    private static final MMLogger logger = MMLogger.create(PilotToolTip.class);
 
     /** the portrait base size */
-    public final static int PORTRAIT_BASESIZE = 72;
-    final static String TEMP_DIR = "/temp/";
-    final static String PORTRAIT_PREFIX = "TT_Portrait_";
-    final static String PNG_EXT = ".png";
+    public static final int PORTRAIT_BASESIZE = 72;
+    static final String TEMP_DIR = "/temp/";
+    static final String PORTRAIT_PREFIX = "TT_Portrait_";
+    static final String PNG_EXT = ".png";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -78,7 +78,8 @@ public final class PilotToolTip {
 
     // PRIVATE
 
-    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait, boolean report) {
+    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait,
+            boolean showDefaultPortrait, boolean report) {
         String result = "";
 
         if (!detailed) {
@@ -114,7 +115,7 @@ public final class PilotToolTip {
     /** The crew advantages and MD */
     public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
         String sCrewAdvs = crewAdvs(entity, detailed).toString();
-        String result = scaledHTMLSpacer(3) + sCrewAdvs +  "</FONT>";
+        String result = scaledHTMLSpacer(3) + sCrewAdvs + "</FONT>";
 
         return new StringBuilder().append(result);
     }
@@ -176,14 +177,16 @@ public final class PilotToolTip {
         Game game = entity.getGame();
 
         String pickedUp = game.getEntitiesVector().stream()
-                .filter(e -> (e.isDeployed() && ((e instanceof MekWarrior) && ((MekWarrior) e).getPickedUpById() == entity.getId())))
+                .filter(e -> (e.isDeployed()
+                        && ((e instanceof MekWarrior) && ((MekWarrior) e).getPickedUpById() == entity.getId())))
                 .map(e -> e.getCrew().getName())
                 .collect(Collectors.joining(", "));
 
         String col = "";
 
         if (!pickedUp.isEmpty()) {
-            pickedUp = guiScaledFontHTML(GUIP.getCautionColor()) +  Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp + "</FONT>";
+            pickedUp = guiScaledFontHTML(GUIP.getCautionColor()) + Messages.getString("BoardView1.Tooltip.PickedUp")
+                    + pickedUp + "</FONT>";
             col = "<TD>" + pickedUp + "</TD>";
         }
 
@@ -204,17 +207,20 @@ public final class PilotToolTip {
                 // Adjust the portrait size to the GUI scale and number of pilots
                 float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
+                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize,
+                        Image.SCALE_SMOOTH);
                 String img = "";
 
                 if (!report) {
                     // Write the scaled portrait to file
                     // This is done to avoid using HTML rescaling on the portrait which does
                     // not do any smoothing and has extremely ugly results
-                    String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
+                    String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX
+                            + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
                     File tempFile = new File(tempPath);
                     if (!tempFile.exists()) {
-                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
+                                portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
                         bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                         ImageIO.write(bufferedImage, "PNG", tempFile);
                     }
@@ -225,7 +231,7 @@ public final class PilotToolTip {
                 }
                 col += "<TD VALIGN=TOP>" + img + "</TD>";
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
         }
 
@@ -247,7 +253,8 @@ public final class PilotToolTip {
         return new StringBuilder().append(result);
     }
 
-    private PilotToolTip() { }
+    private PilotToolTip() {
+    }
 
     public static void deleteImageCache() {
         String tempPath = Configuration.imagesDir() + TEMP_DIR;
@@ -256,18 +263,18 @@ public final class PilotToolTip {
         try {
             StreamSupport.stream(Files.newDirectoryStream(Paths.get(tempPath), filter).spliterator(), true)
                     .forEach(p -> {
-                                try {
-                                    Files.delete(p);
-                                } catch (Exception ex) {
-                                }
-                            }
-                    );
+                        try {
+                            Files.delete(p);
+                        } catch (Exception ex) {
+                        }
+                    });
         } catch (Exception ex) {
         }
     }
 
     public static void deleteImageCache(Crew crew, int pos) {
-        String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + pos + PNG_EXT;
+        String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_"
+                + pos + PNG_EXT;
         File tempFile = new File(tempPath);
         try {
             Files.deleteIfExists(tempFile.toPath());

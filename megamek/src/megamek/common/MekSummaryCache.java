@@ -21,14 +21,13 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
+import megamek.logging.MMLogger;
 
 /**
  * Cache of the Mek summary information. Implemented as Singleton so a client
@@ -37,6 +36,7 @@ import megamek.common.verifier.TestEntity;
  * @author arlith
  */
 public class MekSummaryCache {
+    private static final MMLogger logger = MMLogger.create(MekSummaryCache.class);
 
     public interface Listener {
         void doneLoading();
@@ -236,7 +236,7 @@ public class MekSummaryCache {
             } catch (Exception ex) {
                 loadReport.append("  Unable to load unit cache: ")
                         .append(ex.getMessage()).append("\n");
-                LogManager.getLogger().error(loadReport.toString(), ex);
+                logger.error(loadReport.toString(), ex);
             }
         }
 
@@ -335,7 +335,7 @@ public class MekSummaryCache {
                     .append(" units failed to load...\n");
         }
 
-        LogManager.getLogger().debug(loadReport.toString());
+        logger.debug(loadReport.toString());
     }
 
     private void done() {
@@ -367,7 +367,7 @@ public class MekSummaryCache {
             }
         } catch (Exception ex) {
             loadReport.append(" Unable to save mek cache\n");
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -850,7 +850,7 @@ public class MekSummaryCache {
                     zFile.close();
                     return false;
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error("", ex);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -907,7 +907,7 @@ public class MekSummaryCache {
         try {
             zFile.close();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
 
         loadReport.append("  ...loaded ").append(thisZipFileCount)
@@ -942,7 +942,7 @@ public class MekSummaryCache {
                     }
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
     }

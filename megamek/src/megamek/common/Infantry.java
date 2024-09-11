@@ -27,8 +27,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
@@ -41,6 +39,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * This class represents Conventional Infantry (with BattleArmor as a subclass).
@@ -52,6 +51,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Infantry extends Entity {
+    private static final MMLogger logger = MMLogger.create(Infantry.class);
+
     private static final long serialVersionUID = -8706716079307721282L;
 
     // Infantry Specializations
@@ -1210,7 +1211,7 @@ public class Infantry extends Entity {
      * piloting the crew's piloting skill is treated as the anti-mek skill.
      * This is largely just a convenience method for setting the Crew's piloting
      * skill.
-     * 
+     *
      * @return The Anti-Mek skill
      */
     @SuppressWarnings("unused") // used in MHQ
@@ -1255,7 +1256,7 @@ public class Infantry extends Entity {
             try {
                 addEquipment(armorKit, LOC_INFANTRY);
             } catch (LocationFullException ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
             encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
             spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
@@ -1362,7 +1363,7 @@ public class Infantry extends Entity {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
         } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
             // Need to remove vibro shovels
@@ -1382,7 +1383,7 @@ public class Infantry extends Entity {
                 EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
                 addEquipment(charge, Infantry.LOC_INFANTRY);
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
         } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
             // Need to remove vibro shovels
@@ -1537,7 +1538,7 @@ public class Infantry extends Entity {
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum
      * depth of 2.
-     * 
+     *
      * @return true if this is a conventional infantry unit with non-mechanized
      *         SCUBA specialization
      */
@@ -1793,7 +1794,7 @@ public class Infantry extends Entity {
     public boolean isCrippled() {
         double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+            logger.debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
         } else {
@@ -1869,7 +1870,7 @@ public class Infantry extends Entity {
     /**
      * Determines if there is valid cover for an infantry unit to utilize the
      * Using Non-Infantry as Cover rules (TO pg 108).
-     * 
+     *
      * @param game      The current {@link Game}
      * @param pos       The hex coords
      * @param elevation The elevation (flying or in building)

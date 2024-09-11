@@ -28,8 +28,6 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -44,8 +42,11 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 public class PhysicalDisplay extends AttackPhaseDisplay {
+    private static final MMLogger logger = MMLogger.create(PhysicalDisplay.class);
+
     private static final long serialVersionUID = -3274750006768636001L;
 
     /**
@@ -224,7 +225,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      */
     public void selectEntity(int en) {
         if (clientgui.getClient().getGame().getEntity(en) == null) {
-            LogManager.getLogger().error("Tried to select non-existent entity " + en);
+            logger.error("Tried to select non-existent entity " + en);
             return;
         }
 
@@ -1474,7 +1475,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getPhase().isPhysical()) {
-            LogManager.getLogger().error("Got TurnChange event during the "
+            logger.error("Got TurnChange event during the "
                     + clientgui.getClient().getGame().getPhase() + " phase");
             return;
         }

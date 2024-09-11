@@ -20,8 +20,6 @@ package megamek.client.ui.swing.tileset;
 
 import java.io.File;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
@@ -29,29 +27,34 @@ import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.util.fileUtils.ScaledImageFileFactory;
+import megamek.logging.MMLogger;
 
 public class MMStaticDirectoryManager {
-    //region Variable Declarations
+    private static final MMLogger logger = MMLogger.create(MMStaticDirectoryManager.class);
+
+    // region Variable Declarations
     // Directories
     private static DirectoryItems portraitDirectory;
     private static DirectoryItems camouflageDirectory;
     private static MekTileset mekTileset;
 
-    // Re-parsing Prevention Variables: They are True at startup and when the specified directory
-    // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's
+    // Re-parsing Prevention Variables: They are True at startup and when the
+    // specified directory
+    // should be re-parsed, and are used to avoid re-parsing the directory
+    // repeatedly when there's
     // an error.
     private static boolean parsePortraitDirectory = true;
     private static boolean parseCamouflageDirectory = true;
     private static boolean parseMekTileset = true;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     protected MMStaticDirectoryManager() {
         // This class is not to be instantiated
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Initialization
+    // region Initialization
     /**
      * This initialized all of the directories under this manager
      */
@@ -67,9 +70,11 @@ public class MMStaticDirectoryManager {
      * @see #refreshPortraitDirectory()
      */
     private static void initializePortraits() {
-        // Read in and parse MM's portrait folder only when first called or when refreshed
+        // Read in and parse MM's portrait folder only when first called or when
+        // refreshed
         if (parsePortraitDirectory) {
-            // Set parsePortraitDirectory to false to avoid parsing repeatedly when something fails
+            // Set parsePortraitDirectory to false to avoid parsing repeatedly when
+            // something fails
             parsePortraitDirectory = false;
             try {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
@@ -84,19 +89,20 @@ public class MMStaticDirectoryManager {
 
                 // check for portraits in story arcs subdirectories
                 File storyarcsDir = Configuration.storyarcsDir();
-                if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
                     for (File file : storyarcsDir.listFiles()) {
                         if (file.isDirectory()) {
                             File storyArcPortraitDir = new File(file.getPath() + "/data/images/portraits");
                             if (storyArcPortraitDir.exists() && storyArcPortraitDir.isDirectory()) {
-                                DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir, new ImageFileFactory());
+                                DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir,
+                                        new ImageFileFactory());
                                 portraitDirectory.merge(storyArcPortraits);
                             }
                         }
                     }
                 }
             } catch (Exception e) {
-                LogManager.getLogger().error("Could not parse the portraits directory!", e);
+                logger.error("Could not parse the portraits directory!", e);
             }
         }
     }
@@ -109,7 +115,8 @@ public class MMStaticDirectoryManager {
     private static void initializeCamouflage() {
         // Read in and parse MM's camo folder only when first called or when refreshed
         if (parseCamouflageDirectory) {
-            // Set parseCamouflageDirectory to false to avoid parsing repeatedly when something fails
+            // Set parseCamouflageDirectory to false to avoid parsing repeatedly when
+            // something fails
             parseCamouflageDirectory = false;
             try {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
@@ -124,19 +131,20 @@ public class MMStaticDirectoryManager {
 
                 // check for camouflage in story arcs subdirectories
                 File storyarcsDir = Configuration.storyarcsDir();
-                if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
                     for (File file : storyarcsDir.listFiles()) {
                         if (file.isDirectory()) {
                             File storyArcCamoDir = new File(file.getPath() + "/data/images/camo");
                             if (storyArcCamoDir.exists() && storyArcCamoDir.isDirectory()) {
-                                DirectoryItems storyArcCamo = new DirectoryItems(storyArcCamoDir, new ScaledImageFileFactory());
+                                DirectoryItems storyArcCamo = new DirectoryItems(storyArcCamoDir,
+                                        new ScaledImageFileFactory());
                                 camouflageDirectory.merge(storyArcCamo);
                             }
                         }
                     }
                 }
             } catch (Exception e) {
-                LogManager.getLogger().error("Could not parse the camo directory!", e);
+                logger.error("Could not parse the camo directory!", e);
             }
         }
     }
@@ -154,18 +162,20 @@ public class MMStaticDirectoryManager {
             try {
                 mekTileset.loadFromFile("mekset.txt");// TODO : Remove inline file path
             } catch (Exception e) {
-                LogManager.getLogger().error("Unable to load mek tileset", e);
+                logger.error("Unable to load mek tileset", e);
             }
         }
     }
-    //endregion Initialization
+    // endregion Initialization
 
-    //region Getters
+    // region Getters
     /**
-     * Returns an AbstractDirectory object containing all portrait image filenames found in MM's
+     * Returns an AbstractDirectory object containing all portrait image filenames
+     * found in MM's
      * portrait images folder.
+     *
      * @return an AbstractDirectory object with the portrait folders and filenames.
-     * May be null if the directory cannot be parsed.
+     *         May be null if the directory cannot be parsed.
      */
     public static @Nullable AbstractDirectory getPortraits() {
         initializePortraits();
@@ -173,10 +183,12 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * Returns an AbstractDirectory object containing all camo image filenames found in MM's camo
+     * Returns an AbstractDirectory object containing all camo image filenames found
+     * in MM's camo
      * images folder.
+     *
      * @return an AbstractDirectory object with the camo folders and filenames.
-     * May be null if the directory cannot be parsed.
+     *         May be null if the directory cannot be parsed.
      */
     public static @Nullable AbstractDirectory getCamouflage() {
         initializeCamouflage();
@@ -190,12 +202,14 @@ public class MMStaticDirectoryManager {
         initializeMekTileset();
         return mekTileset;
     }
-    //endregion Getters
+    // endregion Getters
 
-    //region Refreshers
+    // region Refreshers
     /**
-     * Re-reads MM's camo images folder and returns the updated AbstractDirectory object. This will
-     * update the AbstractDirectory object with changes to the camos (like added image files and
+     * Re-reads MM's camo images folder and returns the updated AbstractDirectory
+     * object. This will
+     * update the AbstractDirectory object with changes to the camos (like added
+     * image files and
      * folders) while MM is running.
      *
      * @see #getCamouflage()
@@ -206,8 +220,10 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * Re-reads MM's portrait images folder and returns the updated AbstractDirectory object. This
-     * will update the AbstractDirectory object with changes to the portraits (like added image
+     * Re-reads MM's portrait images folder and returns the updated
+     * AbstractDirectory object. This
+     * will update the AbstractDirectory object with changes to the portraits (like
+     * added image
      * files and folders) while MM is running.
      *
      * @see #getPortraits()
@@ -220,7 +236,8 @@ public class MMStaticDirectoryManager {
     /**
      * Reloads the MekTileset and returns the updated MekTileset object.
      * This will update the MekTileset object with changes to the mek tileset
-     * (like added image files and changes to the tileset text file) while MM is running.
+     * (like added image files and changes to the tileset text file) while MM is
+     * running.
      *
      * @see #getMekTileset()
      */
@@ -228,5 +245,5 @@ public class MMStaticDirectoryManager {
         parseMekTileset = true;
         return getMekTileset();
     }
-    //endregion Refreshers
+    // endregion Refreshers
 }

@@ -13,16 +13,17 @@
  */
 package megamek.common.commandline;
 
+import java.io.File;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.File;
 
 public class ClientServerCommandLineParser extends AbstractCommandLineParser {
+    private static final MMLogger logger = MMLogger.create(ClientServerCommandLineParser.class);
 
     private String saveGameFileName;
     private int port;
@@ -158,7 +159,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 break;
                         }
                     } catch (ParseException ex) {
-                        LogManager.getLogger().error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
+                        logger.error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                         throw ex;
                     }
                     break;
@@ -267,7 +268,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             try {
                 parser.parse();
             } catch (AbstractCommandLineParser.ParseException e) {
-                LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+                logger.error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             }
 
             String playerName = parser.getPlayerName();
@@ -329,7 +330,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
          * path resolves the saveGameFileName arg if it was provided.
          * If it is an absolute path, uses that, otherwise looks first in
          * current working directory and then in ./savegame/
-         * 
+         *
          * @return File object if valid file, null if not
          */
         public File getSaveGameFile() {
@@ -341,7 +342,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             if (gameFile.canRead()) {
                 return gameFile;
             } else if (gameFile.isAbsolute()) {
-                LogManager.getLogger().error("Unable to read savegame file: " + gameFile.getAbsolutePath());
+                logger.error("Unable to read savegame file: " + gameFile.getAbsolutePath());
                 return null;
             } else {
                 String searched = '"' + gameFile.getAbsolutePath() + '"';
@@ -350,7 +351,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                     return gameFile;
                 } else {
                     searched += " or \"" + gameFile.getAbsolutePath() + '"';
-                    LogManager.getLogger().error("Unable to read savegame file at " + searched);
+                    logger.error("Unable to read savegame file at " + searched);
                     return null;
                 }
             }

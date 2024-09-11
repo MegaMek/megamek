@@ -77,8 +77,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
@@ -129,11 +127,14 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 import megamek.utilities.BoardsTagger;
 
 public class ChatLounge extends AbstractPhaseDisplay implements
         ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(ChatLounge.class);
+
     private static final long serialVersionUID = 1454736776730903786L;
 
     // UI display control values
@@ -1893,7 +1894,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } catch (Exception e) {
                     dialog.setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
                     pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
-                    LogManager.getLogger().error("", e);
+                    logger.error(e, "");
                 }
 
                 JButton button = new DialogButton(Messages.getString("Okay"));
@@ -1999,7 +2000,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             JOptionPane.showMessageDialog(clientgui.getFrame(),
                     Messages.getString("ChatLounge.map.problemSaving"),
                     Messages.getString("Error"), JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
     }
 
@@ -2034,7 +2035,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             JOptionPane.showMessageDialog(clientgui.getFrame(),
                     Messages.getString("ChatLounge.map.problemLoadMapSetup"),
                     Messages.getString("Error"), JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
     }
 
@@ -2605,7 +2606,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     }
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             }
 
             if (!newEntities.isEmpty()) {
@@ -3331,7 +3332,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 try {
                     boards.put(name);
                 } catch (Exception e) {
-                    LogManager.getLogger().error("", e);
+                    logger.error(e, "");
                 }
             }
         }

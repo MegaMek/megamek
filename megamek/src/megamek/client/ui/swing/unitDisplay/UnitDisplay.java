@@ -31,8 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
@@ -55,12 +53,15 @@ import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 /**
  * Displays the info for a mek. This is also a sort of interface for special
  * movement and firing actions.
  */
 public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(UnitDisplay.class);
+
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
@@ -514,7 +515,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Used to force the display to the Systems tab, on a specific location
-     * 
+     *
      * @param loc
      */
     public void showSpecificSystem(int loc) {
@@ -549,7 +550,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
                     lis.weaponSelected(event);
                     break;
                 default:
-                    LogManager.getLogger()
+                    logger
                             .error("Received unknown event " + event.getType() + " in processMekDisplayEvent");
                     break;
             }
@@ -558,7 +559,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Returns the UnitDisplay's ClientGUI reference, which can be null.
-     * 
+     *
      * @return
      */
     @Nullable

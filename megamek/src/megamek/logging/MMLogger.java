@@ -151,7 +151,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void debug(Throwable exception, String message, Object... args) {
         Sentry.captureException(exception);
         message = String.format(message, args);
-        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message, exception);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.DEBUG, null, message, exception);
     }
 
     /**
@@ -161,6 +161,19 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param message   Additional message to report to the log file.
      */
     public void error(Throwable exception, String message) {
+        Sentry.captureException(exception);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
+    }
+
+    /**
+     * Error Level Logging w/ Exception
+     *
+     * This one was made to make it easier to replace the Log4J Calls
+     *
+     * @param message   Additional message to report to the log file.
+     * @param exception Exception that was caught via a try/catch block.
+     */
+    public void error(String message, Throwable exception) {
         Sentry.captureException(exception);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
     }
@@ -245,4 +258,29 @@ public class MMLogger extends ExtendedLoggerWrapper {
         fatal(message);
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
+
+    /**
+     * Takes the passed in Level and checks if the current log level is more
+     * specific than provided. This is a helper method around the default logger's
+     * method.
+     *
+     * @param checkedLevel Passed in Level to compare to.
+     * @return
+     */
+    public boolean isLevelMoreSpecificThan(Level checkedLevel) {
+        return exLoggerWrapper.getLevel().isMoreSpecificThan(checkedLevel);
+    }
+
+    /**
+     * Takes the passed in Level and checks if the current log level is less
+     * specific than provided. This is a helper method around the default logger's
+     * method.
+     *
+     * @param checkedLevel Passed in Level to compare to.
+     * @return
+     */
+    public boolean isLevelLessSpecificThan(Level checkedLevel) {
+        return exLoggerWrapper.getLevel().isLessSpecificThan(checkedLevel);
+    }
+
 }

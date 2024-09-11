@@ -24,13 +24,13 @@ import java.io.File;
 
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Configuration;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 public class SkinnedJPanel extends JPanel {
+    private static final MMLogger logger = MMLogger.create(SkinnedJPanel.class);
 
     private final Image backgroundIcon;
 
@@ -47,7 +47,7 @@ public class SkinnedJPanel extends JPanel {
             if (file.exists()) {
                 backgroundIcon = ImageUtil.loadImageFromFile(file.toString());
             } else {
-                LogManager.getLogger().error("Background icon doesn't exist: " + file.getPath());
+                logger.error("Background icon doesn't exist: " + file.getPath());
                 backgroundIcon = null;
             }
         } else {

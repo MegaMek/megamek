@@ -18,24 +18,26 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.board.postprocess.BoardProcessor;
-import megamek.common.util.BoardUtilities;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.Configuration;
+import megamek.common.board.postprocess.BoardProcessor;
+import megamek.common.util.BoardUtilities;
+import megamek.logging.MMLogger;
+
 public class BoardDeserializer extends StdDeserializer<Board> {
+    private static final MMLogger logger = MMLogger.create(BoardDeserializer.class);
 
     private static final String TYPE = "type";
     private static final String LOW_ALTITUDE = "lowaltitude";
@@ -63,14 +65,18 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     }
 
     /**
-     * Parses the given map: or maps: node to return a list of one or more boards (the list should
-     * ideally never be empty, an exception being thrown instead). Board files are tried first
-     * in the given basePath; if not found there, MM's data/boards/ is tried instead.
-
-     * @param mapNode a map: or maps: node from a YAML definition file
+     * Parses the given map: or maps: node to return a list of one or more boards
+     * (the list should
+     * ideally never be empty, an exception being thrown instead). Board files are
+     * tried first
+     * in the given basePath; if not found there, MM's data/boards/ is tried
+     * instead.
+     *
+     * @param mapNode  a map: or maps: node from a YAML definition file
      * @param basePath a path to search board files in (e.g. scenario path)
      * @return a list of parsed boards
-     * @throws IllegalArgumentException for illegal node combinations and other errors
+     * @throws IllegalArgumentException for illegal node combinations and other
+     *                                  errors
      */
     public static List<Board> parse(JsonNode mapNode, File basePath) {
         // the map node is
@@ -84,7 +90,8 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             result.add(loadBoard(mapNode.textValue(), basePath));
 
         } else if (mapNode.isArray()) {
-            // as an array of multiple boards, it cannot be a simple string; each entry must be a board node
+            // as an array of multiple boards, it cannot be a simple string; each entry must
+            // be a board node
             result.addAll(parseMultipleBoards(mapNode, basePath));
 
         } else {
@@ -99,7 +106,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     private static List<Board> parseMultipleBoards(JsonNode node, File basePath) {
         List<Board> result = new ArrayList<>();
         if (!node.isArray()) {
-            LogManager.getLogger().error("Called parseMultipleBoards with non-array node!");
+            logger.error("Called parseMultipleBoards with non-array node!");
             return result;
         }
         node.elements().forEachRemaining(n -> result.add(parseSingleBoard(n, basePath)));
@@ -144,7 +151,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                 case SPACE:
                     return Board.getSpaceBoard(mapWidth, mapHeight);
                 case HIGH_ALTITUDE:
-                    //TODO: dont have that type yet
+                    // TODO: dont have that type yet
                     board.setType(Board.T_SPACE);
                     break;
             }
@@ -165,7 +172,8 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             }
             List<Boolean> isRotatedList = new ArrayList<>();
             Collections.fill(isRotatedList, Boolean.FALSE);
-            board = BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList, isRotatedList, Board.T_GROUND);
+            board = BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList, isRotatedList,
+                    Board.T_GROUND);
         }
         parseBoardProcessors(board, mapNode);
         return board;

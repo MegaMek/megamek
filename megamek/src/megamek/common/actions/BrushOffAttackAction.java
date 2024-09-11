@@ -13,15 +13,16 @@
  */
 package megamek.common.actions;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * The attacker brushes the target off.
  */
 public class BrushOffAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(BrushOffAttackAction.class);
+
     private static final long serialVersionUID = -7455082808488032572L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -91,11 +92,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         int targetId = Entity.NONE;
         Entity te = null;
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {

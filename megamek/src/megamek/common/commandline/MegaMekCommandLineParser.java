@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
@@ -34,11 +32,14 @@ import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.verifier.TestEntity;
+import megamek.logging.MMLogger;
 
 /**
  * This class parses the options passed into to MegaMek from the command line.
  */
 public class MegaMekCommandLineParser extends AbstractCommandLineParser {
+    private static final MMLogger logger = MMLogger.create(MegaMekCommandLineParser.class);
+
     private boolean dedicatedServer = false;
     private boolean host = false;
     private boolean client = false;
@@ -149,7 +150,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         break;
                 }
             } catch (ParseException ex) {
-                LogManager.getLogger().error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
+                logger.error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                 throw ex;
             }
         }
@@ -247,12 +248,12 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             }
 
             if (ms == null) {
-                LogManager.getLogger().error(filename + " not found. Try using \"chassis model\" for input.",
+                logger.error(filename + " not found. Try using \"chassis model\" for input.",
                         new IOException());
             } else {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                    LogManager.getLogger().info("Validating Entity: " + entity.getShortNameRaw());
+                    logger.info("Validating Entity: " + entity.getShortNameRaw());
                     MekView mekView = new MekView(entity, false);
                     StringBuffer sb = new StringBuffer(mekView.getMekReadout());
                     TestEntity testEntity = TestEntity.getEntityVerifier(entity);
@@ -261,7 +262,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         testEntity.correctEntity(sb);
                     }
 
-                    LogManager.getLogger().info(sb.toString());
+                    logger.info(sb.toString());
                 } catch (Exception ex) {
                     throw new ParseException("\"chassis model\" expected as input");
                 }
@@ -280,7 +281,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
 
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
-                    LogManager.getLogger().error(
+                    logger.error(
                             "Error in creating directory ./docs. We know this is annoying, and apologize. "
                                     + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                     + " and we will try to resolve your issue.");
@@ -362,7 +363,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     }
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
         System.exit(0);
@@ -384,7 +385,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
 
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
-                    LogManager.getLogger().error(
+                    logger.error(
                             "Error in creating directory ./docs. We know this is annoying, and apologize. "
                                     + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                     + " and we will try to resolve your issue.");
@@ -458,7 +459,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     bw.newLine();
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
         System.exit(0);

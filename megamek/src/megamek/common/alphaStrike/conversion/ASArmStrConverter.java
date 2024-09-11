@@ -20,13 +20,13 @@ package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.logging.MMLogger;
 
 final class ASArmStrConverter {
+    private static final MMLogger logger = MMLogger.create(ASArmStrConverter.class);
 
     /** Mek Structure, AlphaStrike Companion, p.98 */
     private final static int[][] AS_MEK_STRUCTURE = new int[][] {
@@ -290,7 +290,7 @@ final class ASArmStrConverter {
             }
         }
         report.addLine("Unknown Engine", "");
-        LogManager.getLogger().error("Mek Engine type cannot be converted!");
+        logger.error("Mek Engine type cannot be converted!");
         return -1;
     }
 

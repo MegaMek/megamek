@@ -14,16 +14,17 @@
 
 package megamek.common.actions;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * The attacking ProtoMek makes its combo physical attack action.
  */
 public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(ProtoMekPhysicalAttackAction.class);
+
     private static final long serialVersionUID = 1432011536091665084L;
 
     public ProtoMekPhysicalAttackAction(int entityId, int targetId) {
@@ -83,11 +84,11 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         Entity te = null;
         // arguments legal?
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 

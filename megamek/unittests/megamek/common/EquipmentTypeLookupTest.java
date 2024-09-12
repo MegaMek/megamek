@@ -26,13 +26,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.EquipmentTypeLookup.EquipmentName;
+import megamek.logging.MMLogger;
 
 public class EquipmentTypeLookupTest {
+    private static final MMLogger logger = MMLogger.create(EquipmentTypeLookupTest.class);
 
     @Test
     public void allLookupKeysValid() throws IllegalAccessException {
@@ -69,7 +70,7 @@ public class EquipmentTypeLookupTest {
             try {
                 Thread.sleep(50);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
 
@@ -79,7 +80,7 @@ public class EquipmentTypeLookupTest {
                         ms.getEntryName()).getEntity();
                 failedEquipment.addAll(entity.failedEquipmentList);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
 

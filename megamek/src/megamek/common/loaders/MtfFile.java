@@ -67,7 +67,7 @@ public class MtfFile implements IMekLoader {
 
     private String heatSinks;
     private String jumpMP;
-    private String baseChassieHeatSinks = "base chassis heat sinks:-1";
+    private String baseChassisHeatSinks = "base chassis heat sinks:-1";
 
     private String armorType;
     private final String[] armorValues = new String[12];
@@ -269,20 +269,7 @@ public class MtfFile implements IMekLoader {
             boolean compactSinks = heatSinks.contains(HS_COMPACT);
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
             int baseHeatSinks = Integer
-                    .parseInt(baseChassieHeatSinks.substring("base chassis heat sinks:".length()).trim());
-            // For mixed tech units with double heat sinks we want to install the correct
-            // type. Legacy files
-            // don't specify, so we'll use TECH_BASE_ALL to indicate unknown and check for
-            // heat sinks on the
-            // critical table.
-            int heatSinkBase;
-            if (heatSinks.contains(TECH_BASE_CLAN)) {
-                heatSinkBase = ITechnology.TECH_BASE_CLAN;
-            } else if (heatSinks.contains(TECH_BASE_IS)) {
-                heatSinkBase = ITechnology.TECH_BASE_IS;
-            } else {
-                heatSinkBase = ITechnology.TECH_BASE_ALL;
-            }
+                    .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
             if (!thisStructureType.isBlank()) {
@@ -441,17 +428,18 @@ public class MtfFile implements IMekLoader {
                 mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_LASER_HEAT_SINK);
             } else if (dblSinks) {
                 // If the heat sink entry didn't specify Clan or IS double, check for sinks that
-                // take
-                // critical slots. If none are found, default to the overall tech base of the
-                // unit.
-                if (heatSinkBase == ITechnology.TECH_BASE_ALL) {
-                    for (Mounted<?> mounted : mek.getMisc()) {
-                        if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                            heatSinkBase = mounted.getType().getTechBase();
-                        }
-                    }
-                }
+                // take critical slots. If none are found, default to the overall tech base of
+                // the unit.
                 boolean clan;
+
+                int heatSinkBase = ITechnology.TECH_BASE_ALL;
+
+                if (heatSinks.contains(TECH_BASE_CLAN)) {
+                    heatSinkBase = ITechnology.TECH_BASE_CLAN;
+                } else if (heatSinks.contains(TECH_BASE_IS)) {
+                    heatSinkBase = ITechnology.TECH_BASE_IS;
+                }
+
                 switch (heatSinkBase) {
                     case ITechnology.TECH_BASE_IS:
                         clan = false;
@@ -462,6 +450,7 @@ public class MtfFile implements IMekLoader {
                     default:
                         clan = mek.isClan();
                 }
+
                 mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK, clan);
             } else if (compactSinks) {
                 mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_COMPACT_HEAT_SINK);
@@ -908,9 +897,6 @@ public class MtfFile implements IMekLoader {
                             mount = mek.addEquipment(etype, etype2, loc, isOmniPod, isArmored);
                         }
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = BLKFile.getLegacyVariableSize(critName);
-                            }
                             mount.setSize(size);
                             // The size may require additional critical slots
                             // Account for loading Superheavy oversized Variable Size components
@@ -1202,7 +1188,7 @@ public class MtfFile implements IMekLoader {
         }
 
         if (lineLower.startsWith(BASE_CHASSIS_HEAT_SINKS)) {
-            baseChassieHeatSinks = line;
+            baseChassisHeatSinks = line;
             return true;
         }
 

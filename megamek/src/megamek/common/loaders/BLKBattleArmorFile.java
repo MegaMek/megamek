@@ -238,9 +238,6 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                         }
                         m.setSquadSupportWeapon(sswMounted);
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = getLegacyVariableSize(equipName);
-                            }
                             m.setSize(size);
                         }
                     } catch (LocationFullException ex) {

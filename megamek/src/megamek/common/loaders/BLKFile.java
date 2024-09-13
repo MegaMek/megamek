@@ -163,70 +163,6 @@ public class BLKFile {
         }
     }
 
-    /**
-     * Legacy support for Drone Carrier Control System capacity using additional
-     * equipment
-     */
-    int legacyDCCSCapacity = 0;
-    /** Legacy support for MASH capacity using additional equipment */
-    int mashOperatingTheaters = 0;
-
-    /**
-     * Legacy support for variable sized equipment that expands capacity by using an
-     * additional MiscType.
-     *
-     * @param lookup The lookup name
-     */
-    boolean checkLegacyExtraEquipment(String lookup) {
-        switch (lookup) {
-            case "MASH Operation Theater":
-                mashOperatingTheaters++;
-                return true;
-            case "ISDroneExtra":
-            case "CLDroneExtra":
-                legacyDCCSCapacity++;
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Legacy support for variable equipment that had a separate EquipmentType entry
-     * for each possible
-     * size
-     *
-     * @param eqName The equipment lookup name
-     * @return The size of the equipment
-     */
-    static double getLegacyVariableSize(String eqName) {
-        if (eqName.startsWith("Cargo")
-                || eqName.startsWith("Liquid Storage")
-                || eqName.startsWith("Communications Equipment")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf(" ton")));
-        }
-        if (eqName.startsWith("CommsGear")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
-        }
-        if (eqName.startsWith("Mission Equipment Storage")) {
-            int pos = eqName.indexOf("(");
-            if (pos > 0) {
-                return Double.parseDouble(eqName.substring(pos + 1,
-                        eqName.indexOf("kg")).trim());
-            } else {
-                // If the internal name does not include a size, it's the original 20 kg
-                // version.
-                return 0.02;
-            }
-        }
-        if (eqName.startsWith("Ladder")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf("m)")));
-        }
-        return 1.0;
-    }
-
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
@@ -294,9 +230,6 @@ public class BLKFile {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 // The stealth armor mount is added when the armor type is set
                 if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
@@ -318,9 +251,6 @@ public class BLKFile {
                             }
                         }
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = getLegacyVariableSize(equipName);
-                            }
                             mount.setSize(size);
                         } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
                                 && size > 1) {
@@ -338,24 +268,6 @@ public class BLKFile {
                     }
                 } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (mashOperatingTheaters > 0) {
-            for (Mounted<?> m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted<?> m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }
@@ -688,9 +600,6 @@ public class BLKFile {
                     type = "IS Level 4";
                     break;
                 case TechConstants.T_IS_UNOFFICIAL:
-                default:
-                    type = "IS Level 5";
-                    break;
                 case TechConstants.T_CLAN_TW:
                     type = "Clan Level 2";
                     break;
@@ -703,6 +612,10 @@ public class BLKFile {
                 case TechConstants.T_CLAN_UNOFFICIAL:
                     type = "Clan Level 5";
                     break;
+                default:
+                    type = "IS Level 5";
+                    break;
+
             }
         }
         blk.writeBlockData("type", type);
@@ -887,7 +800,7 @@ public class BLKFile {
             eq.add(new Vector<>());
         }
         for (Mounted<?> m : t.getEquipment()) {
-            // Ignore Mounteds that represent a WeaponGroup
+            // Ignore Mounted's that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
             if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
                 continue;

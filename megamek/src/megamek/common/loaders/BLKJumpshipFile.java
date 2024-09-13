@@ -282,9 +282,6 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 if (etype != null) {
                     // first load the equipment
@@ -338,9 +335,6 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
                         }
                     }
                     if (etype.isVariableSize()) {
-                        if (size == 0.0) {
-                            size = getLegacyVariableSize(equipName);
-                        }
                         newmount.setSize(size);
                     } else if (newmount.getType() instanceof AmmoType) {
                         // ammo should also get loaded into the bay
@@ -348,24 +342,6 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
                     }
                 } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (mashOperatingTheaters > 0) {
-            for (Mounted<?> m : a.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted<?> m : a.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }

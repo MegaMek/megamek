@@ -28,7 +28,7 @@ import megamek.common.verifier.TestProtoMek;
 
 /**
  * This class loads ProtoMek BLK files.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @since April 6, 2002, 2:06 AM
  */
@@ -205,9 +205,6 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
                         mount = t.addEquipment(etype, ProtoMek.LOC_BODY);
                     }
                     if (etype.isVariableSize()) {
-                        if (size == 0.0) {
-                            size = getLegacyVariableSize(equipName);
-                        }
                         mount.setSize(size);
                     }
                 } catch (LocationFullException ex) {

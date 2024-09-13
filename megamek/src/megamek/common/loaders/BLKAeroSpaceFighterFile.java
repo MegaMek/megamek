@@ -260,9 +260,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 if (etype != null) {
                     try {
@@ -279,9 +276,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                             }
                         }
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = getLegacyVariableSize(equipName);
-                            }
                             mount.setSize(size);
                         }
                         if (etype.hasFlag(MiscType.F_CARGO)) {
@@ -294,15 +288,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                     }
                 } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted<?> m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }

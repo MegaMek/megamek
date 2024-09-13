@@ -30,7 +30,7 @@ public class ISBAAPDS extends Weapon {
         criticals = 2;
         bv = 7;
         longRange = 3;
-		flags = flags.or(F_BA_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).andNot(F_MECH_WEAPON)
+		flags = flags.or(F_BA_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).andNot(F_MEK_WEAPON)
 				.andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);

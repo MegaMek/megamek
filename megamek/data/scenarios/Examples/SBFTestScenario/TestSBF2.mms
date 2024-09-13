@@ -22,4 +22,3 @@ factions:
 
     - include: "Formation2.mmu"
       at: [ 8, 3 ]
-

@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * This command allows a player to join a specified team.
- * 
+ *
  * @author arlith
  */
 public class JoinTeamCommand extends ServerCommand {
@@ -33,7 +33,7 @@ public class JoinTeamCommand extends ServerCommand {
     public static String SERVER_VOTE_PROMPT_MSG = "All players with an assigned team "
             + "must allow this change.  Use /allowTeamChange "
             + "to allow this change.";
-    
+
     public JoinTeamCommand(Server server) {
         super(server, "joinTeam", "Switches a player's team at the end phase. "
                 + "Usage: /joinTeam # where the first number is the team "
@@ -43,7 +43,7 @@ public class JoinTeamCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -51,7 +51,7 @@ public class JoinTeamCommand extends ServerCommand {
         try {
             Player player = server.getPlayer(connId);
             int numEntities = server.getGame().getEntitiesOwnedBy(player);
-            
+
             if (args.length != 2) {
                 server.sendServerChat(connId, "Incorrect number of arguments "
                         + "for joinTeam command!  Expected 1, received, "
@@ -59,9 +59,9 @@ public class JoinTeamCommand extends ServerCommand {
                 server.sendServerChat(connId, getHelp());
                 return;
             }
-            
+
             int teamId = Integer.parseInt(args[1]);
-            
+
             if ((Player.TEAM_UNASSIGNED == teamId) && (numEntities != 0)) {
                 server.sendServerChat(connId, "Player must have no more " +
                         "units to join the unassigned team!");
@@ -74,24 +74,24 @@ public class JoinTeamCommand extends ServerCommand {
                 teamString = " go lone wolf!  ";
             }
 
-            for (Player p : server.getGame().getPlayersVector()) {
+            for (Player p : server.getGame().getPlayersList()) {
                 if (p.getId() != player.getId()) {
                     server.sendServerChat(p.getId(), player.getName()
                             + " wants to " + teamString
                             + SERVER_VOTE_PROMPT_MSG);
                 }
             }
-            
+
             server.requestTeamChange(teamId, player);
 
-            for (Player p : server.getGame().getPlayersVector()) {
+            for (Player p : server.getGame().getPlayersList()) {
                 p.setVotedToAllowTeamChange(false);
             }
 
             // requester automatically votes yes
             AllowTeamChangeCommand.voteYes(server, player);
         } catch (NumberFormatException nfe) {
-            server.sendServerChat(connId,"Failed to parse team number \""+args[1]+"\"!");
+            server.sendServerChat(connId, "Failed to parse team number \"" + args[1] + "\"!");
         }
     }
 

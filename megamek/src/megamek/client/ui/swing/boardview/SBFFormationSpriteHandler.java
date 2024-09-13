@@ -19,7 +19,6 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.SBFClient;
-import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;

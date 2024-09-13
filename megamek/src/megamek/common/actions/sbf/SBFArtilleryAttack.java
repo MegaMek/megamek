@@ -20,14 +20,15 @@ package megamek.common.actions.sbf;
 
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.strategicBattleSystems.SBFGame;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
+import megamek.logging.MMLogger;
 
 /**
- * This is a base class for SBF artillery attacks, indirect, against hexes, units or fortifications or direct.
+ * This is a base class for SBF artillery attacks, indirect, against hexes,
+ * units or fortifications or direct.
  * IO:BF p.203
  */
 public abstract class SBFArtilleryAttack extends AbstractSBFAttackAction {
+    private static final MMLogger logger = MMLogger.create(SBFArtilleryAttack.class);
 
     private final BattleForceSUA artilleryType;
 
@@ -39,10 +40,12 @@ public abstract class SBFArtilleryAttack extends AbstractSBFAttackAction {
     @Override
     public boolean isDataValid(SBFGame game) {
         if (artilleryType == null) {
-            getLogger().error("Missing artillery type! {}", this);
+            String message = String.format("Missing artillery type! %h", this);
+            logger.error(message);
             return false;
         } else if (!artilleryType.isArtillery() || artilleryType.isArtilleryCannon()) {
-            getLogger().error("Invalid artillery type! {}", this);
+            String message = String.format("Invalid artillery type! %h", this);
+            logger.error(message);
             return false;
         }
         return true;

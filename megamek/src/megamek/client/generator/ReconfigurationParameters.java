@@ -19,9 +19,9 @@
 
 package megamek.client.generator;
 
-import megamek.client.ratgenerator.ForceDescriptor;
-
 import java.util.HashSet;
+
+import megamek.client.ratgenerator.ForceDescriptor;
 
 /**
  * Bare data class to pass around and store configuration-influencing info

@@ -13,29 +13,33 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.common.EntityMovementMode;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import megamek.common.EntityMovementMode;
+import megamek.logging.MMLogger;
+
 /**
- * A force node contains the rules for generating a force when the ForceDescriptor matches the
+ * A force node contains the rules for generating a force when the
+ * ForceDescriptor matches the
  * characteristics defined by the force node.
  *
  * @author Neoancient
  */
 public class ForceNode extends RulesetNode {
+    private final static MMLogger logger = MMLogger.create(ForceNode.class);
+
     protected Integer eschelon;
     protected String eschelonName;
     protected ArrayList<ValueNode> nameNodes;
     protected ArrayList<CommanderNode> coNodes;
     protected ArrayList<CommanderNode> xoNodes;
-    protected ArrayList<ArrayList <OptionGroupNode>> ruleGroups;
-    protected ArrayList <SubforcesNode> subforces;
-    protected ArrayList <SubforcesNode> attached;
+    protected ArrayList<ArrayList<OptionGroupNode>> ruleGroups;
+    protected ArrayList<SubforcesNode> subforces;
+    protected ArrayList<SubforcesNode> attached;
 
     protected String desc;
 
@@ -63,7 +67,7 @@ public class ForceNode extends RulesetNode {
                 switch (rule.getName()) {
                     case "weightClass":
                         if (fd.getWeightClass() == null
-                        || rule.predicates.containsKey("ifWeightClass")) {
+                                || rule.predicates.containsKey("ifWeightClass")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 fd.setWeightClass(ForceDescriptor.decodeWeightClass(n.getContent()));
@@ -72,7 +76,7 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "unitType":
                         if (fd.getUnitType() == null
-                        || rule.predicates.containsKey("ifUnitType")) {
+                                || rule.predicates.containsKey("ifUnitType")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 fd.setUnitType(ModelRecord.parseUnitType(n.getContent()));
@@ -81,7 +85,7 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "chassis":
                         if (fd.getChassis().isEmpty()
-                        || rule.predicates.containsKey("ifChassis")) {
+                                || rule.predicates.containsKey("ifChassis")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 for (String c : n.getContent().split(",")) {
@@ -123,7 +127,7 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "formation":
                         if (null == fd.getFormation()
-                        || rule.predicates.containsKey("ifFormation")) {
+                                || rule.predicates.containsKey("ifFormation")) {
                             n = rule.selectOption(fd, true);
                             if (n == null) {
                                 break;
@@ -132,7 +136,7 @@ public class ForceNode extends RulesetNode {
                             if (content != null) {
                                 FormationType ft = FormationType.getFormationType(content);
                                 if (null == ft) {
-                                    LogManager.getLogger().error("Could not parse formation type " + content);
+                                    logger.error("Could not parse formation type " + content);
                                 }
                                 fd.setFormationType(ft);
                             }
@@ -163,7 +167,7 @@ public class ForceNode extends RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                LogManager.getLogger().error("Force generator could not parse mission role " + p);
+                                logger.error("Force generator could not parse mission role " + p);
                             }
                         }
                         break;
@@ -204,7 +208,7 @@ public class ForceNode extends RulesetNode {
                             fd.setSizeMod(ForceDescriptor.REINFORCED);
                         } else if (content.endsWith("-")) {
                             fd.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-                        } 
+                        }
                         fd.setEschelon(Integer.parseInt(n.getContent().replaceAll("[\\+\\-]", "")));
                         return false;
                 }
@@ -396,7 +400,7 @@ public class ForceNode extends RulesetNode {
 
     /**
      * Used for debugging output
-     * 
+     *
      * @return A description of the node
      */
     public String show() {

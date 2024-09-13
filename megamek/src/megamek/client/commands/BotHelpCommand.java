@@ -18,9 +18,7 @@
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
 import megamek.client.bot.princess.ChatCommands;
-import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.ClientGUI;
 
 /**
@@ -28,22 +26,18 @@ import megamek.client.ui.swing.ClientGUI;
  */
 public class BotHelpCommand extends ClientCommand {
 
-    private IClientCommandHandler cmdHandler;
-
     public BotHelpCommand(ClientGUI clientGUI) {
         super(
                 clientGUI,
                 "botHelp",
                 "Lists all of the bot commands available, or gives help on a specific command.  Usage: #botHelp [command]");
-        cmdHandler = clientGUI;
     }
 
     @Override
     public String run(String[] args) {
         if (args.length == 1) {
             // no args
-            return "Type #botHelp [command] for help on a specific command.  Commands available: "
-                    + commandList();
+            return "Type #botHelp [command] for help on a specific command.  Commands available: " + commandList();
         }
         // argument
         ChatCommands command = ChatCommands.getByValue(args[1]);
@@ -52,6 +46,7 @@ public class BotHelpCommand extends ClientCommand {
                     + "\" not recognized.  Commands available: "
                     + commandList();
         }
+
         return "#" + command.getSyntax() + " [" + command.getDescription() + "]";
     }
 

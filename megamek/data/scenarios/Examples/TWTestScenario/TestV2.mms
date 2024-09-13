@@ -39,5 +39,3 @@ factions:
     crew:
       name: Cpt. Rhonda Snord
       skill: 4/5
-
-

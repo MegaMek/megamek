@@ -439,7 +439,7 @@ public class TechConstants {
      */
     public static int getGyroTechLevel(int gyroType, boolean isClan, int year) {
         switch (gyroType) {
-            case Mech.GYRO_STANDARD:
+            case Mek.GYRO_STANDARD:
                 if (isClan) {
                     if (year <= 2807) {
                         return T_CLAN_UNOFFICIAL;
@@ -456,7 +456,7 @@ public class TechConstants {
                 } else {
                     return T_INTRO_BOXSET;
                 }
-            case Mech.GYRO_XL:
+            case Mek.GYRO_XL:
                 if (isClan) {
                     return T_CLAN_UNOFFICIAL;
                 }
@@ -470,7 +470,7 @@ public class TechConstants {
                     return T_IS_TW_NON_BOX;
                 }
 
-            case Mech.GYRO_COMPACT:
+            case Mek.GYRO_COMPACT:
                 if (isClan) {
                     return T_CLAN_UNOFFICIAL;
                 }
@@ -484,7 +484,7 @@ public class TechConstants {
                     return T_IS_TW_NON_BOX;
                 }
 
-            case Mech.GYRO_HEAVY_DUTY:
+            case Mek.GYRO_HEAVY_DUTY:
                 if (isClan) {
                     return T_CLAN_UNOFFICIAL;
                 }
@@ -497,7 +497,7 @@ public class TechConstants {
                 } else {
                     return T_IS_TW_NON_BOX;
                 }
-            case Mech.GYRO_SUPERHEAVY:
+            case Mek.GYRO_SUPERHEAVY:
                 if (isClan) {
                     return T_CLAN_UNOFFICIAL;
                 }
@@ -508,7 +508,7 @@ public class TechConstants {
                 } else {
                     return T_IS_ADVANCED;
                 }
-            case Mech.GYRO_NONE:
+            case Mek.GYRO_NONE:
                 return T_ALLOWED_ALL;
         }
 
@@ -527,9 +527,9 @@ public class TechConstants {
      */
     public static int getCockpitTechLevel(int cockpitType, long entityType,
             boolean isClan, int year) {
-        if ((entityType & Entity.ETYPE_MECH) != 0) {
+        if ((entityType & Entity.ETYPE_MEK) != 0) {
             switch (cockpitType) {
-                case Mech.COCKPIT_STANDARD:
+                case Mek.COCKPIT_STANDARD:
                     if (isClan) {
                         if (year <= 2807) {
                             return T_CLAN_UNOFFICIAL;
@@ -545,7 +545,7 @@ public class TechConstants {
                     } else {
                         return T_INTRO_BOXSET;
                     }
-                case Mech.COCKPIT_SMALL:
+                case Mek.COCKPIT_SMALL:
                     if (isClan) {
                         if (year <= 3080) {
                             return T_CLAN_UNOFFICIAL;
@@ -561,7 +561,7 @@ public class TechConstants {
                     } else {
                         return T_IS_TW_NON_BOX;
                     }
-                case Mech.COCKPIT_PRIMITIVE:
+                case Mek.COCKPIT_PRIMITIVE:
                     if (isClan) {
                         if (year <= 2807) {
                             return T_CLAN_UNOFFICIAL;
@@ -576,7 +576,7 @@ public class TechConstants {
                     } else if (year <= 2520) {
                         return T_IS_ADVANCED;
                     }
-                case Mech.COCKPIT_PRIMITIVE_INDUSTRIAL:
+                case Mek.COCKPIT_PRIMITIVE_INDUSTRIAL:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -587,7 +587,7 @@ public class TechConstants {
                     } else if (year <= 2520) {
                         return T_IS_ADVANCED;
                     }
-                case Mech.COCKPIT_INDUSTRIAL:
+                case Mek.COCKPIT_INDUSTRIAL:
                     // Not sure how to handle the Adv. Fire Control One.
                     // With advanced Fire Control becomes Non-Box in 2491
                     if (isClan) {
@@ -605,7 +605,7 @@ public class TechConstants {
                     } else {
                         return T_IS_TW_NON_BOX;
                     }
-                case Mech.COCKPIT_TORSO_MOUNTED:
+                case Mek.COCKPIT_TORSO_MOUNTED:
                     if (isClan) {
                         if (year <= 3055) {
                             return T_CLAN_UNOFFICIAL;
@@ -623,7 +623,7 @@ public class TechConstants {
                             return T_IS_TW_NON_BOX;
                         }
                     }
-                case Mech.COCKPIT_INTERFACE: // Clan Version
+                case Mek.COCKPIT_INTERFACE: // Clan Version
                     if (isClan) {
                         if (year <= 3078) {
                             return T_CLAN_UNOFFICIAL;
@@ -635,7 +635,7 @@ public class TechConstants {
                     } else {
                         return T_IS_EXPERIMENTAL;
                     }
-                case Mech.COCKPIT_COMMAND_CONSOLE:
+                case Mek.COCKPIT_COMMAND_CONSOLE:
                     if (isClan) {
                         if (year <= 2807) {
                             return T_CLAN_UNOFFICIAL;
@@ -653,7 +653,7 @@ public class TechConstants {
                     } else {
                         return T_IS_ADVANCED;
                     }
-                case Mech.COCKPIT_TRIPOD:
+                case Mek.COCKPIT_TRIPOD:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -666,7 +666,7 @@ public class TechConstants {
                         return T_IS_ADVANCED;
                     }
 
-                case Mech.COCKPIT_SUPERHEAVY:
+                case Mek.COCKPIT_SUPERHEAVY:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -678,7 +678,7 @@ public class TechConstants {
                     } else {
                         return T_IS_ADVANCED;
                     }
-                case Mech.COCKPIT_SUPERHEAVY_TRIPOD:
+                case Mek.COCKPIT_SUPERHEAVY_TRIPOD:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -690,7 +690,7 @@ public class TechConstants {
                     } else {
                         return T_IS_ADVANCED;
                     }
-                case Mech.COCKPIT_VRRP:
+                case Mek.COCKPIT_VRRP:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -702,7 +702,7 @@ public class TechConstants {
                     } else {
                         return T_IS_UNOFFICIAL;
                     }
-                case Mech.COCKPIT_QUADVEE:
+                case Mek.COCKPIT_QUADVEE:
                     if (isClan) {
                         if (year <= 3125) {
                             return T_CLAN_UNOFFICIAL;
@@ -713,7 +713,7 @@ public class TechConstants {
                         }
                     }
                     return T_IS_UNOFFICIAL;
-                case Mech.COCKPIT_SUPERHEAVY_INDUSTRIAL:
+                case Mek.COCKPIT_SUPERHEAVY_INDUSTRIAL:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -726,7 +726,7 @@ public class TechConstants {
                         return T_IS_ADVANCED;
                     }
                 //Same as Superheavy cockpit
-                case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+                case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
                     }
@@ -739,7 +739,7 @@ public class TechConstants {
                         return T_IS_ADVANCED;
                     }
                 //Same as Small cockpit
-                case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+                case Mek.COCKPIT_SMALL_COMMAND_CONSOLE:
                     if (isClan) {
                         if (year <= 3080) {
                             return T_CLAN_UNOFFICIAL;

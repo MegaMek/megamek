@@ -25,10 +25,10 @@ import megamek.common.equipment.ArmorType;
 public class BattleArmorCostCalculator {
 
     public static double calculateCost(BattleArmor battleArmor, CalculationReport costReport, boolean ignoreAmmo,
-                                       boolean includeTrainingAndClan) {
+            boolean includeTrainingAndClan) {
         double[] costs = new double[15];
         int idx = 0;
-        
+
         switch (battleArmor.getWeightClass()) {
             case EntityWeightClass.WEIGHT_MEDIUM:
                 costs[idx++] = 100000;
@@ -62,7 +62,7 @@ public class BattleArmorCostCalculator {
         costs[idx++] = 25000 * (battleArmor.getOriginalWalkMP() - 1);
 
         long manipulatorCost = 0;
-        for (Mounted mounted : battleArmor.getEquipment()) {
+        for (Mounted<?> mounted : battleArmor.getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
                     && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 long itemCost = (long) mounted.getCost();
@@ -87,7 +87,8 @@ public class BattleArmorCostCalculator {
             }
         }
 
-        // TODO : we do not track the modular weapons mount for 1000 C-bills in the unit files
+        // TODO : we do not track the modular weapons mount for 1000 C-bills in the unit
+        // files
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo);
         costs[idx++] = -battleArmor.getSquadSize();
 

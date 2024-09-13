@@ -18,23 +18,37 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import java.awt.BasicStroke;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
+import javax.swing.border.EmptyBorder;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.util.IntRangeTextField;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.MechSummary;
+import megamek.common.MekSummary;
 import megamek.common.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.BattleForceSUA;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This panel shows advanced search filters for AlphaStrike values.
@@ -158,7 +172,7 @@ public class ASAdvancedSearchPanel extends JPanel {
     JToggleButton unitRoleTransport = new JToggleButton(UnitRole.TRANSPORT.toString());
     JToggleButton unitRoleNone = new JToggleButton(UnitRole.NONE.toString());
 
-    private final JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
+    private final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
 
     public ASAdvancedSearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -197,71 +211,77 @@ public class ASAdvancedSearchPanel extends JPanel {
         btnClear.addActionListener(e -> clearValues());
     }
 
-    /** @return True when the given MechSummary matches the active search filters or true when no filters are active. */
-    public boolean matches(MechSummary mechSummary) {
-        if (isActive() && (mechSummary.getASUnitType() == ASUnitType.UNKNOWN)) {
+    /**
+     * @return True when the given MekSummary matches the active search filters or
+     *         true when no filters are active.
+     */
+    public boolean matches(MekSummary mekSummary) {
+        if (isActive() && (mekSummary.getASUnitType() == ASUnitType.UNKNOWN)) {
             return false;
-        } else if (useUnitType.isSelected() && !selectedTypes().contains(mechSummary.getASUnitType())) {
+        } else if (useUnitType.isSelected() && !selectedTypes().contains(mekSummary.getASUnitType())) {
             return false;
-        } else if (useUnitRole.isSelected() && !selectedRoles().contains(mechSummary.getRole())) {
+        } else if (useUnitRole.isSelected() && !selectedRoles().contains(mekSummary.getRole())) {
             return false;
-        } else if (useSize.isSelected() && !selectedSizes().contains(mechSummary.getSize())) {
+        } else if (useSize.isSelected() && !selectedSizes().contains(mekSummary.getSize())) {
             return false;
-        } else if (useTMM.isSelected() && !(selectedTMMs().contains(mechSummary.getTMM()) && mechSummary.usesTMM())) {
+        } else if (useTMM.isSelected() && !(selectedTMMs().contains(mekSummary.getTMM()) && mekSummary.usesTMM())) {
             return false;
-        } else if (useArmor.isSelected() && !((mechSummary.getFullArmor() >= armorFrom.getIntVal(-1))
-                && (mechSummary.getFullArmor() <= armorTo.getIntVal(Integer.MAX_VALUE)))) {
+        } else if (useArmor.isSelected() && !((mekSummary.getFullArmor() >= armorFrom.getIntVal(-1))
+                && (mekSummary.getFullArmor() <= armorTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
-        } else if (useStructure.isSelected() && !((mechSummary.getFullStructure() >= structureFrom.getIntVal(-1))
-                && (mechSummary.getFullStructure() <= structureTo.getIntVal(Integer.MAX_VALUE)))) {
+        } else if (useStructure.isSelected() && !((mekSummary.getFullStructure() >= structureFrom.getIntVal(-1))
+                && (mekSummary.getFullStructure() <= structureTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
-        } else if (useThreshold.isSelected() && !((mechSummary.getThreshold() >= thresholdFrom.getIntVal(-1))
-                && (mechSummary.getThreshold() <= thresholdTo.getIntVal(Integer.MAX_VALUE)))) {
+        } else if (useThreshold.isSelected() && !((mekSummary.getThreshold() >= thresholdFrom.getIntVal(-1))
+                && (mekSummary.getThreshold() <= thresholdTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         }
 
-        ASDamageVector stdDamage = mechSummary.getStandardDamage();
+        ASDamageVector stdDamage = mekSummary.getStandardDamage();
         if (useDamageS.isSelected() && (damageSFrom.getSelectedItem() != null) && (damageSTo.getSelectedItem() != null)
                 && !((stdDamage.S.asDoubleValue() >= damageSFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.S.asDoubleValue() <= damageSTo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null) && (damageMTo.getSelectedItem() != null)
+        } else if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null)
+                && (damageMTo.getSelectedItem() != null)
                 && !((stdDamage.M.asDoubleValue() >= damageMFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.M.asDoubleValue() <= damageMTo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null) && (damageLTo.getSelectedItem() != null)
+        } else if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null)
+                && (damageLTo.getSelectedItem() != null)
                 && !((stdDamage.L.asDoubleValue() >= damageLFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.L.asDoubleValue() <= damageLTo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null) && (damageETo.getSelectedItem() != null)
+        } else if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null)
+                && (damageETo.getSelectedItem() != null)
                 && !((stdDamage.E.asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.E.asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useOV.isSelected() && !(selectedOVs().contains(mechSummary.getOV()) && mechSummary.usesOV())) {
+        } else if (useOV.isSelected() && !(selectedOVs().contains(mekSummary.getOV()) && mekSummary.usesOV())) {
             return false;
-        } else if (usePV.isSelected() && !((mechSummary.getPointValue() >= pvFrom.getIntVal(-1))
-                && (mechSummary.getPointValue() <= pvTo.getIntVal(Integer.MAX_VALUE)))) {
+        } else if (usePV.isSelected() && !((mekSummary.getPointValue() >= pvFrom.getIntVal(-1))
+                && (mekSummary.getPointValue() <= pvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         }
 
         String moveMode = mvMode.getSelectedItem();
-        if (useMV.isSelected() && !(mechSummary.hasMovementMode(moveMode)
-                && (mechSummary.getMovement().get(moveMode) >= mvFrom.getIntVal(-1))
-                && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(Integer.MAX_VALUE)))) {
+        if (useMV.isSelected() && !(mekSummary.hasMovementMode(moveMode)
+                && (mekSummary.getMovement().get(moveMode) >= mvFrom.getIntVal(-1))
+                && (mekSummary.getMovement().get(moveMode) <= mvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useAbility1.isSelected() &&
-                !(mechSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())
-                        || (mechSummary.usesArcs() && (mechSummary.getLeftArc().hasSUA(ability1.getSelectedItem())
-                        || mechSummary.getRightArc().hasSUA(ability1.getSelectedItem())
-                        || mechSummary.getFrontArc().hasSUA(ability1.getSelectedItem())
-                        || mechSummary.getRearArc().hasSUA(ability1.getSelectedItem()))))) {
+                !(mekSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())
+                        || (mekSummary.usesArcs() && (mekSummary.getLeftArc().hasSUA(ability1.getSelectedItem())
+                                || mekSummary.getRightArc().hasSUA(ability1.getSelectedItem())
+                                || mekSummary.getFrontArc().hasSUA(ability1.getSelectedItem())
+                                || mekSummary.getRearArc().hasSUA(ability1.getSelectedItem()))))) {
             return false;
         } else if (useAbility2.isSelected() &&
-                !(mechSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())
-                        || (mechSummary.usesArcs() && (mechSummary.getLeftArc().hasSUA(ability2.getSelectedItem())
-                        || mechSummary.getRightArc().hasSUA(ability2.getSelectedItem())
-                        || mechSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
-                        || mechSummary.getRearArc().hasSUA(ability2.getSelectedItem()))))) {
+                !(mekSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())
+                        || (mekSummary.usesArcs() && (mekSummary.getLeftArc().hasSUA(ability2.getSelectedItem())
+                                || mekSummary.getRightArc().hasSUA(ability2.getSelectedItem())
+                                || mekSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
+                                || mekSummary.getRearArc().hasSUA(ability2.getSelectedItem()))))) {
             return false;
         } else {
             return true;
@@ -380,7 +400,7 @@ public class ASAdvancedSearchPanel extends JPanel {
 
     private void initDamageCombo(MMComboBox<ASDamage> comboBox) {
         comboBox.addItem(ASDamage.ZERO);
-        comboBox.addItem(ASDamage.MINIMAL);
+        comboBox.addItem(ASDamage.MINIMAL_DAMAGE);
         for (int i = 1; i <= 20; i++) {
             comboBox.addItem(new ASDamage(i, false));
         }
@@ -580,7 +600,10 @@ public class ASAdvancedSearchPanel extends JPanel {
         useOV.setSelected(false);
     }
 
-    /** Saves the current field settings and contents to restore them when user-canceled. */
+    /**
+     * Saves the current field settings and contents to restore them when
+     * user-canceled.
+     */
     public void saveValues() {
         savedUiValues = new UiValues();
         savedUiValues.store();
@@ -592,10 +615,15 @@ public class ASAdvancedSearchPanel extends JPanel {
         updateEnabled();
     }
 
-    /** @return True when any of the search filters is activated so that units might be filtered out. */
+    /**
+     * @return True when any of the search filters is activated so that units might
+     *         be filtered out.
+     */
     public boolean isActive() {
-        return useUnitType.isSelected() || useUnitRole.isSelected() || useSize.isSelected() || useTMM.isSelected() || useArmor.isSelected()
-                || useStructure.isSelected() || useThreshold.isSelected() || useDamageS.isSelected() || useDamageM.isSelected()
+        return useUnitType.isSelected() || useUnitRole.isSelected() || useSize.isSelected() || useTMM.isSelected()
+                || useArmor.isSelected()
+                || useStructure.isSelected() || useThreshold.isSelected() || useDamageS.isSelected()
+                || useDamageM.isSelected()
                 || useDamageL.isSelected() || useDamageE.isSelected() || usePV.isSelected() || useMV.isSelected()
                 || useAbility1.isSelected() || useAbility2.isSelected() || useOV.isSelected();
     }

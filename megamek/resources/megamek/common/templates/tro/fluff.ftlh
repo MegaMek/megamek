@@ -23,7 +23,7 @@
 <b>Tech Rating/Availability:</b> ${techRating}<br/>
 <b>Cost:</b> ${cost} C-bills<br/>
 </p>
-	
+
 <#noautoesc>
 <#if fluffOverview??>
 <p>

@@ -70,19 +70,19 @@ public class TripAttackAction extends PhysicalAttackAction {
 
         ToHitData toHit;
 
-        // non-mechs can't trip or be tripped
-        if (!(ae instanceof Mech) || !(target instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can trip other mechs");
+        // non-meks can't trip or be tripped
+        if (!(ae instanceof Mek) || !(target instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only meks can trip other meks");
         }
 
-        // LAM AirMechs can only trip when grounded.
+        // LAM AirMeks can only trip when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot trip while airborne");
         }
 
         // described as a leg hook
         // needs 2 legs present
-        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_RLEG)) {
+        if (ae.isLocationBad(Mek.LOC_LLEG) || ae.isLocationBad(Mek.LOC_RLEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
@@ -122,7 +122,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             usedWeapons[i] = false;
         }
 
-        for (Mounted mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound()) {
                 int loc = mounted.getLocation();
                 if (loc != Entity.LOC_NONE) {
@@ -132,31 +132,31 @@ public class TripAttackAction extends PhysicalAttackAction {
         }
 
         // check for good hips / shoulders
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RLEG)) {
-            usedWeapons[Mech.LOC_RLEG] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RLEG)) {
+            usedWeapons[Mek.LOC_RLEG] = true;
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LLEG)) {
-            usedWeapons[Mech.LOC_LLEG] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LLEG)) {
+            usedWeapons[Mek.LOC_LLEG] = true;
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RARM)) {
-            usedWeapons[Mech.LOC_RARM] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RARM)) {
+            usedWeapons[Mek.LOC_RARM] = true;
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LARM)) {
-            usedWeapons[Mech.LOC_LARM] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LARM)) {
+            usedWeapons[Mek.LOC_LARM] = true;
         }
 
-        if (ae instanceof QuadMech) {
-            if (usedWeapons[Mech.LOC_RARM]) {
-                if (usedWeapons[Mech.LOC_LARM]) {
+        if (ae instanceof QuadMek) {
+            if (usedWeapons[Mek.LOC_RARM]) {
+                if (usedWeapons[Mek.LOC_LARM]) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
                 }
-                limb1 = Mech.LOC_LARM;
+                limb1 = Mek.LOC_LARM;
             }
-        } else if (usedWeapons[Mech.LOC_RLEG]) { // normal attack uses both legs
-            if (usedWeapons[Mech.LOC_LLEG]) {
+        } else if (usedWeapons[Mek.LOC_RLEG]) { // normal attack uses both legs
+            if (usedWeapons[Mek.LOC_LLEG]) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
             }
-            limb1 = Mech.LOC_LLEG;
+            limb1 = Mek.LOC_LLEG;
         }
 
         // Set the base BTH
@@ -168,10 +168,10 @@ public class TripAttackAction extends PhysicalAttackAction {
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // Get best leg
-        if (ae instanceof QuadMech) {
+        if (ae instanceof QuadMek) {
             if (limb1 == Entity.LOC_NONE) {
-                ToHitData left = TripAttackAction.getLimbModifier(Mech.LOC_LARM, ae);
-                ToHitData right = TripAttackAction.getLimbModifier(Mech.LOC_RARM, ae);
+                ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LARM, ae);
+                ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RARM, ae);
                 if (left.getValue() < right.getValue()) {
                     toHit.append(left);
                 } else {
@@ -181,8 +181,8 @@ public class TripAttackAction extends PhysicalAttackAction {
                 toHit.append(TripAttackAction.getLimbModifier(limb1, ae));
             }
         } else if (limb1 == Entity.LOC_NONE) {
-            ToHitData left = TripAttackAction.getLimbModifier(Mech.LOC_LLEG, ae);
-            ToHitData right = TripAttackAction.getLimbModifier(Mech.LOC_RLEG, ae);
+            ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LLEG, ae);
+            ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RLEG, ae);
             if (left.getValue() < right.getValue()) {
                 toHit.append(left);
             } else {
@@ -203,15 +203,15 @@ public class TripAttackAction extends PhysicalAttackAction {
     private static ToHitData getLimbModifier(int loc, Entity ae) {
         ToHitData toHit = new ToHitData();
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, loc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, loc)) {
             toHit.addModifier(2, "Upper leg actuator destroyed");
         }
 
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, loc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, loc)) {
             toHit.addModifier(2, "Lower leg actuator destroyed");
         }
 
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_FOOT, loc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_FOOT, loc)) {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
         return toHit;

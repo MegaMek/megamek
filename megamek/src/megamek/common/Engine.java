@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
+ * 
  * @author Reinhard Vicinus
  */
 public class Engine implements Serializable, ITechnology {
@@ -40,8 +41,7 @@ public class Engine implements Serializable, ITechnology {
             56.5, 61.0, 66.5, 72.5, 79.5, 87.5, 97.0, 107.5, 119.5,
             133.5, 150.0, 168.5, 190.0, 214.5, 243.0, 275.5, 313.0,
             356.0, 405.5, 462.5 };
-    
-  
+
     // flags
     public static final int CLAN_ENGINE = 0x1;
     public static final int TANK_ENGINE = 0x2;
@@ -72,7 +72,8 @@ public class Engine implements Serializable, ITechnology {
             "MagLev", "Steam", "Battery", "Solar", "External"
     };
 
-    // These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127 (MagLev from TO:AU&E pg 62)
+    // These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
+    // (MagLev from TO:AU&E pg 62)
     // The other engine types are assumed to have a value of 0 in the array
     // if not listed.
     private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
@@ -90,7 +91,7 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5;
-        
+
         SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
         SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
@@ -132,7 +133,7 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
         SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
         SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
-        
+
         SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
         SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
@@ -157,14 +158,14 @@ public class Engine implements Serializable, ITechnology {
 
     /**
      * The constructor takes the rating of the engine, the type of engine and
-     * any flags. Engine ratings are divided by the weight of the mech to get
+     * any flags. Engine ratings are divided by the weight of the mek to get
      * they walk MP.
      *
      * @param engineRating the rating of the engine
-     * @param engineType the type of the engine, either combustion or a type of
-     *            fusion engine.
-     * @param engineFlags Wether the engine is a tank engine, a clan engine, or
-     *            large engine, or any combination of those.
+     * @param engineType   the type of the engine, either combustion or a type of
+     *                     fusion engine.
+     * @param engineFlags  Wether the engine is a tank engine, a clan engine, or
+     *                     large engine, or any combination of those.
      */
     public Engine(int engineRating, int engineType, int engineFlags) {
         engineValid = true;
@@ -201,7 +202,7 @@ public class Engine implements Serializable, ITechnology {
             problem.append("Flags:").append(engineFlags);
             return false;
         }
-        
+
         if (hasFlag(SUPPORT_VEE_ENGINE) && (engineType != STEAM)
                 && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
                 && (engineType != FUEL_CELL) && (engineType != SOLAR)
@@ -312,11 +313,10 @@ public class Engine implements Serializable, ITechnology {
     public boolean isSolar() {
         return engineType == SOLAR;
     }
-    
+
     public boolean isICE() {
         return engineType == COMBUSTION_ENGINE;
     }
-
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half
@@ -332,7 +332,7 @@ public class Engine implements Serializable, ITechnology {
      * Returns the weight of the engine, rounded by roundWeight.
      *
      * @param roundWeight One of the rounding factors given in
-     *            {@link megamek.common.verifier.TestEntity}.
+     *                    {@link megamek.common.verifier.TestEntity}.
      * @return the weight of the engine in tons.
      */
     public double getWeightEngine(Entity entity, RoundWeight roundWeight) {
@@ -347,7 +347,8 @@ public class Engine implements Serializable, ITechnology {
             double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
-            // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission engines have
+            // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission
+            // engines have
             // a minimum of 5t at all tech ratings.
             if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating() >= RATING_D)) {
                 weight = Math.max(weight, 0.25);
@@ -361,7 +362,7 @@ public class Engine implements Serializable, ITechnology {
             }
 
             return roundWeight.round(weight, entity);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK) && (engineRating < 40)) {
             // ProtoMek engines with rating < 40 use a special calculation
             return roundWeight.round(engineRating * 0.025, entity);
         }
@@ -400,8 +401,7 @@ public class Engine implements Serializable, ITechnology {
         if (hasFlag(TANK_ENGINE) && (isFusion() || (engineType == FISSION))) {
             weight *= 1.5;
         }
-        
-        
+
         double toReturn = roundWeight.round(weight, entity);
         // hover have a minimum weight of 20%
         if (entity.getMovementMode().isHover() && (entity instanceof Tank)) {
@@ -441,8 +441,7 @@ public class Engine implements Serializable, ITechnology {
     public int integralHeatSinkCapacity(boolean compact) {
         if (compact) {
             return (engineRating / 25) * 2;
-        }
-        else {
+        } else {
             return engineRating / 25;
         }
     }
@@ -497,7 +496,7 @@ public class Engine implements Serializable, ITechnology {
      * This returns a non-localized name of the engine, it's mostly used to
      * generate files.
      */
-    // Don't localize the marked strings below since they are used in mech
+    // Don't localize the marked strings below since they are used in mek
     // file parsing.
     public String getEngineName() {
         if (!isValidEngine()) {
@@ -536,51 +535,51 @@ public class Engine implements Serializable, ITechnology {
         if (engineType == COMPACT_ENGINE) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1 };
+                slots = new int[] { 0, 1 };
             } else {
-                slots = new int[]{ 0, 1, 2 };
+                slots = new int[] { 0, 1, 2 };
             }
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
-            if (gyroType == Mech.GYRO_COMPACT) {
+            if (gyroType == Mek.GYRO_COMPACT) {
                 int[] slots;
                 if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[]{ 0, 1, 2, 5 };
+                    slots = new int[] { 0, 1, 2, 5 };
                 } else {
-                    slots = new int[]{ 0, 1, 2, 5, 6, 7, 8, 9 };
+                    slots = new int[] { 0, 1, 2, 5, 6, 7, 8, 9 };
                 }
                 return slots;
             }
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1, 2, 5 };
+                slots = new int[] { 0, 1, 2, 5 };
             } else {
-                slots = new int[]{ 0, 1, 2, 7, 8, 9, 10, 11 };
+                slots = new int[] { 0, 1, 2, 7, 8, 9, 10, 11 };
             }
             return slots;
         } else {
-            if (gyroType == Mech.GYRO_COMPACT) {
+            if (gyroType == Mek.GYRO_COMPACT) {
                 int[] slots;
                 if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[]{ 0, 1, 2 };
+                    slots = new int[] { 0, 1, 2 };
                 } else {
-                    slots = new int[]{ 0, 1, 2, 5, 6, 7 };
+                    slots = new int[] { 0, 1, 2, 5, 6, 7 };
                 }
                 return slots;
-            } else if (gyroType == Mech.GYRO_XL) {
+            } else if (gyroType == Mek.GYRO_XL) {
                 int[] slots;
                 if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[]{ 0, 1, 2 };
+                    slots = new int[] { 0, 1, 2 };
                 } else {
-                    slots = new int[]{ 0, 1, 2, 9, 10, 11 };
+                    slots = new int[] { 0, 1, 2, 9, 10, 11 };
                 }
                 return slots;
             } else {
                 int[] slots;
                 if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[]{ 0, 1, 2 };
+                    slots = new int[] { 0, 1, 2 };
                 } else {
-                    slots = new int[]{ 0, 1, 2, 7, 8, 9 };
+                    slots = new int[] { 0, 1, 2, 7, 8, 9 };
                 }
                 return slots;
             }
@@ -595,52 +594,52 @@ public class Engine implements Serializable, ITechnology {
                 || ((engineType == XL_ENGINE) && hasFlag(CLAN_ENGINE))) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0 };
+                slots = new int[] { 0 };
             } else {
-                slots = new int[]{ 0, 1 };
+                slots = new int[] { 0, 1 };
             }
             return slots;
         } else if (engineType == XL_ENGINE) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1 };
+                slots = new int[] { 0, 1 };
             } else {
-                slots = new int[]{ 0, 1, 2 };
+                slots = new int[] { 0, 1, 2 };
             }
             return slots;
         } else if ((engineType == XXL_ENGINE) && hasFlag(CLAN_ENGINE)) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1 };
+                slots = new int[] { 0, 1 };
             } else {
-                slots = new int[]{ 0, 1, 2, 3 };
+                slots = new int[] { 0, 1, 2, 3 };
             }
             return slots;
         } else if (engineType == XXL_ENGINE) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1, 2 };
+                slots = new int[] { 0, 1, 2 };
             } else {
-                slots = new int[]{ 0, 1, 2, 3, 4, 5 };
+                slots = new int[] { 0, 1, 2, 3, 4, 5 };
             }
             return slots;
         } else {
-            return new int[]{};
+            return new int[] {};
         }
     }
 
     /**
-     * @return the heat generated while the mech is standing still.
+     * @return the heat generated while the mek is standing still.
      */
     public int getStandingHeat() {
         return (engineType == XXL_ENGINE) ? 2 : 0;
     }
 
     /**
-     * @return the heat generated while the mech is walking.
+     * @return the heat generated while the mek is walking.
      */
     public int getWalkHeat(Entity e) {
-        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
+        boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
@@ -653,10 +652,10 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * @return the heat generated while the mech is running.
+     * @return the heat generated while the mek is running.
      */
     public int getRunHeat(Entity e) {
-        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
+        boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
@@ -669,10 +668,10 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * @return the heat generated while the mech is sprinting.
+     * @return the heat generated while the mek is sprinting.
      */
     public int getSprintHeat(Entity e) {
-        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
+        boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
@@ -685,7 +684,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * @return the heat generated while the mech is jumping.
+     * @return the heat generated while the mek is jumping.
      */
     public int getJumpHeat(int movedMP) {
         if (engineType == XXL_ENGINE) {
@@ -739,7 +738,7 @@ public class Engine implements Serializable, ITechnology {
             case NONE:
                 cost = 0;
                 break;
-            }
+        }
         if (hasFlag(LARGE_ENGINE)) {
             cost *= 2;
         }
@@ -747,11 +746,12 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Values used for calculating the cost of a support vehicle engine. The engine cost in C-bills is
+     * Values used for calculating the cost of a support vehicle engine. The engine
+     * cost in C-bills is
      * tonnage * 5,000 * type multiplier
      *
      * @param etype The engine type
-     * @return      The type multiplier for cost
+     * @return The type multiplier for cost
      */
     public static double getSVCostMultiplier(int etype) {
         switch (etype) {
@@ -780,84 +780,84 @@ public class Engine implements Serializable, ITechnology {
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
+
     private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
             .setPrototypeFactions(F_TH).setProductionFactions(F_LC)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+
     private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
             .setTechRating(RATING_C).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
+
     private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE,DATE_NONE)
+            .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE, DATE_NONE)
             .setApproximate(false, false, true, false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_LC).setTechRating(RATING_C)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+
     private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
             .setPrototypeFactions(F_MERC).setProductionFactions(F_LC).setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement LARGE_LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3064, 3065).setISApproximate(true)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    //Greekfire requested Errata March 2022 for RS Jihad book. 
+    // Greekfire requested Errata March 2022 for RS Jihad book.
     private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3060, 3066, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, true,false,false)
+            .setISApproximate(true, false, true, false, false)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);            
-    
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+
     private static final TechAdvancement IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2556, 2579, 3045, 2865, 3035)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC)
             .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setTechRating(RATING_F).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC, F_FS)
             .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+
     private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
             .setPrototypeFactions(F_CIH).setProductionFactions(F_CHH)
             .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    //Greekfire requested Errata March 2022 for RS Jihad book. 
+    // Greekfire requested Errata March 2022 for RS Jihad book.
     private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3055, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false, false, false)
             .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false, false, false)
@@ -865,7 +865,7 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_FS).setProductionFactions(F_LC)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+
     private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true, false, false, false)
@@ -873,56 +873,56 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+
     private static final TechAdvancement FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2470, 2882, 3079).setTechRating(RATING_D)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TC)
             .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(RATING_D)
             .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
             .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);    
-    
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+
     private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_C)
             .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
             .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_C)
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_E, RATING_E, RATING_D, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-   
+
     private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
@@ -941,7 +941,7 @@ public class Engine implements Serializable, ITechnology {
         switch (engineType) {
             case COMBUSTION_ENGINE:
                 if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                    return SUPPORT_ICE_TA;              
+                    return SUPPORT_ICE_TA;
                 } else {
                     if (hasFlag(LARGE_ENGINE)) {
                         return LARGE_ICE_TA;
@@ -1004,7 +1004,7 @@ public class Engine implements Serializable, ITechnology {
             case FISSION:
                 if (hasFlag(SUPPORT_VEE_ENGINE)) {
                     return SUPPORT_FISSION_TA;
-                } else {                
+                } else {
                     return FISSION_TA;
                 }
             case MAGLEV:
@@ -1111,13 +1111,13 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_CLAN_UNOFFICIAL;
                     } else if (year <= 3120) {
                         return TechConstants.T_CLAN_ADVANCED;
-                    } 
+                    }
                 } else if (isLarge) {
                     if (year <= 3055) {
                         return TechConstants.T_IS_UNOFFICIAL;
                     } else if (year <= 3120) {
                         return TechConstants.T_IS_ADVANCED;
-                    } 
+                    }
                 }
             case FISSION:
                 if (isClan) {
@@ -1163,7 +1163,8 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_IS_ADVANCED;
                     }
                 } else {
-                    // Dec 2021 - CGL requested errata to move dates back 5 years for all Tech levels.
+                    // Dec 2021 - CGL requested errata to move dates back 5 years for all Tech
+                    // levels.
                     if (year < 3050) {
                         return TechConstants.T_IS_UNOFFICIAL;
                     } else if (year < 3057) {
@@ -1221,7 +1222,8 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * For omnis set the base Chassies HS any variants will only use this and the reset
+     * For omnis set the base Chassies HS any variants will only use this and the
+     * reset
      * will have to be added.
      *
      * @param amount The number to set as base chassis heat sinks
@@ -1231,11 +1233,12 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Return the Base Chassies Engine heat Sinks or integralHeatSinkCapacity which ever is less.
+     * Return the Base Chassies Engine heat Sinks or integralHeatSinkCapacity which
+     * ever is less.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
      *
-     * @return        The number of integral heat sinks in the base chassis
+     * @return The number of integral heat sinks in the base chassis
      */
     public int getBaseChassisHeatSinks(boolean compact) {
         return Math.min(integralHeatSinkCapacity(compact), baseChassisHeatSinks);
@@ -1244,7 +1247,7 @@ public class Engine implements Serializable, ITechnology {
     public int getFlags() {
         return engineFlags;
     }
-    
+
     @Override
     public int getTechBase() {
         return getTechAdvancement().getTechBase();
@@ -1274,7 +1277,7 @@ public class Engine implements Serializable, ITechnology {
     public int getIntroductionDate(boolean clan) {
         return getTechAdvancement().getIntroductionDate(clan);
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan, int faction) {
         return getTechAdvancement().getIntroductionDate(clan, faction);
@@ -1364,7 +1367,7 @@ public class Engine implements Serializable, ITechnology {
     public int getBaseAvailability(int era) {
         return getTechAdvancement().getBaseAvailability(era);
     }
-    
+
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         return getTechAdvancement().getStaticTechLevel();

@@ -18,39 +18,54 @@
  */
 package megamek.client.ui.baseComponents;
 
-import megamek.MegaMek;
-import megamek.client.ui.preferences.JWindowPreference;
-import megamek.client.ui.preferences.PreferencesNode;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.KeyStroke;
+
+import megamek.MegaMek;
+import megamek.client.ui.preferences.JWindowPreference;
+import megamek.client.ui.preferences.PreferencesNode;
+import megamek.logging.MMLogger;
+
 /**
- * This is the base class for dialogs in MegaMek. This class handles setting the UI, managing the X
+ * This is the base class for dialogs in MegaMek. This class handles setting the
+ * UI, managing the X
  * button, managing the escape key, and saving the dialog preferences.
  *
- * Inheriting classes must call initialize() in their constructors and override createCenterPane()
+ * Inheriting classes must call initialize() in their constructors and override
+ * createCenterPane()
  *
- * This is directly tied to MekHQ's AbstractMHQDialog, and any changes here MUST be verified there.
+ * This is directly tied to MekHQ's AbstractMHQDialog, and any changes here MUST
+ * be verified there.
  */
 public abstract class AbstractDialog extends JDialog implements WindowListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(AbstractDialog.class);
+
+    // region Variable Declarations
     private JFrame frame;
 
     protected static final String CLOSE_ACTION = "closeAction";
 
     protected ResourceBundle resources;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     /**
-     * This creates a non-modal AbstractDialog using the default resource bundle. This is the
+     * This creates a non-modal AbstractDialog using the default resource bundle.
+     * This is the
      * normal constructor to use for an AbstractDialog.
      */
     protected AbstractDialog(final JFrame frame, final String name, final String title) {
@@ -58,7 +73,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * This creates an AbstractDialog using the default resource bundle. It allows one to create
+     * This creates an AbstractDialog using the default resource bundle. It allows
+     * one to create
      * modal dialogs.
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final String name, final String title) {
@@ -67,18 +83,20 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * This creates an AbstractDialog using the specified resource bundle. This is not recommended
+     * This creates an AbstractDialog using the specified resource bundle. This is
+     * not recommended
      * by default.
      *
-     * @param frame the dialog's parent frame
-     * @param modal if this dialog is modal
+     * @param frame     the dialog's parent frame
+     * @param modal     if this dialog is modal
      * @param resources the resource bundle for this dialog
-     * @param name the dialog's name
-     * @param title the dialog's title resource key. This is required for accessibility reasons, and
-     *              the method will error out if it isn't valid.
+     * @param name      the dialog's name
+     * @param title     the dialog's title resource key. This is required for
+     *                  accessibility reasons, and
+     *                  the method will error out if it isn't valid.
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
-                             final String name, final String title) {
+            final String name, final String title) {
         super(frame, modal);
         setTitle(resources.getString(title));
         setName(name);
@@ -87,20 +105,23 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * This allows Swing to create the dialog with another dialog as the parent. Which dialog swing renders on top
-     * is somewhat undefined, depending on the window manager. This can cause problems in the case of modal dialogs
+     * This allows Swing to create the dialog with another dialog as the parent.
+     * Which dialog swing renders on top
+     * is somewhat undefined, depending on the window manager. This can cause
+     * problems in the case of modal dialogs
      * that show up behind other dialogs and you cannot get to them.
      *
-     * @param dialog Owning dialog, for dialogs on dialogs
-     * @param frame Owning frame
-     * @param modal if this dialog is modal
+     * @param dialog    Owning dialog, for dialogs on dialogs
+     * @param frame     Owning frame
+     * @param modal     if this dialog is modal
      * @param resources the resource bundle for this dialog
-     * @param name the dialog's name
-     * @param title the dialog's title resource key. This is required for accessibility reasons, and
-     *              the method will error out if it isn't valid.
+     * @param name      the dialog's name
+     * @param title     the dialog's title resource key. This is required for
+     *                  accessibility reasons, and
+     *                  the method will error out if it isn't valid.
      */
     protected AbstractDialog(final JDialog dialog, JFrame frame, final boolean modal, final ResourceBundle resources,
-                             final String name, final String title) {
+            final String name, final String title) {
         super(dialog, modal);
         setTitle(resources.getString(title));
         setName(name);
@@ -108,9 +129,9 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         this.resources = resources;
     }
 
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public JFrame getFrame() {
         return frame;
     }
@@ -118,14 +139,16 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     public void setFrame(final JFrame frame) {
         this.frame = frame;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region Initialization
+    // region Initialization
     /**
-     * Initializes the dialog's UI and preferences. Needs to be called by child classes for initial
+     * Initializes the dialog's UI and preferences. Needs to be called by child
+     * classes for initial
      * setup.
      *
-     * Anything that overrides this method MUST end by calling {@link AbstractDialog#finalizeInitialization()}
+     * Anything that overrides this method MUST end by calling
+     * {@link AbstractDialog#finalizeInitialization()}
      */
     protected void initialize() {
         setLayout(new BorderLayout());
@@ -133,25 +156,32 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             finalizeInitialization();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+            logger.error(ex,
+                    "Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.");
         }
     }
 
     /**
      * This is used to create the dialog's center pane
+     *
      * @return the center pane of the dialog
      */
     protected abstract Container createCenterPane();
 
     /**
-     * This MUST be called at the end of initialization to finalize it. This is the key method for
+     * This MUST be called at the end of initialization to finalize it. This is the
+     * key method for
      * this being the abstract basis for all other dialogs.
-     * @throws Exception if there's an issue finishing initialization. Normally this means there's
-     * an issue setting the preferences, which normally means that a component has had its name
-     * value set.
+     *
+     * @throws Exception if there's an issue finishing initialization. Normally this
+     *                   means there's
+     *                   an issue setting the preferences, which normally means that
+     *                   a component has had its name
+     *                   value set.
      */
     protected void finalizeInitialization() throws Exception {
-        // Pack and fit only affect dialogs when shown for the absolute first time; at any later time,
+        // Pack and fit only affect dialogs when shown for the absolute first time; at
+        // any later time,
         // the setPreferences() below overwrites size and position with stored values
         pack();
         fitAndCenter();
@@ -175,7 +205,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size
+     * when necessary.
      * If the dialog goes off-screen, center it
      */
     protected void fit() {
@@ -200,7 +231,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size
+     * when necessary.
      * It then centers the dialog on the screen.
      */
     protected void fitAndCenter() {
@@ -212,19 +244,27 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * This is used to set preferences based on the preference node for this class. It is overridden
+     * This is used to set preferences based on the preference node for this class.
+     * It is overridden
      * for MekHQ usage.
-     * @throws Exception if there's an issue initializing the preferences. Normally this means
-     * a component has <strong>not</strong> had its name value set.
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally
+     *                   this means
+     *                   a component has <strong>not</strong> had its name value
+     *                   set.
      */
     protected void setPreferences() throws Exception {
         setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**
-     * This sets the base preferences for this class, and calls the custom preferences method
-     * @throws Exception if there's an issue initializing the preferences. Normally this means
-     * a component has <strong>not</strong> had its name value set.
+     * This sets the base preferences for this class, and calls the custom
+     * preferences method
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally
+     *                   this means
+     *                   a component has <strong>not</strong> had its name value
+     *                   set.
      */
     protected void setPreferences(final PreferencesNode preferences) throws Exception {
         preferences.manage(new JWindowPreference(this));
@@ -237,14 +277,17 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * By default, this dialog will track preferences related to the size
      * and position of the dialog. Other preferences can be added by overriding
      * this method.
+     *
      * @param preferences the preference node for this dialog
-     * @throws Exception if there's an issue initializing the preferences. Normally this means
-     * a component has <strong>not</strong> had its name value set.
+     * @throws Exception if there's an issue initializing the preferences. Normally
+     *                   this means
+     *                   a component has <strong>not</strong> had its name value
+     *                   set.
      */
     protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
 
     }
-    //endregion Initialization
+    // endregion Initialization
 
     /**
      * Note: Cancelling a dialog should always allow one to close the dialog.
@@ -253,21 +296,22 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "cancelAction Performed");
         } finally {
             setVisible(false);
         }
     }
 
     /**
-     * Action performed when the Cancel button is clicked, the dialog is closed by the X button, or
+     * Action performed when the Cancel button is clicked, the dialog is closed by
+     * the X button, or
      * the escape key is pressed
      */
     protected void cancelAction() {
 
     }
 
-    //region WindowEvents
+    // region WindowEvents
     /**
      * Note: Closing the dialog should always allow one to close the dialog.
      */
@@ -276,7 +320,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "windowClosing");
         }
     }
 
@@ -309,5 +353,5 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     public void windowDeactivated(final WindowEvent evt) {
 
     }
-    //endregion WindowEvents
+    // endregion WindowEvents
 }

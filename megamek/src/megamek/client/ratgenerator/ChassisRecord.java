@@ -13,59 +13,61 @@
  */
 package megamek.client.ratgenerator;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import megamek.logging.MMLogger;
+
 /**
- * The ChassisRecord tracks all available variants and determines how much total weight
+ * The ChassisRecord tracks all available variants and determines how much total
+ * weight
  * is to be distributed among the various models.
- * 
+ *
  * @author Neoancient
  */
 public class ChassisRecord extends AbstractUnitRecord {
+    private final static MMLogger logger = MMLogger.create(ChassisRecord.class);
 
     protected HashSet<ModelRecord> models;
-    
+
     public ChassisRecord(String chassis) {
         super(chassis);
         models = new HashSet<>();
     }
-    
+
     public void addModel(ModelRecord model) {
         models.add(model);
         if (introYear == 0 || model.getIntroYear() < getIntroYear()) {
             introYear = model.getIntroYear();
         }
     }
-    
+
     public HashSet<ModelRecord> getModels() {
         return models;
     }
-    
-    public List<ModelRecord> getSortedModels() { 
+
+    public List<ModelRecord> getSortedModels() {
         List<ModelRecord> sortedModels = new ArrayList<>(models);
         sortedModels.sort(Comparator.comparing(ModelRecord::getModel));
         return sortedModels;
-        
+
     }
-    
+
     public int totalModelWeight(int era, String fKey) {
         FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
         if (fRec == null) {
-            LogManager.getLogger().warn("Attempt to find totalModelWeight for non-existent faction " + fKey);
+            logger.warn("Attempt to find totalModelWeight for non-existent faction " + fKey);
             return 0;
         }
         return totalModelWeight(era, fRec);
     }
-    
+
     public int totalModelWeight(int era, FactionRecord fRec) {
         int retVal = 0;
         RATGenerator rg = RATGenerator.getInstance();
-        
+
         for (ModelRecord mr : models) {
             AvailabilityRating ar = rg.findModelAvailabilityRecord(era,
                     mr.getKey(), fRec);
@@ -73,7 +75,7 @@ public class ChassisRecord extends AbstractUnitRecord {
                 retVal += AvailabilityRating.calcWeight(ar.getAvailability());
             }
         }
-        
+
         return retVal;
     }
 }

@@ -18,10 +18,7 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.*;
-import megamek.common.equipment.AmmoMounted;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 
 public class BattleArmorBVCalculator extends BVCalculator {
 
@@ -42,14 +42,11 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     /**
-     * Calculates the Battle Value of a single trooper of this BattleArmor. This value is not influenced
-     * by the pilot skill or any force bonuses.
-     *
-     * @implNote Used in MML
+     * Calculates the Battle Value of a single trooper of this BattleArmor. This
+     * value is not influenced by the pilot skill or any force bonuses.
      *
      * @return The BV of a single trooper of this BattleArmor
      */
-    @SuppressWarnings("unused")
     public int singleTrooperBattleValue() {
         reset();
         bvReport = new DummyCalculationReport();
@@ -91,40 +88,41 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected boolean countAsOffensiveWeapon(Mounted equipment) {
+    protected boolean countAsOffensiveWeapon(Mounted<?> equipment) {
         // see https://bg.battletech.com/forums/ground-combat/battle-armor-bv/
-        return super.countAsOffensiveWeapon(equipment) && !equipment.getType().isAnyOf(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
+        return super.countAsOffensiveWeapon(equipment)
+                && !equipment.getType().isAnyOf(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
     }
 
-    protected void reportPossibleWeaponSection(String name, Predicate<Mounted> weaponFilter) {
+    protected void reportPossibleWeaponSection(String name, Predicate<Mounted<?>> weaponFilter) {
         bvReport.startTentativeSection();
         bvReport.addLine(name, "", "");
         double resultingBV = processWeaponSection(true, weaponFilter, true);
         bvReport.finalizeTentativeSection(resultingBV > 0);
     }
 
-    private boolean isAnyBattleClaw(Mounted mounted) {
+    private boolean isAnyBattleClaw(Mounted<?> mounted) {
         EquipmentType type = mounted.getType();
         return (type instanceof MiscType)
                 && (type.hasFlag(MiscType.F_VIBROCLAW) || type.hasFlag(MiscType.F_MAGNET_CLAW));
     }
 
-    Predicate<Mounted> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
+    Predicate<Mounted<?>> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
             && !m.isSquadSupportWeapon() && !isAnyBattleClaw(m);
 
-    Predicate<Mounted> supportFilter = m -> !m.getType().hasFlag(WeaponType.F_INFANTRY)
+    Predicate<Mounted<?>> supportFilter = m -> !m.getType().hasFlag(WeaponType.F_INFANTRY)
             && ((m.getLocation() == currentTrooper) || m.isSquadSupportWeapon());
 
-    Predicate<Mounted> antiMekClawFilter = m -> (m.getType() instanceof MiscType)
+    Predicate<Mounted<?>> antiMekClawFilter = m -> (m.getType() instanceof MiscType)
             && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper))
             && (isAnyBattleClaw(m));
 
-    Predicate<Mounted> antiMekWeaponFilter = m -> (m.getType() instanceof WeaponType)
+    Predicate<Mounted<?>> antiMekWeaponFilter = m -> (m.getType() instanceof WeaponType)
             && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
             && !m.isBodyMounted()
             && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper));
 
-    Predicate<Mounted> antiMekFilter = m -> antiMekClawFilter.test(m) || antiMekWeaponFilter.test(m);
+    Predicate<Mounted<?>> antiMekFilter = m -> antiMekClawFilter.test(m) || antiMekWeaponFilter.test(m);
 
     @Override
     protected void processWeapons() {
@@ -165,7 +163,8 @@ public class BattleArmorBVCalculator extends BVCalculator {
         bvReport.addEmptyLine();
         bvReport.addSubHeader("Squad Battle Value:");
         bvReport.addLine("Total Squad BV:", "", formatForReport(baseBV));
-        // we have now added all troopers, divide by current strength, then multiply by the unit size modifier
+        // we have now added all troopers, divide by current strength, then multiply by
+        // the unit size modifier
         baseBV /= battleArmor.getShootingStrength();
         bvReport.addLine("Average BV per Trooper", "/ " + battleArmor.getShootingStrength(),
                 "= " + formatForReport(baseBV));
@@ -225,12 +224,14 @@ public class BattleArmorBVCalculator extends BVCalculator {
             modifier = " (" + armor.getName().replaceAll("^BA\\s+", "") + ")";
         }
         defensiveValue += battleArmor.getArmor(currentTrooper) * armorBV + 1;
-        String calculation = "1 + " + battleArmor.getArmor(currentTrooper) + " x " + formatForReport(armorBV) + modifier;
+        String calculation = "1 + " + battleArmor.getArmor(currentTrooper) + " x " + formatForReport(armorBV)
+                + modifier;
         bvReport.addLine("Armor:", calculation, formatForReport(defensiveValue));
     }
 
     @Override
-    protected void processStructure() { }
+    protected void processStructure() {
+    }
 
     @Override
     protected void processDefensiveEquipment() {
@@ -244,7 +245,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
             bonus += 1;
             modifierList.add("AP");
         }
-        for (Mounted mounted : battleArmor.getMisc()) {
+        for (Mounted<?> mounted : battleArmor.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_ECM)) {
                 if (mounted.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                     bonus += 2;
@@ -262,12 +263,12 @@ public class BattleArmorBVCalculator extends BVCalculator {
             bvReport.addLine("Systems:", calculation, "= " + formatForReport(defensiveValue));
         }
         double amsBonus = 0;
-        for (Mounted weapon : battleArmor.getWeaponList()) {
+        for (Mounted<?> weapon : battleArmor.getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                 if (weapon.getLocation() == BattleArmor.LOC_SQUAD) {
                     amsBonus += weapon.getType().getBV(battleArmor);
                 } else {
-                    // squad support, count at 1/troopercount
+                    // squad support, count at 1 / trooper count
                     amsBonus += weapon.getType().getBV(battleArmor) / battleArmor.getTotalOInternal();
                 }
             }
@@ -280,7 +281,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected double getAmmoBV(Mounted ammo) {
+    protected double getAmmoBV(Mounted<?> ammo) {
         return ((AmmoType) ammo.getType()).getKgPerShotBV(ammo.getUsableShotsLeft());
     }
 
@@ -291,7 +292,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected String equipmentDescriptor(Mounted mounted) {
+    protected String equipmentDescriptor(Mounted<?> mounted) {
         return mounted.getType().getShortName();
     }
 }

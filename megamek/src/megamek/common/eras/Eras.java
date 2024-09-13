@@ -18,15 +18,7 @@
  */
 package megamek.common.eras;
 
-import megamek.MMConstants;
-import megamek.common.annotations.Nullable;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,22 +26,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
-import static java.util.stream.Collectors.toList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import megamek.MMConstants;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
 
 /**
- * This singleton class is a handler for the Eras of the BT Universe like the Civil War or the
- * Succession Wars. The Eras are read from the eras.xml definition file and are thus moddable.
- * The class therefore has a few methods that deal with validation and is supposed to be
+ * This singleton class is a handler for the Eras of the BT Universe like the
+ * Civil War or the
+ * Succession Wars. The Eras are read from the eras.xml definition file and are
+ * thus moddable.
+ * The class therefore has a few methods that deal with validation and is
+ * supposed to be
  * resistant to wrong data.
  *
  * @author Justin "Windchild" Bowen
  * @author Simon (Juliez)
  */
 public final class Eras {
+    private static final MMLogger logger = MMLogger.create(Eras.class);
 
-    /** @return The sole instance of Eras. Calling this also initialises and loads the eras. */
+    /**
+     * @return The sole instance of Eras. Calling this also initialises and loads
+     *         the eras.
+     */
     public static Eras getInstance() {
         if (instance == null) {
             instance = new Eras();
@@ -58,7 +71,8 @@ public final class Eras {
     }
 
     /**
-     * Returns the {@link Era} of the given date. For the canon eras the day makes no difference but the eras
+     * Returns the {@link Era} of the given date. For the canon eras the day makes
+     * no difference but the eras
      * definition xml allows eras to be defined with day resolution.
      *
      * @param date The date to get the Era for
@@ -69,8 +83,10 @@ public final class Eras {
     }
 
     /**
-     * Returns the {@link Era} of the first day of the given year (January 1st). For the canon eras the day
-     * makes no difference but the eras definition xml allows eras to be defined with day resolution. Therefore
+     * Returns the {@link Era} of the first day of the given year (January 1st). For
+     * the canon eras the day
+     * makes no difference but the eras definition xml allows eras to be defined
+     * with day resolution. Therefore
      * it is preferable to use {@link #getEra(LocalDate)} when a date is available.
      *
      * @param year The year to get the Era for
@@ -84,7 +100,7 @@ public final class Eras {
      * Returns true when the given date is in the given Era.
      *
      * @param date The date to test
-     * @param era The Era to check against the date
+     * @param era  The Era to check against the date
      * @return True when the date is in the Era's date range
      */
     public static boolean isThisEra(LocalDate date, Era era) {
@@ -93,7 +109,8 @@ public final class Eras {
     }
 
     /**
-     * Returns a list of all Eras, ordered by their end dates, i.e. in their natural order with the oldest
+     * Returns a list of all Eras, ordered by their end dates, i.e. in their natural
+     * order with the oldest
      * being first.
      *
      * @return All Eras
@@ -107,7 +124,10 @@ public final class Eras {
         return (era != null) && era.equals(getInstance().eras.firstEntry().getValue());
     }
 
-    /** @return The era directly preceding the given Era, if any, null if the given Era is the first era (or null). */
+    /**
+     * @return The era directly preceding the given Era, if any, null if the given
+     *         Era is the first era (or null).
+     */
     public static @Nullable Era previousEra(@Nullable Era era) {
         if (era == null) {
             return null;
@@ -116,7 +136,10 @@ public final class Eras {
         }
     }
 
-    /** @return The era directly following the given Era, if any, null if the given Era is the last era (or null). */
+    /**
+     * @return The era directly following the given Era, if any, null if the given
+     *         Era is the last era (or null).
+     */
     public static @Nullable Era nextEra(@Nullable Era era) {
         if (era == null) {
             return null;
@@ -125,7 +148,10 @@ public final class Eras {
         }
     }
 
-    /** @return The starting date of the given Era or LocalDate.MIN if the given Era is the first era. */
+    /**
+     * @return The starting date of the given Era or LocalDate.MIN if the given Era
+     *         is the first era.
+     */
     public static LocalDate startDate(Era era) {
         if (isFirstEra(era)) {
             return LocalDate.MIN;
@@ -134,7 +160,7 @@ public final class Eras {
         }
     }
 
-    //region non-public
+    // region non-public
 
     private static final Era ERA_PLACEHOLDER = new Era("???", "Unknown", null, null, -1, null);
     private static Eras instance;
@@ -142,7 +168,10 @@ public final class Eras {
     /** This Map contains the sorted eras and is used for public methods. */
     private final TreeMap<LocalDate, Era> eras = new TreeMap<>();
 
-    /** This list contains all eras, even if they're malformed and is used for trouble-shooting. */
+    /**
+     * This list contains all eras, even if they're malformed and is used for
+     * trouble-shooting.
+     */
     private final List<Era> eraList = new ArrayList<>();
 
     private Eras() {
@@ -150,7 +179,7 @@ public final class Eras {
             loadErasFromXML();
         } catch (Exception ex) {
             addEra(ERA_PLACEHOLDER);
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -183,7 +212,8 @@ public final class Eras {
         }
         eraList.sort(Comparator.comparing(Era::end));
         if (!areAllValid(null)) {
-            LogManager.getLogger().error("The eras definition file " + MMConstants.ERAS_FILE_PATH + "contains malformed eras!");
+            logger
+                    .error("The eras definition file " + MMConstants.ERAS_FILE_PATH + "contains malformed eras!");
         }
     }
 
@@ -219,20 +249,25 @@ public final class Eras {
             }
             return new Era(code, name, end, flags, mulId, icon);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return ERA_PLACEHOLDER;
         }
     }
 
-    /** @return True when the code, name and mulId of the era are valid. When true, the era may still be invalid. */
+    /**
+     * @return True when the code, name and mulId of the era are valid. When true,
+     *         the era may still be invalid.
+     */
     private boolean isValid(Era era) {
         return !era.code().isBlank() && !era.name().isBlank()
                 && ((era.mulId() == -1) || (era.mulId() > 0));
     }
 
     /**
-     * Returns true when the set of eras is valid (meaning the xml file has no malformed entries.)
-     * A Set can be passed in that will receive all invalid eras if there are any. Note that the
+     * Returns true when the set of eras is valid (meaning the xml file has no
+     * malformed entries.)
+     * A Set can be passed in that will receive all invalid eras if there are any.
+     * Note that the
      * Set is not emptied before being used.
      *
      * @param invalidErasReturn An optional Set to receive invalid eras.
@@ -262,8 +297,10 @@ public final class Eras {
     }
 
     /**
-     * Returns all Eras, possibly including invalid ones. This is only for Era editing when even invalid eras
-     * should be available. Use {@link #getEras()} in all other circumstances. This method is intentionally
+     * Returns all Eras, possibly including invalid ones. This is only for Era
+     * editing when even invalid eras
+     * should be available. Use {@link #getEras()} in all other circumstances. This
+     * method is intentionally
      * package private.
      *
      * @return All eras, possibly also invalid ones.
@@ -272,5 +309,5 @@ public final class Eras {
         return getInstance().eraList;
     }
 
-    //endregion non-public
+    // endregion non-public
 }

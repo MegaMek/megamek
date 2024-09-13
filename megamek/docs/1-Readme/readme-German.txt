@@ -132,11 +132,11 @@ DAS SPIEL SPIELEN
 
 VOR-DEM-SPIEL BERICHT:
 
-Hier kann man chatten, seine Mechs aussuchen, die Karte wählen, seinen
+Hier kann man chatten, seine Meks aussuchen, die Karte wählen, seinen
 Startpunkt aussuchen, und seine Spielerfarbe einstellen . Sobald jeder
-mindesten einen Mech hat, können alle auf "ready" klicken und das Spiel kann
+mindesten einen Mek hat, können alle auf "ready" klicken und das Spiel kann
 beginnen. Die meisten Änderungen an den Spiel Parametern setzten den ready
-status zurück, also sollte man am besten warten bis alle ihre Mechs und
+status zurück, also sollte man am besten warten bis alle ihre Meks und
 Positionen gewöhlt haben.
 
 EINLEITUNGS-REPORT:
@@ -177,7 +177,7 @@ man die Sicht-Richtung der gewählten Einheit bestimmen, ohne die Einheit zu
 bewegen. Am besten macht man das am Ende des Zuges.
 
 Um sich zurück zu bewegen, drückt man den "Back Up" Knopf bevor man den Weg hinter
-dem Mech festlegt. Um zurück zu springen, drückt man erst "Back Up" und dann "Jump".
+dem Mek festlegt. Um zurück zu springen, drückt man erst "Back Up" und dann "Jump".
 Sichtrichtungs wechsel während des Sprunges sind frei.
 
 Hingefallene Einheiten können die Sichtrichtung ändern, ohne aufzustehen.
@@ -187,7 +187,7 @@ und sich dabei zurück zu ziehen, muss man erst "Get Up" anklicken, und dann "Ba
 und dann das gewünschte Feld oder die gewünschte Richtung. Man kann im selben Zug nicht
 aufstehen und springen.
 
-Den Piloten eines Mechs kann man über den 'EJECT' Knopf aussteigen lassen, dieser Mech
+Den Piloten eines Meks kann man über den 'EJECT' Knopf aussteigen lassen, dieser Mek
 ist dann sofort aus dem Spiel.
 
 Rammen und Todessprung (D.F.A.) sind Aangriffe, die während der Bewegungsphase
@@ -306,7 +306,7 @@ Feld aus (so daß der Verteidiger schwerer zu treffen ist)
 dies möglich ist. Das heisst, du kannst nicht zwei Ziele in einer Runde
 schlagen.
 
-- Bei einem Tritt, benutzt der Mech automatisch das Bein, das bessere Chancen
+- Bei einem Tritt, benutzt der Mek automatisch das Bein, das bessere Chancen
 auf einen Treffer hat.
 
 - Es gibt viele Situationen, besonder den ANGRIFF VON OBEN (D.F.A *DEATH

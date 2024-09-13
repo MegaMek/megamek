@@ -44,7 +44,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         tonnage = 1.0;
         criticals = 1;
         flags = flags.or(F_ONESHOT).or(F_B_POD).or(F_BALLISTIC)
-                .or(F_MECH_WEAPON).or(F_TANK_WEAPON);
+                .or(F_MEK_WEAPON).or(F_TANK_WEAPON);
         explosive = true;
         bv = 2;
         cost = 2500;
@@ -65,19 +65,19 @@ public abstract class BPodWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new BPodHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 }

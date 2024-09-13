@@ -37,7 +37,7 @@ public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
         longRange = 12;
         extremeRange = 16;
         bv = 15;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = .06;
         criticals = 2;
         cost = 15000;
@@ -53,5 +53,3 @@ public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
                 .setProductionFactions(F_CHH);
     }
 }
-
-

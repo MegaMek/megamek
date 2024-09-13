@@ -19,18 +19,21 @@
  */
 package megamek.common.util.fileUtils;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.io.File;
 
+import megamek.logging.MMLogger;
+
 /**
- * This class represents a collection of files present within a directory hierarchy, categorized
+ * This class represents a collection of files present within a directory
+ * hierarchy, categorized
  * according to their directories.
  *
  * @author James Damour (original)
  * @author Justin "Windchild" Bowen
  */
 public class DirectoryItems extends AbstractDirectory {
+    private static final MMLogger logger = MMLogger.create(DirectoryItems.class);
+
     public DirectoryItems(final File root, final ItemFileFactory itemFactory)
             throws IllegalArgumentException, NullPointerException {
         this(root, "", "", itemFactory);
@@ -38,22 +41,31 @@ public class DirectoryItems extends AbstractDirectory {
 
     /**
      * Create a categorized collection of all files beneath the given directory.
-     * Please note, the name of any sub-directories will be added to the root category name to
+     * Please note, the name of any sub-directories will be added to the root
+     * category name to
      * create the name of the sub-directories' category path.
      *
-     * @param root the <code>File</code> object for the root directory of the image files. All files
-     *             in this root will be included in this collection. This value must not be
-     *             <code>null</code> and it must be a directory.
-     * @param categoryName the <code>String</code> root category name for this directory
-     * @param categoryPath the <code>String</code> root category path for this collection. All
+     * @param root         the <code>File</code> object for the root directory of
+     *                     the image files. All files
+     *                     in this root will be included in this collection. This
+     *                     value must not be
+     *                     <code>null</code> and it must be a directory.
+     * @param categoryName the <code>String</code> root category name for this
+     *                     directory
+     * @param categoryPath the <code>String</code> root category path for this
+     *                     collection. All
      *                     sub-categories will include this as part of their path.
-     * @param itemFactory the <code>ItemFileFactory</code> that will create <code>ItemFile</code>s
-     *                    for the contents of the directory. This value must not be <code>null</code>.
-     * @throws AssertionError if <code>root</code> is null or if it is not a directory, or if a
-     * <code>null</code> is passed for <code>itemFactory</code>.
+     * @param itemFactory  the <code>ItemFileFactory</code> that will create
+     *                     <code>ItemFile</code>s
+     *                     for the contents of the directory. This value must not be
+     *                     <code>null</code>.
+     * @throws AssertionError if <code>root</code> is null or if it is not a
+     *                        directory, or if a
+     *                        <code>null</code> is passed for
+     *                        <code>itemFactory</code>.
      */
     private DirectoryItems(final File root, final String categoryName, final String categoryPath,
-                           final ItemFileFactory itemFactory)
+            final ItemFileFactory itemFactory)
             throws IllegalArgumentException, NullPointerException {
         super(root, categoryName, categoryPath, itemFactory);
 
@@ -63,7 +75,8 @@ public class DirectoryItems extends AbstractDirectory {
 
         final String[] children = root.list();
         if (children == null) {
-            LogManager.getLogger().error("Failed to parse the " + categoryName + " directory, getting null children calling root.list()");
+            logger.error(
+                    "Failed to parse the " + categoryName + " directory, getting null children calling root.list()");
             return;
         }
 

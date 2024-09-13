@@ -18,16 +18,17 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.client.ui.swing.util.UIUtil;
-
-import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
@@ -38,7 +39,7 @@ public class UnitDisplayDialog extends JDialog {
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
-        this.setTitle(Messages.getString("ClientGUI.MechDisplay"));
+        this.setTitle(Messages.getString("ClientGUI.MekDisplay"));
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());

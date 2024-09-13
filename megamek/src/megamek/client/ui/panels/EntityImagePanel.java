@@ -18,15 +18,19 @@
  */
 package megamek.client.ui.panels;
 
+import java.awt.Image;
+
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import megamek.client.ui.swing.tileset.EntityImage;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * The EntityImagePanel displays the Entity's Image using the provided camouflage.
@@ -85,13 +89,13 @@ public class EntityImagePanel extends JPanel {
      * @param camouflage the camouflage to display
      */
     public void updateDisplayedEntity(final @Nullable Entity entity, final AbstractIcon camouflage) {
-        if ((entity == null) || (MMStaticDirectoryManager.getMechTileset() == null)
+        if ((entity == null) || (MMStaticDirectoryManager.getMekTileset() == null)
                 || !(camouflage instanceof Camouflage)) {
             getImageLabel().setIcon(null);
             return;
         }
 
-        final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
+        final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
         getImageLabel().setIcon(new ImageIcon(EntityImage.createLobbyIcon(base, (Camouflage) camouflage, entity)
                 .loadPreviewImage(false)));
     }

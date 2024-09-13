@@ -1,0 +1,5 @@
+See equipment.txt in the MegaMek/docs folder for equipment names that
+MegaMek will recognize on custom-made units.  Note that while the
+equipment may be read by MegaMek, it may not function by the rules
+in any of the Battletech rulebooks.  In most cases this will not
+prevent the unit from being used in a game.

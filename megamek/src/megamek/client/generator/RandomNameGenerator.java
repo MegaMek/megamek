@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2020 - The MegaMek Team. All Rights Reserved
+ * Copyright (c) 2020-2024 - The MegaMek Team. All Rights Reserved
+ *
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,77 +18,105 @@
  */
 package megamek.client.generator;
 
-import megamek.MMConstants;
-import megamek.common.enums.Gender;
-import megamek.common.util.weightedMaps.WeightedIntMap;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import megamek.MMConstants;
+import megamek.common.enums.Gender;
+import megamek.common.util.weightedMaps.WeightedIntMap;
+import megamek.logging.MMLogger;
+
 /**
- * This class sets up a random name generator that can then be used to generate random pilot names.
- * It has a couple different settings and flexible input file directory locations
+ * This class sets up a random name generator that can then be used to generate
+ * random pilot names. It has a couple different settings and flexible input
+ * file directory locations
  *
  * Files are located in /data/names/. All files are comma spaced csv files
  *
- * The historicalEthnicity.csv file shows the correspondence between the different ethnic names
- * and their numeric code in the database. This file is used to initialize the name mapping, and
- * must be kept current for all additions. The same numeric code MUST be used across all of the
- * files listed below.
- * The numeric codes MUST be listed in exact sequential order (NO skipped numbers) for the load
- * to work correctly.
+ * The historicalEthnicity.csv file shows the correspondence between the
+ * different ethnic names and their numeric code in the database. This file is
+ * used to initialize the name mapping, and must be kept current for all
+ * additions. The same numeric code MUST be used across all of the
+ * files listed below. The numeric codes MUST be listed in exact sequential
+ * order (NO skipped numbers) for the load to work correctly.
  *
- * The name database is located in three files: maleGivenNames.csv, femaleGivenNames.csv,
- * and surnames.csv.
+ * The name database is located in three files: maleGivenNames.csv,
+ * femaleGivenNames.csv, and surnames.csv.
  *
- * The database is divided into three fields; an Integer Ethnic Code, a String name, and an Integer weight.
- * The Ethnic Code is an Integer identifying the ethnic group from the historicalEthnicity.csv file the name is from
- * The Name is a String containing either a male/female first name or a surname, dependant on the origin file.
- * The Weight is an Integer that is used to set the generation chance of the name. The higher the number,
- * the more common the name is.
+ * The database is divided into three fields; an Integer Ethnic Code, a String
+ * name, and an Integer weight.
+ *
+ * The Ethnic Code is an Integer identifying the ethnic group from the
+ * historicalEthnicity.csv file the name is from
+ *
+ * The Name is a String containing either a male/female first name or a surname,
+ * dependant on the origin file.
+ *
+ * The Weight is an Integer that is used to set the generation chance of the
+ * name. The higher the number, the more common the name is.
  *
  * Faction files are located in /data/names/factions/ directory.
- * The faction key is the filename without the extension.
- * The faction files will have varying number of fields depending on how many ethnic groups exist.
+ * The faction key is the filename without the extension. The faction files will
+ * have varying number of fields depending on how many ethnic groups exist.
  * The faction file does two things:
- * First, it identifies the relative frequency of different ethnic surnames for a faction.
- * Second, it identifies the correspondence between first names and surnames.
- * This allows, for example, for more Japanese first names regardless of surname in the Draconis
- * Combine. There MUST be a line in the Faction file for each ethnic group, although a weight of 0
- * can be used to prevent the generation of a grouping of names
  *
- * This is divided into 3 + n fields, where n is the number of ethnic groups listed in historicalEthnicity.csv,
- * divided into the following groupings:
+ * First, it identifies the relative frequency of different ethnic surnames for
+ * a faction.
+ *
+ * Second, it identifies the correspondence between first names and surnames.
+ *
+ * This allows, for example, for more Japanese first names regardless of surname
+ * in the Draconis Combine. There MUST be a line in the Faction file for each
+ * ethnic group, although a weight of 0 can be used to prevent the generation of
+ * a grouping of names
+ *
+ * This is divided into 3 + n fields, where n is the number of ethnic groups
+ * listed in historicalEthnicity.csv, divided into the following groupings:
+ *
  * The Integer Ethnic Code is the first field
- * The String Ethnic Name is the second field. This is included for ease of reference, and
- * is NOT used by the generator.
- * The Integer Weight for generating a surname of the specified ethnicity. The higher the number,
- * the more common the surname is for a faction.
- * This is followed by n fields each containing the Integer Weight for generating a given name for
- * the ethnicity with Ethnic Code n. The higher the number for the weight, the more common that
- * given name ethnicity is in generation for the specific ethnicity of the generated surname.
+ *
+ * The String Ethnic Name is the second field. This is included for ease of
+ * reference, and is NOT used by the generator.
+ *
+ * The Integer Weight for generating a surname of the specified ethnicity. The
+ * higher the number, the more common the surname is for a faction.
+ *
+ * This is followed by n fields each containing the Integer Weight for
+ * generating a given name for the ethnicity with Ethnic Code n. The higher the
+ * number for the weight, the more common that given name ethnicity is in
+ * generation for the specific ethnicity of the generated surname.
  *
  * @author Justin "Windchild" Bowen (current version - April 29th, 2020)
  * @author Jay Lawson (original version)
  */
 public class RandomNameGenerator implements Serializable {
-    //region Variable Declarations
+    private static final MMLogger logger = MMLogger.create(RandomNameGenerator.class);
+
+    // region Variable Declarations
     private static final long serialVersionUID = 5765118329881301375L;
 
-    private static RandomNameGenerator rng; // This is using a singleton, because only a single usage of this class is required
+    private static RandomNameGenerator rng; // This is using a singleton, because only a single usage of this class is
+                                            // required
 
-    //region Data Maps
+    // region Data Maps
     /**
-     * femaleGivenNames, maleGivenNames, and surnames contain values in the following format:
+     * femaleGivenNames, maleGivenNames, and surnames contain values in the
+     * following format:
      * Map<Integer Ethnic_Code, WeightedMap<String Name>>
-     * The ethnic code is an Integer value that is used to determine the ethnicity of the name, while
-     * the name is a String value. The name is stored in a WeightedMap for each ethnic code to ensure
-     * that there is a range from common to rare names. This is determined based on the input weights
+     * The ethnic code is an Integer value that is used to determine the ethnicity
+     * of the name, while
+     * the name is a String value. The name is stored in a WeightedMap for each
+     * ethnic code to ensure
+     * that there is a range from common to rare names. This is determined based on
+     * the input weights
      */
     private static Map<Integer, WeightedIntMap<String>> femaleGivenNames;
     private static Map<Integer, WeightedIntMap<String>> maleGivenNames;
@@ -94,53 +124,62 @@ public class RandomNameGenerator implements Serializable {
 
     /**
      * factionGivenNames contains values in the following format:
-     * Map<String Faction_Name, Map<Integer Surname_Ethnic_Code, WeightedIntMap<Integer Given_Name_Ethnic_Code>>>
-     * The faction name is the key to determining which list of names should be used, with the default being "General"
+     * Map<String Faction_Name, Map<Integer Surname_Ethnic_Code,
+     * WeightedIntMap<Integer Given_Name_Ethnic_Code>>>
+     * The faction name is the key to determining which list of names should be
+     * used, with the default being "General"
      * The Surname Ethnic Code is the code that the surname will be generated from
-     * The Given Name Ethnic Code is the code to generate the given name from, from the femaleGivenNames or maleGivenNames
-     * maps, and this is weighted to ensure that more common pairings are more common
+     * The Given Name Ethnic Code is the code to generate the given name from, from
+     * the femaleGivenNames or maleGivenNames
+     * maps, and this is weighted to ensure that more common pairings are more
+     * common
      */
     private static Map<String, Map<Integer, WeightedIntMap<Integer>>> factionGivenNames;
 
     /**
      * factionEthnicCodes contains values in the following format:
      * Map<String Faction_Name, WeightedIntMap<Integer Surname_Ethnic_Code>>
-     * The faction name is the key to determining which list of names should be used, with the default being "General"
-     * The Surname Ethnic Code is the code that the surname will be generated from, and
-     * this is weighted to ensure that more common pairings for the faction are more common
+     * The faction name is the key to determining which list of names should be
+     * used, with the default being "General"
+     * The Surname Ethnic Code is the code that the surname will be generated from,
+     * and
+     * this is weighted to ensure that more common pairings for the faction are more
+     * common
      */
     private static Map<String, WeightedIntMap<Integer>> factionEthnicCodes;
 
     /**
-     * historical ethnicity is a map of the ethnic code to the historical region of origin on Earth
+     * historical ethnicity is a map of the ethnic code to the historical region of
+     * origin on Earth
      */
     private static Map<Integer, String> historicalEthnicity;
-    //endregion Data Maps
+    // endregion Data Maps
 
-    //region Faction Keys
+    // region Faction Keys
     public static final String KEY_DEFAULT_FACTION = "General";
     public static final String KEY_DEFAULT_CLAN = "Clan";
-    //endregion Faction Keys
+    // endregion Faction Keys
 
-    //region Default Names
+    // region Default Names
     public static final String UNNAMED = "Unnamed";
     public static final String UNNAMED_SURNAME = "Person";
     public static final String UNNAMED_FULL_NAME = "Unnamed Person";
-    //endregion Default Names
+    // endregion Default Names
 
     private String chosenFaction;
 
     private static volatile boolean initialized = false; // volatile to ensure readers get the current version
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
     public RandomNameGenerator() {
         chosenFaction = KEY_DEFAULT_FACTION;
     }
 
-    //region Name Generators
+    // region Name Generators
     /**
      * This is used to generate a name for MegaMek only that uses the chosen faction
-     * @param gender the gender to generate the name for
+     *
+     * @param gender    the gender to generate the name for
      * @param clanPilot if the name is for a clanPilot
      * @return a string containing the randomly generated name
      */
@@ -151,24 +190,30 @@ public class RandomNameGenerator implements Serializable {
     /**
      * Generate a single random name for MegaMek only
      *
-     * @param gender the gender to generate the name for
+     * @param gender    the gender to generate the name for
      * @param clanPilot if the name is for a clanPilot
-     * @param faction a string containing the faction key with which to generate the name from.
-     *                If the faction is not a key for the <code>factionSurnames</code> Map,
-     *                it will instead generate based on the General list
+     * @param faction   a string containing the faction key with which to generate
+     *                  the name from.
+     *                  If the faction is not a key for the
+     *                  <code>factionSurnames</code> Map,
+     *                  it will instead generate based on the General list
      * @return a string containing the randomly generated name
      */
     public String generate(Gender gender, boolean clanPilot, String faction) {
         String name = UNNAMED_FULL_NAME;
         if (initialized) {
-            // This checks to see if we've got a name map for the faction. If we do not, then we
-            // go to check if the person is a clanPilot. If they are, then they default to the default
+            // This checks to see if we've got a name map for the faction. If we do not,
+            // then we
+            // go to check if the person is a clanPilot. If they are, then they default to
+            // the default
             // clan key provided that exists.
-            // If the key isn't set by either case above, then the name is generated based on the
+            // If the key isn't set by either case above, then the name is generated based
+            // on the
             // default faction key
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((clanPilot && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
-                        ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
+                            ? KEY_DEFAULT_CLAN
+                            : KEY_DEFAULT_FACTION);
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
@@ -182,8 +227,8 @@ public class RandomNameGenerator implements Serializable {
     }
 
     /**
-     * @param gender the gender to generate the name for
-     * @param clanPilot if the person is a clanPilot
+     * @param gender     the gender to generate the name for
+     * @param clanPilot  if the person is a clanPilot
      * @param ethnicCode the specified ethnic code
      * @return a string containing the randomly generated name
      */
@@ -202,26 +247,32 @@ public class RandomNameGenerator implements Serializable {
     /**
      * Generate a single random name split between a given name and surname
      *
-     * @param gender the gender to generate the name for
+     * @param gender    the gender to generate the name for
      * @param clanPilot if the person is a clanPilot
-     * @param faction a string containing the faction key with which to generate the name from.
-     *                If the faction is not a key for the <code>factionSurnames</code> Map,
-     *                it will instead generate based on the General list
+     * @param faction   a string containing the faction key with which to generate
+     *                  the name from.
+     *                  If the faction is not a key for the
+     *                  <code>factionSurnames</code> Map,
+     *                  it will instead generate based on the General list
      * @return - a String[] containing the name,
-     *              with the given name at String[0]
-     *              and the surname at String[1]
+     *         with the given name at String[0]
+     *         and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplit(Gender gender, boolean clanPilot, String faction) {
         String[] name = { UNNAMED, UNNAMED_SURNAME };
         if (initialized) {
-            // This checks to see if we've got a name map for the faction. If we do not, then we
-            // go to check if the person is a clanPilot. If they are, then they default to the default
+            // This checks to see if we've got a name map for the faction. If we do not,
+            // then we
+            // go to check if the person is a clanPilot. If they are, then they default to
+            // the default
             // clan key provided that exists.
-            // If the key isn't set by either case above, then the name is generated based on the
+            // If the key isn't set by either case above, then the name is generated based
+            // on the
             // default faction key
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((clanPilot && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
-                        ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
+                            ? KEY_DEFAULT_CLAN
+                            : KEY_DEFAULT_FACTION);
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
@@ -233,12 +284,12 @@ public class RandomNameGenerator implements Serializable {
     }
 
     /**
-     * @param gender the gender to generate the name for
-     * @param clanPilot if the person is a clanPilot
+     * @param gender     the gender to generate the name for
+     * @param clanPilot  if the person is a clanPilot
      * @param ethnicCode the specified ethnic code
      * @return - a String[] containing the name,
-     *              with the given name at String[0]
-     *              and the surname at String[1]
+     *         with the given name at String[0]
+     *         and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplitWithEthnicCode(Gender gender, boolean clanPilot, int ethnicCode) {
         String[] name = { UNNAMED, UNNAMED_SURNAME };
@@ -248,12 +299,13 @@ public class RandomNameGenerator implements Serializable {
         }
         return name;
     }
-    //endregion Name Generators
+    // endregion Name Generators
 
-    //region Getters and Setters
+    // region Getters and Setters
     /**
-     * @return the list of potential keys to generate the name from - this MUST NOT be modified
-     * once it has been gotten
+     * @return the list of potential keys to generate the name from - this MUST NOT
+     *         be modified
+     *         once it has been gotten
      */
     public Set<String> getFactions() {
         return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet();
@@ -293,9 +345,9 @@ public class RandomNameGenerator implements Serializable {
         // when getInstance returns, rng will always be non-null
         return rng;
     }
-    //endregion Getters and Setters
+    // endregion Getters and Setters
 
-    //region Initialization
+    // region Initialization
     private void runThreadLoader() {
         Thread loader = new Thread(() -> rng.populateNames(), "Random Name Generator name initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
@@ -321,7 +373,7 @@ public class RandomNameGenerator implements Serializable {
         }
 
         try (InputStream is = new FileInputStream(file);
-             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+                Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
             while (input.hasNextLine()) {
                 final String[] values = input.nextLine().split(",");
                 if (values.length >= 2) {
@@ -329,7 +381,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to parse historical ethnicity file " + file, e);
+            logger.error(e, "Failed to parse historical ethnicity file " + file);
         }
     }
 
@@ -344,9 +396,10 @@ public class RandomNameGenerator implements Serializable {
                 factionGivenNamesLoadMap, factionEthnicCodesLoadMap);
 
         if (factionGivenNamesLoadMap.isEmpty() || factionEthnicCodesLoadMap.isEmpty()) {
-            LogManager.getLogger().error("No faction files found!");
+            logger.error("No faction files found!");
 
-            // We will create a general list where everything is weighted at one to allow players to
+            // We will create a general list where everything is weighted at one to allow
+            // players to
             // continue to play with named characters, indexing it at 1
             // Initialize Maps
             factionGivenNames.put(KEY_DEFAULT_FACTION, new HashMap<>());
@@ -359,12 +412,15 @@ public class RandomNameGenerator implements Serializable {
                 factionEthnicCodes.get(KEY_DEFAULT_FACTION).add(1, i);
             }
         } else {
-            for (final Map.Entry<String, Map<Integer, Map<Integer, Integer>>> externalEntry : factionGivenNamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Map<Integer, Map<Integer, Integer>>> externalEntry : factionGivenNamesLoadMap
+                    .entrySet()) {
                 factionGivenNames.put(externalEntry.getKey(), new HashMap<>());
-                for (final Map.Entry<Integer, Map<Integer, Integer>> middleEntry : externalEntry.getValue().entrySet()) {
+                for (final Map.Entry<Integer, Map<Integer, Integer>> middleEntry : externalEntry.getValue()
+                        .entrySet()) {
                     factionGivenNames.get(externalEntry.getKey()).put(middleEntry.getKey(), new WeightedIntMap<>());
                     for (final Map.Entry<Integer, Integer> internalEntry : middleEntry.getValue().entrySet()) {
-                        factionGivenNames.get(externalEntry.getKey()).get(middleEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+                        factionGivenNames.get(externalEntry.getKey()).get(middleEntry.getKey())
+                                .add(internalEntry.getValue(), internalEntry.getKey());
                     }
                 }
             }
@@ -372,15 +428,16 @@ public class RandomNameGenerator implements Serializable {
             for (final Map.Entry<String, Map<Integer, Integer>> externalEntry : factionEthnicCodesLoadMap.entrySet()) {
                 factionEthnicCodes.put(externalEntry.getKey(), new WeightedIntMap<>());
                 for (final Map.Entry<Integer, Integer> internalEntry : externalEntry.getValue().entrySet()) {
-                    factionEthnicCodes.get(externalEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+                    factionEthnicCodes.get(externalEntry.getKey()).add(internalEntry.getValue(),
+                            internalEntry.getKey());
                 }
             }
         }
     }
 
     private void loadFactionsFromFile(final File file,
-                                      final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap,
-                                      final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap) {
+            final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap,
+            final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap) {
         if (!file.exists() || !file.isDirectory()) {
             return;
         }
@@ -398,8 +455,8 @@ public class RandomNameGenerator implements Serializable {
     }
 
     private void loadFactionFile(final File file, final String key,
-                                 final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap,
-                                 final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap) {
+            final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap,
+            final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap) {
         if (!file.exists() || key.isBlank()) {
             return;
         }
@@ -408,7 +465,7 @@ public class RandomNameGenerator implements Serializable {
         factionEthnicCodesLoadMap.putIfAbsent(key, new HashMap<>());
 
         try (InputStream is = new FileInputStream(file);
-             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+                Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
             while (input.hasNextLine()) {
                 final String[] values = input.nextLine().split(",");
                 final int ethnicCode = Integer.parseInt(values[0]);
@@ -425,11 +482,12 @@ public class RandomNameGenerator implements Serializable {
                 if (!factionGivenNamesLoadMap.get(key).get(ethnicCode).isEmpty()) {
                     factionEthnicCodesLoadMap.get(key).put(ethnicCode, Integer.parseInt(values[2]));
                 } else {
-                    LogManager.getLogger().error("There are no possible options for " + ethnicCode + " for file " + file);
+                    logger
+                            .error("There are no possible options for " + ethnicCode + " for file " + file);
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to parse " + file, e);
+            logger.error(e, "Failed to parse " + file);
         }
     }
 
@@ -442,7 +500,8 @@ public class RandomNameGenerator implements Serializable {
         final Map<Integer, Map<String, Integer>> femaleGivenNamesLoadMap = new HashMap<>();
         final Map<Integer, Map<String, Integer>> surnamesLoadMap = new HashMap<>();
 
-        // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
+        // Then immediately instantiate the number of weighted maps needed for Given
+        // Names and Surnames
         for (int i = 1; i <= historicalEthnicity.size(); i++) {
             maleGivenNames.put(i, new WeightedIntMap<>());
             femaleGivenNames.put(i, new WeightedIntMap<>());
@@ -486,22 +545,22 @@ public class RandomNameGenerator implements Serializable {
         int lineNumber = 0;
 
         try (InputStream is = new FileInputStream(file);
-             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+                Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
             input.nextLine(); // this is used to skip over the header line
 
             while (input.hasNextLine()) {
                 lineNumber++;
                 final String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    LogManager.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
+                    logger.error("Not enough fields in " + file + " on " + lineNumber);
                     continue;
                 }
 
                 map.get(Integer.parseInt(values[0])).put(values[1], Integer.parseInt(values[2]));
             }
         } catch (IOException e) {
-            LogManager.getLogger().error("Could not find " + file + "!");
+            logger.error(e, "Could not find " + file + "!");
         }
     }
-    //endregion Initialization
+    // endregion Initialization
 }

@@ -19,11 +19,11 @@
  */
 package megamek.common;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Edward Cullen
@@ -144,7 +144,7 @@ public class ConfigurationTests {
      */
     @Test
     public final void testUnitsDir() {
-        assertEquals(new File("data", "mechfiles").toString(), Configuration
+        assertEquals(new File("data", "mekfiles").toString(), Configuration
                 .unitsDir().toString());
     }
 
@@ -158,7 +158,7 @@ public class ConfigurationTests {
         assertEquals("my_units", Configuration.unitsDir().toString());
         // Should reset to default.
         Configuration.setUnitsDir(null);
-        assertEquals(new File("data", "mechfiles").toString(), Configuration
+        assertEquals(new File("data", "mekfiles").toString(), Configuration
                 .unitsDir().toString());
     }
 

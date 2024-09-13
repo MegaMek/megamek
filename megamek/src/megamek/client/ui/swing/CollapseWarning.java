@@ -22,22 +22,22 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.enums.GamePhase;
+import megamek.logging.MMLogger;
 
 /**
- * Construction Factor Warning Logic.  Handles events, help
+ * Construction Factor Warning Logic. Handles events, help
  * methods and logic related to CF Warning in a way that
  * can be unit tested and encapsulated from BoardView and
  * ClientGUI and other actors.
  */
 public final class CollapseWarning {
+    private final static MMLogger logger = MMLogger.create(CollapseWarning.class);
 
     /*
      * Handler for ClientGUI actionPerformed event. Encapsulates
@@ -64,7 +64,7 @@ public final class CollapseWarning {
     }
 
     private static boolean toggleCFWarning() {
-        //Toggle the GUI Preference setting for CF Warning setting.
+        // Toggle the GUI Preference setting for CF Warning setting.
         GUIPreferences GUIP = GUIPreferences.getInstance();
         GUIP.setShowCFWarnings(!GUIP.getShowCFWarnings());
         return (GUIP.getShowCFWarnings());
@@ -72,7 +72,7 @@ public final class CollapseWarning {
 
     /**
      * For the provided entity, find all hexes within movement range with
-     * buildings that would collapse if entered or landed upon.  This is
+     * buildings that would collapse if entered or landed upon. This is
      * used by the {@link MovementDisplay} class.
      *
      * @param g {@link Game} provided by the phase display class
@@ -80,13 +80,13 @@ public final class CollapseWarning {
      * @param b {@link Board} board object with building data.
      *
      * @return returns a list of {@link Coords} that where warning flags
-     * 		should be placed.
+     *         should be placed.
      */
     public static List<Coords> findCFWarningsMovement(Game g, Entity e, Board b) {
         List<Coords> warnList = new ArrayList<Coords>();
 
         try {
-            //Only calculate CF Warnings for entity types in the whitelist.
+            // Only calculate CF Warnings for entity types in the whitelist.
             if (!entityTypeIsInWhiteList(e)) {
                 return warnList;
             }
@@ -101,9 +101,10 @@ public final class CollapseWarning {
                 return hexesToCheck;
             }
 
-            // For each hex in jumping range, look for buildings, if found check for collapse.
+            // For each hex in jumping range, look for buildings, if found check for
+            // collapse.
             for (Coords c : hexesToCheck) {
-                //is there a building at this location?  If so add it to hexes with buildings.
+                // is there a building at this location? If so add it to hexes with buildings.
                 Building bld = b.getBuildingAt(c);
 
                 // If a building, compare total weight and add to warning list.
@@ -114,8 +115,9 @@ public final class CollapseWarning {
                 }
             }
         } catch (Exception exc) {
-            // Something bad is going to happen.  This is a passive feature return an empty list.
-            LogManager.getLogger().error("Unable to calculate construction factor collapse candidates. (Movement)");
+            // Something bad is going to happen. This is a passive feature return an empty
+            // list.
+            logger.error(exc, "Unable to calculate construction factor collapse candidates. (Movement)");
             return new ArrayList<Coords>();
         }
 
@@ -123,16 +125,18 @@ public final class CollapseWarning {
     }
 
     /*
-     *  Returns true if the selected entity should have CF warnings calculated when selected.
+     * Returns true if the selected entity should have CF warnings calculated when
+     * selected.
      */
     protected static boolean entityTypeIsInWhiteList(Entity e) {
-        // Include entities that are ground units and onboard only.  Flying units need not apply.
+        // Include entities that are ground units and onboard only. Flying units need
+        // not apply.
         return (e.isGround() && !e.isOffBoard());
     }
 
     /**
      * Looks for all building locations in a legal deploy zone that would collapse
-     * if the currently selected entity would deploy there.  This is used by
+     * if the currently selected entity would deploy there. This is used by
      * {@link DeploymentDisplay} to render a warning sprite on danger hexes.
      *
      * @param g {@link Game} provided by the phase display class
@@ -140,13 +144,13 @@ public final class CollapseWarning {
      * @param b {@link Board} board object with building data.
      *
      * @return returns a list of {@link Coords} that where warning flags
-     * 		should be placed.
+     *         should be placed.
      */
     public static List<Coords> findCFWarningsDeployment(Game g, Entity e, Board b) {
-	List<Coords> warnList = new ArrayList<Coords>();
+        List<Coords> warnList = new ArrayList<Coords>();
 
         try {
-            //Only calculate CF Warnings for entity types in the whitelist.
+            // Only calculate CF Warnings for entity types in the whitelist.
             if (!entityTypeIsInWhiteList(e)) {
                 return warnList;
             }
@@ -169,8 +173,9 @@ public final class CollapseWarning {
                 }
             }
         } catch (Exception exc) {
-            // Something bad is going to happen.  This is a passive feature return an empty list.
-            LogManager.getLogger().error("Unable to calculate construction factor collapse candidates. (Deployment)");
+            // Something bad is going to happen. This is a passive feature return an empty
+            // list.
+            logger.error(exc, "Unable to calculate construction factor collapse candidates. (Deployment)");
             return new ArrayList<Coords>();
         }
 
@@ -178,9 +183,9 @@ public final class CollapseWarning {
     }
 
     /*
-     *  Determine the total weight burden for a building hex at a location.
-     *  This includes the entity current weight summed with any unit weights
-     *  at the hex location that could cause a building to collapse.
+     * Determine the total weight burden for a building hex at a location.
+     * This includes the entity current weight summed with any unit weights
+     * at the hex location that could cause a building to collapse.
      */
     protected static double calculateTotalTonnage(Game g, Entity selected, Coords c) {
         // Calculate total weight of entity and all entities at the location.
@@ -198,5 +203,6 @@ public final class CollapseWarning {
         return ((selected != inHex) && inHex.isGround() && !inHex.isAirborneVTOLorWIGE());
     }
 
-    private CollapseWarning() { }
+    private CollapseWarning() {
+    }
 }

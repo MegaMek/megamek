@@ -3,10 +3,10 @@ ${fullName}
 Type: ${typeDesc}
 </#if>
 Mass: ${massDesc} tons
-<#if use??>  	
+<#if use??>
 Use: ${use}
 </#if>
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Introduced: ${year}
 Mass: ${tonnage}
 Battle Value: ${battleValue}
@@ -25,7 +25,7 @@ Dimensions
     Height: ${dimensions.height}
 </#if>
 
-</#if>	
+</#if>
 Fuel: ${fuelMass} tons (${fuelPoints})
 Safe Thrust: ${safeThrust}
 Maximum Thrust: ${maxThrust}
@@ -65,7 +65,7 @@ Ammunition:
     ${row.shots} rounds of ${row.name} ammunition (${row.tonnage} tons)<#if row?has_next>, </#if>
 <#else>
 	None
-</#list>		
+</#list>
 
 <#if dropshipCapacity??>
 Dropship Capacity: ${dropshipCapacity}
@@ -75,10 +75,10 @@ Grav Decks: ${gravDecks?size}<#if gravDecks?size gt 0> (${gravDecks?join(", ")})
 </#if>
 Escape Pods: ${escapePods}
 Life Boats: ${lifeBoats}
-Crew: <#if crew?size gt 0> ${crew?join(", ")}<#else>None</#if>		
+Crew: <#if crew?size gt 0> ${crew?join(", ")}<#else>None</#if>
 
 <#if miscEquipment?? && miscEquipment?size gt 0>
-Notes: Equipped with 
+Notes: Equipped with
 	<#list miscEquipment as eq>
     ${eq}
 	</#list>
@@ -103,14 +103,14 @@ None
 </#list>
 <#else>
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Tonnage", "Heat", "SRV", "MRV", "LRV", "ERV")}	
+${formatEquipmentRow("and Ammo", "Location", "Tonnage", "Heat", "SRV", "MRV", "LRV", "ERV")}
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.tonnage, eq.heat, eq.srv, eq.mrv, eq.lrv, eq.erv)}
 <#else>
 None
 </#list>
 </#if>
-	
+
 <#if quirks??>
 Features the following design quirks: ${quirks}
 </#if>

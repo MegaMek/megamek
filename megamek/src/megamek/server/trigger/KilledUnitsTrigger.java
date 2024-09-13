@@ -18,21 +18,27 @@
  */
 package megamek.server.trigger;
 
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.IGame;
+import megamek.common.InGameObject;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
 /**
- * This Trigger reacts when the count of units that were killed is in a given range.
+ * This Trigger reacts when the count of units that were killed is in a given
+ * range.
  *
  * @see Entity#isDestroyed()
  * @see Entity#isCarcass()
  */
 public class KilledUnitsTrigger implements Trigger {
+    private static final MMLogger logger = MMLogger.create(KilledUnitsTrigger.class);
 
     private final String playerName;
     private final int minUnitCount;
@@ -40,17 +46,22 @@ public class KilledUnitsTrigger implements Trigger {
     private final List<Integer> unitIds;
 
     /**
-     * Creates a Trigger that reacts when the count of units that were killed is between the given
+     * Creates a Trigger that reacts when the count of units that were killed is
+     * between the given
      * min and maxUnitCount.
-     * When the playerName is blank, units of all players are counted, otherwise only
+     * When the playerName is blank, units of all players are counted, otherwise
+     * only
      * those of the given player.
      * When a list of unit IDs is given, only those units will be considered.
-     * Note that destroyed units can spawn pilots, so providing an ID list to prevent counting the wrong
+     * Note that destroyed units can spawn pilots, so providing an ID list to
+     * prevent counting the wrong
      * units usually makes sense.
-     * Note that this trigger will react multiple times. Use {@link OnceTrigger} to limit it to one-time-only.
+     * Note that this trigger will react multiple times. Use {@link OnceTrigger} to
+     * limit it to one-time-only.
      *
-     * @param playerName A player name to limit the checked units to; may be null
-     * @param unitIds A list of Ids to limit the checked units to; when empty, all units are considered
+     * @param playerName   A player name to limit the checked units to; may be null
+     * @param unitIds      A list of Ids to limit the checked units to; when empty,
+     *                     all units are considered
      * @param minUnitCount the minimum unit count to react to
      * @param maxUnitCount the maximum unit count to react to
      */
@@ -63,7 +74,8 @@ public class KilledUnitsTrigger implements Trigger {
 
     /**
      * Creates a Trigger that reacts when the given unit is killed.
-     * Note that this trigger will react multiple times. Use {@link OnceTrigger} to limit it to one-time-only.
+     * Note that this trigger will react multiple times. Use {@link OnceTrigger} to
+     * limit it to one-time-only.
      *
      * @param unitId The unit to look at
      */
@@ -72,12 +84,17 @@ public class KilledUnitsTrigger implements Trigger {
     }
 
     /**
-     * Creates a Trigger that reacts when the count of units that were killed is equal to the given count.
-     * When a list of unit IDs is given, only those units will be considered. Note that destroyed units can
-     * spawn pilots, so providing an ID list to prevent counting the wrong units usually makes sense.
-     * Note that this trigger will react multiple times. Use {@link OnceTrigger} to limit it to one-time-only.
+     * Creates a Trigger that reacts when the count of units that were killed is
+     * equal to the given count.
+     * When a list of unit IDs is given, only those units will be considered. Note
+     * that destroyed units can
+     * spawn pilots, so providing an ID list to prevent counting the wrong units
+     * usually makes sense.
+     * Note that this trigger will react multiple times. Use {@link OnceTrigger} to
+     * limit it to one-time-only.
      *
-     * @param unitIds A list of Ids to limit the checked units to; when empty, all units are considered
+     * @param unitIds         A list of Ids to limit the checked units to; when
+     *                        empty, all units are considered
      * @param killedUnitCount The count of killed units to react to
      */
     public KilledUnitsTrigger(List<Integer> unitIds, int killedUnitCount) {
@@ -98,7 +115,7 @@ public class KilledUnitsTrigger implements Trigger {
                     .count();
             return (killedUnitCount >= minUnitCount) && (killedUnitCount <= maxUnitCount);
         } else {
-            LogManager.getLogger().warn("UnitKilledTrigger is currently only available for TW games.");
+            logger.warn("UnitKilledTrigger is currently only available for TW games.");
             return false;
         }
     }

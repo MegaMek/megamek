@@ -7,7 +7,7 @@ frank.mendel@gmail.com
 Here I share 18 maps I made for MegaMek:
 
 
-Woodland 2 (not official) :  
+Woodland 2 (not official) :
 An expansion for the official woodland map. I think it fits quit well.
 woodland_2.board
 
@@ -21,7 +21,7 @@ Traing Area
 training_area_01.board
 
 
-Winter: 
+Winter:
 snow_01
 snow_02
 
@@ -37,26 +37,26 @@ riverland_2.board
 
 
 Stone Maze:
-Just rough hills as cover. Neither water nor woods. 
+Just rough hills as cover. Neither water nor woods.
 
 stone_maze_01.board
 stone_maze_02.board
 
 
-Arena Pit: 
-arena_east.board 
+Arena Pit:
+arena_east.board
 arena_west.board
 
 
 Very Small Hills:
-very_small_hills_1.board 
-very_small_hills_2.board 
+very_small_hills_1.board
+very_small_hills_2.board
 
 
 Canyon:
-canyon_1.board 
-canyon_2.board 
-canyon_3.board 
+canyon_1.board
+canyon_2.board
+canyon_3.board
 
 
 

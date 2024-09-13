@@ -18,23 +18,28 @@
  */
 package megamek.common.jacksonadapters;
 
+import static megamek.common.jacksonadapters.MMUReader.*;
+
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import megamek.common.*;
+
+import megamek.common.Entity;
+import megamek.common.ForceAssignable;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.UnitRole;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 
-import static megamek.common.jacksonadapters.MMUReader.*;
-
-import java.io.IOException;
-
 /**
  * This Jackson serializer writes AlphaStrikeElements to YAML output.
  *
- * When the unit is canon (found in the MechSummaryCache and marked as canon), then the full name
+ * When the unit is canon (found in the MekSummaryCache and marked as canon), then the full name
  * (chassis+model) is written in addition to the unit type (ASElement); for deserialization, the unit is
  * re-converted from the TW Entity.
  *
@@ -71,7 +76,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
             throws IOException {
 
         String fullName = (element.getFullChassis() + " " + element.getModel()).trim();
-        MechSummary unit = MechSummaryCache.getInstance().getMech(fullName);
+        MekSummary unit = MekSummaryCache.getInstance().getMek(fullName);
         boolean writeCacheLink = (unit != null) && unit.isCanon();
         writeCacheLink &= !MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
 

@@ -18,25 +18,26 @@
  */
 package megamek.client.ui.swing;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+
 import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-
 public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
-    protected MegamekButton butSkipTurn;
+    protected MegaMekButton butSkipTurn;
 
     /** The currently selected unit for taking action. Not necessarily equal to the unit shown in the unit viewer. */
     protected int currentEntity = Entity.NONE;
@@ -53,7 +54,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     @Override
     protected UIUtil.FixedXPanel setupDonePanel() {
         var donePanel = super.setupDonePanel();
-        butSkipTurn = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+        butSkipTurn = new MegaMekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");

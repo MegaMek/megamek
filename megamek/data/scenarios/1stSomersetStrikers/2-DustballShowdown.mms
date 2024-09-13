@@ -8,19 +8,19 @@ Maps=scenarios/blankmapsheet,scenarios/blankmapsheet
 Factions=BlackVision,1stSomersetStrikers
 Location_BlackVision=W
 Location_1stSomersetStrikers=any
-# Black Vision, Cluster Command Star: 
+# Black Vision, Cluster Command Star:
 Unit_BlackVision_1=Vulture (Mad Dog) Prime,Star Colonel Kristen Redmond,2,2,NE,01,15
-Unit_BlackVision_2=Vulture (Mad Dog) Prime,Mechwarrior Tanya Pryde,2,3,NE,01,14
-Unit_BlackVision_3=Hunchback IIC (Standard),Mechwarrior Deval,3,4,NE,01,16
-Unit_BlackVision_4=Thor (Summoner) M,Mechwarrior Gengra,3,4,NE,01,13
-Unit_BlackVision_5=Thor (Summoner) M,Mechwarrior Pith,3,4,NE,01,17
+Unit_BlackVision_2=Vulture (Mad Dog) Prime,MekWarrior Tanya Pryde,2,3,NE,01,14
+Unit_BlackVision_3=Hunchback IIC (Standard),MekWarrior Deval,3,4,NE,01,16
+Unit_BlackVision_4=Thor (Summoner) M,MekWarrior Gengra,3,4,NE,01,13
+Unit_BlackVision_5=Thor (Summoner) M,MekWarrior Pith,3,4,NE,01,17
 # Black Vision, Alpha Talon:
 Unit_BlackVision_6=Mad Cat (Timber Wolf) Prime,Star Commander Cyrill Hazen,2,3,S,01,10
-Unit_BlackVision_7=Mad Cat (Timber Wolf) Prime,Mechwarrior Jentry,3,4,S,01,11
-Unit_BlackVision_8=Thor (Summoner) M,Mechwarrior Fatha,3,4,S,01,09
-Unit_BlackVision_9=Thor (Summoner) M,Mechwarrior Korthan,3,4,S,01,12
-Unit_BlackVision_10=Hunchback IIC (Standard),Mechwarrior Damil,3,4,S,01,08
-# Strikers Lance: 
+Unit_BlackVision_7=Mad Cat (Timber Wolf) Prime,MekWarrior Jentry,3,4,S,01,11
+Unit_BlackVision_8=Thor (Summoner) M,MekWarrior Fatha,3,4,S,01,09
+Unit_BlackVision_9=Thor (Summoner) M,MekWarrior Korthan,3,4,S,01,12
+Unit_BlackVision_10=Hunchback IIC (Standard),MekWarrior Damil,3,4,S,01,08
+# Strikers Lance:
 Unit_1stSomersetStrikers_1=Axman AXM-2N,Major Adam Steiner,2,2,SW,17,09
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,3,4,SW,17,08
 Unit_1stSomersetStrikers_3=Centurion CN9-D,Captain Valten Ryder,4,3,SW,17,07

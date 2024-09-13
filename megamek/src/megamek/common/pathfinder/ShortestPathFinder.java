@@ -1,8 +1,22 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.pathfinder;
-
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
-import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -10,13 +24,18 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 
+import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
+import megamek.logging.MMLogger;
+
 /**
  * Implementation of MovePathFinder designed to find the shortest path between
  * two hexes or finding shortest paths from a single hex to all surrounding.
- * 
+ *
  * @author Saginatio
  */
 public class ShortestPathFinder extends MovePathFinder<MovePath> {
+    private static final MMLogger logger = MMLogger.create(ShortestPathFinder.class);
 
     /**
      * Returns true if last processed move path had final position equal to
@@ -124,7 +143,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             return comparator.compare(e, v) < 0 ? e : null;
         }
     }
-    
+
     /**
      * Relaxes edge based on the supplied comparator, with special
      * considerations for flying off the map (since this will likely always look
@@ -137,17 +156,17 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             if (v == null) {
                 return e;
             }
-            
+
             return comparator.compare(e, v) < 0 ? e : null;
         }
-    }    
+    }
 
     /**
      * A MovePath comparator that compares movement points spent and distance to
      * destination. If those are equal then MovePaths with more HexesMoved are
      * Preferred. This should considerably speed A* when multiple shortest paths
      * are present.
-     * 
+     *
      * This comparator is used by A* algorithm.
      */
     public static class MovePathAStarComparator implements Comparator<MovePath>, Serializable {
@@ -167,7 +186,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             int h1 = 0, h2 = 0;
             // We cannot estimate the needed cost for aeros
             // However, DropShips basically follow ground movement rules
-            if ((first.getEntity().isAero()) 
+            if ((first.getEntity().isAero())
                     && !((IAero) first.getEntity()).isSpheroid()) {
                 // We want to pick paths that use fewer MP, and are also shorter
                 // unlike ground units which could benefit from better target
@@ -219,15 +238,15 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     /**
      * Produces a new instance of shortest path between starting points and a
      * destination finder. Algorithm will halt after reaching destination.
-     * 
+     *
      * Current implementation uses AStar algorithm.
-     * 
+     *
      * @param destination
      * @param stepType
-     * @param game The current {@link Game}
+     * @param game        The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination,
-                                                        final MoveStepType stepType, final Game game) {
+            final MoveStepType stepType, final Game game) {
         final ShortestPathFinder spf = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
                 new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard()),
@@ -242,35 +261,38 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * Produces new instance of shortest path searcher. It will find all the
      * shortest paths between starting points that are reachable with at most
      * maxMp move points.
-     * 
-     * @param maxMP maximum MP that entity can use
+     *
+     * @param maxMP    maximum MP that entity can use
      * @param stepType
-     * @param game The current {@link Game}
+     * @param game     The current {@link Game}
      */
-    public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType, final Game game) {
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(
-                        new ShortestPathFinder.MovePathRelaxer(),
-                        new ShortestPathFinder.MovePathMPCostComparator(),
-                        stepType, game);
+    public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType,
+            final Game game) {
+        final ShortestPathFinder spf = new ShortestPathFinder(
+                new ShortestPathFinder.MovePathRelaxer(),
+                new ShortestPathFinder.MovePathMPCostComparator(),
+                stepType, game);
         spf.addFilter(new MovePathLengthFilter(maxMP));
         spf.addFilter(new MovePathLegalityFilter(game));
         return spf;
     }
 
     /**
-     * See {@link newInstanceOfOneToAll} - this returns a customized ShortestPathFinder to support Aerodyne units.
-     * @param maxMP maximum MP that entity can use
+     * See {@link newInstanceOfOneToAll} - this returns a customized
+     * ShortestPathFinder to support Aerodyne units.
+     *
+     * @param maxMP    maximum MP that entity can use
      * @param stepType
-     * @param game The current {@link Game}
-     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move envelope.
+     * @param game     The current {@link Game}
+     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move
+     *         envelope.
      */
-    public static ShortestPathFinder newInstanceOfOneToAllAero(final int maxMP, final MoveStepType stepType, final Game game) {
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(
-                        new ShortestPathFinder.AeroMovePathRelaxer(),
-                        new ShortestPathFinder.MovePathLengthComparator(),
-                        stepType, game);
+    public static ShortestPathFinder newInstanceOfOneToAllAero(final int maxMP, final MoveStepType stepType,
+            final Game game) {
+        final ShortestPathFinder spf = new ShortestPathFinder(
+                new ShortestPathFinder.AeroMovePathRelaxer(),
+                new ShortestPathFinder.MovePathLengthComparator(),
+                stepType, game);
         spf.addFilter(new MovePathLengthFilter(maxMP));
         spf.addFilter(new MovePathLegalityFilter(game));
         return spf;
@@ -284,10 +306,9 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     public static ShortestPathFinder newInstanceOfGreedy(final Coords destination, final MoveStepType stepType,
             final Game game) {
 
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(new ShortestPathFinder.MovePathRelaxer(),
-                        new MovePathGreedyComparator(destination),
-                        stepType, game);
+        final ShortestPathFinder spf = new ShortestPathFinder(new ShortestPathFinder.MovePathRelaxer(),
+                new MovePathGreedyComparator(destination),
+                stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathGreedyFilter(destination));
@@ -298,8 +319,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * Returns the shortest move path to a hex at given coordinates or
      * {@code null} if none is present. If multiple path are present with
      * different final facings, the minimal one is chosen.
-     * 
-     * 
+     *
+     *
      * @param coordinates - the coordinates of the hex
      * @return the shortest move path to hex at given coordinates or
      *         {@code null}
@@ -312,7 +333,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * Returns a map of all computed shortest paths. If multiple paths to a
      * single hex, each with different final facing, are present, then the
      * minimal one is chosen for each hex.
-     * 
+     *
      * @return a map of all computed shortest paths.
      */
     public Map<Coords, MovePath> getAllComputedPaths() {
@@ -322,7 +343,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return getPathCostMap().values();
     }
-    
+
     public static int getFacingDiff(final MovePath mp, Coords dest,
             boolean backward) {
         // Facing doesn't matter for jumping
@@ -360,17 +381,18 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         return firstFacing;
     }
-    
+
     /**
      * Computes the difference in levels between the current location and the
      * goal location. This prevents the heuristic from under-estimating when a
      * unit is on top of a hill.
-     * 
-     * @param mp MovePath to evaluate
-     * @param dest Destination coordinates
-     * @param board Board on which the move path takes place
+     *
+     * @param mp     MovePath to evaluate
+     * @param dest   Destination coordinates
+     * @param board  Board on which the move path takes place
      * @param ignore Whether to ignore this calculation and return 0
-     * @return level difference between the final coordinates of the given move path and the destination coordinates
+     * @return level difference between the final coordinates of the given move path
+     *         and the destination coordinates
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, Board board, boolean ignore) {
         // Ignore level differences if we're not on the ground
@@ -379,7 +401,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         Hex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
-            LogManager.getLogger().debug("getLevelDiff: currHex was null!" +
+            logger.debug("getLevelDiff: currHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ncurrHex:  " + mp.getFinalCoords() +
                     "\nPath: " + mp);
@@ -387,7 +409,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         Hex destHex = board.getHex(dest);
         if (destHex == null) {
-            LogManager.getLogger().debug("getLevelDiff: destHex was null!" +
+            logger.debug("getLevelDiff: destHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ndestHex: " + dest +
                     "\nPath: " + mp);
@@ -395,12 +417,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         return Math.abs(destHex.getLevel() - currHex.getLevel());
     }
-    
+
     /**
-     * Computes the difference in elevation between the current location and 
-     * the goal location.  This is important for using determining when
+     * Computes the difference in elevation between the current location and
+     * the goal location. This is important for using determining when
      * elevation change steps should be used.
-     * 
+     *
      * @param mp
      * @param dest
      * @param board
@@ -423,7 +445,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) >= currElevation) {
                 destElevation = currElevation;
             }
-        // If there's a bridge, we could stand on it            
+            // If there's a bridge, we could stand on it
         } else if (destHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
             // Assume that we stay on same level if bridge is high enough
             if (destHex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) {
@@ -431,7 +453,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             }
         }
         int elevationDiff = Math.abs(currElevation - destElevation);
-        // Infantry elevation changes are doubled 
+        // Infantry elevation changes are doubled
         if (ent instanceof Infantry) {
             elevationDiff *= 2;
         }
@@ -441,5 +463,5 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             elevationDiff += 2;
         }
         return elevationDiff;
-    }    
+    }
 }

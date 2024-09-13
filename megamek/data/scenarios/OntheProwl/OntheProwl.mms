@@ -13,7 +13,7 @@ Location_Genyosha=N
 Team_Mistweaver=1
 Team_Genyosha=2
 
-Unit_Mistweaver_1=Masakari (Warhawk) C,Mechwarrior Seth,3,4
+Unit_Mistweaver_1=Masakari (Warhawk) C,MekWarrior Seth,3,4
 Unit_Genyosha_1=Grand Dragon DRG-5K,Gunjin Yoson Saito,4,4,S,10,20
 Unit_Genyosha_2=Archer ARC-5R,Gunjin Will Yamada,4,5,S,08,18
 Unit_Genyosha_3=Marauder MAD-5D,Kashira Ryuichi Head,3,3

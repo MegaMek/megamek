@@ -31,22 +31,25 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
     private final Infantry infantry = (Infantry) entity;
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
-     * Constructs a special ability converter for fighter-type Aero units (AF, CF, Aero SV).
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
+     * instead.
+     * Constructs a special ability converter for fighter-type Aero units (AF, CF,
+     * Aero SV).
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASInfantrySpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
     }
 
     @Override
-    protected void processENE() { }
+    protected void processENE() {
+    }
 
     @Override
-    protected void processMiscMounted(Mounted misc) {
+    protected void processMiscMounted(Mounted<?> misc) {
         super.processMiscMounted(misc);
 
         if (entity instanceof BattleArmor) {
@@ -65,7 +68,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
     }
 
     @Override
-    protected void processSEALandSOA(Mounted misc) {
+    protected void processSEALandSOA(Mounted<?> misc) {
         if (misc.getType().hasFlag(MiscType.F_SPACE_ADAPTATION)) {
             assign(misc, SOA);
         }
@@ -76,14 +79,14 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         super.processUnitFeatures();
 
         element.getSpecialAbilities().mergeSUA(CAR, (int) Math.ceil(entity.getWeight()));
-        
+
         report.addLine("Infantry transport weight", "CAR" + (int) Math.ceil(entity.getWeight()));
-        
+
         if (entity.getMovementMode().isUMUInfantry()) {
             report.addLine("UMU Gear", "UMU");
             element.getSpecialAbilities().setSUA(UMU);
         }
-        
+
         if (infantry.hasSpecialization(Infantry.FIRE_ENGINEERS)) {
             assign("Fire Engineers", FF);
         }
@@ -102,11 +105,11 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         if (infantry.hasSpecialization(Infantry.TRENCH_ENGINEERS)) {
             assign("Trench Engineers", TRN);
         }
-        
+
         if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             assign("TSM implants", TSI);
         }
-        
+
         if ((entity instanceof BattleArmor) && ((BattleArmor) entity).canDoMechanizedBA()) {
             assign("BA / Mech.", MEC);
         }

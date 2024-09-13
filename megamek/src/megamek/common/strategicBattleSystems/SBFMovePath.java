@@ -18,17 +18,22 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.*;
-import megamek.common.actions.EntityAction;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.toSet;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import megamek.common.BoardLocation;
+import megamek.common.Player;
+import megamek.common.actions.EntityAction;
+import megamek.logging.MMLogger;
+
 public class SBFMovePath implements EntityAction, Serializable {
+    private static final MMLogger logger = MMLogger.create(SBFMovePath.class);
 
     private final int formationId;
     private final List<SBFMoveStep> steps = new ArrayList<>();
@@ -36,7 +41,8 @@ public class SBFMovePath implements EntityAction, Serializable {
     private boolean isIllegal;
     private int jumpUsed = 0;
 
-    // The game is used mainly durinng creation of the movepath and shouldn't be sent in packets
+    // The game is used mainly durinng creation of the movepath and shouldn't be
+    // sent in packets
     private transient SBFGame game;
 
     public SBFMovePath(int formationId, BoardLocation startLocation, SBFGame game) {
@@ -46,7 +52,8 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Creates a new move path that is a copy of the given original. Note that the steps are not copied,
+     * Creates a new move path that is a copy of the given original. Note that the
+     * steps are not copied,
      * i.e. the step list is only a shallow copy!
      *
      * @param original The move path to copy
@@ -59,8 +66,10 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Creates a new move path that is a copy of the given original. Note that the steps are copied,
-     * i.e. the step list is a deep copy. The returned move path is completely independent from the
+     * Creates a new move path that is a copy of the given original. Note that the
+     * steps are copied,
+     * i.e. the step list is a deep copy. The returned move path is completely
+     * independent from the
      * original.
      *
      * @param original The move path to copy
@@ -99,11 +108,12 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Assembles and computes all data for this move path, especially if it is legal.
+     * Assembles and computes all data for this move path, especially if it is
+     * legal.
      */
     private void compile() {
         if (game == null) {
-            LogManager.getLogger().error("Trying to compile but game is null. Call restore after serialization!");
+            logger.error("Trying to compile but game is null. Call restore after serialization!");
         }
 
         SBFFormation formation = game.getFormation(formationId).orElseThrow();
@@ -134,7 +144,8 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Restores the move path after serialization. This is unnecessary unless the {@link #compile()}
+     * Restores the move path after serialization. This is unnecessary unless the
+     * {@link #compile()}
      * method is used.
      *
      * @param game The SBFGame
@@ -167,7 +178,8 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Returns the number of mp used up to and including the given step. Returns -1 if the step is
+     * Returns the number of mp used up to and including the given step. Returns -1
+     * if the step is
      * not part of this move path.
      *
      * @param step The last step to include in the cost
@@ -183,7 +195,7 @@ public class SBFMovePath implements EntityAction, Serializable {
                 }
             }
         }
-        LogManager.getLogger().error("Tried to find the mp used with a step that is not part of this move path!");
+        logger.error("Tried to find the mp used with a step that is not part of this move path!");
         return -1;
     }
 

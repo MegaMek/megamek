@@ -2,7 +2,7 @@ Fontname: Battletech Oldstyle
 Created by: Jason M. Knight (aka Deathshadow)
 http://www.classicbattletech.com/truetype/bt_oldstyle.zip
 
-This file contains a recreation of the fonts used in the Classic Battletech Logo on products from 1984 to 1991. Upper and Lower case letters are identical except for the letter R, which appears differently on the Battleforce products than it does on the others. The lower case R is that used on Battleforce, while the upper case version is that used on Mechwarrior and Succession Wars.
+This file contains a recreation of the fonts used in the Classic Battletech Logo on products from 1984 to 1991. Upper and Lower case letters are identical except for the letter R, which appears differently on the Battleforce products than it does on the others. The lower case R is that used on Battleforce, while the upper case version is that used on Mekwarrior and Succession Wars.
 
 Additionally, the following 5 wingdings are available:
 

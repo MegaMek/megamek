@@ -13,10 +13,10 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.CLIATMWeapon;
 
 /**
@@ -27,13 +27,13 @@ public class CLFussilade extends CLIATMWeapon {
 
     public CLFussilade() {
         super();
-        //TODO Game Rules.
+        // TODO Game Rules.
         this.name = "Fusillade Launcher";
         setInternalName("Fusillade");
         addLookupName("Fussilade");
         flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
                 .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT)
-                .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON)
+                .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON)
                 .andNot(F_TANK_WEAPON);
         rackSize = 3;
         minimumRange = 4;
@@ -54,7 +54,7 @@ public class CLFussilade extends CLIATMWeapon {
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-                .setClanAdvancement(3072,DATE_NONE,DATE_NONE, 3075,DATE_NONE)
+                .setClanAdvancement(3072, DATE_NONE, DATE_NONE, 3075, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY)
@@ -62,7 +62,7 @@ public class CLFussilade extends CLIATMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 0.45;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {

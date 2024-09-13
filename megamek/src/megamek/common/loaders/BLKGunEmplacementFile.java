@@ -22,7 +22,7 @@ import megamek.common.util.BuildingBlock;
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
+public class BLKGunEmplacementFile extends BLKFile implements IMekLoader {
 
     public BLKGunEmplacementFile(BuildingBlock bb) {
         dataFile = bb;
@@ -39,7 +39,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
                 e.setHasNoTurret(true);
             }
         }
-        
+
         // our gun emplacements do not support dual turrets at this time
         e.setHasNoDualTurret(true);
 

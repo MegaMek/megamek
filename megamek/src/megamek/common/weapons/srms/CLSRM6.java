@@ -23,6 +23,7 @@ import megamek.common.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import static megamek.common.MountedHelper.*;
+
 /**
  * @author Sebastian Brocks
  */
@@ -57,18 +58,18 @@ public class CLSRM6 extends SRMWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_D, RATING_C, RATING_C)
-            .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CCC)
-            .setProductionFactions(F_CCC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_C)
+                .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CCC)
+                .setProductionFactions(F_CCC);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
             return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1 : 0;
         } else if (isArtemisV(fcs)) {

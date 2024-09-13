@@ -18,14 +18,17 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import megamek.MMConstants;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.MapSettings;
-import megamek.common.util.ImageUtil;
-import org.apache.logging.log4j.LogManager;
+import static megamek.client.ui.swing.lobby.LobbyUtility.cleanBoardName;
+import static megamek.client.ui.swing.lobby.LobbyUtility.drawMinimapLabel;
+import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -34,14 +37,23 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-import static megamek.client.ui.swing.lobby.LobbyUtility.cleanBoardName;
-import static megamek.client.ui.swing.lobby.LobbyUtility.drawMinimapLabel;
-import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.TransferHandler;
+
+import megamek.MMConstants;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.MapSettings;
+import megamek.common.util.ImageUtil;
+import megamek.logging.MMLogger;
 
 /** A specialized JButton for the map preview panel of the Lobby. */
 public class MapPreviewButton extends JButton {
+    private static final MMLogger logger = MMLogger.create(MapPreviewButton.class);
+
     private static final long serialVersionUID = -80635203255671654L;
-    
+
     private final static Color INDEX_COLOR = new Color(100, 100, 100, 180);
     private Dimension currentPreviewSize;
     private Image scaledImage;
@@ -75,7 +87,7 @@ public class MapPreviewButton extends JButton {
     public MapPreviewButton(ChatLounge cl) {
         this(cl, 0);
     }
-    
+
     /** Sets the size of the button to the given size. */
     public void setPreviewSize(Dimension size) {
         if (!currentPreviewSize.equals(size)) {
@@ -83,14 +95,20 @@ public class MapPreviewButton extends JButton {
             revalidate();
         }
     }
-    
-    /** Deletes the scaled minimap image for this button, making it rescale and redraw. */
+
+    /**
+     * Deletes the scaled minimap image for this button, making it rescale and
+     * redraw.
+     */
     public void scheduleRescale() {
         scaledImage = null;
         generateTooltip();
     }
-    
-    /** Sets the minimap image of the button to the given base image and stores the name for DnD */
+
+    /**
+     * Sets the minimap image of the button to the given base image and stores the
+     * name for DnD
+     */
     public void setImage(Image image, String name) {
         isExample = name.startsWith(MapSettings.BOARD_SURPRISE) || name.startsWith(MapSettings.BOARD_GENERATED);
         baseImage = image;
@@ -99,30 +117,35 @@ public class MapPreviewButton extends JButton {
         generateTooltip();
         scheduleRescale();
     }
-    
+
     public void reset() {
         baseImage = null;
         boardName = "";
     }
-    
+
     private void generateTooltip() {
         setToolTipText(scaleStringForGUI(lobby.createBoardTooltip(boardName)));
     }
-    
-    /** Returns true if this button has a base image stored, i.e. if a board file is set for it. */
+
+    /**
+     * Returns true if this button has a base image stored, i.e. if a board file is
+     * set for it.
+     */
     public boolean hasBoard() {
         return baseImage != null;
     }
-    
-    /** Returns the map board index of this button; e.g. 0 for the upper left map. */
+
+    /**
+     * Returns the map board index of this button; e.g. 0 for the upper left map.
+     */
     public int getIndex() {
         return index;
     }
-    
+
     public void setIndex(int newIndex) {
         index = newIndex;
     }
-    
+
     public String getBoard() {
         return boardName;
     }
@@ -134,13 +157,16 @@ public class MapPreviewButton extends JButton {
         }
         return currentPreviewSize;
     }
-    
-    /** 
+
+    /**
      * Scales the present baseImage so that it fits inside the maximum button size
-     * allowed by the dimensions of the preview panel while preserving the aspect ratio
-     * of the base image. Also, signals the lobby that all preview buttons should be redrawn
-     * with the same resulting size regardless of whether they have a board image or not. 
-     * Adds the necessary labels to the image as well. 
+     * allowed by the dimensions of the preview panel while preserving the aspect
+     * ratio
+     * of the base image. Also, signals the lobby that all preview buttons should be
+     * redrawn
+     * with the same resulting size regardless of whether they have a board image or
+     * not.
+     * Adds the necessary labels to the image as well.
      */
     private void scaleImage() {
         Dimension optSize = lobby.maxMapButtonSize();
@@ -184,7 +210,7 @@ public class MapPreviewButton extends JButton {
             g.drawImage(scaledImage, 0, 0, null);
         }
     }
-    
+
     private void drawIndex(Graphics g, int w, int h) {
         String text = Integer.toString(index + 1);
         int fontSize = Math.min(w, h) / 4;
@@ -196,7 +222,7 @@ public class MapPreviewButton extends JButton {
         g.setColor(INDEX_COLOR);
         g.drawString(text, cx, cy);
     }
-    
+
     private void drawExample(Graphics g, int w, int h) {
         String text = "Example board";
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(25));
@@ -208,10 +234,11 @@ public class MapPreviewButton extends JButton {
         g.drawString(text, cx, cy);
     }
 
-    /** 
+    /**
      * The TransferHandler manages drag-and-drop for the preview button.
      * The preview buttons can import boards from other preview buttons and from
-     * the available bords list. They can also export boards (to other preview buttons). 
+     * the available bords list. They can also export boards (to other preview
+     * buttons).
      */
     private static class MapButtonTransferHandler extends TransferHandler {
         private static final long serialVersionUID = -1798418800717656572L;
@@ -229,10 +256,10 @@ public class MapPreviewButton extends JButton {
         public int getSourceActions(JComponent c) {
             return DnDConstants.ACTION_COPY;
         }
-        
+
         @Override
         protected Transferable createTransferable(JComponent c) {
-            // When multiple boards come from the available boards list, they 
+            // When multiple boards come from the available boards list, they
             // are just the board names separated by newlines; replicate this for the button
             // by removing the "Surprise" prefix.
             String selection = button.boardName;
@@ -260,7 +287,7 @@ public class MapPreviewButton extends JButton {
                         return false;
                     }
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("A problem has occurred with map drag-and-drop.", ex);
+                    logger.error(ex, "A problem has occurred with map drag-and-drop.");
                 }
             }
             return false;

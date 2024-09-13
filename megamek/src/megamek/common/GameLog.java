@@ -13,21 +13,22 @@
  */
 package megamek.common;
 
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
 
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
+
 /**
  * @author Ben
  * @since March 30, 2002, 2:40 PM
- * Renamed from ServerLog to GameLog in July 2005
+ *        Renamed from ServerLog to GameLog in July 2005
  */
 public class GameLog {
+    private static final MMLogger logger = MMLogger.create(GameLog.class);
 
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
 
@@ -51,7 +52,7 @@ public class GameLog {
             writer = new BufferedWriter(new FileWriter(logfile));
             append("Log file opened " + LocalDate.now());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             writer = null;
         }
     }
@@ -60,13 +61,13 @@ public class GameLog {
         if (writer == null) {
             return;
         }
-        
+
         try {
             writer.write("<pre>" + toLog + "</pre>");
             writer.newLine();
             writer.flush();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             writer = null;
         }
     }

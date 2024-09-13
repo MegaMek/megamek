@@ -60,7 +60,7 @@ public class CLUAC2 extends UACWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted ignore) {
+    public double getBattleForceDamage(int range, Mounted<?> ignore) {
         return range == AlphaStrikeElement.SHORT_RANGE ? 0.249 : 0.3;
     }
 }

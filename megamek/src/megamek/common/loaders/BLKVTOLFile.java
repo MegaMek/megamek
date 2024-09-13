@@ -14,15 +14,23 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.Tank;
+import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * @author Andrew Hunter
  * @since June 2, 2005
  */
-public class BLKVTOLFile extends BLKFile implements IMechLoader {
+public class BLKVTOLFile extends BLKFile implements IMekLoader {
+    private static final MMLogger logger = MMLogger.create(BLKVTOLFile.class);
+
     public BLKVTOLFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -81,13 +89,13 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
-        int engineRating = Math.max(10, (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
+        int engineRating = Math.max(10,
+                (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
         if ((engineRating % 5) > 0) {
             engineRating += (5 - (engineRating % 5));
         }
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
-
 
         if (dataFile.exists("internal_type")) {
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
@@ -155,9 +163,9 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                LogManager.getLogger().error("While loading " + t.getShortNameRaw()
-                                + ": Could not parse ICE fuel type "
-                                + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading " + t.getShortNameRaw()
+                        + ": Could not parse ICE fuel type "
+                        + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

@@ -18,6 +18,17 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
+
+import javax.swing.*;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
@@ -29,17 +40,11 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
 
 public abstract class AbstractGameConnectionDialog extends ClientDialog implements ActionListener {
+    private static final MMLogger logger = MMLogger.create(AbstractGameConnectionDialog.class);
 
     /**
      * We need a way to access the action map for a JComboBox editor, so that we can
@@ -88,7 +93,8 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this(owner, title, modal, playerName, null);
     }
 
-    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName, Vector<String> playerNames) {
+    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName,
+            Vector<String> playerNames) {
         super(owner, title, modal);
 
         this.playerNames = playerNames;
@@ -105,7 +111,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         }
     }
 
-    //region Initialization
+    // region Initialization
     private void initComponents() {
         add(createMiddlePanel(), BorderLayout.CENTER);
 
@@ -127,9 +133,9 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         buttonPanel.add(cancelB);
         add(buttonPanel, BorderLayout.PAGE_END);
     }
-    //endregion Initialization
+    // endregion Initialization
 
-    //region Getters and Setters
+    // region Getters and Setters
     public String getPlayerName() {
         return playerName;
     }
@@ -194,7 +200,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             // This is necessary because the default JComboBox ActionEven
             // can't distinguish between typing and hitting enter
             // Note, this won't work with multiple action listeners
-            //  but that shouldn't be a problem for these dialogs
+            // but that shouldn't be a problem for these dialogs
             SimpleComboBoxEditor cbe = new SimpleComboBoxEditor();
             InputMap im = cbe.getInputMap();
             ActionMap am = cbe.getActionMap();
@@ -222,9 +228,9 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     protected ClientPreferences getClientPreferences() {
         return clientPreferences;
     }
-    //endregion Getters and Setters
+    // endregion Getters and Setters
 
-    //region Validation
+    // region Validation
     public boolean dataValidation(String errorTitleKey) {
 
         if (!isConfirmed()) {
@@ -246,10 +252,10 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
+
         return true;
     }
-    //endregion Validation
+    // endregion Validation
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -258,7 +264,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
         }
 
         setConfirmed(true);

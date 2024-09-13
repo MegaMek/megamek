@@ -29,19 +29,20 @@ import static megamek.common.alphaStrike.BattleForceSUA.GLD;
 public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
+     * instead.
      * Constructs a special ability converter for ProtoMeks (PM).
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASProtoMekSpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
     }
 
     @Override
-    protected void processMiscMounted(Mounted misc) {
+    protected void processMiscMounted(Mounted<?> misc) {
         super.processMiscMounted(misc);
 
         if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {

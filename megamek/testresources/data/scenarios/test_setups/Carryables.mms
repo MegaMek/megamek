@@ -45,5 +45,3 @@ factions:
     - name: Deploy this 2 (invulnerable)
       weight: 3
       status: invulnerable
-
-

@@ -14,6 +14,26 @@
 */
 package megamek.common.templates;
 
+import static megamek.client.ui.WrapLayout.wordWrap;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
 import megamek.common.*;
@@ -24,20 +44,7 @@ import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.WrapLayout.wordWrap;
+import megamek.logging.MMLogger;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -45,6 +52,7 @@ import static megamek.client.ui.WrapLayout.wordWrap;
  * @author Neoancient
  */
 public class TROView {
+    private static final MMLogger logger = MMLogger.create(TROView.class);
 
     private Template template;
     private final Map<String, Object> model = new HashMap<>();
@@ -58,10 +66,10 @@ public class TROView {
 
     public static TROView createView(Entity entity, ViewFormatting formatting) {
         TROView view;
-        if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-            view = new MechTROView((Mech) entity);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            view = new ProtomechTROView((Protomech) entity);
+        if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
+            view = new MekTROView((Mek) entity);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+            view = new ProtoMekTROView((ProtoMek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
                 || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
             view = new SupportVeeTROView((Tank) entity);
@@ -85,7 +93,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(formatting == ViewFormatting.HTML));
             } catch (final IOException e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
             view.initModel(view.verifier);
         }
@@ -120,11 +128,11 @@ public class TROView {
         if (null != template) {
             model.put("includeFluff", includeFluff);
             try (final ByteArrayOutputStream os = new ByteArrayOutputStream();
-                 final Writer out = new OutputStreamWriter(os)) {
+                    final Writer out = new OutputStreamWriter(os)) {
                 template.process(model, out);
                 return os.toString();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
         return null;
@@ -191,11 +199,12 @@ public class TROView {
      * Builds the fluff name for a system component.
      *
      * @param system
-     *            The system component
+     *                The system component
      * @param fluff
-     *            The {@link Entity}'s fluff object
+     *                The {@link Entity}'s fluff object
      * @param altText
-     *            Alternate text that will be used if neither fluff field is set.
+     *                Alternate text that will be used if neither fluff field is
+     *                set.
      * @return The fluff display name, which consists of the manufacturer and the
      *         model separated by a space. If either is missing it is left out.
      */
@@ -212,7 +221,7 @@ public class TROView {
         return sj.toString().isBlank() ? altText.get() : sj.toString();
     }
 
-    protected void addMechVeeAeroFluff(Entity entity) {
+    protected void addMekVeeAeroFluff(Entity entity) {
         addEntityFluff(entity);
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
                 + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
@@ -234,7 +243,7 @@ public class TROView {
                 formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();
         double podSpace = 0.0;
-        for (final Mounted m : entity.getEquipment()) {
+        for (final Mounted<?> m : entity.getEquipment()) {
             if (m.isOmniPodMounted()) {
                 podSpace += m.getTonnage();
             } else if (m.getType() instanceof WeaponType) {
@@ -309,19 +318,22 @@ public class TROView {
      * Convenience method to format armor and structure values, consolidating
      * right/left values into a single entry. In most cases the right and left armor
      * values are the same, in which case only a single value is used. If the values
-     * do not match they are both (or all, in the case of tripod mech legs) given
+     * do not match they are both (or all, in the case of tripod mek legs) given
      * separated by slashes.
      *
      * @param entity
-     *            The entity to collect structure or armor values for
+     *                 The entity to collect structure or armor values for
      * @param provider
-     *            The function that retrieves the armor or structure value for the
-     *            entity and location
+     *                 The function that retrieves the armor or structure value for
+     *                 the
+     *                 entity and location
      * @param locSets
-     *            A two-dimensional array that groups locations that should appear
-     *            on the same line. Any location that is not legal for the unit
-     *            (e.g. center leg on non-tripods) is ignored. If the first location
-     *            in a group is illegal, the entire group is skipped.
+     *                 A two-dimensional array that groups locations that should
+     *                 appear
+     *                 on the same line. Any location that is not legal for the unit
+     *                 (e.g. center leg on non-tripods) is ignored. If the first
+     *                 location
+     *                 in a group is illegal, the entire group is skipped.
      * @return A {@link Map} with the armor/structure value mapped to the
      *         abbreviation of each of the location keys.
      */
@@ -337,7 +349,7 @@ public class TROView {
                 for (int i = 1; i < locs.length; i++) {
                     if ((locs[i] < entity.locations())
                             && ((!provider.apply(entity, locs[i]).equals(provider.apply(entity, locs[0])))
-                                    || !entity.hasETypeFlag(Entity.ETYPE_MECH))) {
+                                    || !entity.hasETypeFlag(Entity.ETYPE_MEK))) {
                         val = Arrays.stream(locs).filter(l -> l < entity.locations())
                                 .mapToObj(l -> String.valueOf(provider.apply(entity, l)))
                                 .collect(Collectors.joining("/"));
@@ -391,13 +403,14 @@ public class TROView {
     }
 
     /**
-     * Test for whether the mount should be included in the equipment inventory section.
+     * Test for whether the mount should be included in the equipment inventory
+     * section.
      *
-     * @param mount        The equipment mount
-     * @param includeAmmo  Whether to include ammo in the list
-     * @return             Whether to list the equipment in the inventory section
+     * @param mount       The equipment mount
+     * @param includeAmmo Whether to include ammo in the list
+     * @return Whether to list the equipment in the inventory section
      */
-    protected boolean skipMount(Mounted mount, boolean includeAmmo) {
+    protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
         return mount.getLocation() < 0
                 || mount.isWeaponGroup()
                 || (!includeAmmo && (mount.getType() instanceof AmmoType));
@@ -408,7 +421,7 @@ public class TROView {
         final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
         EquipmentKey eqk;
-        for (final Mounted m : entity.getEquipment()) {
+        for (final Mounted<?> m : entity.getEquipment()) {
             if (skipMount(m, includeAmmo)) {
                 continue;
             }
@@ -427,7 +440,7 @@ public class TROView {
                 final String loc = formatLocationTableEntry(entity, m);
                 equipment.putIfAbsent(loc, new HashMap<>());
                 eqk = new EquipmentKey(m.getType(), m.getSize(), m.isArmored(), m.isInternalBomb());
-                equipment.get(loc).merge(eqk,1, Integer::sum);
+                equipment.get(loc).merge(eqk, 1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
@@ -560,7 +573,7 @@ public class TROView {
                     }
 
                     if (fixedWeight.containsKey(entry.getKey())) {
-                        // Not valid for mech systems
+                        // Not valid for mek systems
                         row.put("tonnage", fixedWeight.get(entry.getKey()));
                         fixedTonnage += fixedWeight.get(entry.getKey());
                     } else {
@@ -601,7 +614,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                LogManager.getLogger().warn("Could not determine bay type for " + bay);
+                logger.warn("Could not determine bay type for " + bay);
             }
         }
         setModelData("bays", bays);
@@ -609,15 +622,15 @@ public class TROView {
 
     /**
      * Used to determine whether system crits should be shown when detailing fixed
-     * equipment in an omni unit. By default this is false, but mechs override it to
+     * equipment in an omni unit. By default this is false, but meks override it to
      * show some systems.
      *
      * @param entity
-     *            The unit the TRO is for
+     *               The unit the TRO is for
      * @param index
-     *            The system index of the critical slot
+     *               The system index of the critical slot
      * @param loc
-     *            The slot location
+     *               The slot location
      * @return Whether to show this as a fixed system in an omni configuration
      */
     protected boolean showFixedSystem(Entity entity, int index, int loc) {
@@ -626,13 +639,13 @@ public class TROView {
 
     /**
      * Used to show the name of fixed system critical slots in an omni unit. This is
-     * only used for Mechs, and returns a default value of "Unknown System" for
+     * only used for Meks, and returns a default value of "Unknown System" for
      * other units.
      *
      * @param entity
-     *            The unit the TRO is for
+     *               The unit the TRO is for
      * @param index
-     *            The system index of the critical slot
+     *               The system index of the critical slot
      * @return The name of the system to display in the fixed equipment table
      */
     protected String getSystemName(Entity entity, int index) {
@@ -646,12 +659,12 @@ public class TROView {
      * than the ones used by MM.
      *
      * @param entity
-     *            The entity the TRO is created for
+     *                The entity the TRO is created for
      * @param mounted
-     *            The mounted equipment
+     *                The mounted equipment
      * @return The location name to use in the table.
      */
-    protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+    protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
         // Default: location abbreviation
         return entity.getLocationAbbr(mounted.getLocation());
     }
@@ -662,9 +675,9 @@ public class TROView {
      * such.
      *
      * @param transporter
-     *            The transporter to show.
+     *                    The transporter to show.
      * @param loc
-     *            The location name to display on the table.
+     *                    The location name to display on the table.
      * @return A map of values used by the equipment tables (omni fixed and
      *         pod/non-omni). Returns {@code null} for a type of {@link Transporter}
      *         that should not be shown.
@@ -721,7 +734,7 @@ public class TROView {
      * a marker of equipment size and left intact.
      *
      * @param str The String to process
-     * @return     The same String with notes removed
+     * @return The same String with notes removed
      */
     protected String stripNotes(String str) {
         return str.replaceAll("\\s+\\[.*?]", "")
@@ -767,7 +780,7 @@ public class TROView {
      * Sets whether to include the fluff section when processing the template
      *
      * @param includeFluff
-     *            Whether to include the fluff section
+     *                     Whether to include the fluff section
      */
     public void setIncludeFluff(boolean includeFluff) {
         this.includeFluff = includeFluff;

@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -15,12 +15,14 @@ package megamek.common.actions;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * The prone attacker thrashes at the target.
  */
 public class ThrashAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(ThrashAttackAction.class);
+
     private static final long serialVersionUID = -1527653560370040648L;
 
     public ThrashAttackAction(int entityId, int targetId) {
@@ -40,7 +42,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * prone Mek in a clear or pavement terrain hex that contains infantry. This
      * attack will force a PSR check for the prone Mek; if the PSR is missed,
      * the Mek takes normal falling damage.
-     * 
+     *
      * @param game The current {@link Game} containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
@@ -49,11 +51,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
         final Targetable target = getTarget(game);
         // arguments legal?
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
@@ -61,7 +63,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        
+
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
@@ -74,14 +76,14 @@ public class ThrashAttackAction extends AbstractAttackAction {
             }
         }
 
-        // Non-mechs can't thrash.
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can thrash at infantry");
+        // Non-meks can't thrash.
+        if (!(ae instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only meks can thrash at infantry");
         }
 
-        // Mech must be prone.
+        // Mek must be prone.
         if (!ae.isProne()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only prone mechs can thrash at infantry");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only prone meks can thrash at infantry");
         }
 
         // Can't thrash against non-infantry
@@ -125,7 +127,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
-        // The Mech can't have fired a weapon this round.
+        // The Mek can't have fired a weapon this round.
         for (int loop = 0; loop < ae.locations(); loop++) {
             if (ae.weaponFiredFrom(loop)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -133,11 +135,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
             }
         }
 
-        // Mech must have at least one working arm or leg.
-        if (ae.isLocationBad(Mech.LOC_RARM) && ae.isLocationBad(Mech.LOC_LARM)
-                && ae.isLocationBad(Mech.LOC_RLEG)
-                && ae.isLocationBad(Mech.LOC_LLEG)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Mech has no arms or legs to thrash");
+        // Mek must have at least one working arm or leg.
+        if (ae.isLocationBad(Mek.LOC_RARM) && ae.isLocationBad(Mek.LOC_LARM)
+                && ae.isLocationBad(Mek.LOC_RLEG)
+                && ae.isLocationBad(Mek.LOC_LLEG)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Mek has no arms or legs to thrash");
         }
 
         // If the attack isn't impossible, it's automatically successful.
@@ -146,7 +148,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
 
     /**
      * Damage caused by a successful thrashing attack.
-     * 
+     *
      * @param entity - the <code>Entity</code> conducting the thrash attack.
      * @return The <code>int</code> amount of damage caused by this attack.
      */

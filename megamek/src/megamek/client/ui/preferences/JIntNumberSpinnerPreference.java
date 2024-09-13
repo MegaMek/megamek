@@ -18,28 +18,34 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JIntNumberSpinnerPreference monitors the value of a JSpinner whose number model is for an int.
+ * JIntNumberSpinnerPreference monitors the value of a JSpinner whose number
+ * model is for an int.
  * It sets the saved value when a dialog is loaded and changes it as it changes.
  *
- * Call preferences.manage(new JIntNumberSpinnerPreference(JSpinner)) to use this preference,
+ * Call preferences.manage(new JIntNumberSpinnerPreference(JSpinner)) to use
+ * this preference,
  * on a JSpinner with an int valued SpinnerNumberModel that has called setName
  */
 public class JIntNumberSpinnerPreference extends PreferenceElement implements ChangeListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JIntNumberSpinnerPreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JSpinner> weakReference;
     private int intValue;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JIntNumberSpinnerPreference(final JSpinner spinner) throws Exception {
         super(spinner.getName());
         if (!(spinner.getModel() instanceof SpinnerNumberModel)) {
@@ -49,9 +55,9 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
         weakReference = new WeakReference<>(spinner);
         spinner.addChangeListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JSpinner> getWeakReference() {
         return weakReference;
     }
@@ -63,9 +69,9 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
     public void setIntValue(final int intValue) {
         this.intValue = intValue;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return Integer.toString(getIntValue());
@@ -74,7 +80,8 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JIntNumberSpinnerPreference because of a null or blank input value");
+            logger
+                    .error("Cannot create a JIntNumberSpinnerPreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -97,9 +104,9 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region ChangeListener
+    // region ChangeListener
     @Override
     public void stateChanged(final ChangeEvent evt) {
         final JSpinner element = getWeakReference().get();
@@ -107,5 +114,5 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
             setIntValue((Integer) element.getValue());
         }
     }
-    //endregion ChangeListener
+    // endregion ChangeListener
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,10 +18,15 @@
  */
 package megamek.client.generator.enums;
 
-import megamek.MegaMek;
-import megamek.client.generator.skillGenerators.*;
-
 import java.util.ResourceBundle;
+
+import megamek.MegaMek;
+import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
+import megamek.client.generator.skillGenerators.ConstantSkillGenerator;
+import megamek.client.generator.skillGenerators.ModifiedConstantSkillGenerator;
+import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
+import megamek.client.generator.skillGenerators.TaharqaSkillGenerator;
+import megamek.client.generator.skillGenerators.TotalWarfareSkillGenerator;
 
 public enum SkillGeneratorMethod {
     //region Enum Declarations

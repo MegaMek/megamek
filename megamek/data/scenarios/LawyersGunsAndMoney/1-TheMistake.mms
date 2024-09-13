@@ -1,4 +1,4 @@
-# 
+#
 #  A MegaMek Scenario file
 #  Based on Lawyers, Guns & Money CBT scenario package
 #  Scenario available at http://www.classicbattletech.com/pdf/Lawyers,_Guns,_and_Money.pdf
@@ -49,5 +49,3 @@ Unit_LoneStar_8=Jenner JR7-D,Andrew Thompson,3,4,S,5,10
 Unit_LoneStar_5_DamageSpecific=N1:0,I1:4,R3:0,I3:8
 Unit_RedfieldsRenegades_4_CritHit=0:2
 Unit_RedfieldsRenegades_4_SetAmmoTo=3:1-4
-
-

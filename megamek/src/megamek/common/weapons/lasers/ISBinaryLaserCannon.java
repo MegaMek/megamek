@@ -26,6 +26,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         super();
         name = "Binary Laser (Blazer) Cannon";
         setInternalName(name);
+        shortName = "Blazer Cannon";
         addLookupName("IS Binary Laser Cannon");
         addLookupName("ISBlazer");
         addLookupName("ISBinaryLaserCannon");

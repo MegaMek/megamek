@@ -49,8 +49,8 @@ public abstract class LaserWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
-        Mounted linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
+            TWGameManager manager) {
+        Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
         if ((linkedBy != null) && !linkedBy.isInoperable()
                 && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
             return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);

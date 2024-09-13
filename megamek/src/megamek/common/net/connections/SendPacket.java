@@ -18,15 +18,17 @@
  */
 package megamek.common.net.connections;
 
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.logging.MMLogger;
+
 class SendPacket implements INetworkPacket {
+    private static final MMLogger logger = MMLogger.create(SendPacket.class);
+
     private byte[] data;
     private boolean zipped = false;
     private final PacketCommand command;
@@ -49,7 +51,7 @@ class SendPacket implements INetworkPacket {
             data = bos.toByteArray();
             connection.addBytesSent(data.length);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 

@@ -18,17 +18,31 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.Dimension;
+import java.awt.Image;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.widget.*;
-import megamek.common.*;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
@@ -122,7 +136,7 @@ public class SummaryPanel extends PicMap {
     /**
      * @param entity The Entity to display info for
      */
-    public void displayMech(Entity entity) {
+    public void displayMek(Entity entity) {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
         String txt = "";
 

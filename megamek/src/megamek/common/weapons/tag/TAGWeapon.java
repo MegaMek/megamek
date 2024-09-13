@@ -30,7 +30,7 @@ public abstract class TAGWeapon extends Weapon {
 
     public TAGWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_TAG).or(F_NO_FIRES);
     }
 

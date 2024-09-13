@@ -13,19 +13,6 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.client.ratgenerator.FactionRecord.TechCategory;
-import megamek.client.ratgenerator.UnitTable.TableEntry;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -39,14 +26,36 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.client.ratgenerator.UnitTable.TableEntry;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementMode;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
+
 /**
- * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
- * including faction, era, unit type, weight class, equipment rating, faction subcommand, vehicle
+ * Generates a random assignment table (RAT) dynamically based on a variety of
+ * criteria,
+ * including faction, era, unit type, weight class, equipment rating, faction
+ * subcommand, vehicle
  * movement mode, and mission role.
  *
  * @author Neoancient
  */
 public class RATGenerator {
+    private final static MMLogger logger = MMLogger.create(RATGenerator.class);
 
     private final HashMap<String, ModelRecord> models;
     private final HashMap<String, ChassisRecord> chassis;
@@ -98,6 +107,7 @@ public class RATGenerator {
 
     /**
      * Clears all data and loads from the given directory
+     *
      * @param dir The directory to load from
      */
     public void reloadFromDir(File dir) {
@@ -128,7 +138,7 @@ public class RATGenerator {
     }
 
     public @Nullable AvailabilityRating findChassisAvailabilityRecord(int era, String unit,
-                                                                      FactionRecord fRec, int year) {
+            FactionRecord fRec, int year) {
         if (fRec == null) {
             return null;
         }
@@ -160,7 +170,7 @@ public class RATGenerator {
     }
 
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
-                                                                    String faction) {
+            String faction) {
         if (factions.containsKey(faction)) {
             return findModelAvailabilityRecord(era, unit, factions.get(faction));
         } else if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
@@ -171,9 +181,9 @@ public class RATGenerator {
     }
 
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
-                                                                    @Nullable FactionRecord fRec) {
+            @Nullable FactionRecord fRec) {
         if (null == models.get(unit)) {
-            LogManager.getLogger().error("Trying to find record for unknown model " + unit);
+            logger.error("Trying to find record for unknown model " + unit);
             return null;
         } else if ((fRec == null) || models.get(unit).factionIsExcluded(fRec)) {
             return null;
@@ -202,12 +212,15 @@ public class RATGenerator {
     }
 
     /**
-     * Provides a list of availability ratings for a unit in a given era. Used in editing and reporting.
+     * Provides a list of availability ratings for a unit in a given era. Used in
+     * editing and reporting.
      *
-     * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
+     * @param era  The year of the record. This must be one of the years in the
+     *             <code>eraSet</code>.
      * @param unit The lookup name of the unit to find records for.
-     * @return     A <code>Collection</code> of all the availability ratings for the unit in the era,
-     *             or null if there are no records for that era.
+     * @return A <code>Collection</code> of all the availability ratings for the
+     *         unit in the era,
+     *         or null if there are no records for that era.
      */
     public @Nullable Collection<AvailabilityRating> getModelFactionRatings(int era, String unit) {
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
@@ -219,10 +232,12 @@ public class RATGenerator {
     /**
      * Adds or changes an availability rating entry for a model.
      *
-     * @param era  The year of the record to change
-     * @param unitKey The model key for the unit which is having its model record updated
-     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
-     *             faction.
+     * @param era     The year of the record to change
+     * @param unitKey The model key for the unit which is having its model record
+     *                updated
+     * @param ar      The new <code>AvailabilityRating</code> for the unit in the
+     *                era. This provides the
+     *                faction.
      */
     public void setModelFactionRating(int era, String unitKey, AvailabilityRating ar) {
         modelIndex.get(era).computeIfAbsent(unitKey, k -> new HashMap<>());
@@ -233,9 +248,9 @@ public class RATGenerator {
     /**
      * Removes the availability rating entry.
      *
-     * @param era      The year of the record to remove.
-     * @param unit     The model to remove the record for.
-     * @param faction  The faction to remove the record for.
+     * @param era     The year of the record to remove.
+     * @param unit    The model to remove the record for.
+     * @param faction The faction to remove the record for.
      */
     public void removeModelFactionRating(int era, String unit, String faction) {
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
@@ -251,15 +266,18 @@ public class RATGenerator {
     }
 
     /**
-     * Provides a list of availability ratings for a chassis in a given era. Used in editing and reporting.
+     * Provides a list of availability ratings for a chassis in a given era. Used in
+     * editing and reporting.
      *
-     * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
+     * @param era        The year of the record. This must be one of the years in
+     *                   the <code>eraSet</code>.
      * @param chassisKey The chassis name to find records for.
-     * @return     A <code>Collection</code> of all the availability ratings for the chassis in the era,
-     *             or null if there are no records for that era.
+     * @return A <code>Collection</code> of all the availability ratings for the
+     *         chassis in the era,
+     *         or null if there are no records for that era.
      */
     public @Nullable Collection<AvailabilityRating> getChassisFactionRatings(int era,
-                                                                             String chassisKey) {
+            String chassisKey) {
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(chassisKey)) {
             return chassisIndex.get(era).get(chassisKey).values();
         }
@@ -271,7 +289,8 @@ public class RATGenerator {
      *
      * @param era  The year of the record to change
      * @param unit The name of the chassis for which to change the record
-     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
+     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era.
+     *             This provides the
      *             faction.
      */
     public void setChassisFactionRating(int era, String unit, AvailabilityRating ar) {
@@ -283,9 +302,9 @@ public class RATGenerator {
     /**
      * Removes the availability rating entry.
      *
-     * @param era      The year of the record to remove.
-     * @param unit     The chassis to remove the record for.
-     * @param faction  The faction to remove the record for.
+     * @param era     The year of the record to remove.
+     * @param unit    The chassis to remove the record for.
+     * @param faction The faction to remove the record for.
      */
     public void removeChassisFactionRating(int era, String unit, String faction) {
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
@@ -358,12 +377,15 @@ public class RATGenerator {
     }
 
     /**
-     * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find the average
-     * availability among the parents. Based on average weight rather than av rating.
+     * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find
+     * the average
+     * availability among the parents. Based on average weight rather than av
+     * rating.
      *
      * @param faction The faction code to use for the new AvailabilityRecord
-     * @param list A list of ARs for the various parent factions
-     * @return A new AR with the average availability code from the various factions.
+     * @param list    A list of ARs for the various parent factions
+     * @return A new AR with the average availability code from the various
+     *         factions.
      */
     private AvailabilityRating mergeFactionAvailability(String faction, List<AvailabilityRating> list) {
         if (list.isEmpty()) {
@@ -379,23 +401,25 @@ public class RATGenerator {
 
         retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / list.size()));
         if (totalAdj < 0) {
-            retVal.ratingAdjustment = (totalAdj - 1)/ list.size();
+            retVal.ratingAdjustment = (totalAdj - 1) / list.size();
         } else {
-            retVal.ratingAdjustment = (totalAdj + 1)/ list.size();
+            retVal.ratingAdjustment = (totalAdj + 1) / list.size();
         }
         return retVal;
     }
 
     /**
-     * Given values for two years, interpolates or extrapolates value for another given year.
+     * Given values for two years, interpolates or extrapolates value for another
+     * given year.
      * If one of the two values is null, it is treated as 0.
      *
-     * @param av1 The first value.
-     * @param av2 The second value.
+     * @param av1   The first value.
+     * @param av2   The second value.
      * @param year1 The year for the first value.
      * @param year2 The year for the second value.
-     * @param now The year for which to calculate a value.
-     * @return The value for the year in question. Returns null if av1 and av2 are both null.
+     * @param now   The year for which to calculate a value.
+     * @return The value for the year in question. Returns null if av1 and av2 are
+     *         both null.
      */
     private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
         if (av1 == null && av2 == null) {
@@ -440,11 +464,15 @@ public class RATGenerator {
             late = early;
         }
 
-        /* Adjustments for unit rating require knowing both how many ratings are available
+        /*
+         * Adjustments for unit rating require knowing both how many ratings are
+         * available
          * to the faction and where the rating falls within the whole. If a faction does
          * not have designated rating levels, it inherits those of the parent faction;
-         * if there are multiple parent factions the first match is used. Some very minor
-         * or generic factions do not use rating adjustments, indicated by a rating level
+         * if there are multiple parent factions the first match is used. Some very
+         * minor
+         * or generic factions do not use rating adjustments, indicated by a rating
+         * level
          * of -1. A faction that has one rating level is a special case that always has
          * the indicated rating within the parent faction's system.
          */
@@ -463,7 +491,7 @@ public class RATGenerator {
         for (String chassisKey : chassisIndex.get(early).keySet()) {
             ChassisRecord cRec = chassis.get(chassisKey);
             if (cRec == null) {
-                LogManager.getLogger().error("Could not locate chassis " + chassisKey);
+                logger.error("Could not locate chassis " + chassisKey);
                 continue;
             }
 
@@ -474,13 +502,13 @@ public class RATGenerator {
 
             if (cRec.getUnitType() != unitType &&
                     !(unitType == UnitType.TANK
-                        && cRec.getUnitType() == UnitType.VTOL
-                        && movementModes.contains(EntityMovementMode.VTOL))) {
+                            && cRec.getUnitType() == UnitType.VTOL
+                            && movementModes.contains(EntityMovementMode.VTOL))) {
                 continue;
             }
 
             AvailabilityRating ar = findChassisAvailabilityRecord(early,
-                        chassisKey, fRec, year);
+                    chassisKey, fRec, year);
             if (ar == null) {
                 continue;
             }
@@ -526,8 +554,10 @@ public class RATGenerator {
             return new ArrayList<>();
         }
 
-        // If there is more than one weight class and the faction record (or parent) indicates a
-        // certain distribution of weight classes, adjust the weight value to conform to the given
+        // If there is more than one weight class and the faction record (or parent)
+        // indicates a
+        // certain distribution of weight classes, adjust the weight value to conform to
+        // the given
         // ratio.
         if (weightClasses.size() > 1) {
             // Get standard weight class distribution for faction
@@ -577,7 +607,7 @@ public class RATGenerator {
                 salvageEntries.put(entry.getKey(),
                         interpolate(entry.getValue(),
                                 fRec.getSalvage(late).get(entry.getKey()),
-                                        early, late, year));
+                                early, late, year));
             }
 
             if (!late.equals(early)) {
@@ -602,7 +632,7 @@ public class RATGenerator {
             for (String fKey : salvageEntries.keySet()) {
                 FactionRecord salvageFaction = factions.get(fKey);
                 if (salvageFaction == null) {
-                    LogManager.getLogger().debug("Could not locate faction " + fKey
+                    logger.debug("Could not locate faction " + fKey
                             + " for " + fRec.getKey() + " salvage");
                 } else {
                     double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
@@ -639,16 +669,16 @@ public class RATGenerator {
         for (ModelRecord mRec : unitWeights.keySet()) {
             int wt = (int) (unitWeights.get(mRec) * adj + 0.5);
             if (wt > 0) {
-                retVal.add(new TableEntry(wt, mRec.getMechSummary()));
+                retVal.add(new TableEntry(wt, mRec.getMekSummary()));
             }
         }
         return retVal;
     }
 
     private void adjustForRating(FactionRecord fRec, int unitType, int year, int rating,
-                                 Map<ModelRecord, Double> unitWeights,
-                                 Map<FactionRecord, Double> salvageWeights, Integer early,
-                                 Integer late) {
+            Map<ModelRecord, Double> unitWeights,
+            Map<FactionRecord, Double> salvageWeights, Integer early,
+            Integer late) {
         double total = 0.0;
         double totalOmni = 0.0;
         double totalClan = 0.0;
@@ -733,7 +763,8 @@ public class RATGenerator {
                 } else if (pct > pctOther + upgradeMargin) {
                     pctOther += upgradeMargin;
                 }
-                /* If clan, sl, and other are all adjusted, the values probably
+                /*
+                 * If clan, sl, and other are all adjusted, the values probably
                  * don't add up to 100, which is fine unless the upgradeMargin is
                  * <= techMargin. Then pctOther is more certain, and we adjust
                  * the values of clan and sl to keep the value of "other" equal to
@@ -767,7 +798,8 @@ public class RATGenerator {
             pctNonOmni = 100.0 - pctOmni;
         }
 
-        // For non-Clan factions, the amount of salvage from Clan factions is part of the overall
+        // For non-Clan factions, the amount of salvage from Clan factions is part of
+        // the overall
         // Clan percentage.
         if (!fRec.isClan() && (pctClan != null) && (totalClan > 0)) {
             double clanSalvage = salvageWeights.keySet().stream().filter(FactionRecord::isClan)
@@ -818,7 +850,7 @@ public class RATGenerator {
 
     private synchronized void initialize(File dir) {
         // Give the MSC some time to initialize
-        MechSummaryCache msc = MechSummaryCache.getInstance();
+        MekSummaryCache msc = MekSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
         while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
@@ -829,7 +861,7 @@ public class RATGenerator {
         }
 
         if (!(dir.exists() && dir.isDirectory())) {
-            LogManager.getLogger().error(dir + " is not a directory");
+            logger.error(dir + " is not a directory");
         } else {
             loadFactions(dir);
 
@@ -852,7 +884,8 @@ public class RATGenerator {
     }
 
     /**
-     * If the year is equal to one of the era marks, it loads that era. If it is between two, it
+     * If the year is equal to one of the era marks, it loads that era. If it is
+     * between two, it
      * loads eras on both sides. Otherwise, just load the closest era.
      */
     public void loadYear(final int year) {
@@ -878,7 +911,7 @@ public class RATGenerator {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            LogManager.getLogger().error("Unable to read RAT generator factions file");
+            logger.error(e, "Unable to read RAT generator factions file");
             return;
         }
 
@@ -888,7 +921,7 @@ public class RATGenerator {
             DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "loadFactions");
             return;
         }
 
@@ -904,7 +937,7 @@ public class RATGenerator {
                     FactionRecord rec = FactionRecord.createFromXml(wn);
                     factions.put(rec.getKey(), rec);
                 } else {
-                    LogManager.getLogger().warn("Faction key not found in " + file.getPath());
+                    logger.warn("Faction key not found in " + file.getPath());
                 }
             }
         }
@@ -930,10 +963,10 @@ public class RATGenerator {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            LogManager.getLogger().error("Unable to read RAT generator file for era " + era);
+            logger.error(e, "Unable to read RAT generator file for era " + era);
             return;
         }
-        while (!MechSummaryCache.getInstance().isInitialized()) {
+        while (!MekSummaryCache.getInstance().isInitialized()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ignored) {
@@ -947,7 +980,7 @@ public class RATGenerator {
             DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "loadEra");
             return;
         }
 
@@ -968,10 +1001,10 @@ public class RATGenerator {
                             if (rec != null) {
                                 rec.loadEra(wn, era);
                             } else {
-                                LogManager.getLogger().error("Faction " + fKey + " not found in " + file.getPath());
+                                logger.error("Faction " + fKey + " not found in " + file.getPath());
                             }
                         } else {
-                            LogManager.getLogger().error("Faction key not found in " + file.getPath());
+                            logger.error("Faction key not found in " + file.getPath());
                         }
                     }
                 }
@@ -988,13 +1021,15 @@ public class RATGenerator {
     }
 
     /**
-     * Creates model and chassis records for all units that don't already have entries. This should
-     * only be called after all availability records are loaded, otherwise they will be overwritten.
+     * Creates model and chassis records for all units that don't already have
+     * entries. This should
+     * only be called after all availability records are loaded, otherwise they will
+     * be overwritten.
      *
      * Used for editing.
      */
     public void initRemainingUnits() {
-        for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
+        for (MekSummary ms : MekSummaryCache.getInstance().getAllMeks()) {
             if (models.containsKey(ms.getName())) {
                 continue;
             }
@@ -1064,7 +1099,7 @@ public class RATGenerator {
         ModelRecord mr = models.get(modelKey);
         if (mr == null) {
             newEntry = true;
-            MechSummary ms = MechSummaryCache.getInstance().getMech(modelKey);
+            MekSummary ms = MekSummaryCache.getInstance().getMek(modelKey);
             if (ms != null) {
                 mr = new ModelRecord(ms);
                 mr.setOmni(cr.isOmni());
@@ -1072,7 +1107,7 @@ public class RATGenerator {
             }
 
             if (mr == null) {
-                LogManager.getLogger().error(cr.getChassis() + ' '
+                logger.error(cr.getChassis() + ' '
                         + wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
                 return;
             }
@@ -1115,7 +1150,7 @@ public class RATGenerator {
         if (initialized) {
             // Possibility of adding a new listener during notification.
             for (ActionListener l : new ArrayList<>(listeners)) {
-                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "ratGenInitialized"));
             }
         }
     }
@@ -1126,7 +1161,7 @@ public class RATGenerator {
     public void notifyListenersEraLoaded() {
         if (initialized) {
             for (ActionListener l : listeners) {
-                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "ratGenEraLoaded"));
             }
         }
     }
@@ -1153,9 +1188,10 @@ public class RATGenerator {
         try {
             pw = new PrintWriter(file, StandardCharsets.UTF_8);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "exportRATGen");
             return;
         }
+
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
         pw.println("<factions>");
         for (FactionRecord fRec : factionRecs) {
@@ -1200,7 +1236,8 @@ public class RATGenerator {
                             String omni = "";
                             if (cr.isOmni() && !cr.getModels().isEmpty()) {
                                 omni = cr.getModels().iterator().next().isClan()
-                                        ? "' omni='Clan" : "' omni='IS";
+                                        ? "' omni='Clan"
+                                        : "' omni='IS";
                             }
                             pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
                                     + "' unitType='" + UnitType.getTypeName(cr.getUnitType())
@@ -1235,7 +1272,8 @@ public class RATGenerator {
                                         }
                                         pw.println("'>");
                                         if (!mr.getRoles().isEmpty()) {
-                                            String str = mr.getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
+                                            String str = mr.getRoles().stream().map(Object::toString)
+                                                    .collect(Collectors.joining(","));
                                             if (!str.isBlank()) {
                                                 pw.println("\t\t\t<roles>" + str + "</roles>");
                                             }
@@ -1269,7 +1307,7 @@ public class RATGenerator {
                 pw.println("</ratgen>");
                 pw.close();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "exportRARGen");
             }
         }
     }

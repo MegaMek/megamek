@@ -13,27 +13,36 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.CheckpointComboBox;
 import megamek.common.MapSettings;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import megamek.logging.MMLogger;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/13/14 3:55 PM
  */
 public class RandomMapPanelBasic extends JPanel {
+    private static final MMLogger logger = MMLogger.create(RandomMapPanelBasic.class);
 
     private static final long serialVersionUID = -6971330721623187856L;
-    
+
     private static final String NONE = Messages.getString("RandomMapDialog.uiNONE");
     private static final String LOW = Messages.getString("RandomMapDialog.uiLow");
     private static final String MEDIUM = Messages.getString("RandomMapDialog.uiMedium");
     private static final String HIGH = Messages.getString("RandomMapDialog.uiHigh");
-    private static final String[] LOW_HIGH_CHOICES = new String[]{NONE, LOW, MEDIUM, HIGH};
+    private static final String[] LOW_HIGH_CHOICES = new String[] { NONE, LOW, MEDIUM, HIGH };
 
     private MapSettings mapSettings;
 
@@ -44,7 +53,7 @@ public class RandomMapPanelBasic extends JPanel {
     private static final String CT_GRID = "GRID";
     private static final String CT_METRO = "METRO";
     private static final String CT_TOWN = "TOWN";
-    private static final String[] CT_CHOICES = new String[]{NONE, CT_GRID, CT_HUB, CT_METRO, CT_TOWN};
+    private static final String[] CT_CHOICES = new String[] { NONE, CT_GRID, CT_HUB, CT_METRO, CT_TOWN };
     private final CheckpointComboBox<String> cityTypeCombo = new CheckpointComboBox<>(CT_CHOICES);
     private final CheckpointComboBox<String> fortifiedCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> pavementCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
@@ -109,8 +118,8 @@ public class RandomMapPanelBasic extends JPanel {
 
     private void loadMapSettings() {
         lakesCombo.setSelectedItem(lakesToRange(this.mapSettings.getMinWaterSize(),
-                                                this.mapSettings.getMinWaterSpots(),
-                                                this.mapSettings.getProbDeep()));
+                this.mapSettings.getMinWaterSpots(),
+                this.mapSettings.getProbDeep()));
         lakesCombo.checkpoint();
 
         riversCombo.setSelectedItem(percentageToRange(this.mapSettings.getProbRiver()));
@@ -120,20 +129,20 @@ public class RandomMapPanelBasic extends JPanel {
         iceCombo.checkpoint();
 
         roughsCombo.setSelectedItem(roughsToRange(this.mapSettings.getMinRoughSize(),
-                                                  this.mapSettings.getMinRoughSpots()));
+                this.mapSettings.getMinRoughSpots()));
         roughsCombo.checkpoint();
 
         sandsCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSandSize(),
-                                                this.mapSettings.getMinSandSpots()));
+                this.mapSettings.getMinSandSpots()));
         sandsCombo.checkpoint();
 
         swampsCombo.setSelectedItem(swampsToRange(this.mapSettings.getMinSwampSize(),
-                                                  this.mapSettings.getMinSwampSpots()));
+                this.mapSettings.getMinSwampSpots()));
         swampsCombo.checkpoint();
 
         woodsCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinForestSize(),
-                                                this.mapSettings.getMinForestSpots(),
-                                                this.mapSettings.getProbHeavy()));
+                this.mapSettings.getMinForestSpots(),
+                this.mapSettings.getProbHeavy()));
         woodsCombo.checkpoint();
 
         jungleCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinJungleSize(),
@@ -164,31 +173,31 @@ public class RandomMapPanelBasic extends JPanel {
         hillinessCombo.checkpoint();
 
         mountainCombo.setSelectedItem(convertMountain(this.mapSettings.getMountainPeaks(),
-                                                      this.mapSettings.getMountainHeightMin(),
-                                                      this.mapSettings.getMountainWidthMin(),
-                                                      this.mapSettings.getMountainStyle()));
+                this.mapSettings.getMountainHeightMin(),
+                this.mapSettings.getMountainWidthMin(),
+                this.mapSettings.getMountainStyle()));
         mountainCombo.checkpoint();
 
         cityTypeCombo.setSelectedItem(this.mapSettings.getCityType());
         cityTypeCombo.checkpoint();
 
         fortifiedCombo.setSelectedItem(fortifiedToRange(this.mapSettings.getMinFortifiedSize(),
-                                                        this.mapSettings.getMinFortifiedSpots()));
+                this.mapSettings.getMinFortifiedSpots()));
         fortifiedCombo.checkpoint();
 
         pavementCombo.setSelectedItem(pavementToRange(this.mapSettings.getMinPavementSize(),
-                                                      this.mapSettings.getMinPavementSpots()));
+                this.mapSettings.getMinPavementSpots()));
         pavementCombo.checkpoint();
 
         plantedFieldsCombo.setSelectedItem(plantedFieldsToRange(this.mapSettings.getMinPlantedFieldSize(),
-                                                                this.mapSettings.getMinPlantedFieldSpots()));
+                this.mapSettings.getMinPlantedFieldSpots()));
         plantedFieldsCombo.checkpoint();
 
         roadsCombo.setSelectedItem(percentageToRange(this.mapSettings.getProbRoad()));
         roadsCombo.checkpoint();
 
         rubbleCombo.setSelectedItem(rubbleToRange(this.mapSettings.getMinRubbleSize(),
-                                                  this.mapSettings.getMinRubbleSpots()));
+                this.mapSettings.getMinRubbleSpots()));
         rubbleCombo.checkpoint();
     }
 
@@ -205,7 +214,7 @@ public class RandomMapPanelBasic extends JPanel {
         panel.add(riversLabel);
         riversCombo.setToolTipText(Messages.getString("RandomMapDialog.riversCombo.toolTip"));
         panel.add(riversCombo);
-        
+
         final JLabel iceLabel = new JLabel(Messages.getString("RandomMapDialog.labIce"));
         panel.add(iceLabel);
         iceCombo.setToolTipText(Messages.getString("RandomMapDialog.iceCombo.toolTip"));
@@ -214,7 +223,6 @@ public class RandomMapPanelBasic extends JPanel {
         makeCompactGrid(panel, 3, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
-    
 
     private String iceToRange(int minSize, int minSpots) {
         return convert(minSize + minSpots, 2, 4, 6);
@@ -224,7 +232,7 @@ public class RandomMapPanelBasic extends JPanel {
         int range = percentDeep + (minSize * 5) + (minSpots * 10);
         return convert(range, 20, 65, 100);
     }
-    
+
     private String convert(int value, int low, int med, int high) {
         if (value >= high) {
             return HIGH;
@@ -238,7 +246,7 @@ public class RandomMapPanelBasic extends JPanel {
 
     private JScrollPane setupNaturalFeaturesPanel() {
         JPanel panel = new JPanel(new SpringLayout());
-        
+
         final JLabel roughsLabel = new JLabel(Messages.getString("RandomMapDialog.labRough"));
         panel.add(roughsLabel);
         roughsCombo.setToolTipText(Messages.getString("RandomMapDialog.roughsCombo.toolTip"));
@@ -278,7 +286,7 @@ public class RandomMapPanelBasic extends JPanel {
         panel.add(tundraLabel);
         tundraCombo.setToolTipText(Messages.getString("RandomMapDialog.tundraCombo.toolTip"));
         panel.add(tundraCombo);
-        
+
         makeCompactGrid(panel, 8, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
@@ -321,7 +329,7 @@ public class RandomMapPanelBasic extends JPanel {
         panel.add(mountainLabel);
         mountainCombo.setToolTipText(Messages.getString("RandomMapDialog.mountainCombo.toolTip"));
         panel.add(mountainCombo);
-        
+
         makeCompactGrid(panel, 4, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
@@ -375,7 +383,7 @@ public class RandomMapPanelBasic extends JPanel {
 
     private JScrollPane setupCivilizationPanel() {
         JPanel panel = new JPanel(new SpringLayout());
-        
+
         final JLabel cityTypeLabel = new JLabel(Messages.getString("RandomMapDialog.labCity"));
         panel.add(cityTypeLabel);
         cityTypeCombo.setToolTipText(Messages.getString("RandomMapDialog.cityTypeCombo.toolTip"));
@@ -405,7 +413,7 @@ public class RandomMapPanelBasic extends JPanel {
         panel.add(rubbleLabel);
         rubbleCombo.setToolTipText(Messages.getString("RandomMapDialog.rubbleCombo.toolTip"));
         panel.add(rubbleCombo);
-        
+
         makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
@@ -438,7 +446,7 @@ public class RandomMapPanelBasic extends JPanel {
             setupJungle(value, newMapSettings);
             anyChanges = true;
         }
-        
+
         if (foliageCombo.hasChanged()) {
             value = (String) foliageCombo.getSelectedItem();
             setupFoliage(value, newMapSettings);
@@ -740,7 +748,7 @@ public class RandomMapPanelBasic extends JPanel {
             mapSettings.setJungleParams(6, 10, 8, 13, 45, 5);
         }
     }
-    
+
     private void setupFoliage(String foliageValue, MapSettings mapSettings) {
         if (NONE.equalsIgnoreCase(foliageValue)) {
             mapSettings.setFoliageParams(0, 0, 0, 0, 0);
@@ -778,10 +786,11 @@ public class RandomMapPanelBasic extends JPanel {
         }
         return 75;
     }
-    
+
     /**
-     * From https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java
-     * 
+     * From
+     * https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java
+     *
      * Aligns the first <code>rows</code> * <code>cols</code>
      * components of <code>parent</code> in
      * a grid. Each component in a column is as wide as the maximum
@@ -789,12 +798,12 @@ public class RandomMapPanelBasic extends JPanel {
      * height is similarly determined for each row.
      * The parent is made just big enough to fit them all.
      *
-     * @param rows number of rows
-     * @param cols number of columns
+     * @param rows     number of rows
+     * @param cols     number of columns
      * @param initialX x location to start the grid at
      * @param initialY y location to start the grid at
-     * @param xPad x padding between cells
-     * @param yPad y padding between cells
+     * @param xPad     x padding between cells
+     * @param yPad     y padding between cells
      */
     public static void makeCompactGrid(Container parent,
             int rows, int cols,
@@ -804,7 +813,7 @@ public class RandomMapPanelBasic extends JPanel {
         try {
             layout = (SpringLayout) parent.getLayout();
         } catch (Exception ex) {
-            LogManager.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", ex);
+            logger.error(ex, "The first argument to makeCompactGrid must use SpringLayout.");
             return;
         }
 
@@ -814,37 +823,33 @@ public class RandomMapPanelBasic extends JPanel {
             Spring width = Spring.constant(0);
             for (int r = 0; r < rows; r++) {
                 width = Spring.max(width,
-                        getConstraintsForCell(r, c, parent, cols).
-                        getWidth());
+                        getConstraintsForCell(r, c, parent, cols).getWidth());
             }
             for (int r = 0; r < rows; r++) {
-                SpringLayout.Constraints constraints =
-                        getConstraintsForCell(r, c, parent, cols);
+                SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
                 constraints.setX(x);
                 constraints.setWidth(width);
             }
             x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
         }
 
-        //Align all cells in each row and make them the same height.
+        // Align all cells in each row and make them the same height.
         Spring y = Spring.constant(initialY);
         for (int r = 0; r < rows; r++) {
             Spring height = Spring.constant(0);
             for (int c = 0; c < cols; c++) {
                 height = Spring.max(height,
-                        getConstraintsForCell(r, c, parent, cols).
-                        getHeight());
+                        getConstraintsForCell(r, c, parent, cols).getHeight());
             }
             for (int c = 0; c < cols; c++) {
-                SpringLayout.Constraints constraints =
-                        getConstraintsForCell(r, c, parent, cols);
+                SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
                 constraints.setY(y);
                 constraints.setHeight(height);
             }
             y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
         }
 
-        //Set the parent's size.
+        // Set the parent's size.
         SpringLayout.Constraints pCons = layout.getConstraints(parent);
         pCons.setConstraint(SpringLayout.SOUTH, y);
         pCons.setConstraint(SpringLayout.EAST, x);
@@ -858,6 +863,5 @@ public class RandomMapPanelBasic extends JPanel {
         Component c = parent.getComponent(row * cols + col);
         return layout.getConstraints(c);
     }
-
 
 }

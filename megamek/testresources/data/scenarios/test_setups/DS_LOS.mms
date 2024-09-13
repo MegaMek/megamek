@@ -12,4 +12,3 @@ factions:
   - fullname: Intruder (3056)
     at: [ 10, 9 ]
     altitude: 0
-    

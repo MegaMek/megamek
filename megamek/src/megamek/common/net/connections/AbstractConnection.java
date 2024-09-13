@@ -15,6 +15,17 @@
 */
 package megamek.common.net.connections;
 
+import java.io.ByteArrayInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Objects;
+import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+
 import megamek.common.net.events.AbstractConnectionEvent;
 import megamek.common.net.events.ConnectedEvent;
 import megamek.common.net.events.DisconnectedEvent;
@@ -23,19 +34,13 @@ import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.marshalling.PacketMarshaller;
 import megamek.common.net.marshalling.PacketMarshallerFactory;
 import megamek.common.net.packets.Packet;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
+import megamek.logging.MMLogger;
 
 /**
  * Generic bidirectional connection between client and server
  */
 public abstract class AbstractConnection {
+    private static final MMLogger logger = MMLogger.create(AbstractConnection.class);
 
     private static final PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
     private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
@@ -78,7 +83,7 @@ public abstract class AbstractConnection {
      *
      * @param host target host
      * @param port target port
-     * @param id connection ID
+     * @param id   connection ID
      */
     public AbstractConnection(String host, int port, int id) {
         this.host = host;
@@ -91,7 +96,7 @@ public abstract class AbstractConnection {
      * Creates new Server connection
      *
      * @param socket accepted socket
-     * @param id connection ID
+     * @param id     connection ID
      */
     public AbstractConnection(Socket socket, int id) {
         this.socket = socket;
@@ -143,7 +148,7 @@ public abstract class AbstractConnection {
     /** Closes the socket and shuts down the receiver and sender threads. */
     public void close() {
         synchronized (this) {
-            LogManager.getLogger().info("Starting to close " + getConnectionTypeText());
+            logger.info("Starting to close " + getConnectionTypeText());
             sendQueue.reportContents();
             sendQueue.finish();
             try {
@@ -151,14 +156,16 @@ public abstract class AbstractConnection {
                     socket.close();
                 }
             } catch (Exception e) {
-                LogManager.getLogger().error("Failed closing connection " + getId(), e);
+                logger.error("Failed closing connection " + getId(), e);
             }
             socket = null;
         }
         processConnectionEvent(new DisconnectedEvent(this));
     }
 
-    /** @return True if the socket for this connection has been closed (or is null). */
+    /**
+     * @return True if the socket for this connection has been closed (or is null).
+     */
     public boolean isClosed() {
         return (socket == null) || socket.isClosed();
     }
@@ -171,6 +178,7 @@ public abstract class AbstractConnection {
     /**
      * Sets the connection ID
      * Note: Be careful with using this method
+     *
      * @param id new connection ID
      */
     public void setId(int id) {
@@ -211,7 +219,7 @@ public abstract class AbstractConnection {
         try {
             sendNetworkPacket(packet.getData(), packet.isCompressed());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -231,7 +239,8 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Adds the specified connection listener to receive connection events from connection.
+     * Adds the specified connection listener to receive connection events from
+     * connection.
      *
      * @param listener the connection listener.
      */
@@ -248,7 +257,10 @@ public abstract class AbstractConnection {
         connectionListeners.removeElement(listener);
     }
 
-    /** @return The connection type ("Client" / "Server") that is used in the debug messages and so on. */
+    /**
+     * @return The connection type ("Client" / "Server") that is used in the debug
+     *         messages and so on.
+     */
     protected String getConnectionTypeText() {
         return isServer() ? "Server" : "Client";
     }
@@ -267,15 +279,17 @@ public abstract class AbstractConnection {
         return socket.getSendBufferSize();
     }
 
-
     protected int getReceiveBufferSize() throws SocketException {
         return socket.getReceiveBufferSize();
     }
 
     /**
-     * Process all incoming data, blocking on the input stream until new input is available. This
-     * method should not be synchronized as it should only deal with the input side of things.
-     * Without creating separate read/write locks, making this method synchronized would not allow
+     * Process all incoming data, blocking on the input stream until new input is
+     * available. This
+     * method should not be synchronized as it should only deal with the input side
+     * of things.
+     * Without creating separate read/write locks, making this method synchronized
+     * would not allow
      * synchronous reads and writes.
      */
     public void update() {
@@ -285,22 +299,23 @@ public abstract class AbstractConnection {
                 processPacket(np);
             }
         } catch (java.io.InvalidClassException ex) {
-            LogManager.getLogger().error(getConnectionTypeText(), ex);
+            logger.error(getConnectionTypeText(), ex);
             close();
         } catch (SocketException | EOFException ignored) {
             // Do nothing, happens when the socket closes
             close();
         } catch (IOException ex) {
-            LogManager.getLogger().error(getConnectionTypeText(), ex);
+            logger.error(getConnectionTypeText(), ex);
             close();
         } catch (Exception ex) {
-            LogManager.getLogger().error(getConnectionTypeText() + " had an error receiving a packet", ex);
+            logger.error(getConnectionTypeText() + " had an error receiving a packet", ex);
             close();
         }
     }
 
     /**
-     * Send all queued packets. This method is synchronized since it deals with the non-thread-safe
+     * Send all queued packets. This method is synchronized since it deals with the
+     * non-thread-safe
      * send queue.
      */
     public synchronized void flush() {
@@ -311,10 +326,10 @@ public abstract class AbstractConnection {
             }
         } catch (Exception ex) {
             if (packet == null) {
-                LogManager.getLogger().error(String.format("%s had an error sending a null packet",
+                logger.error(String.format("%s had an error sending a null packet",
                         getConnectionTypeText()), ex);
             } else {
-                LogManager.getLogger().error(String.format("%s had an error sending command %s",
+                logger.error(String.format("%s had an error sending command %s",
                         getConnectionTypeText(), packet.getCommand().name()), ex);
             }
             close();
@@ -341,7 +356,8 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Reads a complete NetworkPacket. This method must not block, must return null instead.
+     * Reads a complete NetworkPacket. This method must not block, must return null
+     * instead.
      *
      * @return the NetworkPacket that was sent.
      */
@@ -350,7 +366,7 @@ public abstract class AbstractConnection {
     /**
      * Sends the data. This must not be blocked for too long
      *
-     * @param data data to send
+     * @param data   data to send
      * @param zipped should the data be compressed
      * @throws Exception if there's an issue with sending the packet
      */

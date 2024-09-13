@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons.bombs;
@@ -29,7 +29,7 @@ import megamek.server.totalwarfare.TWGameManager;
 public class CLASEWMissileWeapon extends ThunderBoltWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2094737986722961212L;
 
@@ -51,7 +51,7 @@ public class CLASEWMissileWeapon extends ThunderBoltWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 20000;
-        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         this.shortAV = 0;
         this.medAV = 0;
         this.longAV = 0;
@@ -68,8 +68,8 @@ public class CLASEWMissileWeapon extends ThunderBoltWeapon {
         .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(false, false, false, false, false);
     }
-    
-    
+
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, TWGameManager manager) {

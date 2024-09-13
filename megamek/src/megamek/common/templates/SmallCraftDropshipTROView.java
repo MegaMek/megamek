@@ -115,12 +115,13 @@ public class SmallCraftDropshipTROView extends AeroTROView {
                 + (aero.isSpheroid() ? Messages.getString("TROView.Spheroid") : Messages.getString("TROView.Aerodyne"));
     }
 
-    private static final String[][] SPHEROID_ARCS = { { "Nose" }, { "RS Fwd", "LS Fwd" }, { "RS Aft", "LS Aft" }, { "Aft" } };
+    private static final String[][] SPHEROID_ARCS = { { "Nose" }, { "RS Fwd", "LS Fwd" }, { "RS Aft", "LS Aft" },
+            { "Aft" } };
 
     private static final String[][] AERODYNE_ARCS = { { "Nose" }, { "RW", "LW" }, { "RW Aft", "LW Aft" }, { "Aft" } };
 
     @Override
-    protected String getArcAbbr(Mounted m) {
+    protected String getArcAbbr(Mounted<?> m) {
         final String[][] arcs = aero.isSpheroid() ? SPHEROID_ARCS : AERODYNE_ARCS;
         switch (m.getLocation()) {
             case Aero.LOC_NOSE:
@@ -144,7 +145,7 @@ public class SmallCraftDropshipTROView extends AeroTROView {
     }
 
     @Override
-    protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+    protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
         String str;
         if (mounted.getLocation() == Aero.LOC_RWING) {
             str = "TROView.RS";

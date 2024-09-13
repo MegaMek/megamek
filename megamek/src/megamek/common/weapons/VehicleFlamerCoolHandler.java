@@ -87,7 +87,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
         }
         // coolant also reduces heat of mechs
-        if (target instanceof Mech) {
+        if (target instanceof Mek) {
             int nDamage = (nDamPerHit * hits) + 1;
             r = new Report(3400);
             r.subject = subjectId;

@@ -19,19 +19,19 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import megamek.MegaMek;
+import megamek.logging.MMLogger;
+
 /**
  * This enum represents the various Entity Movement Types
  */
 public enum EntityMovementMode {
-    //region Enum Declarations
+    // region Enum Declarations
     NONE("EntityMovementMode.NONE.text"),
     BIPED("EntityMovementMode.BIPED.text"),
     TRIPOD("EntityMovementMode.TRIPOD.text"),
@@ -57,21 +57,21 @@ public enum EntityMovementMode {
     STATION_KEEPING("EntityMovementMode.STATION_KEEPING.text"),
     RAIL("EntityMovementMode.RAIL.text"),
     MAGLEV("EntityMovementMode.MAGLEV.text");
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
-    //region Variable Declarations
+    // region Variable Declarations
     private final String name;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     EntityMovementMode(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Boolean Comparisons
+    // region Boolean Comparisons
     public boolean isNone() {
         return this == NONE;
     }
@@ -219,7 +219,7 @@ public enum EntityMovementMode {
         return isBiped() || isTripod() || isQuad() || isTrackedWheeledOrHover() || isLegInfantry()
                 || isMotorizedInfantry() || isJumpInfantry() || isTrain();
     }
-    //endregion Boolean Comparisons
+    // endregion Boolean Comparisons
 
     public static List<EntityMovementMode> getCombatVehicleModes() {
         return Stream.of(values()).filter(EntityMovementMode::isCombatVehicle).collect(Collectors.toList());
@@ -229,7 +229,7 @@ public enum EntityMovementMode {
         return Stream.of(values()).filter(EntityMovementMode::isInfantryVehicle).collect(Collectors.toList());
     }
 
-    //region File I/O
+    // region File I/O
     /**
      * @param text the string to parse
      * @return the EntityMovementMode, or NONE if there is an error in parsing
@@ -241,7 +241,8 @@ public enum EntityMovementMode {
 
         }
 
-        // Splitting this off the baseline as it is a legacy call, the text should be saved uppercase
+        // Splitting this off the baseline as it is a legacy call, the text should be
+        // saved uppercase
         try {
             return valueOf(text.toUpperCase());
         } catch (Exception ignored) {
@@ -278,11 +279,12 @@ public enum EntityMovementMode {
 
         }
 
-        LogManager.getLogger().error("Unable to parse " + text + " into an EntityMovementMode. Returning NONE.");
+        MMLogger.create(EntityMovementMode.class)
+                .error("Unable to parse " + text + " into an EntityMovementMode. Returning NONE.");
 
         return NONE;
     }
-    //endregion File I/O
+    // endregion File I/O
 
     @Override
     public String toString() {

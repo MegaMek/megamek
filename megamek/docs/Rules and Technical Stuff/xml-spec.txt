@@ -28,11 +28,11 @@ Drawing Board.
         will be ignored.
      The following attributes are defined for this element:
         type - required - identifies the type of entity being described.
-                Valid values are: Mech, Tank, BattleArmor, or Infantry.
+                Valid values are: Mek, Tank, BattleArmor, or Infantry.
 
 <packetData> - The "payload" for the packet. Contains one or more other
         elements. The exact details on the number and types of elements
-        are included in the packet documentation. 
+        are included in the packet documentation.
      The following attributes are defined for this element:
         count - required - identifies the number of data elements in
                 the packet. Any non-negative integer is valid.
@@ -43,7 +43,7 @@ Drawing Board.
                 encoding of the compressed data.
 
 <board> - A rectangular, hex-based battlefield, specifying the terrain
-        (including fire and smoke), buildings, and burning Inferno rounds. 
+        (including fire and smoke), buildings, and burning Inferno rounds.
         Contains one <boardData> element, zero or one <buildings> elements,
         and zero or one <infernos> elements. The hex field of every board is
         rotated so that, if you consider the top of the board to be North, the
@@ -89,7 +89,7 @@ Drawing Board.
                 the hex. Any non-negative integer is valid.
         elevation - required - identifies the base elevation of the hex. Any
                 integer is valid.
-        theme - optional - identifies the theme of the graphics for the hex. 
+        theme - optional - identifies the theme of the graphics for the hex.
                 Any string is valid. Not all values for theme produce
                 meaningful results.
 
@@ -103,10 +103,10 @@ Drawing Board.
                 the various levels are documented with the terrain types.
         exits - required - the level of the terrain feature. Any integer
                 between 0 and 63 is valid. Certain terrain features like
-                roads and buildings have special rules when one travels 
+                roads and buildings have special rules when one travels
                 from one hex to another along (or inside) the terrain feature.
                 This attribute specifies when a terrain feature in one hex is
-                connected to the same terrain feature in an adjacent hex. 
+                connected to the same terrain feature in an adjacent hex.
                 Each edge of a hex is assigned a numeric value: the North edge
                 is 1, the Northeast edge is 2, the Southeast edge is 4, the
                 South edge is 8, the Southwest edge is 16, and the Northwest
@@ -141,7 +141,7 @@ Drawing Board.
      The following attributes are defined for this element:
         id - required - a unique identifier for the building. Valid values
                 are any non-negative integer.
-        type - required - identifies the construction type of this building. 
+        type - required - identifies the construction type of this building.
                 Valid values are 1, 2, 3, and 4. A value of 1 indicates a
                 light building, 2 is for medium buildings, 3 is for heavy
                 construction, and 4 is for hardened buildings.
@@ -154,7 +154,7 @@ Drawing Board.
                 floor in a single hex; if the cumulative tonnage exceeds the
                 currentCF, the building will collapse immediately.
         phaseCF - required - the number of construction factors (i.e. damage
-                points) that the building had at the beginning of the phase. 
+                points) that the building had at the beginning of the phase.
                 Valid values are any positive integer. The damage that a
                 building inflicts during a collapse and upon units moving
                 through its walls is based upon the phaseCF, not the currentCF.
@@ -186,7 +186,7 @@ Drawing Board.
         is the upper-lefthand-corner, X increases to the right of the origin,
         and Y increases below the origin.
      The following attributes are defined for this element:
-        hash - required - the hash value that represents these coordinates. 
+        hash - required - the hash value that represents these coordinates.
                Any non-negative integer is valid. The value = X * 256 + Y.
 
 <entity> - A playable item in the game. Contains zero or one <pilot>
@@ -213,7 +213,7 @@ Drawing Board.
         mass - optional - the mass of the unit. Any integer value between
                 0 and 100 is valid. Not all mass values are valid for all
                 template types.
-        engineRating - optional - the rating of the entity's engine. Any 
+        engineRating - optional - the rating of the entity's engine. Any
                 numeric value between 0 and 400 is valid.
         engineType - optional - the type of engine used by the entity.
                 Valid values are: IC, Fusion, XL, and Light. Not all
@@ -279,7 +279,7 @@ Drawing Board.
         <slot> elements. Not every template type can have the maximum
         number of <armor> or <slot> elements. If a <location> is omitted
         from an <entity> in a <unit>, the values of the entity's template
-        will be used. 
+        will be used.
      The following attributes are defined for this element:
         index - required - the index of the location on the entity. Any
                 integer value from 0 to 7 is valid. Not all index values
@@ -374,14 +374,14 @@ An example unit would be:
 
 An example template would be:
 
-<template type="Mech">
-   <entity chassis="Barney" model="KIL-ME" 
+<template type="Mek">
+   <entity chassis="Barney" model="KIL-ME"
         type="Biped" techBase="IS" year="3025" engineRating="40"
         engineType="Fusion" structure="Standard" myomer="Standard"
         armor="Standard" sinkTotal="Standard" sinkType="Single"
         walkMp="2" jumpMp="0">
       <fluff>
-   An annoying purple lizard-shaped Mech with bad breath and a killer hug.
+   An annoying purple lizard-shaped Mek with bad breath and a killer hug.
    This unit is intentionally easy to kill. They tend to explode... a lot!
       </fluff>
       The first slot in a location is at index="1".

@@ -20,7 +20,6 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.InitiativeRoll;
 import megamek.common.Roll;
 
 import java.util.List;
@@ -37,7 +36,6 @@ public class SBFRollReportEntry extends SBFReportEntry {
     private static final List<String> DICE = List.of(ONE, TWO, THREE, FOUR, FIVE, SIX);
 
     private final String rollText;
-
 
     public SBFRollReportEntry(Roll roll) {
         super(0);

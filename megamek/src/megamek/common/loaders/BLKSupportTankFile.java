@@ -13,16 +13,23 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.SupportTank;
+import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKSupportTankFile extends BLKFile implements IMechLoader {
+public class BLKSupportTankFile extends BLKFile implements IMekLoader {
+    private static final MMLogger logger = MMLogger.create(BLKSupportTankFile.class);
+
     public BLKSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -78,7 +85,8 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
-        int engineRating = Math.max(10, (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
+        int engineRating = Math.max(10,
+                (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
         if (dataFile.getDataAsInt("cruiseMP")[0] == 0) {
             engineRating = engineCode == BLKFile.NONE ? 0 : 10;
         }
@@ -131,7 +139,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
                     .getDataAsInt("armor_tech_rating")[0]);
         } else if (dataFile.exists("armor_tech")) {
             t.setArmorTechRating(dataFile
-                .getDataAsInt("armor_tech")[0]);
+                    .getDataAsInt("armor_tech")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
@@ -176,9 +184,9 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                LogManager.getLogger().error("While loading " + t.getShortNameRaw()
-                                + ": Could not parse ICE fuel type "
-                                + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading " + t.getShortNameRaw()
+                        + ": Could not parse ICE fuel type "
+                        + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

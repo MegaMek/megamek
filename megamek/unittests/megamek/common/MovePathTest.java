@@ -19,13 +19,17 @@
  */
 package megamek.common;
 
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -40,7 +44,7 @@ public class MovePathTest {
         mockPC.setGravity(1.0f);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
 
-        Entity mockMech = mock(BipedMech.class);
+        Entity mockMek = mock(BipedMek.class);
 
         Vector<MoveStep> stepVector = new Vector<>();
 
@@ -56,7 +60,7 @@ public class MovePathTest {
         MoveStep mockStep4 = mock(MoveStep.class);
         stepVector.add(mockStep4);
 
-        MovePath testPath = spy(new MovePath(mockGame, mockMech));
+        MovePath testPath = spy(new MovePath(mockGame, mockMek));
         doReturn(stepVector).when(testPath).getStepVector();
 
         assertEquals(mockStep4, testPath.getLastStep());

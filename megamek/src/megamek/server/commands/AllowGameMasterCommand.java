@@ -23,7 +23,8 @@ import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
- * This command votes to allow another player to assume the elevated Game Master role
+ * This command votes to allow another player to assume the elevated Game Master
+ * role
  *
  * @author pakfront
  */
@@ -55,14 +56,14 @@ public class AllowGameMasterCommand extends ServerCommand {
         voteYes(server, player);
     }
 
-    protected static void voteYes(Server server, Player player ) {
+    protected static void voteYes(Server server, Player player) {
         player.setVotedToAllowGameMaster(true);
 
         // Tally votes
         boolean allowGameMaster = true;
         int voteCount = 0;
         int eligiblePlayerCount = 0;
-        for (Player p : server.getGame().getPlayersVector()) {
+        for (Player p : server.getGame().getPlayersList()) {
             if (p.getTeam() != Player.TEAM_UNASSIGNED) {
                 allowGameMaster &= p.getVotedToAllowGameMaster();
                 if (p.getVotedToAllowGameMaster()) {

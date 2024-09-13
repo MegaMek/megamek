@@ -105,7 +105,7 @@ Minefields_PlayerB=1,0,3
 Camo_PlayerA=Clans/Wolf/,Alpha Galaxy.jpg
 Camo_PlayerB=Clans/Burrock/,Clan Burrock.jpg
 
-# Mechlist for each faction -------------------------------------------------
+# Meklist for each faction -------------------------------------------------
 #
 # Units are constructed as Unit_<faction name>_<#>, where the faction name
 # matches the one listed in the Faction property and the # is a sequential
@@ -113,7 +113,7 @@ Camo_PlayerB=Clans/Burrock/,Clan Burrock.jpg
 # the gap will be ignored.
 #
 
-# The format is MechRef,PilotName,PilotGunnery,PilotPiloting,facing,x,y
+# The format is MekRef,PilotName,PilotGunnery,PilotPiloting,facing,x,y
 # Facing and coordinates are optional. Facing is one of NW, N, NE, SE, S, SW
 # Example: Unit_Irregulars_1=HGN-732,Col Rhonda Snord,2,1,N,01,32
 
@@ -131,7 +131,7 @@ Unit_PlayerC_1=Locust LCT-1M,PilotB2,4,5
 Unit_PlayerA_2_Advantages=melee_specialist pain_resistance
 Unit_PlayerB_2_Advantages=dodge_maneuver
 
-#set autoeject, only for mechs
+#set autoeject, only for meks
 Unit_PlayerA_2_AutoEject=false
 Unit_PlayerB_2_AutoEject=true
 
@@ -164,9 +164,9 @@ Unit_PlayerA_1_Camo=Clans/Wolf/,Alpha Galaxy.jpg
 
 # Advanced Dammage Modification
 #
-# Mech Locations
+# Mek Locations
 # 	HEAD=0,CT=1,RT=2,LT=3,RARM=4,LARM=5,RLEG=6,LLEG=7
-# Example for Mechs:
+# Example for Meks:
 #   N0:1 Means Normal Armor Location 0 Set to 1
 #   I2:2 Means Internal Armor Location 2 Set to 2
 #   R2:3 Means Rear Armor Location 2 Set to 3
@@ -183,7 +183,7 @@ Unit_PlayerA_1_Camo=Clans/Wolf/,Alpha Galaxy.jpg
 #          Will set unit 3 to have 1 Armor Remaning
 #          while unit 4 Destroyed
 #
-# Proto Mechs
+# Proto Meks
 #      Head=0,Torso =1,RARM=2,LARM=3,LEGS=4,Main Gun=5
 #
 Unit_Kurita_1_DamageSpecific=I1:10,N2:2
@@ -197,7 +197,7 @@ Unit_Kurita_5_DamageSpecific=N4:1,N1:1
 # eg Unit_Kurita_1_CritHit=1:8
 # This does a crit hit on location 1 slot 8.
 #
-# Mech Crit Hits
+# Mek Crit Hits
 # 	HEAD=0,CT=1,RT=2,LT=3,RARM=4,LARM=5,RLEG=6,LLEG=7
 # 	Slots starting from 1 to the number of filled critical slots
 #
@@ -211,7 +211,7 @@ Unit_Kurita_5_DamageSpecific=N4:1,N1:1
 # 	5 = Fuel Tank/Engine Shielding (tank dead)
 # 	6 = Power Plant Hit (tank dead)
 #
-# Proto Mechs
+# Proto Meks
 # 	Head=0,Torso=1,RARM=2,LARM=3,LEGS=4,Main Gun=5
 # 	Slots starting from 1 to the number of critical hit boxes
 #
@@ -225,13 +225,13 @@ Unit_Kurita_4_CritHit=2:1,1:5
 Unit_Kurita_5_CritHit=0:3
 Unit_Kurita_6_CritHit=2:10
 
-# Set Ammo Ammount(Only Works for Mechs)
+# Set Ammo Ammount(Only Works for Meks)
 #
 # Note will not be able to specifiy a value larger then Inital Ammout
 #
 # Loc and Slots are the same as Crit Locations
 #
-# For a Mech this would
+# For a Mek this would
 # Unit_Kurita_6_SetAmmoTo=2:11-3
 # Would set Ammo at Slot 2:11 to 3 points
 #

@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
@@ -41,7 +47,7 @@ public enum CardinalEdge {
     public int getIndex() {
         return index;
     }
-    
+
     @Override
     public String toString() {
         return text;
@@ -58,7 +64,7 @@ public enum CardinalEdge {
         }
         return null;
     }
-    
+
     /**
      * Given a string, attempt to figure out if it corresponds to a cardinal edge
      */
@@ -67,16 +73,16 @@ public enum CardinalEdge {
         try {
             return valueOf(source);
         } catch (Exception ignored) {}
-        
+
         // attempt "legacy" parse
         try {
             int edgeIndex = Integer.parseInt(source);
             return getCardinalEdge(edgeIndex);
         } catch (Exception ignored) {}
-        
+
         return CardinalEdge.NONE;
     }
-    
+
     /**
      * Convert an OffBoardDirection to a cardinal edge
      */
@@ -94,7 +100,7 @@ public enum CardinalEdge {
                 return NONE;
         }
     }
-    
+
     /**
      * Attempt to determine the opposite edge, given another cardinal edge
      */
@@ -111,6 +117,6 @@ public enum CardinalEdge {
             default:
                 return NONE;
         }
-            
+
     }
 }

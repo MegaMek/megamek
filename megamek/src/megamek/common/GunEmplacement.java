@@ -17,15 +17,19 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
- * Taharqa: I am completely re-writing this entity to bring it up to code with TacOps rules
- * GunEmplacements will not simply be the weapon loadouts that can be attached to buildings.
- * They will not be targetable in game, but will be destroyed if their building hex is reduced.
+ * Taharqa: I am completely re-writing this entity to bring it up to code with
+ * TacOps rules
+ * GunEmplacements will not simply be the weapon loadouts that can be attached
+ * to buildings.
+ * They will not be targetable in game, but will be destroyed if their building
+ * hex is reduced.
  */
 public class GunEmplacement extends Tank {
+    private static final MMLogger logger = MMLogger.create(GunEmplacement.class);
 
     private static final long serialVersionUID = 8561738092216598248L;
 
@@ -37,20 +41,20 @@ public class GunEmplacement extends Tank {
     private static final int[] CRITICAL_SLOTS = new int[] { 0 };
     private static final String[] LOCATION_ABBRS = { "GUN" };
     private static final String[] LOCATION_NAMES = { "GUNS" };
-        
+
     private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
+
     public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
+
     private int initialBuildingCF;
     private int initialBuildingArmor;
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_GUN_EMPLACEMENT;
@@ -58,7 +62,7 @@ public class GunEmplacement extends Tank {
 
     public GunEmplacement() {
         initializeInternal(IArmorState.ARMOR_NA, LOC_GUNS);
-        //give it an engine just to avoid NPE on calls to Tank
+        // give it an engine just to avoid NPE on calls to Tank
         setEngine(new Engine(0, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
     }
 
@@ -75,7 +79,7 @@ public class GunEmplacement extends Tank {
     public boolean isImmobile() {
         return true;
     }
-    
+
     /**
      * Our gun emplacements do not support dual turrets at this time
      */
@@ -106,29 +110,33 @@ public class GunEmplacement extends Tank {
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
-        //gun emplacements must be placed on a building
+        // gun emplacements must be placed on a building
         return !hex.containsTerrain(Terrains.BUILDING);
 
     }
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+        return 0; // Overridden for performance and to keep it from being made non-zero by any
+                  // rule
     }
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+        return 0; // Overridden for performance and to keep it from being made non-zero by any
+                  // rule
     }
 
     @Override
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
-        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+        return 0; // Overridden for performance and to keep it from being made non-zero by any
+                  // rule
     }
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+        return 0; // Overridden for performance and to keep it from being made non-zero by any
+                  // rule
     }
 
     @Override
@@ -166,7 +174,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         return rollHitLocation(table, side);
     }
 
@@ -247,7 +255,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+    public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
@@ -262,10 +270,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
+            logger.debug(getDisplayName() + " CRIPPLED: Crew dead.");
             return true;
         } else if (isMilitary() && !hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            logger.debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
             return true;
         } else {
             return false;
@@ -276,7 +284,7 @@ public class GunEmplacement extends Tank {
     public boolean isDmgHeavy() {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
-        for (Mounted weap : getTotalWeaponList()) {
+        for (Mounted<?> weap : getTotalWeaponList()) {
             if (weap.isCrippled()) {
                 totalInoperable++;
             }
@@ -288,7 +296,7 @@ public class GunEmplacement extends Tank {
     public boolean isDmgLight() {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
-        for (Mounted weap : getTotalWeaponList()) {
+        for (Mounted<?> weap : getTotalWeaponList()) {
             if (weap.isCrippled()) {
                 totalInoperable++;
             }
@@ -301,7 +309,7 @@ public class GunEmplacement extends Tank {
     public boolean isDmgModerate() {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
-        for (Mounted weap : getTotalWeaponList()) {
+        for (Mounted<?> weap : getTotalWeaponList()) {
             if (weap.isCrippled()) {
                 totalInoperable++;
             }
@@ -314,16 +322,17 @@ public class GunEmplacement extends Tank {
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_GUN_EMPLACEMENT;
     }
-    
+
     @Override
     public boolean hasEngine() {
         // TODO: Power generators and energy grid setup
         return false;
     }
-    
+
     @Override
     public int getArmorType(int loc) {
-        // this is a hack to get around the fact that gun emplacements don't even have armor
+        // this is a hack to get around the fact that gun emplacements don't even have
+        // armor
         return 0;
     }
 
@@ -331,14 +340,14 @@ public class GunEmplacement extends Tank {
     public int getArmorTechLevel(int loc) {
         return TechConstants.T_INTRO_BOXSET;
     }
-    
+
     @Override
     public boolean hasStealth() {
         return false;
     }
-    
+
     /**
-     * Sets the deployed flag. 
+     * Sets the deployed flag.
      * Has the side effect of initializing building CF if deployed
      */
     @Override
@@ -346,52 +355,52 @@ public class GunEmplacement extends Tank {
         super.setDeployed(deployed);
 
         // very aggressive null defense
-        if (deployed && (getGame() != null) && (getGame().getBoard() != null) && 
+        if (deployed && (getGame() != null) && (getGame().getBoard() != null) &&
                 (getPosition() != null)) {
             Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
-            
+
             if (occupiedStructure != null) {
                 initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
                 initialBuildingArmor = occupiedStructure.getArmor(getPosition());
                 return;
             }
-        }        
-        
+        }
+
         initialBuildingCF = initialBuildingArmor = 0;
     }
-    
+
     @Override
     public double getArmorRemainingPercent() {
         if (getPosition() == null) {
             return 1.0;
         }
-        
+
         Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
-        
+
         // we'll consider undeployed emplacements to be fully intact
         if ((occupiedStructure == null) || (initialBuildingCF + initialBuildingArmor == 0)) {
             return 1.0;
         }
-        
+
         return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
                 / ((double) (initialBuildingCF + initialBuildingArmor));
     }
-    
+
     /**
      * Gun emplacements don't have critical slots per se, so we
      * simply return 1 if the piece of equipment has been hit and 0 otherwise.
      */
     @Override
     public int getDamagedCriticals(int type, int index, int loc) {
-        Mounted m;
+        Mounted<?> m;
         if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
-            
+
             if (m != null && m.isHit()) {
                 return 1;
             }
         }
-        
+
         return 0;
     }
 

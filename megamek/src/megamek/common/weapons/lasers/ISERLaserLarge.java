@@ -13,10 +13,6 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
-
 /**
  * @author Andrew Hunter
  * @since Sep 12, 2004

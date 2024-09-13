@@ -18,6 +18,22 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
+import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
+import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
+
+import java.awt.Dimension;
+import java.util.*;
+import java.util.Map.Entry;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -29,7 +45,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.dialogs.SBFStatsDialog;
-import megamek.client.ui.swing.CustomMechDialog;
+import megamek.client.ui.swing.CustomMekDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitEditorDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
@@ -41,39 +57,37 @@ import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.util.CollectionUtil;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
-import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
-import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-
-/** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
+/**
+ * This class contains the methods that perform entity and force changes from
+ * the pop-up menu and elsewhere.
+ */
 public class LobbyActions {
+    private static final MMLogger logger = MMLogger.create(LobbyActions.class);
 
     private final ChatLounge lobby;
 
-    private String cmdSelectedTab = null;   // TODO: required?
+    private String cmdSelectedTab = null; // TODO: required?
 
-    /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
+    /**
+     * This class contains the methods that perform entity and force changes from
+     * the pop-up menu and elsewhere.
+     */
     LobbyActions(ChatLounge cl) {
         lobby = cl;
     }
 
-    /** Sets a deployment round for the given entities. Sends an update to the server. */
+    /**
+     * Sets a deployment round for the given entities. Sends an update to the
+     * server.
+     */
     void applyDeployment(Collection<Entity> entities, int newRound) {
         if (!validateUpdate(entities)) {
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             if (entity.getDeployRound() != newRound) {
                 entity.setDeployRound(newRound);
                 updateCandidates.add(entity);
@@ -92,7 +106,7 @@ public class LobbyActions {
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             if (entity.getHeat() != heat) {
                 entity.heat = heat;
                 updateCandidates.add(entity);
@@ -101,13 +115,16 @@ public class LobbyActions {
         sendUpdates(updateCandidates);
     }
 
-    /** Sets/removes hidden deployment for the given entities. Sends an update to the server. */
+    /**
+     * Sets/removes hidden deployment for the given entities. Sends an update to the
+     * server.
+     */
     void applyHidden(Collection<Entity> entities, boolean newHidden) {
         if (!validateUpdate(entities)) {
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             if (entity.isHidden() != newHidden) {
                 entity.setHidden(newHidden);
                 updateCandidates.add(entity);
@@ -129,7 +146,7 @@ public class LobbyActions {
         boolean goProne = info.equals(LMP_PRONE);
         boolean goHullDown = info.equals(LMP_HULLDOWN);
         boolean stand = !goProne && !goHullDown;
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             if ((goProne && !entity.isProne()) || (goHullDown && !entity.isHullDown())
                     || (stand && (entity.isProne() || entity.isHullDown()))) {
                 entity.setProne(goProne);
@@ -173,7 +190,6 @@ public class LobbyActions {
         var forceList = new ArrayList<>(List.of(force));
         client().sendForceParent(forceList, newParentId);
     }
-
 
     /**
      * Makes the given forces top-level, detaching them from any former parents.
@@ -281,7 +297,7 @@ public class LobbyActions {
      *
      * @param entities the units to configure
      */
-    public void customizeMechs(Collection<Entity> entities) {
+    public void customizeMeks(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
             return;
         }
@@ -293,7 +309,7 @@ public class LobbyActions {
         Client client = clientForCustomization(oneSelected);
         boolean editable = allowCustomization(oneSelected);
 
-        CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
+        CustomMekDialog cmd = new CustomMekDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                 GUIPreferences.getInstance().getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits"));
@@ -305,9 +321,9 @@ public class LobbyActions {
             sendCustomizationUpdate(entities);
         }
 
-        if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
-            Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
-            customizeMech(nextEnt);
+        if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
+            Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
+            customizeMek(nextEnt);
         }
     }
 
@@ -316,7 +332,7 @@ public class LobbyActions {
      *
      * @param entity the unit to configure
      */
-    public void customizeMech(Entity entity) {
+    public void customizeMek(Entity entity) {
         if (!validateUpdate(List.of(entity))) {
             return;
         }
@@ -329,7 +345,7 @@ public class LobbyActions {
             // display dialog
             List<Entity> entities = new ArrayList<>();
             entities.add(entity);
-            CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, entities, editable);
+            CustomMekDialog cmd = new CustomMekDialog(lobby.getClientgui(), client, entities, editable);
             cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                     GUIPreferences.getInstance().getCustomUnitHeight()));
             cmd.refreshOptions();
@@ -348,8 +364,8 @@ public class LobbyActions {
                 sendCustomizationUpdate(entities);
             }
 
-            if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
-                entity = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
+                entity = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
             } else {
                 doneCustomizing = true;
             }
@@ -370,8 +386,10 @@ public class LobbyActions {
     }
 
     /**
-     * For use after customization in the unit configuration dialog. Checks the given list
-     * of units for dependents (transported/contained units/C3 connections) and sends an update
+     * For use after customization in the unit configuration dialog. Checks the
+     * given list
+     * of units for dependents (transported/contained units/C3 connections) and
+     * sends an update
      * for all to the Server.
      *
      * @param entities The units that were configured
@@ -379,9 +397,9 @@ public class LobbyActions {
     private void sendCustomizationUpdate(Collection<Entity> entities) {
         Set<Entity> updateCandidates = new HashSet<>(entities);
         for (Entity entity : entities) {
-            // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
-            if ((entity instanceof LandAirMech)
-                    && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+            // If a LAM with mechanized BA was changed to non-mek mode, unload the BA.
+            if ((entity instanceof LandAirMek)
+                    && entity.getConversionMode() != LandAirMek.CONV_MODE_MEK) {
                 for (Entity loadee : entity.getLoadedUnits()) {
                     entity.unload(loadee);
                     loadee.setTransportId(Entity.NONE);
@@ -445,7 +463,8 @@ public class LobbyActions {
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i), e.getOwner().getName()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i),
+                        e.getOwner().getName()), i);
             }
         }
         sendUpdates(entities);
@@ -515,7 +534,8 @@ public class LobbyActions {
         if ((name == null) || name.isBlank()) {
             return;
         }
-        client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.anyOneElement(entities).getOwner()), entities);
+        client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.anyOneElement(entities).getOwner()),
+                entities);
     }
 
     /**
@@ -542,8 +562,8 @@ public class LobbyActions {
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
-            for (Mounted m: entity.getWeaponList()) {
+        for (Entity entity : entities) {
+            for (Mounted<?> m : entity.getWeaponList()) {
                 if (((WeaponType) m.getType()).hasFlag(WeaponType.F_MG)) {
                     m.setRapidfire(burstOn);
                     updateCandidates.add(entity);
@@ -564,15 +584,16 @@ public class LobbyActions {
     }
 
     /**
-     * Toggles hot loading LRMs for the given entities to the state given as hotLoadOn
+     * Toggles hot loading LRMs for the given entities to the state given as
+     * hotLoadOn
      */
     void toggleHotLoad(Collection<Entity> entities, boolean hotLoadOn) {
         if (!validateUpdate(entities)) {
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
-            for (Mounted m: entity.getAmmo()) {
+        for (Entity entity : entities) {
+            for (Mounted<?> m : entity.getAmmo()) {
                 // setHotLoad checks the Ammo to see if it can be hotloaded
                 m.setHotLoad(hotLoadOn);
                 // TODO: The following should ideally be part of setHotLoad in Mounted
@@ -592,16 +613,20 @@ public class LobbyActions {
         int loaderId = Integer.parseInt(stLoad.nextToken());
         Entity loader = game().getEntity(loaderId);
         int bayNumber = Integer.parseInt(stLoad.nextToken());
-        // Remove those entities from the candidates that are already carried by that loader
+        // Remove those entities from the candidates that are already carried by that
+        // loader
         Collection<Entity> entities = new HashSet<>(selEntities);
         entities.removeIf(e -> e.getTransportId() == loaderId);
         if (entities.isEmpty()) {
             return;
         }
 
-        // If a unit of the selected units is currently loaded onto another, 2nd unit of the selected
-        // units, do not continue. The player should unload units first. This would require
-        // a server update offloading that second unit AND embarking it. Currently not possible
+        // If a unit of the selected units is currently loaded onto another, 2nd unit of
+        // the selected
+        // units, do not continue. The player should unload units first. This would
+        // require
+        // a server update offloading that second unit AND embarking it. Currently not
+        // possible
         // as a single server update and updates for one unit shouldn't be chained.
         Set<Entity> carriers = entities.stream()
                 .filter(e -> e.getTransportId() != Entity.NONE)
@@ -623,7 +648,7 @@ public class LobbyActions {
             return;
         }
 
-        for (Entity e: entities) {
+        for (Entity e : entities) {
             if (e.getTransportId() != Entity.NONE) {
                 Entity formerLoader = game().getEntity(e.getTransportId());
                 Set<Entity> updateCandidates = new HashSet<>();
@@ -661,7 +686,8 @@ public class LobbyActions {
     }
 
     /**
-     * Deletes the given forces and entities. Asks for confirmation if confirm is true.
+     * Deletes the given forces and entities. Asks for confirmation if confirm is
+     * true.
      */
     void delete(Collection<Force> foDelete, Collection<Entity> enDelete, boolean confirm) {
         Forces forces = game().getForces();
@@ -672,7 +698,8 @@ public class LobbyActions {
         Set<Force> finalFoDelete = new HashSet<>(foDelete);
         // Remove redundant entities = entities in the given forces
         Set<Entity> inForces = new HashSet<>();
-        foDelete.stream().map(forces::getFullEntities).map(ForceAssignable::filterToEntityList).forEach(inForces::addAll);
+        foDelete.stream().map(forces::getFullEntities).map(ForceAssignable::filterToEntityList)
+                .forEach(inForces::addAll);
         enDelete.removeIf(inForces::contains);
         Set<Entity> finalEnDelete = new HashSet<>(enDelete);
 
@@ -703,7 +730,7 @@ public class LobbyActions {
 
         // Send a command to remove the forceless entities
         Set<Client> senders = finalEnDelete.stream().map(this::correctSender).collect(toSet());
-        for (Client sender: senders) {
+        for (Client sender : senders) {
             // Gather the entities for this sending client;
             // Serialization doesn't like the toList() result, therefore the new ArrayList
             List<Integer> ids = new ArrayList<>(finalEnDelete.stream()
@@ -713,7 +740,7 @@ public class LobbyActions {
 
         // Send a command to remove the forces (with entities)
         senders = finalFoDelete.stream().map(this::correctSender).collect(toSet());
-        for (Client sender: senders) {
+        for (Client sender : senders) {
             List<Force> foList = new ArrayList<>(finalFoDelete.stream()
                     .filter(f -> correctSender(f).equals(sender))
                     .collect(toList()));
@@ -723,8 +750,10 @@ public class LobbyActions {
 
     /**
      * Removes the given entities from their force(s), making them force-less.
-     * Entities must have a single owner and be editable (local units or local bot's units)
-     * (Having multiple owners makes sending updates correctly for one's own bots difficult)
+     * Entities must have a single owner and be editable (local units or local bot's
+     * units)
+     * (Having multiple owners makes sending updates correctly for one's own bots
+     * difficult)
      */
     void forceRemoveEntity(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
@@ -771,12 +800,13 @@ public class LobbyActions {
     }
 
     /**
-     * Performs a disconnect from C3 networks for the given entities without sending an update.
+     * Performs a disconnect from C3 networks for the given entities without sending
+     * an update.
      * Returns a set of all affected units.
      */
     private HashSet<Entity> performDisconnect(Collection<Entity> entities) {
         HashSet<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             if (entity.hasNhC3()) {
                 entity.setC3NetIdSelf();
                 updateCandidates.add(entity);
@@ -786,7 +816,7 @@ public class LobbyActions {
             }
         }
         // Also disconnect all units connected *to* that entity
-        for (Entity entity: game().getEntitiesVector()) {
+        for (Entity entity : game().getEntitiesVector()) {
             if (entities.contains(entity.getC3Master())) {
                 entity.setC3Master(null, true);
                 updateCandidates.add(entity);
@@ -795,7 +825,7 @@ public class LobbyActions {
         return updateCandidates;
     }
 
-    /**  Sets the entities' C3M to act as a Company Master. */
+    /** Sets the entities' C3M to act as a Company Master. */
     void c3SetCompanyMaster(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
             return;
@@ -808,7 +838,7 @@ public class LobbyActions {
         sendUpdates(entities);
     }
 
-    /**  Sets the entities' C3M to act as a Lance Master (aka normal mode). */
+    /** Sets the entities' C3M to act as a Lance Master (aka normal mode). */
     void c3SetLanceMaster(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
             return;
@@ -866,7 +896,7 @@ public class LobbyActions {
             LobbyErrors.showOnlyTeam(frame());
             return;
         }
-        boolean connectMS = master.isC3IndependentMaster()  && entities.stream().allMatch(Entity::hasC3S);
+        boolean connectMS = master.isC3IndependentMaster() && entities.stream().allMatch(Entity::hasC3S);
         boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(Entity::hasC3M);
         boolean connectSMM = master.hasC3MM() && entities.stream().allMatch(e -> e.hasC3S() || e.hasC3M());
         if (!connectMM && !connectMS && !connectSMM) {
@@ -905,18 +935,21 @@ public class LobbyActions {
         client().sendChangeOwner(entities, newOwnerId);
     }
 
-    /** Change the team of a controlled player (the local player or one of his bots). */
+    /**
+     * Change the team of a controlled player (the local player or one of his bots).
+     */
     void changeTeam(Collection<Player> players, int team) {
         var toSend = new HashSet<Player>();
         players.stream()
-            .filter(this::isSelfOrLocalBot)
-            .filter(p -> p.getTeam() != team)
-            .forEach(toSend::add);
+                .filter(this::isSelfOrLocalBot)
+                .filter(p -> p.getTeam() != team)
+                .forEach(toSend::add);
         client().sendChangeTeam(toSend, team);
     }
 
     /**
-     * Add the entities to the force if admissible (the entities must all be editable
+     * Add the entities to the force if admissible (the entities must all be
+     * editable
      * by the local player and be allied to the force's owner.
      */
     void forceAddEntity(Collection<Entity> entities, int forceId) {
@@ -961,7 +994,7 @@ public class LobbyActions {
             return;
         }
         List<Force> changedForces = new ArrayList<>();
-        for (Force force: forceList) {
+        for (Force force : forceList) {
             changedForces.addAll(forces.assignForceOnly(force, newOwner));
         }
         client().sendUpdateForce(changedForces);
@@ -1053,7 +1086,7 @@ public class LobbyActions {
         if (entities.stream().anyMatch(e -> e.getOwner().equals(localPlayer()))) {
             return localPlayer();
         } else {
-            for (Entry<String, AbstractClient> en: client().getBots().entrySet()) {
+            for (Entry<String, AbstractClient> en : client().getBots().entrySet()) {
                 Player bot = en.getValue().getLocalPlayer();
                 if (entities.stream().anyMatch(e -> e.getOwner().equals(bot))) {
                     return en.getValue().getLocalPlayer();
@@ -1063,7 +1096,10 @@ public class LobbyActions {
         return entities.stream().map(Entity::getOwner).findAny().get();
     }
 
-    /** Shows a non-modal dialog window with the Strategic BattleForce stats of the given forces. */
+    /**
+     * Shows a non-modal dialog window with the Strategic BattleForce stats of the
+     * given forces.
+     */
     void showSbfView(Collection<Force> fo) {
         if (fo.stream().anyMatch(f -> !SBFFormationConverter.canConvertToSbfFormation(f, lobby.game()))) {
             LobbyErrors.showSBFConversion(frame());
@@ -1072,13 +1108,17 @@ public class LobbyActions {
         new SBFStatsDialog(frame(), fo, lobby.game()).setVisible(true);
     }
 
-    /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */
+    /**
+     * Shows a non-modal dialog window with the AlphaStrike stats of the given
+     * entities.
+     */
     void showAlphaStrikeView(Collection<Entity> en) {
         new ASStatsDialog(frame(), en).setVisible(true);
     }
 
     /**
-     * Performs standard checks for updates (units must be present, visible and editable)
+     * Performs standard checks for updates (units must be present, visible and
+     * editable)
      * and returns false if that's not the case. Also shows an error message dialog.
      */
     private boolean validateUpdate(Collection<Entity> entities) {
@@ -1106,14 +1146,16 @@ public class LobbyActions {
      * or its teammates.
      */
     void sendUpdates(Collection<Entity> entities) {
-        // Gather the necessary sending clients; this list may contain null if some units
+        // Gather the necessary sending clients; this list may contain null if some
+        // units
         // cannot be affected at all, i.e. are enemies to localplayer and all his bots
         List<Client> senders = entities.stream().map(this::correctSender).distinct().collect(toList());
-        for (Client sender: senders) {
+        for (Client sender : senders) {
             if (sender == null) {
                 continue;
             }
-            sender.sendUpdateEntity(new ArrayList<>(entities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList())));
+            sender.sendUpdateEntity(
+                    new ArrayList<>(entities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList())));
         }
     }
 
@@ -1127,17 +1169,19 @@ public class LobbyActions {
      * or its teammates.
      */
     void sendUpdates(Collection<Entity> changedEntities, Collection<Force> changedForces) {
-        // Gather the necessary sending clients; this list may contain null if some units
+        // Gather the necessary sending clients; this list may contain null if some
+        // units
         // cannot be affected at all, i.e. are enemies to localplayer and all his bots
         Set<Client> senders = new HashSet<>();
         senders.addAll(changedEntities.stream().map(this::correctSender).distinct().collect(toList()));
         senders.addAll(changedForces.stream().map(this::correctSender).distinct().collect(toList()));
 
-        for (Client sender: senders) {
+        for (Client sender : senders) {
             if (sender == null) {
                 continue;
             }
-            List<Entity> enList = changedEntities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList());
+            List<Entity> enList = changedEntities.stream().filter(e -> correctSender(e).equals(sender))
+                    .collect(toList());
             List<Force> foList = changedForces.stream().filter(f -> correctSender(f).equals(sender)).collect(toList());
 
             if (foList.isEmpty()) {
@@ -1150,7 +1194,7 @@ public class LobbyActions {
 
     void sendSingleUpdate(Collection<Entity> changedEntities, Collection<Force> changedForces) {
         if (!areAllied(changedEntities, changedForces)) {
-            LogManager.getLogger().error("Cannot send force update unless all changed entities and forces are allied!");
+            logger.error("Cannot send force update unless all changed entities and forces are allied!");
             return;
         }
 
@@ -1158,7 +1202,8 @@ public class LobbyActions {
 
     /**
      * Returns the best sending client for an update of the given entity or
-     * null if none can be found (entity is an enemy to the local player and all his bots)
+     * null if none can be found (entity is an enemy to the local player and all his
+     * bots)
      */
     private Client correctSender(Entity entity) {
         Player owner = entity.getOwner();
@@ -1169,7 +1214,7 @@ public class LobbyActions {
         } else if (!localPlayer().isEnemyOf(owner)) {
             return client();
         } else {
-            for (AbstractClient bot: client().getBots().values()) {
+            for (AbstractClient bot : client().getBots().values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
                     return (Client) bot;
                 }
@@ -1181,7 +1226,8 @@ public class LobbyActions {
 
     /**
      * Returns the best sending client for an update of the given force or
-     * null if none can be found (force is an enemy to the local player and all his bots)
+     * null if none can be found (force is an enemy to the local player and all his
+     * bots)
      */
     private Client correctSender(Force force) {
         Player owner = game().getForces().getOwner(force);
@@ -1192,7 +1238,7 @@ public class LobbyActions {
         } else if (!localPlayer().isEnemyOf(owner) || isEditable(force)) {
             return client();
         } else {
-            for (AbstractClient bot: client().getBots().values()) {
+            for (AbstractClient bot : client().getBots().values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
                     return (Client) bot;
                 }
@@ -1204,7 +1250,8 @@ public class LobbyActions {
     /**
      * Returns true when the given entity may be configured by the local player,
      * i.e. if it is his own unit or one of his bot's units.
-     * <P>Note that this is more restrictive than the Server is. The Server
+     * <P>
+     * Note that this is more restrictive than the Server is. The Server
      * accepts entity changes also for teammates so that entity updates that
      * signal transporting a teammate's unit don't get rejected.
      * I think it's important to generally limit entity changes by other players
@@ -1224,6 +1271,7 @@ public class LobbyActions {
     /**
      * Returns true when the given entity may NOT be configured by the local player,
      * i.e. if it is not own unit or one of his bot's units.
+     *
      * @see #isEditable(Entity)
      */
     boolean isNotEditable(Entity entity) {
@@ -1233,6 +1281,7 @@ public class LobbyActions {
     /**
      * Returns true when all given entities may be configured by the local player,
      * i.e. if they are his own units or one of his bot's units.
+     *
      * @see #isEditable(Entity)
      */
     boolean isEditable(Collection<Entity> entities) {
@@ -1268,7 +1317,8 @@ public class LobbyActions {
     /**
      * A force is editable to the local player if any forces in its force chain
      * (this includes the force itself) is owned by the local player or one of the
-     * local bots. This allows editing forces of other players if they are a subforce
+     * local bots. This allows editing forces of other players if they are a
+     * subforce
      * of a local/bot force.
      */
     boolean isEditable(Force force) {
@@ -1289,12 +1339,14 @@ public class LobbyActions {
      * true when all entities belong to a single player. If they belong to
      * different players, it is true when all belong to the same team and
      * that team is one of Teams 1 through 5 (not "No Team").
-     * <P>Returns true when entities is empty or has only one entity. The case of
+     * <P>
+     * Returns true when entities is empty or has only one entity. The case of
      * entities being empty should be considered by the caller.
      */
     private boolean areAllied(Collection<Entity> entities) {
         if (entities.isEmpty()) {
-            LogManager.getLogger().warn("Empty collection of entities received, cannot determine if no entities are all allied. Returning true.");
+            logger.warn(
+                    "Empty collection of entities received, cannot determine if no entities are all allied. Returning true.");
             return true;
         }
         Entity randomEntry = entities.stream().findAny().get();
@@ -1302,14 +1354,17 @@ public class LobbyActions {
     }
 
     /**
-     * Returns true if no two of the given entities and forces are enemies. Also checks
+     * Returns true if no two of the given entities and forces are enemies. Also
+     * checks
      * between forces and entities.
+     *
      * @see #areAllied(Collection)
      * @see #areForcesAllied(Collection)
      */
     private boolean areAllied(Collection<Entity> entities, Collection<Force> forces) {
         if (entities.isEmpty() && forces.isEmpty()) {
-            LogManager.getLogger().warn("Empty collection of entities and forces received, cannot determine if these are allied. Returning true.");
+            logger.warn(
+                    "Empty collection of entities and forces received, cannot determine if these are allied. Returning true.");
             return true;
         }
         if (forces.isEmpty()) {
@@ -1331,12 +1386,14 @@ public class LobbyActions {
      * true when all forces belong to a single player. If they belong to
      * different players, it is true when all belong to the same team and
      * that team is one of Teams 1 through 5 (not "No Team").
-     * <P>Returns true when forces is empty or has only one force. The case of
+     * <P>
+     * Returns true when forces is empty or has only one force. The case of
      * forces being empty should be considered by the caller.
      */
     private boolean areForcesAllied(Collection<Force> forces) {
         if (forces.isEmpty()) {
-            LogManager.getLogger().warn("Empty collection of forces received, cannot determine if these are allied. Returning true.");
+            logger
+                    .warn("Empty collection of forces received, cannot determine if these are allied. Returning true.");
             return true;
         }
         Force randomEntry = forces.stream().findAny().get();

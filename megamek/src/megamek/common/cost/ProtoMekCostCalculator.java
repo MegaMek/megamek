@@ -19,12 +19,14 @@
 package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.Mounted;
+import megamek.common.ProtoMek;
+import megamek.common.WeaponType;
 import megamek.common.equipment.ArmorType;
 
 public class ProtoMekCostCalculator {
 
-    public static double calculateCost(Protomech protoMek, CalculationReport costReport, boolean ignoreAmmo) {
+    public static double calculateCost(ProtoMek protoMek, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[15];
         int idx = 0;
 
@@ -67,10 +69,11 @@ public class ProtoMekCostCalculator {
         // Jump jet cost is based on tonnage and jump MP.
         costs[idx++] = protoMek.getWeight() * protoMek.getJumpMP() * protoMek.getJumpMP() * 200;
 
-        // Heat sinks is constant per sink. Per the construction rules, we need enough sinks to sink all energy
+        // Heat sinks is constant per sink. Per the construction rules, we need enough
+        // sinks to sink all energy
         // weapon heat, so we just calculate the cost that way.
         int sinks = 0;
-        for (Mounted mount : protoMek.getWeaponList()) {
+        for (Mounted<?> mount : protoMek.getWeaponList()) {
             if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
                 WeaponType wtype = (WeaponType) mount.getType();
                 sinks += wtype.getHeat();
@@ -78,7 +81,7 @@ public class ProtoMekCostCalculator {
         }
         costs[idx++] = 2000 * sinks;
 
-        // Armor is linear on the armor value of the Protomech
+        // Armor is linear on the armor value of the ProtoMek
         costs[idx++] = protoMek.getTotalArmor() * ArmorType.forEntity(protoMek).getCost();
 
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(protoMek, ignoreAmmo);

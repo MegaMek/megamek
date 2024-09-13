@@ -36,7 +36,7 @@ public class CLAMS extends AmmoWeapon {
 		heat = 1;
 		rackSize = 2;
 		damage = 2; // for manual operation
-		minimumRange = 0; 
+		minimumRange = 0;
 		shortRange = 1;
 		mediumRange = 1;
 		longRange = 1;
@@ -47,22 +47,22 @@ public class CLAMS extends AmmoWeapon {
 		tonnage = 0.5;
 		criticals = 1;
 		bv = 32;
-		flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON)
-		        .or(F_PROTO_WEAPON);
+		flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).or(F_MEK_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON)
+				.or(F_PROTO_WEAPON);
 		setModes(new String[] { "On", "Off" });
 		setInstantModeSwitch(false);
 		cost = 100000;
 		atClass = CLASS_AMS;
 		rulesRefs = "204, TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
-		        .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
-		        .setProductionFactions(F_CSA).setStaticTechLevel(SimpleTechLevel.STANDARD);
+				.setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+				.setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
+				.setProductionFactions(F_CSA).setStaticTechLevel(SimpleTechLevel.STANDARD);
 	}
 
 	@Override
-	public double getBattleForceDamage(int range, Mounted fcs) {
+	public double getBattleForceDamage(int range, Mounted<?> fcs) {
 		return 0;
 	}
 

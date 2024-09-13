@@ -54,6 +54,3 @@ factions:
 
     - include: Noble's Company.mmu
       at: [ 11, 15 ]
-
-
-

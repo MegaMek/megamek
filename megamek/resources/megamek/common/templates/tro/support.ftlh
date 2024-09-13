@@ -8,15 +8,15 @@
 <#if includeFluff>
 <#include "fluff.ftlh">
 </#if>
-  
+
 	<p>
 	<b>Type:</b> ${chassis}<br/>
 	<b>Chassis Type:</b> ${moveType} (${weightClass})<br/>
-	<b>Technology Base:</b> ${techBase}<br/> 
+	<b>Technology Base:</b> ${techBase}<br/>
 	<b>Mass:</b> ${mass} ${weightStandard}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-	
+
 	<table>
 	<tr><th>Equipment</th><th/><th>Mass (${weightStandard})</th></tr>
 	<tr><td>Chassis/Controls</td><td></td><td align="center">${chassisControlMass}</td></tr>
@@ -102,7 +102,7 @@
 		</tr>
 </#if>
 	</table>
-	
+
 	<#if isOmni>
 	<b>Fixed Equipment</b><br/>
 		<#if fixedTonnage gt 0>
@@ -118,7 +118,7 @@
 			None
 		</#if>
 	</#if>
-	
+
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Mass (${weightStandard})</th></tr>
 		<#list weaponList as eq>
@@ -146,14 +146,14 @@
 	<#if chassisMods?size + miscEquipment?size gt 0>Features
 		<#if chassisMods?size gt 0>
 		${chassisMods?join(", ")} Chassis and Controls Modification<#if chassisMods?size gt 1>s</#if><#if miscEquipment?size gt 0>, </#if>
-		</#if>	
+		</#if>
 		<#if miscEquipment?size gt 0>
 		${miscEquipment?join(", ")}<br/>
 		</#if>
 	<#else>
 	None
 	</#if><br/>
-	
+
 	<#if quirks??>
 		<p>
 		Features the following design quirks: ${quirks}

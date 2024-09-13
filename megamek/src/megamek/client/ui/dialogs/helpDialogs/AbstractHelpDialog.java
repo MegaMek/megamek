@@ -18,33 +18,39 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
+import java.awt.Container;
+import java.io.File;
+
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.util.UIUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
+import megamek.logging.MMLogger;
 
 /**
- * This class ensures that every Help dialog in MegaMek has an identical look-and-feel.
+ * This class ensures that every Help dialog in MegaMek has an identical
+ * look-and-feel.
  */
 public abstract class AbstractHelpDialog extends AbstractDialog {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(AbstractHelpDialog.class);
+
+    // region Variable Declarations
     private String helpFilePath;
 
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     protected AbstractHelpDialog(final JFrame frame, final String name, final String helpFilePath) {
         super(frame, name, "AbstractHelpDialog.helpFile");
         setHelpFilePath(helpFilePath);
         initialize();
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public String getHelpFilePath() {
         return helpFilePath;
     }
@@ -52,7 +58,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
     public void setHelpFilePath(final String helpFilePath) {
         this.helpFilePath = helpFilePath;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
     @Override
     protected Container createCenterPane() {
@@ -69,7 +75,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
         } catch (Exception e) {
             setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
             pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
-            LogManager.getLogger().error("", e);
+            logger.error(e, "createCenterPane");
         }
 
         return new JScrollPane(pane);

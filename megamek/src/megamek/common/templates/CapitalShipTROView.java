@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Creates a TRO template model for advanced aerospace units (JumpShips, warships, space stations)
+ * Creates a TRO template model for advanced aerospace units (JumpShips,
+ * warships, space stations)
  *
  * @author Neoancient
  */
@@ -126,7 +127,7 @@ public class CapitalShipTROView extends AeroTROView {
     }
 
     @Override
-    protected String getArcAbbr(Mounted m) {
+    protected String getArcAbbr(Mounted<?> m) {
         switch (m.getLocation()) {
             case Aero.LOC_NOSE:
                 return ARCS[0][0];

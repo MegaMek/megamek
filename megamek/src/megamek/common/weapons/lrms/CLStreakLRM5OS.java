@@ -55,7 +55,7 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "327, TO";
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);

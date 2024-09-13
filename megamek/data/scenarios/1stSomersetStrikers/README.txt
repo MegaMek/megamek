@@ -24,7 +24,7 @@ Clan units do not retreat to Inner Sphere units unless otherwise stated in the s
 **********1st Somerset Strikers Scenario #1 - CLASH IN THE CANYON (EPISODE 2), pg. 102**********
 
 SITUATION
-Strikers find two clan mechs in a narrow canyon.
+Strikers find two clan meks in a narrow canyon.
 
 GAME SET-UP
 Mapboards= Width 1, Height 2, Maps DustballCanyon1, DustballCanyon2
@@ -48,25 +48,25 @@ BlackVision
 
 Black Vision, Falcon Star
 Star Colonel Kristen Redmond (Gunnery 2, Piloting 2), Mad Dog Prime
-Mechwarrior Deval (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Deval (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
 
 Deployment
 The defenders set up first.  Mad Dog goes in hex 0721 facing southwest.  Hunchback IIC goes in hex 0620 facing south.
 
 VICTORY CONDITIONS
-The Strikers win a decisive victory if they destroy both clan mechs.  They win a marginal victory if both clan mechs are either driven off or destroyed.
-The Jade Falcons win a decisive victory if they destroy all of the opposing mechs.  They win a marginal victory if both their mechs escape through the North end of the canyon.
+The Strikers win a decisive victory if they destroy both clan meks.  They win a marginal victory if both clan meks are either driven off or destroyed.
+The Jade Falcons win a decisive victory if they destroy all of the opposing meks.  They win a marginal victory if both their meks escape through the North end of the canyon.
 
 SPECIAL RULES
 Recommend playing this scenario with Double-Blind option set to true (unless using bot as a player).
-Units may only exit the mapsheets off the north and south edges. The Pavement hexes on the South end the South map are non-play areas.   If a mech moves into one of these hexes (intentionally or unintentionally), it is considered out of play & should eject.  Do not place any mech on the Level 10 canyon walls.
-Clan mechs cannot retreat until they have line of sight with a Striker mech. They can only retreat off the north edge of the map.
-The scenario starts off with the two clan mechs finishing off a fallen Centurion. The clanners must not move north nor face any of the northern hexsides until a LOS is established with the Strikers.
-The Banshee strafes the clan mechs just before the beginning of Turn 1.  The Strikes player should choose one of the clan mechs and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
+Units may only exit the mapsheets off the north and south edges. The Pavement hexes on the South end the South map are non-play areas.   If a mek moves into one of these hexes (intentionally or unintentionally), it is considered out of play & should eject.  Do not place any mek on the Level 10 canyon walls.
+Clan meks cannot retreat until they have line of sight with a Striker mek. They can only retreat off the north edge of the map.
+The scenario starts off with the two clan meks finishing off a fallen Centurion. The clanners must not move north nor face any of the northern hexsides until a LOS is established with the Strikers.
+The Banshee strafes the clan meks just before the beginning of Turn 1.  The Strikes player should choose one of the clan meks and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
 
 MEGAMEK ADJUSTMENTS
 The map setup called for in the scenario is currently impossible to setup in MegaMek.  This required a shift in all directions 90 degrees clockwise (West is now North, East is now South).
-While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the clan mechs, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills both 'Meks before start of game (if that ever happens, let me know).
+While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the clan meks, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills both 'Meks before start of game (if that ever happens, let me know).
 
 **********1st Somerset Strikers Scenario #2 - DUSTBALL SHOWDOWN (EPISODE 2), pg. 103**********
 
@@ -81,17 +81,17 @@ BlackVision
 
 Black Vision, Cluster Command Star
 Star Colonel Kristen Redmond (Gunnery 2, Piloting 2), Mad Dog Prime
-Mechwarrior Tanya Pryde (Gunnery 2, Piloting 3), Mad Dog Prime
-Mechwarrior Deval (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
-Mechwarrior Gengra (Gunnery 3, Piloting 4), Summoner M
-Mechwarrior Pith (Gunnery 3, Piloting 4), Summoner M
+MekWarrior Tanya Pryde (Gunnery 2, Piloting 3), Mad Dog Prime
+MekWarrior Deval (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Gengra (Gunnery 3, Piloting 4), Summoner M
+MekWarrior Pith (Gunnery 3, Piloting 4), Summoner M
 
 Black Vision, Alpha Talon
 Star Commander Cyrill Hazen (Gunnery 2, Piloting 3), Timber Wolf Prime
-Mechwarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Fatha (Gunnery 3, Piloting 4), Summoner M
-Mechwarrior Korthan (Gunnery 3, Piloting 4), Summoner M
-Mechwarrior Damil (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Fatha (Gunnery 3, Piloting 4), Summoner M
+MekWarrior Korthan (Gunnery 3, Piloting 4), Summoner M
+MekWarrior Damil (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
 
 Deployment
 The Cluster Command Star sets up first, on the west mapsheet in the hexes numbered 0113-0117.  Alpha Talon does not enter the map until the beginning of Turn 3, at which point the 'Meks are placed on hexes 0113-0117 of the west mapsheet.
@@ -127,7 +127,7 @@ Since the scenario system cannot currently delay the deployment of units, the se
 Because all 'Meks will be on the board from the beginning, this will effect the turn rotations.  Use the following sequence until round 3:
 If attacker wins the initiative; 1stSomersetStrikers(Centurion), BlackVision(Alpha Talon), BlackVision(Alpha Talon), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star)
 If defender wins the initiative; BlackVision(Alpha Talon), BlackVision(Alpha Talon), 1stSomersetStrikers(Centurion), BlackVision(Alpha Talon), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star), 1stSomersetStrikers, BlackVision(Alpha Talon), BlackVision(Command Star), BlackVision(Command Star), 1stSomersetStrikers
-To reflect the fact that all Clan 'Meks are supposed to start of with 13 heat points on their scale, the first star during the first round and the second star during the third round will not use 13 heat points worth of their heatsinks, regardless of the 'Meks capabilities to overheat without consequence.  If the 'Mek does not have 13 heatsinks available to start with (6.5 if Double Heatsinks), the mech may not move or fire.  After that round, nothing's stopping you from cooking your 'Mek as you see fit.
+To reflect the fact that all Clan 'Meks are supposed to start of with 13 heat points on their scale, the first star during the first round and the second star during the third round will not use 13 heat points worth of their heatsinks, regardless of the 'Meks capabilities to overheat without consequence.  If the 'Mek does not have 13 heatsinks available to start with (6.5 if Double Heatsinks), the mek may not move or fire.  After that round, nothing's stopping you from cooking your 'Mek as you see fit.
 While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that half of the total shots (2 lasers x 4 strafes = 8 hits / 2 = 4 hits) from the Banshee made there marks, and divided the damage equally among the Clan 'Meks, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the 'Meks before start of game (if that ever happens, let me know).
 
 **********1st Somerset Strikers Scenario #3 - THE TAKING OF WOTAN (EPISODE 3), pg. 104**********
@@ -144,10 +144,10 @@ FalconsClaws
 
 Falcon's Claws, Command Star:
 Star Colonel Nicolai Malthus (Gunnery 1, Piloting 2), Summoner M
-Mechwarrior Douglas (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Jala (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Leopold (Gunnery 3, Piloting 4), Mad Dog Prime
-Mechwarrior Erin (Gunnery 3, Piloting 4), Mad Dog Prime
+MekWarrior Douglas (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Jala (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Leopold (Gunnery 3, Piloting 4), Mad Dog Prime
+MekWarrior Erin (Gunnery 3, Piloting 4), Mad Dog Prime
 
 Deployment
 The Falcons enter from the north edge during the Movement Phase of the first turn.
@@ -157,15 +157,15 @@ WotanTMM
 
 Wotan TMM, Command Lance
 Lt. General Ansel Cabrillo (Gunnery 4, Piloting 3), Mauler MAL-1R
-Mechwarrior Wilma Stenson (Gunnery 4, Piloting 4), Centurion CN9-A
-Mechwarrior Petrov Himmelmann (Gunnery 5, Piloting 5), Centurion CN9-A
-Mechwarrior Abel Rodriguez (Gunnery 6, Piloting 6), Centurion CN9-A
+MekWarrior Wilma Stenson (Gunnery 4, Piloting 4), Centurion CN9-A
+MekWarrior Petrov Himmelmann (Gunnery 5, Piloting 5), Centurion CN9-A
+MekWarrior Abel Rodriguez (Gunnery 6, Piloting 6), Centurion CN9-A
 
 Wotan TMM, Recon Lance
 Lieutenant Pamela Genaro (Gunnery 5, Piloting 4), Centurion CN9-D
 Sergeant Edward Fitgibbons (Gunnery 6, Piloting 5), Wolfhound WLF-1
-Mechwarrior John Kerouac (Gunnery 6, Piloting 6), Wolfhound WLF-1
-Mechwarrior Cedric Quentin (Gunnery 6, Piloting 6), Wolfhound WLF-1
+MekWarrior John Kerouac (Gunnery 6, Piloting 6), Wolfhound WLF-1
+MekWarrior Cedric Quentin (Gunnery 6, Piloting 6), Wolfhound WLF-1
 
 Deployment
 The defenders set up first.  The 'Meks of the Recon Lance may start anywhere between rows XX15 and XX20 (hex numbers ending with 15 through 20).  The Command Lance begins in any hexes along the south edge of the map (hex numbers ending in 34).  All of the defending 'Meks begin the scenario facing north.
@@ -196,17 +196,17 @@ BlackVision
 
 Black Vision, Cluster Command Star
 Star Colonel Kristen Redmond (Gunnery 2, Piloting 2), Mad Dog Prime
-Mechwarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Fatha (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Korthan (Gunnery 3, Piloting 4), Summoner M
-Mechwarrior Damil (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Fatha (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Korthan (Gunnery 3, Piloting 4), Summoner M
+MekWarrior Damil (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
 
 Deployment
-Kristen's Mad Dog stands in hex 0804, facing south.  The remaining mechs are behind her.  None may be in a Woods or Hill hex, nor further south than Redmond.
+Kristen's Mad Dog stands in hex 0804, facing south.  The remaining meks are behind her.  None may be in a Woods or Hill hex, nor further south than Redmond.
 
 DEFENDER
 1stSomersetStrikers
-The defenders are badly damaged and low on ammo.  Mark off half the armor (rounding up) on all locations on every mech.  The ammunition bins on every mech are half their full capacity (rounding down).  The Centurion's LB 10-X autocannon is loaded with normal ammo (not cluster munitions).
+The defenders are badly damaged and low on ammo.  Mark off half the armor (rounding up) on all locations on every mek.  The ammunition bins on every mek are half their full capacity (rounding down).  The Centurion's LB 10-X autocannon is loaded with normal ammo (not cluster munitions).
 
 Strikers Lance
 Major Adam Steiner (Gunnery 2, Piloting 2), Axman AXM-2N
@@ -218,11 +218,11 @@ Place the Centurion in Hex 0818 facing north.  Place the Axman in Hex 0719 facin
 
 VICTORY CONDITIONS
 The attackers win a decisive victory if Kristen Redmond destroys all of the defending 'Meks without aid from the other 'Meks in her Star.  The attackers win a marginal victory if they destroy all of the defending 'Meks.
-The defenders win a decisive victory if all three 'Meks escape off the south edge of the mapsheet.  They win a marginal victory if one or two mechs escape off the south edge.
+The defenders win a decisive victory if all three 'Meks escape off the south edge of the mapsheet.  They win a marginal victory if one or two meks escape off the south edge.
 
 SPECIAL RULES
-Kristen Redmond says she alone will deal with all three Strikers.  No other mech may fire its weapons or move closer to the defenders than Kristen.  This restriction is lifted if Kristen's Mad Dog is destroyed or disabled.  The Mad Dog is considered disabled if all of its weapons, both arms, or one or both legs are destroyed; if it shuts down due to overheating; or if Kristen fails a Consciousness roll.
-Valten Ryder has decided to hold off the Clanners while the others get to the Kwaidan.  He may not begin to move south until the other two Striker mechs are at least halfway to the edge (Hexrow XX27 or farther).  Kristen will only fire at the Centurion while Val maintains a defensive posture.  Kristen may fire at any of the Strikers once Val begins to retreat.
+Kristen Redmond says she alone will deal with all three Strikers.  No other mek may fire its weapons or move closer to the defenders than Kristen.  This restriction is lifted if Kristen's Mad Dog is destroyed or disabled.  The Mad Dog is considered disabled if all of its weapons, both arms, or one or both legs are destroyed; if it shuts down due to overheating; or if Kristen fails a Consciousness roll.
+Valten Ryder has decided to hold off the Clanners while the others get to the Kwaidan.  He may not begin to move south until the other two Striker meks are at least halfway to the edge (Hexrow XX27 or farther).  Kristen will only fire at the Centurion while Val maintains a defensive posture.  Kristen may fire at any of the Strikers once Val begins to retreat.
 
 MEGAMEK ADJUSTMENTS
 The map setup called for in the scenario is currently impossible to setup in MegaMek.  To compensate, all directions are shifted 90 degrees clockwise (West is now North, East is now South).
@@ -286,17 +286,17 @@ Two distinct forces; MalthusStar and RedmondStar.
 
 Malthus's Star
 Star Colonel Nicolai Malthus (Gunnery 1, Piloting 2), Summoner M
-Mechwarrior Ciro (Gunnery 4, Piloting 5), Timber Wolf Prime
-Mechwarrior Ross (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
-Mechwarrior Uri (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
-Mechwarrior Elaine (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Ciro (Gunnery 4, Piloting 5), Timber Wolf Prime
+MekWarrior Ross (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Uri (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Elaine (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
 
 Redmond's Star
 Star Colonel Kristen Redmond (Gunnery 2, Piloting 2), Mad Dog Prime
-Mechwarrior Pytor (Gunnery 2, Piloting 2), Hunchback IIC HBK-IIC
-Mechwarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Elston (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Althea (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Pytor (Gunnery 2, Piloting 2), Hunchback IIC HBK-IIC
+MekWarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Elston (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Althea (Gunnery 3, Piloting 4), Timber Wolf Prime
 
 Deployment
 The Clans set up second.  Place Malthus's Summoner in Hex 1412.  The other 'Meks of his Star may be placed in any Level 0 hexes within two hexes of the Summoner.  Set up Redmond's Star in the following five hexes: 0109,0110,0111,0209, and 0210.
@@ -314,8 +314,8 @@ Deployment
 The Strikers set up first.  Place Adam's Axman in Hex 2006.  The other Striker 'Meks may be set up in any Level 0 hex within two hexes of the Axman.  The Packrat (Gnat, see below) may begin play in any Level 0 hex on the east half of the map (hexes 17XX through 32XX), and need not be placed until after all Clan units have been deployed.
 
 VICTORY CONDITIONS
-Malthus's Star wins a decisive victory if all of the Strikers' mechs are destroyed without the cooperation of Redmond's Star.  They win a marginal victory if the Strikers are destroyed after the two Clan Stars join forces (see Special Rules, below).
-Redmond's Star wins a decisive victory if Malthus's Star is destroyed before the two units join forces.  After that point, the two Clan Stars share a marginal victory if they destroy all the Strikers' mechs.
+Malthus's Star wins a decisive victory if all of the Strikers' meks are destroyed without the cooperation of Redmond's Star.  They win a marginal victory if the Strikers are destroyed after the two Clan Stars join forces (see Special Rules, below).
+Redmond's Star wins a decisive victory if Malthus's Star is destroyed before the two units join forces.  After that point, the two Clan Stars share a marginal victory if they destroy all the Strikers' meks.
 The Strikers must survive long enough to discover that Andrew is not present on this planet, then make good their escape (see Special Rules, below).  If all of the Striker units escape off the map after this point, the defenders win a decisive victory.  If two or more units escape, they win a marginal victory.
 
 SPECIAL RULES
@@ -341,9 +341,9 @@ Two distinct groups; ISF and 1stSomersetStrikers.
 
 ISF Lance
 Toshiro Okura (Gunnery 2, Piloting 3), Centurion CN9-D
-ISF Mechwarrior (Gunnery 3, Piloting 4), Centurion CN9-D
-ISF Mechwarrior (Gunnery 3, Piloting 4), Centurion CN9-A
-ISF Mechwarrior (Gunnery 3, Piloting 4), Centurion CN9-A
+ISF MekWarrior (Gunnery 3, Piloting 4), Centurion CN9-D
+ISF MekWarrior (Gunnery 3, Piloting 4), Centurion CN9-A
+ISF MekWarrior (Gunnery 3, Piloting 4), Centurion CN9-A
 
 Strikers Lance
 Major Adam Steiner (Gunnery 2, Piloting 2), Awesome AWS-9MA
@@ -355,20 +355,20 @@ Strikers Air Support
 Cadet Katiara Kylie (Gunnery 4, Piloting 3), Banshee BSE-X2
 
 Deployment
-Okura's Centurion begins in Hex 1709.  The other mechs of his lance may be placed in any hexes in hexrows 17XX through 32XX, as long as none of them start play with a line of sight to the Hatamoto-Chi or the rebel mechs.
-Franklin's Hatamoto-chi begins in Hex 1509.  The other Striker mechs may begin in any of the hexes 3201 through 3217 on the east edge. See Special Rules about Kylie's Banshee.
+Okura's Centurion begins in Hex 1709.  The other meks of his lance may be placed in any hexes in hexrows 17XX through 32XX, as long as none of them start play with a line of sight to the Hatamoto-Chi or the rebel meks.
+Franklin's Hatamoto-chi begins in Hex 1509.  The other Striker meks may begin in any of the hexes 3201 through 3217 on the east edge. See Special Rules about Kylie's Banshee.
 
 DEFENDER
 Rebels
 
 Rebel Lance
 Rebel Lance Commander (Gunnery 3, Piloting 4), Wolfhound WLF-1
-Rebel Mechwarrior (Gunnery 4, Piloting 5), Wolfhound WLF-1
-Rebel Mechwarrior (Gunnery 4, Piloting 5), Wolfhound WLF-1
-Rebel Mechwarrior (Gunnery 4, Piloting 5), Wolfhound WLF-1
+Rebel MekWarrior (Gunnery 4, Piloting 5), Wolfhound WLF-1
+Rebel MekWarrior (Gunnery 4, Piloting 5), Wolfhound WLF-1
+Rebel MekWarrior (Gunnery 4, Piloting 5), Wolfhound WLF-1
 
 Deployment
-Place the four rebel mechs in the following hexes: 1407, 1410, 1507, and 1511.
+Place the four rebel meks in the following hexes: 1407, 1410, 1507, and 1511.
 
 VICTORY CONDITIONS
 The Strikers win a decisive victory if all of their 'Meks manage to exit the map off the west edge.  They win a marginal victory if Franklin's Hatamoto-Chi exits the west edge of the map and a combined total of five or more ISF and rebel 'Meks are destroyed.
@@ -377,7 +377,7 @@ The rebels win a decisive victory if Franklin's Hatamoto-Chi exits the west edge
 
 SPECIAL RULES
 This should be played by three players: the Strikers, the ISF, and the rebels.
-The Banshee Strafes the rebel mechs just before the beginning of Turn 1.  The Strikes player should choose any one rebel mech and attack it with both medium lasers, hitting on an 8 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly east of the target.  After her first strafing run, Kylie may choose to attack either a rebel mech or an ISF mech.
+The Banshee Strafes the rebel meks just before the beginning of Turn 1.  The Strikes player should choose any one rebel mek and attack it with both medium lasers, hitting on an 8 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly east of the target.  After her first strafing run, Kylie may choose to attack either a rebel mek or an ISF mek.
 
 MEGAMEK ADJUSTMENTS
 Recommend playing this scenario with Double-Blind option set to true (unless using bot as a player).
@@ -422,10 +422,10 @@ BlackVision
 
 Black Vision, Redmond's Star
 Star Colonel Kristen Redmond (Gunnery 2, Piloting 2), Mad Dog Prime
-Mechwarrior Pytor (Gunnery 2, Piloting 2), Hunchback IIC HBK-IIC
-Mechwarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Elston (Gunnery 3, Piloting 4), Timber Wolf Prime
-Mechwarrior Althea (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Pytor (Gunnery 2, Piloting 2), Hunchback IIC HBK-IIC
+MekWarrior Jentry (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Elston (Gunnery 3, Piloting 4), Timber Wolf Prime
+MekWarrior Althea (Gunnery 3, Piloting 4), Timber Wolf Prime
 
 # Somerset Garrison Infantry:
 Elemental Point (Gunnery 4), Small Lasers
@@ -439,7 +439,7 @@ The Strikers must destroy all of the Clan forces to retake Somerset Military Aca
 
 SPECIAL RULES
 The Banshee Strafes the Clan 'Meks just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Meks and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
-The Strikers benefit from an ecstatic level of morale during this scenario.  Apply +1 to all to-hit, piloting, and Initiative rolls.  Note that this bonus allows the Strikers to roll a 13, making otherwise impossible shots possible.  This bonus is lost if Adam's Mech is destroyed.
+The Strikers benefit from an ecstatic level of morale during this scenario.  Apply +1 to all to-hit, piloting, and Initiative rolls.  Note that this bonus allows the Strikers to roll a 13, making otherwise impossible shots possible.  This bonus is lost if Adam's Mek is destroyed.
 
 MEGAMEK ADJUSTMENTS
 The map setup called for in the scenario is currently impossible to setup in MegaMek.  To compensate, all directions are shifted 90 degrees counter-clockwise (West is now South, East is now North).
@@ -458,10 +458,10 @@ FalconsClaws
 
 Command Star
 Star Colonel Nicolai Malthus (Gunnery 1, Piloting 2), Summoner M
-Mechwarrior Ciro (Gunnery 4, Piloting 5), Timber Wolf Prime
-Mechwarrior Ross (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
-Mechwarrior Uri (Gunnery 3, Piloting 4), Mad Dog Prime
-Mechwarrior Elaine (Gunnery 3, Piloting 4), Mad Dog Prime
+MekWarrior Ciro (Gunnery 4, Piloting 5), Timber Wolf Prime
+MekWarrior Ross (Gunnery 3, Piloting 4), Hunchback IIC HBK-IIC
+MekWarrior Uri (Gunnery 3, Piloting 4), Mad Dog Prime
+MekWarrior Elaine (Gunnery 3, Piloting 4), Mad Dog Prime
 
 Elemental Star
 Point Commander Yartak (Gunnery 4), Clan Elemental Point, Small Lasers
@@ -494,7 +494,7 @@ At any time during the battle, either player can call for a Trial of Possession 
 
 SPECIAL RULES
 The Banshee Strafes the Clan 'Meks just before the beginning of Turn 1.  The Strikes player should choose one of the Clan 'Meks and attack it with both medium lasers, hitting on a 7 or better.  As the battle progresses, the fighter may turn around and strafe the battlefield up to three more times, during the Weapon Attack Phases of Turns 2, 4, and 6.  Resolve hit location for all these strafing attacks as if they originated from directly south of the target.
-The Strikers benefit from an ecstatic level of morale during this scenario.  Apply +1 to all to-hit, piloting, and Initiative rolls.  Note that this bonus allows the Strikers to roll a 13, making otherwise impossible shots possible.  This bonus is lost if Adam's Mech is destroyed.
+The Strikers benefit from an ecstatic level of morale during this scenario.  Apply +1 to all to-hit, piloting, and Initiative rolls.  Note that this bonus allows the Strikers to roll a 13, making otherwise impossible shots possible.  This bonus is lost if Adam's Mek is destroyed.
 Malthus is bent on destroying Adam, but he thinks that Adam is piloting the Axman.  Malthus will attack only the Axman until it is destroyed or the pilot ejects.  After that, Malthus will take on the Awesome.
 
 MEGAMEK ADJUSTMENTS
@@ -502,4 +502,4 @@ The map setup called for in the scenario is currently impossible to setup in Meg
 Only the Awesome has the Piloting & Gunnery skills adjusted to reflect the morale bonus, because at this point the Awesome is either destroyed or go to declare a trail of position, which will not involve the other units.
 Clan Enhanced Imaging neural implants are not incorporated into MegaMek.
 The advantages of the TOC will not be used in a Trial of Possession, and cannot be used if the Awesome hasn't survived to this point, so nothing will be done to reflect the advantage of having it this round.
-While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that 5 out of 8 medium lasers from the Banshee made there marks, one to each Clan mech, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the mechs before start of game (if that ever happens, let me know).
+While the information for the Strikers Air Support is provided in this scenario for (wishful thinking) future applications, the current version does not support this capability.  To compensate, I have assumed that 5 out of 8 medium lasers from the Banshee made there marks, one to each Clan mek, using the Addition Damage option of the current scenario system.  Any effects these attacks have are legitimate, even if it kills the meks before start of game (if that ever happens, let me know).

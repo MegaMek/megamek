@@ -42,8 +42,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ratgenerator.AbstractUnitRecord;
 import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.FactionRecord;
@@ -58,15 +56,29 @@ import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 import megamek.common.eras.Eras;
+import megamek.logging.MMLogger;
 
 /**
  * @author neoancient
  */
 public class RATGeneratorEditor extends JFrame {
+    private static final MMLogger logger = MMLogger.create(RATGeneratorEditor.class);
+
     private static final String[] MOVEMENT_TYPE_NAMES = {
-            "Leg", "Tracked", "Wheeled", "Hover", "WiGE", "VTOL",
-            "Naval", "Underwater", "Jump", "Motorized", "Atmospheric",
-            "Aerospace", "Space", "None"
+            "Leg",
+            "Tracked",
+            "Wheeled",
+            "Hover",
+            "WiGE",
+            "VTOL",
+            "Naval",
+            "Underwater",
+            "Jump",
+            "Motorized",
+            "Atmospheric",
+            "Aerospace",
+            "Space",
+            "None"
     };
 
     private static final FactionRecord GENERAL_FACTION = new FactionRecord("General", "General");
@@ -307,7 +319,7 @@ public class RATGeneratorEditor extends JFrame {
             if (tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord rec = masterUnitListModel
                         .getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
-                currentMulId = rec.getMechSummary().getMulId();
+                currentMulId = rec.getMekSummary().getMulId();
                 unitModelEditorModel.setData(rec, UnitEditorTableModel.MODE_MODEL);
                 unitChassisEditorModel.setData(rec, UnitEditorTableModel.MODE_CHASSIS);
             } else {
@@ -736,28 +748,28 @@ public class RATGeneratorEditor extends JFrame {
                     }
                     return data.get(row).getModel();
                 case COL_UNIT_TYPE:
-                    if (data.get(row).getMechSummary() == null) {
-                        System.err.println("Could not find mechsummary for " + data.get(row).getKey());
+                    if (data.get(row).getMekSummary() == null) {
+                        System.err.println("Could not find meksummary for " + data.get(row).getKey());
                     }
-                    return data.get(row).getMechSummary().getUnitType();
+                    return data.get(row).getMekSummary().getUnitType();
                 case COL_WEIGHT:
-                    return data.get(row).getMechSummary().getTons();
+                    return data.get(row).getMekSummary().getTons();
                 case COL_YEAR:
-                    if (data.get(row).getMechSummary() == null) {
-                        System.err.println("Could not find mechsummary for " + data.get(row).getKey());
+                    if (data.get(row).getMekSummary() == null) {
+                        System.err.println("Could not find meksummary for " + data.get(row).getKey());
                     }
-                    return data.get(row).getMechSummary().getYear();
+                    return data.get(row).getMekSummary().getYear();
 
                 case COL_EXTINCT_RANGE:
-                    if (data.get(row).getMechSummary() == null) {
-                        System.err.println("Could not find mechsummary for " + data.get(row).getKey());
+                    if (data.get(row).getMekSummary() == null) {
+                        System.err.println("Could not find meksummary for " + data.get(row).getKey());
                     }
-                    return data.get(row).getMechSummary().getExtinctRange();
+                    return data.get(row).getMekSummary().getExtinctRange();
 
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
                 case COL_CANON_ROLE:
-                    return data.get(row).getMechSummary().getRole().toString();
+                    return data.get(row).getMekSummary().getRole().toString();
                 case COL_DEPLOYED_WITH:
                     StringJoiner sj = new StringJoiner(",");
                     data.get(row).getDeployedWith().forEach(sj::add);
@@ -1572,7 +1584,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (dir.exists() && dir.isDirectory()) {
                     ui = new RATGeneratorEditor(dir);
                 } else {
-                    LogManager.getLogger().info(args[0] + " is not a valid directory name");
+                    logger.info(args[0] + " is not a valid directory name");
                     ui = new RATGeneratorEditor();
                 }
             } else {

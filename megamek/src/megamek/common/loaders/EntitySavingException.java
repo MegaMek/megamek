@@ -19,7 +19,7 @@
 package megamek.common.loaders;
 
 /**
- * This exception is thrown if a mech or other cannot be properly saved from a
+ * This exception is thrown if a mek or other cannot be properly saved from a
  * file due to IO errors, file format errors, missing fields, or whatever.
  *
  * @author sleet01
@@ -49,7 +49,7 @@ public class EntitySavingException extends Exception {
      * cause.
      *
      * @param message the detail message
-     * @param cause the cause
+     * @param cause   the cause
      */
     public EntitySavingException(final String message, final Throwable cause) {
         super(message, cause);

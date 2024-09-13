@@ -13,6 +13,12 @@
  */
 package megamek.client.ui.swing.tooltip;
 
+import static megamek.client.ui.swing.util.UIUtil.DOT_SPACER;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
+import java.util.List;
+import java.util.Vector;
+
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -21,11 +27,6 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
 import megamek.common.planetaryconditions.IlluminationLevel;
-
-import java.util.List;
-import java.util.Vector;
-
-import static megamek.client.ui.swing.util.UIUtil.*;
 
 
 public final class HexTooltip {
@@ -160,7 +161,7 @@ public final class HexTooltip {
                 result.append("<BR>");
             }
         }
-        
+
         if ((game != null) && game.getGroundObjects(mcoords).size() > 0) {
         	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
         		result.append("&nbsp");

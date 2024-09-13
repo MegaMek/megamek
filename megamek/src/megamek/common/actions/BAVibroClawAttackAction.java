@@ -15,12 +15,14 @@ package megamek.common.actions;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * A BattleArmor uses its vibroclaws
  */
 public class BAVibroClawAttackAction extends AbstractAttackAction {
+    private static final MMLogger logger = MMLogger.create(BAVibroClawAttackAction.class);
+
     private static final long serialVersionUID = 1432011536091665084L;
 
     public BAVibroClawAttackAction(int entityId, int targetId) {
@@ -50,11 +52,11 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         Entity te = null;
         // arguments legal?
         if (ae == null) {
-            LogManager.getLogger().error("Attacker not valid");
+            logger.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            LogManager.getLogger().error("target not valid");
+            logger.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
@@ -70,7 +72,8 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
                             || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                                     && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                                     && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "A friendly unit can never be the target of a direct attack.");
             }
         }
 
@@ -131,7 +134,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
                     "Target elevation not in range");
         }
 
-        // can't physically attack mechs making dfa attacks
+        // can't physically attack meks making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is making a DFA attack");

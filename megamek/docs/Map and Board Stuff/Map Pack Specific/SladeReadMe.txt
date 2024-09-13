@@ -14,7 +14,7 @@ siege_bottomleft.board -  Campaign Maps. Again, load 3x1.
 
 *Full Siege* - Load 3x2.  Definitely able to support a battalion campaign.
 
-convoy1.board & convoy2.board - A useful 2x1 map system for campaigns involving getting your mechs/vehicles from point A (NW corner) to point B (NE corner).  There's plenty to do for both the ambushers and ambushees.
+convoy1.board & convoy2.board - A useful 2x1 map system for campaigns involving getting your meks/vehicles from point A (NW corner) to point B (NE corner).  There's plenty to do for both the ambushers and ambushees.
 
 *** Installation Instructions ***
 

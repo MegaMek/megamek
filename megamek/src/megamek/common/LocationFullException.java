@@ -14,8 +14,8 @@
 package megamek.common;
 
 /**
- * Thrown by Mech, if a location is too full for new equipment.
- * 
+ * Thrown by Mek, if a location is too full for new equipment.
+ *
  * @author Ben
  * @since June 19, 2002, 7:16 PM
  */
@@ -31,7 +31,7 @@ public class LocationFullException extends java.lang.Exception {
     /**
      * Constructs an <code>LocationFullException</code> with the specified
      * detail message.
-     * 
+     *
      * @param msg the detail message.
      */
     public LocationFullException(String msg) {

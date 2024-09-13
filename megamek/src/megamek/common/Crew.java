@@ -15,6 +15,14 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Vector;
+
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.enums.Gender;
@@ -24,9 +32,6 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.CrewSkillSummaryUtil;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Health status, skills, and miscellanea for an Entity crew.
@@ -120,7 +125,7 @@ public class Crew implements Serializable {
 
     // SPA Human TRO entity types
     public static final String HUMANTRO_NONE = "None";
-    public static final String HUMANTRO_MECH = "Mek";
+    public static final String HUMANTRO_MEK = "Mek";
     public static final String HUMANTRO_AERO = "Aero";
     public static final String HUMANTRO_VEE = "Vee";
     public static final String HUMANTRO_BA = "BA";
@@ -436,7 +441,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * LAMs use a different skill in AirMech mode depending on whether they are grounded or airborne.
+     * LAMs use a different skill in AirMEK mode depending on whether they are grounded or airborne.
      */
     public int getPiloting(EntityMovementType moveType) {
         return piloting[pilotPos];
@@ -450,7 +455,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @param showPiloting if false, only the gunnery skill is shown (used for protomechs; may be ignored
+     * @param showPiloting if false, only the gunnery skill is shown (used for protomeks; may be ignored
      *                     for other unit types)
      * @return a String showing the overall skills in the format gunnery/piloting
      */
@@ -481,7 +486,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @param showPiloting if false, only the gunnery skill is shown (used for protomechs; may be ignored
+     * @param showPiloting if false, only the gunnery skill is shown (used for protomeks; may be ignored
      *                     for other unit types)
      * @return a String showing the skills for a particular slot in the format gunnery/piloting
      */

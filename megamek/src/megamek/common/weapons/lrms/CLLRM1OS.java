@@ -31,7 +31,7 @@ public class CLLRM1OS extends LRMWeapon {
         criticals = 0;
         bv = 3;
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
         rulesRefs = "231, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

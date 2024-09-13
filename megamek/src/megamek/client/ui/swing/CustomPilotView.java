@@ -15,23 +15,37 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.PortraitChooserDialog;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.Infantry;
+import megamek.common.LAMPilot;
+import megamek.common.ProtoMek;
+import megamek.common.Tank;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab.
@@ -46,11 +60,11 @@ public class CustomPilotView extends JPanel {
     private final Entity entity;
     private Gender gender = Gender.RANDOMIZE;
 
-    private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
+    private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMekDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
     private final JTextField fldNick = new JTextField(20);
     private final JTextField fldHits = new JTextField(5);
-    private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMechDialog.chkClanPilot"));
+    private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
     private final JTextField fldGunneryM = new JTextField(3);
@@ -72,7 +86,7 @@ public class CustomPilotView extends JPanel {
 
     private Portrait portrait;
 
-    public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
+    public CustomPilotView(CustomMekDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
         setLayout(new GridBagLayout());
         JLabel label;
@@ -101,18 +115,18 @@ public class CustomPilotView extends JPanel {
         portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
         add(portraitButton, GBC.std().gridheight(4));
 
-        JButton button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
+        JButton button = new JButton(Messages.getString("CustomMekDialog.RandomName"));
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
             fldName.setText(RandomNameGenerator.getInstance().generate(gender, isClanPilot(), entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomCallsign"));
+        button = new JButton(Messages.getString("CustomMekDialog.RandomCallsign"));
         button.addActionListener(e -> fldNick.setText(RandomCallsignGenerator.getInstance().generate()));
         add(button, GBC.eop());
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomSkill"));
+        button = new JButton(Messages.getString("CustomMekDialog.RandomSkill"));
         button.addActionListener(e -> {
             int[] skills = parent.getClientGUI().getClient().getSkillGenerator().generateRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
@@ -128,65 +142,65 @@ public class CustomPilotView extends JPanel {
         add(chkClanPilot, GBC.eop());
         chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT);
+        label = new JLabel(Messages.getString("CustomMekDialog.labName"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldName, GBC.eol());
         fldName.setText(entity.getCrew().getName(slot));
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labNick"), SwingConstants.RIGHT);
+        label = new JLabel(Messages.getString("CustomMekDialog.labNick"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldNick, GBC.eol());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labHits"), SwingConstants.RIGHT);
+        label = new JLabel(Messages.getString("CustomMekDialog.labHits"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldHits, GBC.eop());
         fldHits.setText(String.valueOf(entity.getCrew().getHits()));
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labGunneryL"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryL, GBC.eol());
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labGunneryM"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryM, GBC.eol());
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labGunneryB"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryB, GBC.eol());
 
             if (entity.getCrew() instanceof LAMPilot) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT);
+                label = new JLabel(Messages.getString("CustomMekDialog.labGunneryAeroL"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroL, GBC.eol());
 
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroM"), SwingConstants.RIGHT);
+                label = new JLabel(Messages.getString("CustomMekDialog.labGunneryAeroM"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroM, GBC.eol());
 
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroB"), SwingConstants.RIGHT);
+                label = new JLabel(Messages.getString("CustomMekDialog.labGunneryAeroB"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroB, GBC.eol());
             }
 
         } else {
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labGunnery"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunnery, GBC.eol());
 
             if (entity.getCrew() instanceof LAMPilot) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAero"), SwingConstants.RIGHT);
+                label = new JLabel(Messages.getString("CustomMekDialog.labGunneryAero"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAero, GBC.eol());
             }
         }
         if (entity.getCrew() instanceof LAMPilot) {
             LAMPilot pilot = (LAMPilot) entity.getCrew();
-            fldGunneryL.setText(Integer.toString(pilot.getGunneryMechL()));
-            fldGunneryM.setText(Integer.toString(pilot.getGunneryMechM()));
-            fldGunneryB.setText(Integer.toString(pilot.getGunneryMechB()));
-            fldGunnery.setText(Integer.toString(pilot.getGunneryMech()));
+            fldGunneryL.setText(Integer.toString(pilot.getGunneryMekL()));
+            fldGunneryM.setText(Integer.toString(pilot.getGunneryMekM()));
+            fldGunneryB.setText(Integer.toString(pilot.getGunneryMekB()));
+            fldGunnery.setText(Integer.toString(pilot.getGunneryMek()));
             fldGunneryAeroL.setText(Integer.toString(pilot.getGunneryAeroL()));
             fldGunneryAeroM.setText(Integer.toString(pilot.getGunneryAeroM()));
             fldGunneryAeroB.setText(Integer.toString(pilot.getGunneryAeroB()));
@@ -202,17 +216,17 @@ public class CustomPilotView extends JPanel {
             fldGunneryAero.setText("0");
         }
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT);
+        label = new JLabel(Messages.getString("CustomMekDialog.labPiloting"), SwingConstants.RIGHT);
         if (entity instanceof Tank) {
-            label.setText(Messages.getString("CustomMechDialog.labDriving"));
+            label.setText(Messages.getString("CustomMekDialog.labDriving"));
         } else if (entity instanceof Infantry) {
-            label.setText(Messages.getString("CustomMechDialog.labAntiMech"));
+            label.setText(Messages.getString("CustomMekDialog.labAntiMek"));
         }
         if (entity.getCrew() instanceof LAMPilot) {
             add(label, GBC.std());
             add(fldPiloting, GBC.eol());
-            fldPiloting.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingMech()));
-            label = new JLabel(Messages.getString("CustomMechDialog.labPilotingAero"), SwingConstants.RIGHT);
+            fldPiloting.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingMek()));
+            label = new JLabel(Messages.getString("CustomMekDialog.labPilotingAero"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldPilotingAero, GBC.eop());
             fldPilotingAero.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingAero()));
@@ -224,21 +238,21 @@ public class CustomPilotView extends JPanel {
         }
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
-            label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labArtillery"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldArtillery, GBC.eop());
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            label = new JLabel(Messages.getString("CustomMechDialog.labTough"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labTough"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldTough, GBC.eop());
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
-            label = new JLabel(Messages.getString("CustomMechDialog.labFatigue"), SwingConstants.RIGHT);
+            label = new JLabel(Messages.getString("CustomMekDialog.labFatigue"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldFatigue, GBC.eop());
         }
@@ -251,30 +265,30 @@ public class CustomPilotView extends JPanel {
                 }
             }
             if (slot == entity.getCrew().getCrewType().getPilotPos()) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labBackupPilot"), SwingConstants.RIGHT);
+                label = new JLabel(Messages.getString("CustomMekDialog.labBackupPilot"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(cbBackup, GBC.eop());
-                cbBackup.setToolTipText(Messages.getString("CustomMechDialog.tooltipBackupPilot"));
+                cbBackup.setToolTipText(Messages.getString("CustomMekDialog.tooltipBackupPilot"));
                 cbBackup.setSelectedItem(entity.getCrew().getCrewType().getRoleName(entity.getCrew().getBackupPilotPos()));
             } else if (slot == entity.getCrew().getCrewType().getGunnerPos()) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labBackupGunner"), SwingConstants.RIGHT);
+                label = new JLabel(Messages.getString("CustomMekDialog.labBackupGunner"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(cbBackup, GBC.eop());
-                cbBackup.setToolTipText(Messages.getString("CustomMechDialog.tooltipBackupGunner"));
+                cbBackup.setToolTipText(Messages.getString("CustomMekDialog.tooltipBackupGunner"));
                 cbBackup.setSelectedItem(entity.getCrew().getCrewType().getRoleName(entity.getCrew().getBackupGunnerPos()));
             }
         }
 
-        if (entity instanceof Protomech) {
-            // All ProtoMechs have a callsign.
-            String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " +
+        if (entity instanceof ProtoMek) {
+            // All ProtoMeks have a callsign.
+            String callsign = Messages.getString("CustomMekDialog.Callsign") + ": " +
                     (entity.getUnitNumber() + PreferenceManager
                             .getClientPreferences().getUnitStartChar()) +
                     '-' + entity.getId();
             label = new JLabel(callsign, SwingConstants.CENTER);
             add(label, GBC.eol().anchor(GridBagConstraints.CENTER));
 
-            // Get the ProtoMechs of this entity's player
+            // Get the ProtoMeks of this entity's player
             // that *aren't* in the entity's unit.
             Iterator<Entity> otherUnitEntities = parent.getClientGUI().getClient().getGame()
                     .getSelectedEntities(new EntitySelector() {
@@ -284,7 +298,7 @@ public class CustomPilotView extends JPanel {
 
                         @Override
                         public boolean accept(Entity unitEntity) {
-                            return (unitEntity instanceof Protomech)
+                            return (unitEntity instanceof ProtoMek)
                                     && (ownerId == unitEntity.getOwnerId())
                                     && (unitNumber != unitEntity.getUnitNumber());
                         }
@@ -292,7 +306,7 @@ public class CustomPilotView extends JPanel {
 
             // If we got any other entities, show the unit number controls.
             if (otherUnitEntities.hasNext()) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER);
+                label = new JLabel(Messages.getString("CustomMekDialog.labUnitNum"), SwingConstants.CENTER);
                 add(choUnitNum, GBC.eop());
                 refreshUnitNum(otherUnitEntities);
             }
@@ -334,7 +348,7 @@ public class CustomPilotView extends JPanel {
         entityUnitNum.clear();
 
         // Make an entry for "no change".
-        choUnitNum.addItem(Messages.getString("CustomMechDialog.doNotSwapUnits"));
+        choUnitNum.addItem(Messages.getString("CustomMekDialog.doNotSwapUnits"));
         entityUnitNum.add(entity);
 
         // Walk through the other entities.

@@ -1,28 +1,38 @@
 /*
  * MegaMek
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
-
-import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Infantry;
+import megamek.common.Player;
+import megamek.common.ProtoMek;
+import megamek.logging.MMLogger;
 
 /**
  * Method for handling morale with Princess.
@@ -31,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 5/13/14 8:36 AM
  */
 public class MoraleUtil {
+    private static final MMLogger logger = MMLogger.create(MoraleUtil.class);
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("0.00");
 
     private final Set<Integer> BROKEN_UNITS = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -42,7 +53,8 @@ public class MoraleUtil {
     /**
      * If a unit's morale is broken, this method should return TRUE.
      *
-     * @param unitId The ID of the {@link Entity} being checked (from {@link Entity#getId()}).
+     * @param unitId The ID of the {@link Entity} being checked (from
+     *               {@link Entity#getId()}).
      * @return TRUE if the unit is broken.
      */
     public boolean isUnitBroken(int unitId) {
@@ -50,16 +62,19 @@ public class MoraleUtil {
     }
 
     /**
-     * Triggers the morale check for all units controlled by the Princess bot player.
+     * Triggers the morale check for all units controlled by the Princess bot
+     * player.
      *
      * @param forcedWithdrawal Set TRUE if Forced Withdrawal is in effect.
-     * @param bravery          The index of the bravery setting in {@link BehaviorSettings}.
-     * @param selfPreservation The index of the selfPreservation setting in {@link BehaviorSettings}.
+     * @param bravery          The index of the bravery setting in
+     *                         {@link BehaviorSettings}.
+     * @param selfPreservation The index of the selfPreservation setting in
+     *                         {@link BehaviorSettings}.
      * @param player           The {@link Player} of the Princess bot.
-     * @param game              The current {@link Game}
+     * @param game             The current {@link Game}
      */
     public void checkMorale(boolean forcedWithdrawal, int bravery, int selfPreservation,
-                            Player player, Game game) {
+            Player player, Game game) {
         StringBuilder logMsg = new StringBuilder("Starting morale checks for ").append(player.getName());
 
         try {
@@ -69,11 +84,11 @@ public class MoraleUtil {
 
             int braveryMod = calcBehaviorMod(bravery);
             logMsg.append("\n\tBravery ").append(bravery).append(" (").append(braveryMod >= 0 ? "+" : "")
-                  .append(braveryMod).append(")");
+                    .append(braveryMod).append(")");
 
             int selfPreservationMod = -calcBehaviorMod(selfPreservation);
             logMsg.append("\n\tSelf Preservation ").append(selfPreservation).append(" (")
-                  .append(selfPreservationMod >= 0 ? "+" : "").append(selfPreservationMod).append(")");
+                    .append(selfPreservationMod >= 0 ? "+" : "").append(selfPreservationMod).append(")");
 
             // Loop through all the units controlled by this player.
             for (Entity unit : game.getPlayerEntities(player, true)) {
@@ -95,7 +110,8 @@ public class MoraleUtil {
                 int targetNumber = rally ? 6 : 2;
                 logMsg.append("\n\t\tBase Target Number = ").append(targetNumber);
 
-                // If the unit is crippled and forced withdrawal is in effect, the unit will automatically break.
+                // If the unit is crippled and forced withdrawal is in effect, the unit will
+                // automatically break.
                 targetNumber += calcDamageMod(unit, forcedWithdrawal, logMsg);
                 if (targetNumber >= 12) {
                     addBrokenUnit(unitId);
@@ -134,19 +150,21 @@ public class MoraleUtil {
                 }
             }
         } finally {
-            LogManager.getLogger().info(logMsg.toString());
+            logger.info(logMsg.toString());
         }
     }
 
     /**
-     * @param unitId The ID of the {@link Entity} to be added to the broken units list.
+     * @param unitId The ID of the {@link Entity} to be added to the broken units
+     *               list.
      */
     protected void addBrokenUnit(int unitId) {
         BROKEN_UNITS.add(unitId);
     }
 
     /**
-     * @param unitId The ID of the {@link Entity} to be removed from the broken units list.
+     * @param unitId The ID of the {@link Entity} to be removed from the broken
+     *               units list.
      */
     protected void removeBrokenUnit(int unitId) {
         BROKEN_UNITS.remove(unitId);
@@ -172,7 +190,8 @@ public class MoraleUtil {
                 continue;
             }
 
-            // If this is an enemy unit add it's BV to the enemy BV total, otherwise add it to the friendly BV total
+            // If this is an enemy unit add it's BV to the enemy BV total, otherwise add it
+            // to the friendly BV total
             // so long as it's not broken and still on the board.
             if (entity.getOwner().isEnemyOf(player)) {
                 enemyBv += entity.calculateBattleValue();
@@ -184,7 +203,7 @@ public class MoraleUtil {
         // The target number mod is based on the friendly : enemy BV ratio.
         float ratio = (float) friendlyBv / enemyBv;
         logMsg.append("\n\tBV Ratio = ").append(friendlyBv).append(" / ").append(enemyBv).append(" = ")
-              .append(DEC_FORMAT.format(ratio));
+                .append(DEC_FORMAT.format(ratio));
 
         if (ratio >= 3.0) {
             return -4;
@@ -244,7 +263,7 @@ public class MoraleUtil {
         final float veteranThreshold = 2.5f;
 
         float skillAverage;
-        if ((unit instanceof Infantry) || (unit instanceof Protomech)) {
+        if ((unit instanceof Infantry) || (unit instanceof ProtoMek)) {
             skillAverage = unit.getCrew().getGunnery();
         } else {
             skillAverage = (unit.getCrew().getGunnery() + unit.getCrew().getPiloting()) / 2f;

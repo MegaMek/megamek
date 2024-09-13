@@ -25,7 +25,7 @@ public interface Targetable extends InGameObject, Serializable {
     int TYPE_HEX_TAG = 19;
     int TYPE_BUILDING = 3;
     int TYPE_BLDG_IGNITE = 4;
-    int TYPE_BLDG_TAG = 20;    
+    int TYPE_BLDG_TAG = 20;
     int TYPE_MINEFIELD_CLEAR = 5;
     int TYPE_MINEFIELD_DELIVER = 6;
     int TYPE_HEX_ARTILLERY = 7;
@@ -43,7 +43,7 @@ public interface Targetable extends InGameObject, Serializable {
 
     /** @return the coordinates of the hex containing the target */
     Coords getPosition();
-    
+
     Map<Integer, Coords> getSecondaryPositions();
 
     /**
@@ -55,7 +55,7 @@ public interface Targetable extends InGameObject, Serializable {
     /**
      * Returns the height of the target, that is, how many levels above its
      * elevation it is for LOS purposes.
-     * 
+     *
      * @return height of the target in elevation levels */
     int getHeight();
 
@@ -66,7 +66,7 @@ public interface Targetable extends InGameObject, Serializable {
      *         surface
      */
     int getElevation();
-    
+
     /**
      * @return altitude of target
      */
@@ -80,7 +80,7 @@ public interface Targetable extends InGameObject, Serializable {
 
     /** @return side hit from location */
     int sideTable(Coords src);
-    
+
     /** @return side hit from location */
     int sideTable(Coords src, boolean usePrior);
 
@@ -99,13 +99,13 @@ public interface Targetable extends InGameObject, Serializable {
      * Does not include VTOL movement (see {@link Targetable#isAirborneVTOLorWIGE()}
      */
     boolean isAirborne();
-    
+
     /**
      * @return is the entity airborne in the fashion of a VTOL
      * Not used for aerospace units, see {@link Targetable#isAirborne()}
      */
     boolean isAirborneVTOLorWIGE();
-    
+
     // Make sure Targetable implements both
     @Override
     boolean equals(Object obj);
@@ -119,28 +119,28 @@ public interface Targetable extends InGameObject, Serializable {
      * @return
      */
     boolean isEnemyOf(Entity other);
-    
+
     default boolean isHexBeingBombed() {
-        return getTargetType() == TYPE_HEX_AERO_BOMB || 
+        return getTargetType() == TYPE_HEX_AERO_BOMB ||
                 getTargetType() == TYPE_HEX_BOMB;
     }
 
     /**
-     * Used to identify an target that tracks heat buildup (Mechs, ASFs, and small craft).
-     * 
+     * Used to identify an target that tracks heat buildup (Meks, ASFs, and small craft).
+     *
      * @return Whether the target tracks heat buildup.
      */
     default boolean tracksHeat() {
         return false;
     }
-    
+
     default boolean isBracing() {
         return false;
     }
-    
+
     @Override
     int hashCode();
-    
+
     /**
      * Utility function used to safely tell whether two Targetables are in the same hex.
      * Does not throw exceptions in case of nulls.
@@ -150,7 +150,7 @@ public interface Targetable extends InGameObject, Serializable {
                 (first.getPosition() == null) || (second.getPosition() == null)) {
             return false;
         }
-        
+
         return first.getPosition().equals(second.getPosition());
     }
 }

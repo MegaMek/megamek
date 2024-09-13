@@ -13,38 +13,48 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.client.generator.RandomNameGenerator;
-import megamek.common.annotations.Nullable;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import megamek.client.generator.RandomNameGenerator;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
+
 /**
- * Container for all the rule nodes for a faction. Has methods for processing the rules to
+ * Container for all the rule nodes for a faction. Has methods for processing
+ * the rules to
  * fill out a ForceDescriptor.
  *
  * @author Neoancient
  */
 public class Ruleset {
+    private final static MMLogger logger = MMLogger.create(Ruleset.class);
+
     public enum RatingSystem {
-        IS ("F", "D", "C", "B", "A"),
-        SL ("C", "B", "A"), // used for SLDF and CS/WoB
-        CLAN ("PG", "Sol", "SL",  "FL", "Keshik"),
-        ROS ("TP", "PG", "HS", "SB"),
-        NONE ();
+        IS("F", "D", "C", "B", "A"),
+        SL("C", "B", "A"), // used for SLDF and CS/WoB
+        CLAN("PG", "Sol", "SL", "FL", "Keshik"),
+        ROS("TP", "PG", "HS", "SB"),
+        NONE();
 
         String[] vals;
+
         RatingSystem(String... vals) {
             this.vals = vals;
         }
@@ -62,9 +72,9 @@ public class Ruleset {
     private static final String directory = "data/forcegenerator/faction_rules";
     private static final String CONSTANTS_FILE = "constants.txt";
 
-    private static HashMap<String,String> constants;
+    private static HashMap<String, String> constants;
     private static Pattern constantPattern = Pattern.compile("%(.*?)%");
-    private static HashMap<String,Ruleset> rulesets;
+    private static HashMap<String, Ruleset> rulesets;
     private static boolean initialized;
     private static boolean initializing;
 
@@ -73,7 +83,7 @@ public class Ruleset {
     private DefaultsNode defaults;
     private TOCNode toc;
     private int customRankBase;
-    private HashMap<Integer,String> customRanks;
+    private HashMap<Integer, String> customRanks;
     private ArrayList<ForceNode> forceNodes;
     private String parent;
 
@@ -111,7 +121,8 @@ public class Ruleset {
             return rulesets.get(faction);
         }
         FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
-        /* First check all parents without recursion. If none is found, do
+        /*
+         * First check all parents without recursion. If none is found, do
          * a recursive check on all parents.
          */
         if (fRec != null) {
@@ -127,7 +138,8 @@ public class Ruleset {
                 }
             }
         }
-        // This shouldn't happen unless the data is missing. Throw out a default ruleset to prevent barfing.
+        // This shouldn't happen unless the data is missing. Throw out a default ruleset
+        // to prevent barfing.
         return new Ruleset();
     }
 
@@ -135,7 +147,7 @@ public class Ruleset {
         return customRankBase;
     }
 
-    public HashMap<Integer,String> getCustomRanks() {
+    public HashMap<Integer, String> getCustomRanks() {
         return customRanks;
     }
 
@@ -144,8 +156,9 @@ public class Ruleset {
         /**
          * Notifies listener of progress in generating force.
          *
-         * @param progress The fraction of the task that has been completed in this step.
-         * @param message A message that describes the current step.
+         * @param progress The fraction of the task that has been completed in this
+         *                 step.
+         * @param message  A message that describes the current step.
          *
          */
         void updateProgress(double progress, String message);
@@ -169,7 +182,7 @@ public class Ruleset {
             l.updateProgress(0.05, "Finalizing formation");
         }
         fd.loadEntities(l, 0.4);
-        //      fd.assignBloodnames();
+        // fd.assignBloodnames();
 
         ForceDescriptor transports = fd.assignTransport();
         if (null != transports) {
@@ -185,18 +198,21 @@ public class Ruleset {
     }
 
     /**
-     * Recursively build the force structure by assigning appropriate values to the current node,
-     * including number and type of subforce and attached force nodes, and process those as well.
+     * Recursively build the force structure by assigning appropriate values to the
+     * current node,
+     * including number and type of subforce and attached force nodes, and process
+     * those as well.
      *
      * @param fd
      */
-    private void buildForceTree (ForceDescriptor fd, ProgressListener l, double progress) {
-        //Find the most specific ruleset for this faction.
+    private void buildForceTree(ForceDescriptor fd, ProgressListener l, double progress) {
+        // Find the most specific ruleset for this faction.
         Ruleset rs = findRuleset(fd.getFaction());
         boolean applied = false;
         ForceNode fn = null;
-        //Find the first node matching node in the ruleset and apply the options to the current force descriptor.
-        //If no matching node is found in the ruleset, move to the parent ruleset.
+        // Find the first node matching node in the ruleset and apply the options to the
+        // current force descriptor.
+        // If no matching node is found in the ruleset, move to the parent ruleset.
         do {
             fn = rs.findForceNode(fd);
             if (fn == null) {
@@ -207,15 +223,16 @@ public class Ruleset {
                 }
             } else {
                 applied = fn.apply(fd);
-                LogManager.getLogger().debug("Selecting force node " + fn.show()
+                logger.debug("Selecting force node " + fn.show()
                         + " from ruleset " + rs.getFaction());
             }
         } while (rs != null && (fn == null || !applied));
 
         int count = fd.getSubforces().size() + fd.getAttached().size();
 
-        //Process subforces recursively. It is possible that the subforce has
-        // a different faction, in which case the ruleset appropriate to that faction is used.
+        // Process subforces recursively. It is possible that the subforce has
+        // a different faction, in which case the ruleset appropriate to that faction is
+        // used.
         for (ForceDescriptor sub : fd.getSubforces()) {
             rs = this;
             if (!fd.getFaction().equals(sub.getFaction())) {
@@ -228,19 +245,19 @@ public class Ruleset {
             }
         }
 
-        //Any attached support units are then built.
+        // Any attached support units are then built.
         for (ForceDescriptor sub : fd.getAttached()) {
             buildForceTree(sub, l, progress / count);
         }
         /*
-        // Each attached formation is essentially a new top-level node
-        for (ForceDescriptor sub : fd.getAttached()) {
-            sub.generateUnits(l, progress * 0.7 / count);
-            sub.assignCommanders();
-            sub.assignPositions();
-            sub.loadEntities(l, progress * 0.1 / count);
-            sub.assignBloodnames();
-        }
+         * // Each attached formation is essentially a new top-level node
+         * for (ForceDescriptor sub : fd.getAttached()) {
+         * sub.generateUnits(l, progress * 0.7 / count);
+         * sub.assignCommanders();
+         * sub.assignPositions();
+         * sub.loadEntities(l, progress * 0.1 / count);
+         * sub.assignBloodnames();
+         * }
          */
         if (count == 0 && null != l) {
             l.updateProgress(progress, "Building force tree");
@@ -289,8 +306,8 @@ public class Ruleset {
         return null;
     }
 
-    public HashMap<String,String> getEschelonNames(String unitType) {
-        HashMap<String,String> retVal = new HashMap<>();
+    public HashMap<String, String> getEschelonNames(String unitType) {
+        HashMap<String, String> retVal = new HashMap<>();
         for (ForceNode n : forceNodes) {
             if (n.matchesPredicate(unitType, "ifUnitType")) {
                 retVal.put(n.getEschelonCode(), n.getEschelonName());
@@ -351,13 +368,13 @@ public class Ruleset {
                     try {
                         constants.put(fields[0], fields[1]);
                     } catch (NumberFormatException e) {
-                        LogManager.getLogger().error("Malformed line in force generator constants file: " + line);
+                        logger.error(e, "Malformed line in force generator constants file: " + line);
                     }
                 }
             }
             reader.close();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "loadConstants");
         }
     }
 
@@ -368,14 +385,14 @@ public class Ruleset {
 
         File dir = new File(directory);
         if (!dir.exists()) {
-            LogManager.getLogger().error("Could not locate force generator faction rules.");
+            logger.error("Could not locate force generator faction rules.");
             initializing = false;
             return;
         }
 
         loadConstants(new File(dir, CONSTANTS_FILE));
 
-        //We need this so we can determine parent faction if not stated explicitly.
+        // We need this so we can determine parent faction if not stated explicitly.
         while (!RATGenerator.getInstance().isInitialized()) {
             try {
                 Thread.sleep(50);
@@ -394,7 +411,7 @@ public class Ruleset {
                     rulesets.put(rs.getFaction(), rs);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed while parsing file " + f, ex);
+                logger.error(ex, "Failed while parsing file " + f);
             }
         }
         initialized = true;
@@ -409,7 +426,7 @@ public class Ruleset {
             db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed loading force template from file " + f.getName(), ex);
+            logger.error(ex, "Failed loading force template from file " + f.getName());
             return null;
         }
 
@@ -417,14 +434,14 @@ public class Ruleset {
 
         Element elem = xmlDoc.getDocumentElement();
         if (!elem.getNodeName().equals("ruleset")) {
-            LogManager.getLogger().error("Could not find ruleset element in file " + f.getName());
+            logger.error("Could not find ruleset element in file " + f.getName());
             return null;
         }
 
         if (!elem.getAttribute("faction").isBlank()) {
             retVal.faction = elem.getAttribute("faction");
         } else {
-            LogManager.getLogger().error("Faction is not declared in ruleset file " + f.getName());
+            logger.error("Faction is not declared in ruleset file " + f.getName());
             return null;
         }
         if (!elem.getAttribute("parent").isBlank()) {
@@ -449,7 +466,8 @@ public class Ruleset {
                 }
             }
         }
-        // Rating system defaults to IS if not present. If present but cannot be parsed, is set to NONE.
+        // Rating system defaults to IS if not present. If present but cannot be parsed,
+        // is set to NONE.
         if (!elem.getAttribute("ratingSystem").isBlank()) {
             switch (elem.getAttribute("ratingSystem")) {
                 case "IS":
@@ -503,9 +521,10 @@ public class Ruleset {
                     try {
                         fn = ForceNode.createFromXml(wn);
                     } catch (IllegalArgumentException ex) {
-                        LogManager.getLogger().error("In file " + f.getName() + " while processing force node"
-                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? "" : " "
-                                        + wn.getAttributes().getNamedItem("eschName"))
+                        logger.error(ex, "In file " + f.getName() + " while processing force node"
+                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? ""
+                                        : " "
+                                                + wn.getAttributes().getNamedItem("eschName"))
                                 + ": " + ex.getMessage());
                     }
                     if (fn != null) {

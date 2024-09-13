@@ -18,7 +18,6 @@ import java.awt.Image;
 import java.io.Serializable;
 import java.util.Objects;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
@@ -244,7 +243,8 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * Determines whether this special hex should be obscured from the given <code>Player</code>.
+     * Determines whether this special hex should be obscured from the given
+     * <code>Player</code>.
      *
      * @param other
      * @return
@@ -268,8 +268,11 @@ public class SpecialHexDisplay implements Serializable {
 
     /**
      * Determine whether the current SpecialHexDisplay should be displayed
-     * Note Artillery Hits and Bomb Hits (direct hits on their targets) will always display
-     * in the appropriate phase.  Other bomb- or artillery-related graphics are optional.
+     * Note Artillery Hits and Bomb Hits (direct hits on their targets) will always
+     * display
+     * in the appropriate phase. Other bomb- or artillery-related graphics are
+     * optional.
+     * 
      * @param phase
      * @param curRound
      * @param playerChecking
@@ -289,7 +292,7 @@ public class SpecialHexDisplay implements Serializable {
         }
 
         // Arty icons for the owner are drawn in BoardView1.drawArtillery
-        //  and shouldn't be drawn twice
+        // and shouldn't be drawn twice
         if (isOwner(playerChecking)
                 && (type == Type.ARTILLERY_AUTOHIT
                         || type == Type.ARTILLERY_ADJUSTED
@@ -304,10 +307,12 @@ public class SpecialHexDisplay implements Serializable {
         }
 
         // Hide icons the player doesn't want to see
-        // Check user settings and Hide some "hits" because they are actually drifts that did damage
+        // Check user settings and Hide some "hits" because they are actually drifts
+        // that did damage
         if (guiPref != null) {
             switch (type) {
-                case ARTILLERY_HIT -> shouldDisplay &= !this.info.contains(Messages.getString("ArtilleryMessage.drifted"));
+                case ARTILLERY_HIT ->
+                    shouldDisplay &= !this.info.contains(Messages.getString("ArtilleryMessage.drifted"));
                 case ARTILLERY_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_MISSES);
                 case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
                 case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);

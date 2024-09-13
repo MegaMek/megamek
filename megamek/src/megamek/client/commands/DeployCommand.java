@@ -1,22 +1,25 @@
 /*
-* MegaMek -
-* Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
+ * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
 */
 
 package megamek.client.commands;
 
-import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 
@@ -61,25 +64,25 @@ public class DeployCommand extends ClientCommand {
         int width = getClient().getBoard().getWidth();
         int height = getClient().getBoard().getHeight();
         int nDir = getClient().getLocalPlayer().getStartingPos();
-        int minx = 0;
-        int maxx = width;
-        int miny = 0;
-        int maxy = height;
+        int minHorizontal = 0;
+        int maxHorizontal = width;
+        int minVertical = 0;
+        int maxVertical = height;
         String deep = "";
         if (nDir > 10) {
             // Deep deployment, the board is effectively smaller
             nDir -= 10;
             deep = "Deep ";
-            minx = width / 5;
-            maxx -= width / 5;
-            miny = height / 5;
-            maxy -= height / 5;
+            minHorizontal = width / 5;
+            maxHorizontal -= width / 5;
+            minVertical = height / 5;
+            maxVertical -= height / 5;
         }
         switch (nDir) {
             case 0: // Any
-                return deep + "Deploy nearly anywhere. MinX: " + (minx + 1)
-                        + " MinY: " + (miny + 1) + " MaxX: " + (maxx + 1)
-                        + " MaxY: " + (maxy + 1);
+                return deep + "Deploy nearly anywhere. MinX: " + (minHorizontal + 1)
+                        + " MinY: " + (minVertical + 1) + " MaxX: " + (maxHorizontal + 1)
+                        + " MaxY: " + (maxVertical + 1);
             case 1: // NW
                 return deep + "Deploy NW.";
             case 2: // N
@@ -100,11 +103,11 @@ public class DeployCommand extends ClientCommand {
                 return deep + "Deploy at any edge.";
             case 10: // Centre
                 return deep + "Deploy in the center. MinX: "
-                        + (Math.max(minx, width / 3) + 1) + " MinY: "
-                        + (Math.max(miny, height / 3) + 1) + " MaxX: "
-                        + (Math.min(maxx, 2 * width / 3) + 1) + " MaxY: "
-                        + (Math.min(miny, 2 * height / 3) + 1);
-            default: // ummm. .
+                        + (Math.max(minHorizontal, width / 3) + 1) + " MinY: "
+                        + (Math.max(minVertical, height / 3) + 1) + " MaxX: "
+                        + (Math.min(maxHorizontal, 2 * width / 3) + 1) + " MaxY: "
+                        + (Math.min(maxVertical, 2 * height / 3) + 1);
+            default:
                 return "Something went wrong, unknown deployment schema.";
         }
     }

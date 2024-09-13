@@ -20,12 +20,13 @@ import java.io.OutputStream;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.net.packets.Packet;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * Generic marshaller that [un]marshalls the <code>Packet</code>
  */
 public abstract class PacketMarshaller {
+    private static final MMLogger logger = MMLogger.create(PacketMarshaller.class);
 
     /**
      * Java native serialization marshalling
@@ -45,7 +46,7 @@ public abstract class PacketMarshaller {
             bo.flush();
             return bo.toByteArray();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return null;
         }
     }
@@ -55,7 +56,7 @@ public abstract class PacketMarshaller {
      *
      * @param packet packet to marshall
      * @param stream <code>OutputStream</code> to marshall the
-     *            <code>Packet</code> to
+     *               <code>Packet</code> to
      * @throws Exception
      */
     public abstract void marshall(Packet packet, OutputStream stream) throws Exception;
@@ -71,7 +72,7 @@ public abstract class PacketMarshaller {
         try {
             return unmarshall(new ByteArrayInputStream(data));
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return null;
         }
     }

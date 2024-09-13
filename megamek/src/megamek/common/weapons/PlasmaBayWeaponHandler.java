@@ -15,19 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
@@ -50,7 +38,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -62,7 +50,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
         if (!missed
-                && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
+                && ((entityTarget instanceof Mek) || (entityTarget instanceof Aero))) {
             int extraHeat = 0;
             for (WeaponMounted m : weapon.getBayWeapons()) {
                 if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
@@ -79,8 +67,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                 Report r = new Report(3400);
                 r.subject = subjectId;
                 r.indent(2);
-                if (entityTarget.getArmor(hit) > 0 &&                        
-                        (entityTarget.getArmorType(hit.getLocation()) == 
+                if (entityTarget.getArmor(hit) > 0 &&
+                        (entityTarget.getArmorType(hit.getLocation()) ==
                            EquipmentType.T_ARMOR_REFLECTIVE)) {
                    entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                    r.messageId = 3406;
@@ -89,7 +77,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                    r.add(extraHeat);
                    r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
                 } else if (entityTarget.getArmor(hit) > 0 &&
-                       (entityTarget.getArmorType(hit.getLocation()) == 
+                       (entityTarget.getArmorType(hit.getLocation()) ==
                            EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                     entityTarget.heatFromExternal += extraHeat / 2;
                     r.messageId = 3406;
@@ -101,8 +89,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     entityTarget.heatFromExternal += extraHeat;
                     r.add(extraHeat);
                     r.choose(true);
-                }                
-                vPhaseReport.addElement(r);                
+                }
+                vPhaseReport.addElement(r);
             }
         }
     }

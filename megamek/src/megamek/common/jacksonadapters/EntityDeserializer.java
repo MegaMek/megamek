@@ -18,21 +18,25 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.*;
-import megamek.common.icons.Camouflage;
-import megamek.common.scenario.Scenario;
+import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
+import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.IAero;
+import megamek.common.MekSummary;
+import megamek.common.icons.Camouflage;
+import megamek.common.scenario.Scenario;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -93,7 +97,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
 
     private Entity loadEntity(JsonNode node) {
         String fullName = node.get(FULL_NAME).textValue();
-        Entity entity = MechSummary.loadEntity(fullName);
+        Entity entity = MekSummary.loadEntity(fullName);
         if (entity == null) {
             throw new IllegalArgumentException("Could not retrieve unit " + fullName + " from cache!");
         }

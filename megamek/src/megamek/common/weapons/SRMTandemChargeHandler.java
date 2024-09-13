@@ -13,11 +13,11 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
-
-import java.util.Vector;
 
 /**
  * @author Jason Tighe
@@ -40,7 +40,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     * 
+     *
      * @param entityTarget
      * @param vPhaseReport
      * @param bldg
@@ -89,8 +89,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
         // damage absorption by the partial cover, if it would have happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
+
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 
@@ -115,11 +115,11 @@ public class SRMTandemChargeHandler extends SRMHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bDirect && !target.isConventionalInfantry()) {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
@@ -131,7 +131,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 if (critRoll >= 10) {
                     hit = new HitData(loc, false, HitData.EFFECT_CRITICAL);
                 }
-            } else if ((target instanceof Tank) || (target instanceof Mech)) {
+            } else if ((target instanceof Tank) || (target instanceof Mek)) {
 
                 if (bGlancing || bLowProfileGlancing) {
                     // this will be either -4 or -8

@@ -17,7 +17,12 @@ import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.*;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.ArtilleryWeaponDirectFireHandler;
+import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
+import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
+import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
+import megamek.common.weapons.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -29,7 +34,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
 
     public ArtilleryWeapon() {
         super();
-        flags = flags.or(F_ARTILLERY).or(F_MECH_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_ARTILLERY).or(F_MEK_WEAPON).or(F_TANK_WEAPON);
         damage = DAMAGE_ARTILLERY;
         atClass = CLASS_ARTILLERY;
     }
@@ -55,7 +60,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Mounted ammo = game.getEntity(waa.getEntityId())
+        Mounted<?> ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {

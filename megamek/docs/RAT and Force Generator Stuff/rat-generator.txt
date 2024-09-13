@@ -305,9 +305,9 @@ This is required to distinguish between different unit types that have the same 
                 for easy air transport.
 
         anti_mek
-        Use: infantry with equipment for making anti-Mech attacks
+        Use: infantry with equipment for making anti-Mek attacks
         Unit types: Infantry
-        Notes: typically applied to foot, jump, or motorized infantry that are built with anti-Mech
+        Notes: typically applied to foot, jump, or motorized infantry that are built with anti-Mek
                 equipment, may be applied to units which do not have the gear but are still allowed
                 to make such attacks
 
@@ -402,13 +402,13 @@ This is required to distinguish between different unit types that have the same 
         Unit types: Small Craft, Dropship
         Notes: use troop_carrier role on WarShips
 
-        mech_carrier
-        Use: unit has bays for transporting Mechs
+        mek_carrier
+        Use: unit has bays for transporting Meks
         Unit types: Dropship
         Notes: use troop_carrier role on WarShips
 
-        protomech_carrier
-        Use: unit has bays for transporting ProtoMechs
+        protomek_carrier
+        Use: unit has bays for transporting ProtoMeks
         Unit types: Dropship
         Notes: use troop_carrier role on WarShips
 

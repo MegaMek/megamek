@@ -18,6 +18,19 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiWhite;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -30,14 +43,6 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 
 public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
@@ -298,7 +303,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         }
 
         // Artillery fire adjustment
-        final Mounted curWeapon = getSelectedArtilleryWeapon();
+        final Mounted<?> curWeapon = getSelectedArtilleryWeapon();
         if ((curWeapon != null) && (selectedEntity != null)) {
             // process targeted hexes
             int amod = 0;

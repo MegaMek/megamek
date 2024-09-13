@@ -67,15 +67,15 @@ public class Sensor implements Serializable {
     public static final String ISBALIGHT_AP = "ISBALightActiveProbe";
     public static final String EW_EQUIPMENT = "ISElectronicWarfareEquipment";
 
-    private static String[] sensorNames = { "Mech Radar", "Vehicle Radar",
+    private static String[] sensorNames = { "Mek Radar", "Vehicle Radar",
             "Beagle Active Probe", "Clan AP", "Bloodhound AP", "Watchdog",
-            "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan",
+            "Light AP", "Mek IR", "Vehicle IR", "Mek Magscan",
             "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
-            "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype", 
+            "Mek Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype",
             "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)", "Spacecraft Electronic Support Measures (Passive)",
             "Spacecraft Thermal/Optical Sensors (Passive)", "Aero Thermal/Optical Sensors (Passive)"};
     public static final int SIZE = sensorNames.length;
-    
+
     //Constants for space automatic visual detection ranges
     public static final int ASF_RADAR_AUTOSPOT_RANGE = 55;
     public static final int ASF_OPTICAL_FIRING_SOLUTION_RANGE = 14;
@@ -149,7 +149,7 @@ public class Sensor implements Serializable {
             case TYPE_VEE_SEISMIC:
                 return 1;
             //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
-            //them into just the types that have different detection mechanics. 
+            //them into just the types that have different detection mechanics.
             case TYPE_SPACECRAFT_RADAR:
             case TYPE_SPACECRAFT_ESM:
                 return 5555;
@@ -169,7 +169,7 @@ public class Sensor implements Serializable {
                 && ((los.getHardBuildings() + los.getSoftBuildings()) > 0)) {
             return 0;
         }
-        
+
         if (los.isBlockedByHill()
                 && (type != TYPE_MEK_SEISMIC)
                 && (type != TYPE_VEE_SEISMIC)
@@ -199,20 +199,20 @@ public class Sensor implements Serializable {
             range -= game.getPlanetaryConditions().getTemperatureDifference(50,
                     -30);
         }
-        
+
         //Most spacecraft sensors only work in space...
-        if (!game.getBoard().inSpace() && 
-                (type == TYPE_SPACECRAFT_ESM 
-                || type == TYPE_SPACECRAFT_THERMAL 
+        if (!game.getBoard().inSpace() &&
+                (type == TYPE_SPACECRAFT_ESM
+                || type == TYPE_SPACECRAFT_THERMAL
                 || type == TYPE_AERO_THERMAL)) {
-            range = 0;            
+            range = 0;
         }
-        
+
         //Aero/Small Craft Active Sensors have longer range in space
         if (game.getBoard().inSpace() && type == TYPE_AERO_SENSOR) {
             range = ASF_RADAR_MAX_RANGE;
         }
-        
+
         //DropShip radar has reduced range when not in space
         if (!game.getBoard().inSpace() && type == TYPE_SPACECRAFT_RADAR) {
             range = LC_RADAR_GROUND_RANGE;
@@ -422,7 +422,7 @@ public class Sensor implements Serializable {
 
     /**
      * Computes the sensor check modifier for ECM.
-     * 
+     *
      * @param en
      * @param allECMInfo  A collection of ECMInfo for all entities, this value
      *                    can be null and it will be computed when it's

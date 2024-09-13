@@ -15,5 +15,3 @@ factions:
   units:
     - fullname: Atlas AS7-D
     - fullname: Locust LCT-1M
-
-

@@ -18,25 +18,32 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.HashMap;
 
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.Entity;
+import megamek.common.LandAirMek;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Mek;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.QuadVee;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
-    private final Mech mek = (Mech) entity;
+    private final Mek mek = (Mek) entity;
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
+     * instead.
      * Constructs a special ability converter for Mek units.
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASMekSpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -50,17 +57,17 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             assign("Omni Unit", OMNI);
         }
 
-        String cockpitName = Mech.getCockpitDisplayString(mek.getCockpitType());
+        String cockpitName = Mek.getCockpitDisplayString(mek.getCockpitType());
         switch (mek.getCockpitType()) {
-            case Mech.COCKPIT_INTERFACE:
+            case Mek.COCKPIT_INTERFACE:
                 assign(cockpitName, DN);
                 break;
-            case Mech.COCKPIT_COMMAND_CONSOLE:
-            case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
-            case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+            case Mek.COCKPIT_COMMAND_CONSOLE:
+            case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+            case Mek.COCKPIT_SMALL_COMMAND_CONSOLE:
                 assign(cockpitName, MHQ, 1);
                 break;
-            case Mech.COCKPIT_VRRP:
+            case Mek.COCKPIT_VRRP:
                 assign(cockpitName, VR);
                 break;
         }
@@ -75,8 +82,8 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             assign("BattleMek", SRCH);
         }
 
-        if (entity instanceof LandAirMech) {
-            LandAirMech lam = (LandAirMech) entity;
+        if (entity instanceof LandAirMek) {
+            LandAirMek lam = (LandAirMek) entity;
             double bombs = entity.countWorkingMisc(MiscType.F_BOMB_BAY);
             int bombValue = ASConverter.roundUp(bombs / 5);
             if (bombValue > 0) {
@@ -84,12 +91,12 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             }
             assign("LAM Fuel (" + lam.getFuel() + ")", FUEL, (int) Math.round(0.05 * lam.getFuel()));
             var lamMoves = new HashMap<String, Integer>();
-            if (lam.getLAMType() == LandAirMech.LAM_BIMODAL) {
+            if (lam.getLAMType() == LandAirMek.LAM_BIMODAL) {
                 lamMoves.put("a", lam.getCurrentThrust());
                 report.addLine("Bimodal Movement", "BIM");
                 element.getSpecialAbilities().replaceSUA(BIM, lamMoves);
             } else {
-                lamMoves.put("g", lam.getAirMechCruiseMP(MPCalculationSetting.AS_CONVERSION) * 2);
+                lamMoves.put("g", lam.getAirMekCruiseMP(MPCalculationSetting.AS_CONVERSION) * 2);
                 lamMoves.put("a", lam.getCurrentThrust());
                 report.addLine("LAM Movement", "LAM");
                 element.getSpecialAbilities().replaceSUA(LAM, lamMoves);
@@ -111,7 +118,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
     }
 
     @Override
-    protected void processSEALandSOA(Mounted misc) {
+    protected void processSEALandSOA(Mounted<?> misc) {
         if (mek.isIndustrial()) {
             MiscType miscType = (MiscType) misc.getType();
             if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {

@@ -27,7 +27,6 @@ import megamek.common.Roll;
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,8 @@ import static megamek.client.ui.swing.util.UIUtil.hexColor;
 
 public class SBFReportEntry implements ReportEntry {
 
-    record DataEntry(String data, boolean isObscured) implements Serializable { }
+    record DataEntry(String data, boolean isObscured) implements Serializable {
+    }
 
     protected static final String CSS_HEADER = "header";
 
@@ -72,25 +72,32 @@ public class SBFReportEntry implements ReportEntry {
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
     }
 
-//    public static String styles() {
-//        float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-//        int labelSize = (int) (0.8 * base);
-//        int valueSize = (int) (1.1 * base);
-//        int nameSize = (int) (1.3 * base);
-//
-//        return ".value { font-family:Exo; font-size:20; }" +
-//                ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }" +
-//                ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray; text-align:right; }" +
-//                ".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
-//                ".armornodmg { font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
-//                ".valuedmg { font-family:Exo; font-size:" + valueSize + "; text-align: center; color: #FAA; }" +
-//                ".valuedeemph { font-family:Exo; font-size:" + labelSize + "; color:gray; }" +
-//                ".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }" +
-//                ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
-//                ".fullwidth { width:100%; }" +
-//                ".formation { font-family:Noto Sans; font-size:" + nameSize + "; }" +
-//                "th, td { padding:0 2; }";
-//    }
+    // public static String styles() {
+    // float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+    // int labelSize = (int) (0.8 * base);
+    // int valueSize = (int) (1.1 * base);
+    // int nameSize = (int) (1.3 * base);
+    //
+    // return ".value { font-family:Exo; font-size:20; }" +
+    // ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }"
+    // +
+    // ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray;
+    // text-align:right; }" +
+    // ".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + ";
+    // text-align: center; }" +
+    // ".armornodmg { font-family:Exo; font-size:" + valueSize + "; text-align:
+    // center; }" +
+    // ".valuedmg { font-family:Exo; font-size:" + valueSize + "; text-align:
+    // center; color: #FAA; }" +
+    // ".valuedeemph { font-family:Exo; font-size:" + labelSize + "; color:gray; }"
+    // +
+    // ".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }"
+    // +
+    // ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
+    // ".fullwidth { width:100%; }" +
+    // ".formation { font-family:Noto Sans; font-size:" + nameSize + "; }" +
+    // "th, td { padding:0 2; }";
+    // }
 
     /**
      * Add the given int to the list of data that will be substituted for the
@@ -158,7 +165,9 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     /**
-     * Indent the report. Equivalent to calling {@link #indent(int)} with a parameter of 1.
+     * Indent the report. Equivalent to calling {@link #indent(int)} with a
+     * parameter of 1.
+     * 
      * @return This Report to allow chaining
      */
     public SBFReportEntry indent() {

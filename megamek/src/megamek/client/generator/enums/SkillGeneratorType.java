@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,9 +18,9 @@
  */
 package megamek.client.generator.enums;
 
-import megamek.MegaMek;
-
 import java.util.ResourceBundle;
+
+import megamek.MegaMek;
 
 public enum SkillGeneratorType {
     //region Enum Declarations
@@ -62,7 +62,7 @@ public enum SkillGeneratorType {
     public boolean isManeiDomini() {
         return this == MANEI_DOMINI;
     }
-    
+
     public boolean isSociety() {
         return this == SOCIETY;
     }

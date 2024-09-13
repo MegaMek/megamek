@@ -21,7 +21,7 @@ import megamek.common.util.BuildingBlock;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKJumpshipFile extends BLKFile implements IMechLoader {
+public class BLKJumpshipFile extends BLKFile implements IMekLoader {
 
     public BLKJumpshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -50,13 +50,13 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
         // Marines
         if (!dataFile.exists("marines")) {
-            //throw new EntityLoadingException("Could not find marines block.");
+            // throw new EntityLoadingException("Could not find marines block.");
         }
         a.setNMarines(dataFile.getDataAsInt("marines")[0]);
 
         // Battle Armor
         if (!dataFile.exists("battlearmor")) {
-            //throw new EntityLoadingException("Could not find battlearmor block.");
+            // throw new EntityLoadingException("Could not find battlearmor block.");
         }
         a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
 
@@ -76,7 +76,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
         // Other Passengers
         if (!dataFile.exists("other_crew")) {
-            //throw new EntityLoadingException("Could not find other_crew block.");
+            // throw new EntityLoadingException("Could not find other_crew block.");
         }
         a.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
 
@@ -128,14 +128,15 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("hpg")) {
             a.setHPG(true);
         }
-        
+
         if (dataFile.exists("sail")) {
             a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
         // Grav Decks - two approaches
-        // First, the old method, where a number of grav decks for each category is specified
-        //  This doesn't allow us to specify precise size
+        // First, the old method, where a number of grav decks for each category is
+        // specified
+        // This doesn't allow us to specify precise size
         if (dataFile.exists("grav_deck")) {
             a.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
         }
@@ -145,8 +146,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("grav_deck_huge")) {
             a.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
         }
-        // Second, the new method, where a white space separated list of numbers is given
-        //  Each number represents a distinct grav deck, with the specified size
+        // Second, the new method, where a white space separated list of numbers is
+        // given
+        // Each number represents a distinct grav deck, with the specified size
         if (dataFile.exists("grav_decks")) {
             String[] toks = dataFile.getDataAsString("grav_decks");
             for (String t : toks) {
@@ -175,7 +177,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
-        
+
         if (dataFile.exists("designtype")) {
             a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
         } else {
@@ -280,9 +282,6 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 if (etype != null) {
                     // first load the equipment
@@ -318,7 +317,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                         if (weap.isCapital()) {
                             damage *= 10;
                         }
-                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount) && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
+                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount)
+                                && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass())
+                                && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;
@@ -334,9 +335,6 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                         }
                     }
                     if (etype.isVariableSize()) {
-                        if (size == 0.0) {
-                            size = getLegacyVariableSize(equipName);
-                        }
                         newmount.setSize(size);
                     } else if (newmount.getType() instanceof AmmoType) {
                         // ammo should also get loaded into the bay
@@ -344,24 +342,6 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                     }
                 } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (mashOperatingTheaters > 0) {
-            for (Mounted m : a.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted m : a.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }

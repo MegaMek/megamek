@@ -18,12 +18,12 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-
-import java.util.HashMap;
-import java.util.Map;
 
 final class ASMovementConverter {
 
@@ -75,10 +75,10 @@ final class ASMovementConverter {
 
         int jumpMove = entity.getJumpMP(MPCalculationSetting.AS_CONVERSION) * 2;
 
-        if (hasSupercharger(entity) && hasMechMASC(entity)) {
+        if (hasSupercharger(entity) && hasMekMASC(entity)) {
             walkMP *= 1.5;
             report.addLine("MASC + Supercharger", "x 1.5", "= ", walkMP);
-        } else if (hasSupercharger(entity) || hasMechMASC(entity)
+        } else if (hasSupercharger(entity) || hasMekMASC(entity)
                 || hasJetBooster(entity) || hasMyomerBooster(entity)) {
             walkMP *= 1.25;
             report.addLine("MASC, SC, Jet or Myomer Booster", "x 1.25", "= ", walkMP);
@@ -86,7 +86,7 @@ final class ASMovementConverter {
         walkMP = Math.round(walkMP);
         report.addLine("Round normal", "= " + Math.round(walkMP));
 
-        if ((entity instanceof Mech) && ((Mech) entity).hasMPReducingHardenedArmor()) {
+        if ((entity instanceof Mek) && ((Mek) entity).hasMPReducingHardenedArmor()) {
             walkMP--;
             report.addLine("MP reducing armor", "- 1", "= ", walkMP);
         }
@@ -179,12 +179,12 @@ final class ASMovementConverter {
 
     /** Returns true if the given entity has a ProtoMek Myomer Booster. */
     private static boolean hasMyomerBooster(Entity entity) {
-        return (entity instanceof Protomech) && entity.hasWorkingMisc(EquipmentTypeLookup.PROTOMECH_MYOMER_BOOSTER);
+        return (entity instanceof ProtoMek) && entity.hasWorkingMisc(EquipmentTypeLookup.PROTOMEK_MYOMER_BOOSTER);
     }
 
-    /** Returns true if the given entity is a Mech and has MASC, regardless of its state (convert as if undamaged). */
-    private static boolean hasMechMASC(Entity entity) {
-        return (entity instanceof Mech)
+    /** Returns true if the given entity is a Mek and has MASC, regardless of its state (convert as if undamaged). */
+    private static boolean hasMekMASC(Entity entity) {
+        return (entity instanceof Mek)
                 && entity.getMisc().stream()
                 .map(m -> (MiscType) m.getType())
                 .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && !m.hasSubType(MiscType.S_SUPERCHARGER)));

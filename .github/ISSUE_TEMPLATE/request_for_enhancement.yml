@@ -1,5 +1,5 @@
 name: Request for Enhancement
-description: Request an enhancement for MegaMek. Review our Content Policy first.
+description: Use this to submit a Request for Enhancement (RFE)—asking for a new feature, extending an existing feature, or implementing missing rules or errata.
 title: "[RFE] Brief Description"
 labels: [(RFE) Enhancement]
 body:

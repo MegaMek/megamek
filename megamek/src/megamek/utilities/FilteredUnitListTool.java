@@ -33,7 +33,7 @@ import megamek.logging.MMLogger;
 /**
  * This util will go through all available units and filter them according to
  * the filter() method and print out any units that match the filter. Edit
- * {@link #filter(Entity, MekSummary)} to apply the desired filter.
+ * {@link Entity} and {@link MekSummary} to apply the desired filter.
  */
 public final class FilteredUnitListTool {
     private static final MMLogger logger = MMLogger.create(FilteredUnitListTool.class);
@@ -44,17 +44,23 @@ public final class FilteredUnitListTool {
      * when true, should make the unit be listed. E.g. when looking for all SV with
      * a fusion engine, use:
      *
+     * <code>
      * passesFilter = entity.isSupportVehicle() && entity.getEngine().isFusion();
+     *</code>
      *
      * All Primitive Meks with a standard gyro:
      *
+     * <code>
      * passesFilter = entity instanceof Mek && entity.isPrimitive() &&
      * entity.getGyroType() == Mek.GYRO_STANDARD;
+     * </code>
      *
      * SV with amphibious chassis:
      *
+     * <code>
      * passesFilter = entity.isSupportVehicle() &&
      * entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
+     * </code>
      *
      * Note that the MekSummary contains Alpha Strike values and can be filtered
      * using those.

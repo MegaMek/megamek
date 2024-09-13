@@ -43,11 +43,10 @@ import megamek.logging.MMLogger;
 
 /**
  * This class represents an Era of the BT Universe such as the Civil War or Star
- * League eras.
- * The eras are read from the XML definition file located at
+ * League eras. The eras are read from the XML definition file located at
  * {@link megamek.MMConstants#ERAS_FILE_PATH}.
  *
- * @implNote This class is immutable.
+ * This class is immutable.
  *
  * @author Justin "Windchild" Bowen
  * @author Simon (Juliez)

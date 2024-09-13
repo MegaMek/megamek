@@ -398,7 +398,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // if we used ProtoMek myomer booster, roll 2d6
         // pilot damage on a 2
         if ((entity instanceof ProtoMek) && ((ProtoMek) entity).hasMyomerBooster()
-                && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER))) {
+                && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMER_BOOSTER))) {
             r = new Report(2373);
             r.addDesc(entity);
             r.subject = entity.getId();

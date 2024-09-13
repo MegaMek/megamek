@@ -34,18 +34,16 @@ import megamek.logging.MMLogger;
 
 /**
  * This is a form of an Image that is based on a base64-encoded form, e.g.
- * loaded from file. The base64 is retained
- * and the actual image only created when {@link #getImage()} is called. This
- * class is serializable;
- * the internal Image object is transient and the base64 String is used for
- * serialization.
+ * loaded from file. The base64 is retained and the actual image only created
+ * when {@link #getImage()} is called. This class is serializable; the internal
+ * Image object is transient and the base64 String is used for serialization.
  * Decoding the base64 image uses {@link ImageIO#read(InputStream)}.
  *
- * @implNote Threadsafe; Immutable. The displayable Image is created only when
- *           needed and uses synchronized access
+ * Thread-safe; Immutable. The displayable Image is created only when
+ * needed and uses synchronized access
  */
 public class Base64Image implements Serializable {
-    private final static MMLogger logger = MMLogger.create(Base64Image.class);
+    private static final MMLogger logger = MMLogger.create(Base64Image.class);
 
     /** The base64 representation of the image. */
     private final String base64encodedImage;

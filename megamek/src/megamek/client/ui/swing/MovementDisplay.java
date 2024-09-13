@@ -93,10 +93,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried
-     * out during the
-     * movement phase. Each command has a string for the command plus a flag that
-     * determines what
-     * unit type it is appropriate for.
+     * out during the movement phase. Each command has a string for the command plus
+     * a flag that determines what unit type it is appropriate for.
      *
      * @author arlith
      */
@@ -149,7 +147,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_DIG_IN("moveDigIn", CMD_INF),
         MOVE_FORTIFY("moveFortify", CMD_INF | CMD_TANK),
         MOVE_TAKE_COVER("moveTakeCover", CMD_INF),
-        MOVE_CALL_SUPPORT("moveCallSuport", CMD_INF),
+        MOVE_CALL_SUPPORT("moveCallSupport", CMD_INF),
         // VTOL attacks, declared in the movement phase
         MOVE_STRAFE("moveStrafe", CMD_VTOL),
         MOVE_BOMB("moveBomb", CMD_VTOL | CMD_AIRMEK),
@@ -234,40 +232,37 @@ public class MovementDisplay extends ActionPhaseDisplay {
         public String getHotKeyDesc() {
             String result = "";
 
-            String msg_next = Messages.getString("Next");
-            String msg_previous = Messages.getString("Previous");
-            String msg_left = Messages.getString("Left");
-            String msg_right = Messages.getString("Right");
-            String msg_togglemovejump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
-            String msg_togglemode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
+            String msgNext = Messages.getString("Next");
+            String msgPrevious = Messages.getString("Previous");
+            String msgLeft = Messages.getString("Left");
+            String msgRight = Messages.getString("Right");
+            String msgToggleMoveJump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
+            String msgToggleMode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
+
+            result = "<BR>";
 
             switch (this) {
                 case MOVE_NEXT:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    result += "&nbsp;&nbsp;" + msgNext + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msgPrevious + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 case MOVE_WALK:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + msg_togglemovejump + ": "
+                    result += "&nbsp;&nbsp;" + msgToggleMoveJump + ": "
                             + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                     break;
                 case MOVE_JUMP:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + msg_togglemovejump + ": "
+                    result += "&nbsp;&nbsp;" + msgToggleMoveJump + ": "
                             + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                     break;
                 case MOVE_TURN:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
-                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
+                    result += "&nbsp;&nbsp;" + msgLeft + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
+                    result += "&nbsp;&nbsp;" + msgRight + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
                     break;
                 case MOVE_MODE_AIR:
                 case MOVE_MODE_CONVERT:
                 case MOVE_MODE_LEG:
                 case MOVE_MODE_VEE:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + msg_togglemode + ": "
+                    result += "&nbsp;&nbsp;" + msgToggleMode + ": "
                             + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSIONMODE);
                     break;
                 default:
@@ -287,34 +282,38 @@ public class MovementDisplay extends ActionPhaseDisplay {
          * @return An array of valid commands for the given parameters
          */
         public static MoveCommand[] values(int f, GameOptions opts, boolean forwardIni) {
-            boolean manualShutdown = false, selfDestruct = false, advVehicle = false, vtolStrafe = false;
+            boolean manualShutdown = false;
+            boolean selfDestruct = false;
+            boolean advVehicle = false;
+            boolean vtolStrafe = false;
+
             if (opts != null) {
                 manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
                 advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
                 vtolStrafe = opts.booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING);
             }
-            ArrayList<MoveCommand> flaggedCmds = new ArrayList<>();
-            for (MoveCommand cmd : MoveCommand.values()) {
+            ArrayList<MoveCommand> flaggedCommands = new ArrayList<>();
+            for (MoveCommand command : MoveCommand.values()) {
                 // Check for movements that with disabled game options
-                if (((cmd == MOVE_SHUTDOWN) || (cmd == MOVE_STARTUP)) && !manualShutdown) {
+                if (((command == MOVE_SHUTDOWN) || (command == MOVE_STARTUP)) && !manualShutdown) {
                     continue;
-                } else if ((cmd == MOVE_SELF_DESTRUCT) && !selfDestruct) {
+                } else if ((command == MOVE_SELF_DESTRUCT) && !selfDestruct) {
                     continue;
-                } else if ((cmd == MOVE_FORWARD_INI) && !forwardIni) {
+                } else if ((command == MOVE_FORWARD_INI) && !forwardIni) {
                     continue;
-                } else if ((cmd == MOVE_BOOTLEGGER) && !advVehicle) {
+                } else if ((command == MOVE_BOOTLEGGER) && !advVehicle) {
                     continue;
-                } else if ((cmd == MOVE_STRAFE) && !vtolStrafe) {
+                } else if ((command == MOVE_STRAFE) && !vtolStrafe) {
                     continue;
                 }
 
                 // Check unit type flag
-                if ((cmd.flag & f) != 0) {
-                    flaggedCmds.add(cmd);
+                if ((command.flag & f) != 0) {
+                    flaggedCommands.add(command);
                 }
             }
-            return flaggedCmds.toArray(new MoveCommand[0]);
+            return flaggedCommands.toArray(new MoveCommand[0]);
         }
     }
 
@@ -4550,8 +4549,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * This method always sets the original entity velocity back to it's orginial.
      *
      * @param entity - Suggested entity to use to compute Aero move envelope.
-     * @return - This method will do nothing if the Entity passed in is null or
-     *         is not an Aero based unity.
      */
     public void computeAeroMovementEnvelope(Entity entity) {
         if ((entity == null) || !(entity.isAero()) || (cmd == null)) {
@@ -4576,8 +4573,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // the 'move' button is clicked and the move is processed.
             ae.setCurrentVelocity(currentVelocity);
         }
-
-        return;
     }
 
     public void computeModifierEnvelope() {

@@ -45,7 +45,7 @@ public class MunitionTree {
 
     // Validated munition names that will work in ADF files.
     // TODO: validate all these strings!
-    public static final ArrayList<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of(
             "Dead-Fire",
             "Standard",
             "Swarm-I",
@@ -66,7 +66,7 @@ public class MunitionTree {
             "Smoke",
             "Mine Clearance"));
 
-    public static final ArrayList<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of(
             "Dead-Fire",
             "Standard",
             "Tandem-Charge",
@@ -81,7 +81,7 @@ public class MunitionTree {
             "Mine Clearance",
             "Smoke"));
 
-    public static final ArrayList<String> AC_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> AC_MUNITION_NAMES = new ArrayList<>(List.of(
             "Precision",
             "Standard",
             "Armor-Piercing",
@@ -90,12 +90,12 @@ public class MunitionTree {
             "Tracer",
             "Flechette"));
 
-    public static final ArrayList<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of(
             "HE",
             "ER",
             "Standard"));
 
-    public static final ArrayList<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
             "Fuel-Air",
             "Standard",
             "ADA",
@@ -109,7 +109,7 @@ public class MunitionTree {
             "Laser Inhibiting",
             "Davy Crockett-M"));
 
-    public static final ArrayList<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
             "Fuel-Air",
             "Standard",
             "Cluster",
@@ -120,11 +120,11 @@ public class MunitionTree {
             "Smoke",
             "Davy Crockett-M"));
 
-    public static final ArrayList<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of(
             "Fuel-Air",
             "Standard"));
 
-    public static final ArrayList<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
             "Standard",
             "Semi-Guided",
             "Anti-personnel",
@@ -132,19 +132,19 @@ public class MunitionTree {
             "Flare",
             "Smoke"));
 
-    public static final ArrayList<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of(
+    public static final List<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of(
             "Narc Explosive",
             "Standard"));
 
     // Shorter, guaranteed to work in lookups
-    public static final ArrayList<String> BOMB_MUNITION_NAMES = new ArrayList<>(
+    public static final List<String> BOMB_MUNITION_NAMES = new ArrayList<>(
             Arrays.asList(BombType.bombInternalNames));
 
     private static String HEADER = String.join(
             System.getProperty("line.separator"),
-            "# ADF (Autoconfiguration Data File) from MegaMek.",
+            "# ADF (AutoConfiguration Data File) from MegaMek.",
             "# Lines are formatted as",
-            "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Muntion1[:Munition2[:...]]][::AmmoType2...]'",
+            "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Munition1[:Munition2[:...]]][::AmmoType2...]'",
             "# Values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",
             "# Values for <Weapon Type> may also be specific or general, e.g. 'AC/20' ~ 'AC', 'SRM6' ~ 'SRM'",
             "# e.g. 'Shadow Hawk:any:Grayson Carlyle::LRM:Swarm::SRM:Inferno::AC:Precision:Flak'.",
@@ -167,9 +167,9 @@ public class MunitionTree {
     }
 
     /**
-     * Constructor for reading in files containing loadout imperatives.
+     * Constructor for reading in files containing load out imperatives.
      *
-     * @param fd
+     * @param fName
      */
     public MunitionTree(String fName) throws IllegalArgumentException {
         File fd = new File(fName);
@@ -265,17 +265,16 @@ public class MunitionTree {
 
     /**
      * Convert List of Entities into a set of specific imperatives for each unit.
-     * Used for backing up original loadout.
+     * Used for backing up original load out.
      *
      * @param el
      */
-    public void loadEntityList(ArrayList<Entity> el) {
+    public void loadEntityList(List<Entity> el) {
         for (Entity e : el) {
             HashMap<String, String> imperatives = new HashMap<>();
             for (Mounted<?> m : e.getAmmo()) {
                 AmmoType aType = (AmmoType) m.getType();
                 String baseName = aType.getBaseName();
-                String sName = aType.getShortName();
                 String munition = (aType.getSubMunitionName().equals(baseName)) ? "Standard"
                         : aType.getSubMunitionName();
                 if (!(imperatives.containsKey(baseName))) {
@@ -284,13 +283,13 @@ public class MunitionTree {
                     imperatives.put(baseName, imperatives.get(baseName) + ':' + munition);
                 }
             }
+
             root.insert(imperatives, e.getFullChassis(), e.getModel(), e.getCrew().getName(0));
         }
     }
 
     // Can take multiple separate ammoType strings (e.g. "Standard", "HE", "ER") or
-    // one
-    // pre-defined imperative set in priority order ("Standard:HE:ER")
+    // one pre-defined imperative set in priority order ("Standard:HE:ER")
     public void insertImperative(
             String chassis, String variant, String pilot, String binType, String... ammoTypes)
             throws IllegalArgumentException {

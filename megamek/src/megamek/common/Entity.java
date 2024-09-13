@@ -5186,13 +5186,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @returns the number of critical slots of the equipment given as index for
-     *          {@link #getEquipment(int)} in
-     *          location loc wherein the type is the critical slot type that fit the
-     *          slot state given as slotState Predicate
-     *          such as {@link CriticalSlot#isDestroyed()}. The critslots tested are
-     *          only those in location loc except
-     *          for Super-Cooled Myomer where all locations are considered.
+     * @return the number of critical slots of the equipment given as index for
+     *         {@link #getEquipment(int)} in location loc wherein the type is the
+     *         critical slot type that fit the slot state given as slotState
+     *         Predicate such as {@link CriticalSlot#isDestroyed()}. The crit slots
+     *         tested are only those in location loc except for Super-Cooled Myomer
+     *         where all locations are considered.
      */
     protected int critStateCount(int type, int index, int loc, Predicate<CriticalSlot> slotState) {
         int stateAppliesCount = 0;

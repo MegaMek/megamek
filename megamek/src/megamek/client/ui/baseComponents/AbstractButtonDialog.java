@@ -33,10 +33,8 @@ import megamek.logging.MMLogger;
 
 /**
  * This is the Base Dialog for a dialog with buttons in MegaMek. It extends Base
- * Dialog, and adds a
- * button panel with base Ok and Cancel buttons. It also includes an enum
- * tracker for the result of
- * the dialog.
+ * Dialog, and adds a button panel with base Ok and Cancel buttons. It also
+ * includes an enum tracker for the result of the dialog.
  *
  * Inheriting classes must call initialize() in their constructors and override
  * createCenterPane()
@@ -49,11 +47,10 @@ import megamek.logging.MMLogger;
  * - "Cancel.toolTipText" - toolTipText for the cancel button
  *
  * This is directly tied to MekHQ's AbstractMHQButtonDialog, and any changes
- * here MUST be verified
- * there.
+ * here MUST be verified there.
  */
 public abstract class AbstractButtonDialog extends AbstractDialog {
-    private final static MMLogger logger = MMLogger.create(AbstractButtonDialog.class);
+    private static final MMLogger logger = MMLogger.create(AbstractButtonDialog.class);
 
     // region Variable Declarations
     private DialogResult result;
@@ -62,8 +59,11 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
     // region Constructors
     /**
      * This creates a modal AbstractButtonDialog using the default resource bundle.
-     * This is
-     * the normal constructor to use for an AbstractButtonDialog.
+     * This is the normal constructor to use for an AbstractButtonDialog.
+     *
+     * @param frame Frame to connect to.
+     * @param name  Name for the button.
+     * @param title Title of the dialog.
      */
     protected AbstractButtonDialog(final JFrame frame, final String name, final String title) {
         this(frame, true, name, title);
@@ -71,8 +71,12 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
 
     /**
      * This creates an AbstractButtonDialog using the default resource bundle. It
-     * allows one
-     * to create non-modal button dialogs.
+     * allows one to create non-modal button dialogs.
+     *
+     * @param frame Window frame to connect to.
+     * @param modal Whether to open modally
+     * @param name  Name on the button.
+     * @param title Title of window
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
             final String title) {
@@ -82,8 +86,7 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
 
     /**
      * This creates an AbstractButtonDialog using the specified resource bundle.
-     * This is not
-     * recommended by default.
+     * This is not recommended by default.
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
             final String name, final String title) {

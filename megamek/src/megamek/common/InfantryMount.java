@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * Stats for beast mounted infantry units. See TO:AU&E, p. 106
+ * Stats for beast mounted infantry units. See TO:AU&amp;E, p. 106
  */
 public class InfantryMount implements Serializable {
     public enum BeastSize {

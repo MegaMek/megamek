@@ -211,7 +211,10 @@ public class ASAdvancedSearchPanel extends JPanel {
         btnClear.addActionListener(e -> clearValues());
     }
 
-    /** @return True when the given MekSummary matches the active search filters or true when no filters are active. */
+    /**
+     * @return True when the given MekSummary matches the active search filters or
+     *         true when no filters are active.
+     */
     public boolean matches(MekSummary mekSummary) {
         if (isActive() && (mekSummary.getASUnitType() == ASUnitType.UNKNOWN)) {
             return false;
@@ -239,15 +242,18 @@ public class ASAdvancedSearchPanel extends JPanel {
                 && !((stdDamage.S.asDoubleValue() >= damageSFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.S.asDoubleValue() <= damageSTo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null) && (damageMTo.getSelectedItem() != null)
+        } else if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null)
+                && (damageMTo.getSelectedItem() != null)
                 && !((stdDamage.M.asDoubleValue() >= damageMFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.M.asDoubleValue() <= damageMTo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null) && (damageLTo.getSelectedItem() != null)
+        } else if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null)
+                && (damageLTo.getSelectedItem() != null)
                 && !((stdDamage.L.asDoubleValue() >= damageLFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.L.asDoubleValue() <= damageLTo.getSelectedItem().asDoubleValue()))) {
             return false;
-        } else if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null) && (damageETo.getSelectedItem() != null)
+        } else if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null)
+                && (damageETo.getSelectedItem() != null)
                 && !((stdDamage.E.asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue())
                         && (stdDamage.E.asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue()))) {
             return false;
@@ -266,16 +272,16 @@ public class ASAdvancedSearchPanel extends JPanel {
         } else if (useAbility1.isSelected() &&
                 !(mekSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())
                         || (mekSummary.usesArcs() && (mekSummary.getLeftArc().hasSUA(ability1.getSelectedItem())
-                        || mekSummary.getRightArc().hasSUA(ability1.getSelectedItem())
-                        || mekSummary.getFrontArc().hasSUA(ability1.getSelectedItem())
-                        || mekSummary.getRearArc().hasSUA(ability1.getSelectedItem()))))) {
+                                || mekSummary.getRightArc().hasSUA(ability1.getSelectedItem())
+                                || mekSummary.getFrontArc().hasSUA(ability1.getSelectedItem())
+                                || mekSummary.getRearArc().hasSUA(ability1.getSelectedItem()))))) {
             return false;
         } else if (useAbility2.isSelected() &&
                 !(mekSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())
                         || (mekSummary.usesArcs() && (mekSummary.getLeftArc().hasSUA(ability2.getSelectedItem())
-                        || mekSummary.getRightArc().hasSUA(ability2.getSelectedItem())
-                        || mekSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
-                        || mekSummary.getRearArc().hasSUA(ability2.getSelectedItem()))))) {
+                                || mekSummary.getRightArc().hasSUA(ability2.getSelectedItem())
+                                || mekSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
+                                || mekSummary.getRearArc().hasSUA(ability2.getSelectedItem()))))) {
             return false;
         } else {
             return true;
@@ -394,7 +400,7 @@ public class ASAdvancedSearchPanel extends JPanel {
 
     private void initDamageCombo(MMComboBox<ASDamage> comboBox) {
         comboBox.addItem(ASDamage.ZERO);
-        comboBox.addItem(ASDamage.MINIMAL);
+        comboBox.addItem(ASDamage.MINIMAL_DAMAGE);
         for (int i = 1; i <= 20; i++) {
             comboBox.addItem(new ASDamage(i, false));
         }
@@ -594,7 +600,10 @@ public class ASAdvancedSearchPanel extends JPanel {
         useOV.setSelected(false);
     }
 
-    /** Saves the current field settings and contents to restore them when user-canceled. */
+    /**
+     * Saves the current field settings and contents to restore them when
+     * user-canceled.
+     */
     public void saveValues() {
         savedUiValues = new UiValues();
         savedUiValues.store();
@@ -606,10 +615,15 @@ public class ASAdvancedSearchPanel extends JPanel {
         updateEnabled();
     }
 
-    /** @return True when any of the search filters is activated so that units might be filtered out. */
+    /**
+     * @return True when any of the search filters is activated so that units might
+     *         be filtered out.
+     */
     public boolean isActive() {
-        return useUnitType.isSelected() || useUnitRole.isSelected() || useSize.isSelected() || useTMM.isSelected() || useArmor.isSelected()
-                || useStructure.isSelected() || useThreshold.isSelected() || useDamageS.isSelected() || useDamageM.isSelected()
+        return useUnitType.isSelected() || useUnitRole.isSelected() || useSize.isSelected() || useTMM.isSelected()
+                || useArmor.isSelected()
+                || useStructure.isSelected() || useThreshold.isSelected() || useDamageS.isSelected()
+                || useDamageM.isSelected()
                 || useDamageL.isSelected() || useDamageE.isSelected() || usePV.isSelected() || useMV.isSelected()
                 || useAbility1.isSelected() || useAbility2.isSelected() || useOV.isSelected();
     }

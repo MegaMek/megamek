@@ -56,13 +56,17 @@ import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
+/**
+ * AbstractClient that handles basic client features.
+ */
 public abstract class AbstractClient implements IClient {
     private static final MMLogger logger = MMLogger.create(AbstractClient.class);
 
     // Server connection information
-    protected String name;
     protected AbstractConnection connection;
     protected Thread connThread;
+
+    protected String name;
     protected boolean connected = false;
     protected boolean disconnectFlag = false;
     protected final String host;
@@ -185,9 +189,10 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Called to determine whether the game log should be kept.
-     * Default implementation delegates to
-     * {@code PreferenceManager.getClientPreferences()}.
+     * Called to determine whether the game log should be kept. Default
+     * implementation delegates to {@link PreferenceManager#getClientPreferences()}.
+     *
+     * @return True/False if the game log is to be kept.
      */
     protected boolean keepGameLog() {
         return PreferenceManager.getClientPreferences().keepGameLog();
@@ -215,6 +220,9 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Broadcast a general chat message from the local player
+     *
+     * @param connId  Connection ID
+     * @param message Message to send
      */
     public void sendServerChat(int connId, String message) {
         send(new Packet(PacketCommand.CHAT, message, connId));
@@ -229,20 +237,25 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Receives player information from the message packet.
+     *
+     * @param packet The packet we received.
      */
-    protected void receivePlayerInfo(Packet c) {
-        int pindex = c.getIntValue(0);
-        Player newPlayer = (Player) c.getObject(1);
+    protected void receivePlayerInfo(Packet packet) {
+        int packetIndex = packet.getIntValue(0);
+
+        Player newPlayer = (Player) packet.getObject(1);
         if (!playerExists(newPlayer.getId())) {
-            getGame().addPlayer(pindex, newPlayer);
+            getGame().addPlayer(packetIndex, newPlayer);
         } else {
-            getGame().setPlayer(pindex, newPlayer);
+            getGame().setPlayer(packetIndex, newPlayer);
         }
     }
 
     /**
      * Sends the packet to the server, if this client is connected. Otherwise, does
      * nothing.
+     *
+     * @param packet Packet to send over the connection.
      */
     protected void send(Packet packet) {
         if (connection != null) {
@@ -264,10 +277,8 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Perform a dump of the current memory usage. This method is useful in tracking
-     * performance issues
-     * on various player's systems. You can activate it by changing the
-     * "memorydumpon" setting to
-     * "true" in the clientsettings.xml file.
+     * performance issues on various player's systems. You can activate it by
+     * changing the "memorydumpon" setting to "true" in the clientsettings.xml file.
      *
      * @param where A String indicating which part of the game is making this call.
      */
@@ -313,6 +324,8 @@ public abstract class AbstractClient implements IClient {
      * Before we officially "add" this unit to the game, check and see if this
      * client (player) already has a unit in the game with the same name. If so,
      * add an identifier to the units name.
+     *
+     * @param entity The entity to check if it is duplicated.
      */
     protected synchronized void checkDuplicateNamesDuringAdd(Entity entity) {
         if (entity != null) {
@@ -344,7 +357,7 @@ public abstract class AbstractClient implements IClient {
     /**
      * This method is the starting point that handles all received Packets. This
      * method should only
-     * be overriden in very special cases such as in Princess to call Precognition.
+     * be overridden in very special cases such as in Princess to call Precognition.
      *
      * @param packet The packet to handle
      */
@@ -378,18 +391,16 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Handles any Packets that are specific to the game type (TW, AS...). When
-     * implementing this,
-     * make sure that this doesn't do duplicate actions with
-     * {@link #handleGameIndependentPacket(Packet)}
-     * - but packets may be handled in both methods (all packets traverse both
-     * methods).
+     * implementing this, make sure that this doesn't do duplicate actions with
+     * {@link #handleGameIndependentPacket(Packet)} - but packets may be handled in
+     * both methods (all packets traverse both methods).
      *
      * When making changes, do not forget to update Precognition which is a Client
-     * clone but unfortunately
-     * not a subclass.
+     * clone but unfortunately not a subclass.
      *
      * @param packet The packet to handle
      * @return True when the packet has been handled
+     * @throws Exception If some error occurred.
      */
     protected abstract boolean handleGameSpecificPacket(Packet packet) throws Exception;
 
@@ -483,6 +494,8 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Changes the game phase, and the displays that go along with it.
+     *
+     * @param phase the phase switching from.
      */
     public void changePhase(GamePhase phase) {
         getGame().receivePhase(phase);
@@ -518,6 +531,11 @@ public abstract class AbstractClient implements IClient {
         return bots;
     }
 
+    /**
+     * Custom connection Listener for AbstractClient
+     *
+     * @see ConnectionListener
+     */
     protected ConnectionListener connectionListener = new ConnectionListener() {
 
         @Override
@@ -535,6 +553,9 @@ public abstract class AbstractClient implements IClient {
         }
     };
 
+    /**
+     * Custom ConnectionHandler for use with {@link AbstractClient}.
+     */
     protected class ConnectionHandler implements Runnable {
 
         boolean shouldStop = false;

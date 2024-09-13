@@ -117,7 +117,7 @@ public class TeamLoadOutGenerator {
             "LRM", "SRM", "AC", "ATM", "Arrow IV", "Artillery", "Artillery Cannon",
             "Mek Mortar", "Narc", "Bomb"));
 
-    public static final Map<String, ArrayList<String>> TYPE_MAP = Map.ofEntries(
+    public static final Map<String, List<String>> TYPE_MAP = Map.ofEntries(
             entry("LRM", MunitionTree.LRM_MUNITION_NAMES),
             entry("SRM", MunitionTree.SRM_MUNITION_NAMES),
             entry("AC", MunitionTree.AC_MUNITION_NAMES),
@@ -595,73 +595,74 @@ public class TeamLoadOutGenerator {
             boolean spaceEnvironment,
             int rating,
             float fillRatio) {
-        ReconfigurationParameters rp = new ReconfigurationParameters();
+        ReconfigurationParameters reconfigurationParameters = new ReconfigurationParameters();
 
         // Set own faction and quality rating (default to generic IS if faction is not
         // provided)
-        rp.friendlyFaction = (friendlyFaction == null) ? "IS" : friendlyFaction;
-        rp.friendlyQuality = rating;
+        reconfigurationParameters.friendlyFaction = (friendlyFaction == null) ? "IS" : friendlyFaction;
+        reconfigurationParameters.friendlyQuality = rating;
 
         // Fill desired bin fill ratio / percentage (as float)
-        rp.binFillPercent = fillRatio;
+        reconfigurationParameters.binFillPercent = fillRatio;
 
         // Get our own side's numbers for comparison
-        rp.friendlyCount = ownTeamEntities.size();
+        reconfigurationParameters.friendlyCount = ownTeamEntities.size();
 
         // Estimate enemy count for ammo count purposes; may include observers. The fog
         // of war!
-        rp.enemyCount = etEntities.size();
+        reconfigurationParameters.enemyCount = etEntities.size();
 
         // Record if ground map
-        rp.groundMap = groundMap;
+        reconfigurationParameters.groundMap = groundMap;
         // Record if space-based environment
-        rp.spaceEnvironment = spaceEnvironment;
+        reconfigurationParameters.spaceEnvironment = spaceEnvironment;
 
         // If our team can see other teams...
         if (!blind) {
-            rp.enemiesVisible = true;
-            rp.enemyFactions.addAll(enemyFactions);
-            rp.enemyFliers += checkForFliers(etEntities);
-            rp.enemyBombers += checkForBombers(etEntities);
-            rp.enemyInfantry += checkForInfantry(etEntities);
-            rp.enemyBattleArmor += checkForBattleArmor(etEntities);
-            rp.enemyVehicles += checkForVehicles(etEntities);
-            rp.enemyMeks += checkForMeks(etEntities);
-            rp.enemyEnergyBoats += checkForEnergyBoats(etEntities);
+            reconfigurationParameters.enemiesVisible = true;
+            reconfigurationParameters.enemyFactions.addAll(enemyFactions);
+            reconfigurationParameters.enemyFliers += checkForFliers(etEntities);
+            reconfigurationParameters.enemyBombers += checkForBombers(etEntities);
+            reconfigurationParameters.enemyInfantry += checkForInfantry(etEntities);
+            reconfigurationParameters.enemyBattleArmor += checkForBattleArmor(etEntities);
+            reconfigurationParameters.enemyVehicles += checkForVehicles(etEntities);
+            reconfigurationParameters.enemyMeks += checkForMeks(etEntities);
+            reconfigurationParameters.enemyEnergyBoats += checkForEnergyBoats(etEntities);
             // Enemy Missile Boats might be good to know for Retro Streak weighting
-            rp.enemyMissileBoats += checkForMissileBoats(etEntities);
-            rp.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
-            rp.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
-            rp.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
-            rp.enemyFastMovers += checkForFastMovers(etEntities);
-            rp.enemyOffBoard = checkForOffBoard(etEntities);
-            rp.enemyECMCount = checkForECM(etEntities);
-            rp.enemyTSMCount = checkForTSM(etEntities);
+            reconfigurationParameters.enemyMissileBoats += checkForMissileBoats(etEntities);
+            reconfigurationParameters.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
+            reconfigurationParameters.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
+            reconfigurationParameters.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
+            reconfigurationParameters.enemyFastMovers += checkForFastMovers(etEntities);
+            reconfigurationParameters.enemyOffBoard = checkForOffBoard(etEntities);
+            reconfigurationParameters.enemyECMCount = checkForECM(etEntities);
+            reconfigurationParameters.enemyTSMCount = checkForTSM(etEntities);
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
-            rp.enemiesVisible = false;
+            reconfigurationParameters.enemiesVisible = false;
         }
 
         // Friendly force info
-        rp.friendlyEnergyBoats = checkForEnergyBoats(ownTeamEntities);
-        rp.friendlyMissileBoats = checkForMissileBoats(ownTeamEntities);
-        rp.friendlyTAGs = checkForTAG(ownTeamEntities);
-        rp.friendlyNARCs = checkForNARC(ownTeamEntities);
-        rp.friendlyOffBoard = checkForOffBoard(ownTeamEntities);
-        rp.friendlyECMCount = checkForECM(ownTeamEntities);
-        rp.friendlyInfantry = checkForInfantry(ownTeamEntities);
-        rp.friendlyBattleArmor = checkForBattleArmor(ownTeamEntities);
+        reconfigurationParameters.friendlyEnergyBoats = checkForEnergyBoats(ownTeamEntities);
+        reconfigurationParameters.friendlyMissileBoats = checkForMissileBoats(ownTeamEntities);
+        reconfigurationParameters.friendlyTAGs = checkForTAG(ownTeamEntities);
+        reconfigurationParameters.friendlyNARCs = checkForNARC(ownTeamEntities);
+        reconfigurationParameters.friendlyOffBoard = checkForOffBoard(ownTeamEntities);
+        reconfigurationParameters.friendlyECMCount = checkForECM(ownTeamEntities);
+        reconfigurationParameters.friendlyInfantry = checkForInfantry(ownTeamEntities);
+        reconfigurationParameters.friendlyBattleArmor = checkForBattleArmor(ownTeamEntities);
 
         // General parameters
-        rp.darkEnvironment = darkEnvironment;
+        reconfigurationParameters.darkEnvironment = darkEnvironment;
 
-        return rp;
+        return reconfigurationParameters;
     }
     // endregion generateParameters
 
     // region Imperative mutators
-    private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        applyACCaselessImperative(e, mt, rp);
+    private static void setACImperatives(Entity e, MunitionTree mt,
+            ReconfigurationParameters reconfigurationParameters) {
+        applyACCaselessImperative(e, mt, reconfigurationParameters);
     }
 
     private static int getACWeaponCount(Entity e, String size) {
@@ -782,12 +783,12 @@ public class TeamLoadOutGenerator {
      * NOTE: if sub-classing this generator, should only need to override this
      * method.
      *
-     * @param rp
-     * @param t
+     * @param reconfigurationParameters
      * @param defaultSettingsFile
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> ownTeamEntities,
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters reconfigurationParameters,
+            ArrayList<Entity> ownTeamEntities,
             String defaultSettingsFile, MunitionWeightCollection mwc) {
 
         // Either create a new tree or, if a defaults file is provided, load that as a
@@ -796,7 +797,7 @@ public class TeamLoadOutGenerator {
                 : new MunitionTree(defaultSettingsFile);
 
         // Modify weights for parameters
-        if (rp.darkEnvironment) {
+        if (reconfigurationParameters.darkEnvironment) {
             // Bump munitions that light stuff up
             mwc.increaseIlluminationMunitions();
         } else {
@@ -805,95 +806,105 @@ public class TeamLoadOutGenerator {
         }
 
         // Adjust weights for enemy force composition
-        if (rp.enemiesVisible) {
+        if (reconfigurationParameters.enemiesVisible) {
             // Drop weight of shot-reducing ammo unless this team significantly outnumbers
             // the enemy
-            if (!(rp.friendlyCount >= rp.enemyCount * castPropertyDouble("mtReducingAmmoReduceIfUnderFactor", 2.0))) {
+            if (!(reconfigurationParameters.friendlyCount >= reconfigurationParameters.enemyCount
+                    * castPropertyDouble("mtReducingAmmoReduceIfUnderFactor", 2.0))) {
                 // Skip munitions that reduce the number of rounds because we need to shoot a
                 // lot!
                 mwc.decreaseAmmoReducingMunitions();
-            } else if (rp.friendlyCount >= rp.enemyCount
+            } else if (reconfigurationParameters.friendlyCount >= reconfigurationParameters.enemyCount
                     * castPropertyDouble("mtReducingAmmoIncreaseIfOverFactor", 3.0)) {
                 mwc.increaseAmmoReducingMunitions();
             }
 
             // Flak: bump for any bombers, or fliers > 1/4th of enemy force
-            if (rp.enemyBombers > castPropertyDouble("mtFlakMinBombersExceedThreshold", 0.0)) {
+            if (reconfigurationParameters.enemyBombers > castPropertyDouble("mtFlakMinBombersExceedThreshold", 0.0)) {
                 mwc.increaseFlakMunitions();
             }
-            if (rp.enemyFliers >= rp.enemyCount / castPropertyDouble("mtFlakEnemyFliersFractionDivisor", 4.0)) {
+            if (reconfigurationParameters.enemyFliers >= reconfigurationParameters.enemyCount
+                    / castPropertyDouble("mtFlakEnemyFliersFractionDivisor", 4.0)) {
                 mwc.increaseFlakMunitions();
             }
             // Decrease if no bombers or fliers at all
-            if (rp.enemyBombers == 0 && rp.enemyFliers == 0) {
+            if (reconfigurationParameters.enemyBombers == 0 && reconfigurationParameters.enemyFliers == 0) {
                 mwc.decreaseFlakMunitions();
             }
 
             // Enemy fast movers make more precise ammo attractive
-            if (rp.enemyFastMovers >= rp.enemyCount
+            if (reconfigurationParameters.enemyFastMovers >= reconfigurationParameters.enemyCount
                     / castPropertyDouble("mtPrecisionAmmoFastEnemyFractionDivisor", 4.0)) {
                 mwc.increaseAccurateMunitions();
             }
 
             // AP munitions are hard-countered by hardened, reactive, etc. armor
-            if (rp.enemyAdvancedArmorCount > castPropertyDouble("mtHPAmmoAdvArmorEnemiesExceedThreshold", 0.0)
-                    && rp.enemyAdvancedArmorCount > rp.enemyReflectiveArmorCount) {
+            if (reconfigurationParameters.enemyAdvancedArmorCount > castPropertyDouble(
+                    "mtHPAmmoAdvArmorEnemiesExceedThreshold", 0.0)
+                    && reconfigurationParameters.enemyAdvancedArmorCount > reconfigurationParameters.enemyReflectiveArmorCount) {
                 mwc.decreaseAPMunitions();
                 mwc.increaseHighPowerMunitions();
-            } else if (rp.enemyReflectiveArmorCount > rp.enemyAdvancedArmorCount) {
+            } else if (reconfigurationParameters.enemyReflectiveArmorCount > reconfigurationParameters.enemyAdvancedArmorCount) {
                 // But AP munitions really hurt Reflective!
                 mwc.increaseAPMunitions();
             }
 
             // Heat-based weapons kill infantry dead, also vehicles
             // But anti-infantry weapons are generally inferior without infantry targets
-            if (rp.enemyFireproofArmorCount < rp.enemyCount
+            if (reconfigurationParameters.enemyFireproofArmorCount < reconfigurationParameters.enemyCount
                     / castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
-                if (rp.enemyInfantry >= rp.enemyCount
+                if (reconfigurationParameters.enemyInfantry >= reconfigurationParameters.enemyCount
                         / castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseHeatMunitions();
                     mwc.increaseAntiInfMunitions();
                 } else {
                     mwc.decreaseAntiInfMunitions();
                 }
-                if (rp.enemyVehicles >= rp.enemyCount / castPropertyDouble("mtVeeEnemyExceedsFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyVehicles >= reconfigurationParameters.enemyCount
+                        / castPropertyDouble("mtVeeEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseHeatMunitions();
                 }
                 // BAs are proof against some dedicated Anti-Infantry weapons but not
                 // heat-generating rounds
-                if (rp.enemyBattleArmor > rp.enemyCount / castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyBattleArmor > reconfigurationParameters.enemyCount
+                        / castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseHeatMunitions();
                     mwc.increaseAntiBAMunitions();
                 }
-            } else if (rp.enemyFireproofArmorCount >= rp.enemyCount
+            } else if (reconfigurationParameters.enemyFireproofArmorCount >= reconfigurationParameters.enemyCount
                     / castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
-                if (rp.enemyInfantry >= rp.enemyCount
+                if (reconfigurationParameters.enemyInfantry >= reconfigurationParameters.enemyCount
                         / castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseAntiInfMunitions();
                 }
-                if (rp.enemyBattleArmor > rp.enemyCount / castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyBattleArmor > reconfigurationParameters.enemyCount
+                        / castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseAntiBAMunitions();
                 }
                 mwc.decreaseHeatMunitions();
             }
 
             // Energy boats run hot; increase heat munitions and heat-seeking specifically
-            if (rp.enemyEnergyBoats > rp.enemyCount / castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
+            if (reconfigurationParameters.enemyEnergyBoats > reconfigurationParameters.enemyCount
+                    / castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
                 mwc.increaseHeatMunitions();
                 mwc.increaseHeatMunitions();
                 mwc.increaseMunitions(new ArrayList<>(List.of("Heat-Seeking")));
             }
 
             // Counter EMC by swapping Seeking in for Guided
-            if (rp.enemyECMCount > castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
+            if (reconfigurationParameters.enemyECMCount > castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold",
+                    1.0)) {
                 mwc.decreaseGuidedMunitions();
                 mwc.increaseSeekingMunitions();
             }
-            if (rp.enemyTSMCount > castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
+            if (reconfigurationParameters.enemyTSMCount > castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold",
+                    1.0)) {
                 // Seeking
                 mwc.increaseSeekingMunitions();
             }
-            if (rp.enemyECMCount == 0.0 && rp.enemyTSMCount == 0.0 && rp.enemyEnergyBoats == 0.0) {
+            if (reconfigurationParameters.enemyECMCount == 0.0 && reconfigurationParameters.enemyTSMCount == 0.0
+                    && reconfigurationParameters.enemyEnergyBoats == 0.0) {
                 // Seeking munitions are generally situational
                 mwc.decreaseSeekingMunitions();
             }
@@ -903,33 +914,34 @@ public class TeamLoadOutGenerator {
 
         // Guided munitions are worth exponentially more with guidance and supporting
         // missile units
-        if (rp.friendlyTAGs >= castPropertyDouble("mtGuidedAmmoFriendlyTAGThreshold", 1.0)
-                || rp.friendlyNARCs >= castPropertyDouble("mtGuidedAmmoFriendlyNARCThreshold", 1.0)) {
+        if (reconfigurationParameters.friendlyTAGs >= castPropertyDouble("mtGuidedAmmoFriendlyTAGThreshold", 1.0)
+                || reconfigurationParameters.friendlyNARCs >= castPropertyDouble("mtGuidedAmmoFriendlyNARCThreshold",
+                        1.0)) {
 
             // And worth even more with more guidance around
-            if (rp.friendlyMissileBoats >= rp.friendlyCount /
+            if (reconfigurationParameters.friendlyMissileBoats >= reconfigurationParameters.friendlyCount /
                     castPropertyDouble("mtGuidedAmmoFriendlyMissileBoatFractionDivisor", 3.0)) {
-                for (int i = 0; i < rp.friendlyMissileBoats; i++) {
+                for (int i = 0; i < reconfigurationParameters.friendlyMissileBoats; i++) {
                     mwc.increaseGuidedMunitions();
                 }
             }
 
             // Increase the relevant types depending on the present guidance systems and
             // their counts
-            for (int i = 0; i < rp.friendlyTAGs; i++) {
+            for (int i = 0; i < reconfigurationParameters.friendlyTAGs; i++) {
                 mwc.increaseTagGuidedMunitions();
             }
-            for (int i = 0; i < rp.friendlyNARCs; i++) {
+            for (int i = 0; i < reconfigurationParameters.friendlyNARCs; i++) {
                 mwc.increaseNARCGuidedMunitions();
             }
 
             // TAG-guided rounds may have _some_ use, but not as much as base rounds,
             // without TAG support
-            if (rp.friendlyTAGs == 0) {
+            if (reconfigurationParameters.friendlyTAGs == 0) {
                 mwc.decreaseTagGuidedMunitions();
             }
             // Narc-capable are just not worth it without NARC support
-            if (rp.friendlyNARCs == 0) {
+            if (reconfigurationParameters.friendlyNARCs == 0) {
                 mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Narc-capable")));
             }
         } else {
@@ -940,10 +952,11 @@ public class TeamLoadOutGenerator {
         // Downgrade utility munitions unless there are multiple units that could use
         // them; off-board arty
         // in particular
-        if (rp.friendlyOffBoard > castPropertyDouble("mtUtilityAmmoOffBoardUnitsThreshold", 2.0)) {
+        if (reconfigurationParameters.friendlyOffBoard > castPropertyDouble("mtUtilityAmmoOffBoardUnitsThreshold",
+                2.0)) {
             // Only increase utility rounds if we have more off-board units that the other
             // guys
-            if (rp.enemyOffBoard < rp.friendlyOffBoard /
+            if (reconfigurationParameters.enemyOffBoard < reconfigurationParameters.friendlyOffBoard /
                     castPropertyDouble("mtUtilityAmmoFriendlyVsEnemyFractionDivisor", 1.0)) {
                 mwc.increaseArtilleryUtilityMunitions();
             }
@@ -953,9 +966,10 @@ public class TeamLoadOutGenerator {
         }
 
         // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
-        if ((rp.friendlyFaction != null && rp.enemyFactions != null)
-                && rp.friendlyFaction.equals("FS") && rp.enemyFactions.contains("CC")
-                && (3028 <= rp.allowedYear && rp.allowedYear <= 3050)) {
+        if ((reconfigurationParameters.friendlyFaction != null && reconfigurationParameters.enemyFactions != null)
+                && reconfigurationParameters.friendlyFaction.equals("FS")
+                && reconfigurationParameters.enemyFactions.contains("CC")
+                && (3028 <= reconfigurationParameters.allowedYear && reconfigurationParameters.allowedYear <= 3050)) {
             ArrayList<String> tsmOnly = new ArrayList<String>(List.of("Anti-TSM"));
             mwc.increaseMunitions(tsmOnly);
             mwc.increaseMunitions(tsmOnly);
@@ -965,7 +979,7 @@ public class TeamLoadOutGenerator {
         // Set nukes to lowest possible weight if user has set the to unusable /for
         // this team/
         // This is a separate mechanism from the legality check.
-        if (rp.nukesBannedForMe) {
+        if (reconfigurationParameters.nukesBannedForMe) {
             mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Davy Crockett-M", "AlamoMissile Ammo")));
         }
 
@@ -973,7 +987,7 @@ public class TeamLoadOutGenerator {
         // TODO: add more precise faction and year checks here so Wolf's Dragoons can
         // have them before everybody
         // else.
-        if (rp.allowedYear < 3028 || rp.allowedYear > 3042) {
+        if (reconfigurationParameters.allowedYear < 3028 || reconfigurationParameters.allowedYear > 3042) {
             mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Listen-Kill")));
         }
 
@@ -985,10 +999,10 @@ public class TeamLoadOutGenerator {
         for (Entity e : ownTeamEntities) {
             // Set certain imperatives based on weapon types, due to low ammo count / low
             // utility
-            setACImperatives(e, mt, rp);
-            setLRMImperatives(e, mt, rp);
-            setSRMImperatives(e, mt, rp);
-            setMMLImperatives(e, mt, rp);
+            setACImperatives(e, mt, reconfigurationParameters);
+            setLRMImperatives(e, mt, reconfigurationParameters);
+            setSRMImperatives(e, mt, reconfigurationParameters);
+            setMMLImperatives(e, mt, reconfigurationParameters);
         }
 
         return mt;
@@ -1043,14 +1057,14 @@ public class TeamLoadOutGenerator {
      * @param adfFile
      */
     public void reconfigureTeam(Team team, String faction, String adfFile) {
-        ReconfigurationParameters rp = generateParameters(team);
-        rp.allowedYear = allowedYear;
+        ReconfigurationParameters reconfigurationParameters = generateParameters(team);
+        reconfigurationParameters.allowedYear = allowedYear;
 
         ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
                 game.getTeamEntities(team));
 
-        MunitionTree mt = generateMunitionTree(rp, updateEntities, adfFile);
-        reconfigureEntities(updateEntities, faction, mt, rp);
+        MunitionTree mt = generateMunitionTree(reconfigurationParameters, updateEntities, adfFile);
+        reconfigureEntities(updateEntities, faction, mt, reconfigurationParameters);
     }
 
     /**
@@ -1061,22 +1075,23 @@ public class TeamLoadOutGenerator {
      * @param mt       MunitionTree defining all applicable load out imperatives
      */
     public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt,
-            ReconfigurationParameters rp) {
+            ReconfigurationParameters reconfigurationParameters) {
         // For Pirate forces, assume fewer rounds per bin at lower quality levels,
         // minimum 20%
         // If fill ratio is already set, leave it.
-        if (rp.binFillPercent == UNSET_FILL_RATIO) {
-            if (rp.isPirate) {
-                rp.binFillPercent = (float) (Math.min(
+        if (reconfigurationParameters.binFillPercent == UNSET_FILL_RATIO) {
+            if (reconfigurationParameters.isPirate) {
+                reconfigurationParameters.binFillPercent = (float) (Math.min(
                         castPropertyDouble("pirateMaxAllowedBinFillRatio", 1.0),
                         Math.max(
                                 castPropertyDouble("pirateMinAllowedBinFillRatio", 0.2),
                                 Math.random() / castPropertyDouble("pirateRandomRangeDivisor", 4.0)
-                                        + (rp.friendlyQuality / castPropertyDouble("pirateQualityDivisor", 8.0)))));
+                                        + (reconfigurationParameters.friendlyQuality
+                                                / castPropertyDouble("pirateQualityDivisor", 8.0)))));
             } else {
                 // If we get this far without setting the ratio, but are not pirates, reset to
                 // fill
-                rp.binFillPercent = 1.0f;
+                reconfigurationParameters.binFillPercent = 1.0f;
             }
         }
 
@@ -1086,16 +1101,17 @@ public class TeamLoadOutGenerator {
                 // TODO: Will be used when A2G attack errata are implemented
                 aeroSpaceUnits.add(entity);
             } else {
-                reconfigureEntity(entity, mt, faction, rp.binFillPercent);
+                reconfigureEntity(entity, mt, faction, reconfigurationParameters.binFillPercent);
             }
         }
 
         populateAeroBombs(
                 entities,
                 this.allowedYear,
-                rp.groundMap || rp.enemyCount > rp.enemyFliers,
-                rp.friendlyQuality,
-                rp.isPirate);
+                reconfigurationParameters.groundMap
+                        || reconfigurationParameters.enemyCount > reconfigurationParameters.enemyFliers,
+                reconfigurationParameters.friendlyQuality,
+                reconfigurationParameters.isPirate);
     }
 
     /**
@@ -1137,7 +1153,7 @@ public class TeamLoadOutGenerator {
      * Method to apply a MunitionTree to a specific unit.
      * Main application logic
      *
-     * @param e
+     * @param entity
      * @param mt
      * @param faction
      * @param binFillRatio float setting the max fill rate for all bins in this
@@ -1172,7 +1188,7 @@ public class TeamLoadOutGenerator {
     /**
      * Applies specified ammo fill ratio to all bins
      *
-     * @param e
+     * @param entity
      * @param binFillRatio
      */
     protected void clampAmmoShots(Entity entity, float binFillRatio) {
@@ -1352,7 +1368,7 @@ public class TeamLoadOutGenerator {
             if ((trueRandom || !UTILITY_MUNITIONS.contains(typeName)) &&
                     (binName.toLowerCase().contains(typeName.toLowerCase())
                             || typeName.toLowerCase().contains(binName.toLowerCase()))) {
-                ArrayList<String> tList = TYPE_MAP.get(typeName);
+                List<String> tList = TYPE_MAP.get(typeName);
                 result = tList.get(new Random().nextInt(tList.size()));
                 break;
             }
@@ -1367,7 +1383,6 @@ public class TeamLoadOutGenerator {
      * them
      *
      * @param entityList       The list of entities to process
-     * @param campaign         Campaign object
      * @param hasGroundTargets true to select air-to-ground ordnance, false for
      *                         air-to-air only
      * @param quality          IUnitRating enum for force quality (A/A* through F)
@@ -1924,7 +1939,7 @@ class MunitionWeightCollection {
     }
 
     // Section: initializing weights
-    private static HashMap<String, Double> initializeWeaponWeights(ArrayList<String> wepAL) {
+    private static HashMap<String, Double> initializeWeaponWeights(List<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
         for (String name : wepAL) {
             weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
@@ -1934,7 +1949,7 @@ class MunitionWeightCollection {
         return weights;
     }
 
-    private static HashMap<String, Double> initializeMissileWeaponWeights(ArrayList<String> wepAL) {
+    private static HashMap<String, Double> initializeMissileWeaponWeights(List<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
         for (String name : wepAL) {
             weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
@@ -1949,7 +1964,7 @@ class MunitionWeightCollection {
         return weights;
     }
 
-    private static HashMap<String, Double> initializeATMWeights(ArrayList<String> wepAL) {
+    private static HashMap<String, Double> initializeATMWeights(List<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
         for (String name : wepAL) {
             weights.put(name, getPropDouble("defaultATMMunitionWeight", 2.0));
@@ -1962,7 +1977,7 @@ class MunitionWeightCollection {
     // Increase/Decrease functions. Increase is 2x + 1, decrease is 0.5x, so items
     // voted up and down multiple times should still exceed items never voted up
     // _or_ down.
-    public void increaseMunitions(ArrayList<String> munitions) {
+    public void increaseMunitions(List<String> munitions) {
         mapTypeToWeights.entrySet().forEach(
                 e -> modifyMatchingWeights(
                         e.getValue(),
@@ -1971,7 +1986,7 @@ class MunitionWeightCollection {
                         getPropDouble("increaseWeightIncrement", 1.0)));
     }
 
-    public void decreaseMunitions(ArrayList<String> munitions) {
+    public void decreaseMunitions(List<String> munitions) {
         mapTypeToWeights.entrySet().forEach(
                 e -> modifyMatchingWeights(
                         e.getValue(),
@@ -1980,7 +1995,7 @@ class MunitionWeightCollection {
                         getPropDouble("decreaseWeightDecrement", 0.0)));
     }
 
-    public void zeroMunitionsWeight(ArrayList<String> munitions) {
+    public void zeroMunitionsWeight(List<String> munitions) {
         mapTypeToWeights.entrySet().forEach(
                 e -> modifyMatchingWeights(
                         e.getValue(), munitions, 0.0, 0.0));
@@ -2125,7 +2140,8 @@ class MunitionWeightCollection {
      * @param factor
      * @param increment
      */
-    private static void modifyMatchingWeights(HashMap<String, Double> current, ArrayList<String> types, double factor,
+    private static void modifyMatchingWeights(HashMap<String, Double> current,
+            List<String> types, double factor,
             double increment) {
         for (String key : types) {
             if (current.containsKey(key)) {
@@ -2134,7 +2150,7 @@ class MunitionWeightCollection {
         }
     }
 
-    public ArrayList<String> getMunitionTypesInWeightOrder(Map<String, Double> weightMap) {
+    public List<String> getMunitionTypesInWeightOrder(Map<String, Double> weightMap) {
         ArrayList<String> orderedTypes = new ArrayList<>();
         weightMap.entrySet().stream()
                 .sorted((E1, E2) -> E2.getValue().compareTo(E1.getValue()))

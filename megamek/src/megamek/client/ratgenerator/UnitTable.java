@@ -72,7 +72,7 @@ public class UnitTable {
      *                         {@link megamek.common.EntityWeightClass} constants to
      *                         include in the table;
      *                         if null or empty all weight classes are included
-     * @param networkMask      One of the {@link MOdelRecord} NETWORK constants, for
+     * @param networkMask      One of the {@link ModelRecord} NETWORK constants, for
      *                         filtering various C3 systems
      * @param movementModes    the movement modes covered by the table, null/empty
      *                         for all modes

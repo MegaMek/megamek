@@ -43,10 +43,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     /**
      * Calculates the Battle Value of a single trooper of this BattleArmor. This
-     * value is not influenced
-     * by the pilot skill or any force bonuses.
-     *
-     * @implNote Used in MML
+     * value is not influenced by the pilot skill or any force bonuses.
      *
      * @return The BV of a single trooper of this BattleArmor
      */
@@ -271,7 +268,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
                 if (weapon.getLocation() == BattleArmor.LOC_SQUAD) {
                     amsBonus += weapon.getType().getBV(battleArmor);
                 } else {
-                    // squad support, count at 1/troopercount
+                    // squad support, count at 1 / trooper count
                     amsBonus += weapon.getType().getBV(battleArmor) / battleArmor.getTotalOInternal();
                 }
             }

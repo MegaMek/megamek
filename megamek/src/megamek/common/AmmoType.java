@@ -178,8 +178,6 @@ public class AmmoType extends EquipmentType {
     /**
      * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and
      * SRM 6, both fire SRM rounds), and conceptually can share ammo.
-     *
-     * NB: This is used in MekHQ.
      */
     public static final Set<Integer> ALLOWED_BY_TYPE = Set.of(ALLOWED_BY_TYPE_ARRAY);
 
@@ -189,7 +187,7 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_PROTOMEK = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
     public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo can be hotloaded
 
-    // BA can't jump or make antimek until dumped
+    // BA can't jump or make anti-mek until dumped
     public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4);
 
     public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
@@ -341,7 +339,7 @@ public class AmmoType extends EquipmentType {
         M_FAE
     }
 
-    private static Vector<Vector<AmmoType>> m_vaMunitions = new Vector<Vector<AmmoType>>(NUM_TYPES);
+    private static Vector<Vector<AmmoType>> m_vaMunitions = new Vector<>(NUM_TYPES);
 
     public static Vector<AmmoType> getMunitionsFor(int nAmmoType) {
         return m_vaMunitions.get(nAmmoType);
@@ -372,11 +370,13 @@ public class AmmoType extends EquipmentType {
             T_THUMPER,
             T_ARROW_IV
     };
+
     private int[] ARTILLERY_CANNON_TYPES = {
             T_LONG_TOM_CANNON,
             T_SNIPER_CANNON,
             T_THUMPER_CANNON
     };
+
     private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD);
 
     public AmmoType() {
@@ -403,8 +403,8 @@ public class AmmoType extends EquipmentType {
 
         AmmoType otherAmmoType = (AmmoType) other;
 
-        // There a couple of flags that need to be checked before we check
-        // on getAmmoType() strictly.
+        // There a couple of flags that need to be checked before we check on
+        // getAmmoType() strictly.
         if (is(T_MML)) {
             if (hasFlag(F_MML_LRM) != otherAmmoType.hasFlag(F_MML_LRM)) {
                 return false;
@@ -430,8 +430,8 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * Gets a value indicating whether this {@code AmmoType} is compatible
-     * with another {@code AmmoType}.
+     * Gets a value indicating whether this {@code AmmoType} is compatible with
+     * another {@code AmmoType}.
      *
      * NB: this roughly means the same ammo type and munition type, but not rack
      * size.
@@ -520,7 +520,7 @@ public class AmmoType extends EquipmentType {
      * TW/TO/IO rules.
      *
      * Arrow IV missiles with M_CLUSTER, M_ADA, or M_STANDARD (not M_HOMING) count
-     * as Flak (TO:AU&E pp166-167, 224)
+     * as Flak (TO:AU&amp;E pp166-167, 224)
      *
      * @return counts true if this ammo can be considered Flak in some situations
      */

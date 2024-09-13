@@ -9002,23 +9002,27 @@ public class TWGameManager extends AbstractGameManager {
         entity.setPosition(coords);
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
+
+        if (entity instanceof IAero aero) {
+            entity.setAltitude(elevation);
+            if (elevation == 0) {
+                aero.land();
+            } else {
+                aero.liftOff(elevation);
+            }
+        } else {
+            entity.setElevation(elevation);
+        }
+
         Hex hex = game.getBoard().getHex(coords);
         if (assaultDrop) {
             entity.setAltitude(1);
             // from the sky!
             entity.setAssaultDropInProgress(true);
-        } else if ((entity instanceof VTOL) && (entity.getExternalUnits().size() <= 0)) {
-            // We should let players pick, but this simplifies a lot.
-            // Only do it for VTOLs, though; assume everything else is on the
-            // ground.
-            entity.setElevation((hex.ceiling() - hex.getLevel()) + 1);
+        } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
             while ((Compute.stackingViolation(game, entity, coords, null, entity.climbMode()) != null)
-                    && (entity.getElevation() <= 50)) {
+                    && (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
-            }
-            if (entity.getElevation() > 50) {
-                throw new IllegalStateException("Entity #" + entity.getId()
-                        + " appears to be in an infinite loop trying to get a legal elevation.");
             }
         } else if (entity.isAero()) {
             // if the entity is airborne, then we don't want to set its
@@ -9026,7 +9030,6 @@ public class TWGameManager extends AbstractGameManager {
             // default to 999
             if (entity.isAirborne()) {
                 entity.setElevation(0);
-                elevation = 0;
             }
             if (!game.getBoard().inSpace()) {
                 // all spheroid craft should have velocity of zero in atmosphere
@@ -9045,19 +9048,6 @@ public class TWGameManager extends AbstractGameManager {
                     entity.setAltitude(hex.ceiling(true) + 1);
                 }
             }
-        } else if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
-            // TODO : Submarines should have a selectable height.
-            // TODO : For now, pretend they're regular naval.
-            entity.setElevation(0);
-        } else if ((entity.getMovementMode() == EntityMovementMode.HOVER)
-                || (entity.getMovementMode() == EntityMovementMode.WIGE)
-                || (entity.getMovementMode() == EntityMovementMode.NAVAL)
-                || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)) {
-            // For now, assume they're on the surface.
-            // entity elevation is relative to hex surface
-            entity.setElevation(0);
-        } else if (hex.containsTerrain(Terrains.ICE)) {
-            entity.setElevation(0);
         } else {
             Building bld = game.getBoard().getBuildingAt(entity.getPosition());
             if ((bld != null) && (bld.getType() == Building.WALL)) {
@@ -9065,14 +9055,10 @@ public class TWGameManager extends AbstractGameManager {
             }
 
         }
-        // add the elevation that was passed into this method
-        // TODO : currently only used for building placement, we should do this
-        // TODO : more systematically with up/down buttons in the deployment display
-        entity.setElevation(entity.getElevation() + elevation);
+
         boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE
                 && hex.containsTerrain(Terrains.BLDG_ELEV)
                 && entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
-
 
         // when first entering a building, we need to roll what type
         // of basement it has

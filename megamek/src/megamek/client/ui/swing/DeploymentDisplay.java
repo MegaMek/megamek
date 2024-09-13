@@ -351,37 +351,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
-        final Game game = clientgui.getClient().getGame();
-        final Entity en = ce();
-
+        final Entity entity = ce();
         if (checkNags()) {
             return;
         }
-
         disableButtons();
 
-        int elevation = en.getElevation();
-        // If elevation was set in lounge, try to preserve it
-        // Server.processDeployment will adjust elevation, so we want to account for this
-        Hex hex = game.getBoard().getHex(en.getPosition());
-        if ((en instanceof VTOL) && (elevation >= 1)) {
-            elevation = Math.max(0, elevation - (hex.ceiling() - hex.getLevel() + 1));
-        }
-        // Deploy grounded WiGEs on the roof of a building, and airborne at least one elevation above the roof.
-        if ((en.getMovementMode() == EntityMovementMode.WIGE) && hex.containsTerrain(Terrains.BLDG_ELEV)) {
-            int minElev = hex.terrainLevel(Terrains.BLDG_ELEV);
-            if (elevation > 0) {
-                minElev++;
-            }
-            elevation = Math.max(elevation, minElev);
-        }
+        int elevationOrAltitude = entity.isAero() ? entity.getAltitude() : entity.getElevation();
+        clientgui.getClient().deploy(entity.getId(), entity.getPosition(), entity.getFacing(),
+                elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
+        entity.setDeployed(true);
 
-        clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
-                elevation, en.getLoadedUnits(), assaultDropPreference);
-        en.setDeployed(true);
-
-        if (ce().isWeapOrderChanged()) {
-            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        if (entity.isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
         endMyTurn();
     }
@@ -500,12 +482,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             boolean shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
             Board board = clientgui.getClient().getGame().getBoard();
-//        final Hex deployhex = board.getHex(coords);
-//        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK)
-//                && !ce().hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
-//                && !ce().isNaval()
-//                && deployhex.containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE_ELEV);
-
             // When the unit is not already on the board, ignore turn mode and place the unit instead
             if ((entity.getPosition() != null) && (shiftHeld || turnMode)) {
                 processTurn(entity, coords);
@@ -544,102 +520,25 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 } else {
                     return;
                 }
-//                var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
-//                DialogResult result = dlg.showDialog();
-//                if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
-//                    if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
-//                        finalElevation = showHighElevationChoiceDialog();
-//                        if ((finalElevation == -1) || entity.isLocationProhibited(coords, finalElevation)) {
-//                            return;
-//                        }
-//                    } else {
-//                        finalElevation = dlg.getFirstChoice().elevation();
-//                    }
-//                    lastHexDeploymentOptions.clear();
-//                    lastHexDeploymentOptions.addAll(elevationOptions);
-//                    lastDeploymentOption = dlg.getFirstChoice();
-//                } else {
-//                    return;
-//                }
             }
 
-            if (entity.isAero()) {
+            if ((entity instanceof IAero aero)
+                    && (!(entity instanceof LandAirMech lam) || (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
                 entity.setAltitude(finalElevation);
+                if (finalElevation == 0) {
+                    aero.land();
+                } else {
+                    aero.liftOff(finalElevation);
+                }
             } else {
                 entity.setElevation(finalElevation);
             }
             entity.setPosition(coords);
-            clientgui.getBoardView().redrawEntity(entity);
+            clientgui.getBoardView().redrawAllEntities();
             clientgui.updateFiringArc(entity);
             clientgui.showSensorRanges(entity);
             clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);
-
-
-//        final Game game = clientgui.getClient().getGame();
-//
-//        final Building bldg = board.getBuildingAt(coords);
-//        boolean isAero = ce().isAero();
-//        boolean isVTOL = ce() instanceof VTOL;
-//        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
-//
-//        String title, msg;
-//        if (isAero && board.inAtmosphere() && (ce().getElevation() <= board.getHex(coords).ceiling(true))) {
-//            // Ensure aeros don't end up at lower elevation than the current hex
-//            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-//            msg = Messages.getString("DeploymentDisplay.elevationTooLow", ce().getShortName(), coords.getBoardNum());
-//            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
-//            return;
-//        } else if ((Compute.stackingViolation(game, ce().getId(), coords, ce().climbMode()) != null) && (bldg == null)) {
-//            // check if deployed unit violates stacking
-//            return;
-//        } else {
-//            // check for buildings and if found ask what level they want to deploy at
-//            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
-//                if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
-//                    boolean success = processBuildingDeploy(coords);
-//                    if (!success) {
-//                        return;
-//                    }
-//                } else if (deployhex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-//                    boolean success = processBridgeDeploy(coords);
-//                    if (!success) {
-//                        return;
-//                    }
-//                }
-//            } else if (!isAero && !isWiGE) {
-//                // hovers and naval units go on the surface
-//                if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
-//                        || (ce().getMovementMode() == EntityMovementMode.HYDROFOIL)
-//                        || (ce().getMovementMode() == EntityMovementMode.HOVER)) {
-//                    ce().setElevation(0);
-//                } else if (ce().getMovementMode().isSubmarine()) {
-//                    // submarines have one level above the surface
-//                    ce().setElevation(-ce().height());
-//                } else if (isVTOL) {
-//                    // VTOLs go to elevation 1... unless set in the Lounge.
-//                    // or if mechanized BA, since VTOL movement is then illegal
-//                    if ((ce().getElevation() < 1) && (ce().getExternalUnits().size() <= 0)) {
-//                        ce().setElevation(1);
-//                    }
-//                } else {
-//                    // everything else goes to elevation 0, or on the floor of a
-//                    // water hex, except non-mechanized SCUBA infantry, which have a max depth of 2.
-//                    if (deployhex.containsTerrain(Terrains.WATER) && (ce() instanceof Infantry) && ((Infantry) ce()).isNonMechSCUBA()) {
-//                        ce().setElevation(Math.max(deployhex.floor() - deployhex.getLevel(), -2));
-//                    } else {
-//                        ce().setElevation(deployhex.floor() - deployhex.getLevel());
-//                    }
-//                }
-//            }
-//            ce().setPosition(coords);
-//
-//            clientgui.getBoardView().redrawEntity(ce());
-//            clientgui.updateFiringArc(ce());
-//            clientgui.showSensorRanges(ce());
-//            clientgui.getBoardView().getPanel().repaint();
-//            butDone.setEnabled(true);
-//        }
             if (!shiftHeld) {
                 clientgui.getBoardView().select(coords);
             }
@@ -654,7 +553,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
             if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
                 int elevation = showHighElevationChoiceDialog();
-                return (elevation == -1) ? null : new ElevationOption(elevation, DeploymentElevationType.ELEVATION);
+                return (elevation == -1) ? null : new ElevationOption(elevation, DeploymentElevationType.ELEVATIONS_ABOVE);
             } else {
                 return dlg.getFirstChoice();
             }
@@ -664,7 +563,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private int showHighElevationChoiceDialog() {
-        String msg = "Choose an elevation:";
+        String msg = Messages.getString("DeploymentDisplay.elevationChoice");
         String input = JOptionPane.showInputDialog(clientgui.frame, msg);
         try {
             return Integer.parseInt(input);
@@ -679,10 +578,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * deployment option is available in the new hex.
      */
     private boolean useLastDeployElevation(List<ElevationOption> currentOptions) {
-        return currentOptions.size() <= lastHexDeploymentOptions.size()
+        return ((lastDeploymentOption != null)
+                && (lastDeploymentOption.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
+                && isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation()))
+                || ((currentOptions.size() <= lastHexDeploymentOptions.size())
                 && lastHexDeploymentOptions.containsAll(currentOptions)
-                && currentOptions.contains(lastDeploymentOption);
+                && currentOptions.contains(lastDeploymentOption));
+    }
 
+    private boolean isHighElevationAvailable(List<ElevationOption> currentOptions, int elevation) {
+        return currentOptions.stream()
+                .filter(o -> o.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
+                .anyMatch(o -> o.elevation() <= elevation);
     }
 
     private void showWrongBoardTypeMessage() {

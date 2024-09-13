@@ -126,10 +126,6 @@ public class VTOL extends Tank implements IBomber {
             return true;
         }
 
-        if (hex.containsTerrain(INDUSTRIAL) && (elevation <= hex.terrainLevel(INDUSTRIAL))) {
-            return true;
-        }
-
         if (hex.hasVegetation() && !hex.containsTerrain(ROAD) && (elevation <= hex.vegetationCeiling())) {
             return true;
         }

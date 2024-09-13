@@ -4206,6 +4206,12 @@ public abstract class Mech extends Entity {
                             && convertingNow);
         }
 
+        // a swimming Mek (UMU) may not reach above the surface
+        if ((currElevation == -1) && hex.hasDepth1WaterOrDeeper()
+                && (hex.terrainLevel(Terrains.WATER) > 1) && !isProne()) {
+            return true;
+        }
+
         return (hex.terrainLevel(Terrains.WOODS) > 2)
                 || (hex.terrainLevel(Terrains.JUNGLE) > 2);
     }

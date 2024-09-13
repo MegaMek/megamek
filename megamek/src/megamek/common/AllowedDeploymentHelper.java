@@ -33,7 +33,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
      * and above all terrain features of the hex, only a single elevation is reported using the
      * ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available.
      * Altitudes are always reported individually (1 to 10).
-     * 
+     *
      * @return All legal deployment elevations/altitudes
      */
     public List<ElevationOption> findAllowedElevations() {
@@ -47,18 +47,19 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         } else {
             result.addAll(allowedGroundElevations());
         }
+        result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation()));
+        result.removeIf(o -> Compute.stackingViolation(game, entity, o.elevation(), coords, null, entity.climbMode()) != null);
         Collections.sort(result);
         return result;
     }
 
     private List<ElevationOption> allowedAeroAltitudes() {
         List<ElevationOption> result = new ArrayList<>();
-        for (int altitude = Math.max(0, board.getHex(coords).ceiling(board.inAtmosphere()) + 1); altitude <= 10; altitude++) {
+        result.add(new ElevationOption(0, ON_GROUND));
+        int startingAltitude = Math.max(0, board.inAtmosphere() ? board.getHex(coords).ceiling(true) + 1 : 1);
+        for (int altitude = startingAltitude; altitude <= 10; altitude++) {
             result.add(new ElevationOption(altitude, ALTITUDE));
         }
-        // TODO: Make GameManager respect selection
-        // TODO: allow landing here?
-        // TODO: remember altitude? -> DeploymentDisplay
         return result;
     }
 
@@ -91,9 +92,6 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
             result.addAll(vtolElevations);
         }
 
-        //TODO: test stacking violations
-        result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation()));
-
         return result;
     }
 
@@ -119,7 +117,6 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
                 result.add(new ElevationOption(elevation, SUBMERGED));
             }
         } else if (entity.getMovementMode().isSubmarine() || entity.hasUMU()) {
-            // TODO: what depths can an upright UMU mek go to? -1? head above water
             for (int elevation = -1; elevation >= -depth; elevation--) {
                 result.add(new ElevationOption(elevation, SUBMERGED));
             }
@@ -150,8 +147,6 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
                 result.add(new ElevationOption(elevation, ELEVATION));
             }
             result.add(new ElevationOption(Math.max(10, hex.ceiling() + 1), ELEVATIONS_ABOVE));
-            // TODO: Make GameManager respect selection (when landed)
-            // TODO: Choose elevation for 11+
         }
         return result;
     }
@@ -163,22 +158,13 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     private List<ElevationOption> findAllowedElevationsWithBuildings() {
         List<ElevationOption> result = new ArrayList<>();
         int height = hex.terrainLevel(Terrains.BLDG_ELEV);
-        if (!(entity instanceof VTOL) && !entity.getMovementMode().isWiGE()) {
-
-            if (Compute.stackingViolation(game, entity, 0, coords, null, entity.climbMode()) == null) {
-                result.add((new ElevationOption(0, ON_GROUND)));
-            }
-
+        result.add((new ElevationOption(0, ON_GROUND)));
+        if (!(entity instanceof Tank)) {
             for (int elevation = 1; elevation < height; elevation++) {
-                if (Compute.stackingViolation(game, entity, elevation, coords, null, entity.climbMode()) == null) {
-                    result.add((new ElevationOption(elevation, BUILDING_FLOOR)));
-                }
+                result.add((new ElevationOption(elevation, BUILDING_FLOOR)));
             }
         }
-
-        if (Compute.stackingViolation(game, entity, height, coords, null, entity.climbMode()) == null) {
-            result.add((new ElevationOption(height, BUILDING_TOP)));
-        }
+        result.add((new ElevationOption(height, BUILDING_TOP)));
         return result;
     }
 }

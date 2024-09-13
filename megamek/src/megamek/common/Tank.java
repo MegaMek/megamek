@@ -27,6 +27,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
+import static megamek.common.Terrains.BLDG_ELEV;
+import static megamek.common.Terrains.BUILDING;
+
 /**
  * You know what tanks are, silly.
  */
@@ -640,6 +643,10 @@ public class Tank extends Entity {
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) && hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
+
+        if (hex.containsTerrain(BUILDING) && (currElevation <= hex.terrainLevel(BLDG_ELEV)) && (currElevation > 0)) {
+            return true;
+        }
 
         // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {

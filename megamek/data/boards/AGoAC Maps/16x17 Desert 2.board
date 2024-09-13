@@ -3,7 +3,7 @@ option exit_roads_to_pavement false
 tag "Water (Auto)"
 tag "DesertTheme (Auto)"
 tag "Woods (Auto)"
-hex 0101 0 "ground_fluff:1" "desert"
+hex 0101 0 "ground_fluff:4" "desert"
 hex 0201 0 "ground_fluff:4" "desert"
 hex 0301 0 "ground_fluff:4" "desert"
 hex 0401 0 "ground_fluff:4:1" "desert"

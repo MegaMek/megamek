@@ -1,0 +1,20 @@
+Disclaimer
+Version 1.0 | Date: August 9th, 2024
+
+Content Creation Notice
+
+Some of the lore and narrative content within MegaMek has been generated using OpenAI's ChatGPT. This AI-assisted content creation aims to enhance the game's depth and provide players with a richer experience.
+
+Important Points to Note:
+
+Accuracy and Consistency: While we strive to maintain the accuracy and consistency of the BattleTech universe, there may be occasional deviations or errors in the AI-generated content. We appreciate your understanding and welcome feedback to improve these elements.
+
+Intellectual Property: All AI-generated content is created with respect to the intellectual property holders and those that license the Tabletop properties of the BattleTech universe. However, it is important to note that this content is unofficial and not directly endorsed by these entities. Additionally, MechWarrior, BattleMech, ‘Mech, and AeroTech are registered trademarks of The Topps Company, Inc. All Rights Reserved.
+
+Ethical Use: We ensure that all AI-generated content adheres to ethical standards and does not contain inappropriate or sensitive material. Our team reviews and moderates this content to ensure it aligns with the community's expectations.
+
+Use of AI: We use AI specifically for certain art in splash screens, editing fluff text within the programs, and developing news articles for MekHQ.
+
+Feedback and Contributions: We value the input of our community. If you notice any issues or have suggestions for improving the AI-generated content, please reach out to us. Your feedback helps us refine and enhance the game.
+
+Thank you for being a part of the MegaMek community and for supporting our efforts to bring a more immersive experience to the BattleTech universe.

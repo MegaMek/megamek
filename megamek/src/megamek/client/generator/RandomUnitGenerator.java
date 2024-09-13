@@ -140,7 +140,7 @@ public class RandomUnitGenerator implements Serializable {
     private String chosenRAT;
 
     public RandomUnitGenerator() {
-        chosenRAT = "TW Heavy Mech (Kurita)";
+        chosenRAT = "House Kurita Heavy 'Mek";
         listeners = new ArrayList<>();
     }
 

@@ -1506,7 +1506,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
 
-        // a very specific situation where a mech is standing in a height 1 building
+        // a very specific situation where a mek is standing in a height 1 building
         // or its upper torso is otherwise somehow poking out of said building
         boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
         boolean legHit = entityTarget.locationIsLeg(hit.getLocation());

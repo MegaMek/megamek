@@ -9005,7 +9005,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (entity instanceof IAero aero) {
             entity.setAltitude(elevation);
-            if (elevation == 0) {
+            if ((elevation == 0) && !entity.isSpaceborne()) {
                 aero.land();
             } else {
                 aero.liftOff(elevation);

@@ -476,8 +476,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        // This try block makes sure that tooltips get re-enabled
         try {
+            // Tooltips go above even modal dialogs; therefore hide them; try block makes sure they get re-enabled
             ToolTipManager.sharedInstance().setEnabled(false);
 
             boolean shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
@@ -494,44 +494,46 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 return;
             }
 
-            int finalElevation;
-            var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
-                    board.getHex(coords), clientgui.getClient().getGame());
-            List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
+            if (!board.inSpace()) {
+                int finalElevation;
+                var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
+                        board.getHex(coords), clientgui.getClient().getGame());
+                List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
 
-            if (elevationOptions.isEmpty()) {
-                showCannotDeployHereMessage(coords);
-                return;
-            } else if (elevationOptions.size() == 1) {
-                finalElevation = elevationOptions.get(0).elevation();
-                lastHexDeploymentOptions.clear();
-                lastHexDeploymentOptions.addAll(elevationOptions);
-                lastDeploymentOption = elevationOptions.get(0);
-            } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
-                // When the player clicks the same hex again, always ask for the elevation
-                finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
-            } else {
-                ElevationOption elevationOption = showElevationChoiceDialog(elevationOptions);
-                if (elevationOption != null) {
+                if (elevationOptions.isEmpty()) {
+                    showCannotDeployHereMessage(coords);
+                    return;
+                } else if (elevationOptions.size() == 1) {
+                    finalElevation = elevationOptions.get(0).elevation();
                     lastHexDeploymentOptions.clear();
                     lastHexDeploymentOptions.addAll(elevationOptions);
-                    lastDeploymentOption = elevationOption;
-                    finalElevation = elevationOption.elevation();
+                    lastDeploymentOption = elevationOptions.get(0);
+                } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
+                    // When the player clicks the same hex again, always ask for the elevation
+                    finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
                 } else {
-                    return;
+                    ElevationOption elevationOption = showElevationChoiceDialog(elevationOptions);
+                    if (elevationOption != null) {
+                        lastHexDeploymentOptions.clear();
+                        lastHexDeploymentOptions.addAll(elevationOptions);
+                        lastDeploymentOption = elevationOption;
+                        finalElevation = elevationOption.elevation();
+                    } else {
+                        return;
+                    }
                 }
-            }
 
-            if ((entity instanceof IAero aero)
-                    && (!(entity instanceof LandAirMech lam) || (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
-                entity.setAltitude(finalElevation);
-                if (finalElevation == 0) {
-                    aero.land();
+                if ((entity instanceof IAero aero)
+                        && (!(entity instanceof LandAirMech lam) || (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
+                    entity.setAltitude(finalElevation);
+                    if (finalElevation == 0) {
+                        aero.land();
+                    } else {
+                        aero.liftOff(finalElevation);
+                    }
                 } else {
-                    aero.liftOff(finalElevation);
+                    entity.setElevation(finalElevation);
                 }
-            } else {
-                entity.setElevation(finalElevation);
             }
             entity.setPosition(coords);
             clientgui.getBoardView().redrawAllEntities();

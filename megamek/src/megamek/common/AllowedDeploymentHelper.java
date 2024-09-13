@@ -32,7 +32,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
      * altitudes. For VTOLs, elevations up to 10 are always included individually if available. Above that
      * and above all terrain features of the hex, only a single elevation is reported using the
      * ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available.
-     * Altitudes are always reported individually (1 to 10).
+     * Altitudes are always reported individually (0 to 10).
      *
      * @return All legal deployment elevations/altitudes
      */
@@ -55,7 +55,9 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> allowedAeroAltitudes() {
         List<ElevationOption> result = new ArrayList<>();
-        result.add(new ElevationOption(0, ON_GROUND));
+        if (board.onGround()) {
+            result.add(new ElevationOption(0, ON_GROUND));
+        }
         int startingAltitude = Math.max(0, board.inAtmosphere() ? board.getHex(coords).ceiling(true) + 1 : 1);
         for (int altitude = startingAltitude; altitude <= 10; altitude++) {
             result.add(new ElevationOption(altitude, ALTITUDE));

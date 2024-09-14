@@ -16698,10 +16698,10 @@ public class TWGameManager extends AbstractGameManager {
                         vPhaseReport.addAll(doExtremeGravityDamage(entity,
                                 damage));
                     }
-                    // high g, 1 damage for each MP we have less than normally
+                    // high g, 1 damage for every second MP we have less than normally
                     else if (game.getPlanetaryConditions().getGravity() > 1) {
-                        int damage = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY)
-                                - entity.getWalkMP();
+                        int damage = (entity.getWalkMP(MPCalculationSetting.NO_GRAVITY)
+                                - entity.getWalkMP())/2;
                         // Wee, direct internal damage
                         vPhaseReport.addAll(doExtremeGravityDamage(entity,
                                 damage));

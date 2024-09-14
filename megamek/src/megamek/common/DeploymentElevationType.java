@@ -19,7 +19,8 @@
 package megamek.common;
 
 /**
- * This enum gives the meaning of an elevation or altitude that a unit is at or can be deployed to.
+ * This enum gives the meaning of an elevation or altitude that a unit can be deployed to. This is used for
+ * GUI purposes.
  */
 public enum DeploymentElevationType {
     ON_GROUND, ON_ICE, ON_SEAFLOOR, SUBMERGED, BUILDING_FLOOR, BUILDING_TOP, ELEVATION, ALTITUDE, BRIDGE,

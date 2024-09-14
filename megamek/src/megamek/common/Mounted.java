@@ -752,6 +752,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return shotsLeft;
     }
 
+    /**
+     * @return True when this ammunition Mounted has shots left and is operable.
+     * @see #getUsableShotsLeft()
+     * @see #isOperable()
+     */
+    public boolean hasUsableShotsLeft() {
+        return getUsableShotsLeft() > 0;
+    }
+
     public void setShotsLeft(int shotsLeft) {
         if (shotsLeft < 0) {
             shotsLeft = 0;

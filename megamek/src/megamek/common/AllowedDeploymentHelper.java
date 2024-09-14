@@ -78,6 +78,14 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         if (!hasZeroElevationOption(result)) {
             result.addAll(allowedZeroElevation());
         }
+        if (entity.getMovementMode().isWiGE()) {
+            // WiGE may also deploy flying wherever they can be grounded
+            List<ElevationOption> wigeOptions = new ArrayList<>();
+            for (ElevationOption currentOption : result) {
+                wigeOptions.add(new ElevationOption(currentOption.elevation() + 1, ELEVATION));
+            }
+            result.addAll(wigeOptions);
+        }
 
         // Bridges block deployment for units of more than 1 level height if they intersect; height() == 0 is 1 level
         if (hex.containsTerrain(Terrains.BRIDGE) && (entity.height() > 0)) {
@@ -112,7 +120,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         boolean hasIce = hex.containsTerrain(Terrains.ICE);
         EntityMovementMode moveMode = entity.getMovementMode();
 
-        if ((moveMode.isNaval() || moveMode.isHydrofoil() || moveMode.isHover()) && !hasIce) {
+        if ((moveMode.isNaval() || moveMode.isHydrofoil() || moveMode.isHoverOrWiGE()) && !hasIce) {
             result.add(new ElevationOption(0, WATER_SURFACE));
         } else if ((entity instanceof Infantry infantry) && infantry.isNonMechSCUBA()) {
             for (int elevation = -1; elevation >= Math.max(-depth, -2); elevation--) {
@@ -125,7 +133,6 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         } else if (!moveMode.isTrackedWheeledOrHover() && (!hasIce || (depth > entity.height()))) {
             // when there is ice over depth 1 water, don't allow standing Meks to deploy under the ice
             result.add(new ElevationOption(hex.floor() - hex.getLevel(), ON_SEAFLOOR));
-
         }
         if (hasIce && !entity.getMovementMode().isSubmarine()) {
             result.add(new ElevationOption(0, ON_ICE));

@@ -773,19 +773,19 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (elevation < 0) {
+        if (currElevation < 0) {
             return true;
         }
 
-        if (hex.containsTerrain(Terrains.BUILDING) && (elevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+        if (hex.containsTerrain(Terrains.BUILDING) && (currElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
             return true;
         }
 
-        if (hex.containsTerrain(Terrains.INDUSTRIAL) && (elevation <= hex.terrainLevel(Terrains.INDUSTRIAL))) {
+        if (hex.containsTerrain(Terrains.INDUSTRIAL) && (currElevation <= hex.terrainLevel(Terrains.INDUSTRIAL))) {
             return true;
         }
 
-        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (elevation <= hex.vegetationCeiling())) {
+        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (currElevation <= hex.vegetationCeiling())) {
             return true;
         }
 

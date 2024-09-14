@@ -22,14 +22,9 @@ package megamek.client.ui.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
@@ -539,7 +534,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 }
 
                 if ((entity instanceof IAero aero)
-                        && (!(entity instanceof LandAirMech lam) || (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
+                        && (!(entity instanceof LandAirMek lam) || (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) {
                     entity.setAltitude(finalElevation);
                     if (finalElevation == 0) {
                         aero.land();

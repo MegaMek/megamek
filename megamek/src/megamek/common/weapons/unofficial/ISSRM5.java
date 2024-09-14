@@ -40,7 +40,7 @@ public class ISSRM5 extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         bv = 47;
-        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

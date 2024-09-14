@@ -4,8 +4,8 @@ Table format is Game Component - Implemented - Notes.
 
 Components (Units)
 
-- Battlemechs			Yes		None
-- Protomechs			Yes		None
+- BattleMeks			Yes		None
+- ProtoMeks			Yes		None
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -38,7 +38,7 @@ Playing The Game (Warriors)
 
 - Skills			Yes		None
 - Skill Improvement		No		None
-- Damaging a mechwarrior	Yes		None
+- Damaging a Mekwarrior	Yes		None
 - Consciousness Rolls		Yes		None
 
 Movement (Basics)
@@ -95,7 +95,7 @@ Weapon Attacks (Firing Weapons)
 
 - Base To-Hit Number		Yes		None
 - To-Hit Modifiers		Yes		None
-- Prone Battlemechs		Yes		None
+- Prone BattleMeks		Yes		None
 - To-Hit Rolls			Yes		None
 - Hit Location			Yes		None
 
@@ -112,8 +112,8 @@ Weapons Attacks (Critical Damage)
 
 Weapon Attacks (Destroying a Unit)
 
-- Battlemech			Yes		None
-- Protomechs			Yes		Fire declaration *is* as a point (report a bug if it's not).
+- BattleMek			Yes		None
+- ProtoMeks			Yes		Fire declaration *is* as a point (report a bug if it's not).
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -127,8 +127,8 @@ Physical Attacks
 - Charge Attacks		Yes		Buildings may not be charged.
 - Death From Above		Yes		Buildings may not be DFA'd
 - Different Elevations		Yes		None
-- Prone Battlemechs		Yes		None
-- Protomech Physical		Yes		None
+- Prone BattleMeks		Yes		None
+- ProtoMek Physical		Yes		None
 
 Heat (Heat Points)
 
@@ -140,7 +140,7 @@ Heat (Effects of Heat)
 - Weapon effects		Yes		None
 - Shutdown effects		Yes		None
 - Ammunition effects		Yes		None
-- Mechwarrior effects		Yes		None
+- Mekwarrior effects		Yes		None
 
 Buildings
 
@@ -167,11 +167,11 @@ Building (Emplacements)
 
 - Gun Emplacements		Partial		Don't act as buildings
 
-ProtoMechs
+ProtoMeks
 
-- ProtoMechs			Yes		None
+- ProtoMeks			Yes		None
 
-ProtoMechs (Combat)
+ProtoMeks (Combat)
 
 - Weapon Attacks		Yes		None
 - Hit Locations			Yes		None
@@ -194,7 +194,7 @@ Infantry (Movement)
 
 - Movement			Yes		Infantry cannot change floors in a building
 - Infantry Carriers		Yes		When Deploying infantry carriers, select "Load" to start Infantry inside.
-- Mechanised Battle Armor	Yes		When Deploying OmniMechs, select "Load" to start BA squad attached to a Mech.
+- Mechanised Battle Armor	Yes		When Deploying OmniMeks, select "Load" to start BA squad attached to a Mek.
 
 Infantry (Combat)
 
@@ -222,7 +222,7 @@ Innersphere Battle Armor Variants
 - Purifier			Yes		None
 - Sloth				Yes		None
 
-Special Case Rules (Anti Mech Infantry)
+Special Case Rules (Anti Mek Infantry)
 
 - Leg Attacks			Yes		None
 - Swarm Attacks			Yes		None
@@ -239,7 +239,7 @@ Special Case Rules (Artillery)
 
 Special Case Rules (Miscellaneous)
 
-- Battlemech Lifting Capab.	No		None
+- BattleMek Lifting Capab.	No		None
 - Cargo Carriers		No		None
 - Clearing Woods		Yes		None
 - Dropping Troops		Yes		None
@@ -266,7 +266,7 @@ Special Case Rules (Flak)
 - Artillery Flak		Yes		None
 - LB-X Cluster Flak		Yes		None
 
-Special Case Rules (Four Legged Battlemechs)
+Special Case Rules (Four Legged BattleMeks)
 
 - Movement			Yes		None
 - Combat			Yes		None
@@ -296,7 +296,7 @@ Special Case Rules (Night Combat)
 
 - Night Combat			Yes		None
 - Searchlights			Yes		Player can give spotlights to units using
-						the "customize mech" window.  Players
+						the "customize mek" window.  Players
 						must activate them during move phase.
 						Target selected in firing phase.
 

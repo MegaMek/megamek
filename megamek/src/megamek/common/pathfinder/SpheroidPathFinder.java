@@ -25,14 +25,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.logging.MMLogger;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths
@@ -42,6 +41,8 @@ import megamek.common.MovePath.MoveStepType;
  * @author NickAragua
  */
 public class SpheroidPathFinder {
+    private static final MMLogger logger = MMLogger.create(SpheroidPathFinder.class);
+
     private Game game;
     private int direction;
     private List<MovePath> spheroidPaths;
@@ -147,9 +148,9 @@ public class SpheroidPathFinder {
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
 
-            LogManager.getLogger().error(memoryMessage, ex);
+            logger.error(memoryMessage, ex);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex); // do something, don't just swallow the exception, good lord
+            logger.error("", ex); // do something, don't just swallow the exception, good lord
         }
     }
 

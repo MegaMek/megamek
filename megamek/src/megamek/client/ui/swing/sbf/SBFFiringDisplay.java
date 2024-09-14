@@ -18,12 +18,24 @@
  */
 package megamek.client.ui.swing.sbf;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.SBFClientGUI;
 import megamek.client.ui.swing.SBFTargetDialog;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.BTObject;
 import megamek.common.BoardLocation;
 import megamek.common.InGameObject;
@@ -33,14 +45,10 @@ import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.strategicBattleSystems.*;
-
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.util.*;
-import java.util.function.Predicate;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFFormationTurn;
+import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFToHitData;
 
 public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelectionListener {
 
@@ -90,7 +98,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     private int firingUnit = BTObject.NONE;
     private final SBFTargetDialog targetDialog;
 
-    private final Map<FiringCommand, MegamekButton> buttons = new HashMap<>();
+    private final Map<FiringCommand, MegaMekButton> buttons = new HashMap<>();
 
     public SBFFiringDisplay(SBFClientGUI cg) {
         super(cg);
@@ -144,7 +152,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     }
 
     @Override
-    protected List<MegamekButton> getButtonList() {
+    protected List<MegaMekButton> getButtonList() {
         return new ArrayList<>(buttons.values());
     }
 

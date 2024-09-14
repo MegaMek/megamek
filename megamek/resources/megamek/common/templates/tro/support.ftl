@@ -2,13 +2,13 @@ ${fullName}
 <#if includeFluff>
 <#include "fluff.ftl">
 </#if>
-  
+
 Type: ${chassis}
 Chassis Type: ${moveType} (${weightClass})
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Mass: ${mass} ${weightStandard}
 Battle Value: ${battleValue}
-	
+
 ${formatBasicDataRow("Equipment", "", "Mass (" + weightStandard + ")")}
 ${formatBasicDataRow("Chassis/Controls", "", chassisControlMass)}
 ${formatBasicDataRow("Engine/Trans.", "", engineMass)}
@@ -33,7 +33,7 @@ ${formatBasicDataRow("Armor Factor (" + barRating + ")", armorFactor, armorMass)
 <#if armorValues.FRRS??>
      ${formatArmorRow("Front R/L Side", structureValues.FRRS, armorValues.FRRS)}<#if patchworkByLoc??> ${patchworkByLoc.FRRS}</#if>
      ${formatArmorRow("Rear R/L Side", structureValues.RRRS, armorValues.RRRS)}<#if patchworkByLoc??> ${patchworkByLoc.RRRS}</#if>
-<#else>     
+<#else>
      ${formatArmorRow("R/L Side", structureValues.RS, armorValues.RS)}<#if patchworkByLoc??> ${patchworkByLoc.RS}</#if>
 </#if>
      ${formatArmorRow("Rear", structureValues.RR, armorValues.RR)}<#if patchworkByLoc??> ${patchworkByLoc.RR}</#if>
@@ -46,11 +46,11 @@ ${formatBasicDataRow("Armor Factor (" + barRating + ")", armorFactor, armorMass)
 <#if isVTOL>
      ${formatArmorRow("Rotor", structureValues.RO, armorValues.RO)}<#if patchworkByLoc??> ${patchworkByLoc.RO}</#if>
 </#if>
-	
+
 <#if isOmni>
 Fixed Equipment
 	<#if fixedTonnage gt 0>
-${formatBasicDataRow("Location", "Fixed", "Tonnage")}	
+${formatBasicDataRow("Location", "Fixed", "Tonnage")}
 	<#list fixedEquipment as row>
 		<#if row.equipment != "None">
 ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
@@ -62,13 +62,13 @@ None
 </#if>
 
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Tonnage")}	
+${formatEquipmentRow("and Ammo", "Location", "Tonnage")}
 <#list weaponList as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.tonnage)}
 <#else>
 None
 </#list>
-	
+
 Cargo
 <#list bays>
     <#items as bay>
@@ -79,7 +79,7 @@ Cargo
 </#list>
 
 <#if chassisMods?size + miscEquipment?size gt 0>
-Notes: 
+Notes:
 <#if chassisMods?size gt 0>
 Features ${chassisMods?join(", ")} Chassis and Controls Modification<#if chassisMods?size gt 1>s</#if>
 </#if>
@@ -87,7 +87,7 @@ Features ${chassisMods?join(", ")} Chassis and Controls Modification<#if chassis
 ${misc}
 </#list>
 </#if>
-	
+
 <#if quirks??>
 Features the following design quirks: ${quirks}
 </#if>

@@ -1,20 +1,24 @@
 /*
- * MegaMek -
- * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.LosEffects;
@@ -36,8 +40,8 @@ public class RulerCommand extends ClientCommand {
                         "Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]]. " +
                         "Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev " +
                         "numbers are the elevations of the targets over the terrain. " +
-                        "If elev is not given 1 is assumed which is for standing mechs. " +
-                        "Prone mechs and most other units are at elevation 0. " +
+                        "If elev is not given 1 is assumed which is for standing Meks. " +
+                        "Prone Meks and most other units are at elevation 0. " +
                         "cur hex can be given as the start hex, which will use the client's current hex. " +
                         "eg; #ruler cur hex x2 y2, or as a short form #ruler x2 y2, " +
                         "in which case elevation can't be used.");

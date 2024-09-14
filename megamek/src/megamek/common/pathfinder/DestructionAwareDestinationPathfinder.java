@@ -300,13 +300,13 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     }
 
     /**
-     * Simplified logic for whether a mech going into the given hex will flood
+     * Simplified logic for whether a mek going into the given hex will flood
      * breached legs and effectively immobilize it.
      */
     private boolean underwaterLegBreachCheck(BulldozerMovePath path) {
         Hex hex = path.getGame().getBoard().getHex(path.getFinalCoords());
 
-        // investigate: do we want quad mechs with a single breached leg to risk this
+        // investigate: do we want quad meks with a single breached leg to risk this
         // move? Currently not, but if we did, this is probably where this logic would
         // go.
         return path.getCachedEntityState().getNumBreachedLegs() > 0 &&

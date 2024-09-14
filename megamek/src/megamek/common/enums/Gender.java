@@ -16,35 +16,37 @@
  */
 package megamek.common.enums;
 
-import megamek.client.generator.RandomGenderGenerator;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.logging.MMLogger;
+
 /**
- * In this context, sex relates to the character's capacity to incubate offspring.
+ * In this context, sex relates to the character's capacity to incubate
+ * offspring.
  * While this is a very limited view of the broad spectrum of human genders,
- * the needs of programming dictate that we need to take a more binary view of things.
+ * the needs of programming dictate that we need to take a more binary view of
+ * things.
  * To this end, males can't birth children, females can.
  * 'Other' genders are used for characters that fall outside the gender binary,
  * with the sex following 'other' determining their capacity to birth children.
  */
 public enum Gender {
-    //region Enum Declarations
+    // region Enum Declarations
     MALE(false, "Male"),
     FEMALE(false, "Female"),
     OTHER_MALE(true, "Other (M)"),
     OTHER_FEMALE(true, "Other (F)"),
     RANDOMIZE(true);
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
-    //region Variable Declarations
+    // region Variable Declarations
     private final boolean internal;
     private final String displayName;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     Gender(boolean internal) {
         this(internal, "");
     }
@@ -53,9 +55,9 @@ public enum Gender {
         this.internal = internal;
         this.displayName = displayName;
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Boolean Checks
+    // region Boolean Checks
     /**
      * @return true if the person's biological gender is male, otherwise false
      */
@@ -83,7 +85,7 @@ public enum Gender {
     public boolean isInternal() {
         return internal;
     }
-    //endregion Boolean Checks
+    // endregion Boolean Checks
 
     /**
      * @return a list of all external-facing gender options
@@ -116,8 +118,9 @@ public enum Gender {
 
     /**
      * @param input the string to parse
-     * @return the gender defined by the input, or a randomly generated string if the string isn't a
-     * proper value
+     * @return the gender defined by the input, or a randomly generated string if
+     *         the string isn't a
+     *         proper value
      */
     public static Gender parseFromString(String input) {
         try {
@@ -138,7 +141,8 @@ public enum Gender {
 
         }
 
-        LogManager.getLogger().error("Failed to parse the gender value from input String {}. Returning a newly generated gender.",
+        MMLogger.create(Gender.class).error(
+                "Failed to parse the gender value from input String {}. Returning a newly generated gender.",
                 input);
         return RandomGenderGenerator.generate();
     }

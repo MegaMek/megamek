@@ -59,7 +59,7 @@ public class CLImprovedAC2 extends ACWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted ignore) {
+    public double getBattleForceDamage(int range, Mounted<?> ignore) {
         return range == AlphaStrikeElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

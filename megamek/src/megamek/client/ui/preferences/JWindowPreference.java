@@ -18,35 +18,42 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.lang.ref.WeakReference;
 
+import javax.swing.JFrame;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JWindowPreference monitors the size (width and height), location, and maximization state of a Window.
- * It sets the saved values when a dialog is loaded and changes them as they change.
+ * JWindowPreference monitors the size (width and height), location, and
+ * maximization state of a Window.
+ * It sets the saved values when a dialog is loaded and changes them as they
+ * change.
  *
- * Call preferences.manage(new JWindowPreference(Window)) to use this preference, on a Window that
+ * Call preferences.manage(new JWindowPreference(Window)) to use this
+ * preference, on a Window that
  * has called setName
  */
 public class JWindowPreference extends PreferenceElement implements ComponentListener, WindowStateListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JWindowPreference.class);
+
+    // region Variable Declarations
     private final WeakReference<Window> weakReference;
     private int width;
     private int height;
     private int screenX;
     private int screenY;
     private boolean maximized;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JWindowPreference(final Window window) throws Exception {
         super(window.getName());
 
@@ -63,9 +70,9 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
         window.addComponentListener(this);
         window.addWindowStateListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<Window> getWeakReference() {
         return weakReference;
     }
@@ -109,9 +116,9 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
     public void setMaximized(final boolean maximized) {
         this.maximized = maximized;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return String.format("%d|%d|%d|%d|%s", getWidth(), getHeight(), getScreenX(), getScreenY(), isMaximized());
@@ -120,7 +127,7 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JWindowPreference because of a null or blank input value");
+            logger.error("Cannot create a JWindowPreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -153,9 +160,9 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region ComponentListener
+    // region ComponentListener
     @Override
     public void componentResized(final ComponentEvent evt) {
         setWidth(evt.getComponent().getWidth());
@@ -179,12 +186,12 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
     public void componentHidden(final ComponentEvent evt) {
 
     }
-    //endregion ComponentListener
+    // endregion ComponentListener
 
-    //region WindowStateListener
+    // region WindowStateListener
     @Override
     public void windowStateChanged(final WindowEvent evt) {
         setMaximized((evt.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH);
     }
-    //endregion WindowStateListener
+    // endregion WindowStateListener
 }

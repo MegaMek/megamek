@@ -18,7 +18,6 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
 
 import java.awt.*;

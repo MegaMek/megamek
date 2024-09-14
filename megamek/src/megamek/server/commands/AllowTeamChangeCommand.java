@@ -21,7 +21,7 @@ import megamek.server.Server;
 
 /**
  * This command allows a player to allow another player to switch teams.
- * 
+ *
  * @author arlith
  */
 public class AllowTeamChangeCommand extends ServerCommand {
@@ -38,7 +38,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -59,7 +59,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
         boolean changeTeam = true;
         int voteCount = 0;
         int eligiblePlayerCount = 0;
-        for (Player p : server.getGame().getPlayersVector()) {
+        for (Player p : server.getGame().getPlayersList()) {
             if (p.getTeam() != Player.TEAM_UNASSIGNED) {
                 changeTeam &= p.getVotedToAllowTeamChange();
                 if (p.getVotedToAllowTeamChange()) {

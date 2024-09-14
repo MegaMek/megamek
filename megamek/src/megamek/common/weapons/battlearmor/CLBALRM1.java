@@ -38,7 +38,7 @@ public class CLBALRM1 extends LRMWeapon {
         criticals = 2;
         bv = 17;
         cost = 6000;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)
@@ -51,5 +51,3 @@ public class CLBALRM1 extends LRMWeapon {
                 .setProductionFactions(F_CGS);
     }
 }
-
-

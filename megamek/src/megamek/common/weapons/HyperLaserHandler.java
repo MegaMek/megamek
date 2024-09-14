@@ -57,11 +57,11 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             int wloc = weapon.getLocation();
             for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
                 CriticalSlot slot1 = ae.getCritical(wloc, i);
-                if ((slot1 == null) || 
+                if ((slot1 == null) ||
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
-                Mounted mounted = slot1.getMount();
+                Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
                     ae.hitAllCriticals(wloc, i);
                     break;
@@ -77,7 +77,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -86,7 +86,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-            && weapon.hasModes()) {
+                && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
@@ -119,7 +119,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > nRanges[RangeType.RANGE_LONG])) {
+                && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
             if (target.isConventionalInfantry()) {
                 toReturn -= 1;
@@ -129,7 +129,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
-         // Against conventional infantry, treat as direct fire energy
+            // Against conventional infantry, treat as direct fire energy
             if (target.isConventionalInfantry()) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             } else { // Else, treat as pulse weapon

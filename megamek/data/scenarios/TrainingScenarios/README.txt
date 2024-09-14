@@ -1,12 +1,12 @@
-FUTURE AMMENDMENTS (for game developers)
+FUTURE AMENDMENTS (for game developers)
 This training scenario series is intended to introduce small chunks of the rules with each scenario.
-Provide game options to disable the following Advance rules: Torso Twisting, Heat, Mechwarriors, Piloting Skill Rolls, Critical Hits, Physical Attacks.
+Provide game options to disable the following Advance rules: Torso Twisting, Heat, MekWarriors, Piloting Skill Rolls, Critical Hits, Physical Attacks.
 Provide a way to set Game Options within the .mms file.
 
 **********Battletech 3rd Edition Training Scenario #1 - First Run, pg. 36**********
 
 SITUATION
-Four trainees are using mech simulators for the first time.
+Four trainees are using mek simulators for the first time.
 
 GAME SET-UP
 Mapboards= Width 2, Height 1, Maps battletech, battletech.
@@ -28,18 +28,18 @@ Deployment
 TraineeB sets up within three hexes of the North edge.
 
 VICTORY CONDITIONS
-First side to have a mech destroyed or exit the map is the loser.  In other words, the first side to get one kill wins.
+First side to have a mek destroyed or exit the map is the loser.  In other words, the first side to get one kill wins.
 
 SPECIAL RULES
 This scenario is should only use the basic rules of moving & firing.
 No Torso Twisting.
 Piloting Skills have been set to 0 to reflect that they shouldn't be made in this scenario.  Hopefully no one falls.
-No Physical Attacks from any mech.
+No Physical Attacks from any mek.
 Set Game Options "Friendly fire" to false.
 Set Game Options "Allow pushing off the map" to false.
 Set Game Options "Fire and smoke" to false.
 Set Game Options "Indirect fire" to false.
-Set Game Options "MaxTech firing while prone" to true (with Basic Rules, mechs never fall, even if they are missing one or both legs.  This option will help keep a mech useful to the very end).
+Set Game Options "MaxTech firing while prone" to true (with Basic Rules, meks never fall, even if they are missing one or both legs.  This option will help keep a mek useful to the very end).
 Set Game Options "No through-armor criticals" to true.
 
 **********Battletech 3rd Edition Training Scenario #2 - Final Exam, pg. 37**********
@@ -65,23 +65,23 @@ Deployment
 TraineeB sets up anywhere at least 6 hexes from Trainee A and at least 3 hexes from any map edge.
 
 VICTORY CONDITIONS
-First side to have a mech destroyed or exit the map is the loser.
-If neither mech is disabled after 10 turns, tally total armor & internal structure damage for each mech.  Whichever side suffered the least amount of damage is the victor.
+First side to have a mek destroyed or exit the map is the loser.
+If neither mek is disabled after 10 turns, tally total armor & internal structure damage for each mek.  Whichever side suffered the least amount of damage is the victor.
 
 SPECIAL RULES
 This scenario should only use the Basic Rules of moving & firing, plus the Advance Rules of Torso Twisting & Heat.
 Piloting Skills have been set to 0 to reflect that they shouldn't be made in this scenario.  Hopefully no one falls.
-No Physical Attacks from any mech.
+No Physical Attacks from any mek.
 Set Game Options "Allow pushing off the map" to false.
 Set Game Options "Fire and smoke" to false.
 Set Game Options "Indirect fire" to false.
-Set Game Options "MaxTech firing while prone" to true (with Basic Rules, mechs never fall, even if they are missing one or both legs.  This option will help keep a mech useful to the very end).
+Set Game Options "MaxTech firing while prone" to true (with Basic Rules, meks never fall, even if they are missing one or both legs.  This option will help keep a mek useful to the very end).
 Set Game Options "No through-armor criticals" to true.
 
 **********Battletech 3rd Edition Training Scenario #3 - Trial By Fire, pg. 38**********
 
 SITUATION
-A lone Mechwarrior must get his beat-up mech through enemy lines to join up with the rest of his forces.
+A lone MekWarrior must get his beat-up mek through enemy lines to join up with the rest of his forces.
 
 GAME SET-UP
 Mapboards= Width 1, Height 2, Maps battletech, battletech.
@@ -107,8 +107,8 @@ VICTORY CONDITIONS
 The BattleMaster must exit the South map edge to claim victory.  Otherwise the Attacker wins.
 
 SPECIAL RULES
-This scenario should only use the Basic Rules of moving & firing, plus the Advance Rules of Torso Twisting, Heat, Mechwarriors, & Piloting Skill Rolls.
-No Physical Attacks from any mech.
+This scenario should only use the Basic Rules of moving & firing, plus the Advance Rules of Torso Twisting, Heat, MekWarriors, & Piloting Skill Rolls.
+No Physical Attacks from any mek.
 Set Game Options "Allow pushing off the map" to false.
 Set Game Options "Fire and smoke" to false.
 Set Game Options "Indirect fire" to false.
@@ -139,7 +139,7 @@ Deployment
 The Marauder & Shadow Hawk must start in any of the six hexrows XX15 through XX20.
 
 VICTORY CONDITIONS
-Whichever side destroys or runs off all of their opponent's mechs wins.
+Whichever side destroys or runs off all of their opponent's meks wins.
 
 SPECIAL RULES:
 # Set Game Options "Fire and smoke" to false.

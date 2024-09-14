@@ -115,7 +115,7 @@ public class PilotOptions extends AbstractOptions {
         IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES);
         addOption(edge, "edge", 0);
         /* different edge triggers */
-        // Mech Triggers
+        // Mek Triggers
         addOption(edge, "edge_when_headhit", true);
         addOption(edge, "edge_when_tac", true);
         addOption(edge, "edge_when_ko", true);
@@ -131,7 +131,7 @@ public class PilotOptions extends AbstractOptions {
 
         addOption(edge, OptionsConstants.EDGE, 0);
         // different edge triggers
-        //Mech Triggers
+        //Mek Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_TAC, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, true);

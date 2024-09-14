@@ -18,39 +18,45 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
+import javax.swing.JList;
+
+import org.apache.commons.lang3.StringUtils;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JListPreference monitors the selected indices of a {@link JList}. It sets the saved indices when a
+ * JListPreference monitors the selected indices of a {@link JList}. It sets the
+ * saved indices when a
  * dialog is loaded and changes them when they change.
  *
- * Call preferences.manage(new JListPreference(JList)) to use this preference, on a JList that
+ * Call preferences.manage(new JListPreference(JList)) to use this preference,
+ * on a JList that
  * has called setName
  */
 public class JListPreference extends PreferenceElement implements PropertyChangeListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JListPreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JList<?>> weakReference;
     private int[] selectedIndices;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JListPreference(final JList<?> jList) throws Exception {
         super(jList.getName());
         setSelectedIndices(jList.getSelectedIndices());
         weakReference = new WeakReference<>(jList);
         jList.addPropertyChangeListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JList<?>> getWeakReference() {
         return weakReference;
     }
@@ -62,9 +68,9 @@ public class JListPreference extends PreferenceElement implements PropertyChange
     public void setSelectedIndices(final int... selectedIndices) {
         this.selectedIndices = selectedIndices;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return StringUtils.join(getSelectedIndices(), '|');
@@ -73,7 +79,7 @@ public class JListPreference extends PreferenceElement implements PropertyChange
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JListPreference because of a null or blank input value");
+            logger.error("Cannot create a JListPreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -93,9 +99,9 @@ public class JListPreference extends PreferenceElement implements PropertyChange
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region PropertyChangeListener
+    // region PropertyChangeListener
     @Override
     public void propertyChange(final PropertyChangeEvent evt) {
         final JList<?> element = getWeakReference().get();
@@ -103,5 +109,5 @@ public class JListPreference extends PreferenceElement implements PropertyChange
             setSelectedIndices(element.getSelectedIndices());
         }
     }
-    //endregion PropertyChangeListener
+    // endregion PropertyChangeListener
 }

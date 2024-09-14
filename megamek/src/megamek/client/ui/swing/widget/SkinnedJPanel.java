@@ -1,15 +1,36 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.widget;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.File;
+
+import javax.swing.JPanel;
 
 import megamek.common.Configuration;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
+import megamek.logging.MMLogger;
 
 public class SkinnedJPanel extends JPanel {
+    private static final MMLogger logger = MMLogger.create(SkinnedJPanel.class);
 
     private final Image backgroundIcon;
 
@@ -21,11 +42,12 @@ public class SkinnedJPanel extends JPanel {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(skinComponent, true);
 
         if (skinSpec.hasBackgrounds() && (skinSpec.backgrounds.size() > backgroundIndex)) {
-            File file = new MegaMekFile(Configuration.widgetsDir(), skinSpec.backgrounds.get(backgroundIndex)).getFile();
+            File file = new MegaMekFile(Configuration.widgetsDir(), skinSpec.backgrounds.get(backgroundIndex))
+                    .getFile();
             if (file.exists()) {
                 backgroundIcon = ImageUtil.loadImageFromFile(file.toString());
             } else {
-                LogManager.getLogger().error("Background icon doesn't exist: " + file.getPath());
+                logger.error("Background icon doesn't exist: " + file.getPath());
                 backgroundIcon = null;
             }
         } else {

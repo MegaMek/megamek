@@ -49,7 +49,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
+        flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MEK_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);
         rulesRefs = "312, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

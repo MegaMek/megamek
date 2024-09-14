@@ -1,65 +1,48 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.Enumeration;
 
-import megamek.client.ui.swing.widget.AeroMapSet;
-import megamek.client.ui.swing.widget.ArmlessMechMapSet;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.BattleArmorMapSet;
-import megamek.client.ui.swing.widget.CapitalFighterMapSet;
-import megamek.client.ui.swing.widget.DisplayMapSet;
-import megamek.client.ui.swing.widget.GunEmplacementMapSet;
-import megamek.client.ui.swing.widget.InfantryMapSet;
-import megamek.client.ui.swing.widget.JumpshipMapSet;
-import megamek.client.ui.swing.widget.LargeSupportTankMapSet;
-import megamek.client.ui.swing.widget.MechMapSet;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.ProtomechMapSet;
-import megamek.client.ui.swing.widget.QuadMapSet;
-import megamek.client.ui.swing.widget.SpheroidMapSet;
-import megamek.client.ui.swing.widget.SquadronMapSet;
-import megamek.client.ui.swing.widget.SuperHeavyTankMapSet;
-import megamek.client.ui.swing.widget.TankMapSet;
-import megamek.client.ui.swing.widget.TripodMechMapSet;
-import megamek.client.ui.swing.widget.VTOLMapSet;
-import megamek.client.ui.swing.widget.WarshipMapSet;
-import megamek.common.Aero;
-import megamek.common.ArmlessMech;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LargeSupportTank;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.SmallCraft;
-import megamek.common.SuperHeavyTank;
-import megamek.common.Tank;
-import megamek.common.TripodMech;
-import megamek.common.VTOL;
-import megamek.common.Warship;
-import org.apache.logging.log4j.LogManager;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.logging.MMLogger;
 
 /**
  * This panel contains the armor readout display.
  */
 class ArmorPanel extends PicMap {
+    private static final MMLogger logger = MMLogger.create(ArmorPanel.class);
+
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
-    private MechMapSet mech;
+    private MekMapSet mek;
     private InfantryMapSet infantry;
     private BattleArmorMapSet battleArmor;
-    private ProtomechMapSet proto;
+    private ProtoMekMapSet proto;
     private VTOLMapSet vtol;
     private QuadMapSet quad;
-    private TripodMechMapSet tripod;
+    private TripodMekMapSet tripod;
     private GunEmplacementMapSet gunEmplacement;
-    private ArmlessMechMapSet armless;
+    private ArmlessMekMapSet armless;
     private LargeSupportTankMapSet largeSupportTank;
     private SuperHeavyTankMapSet superHeavyTank;
     private AeroMapSet aero;
@@ -72,17 +55,17 @@ class ArmorPanel extends PicMap {
     private int minLeftMargin;
     private int minBottomMargin;
     private int minRightMargin;
-    
+
     private UnitDisplay unitDisplay;
 
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;
     private static final int minVTOLTopMargin = 8;
     private static final int minVTOLLeftMargin = 8;
-    private static final int minMechTopMargin = 18;
-    private static final int minMechLeftMargin = 7;
-    private static final int minMechBottomMargin = 0;
-    private static final int minMechRightMargin = 0;
+    private static final int minMekTopMargin = 18;
+    private static final int minMekLeftMargin = 7;
+    private static final int minMekBottomMargin = 0;
+    private static final int minMekRightMargin = 0;
     private static final int minInfTopMargin = 8;
     private static final int minInfLeftMargin = 8;
     private static final int minAeroTopMargin = 8;
@@ -99,15 +82,15 @@ class ArmorPanel extends PicMap {
     public void addNotify() {
         super.addNotify();
         tank = new TankMapSet(this, unitDisplay);
-        mech = new MechMapSet(this, unitDisplay);
+        mek = new MekMapSet(this, unitDisplay);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
-        proto = new ProtomechMapSet(this, unitDisplay);
+        proto = new ProtoMekMapSet(this, unitDisplay);
         vtol = new VTOLMapSet(this, unitDisplay);
         quad = new QuadMapSet(this, unitDisplay);
-        tripod = new TripodMechMapSet(this, unitDisplay);
+        tripod = new TripodMekMapSet(this, unitDisplay);
         gunEmplacement = new GunEmplacementMapSet(this);
-        armless = new ArmlessMechMapSet(this, unitDisplay);
+        armless = new ArmlessMekMapSet(this, unitDisplay);
         largeSupportTank = new LargeSupportTankMapSet(this, unitDisplay);
         superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplay);
         aero = new AeroMapSet(this, unitDisplay);
@@ -120,12 +103,12 @@ class ArmorPanel extends PicMap {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(0,0);
+        return new Dimension(0, 0);
     }
 
     @Override
     public Dimension getMinimumSize() {
-        return new Dimension(0,0);
+        return new Dimension(0, 0);
     }
 
     @Override
@@ -142,39 +125,39 @@ class ArmorPanel extends PicMap {
     }
 
     /**
-     * updates fields for the specified mech
+     * updates fields for the specified mek
      */
-    public void displayMech(Entity en) {
+    public void displayMek(Entity en) {
         // Look out for a race condition.
         if (en == null) {
             return;
         }
-        DisplayMapSet ams = mech;
+        DisplayMapSet ams = mek;
         removeAll();
-        if (en instanceof QuadMech) {
+        if (en instanceof QuadMek) {
             ams = quad;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
-        } else if (en instanceof TripodMech) {
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
+        } else if (en instanceof TripodMek) {
             ams = tripod;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
-        } else if (en instanceof ArmlessMech) {
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
+        } else if (en instanceof ArmlessMek) {
             ams = armless;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
-        } else if (en instanceof Mech) {
-            ams = mech;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
-            minBottomMargin = minMechBottomMargin;
-            minRightMargin = minMechRightMargin;
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
+        } else if (en instanceof Mek) {
+            ams = mek;
+            minLeftMargin = minMekLeftMargin;
+            minTopMargin = minMekTopMargin;
+            minBottomMargin = minMekBottomMargin;
+            minRightMargin = minMekRightMargin;
         } else if (en instanceof GunEmplacement) {
             ams = gunEmplacement;
             minLeftMargin = minTankLeftMargin;
@@ -217,7 +200,7 @@ class ArmorPanel extends PicMap {
             minTopMargin = minInfTopMargin;
             minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-        } else if (en instanceof Protomech) {
+        } else if (en instanceof ProtoMek) {
             ams = proto;
             minLeftMargin = minTankLeftMargin;
             minTopMargin = minTankTopMargin;
@@ -259,7 +242,7 @@ class ArmorPanel extends PicMap {
         }
 
         if (ams == null) {
-            LogManager.getLogger().error("The armor panel is null");
+            logger.error("The armor panel is null");
             return;
         }
         ams.setEntity(en);

@@ -538,3 +538,5 @@ base -3 "" "volcano" "volcano/volcano_sinkhole_3.gif"
 base -4 "" "volcano" "volcano/volcano_sinkhole_4.gif"
 
 #------------------- END volcano theme
+
+super * "deployment_zone:*" "" "saxarba/misc/blank.png"

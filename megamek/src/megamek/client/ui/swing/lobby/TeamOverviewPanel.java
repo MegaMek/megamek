@@ -18,6 +18,40 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import static megamek.client.ui.swing.util.UIUtil.FONT_SCALE1;
+import static megamek.client.ui.swing.util.UIUtil.criticalSign;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.warningSign;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -27,30 +61,23 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.client.ui.swing.util.UIUtil.*;
-
-/** 
- * A JPanel that holds a table giving an overview of the current relative strength
- * of the teams of the game. The table does not listen to game changes and requires
- * being notified through {@link #refreshData()}. It accesses data through the stored
+/**
+ * A JPanel that holds a table giving an overview of the current relative
+ * strength
+ * of the teams of the game. The table does not listen to game changes and
+ * requires
+ * being notified through {@link #refreshData()}. It accesses data through the
+ * stored
  * ClientGUI.
  */
 public class TeamOverviewPanel extends JPanel {
 
     private static final long serialVersionUID = -4754010220963493049L;
-     
-    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS }
+
+    private enum TOMCOLS {
+        TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS
+    }
+
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final TableColumnManager teamOverviewManager = new TableColumnManager(teamOverviewTable, false);
@@ -58,8 +85,11 @@ public class TeamOverviewPanel extends JPanel {
     private final ClientGUI clientGui;
     private boolean isDetached;
     private int shownColumn;
-    
-    /** Constructs the team overview panel; the given ClientGUI is used to access the game data. */ 
+
+    /**
+     * Constructs the team overview panel; the given ClientGUI is used to access the
+     * game data.
+     */
     public TeamOverviewPanel(ClientGUI cg) {
         clientGui = cg;
         setLayout(new GridLayout(1, 1));
@@ -81,7 +111,7 @@ public class TeamOverviewPanel extends JPanel {
 
         refreshData();
     }
-    
+
     /** Detaches or attaches the team overview from/to its pane. */
     public void setDetached(boolean state) {
         if (state != isDetached) {
@@ -101,7 +131,7 @@ public class TeamOverviewPanel extends JPanel {
             refreshTableHeader();
         }
     }
-    
+
     MouseListener headerListener = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -123,7 +153,7 @@ public class TeamOverviewPanel extends JPanel {
             }
         }
     };
-    
+
     /** Refreshes the headers, setting the header names and gui scaling them. */
     public void refreshTableHeader() {
         JTableHeader header = teamOverviewTable.getTableHeader();
@@ -142,10 +172,10 @@ public class TeamOverviewPanel extends JPanel {
         if (selectedRow != -1) {
             selectedTeam = teamOverviewModel.teamID.get(teamOverviewTable.getSelectedRow());
         }
-        
+
         // Update the data
         teamOverviewModel.updateTable(clientGui.getClient().getGame());
-        
+
         // Re-select the previously selected team, if possible
         if ((selectedRow != -1) && (teamOverviewModel.teamID.contains(selectedTeam))) {
             int row = teamOverviewModel.teamID.indexOf(selectedTeam);
@@ -194,7 +224,7 @@ public class TeamOverviewPanel extends JPanel {
                 teams.add(team);
                 teamID.add(team.getId());
                 teamNames.add(team.toString());
-                
+
                 long cost = 0;
                 double ton = 0;
                 int bv = 0;
@@ -207,7 +237,7 @@ public class TeamOverviewPanel extends JPanel {
                     Player player = game.getPlayer(teamMember.getId());
                     bv += player.getBV();
                     for (Entity entity : game.getPlayerEntities(player, false)) {
-                        // Avoid counting fighters in squadrons twice 
+                        // Avoid counting fighters in squadrons twice
                         if (entity instanceof FighterSquadron) {
                             continue;
                         }
@@ -241,9 +271,9 @@ public class TeamOverviewPanel extends JPanel {
             fireTableDataChanged();
             updateRowHeights();
         }
-        
+
         private int classIndex(Entity entity) {
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 return 0;
             } else if (entity instanceof Tank) {
                 return 1;
@@ -251,13 +281,13 @@ public class TeamOverviewPanel extends JPanel {
                 return 2;
             } else if (entity instanceof Infantry) {
                 return 3;
-            } else { // Protomech
+            } else { // ProtoMek
                 return 4;
             }
         }
-        
+
         private String unitSummary(int[] counts, boolean[] criticals, boolean[] warnings) {
-            String result = ""; 
+            String result = "";
             for (int i = 0; i < counts.length; i++) {
                 if (counts[i] > 0) {
                     result += criticals[i] ? criticalSign() + " " : "";
@@ -265,17 +295,17 @@ public class TeamOverviewPanel extends JPanel {
                     result += Messages.getString("ChatLounge.teamOverview.unitSum" + i) + " " + counts[i];
                     result += "<BR>";
                 }
-                
+
             }
             return result;
         }
-        
-        /** Finds and sets the required row height (max height of all cells plus margin). */
-        private void updateRowHeights()
-        {
+
+        /**
+         * Finds and sets the required row height (max height of all cells plus margin).
+         */
+        private void updateRowHeights() {
             int rowHeight = 0;
-            for (int row = 0; row < teamOverviewTable.getRowCount(); row++)
-            {
+            for (int row = 0; row < teamOverviewTable.getRowCount(); row++) {
                 for (int col = 0; col < teamOverviewTable.getColumnCount(); col++) {
                     // Consider the preferred height of the team members column
                     TableCellRenderer renderer = teamOverviewTable.getCellRenderer(row, col);
@@ -308,7 +338,8 @@ public class TeamOverviewPanel extends JPanel {
             switch (column) {
                 case TEAM:
                     boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
-                    Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
+                    Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor()
+                            : GUIPreferences.getInstance().getMyUnitColor();
                     result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
                     break;
@@ -362,16 +393,18 @@ public class TeamOverviewPanel extends JPanel {
 
             return result.toString();
         }
-        
+
         private boolean seeTeam(int row) {
             Game game = clientGui.getClient().getGame();
             return !game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)
                     || game.getTeamForPlayer(clientGui.getClient().getLocalPlayer()).getId() == teamID.get(row);
         }
-        
-        /** 
-         * Constructs and returns the string "(xx % of Team yy)". The provided values list 
-         * is the data for the table column and the provided row is the row of current value.
+
+        /**
+         * Constructs and returns the string "(xx % of Team yy)". The provided values
+         * list
+         * is the data for the table column and the provided row is the row of current
+         * value.
          * The reference value (that represents 100%) is taken from the selected row.
          * Returns an empty string if nothing is selected or the base value is 0.
          */
@@ -384,9 +417,11 @@ public class TeamOverviewPanel extends JPanel {
                     String selectedTeam = teamNames.get(selectedRow);
                     long percentage = 100 * values.get(row) / baseValue;
                     if (isDetached) {
-                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %%)", percentage);
+                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f)
+                                + String.format("(%d %%)", percentage);
                     } else {
-                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %% of %s)", percentage, selectedTeam);
+                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f)
+                                + String.format("(%d %% of %s)", percentage, selectedTeam);
                     }
                 }
             }
@@ -394,18 +429,18 @@ public class TeamOverviewPanel extends JPanel {
         }
 
     }
-    
+
     /** A specialized renderer for the mek table. */
     private class MemberListRenderer extends JPanel implements TableCellRenderer {
         private static final long serialVersionUID = 6379065972840999336L;
-        
+
         MemberListRenderer() {
             super();
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
 
             if (!(value instanceof List<?>)) {
@@ -431,7 +466,7 @@ public class TeamOverviewPanel extends JPanel {
                 add(lblPlayer);
             }
             add(Box.createVerticalGlue());
-            
+
             if (isSelected) {
                 setForeground(table.getSelectionForeground());
                 setBackground(table.getSelectionBackground());

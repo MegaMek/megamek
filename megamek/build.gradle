@@ -36,24 +36,25 @@ sourceSets {
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2'
-    implementation 'com.formdev:flatlaf:3.5'
-    implementation 'com.formdev:flatlaf-extras:3.5'
+    implementation 'com.formdev:flatlaf:3.5.1'
+    implementation 'com.formdev:flatlaf-extras:3.5.1'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.20'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
     implementation 'org.apache.commons:commons-collections4:4.5.0-M2'
-    implementation 'org.apache.commons:commons-lang3:3.15.0'
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
     implementation 'org.apache.commons:commons-text:1.12.0'
-    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
     implementation 'org.freemarker:freemarker:2.3.33'
+    implementation 'org.commonmark:commonmark:0.22.0'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
-    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.mockito:mockito-core:5.13.0'
 }
 
 application {
@@ -70,7 +71,7 @@ ext {
         '-Dsun.awt.disablegrab=true'
     ]
     data = 'data'
-    unitFiles = "${data}/mechfiles"
+    unitFiles = "${data}/mekfiles"
     rats = "${data}/rat"
     docs = "docs"
     lib = "lib"
@@ -358,7 +359,7 @@ task mechCacheCSVTool(type: JavaExec, dependsOn: jar) {
     description = 'Icon Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.utilities.MechCacheCSVTool'
+    mainClass = 'megamek.utilities.MekCacheCSVTool'
 }
 
 task nameChangesValidator(type: JavaExec, dependsOn: jar) {

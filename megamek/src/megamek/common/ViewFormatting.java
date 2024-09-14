@@ -20,7 +20,7 @@
 package megamek.common;
 
 /**
- * Enum of valid formatting styles, to use with MechView objects
+ * Enum of valid formatting styles, to use with MekView objects
  * HTML: contains HTML markup
  * Discord: Contains Discord markup and formatting
  * None: plain text

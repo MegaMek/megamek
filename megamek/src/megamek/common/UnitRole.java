@@ -18,49 +18,52 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceSUA;
-import org.apache.logging.log4j.LogManager;
+import static megamek.common.UnitRole.Availability.AERO;
+import static megamek.common.UnitRole.Availability.ALL;
+import static megamek.common.UnitRole.Availability.GROUND;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-import static megamek.common.UnitRole.Availability.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.logging.MMLogger;
 
 /**
- * Unit roles as defined by Alpha Strike Companion, used in formation building rules
- * in ASC and Campaign Operations
- * 
+ * Unit roles as defined by Alpha Strike Companion, used in formation building
+ * rules in ASC and Campaign Operations
+ *
  * @author Neoancient
  */
 public enum UnitRole {
 
-    /** This is the default role; given to units where the role definition is missing. */
-    UNDETERMINED (ALL),
+    /**
+     * This is the default role; given to units where the role definition is
+     * missing.
+     */
+    UNDETERMINED(ALL),
 
     /** Shows that this unit intentionally has no combat role. */
-	NONE (ALL),
+    NONE(ALL),
 
-    AMBUSHER (GROUND),
-    BRAWLER (GROUND),
-    JUGGERNAUT (GROUND),
-    MISSILE_BOAT (GROUND),
-    SCOUT (GROUND),
-    SKIRMISHER (GROUND),
-    SNIPER (GROUND),
-    STRIKER (GROUND),
+    AMBUSHER(GROUND),
+    BRAWLER(GROUND),
+    JUGGERNAUT(GROUND),
+    MISSILE_BOAT(GROUND),
+    SCOUT(GROUND),
+    SKIRMISHER(GROUND),
+    SNIPER(GROUND),
+    STRIKER(GROUND),
 
-    ATTACK_FIGHTER (AERO),
-    DOGFIGHTER (AERO),
-    FAST_DOGFIGHTER (AERO),
-    FIRE_SUPPORT (AERO),
-    INTERCEPTOR (AERO),
-    TRANSPORT (AERO);
-
+    ATTACK_FIGHTER(AERO),
+    DOGFIGHTER(AERO),
+    FAST_DOGFIGHTER(AERO),
+    FIRE_SUPPORT(AERO),
+    INTERCEPTOR(AERO),
+    TRANSPORT(AERO);
 
     /** @return True when the given unit may use this role. Used in MML. */
-    @SuppressWarnings("unused")
     public boolean isAvailableTo(BTObject unit) {
         return availableTo.fits(unit) && !unit.isUnitGroup();
     }
@@ -75,13 +78,14 @@ public enum UnitRole {
     }
 
     /**
-     * Parses the given string into the UnitRole if possible and returns it. If it can't parse the string,
-     * logs an error and returns UNDETERMINED. Does not return null.
+     * Parses the given string into the UnitRole if possible and returns it. If it
+     * can't parse the string, logs an error and returns UNDETERMINED. Does not
+     * return null.
      *
      * @return The UnitRole given as a string or UNDETERMINED.
      */
     public static UnitRole parseRole(String role) {
-        switch (role.toLowerCase()) {
+        switch (role.strip().toLowerCase()) {
             case "ambusher":
                 return AMBUSHER;
             case "brawler":
@@ -117,24 +121,27 @@ public enum UnitRole {
             case "transport":
                 return TRANSPORT;
             case "none":
-            	return NONE;
+                return NONE;
             default:
-                LogManager.getLogger().error("Could not parse role " + role);
+                MMLogger.create(UnitRole.class).warn("Could not parse role: %s", role);
                 return UNDETERMINED;
         }
     }
 
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
-     * qualifies for a particular role. As the canon unit roles do not themselves adhere
-     * strictly to the guidelines, there is some allowance for fuzziness in applying the
-     * criteria by computing a score. Stats outside the given ranges lower the score, and
-     * special abilities that are useful for a role raise the score.
+     * qualifies for a particular role. As the canon unit roles do not themselves
+     * adhere strictly to the guidelines, there is some allowance for fuzziness in
+     * applying the criteria by computing a score. Stats outside the given ranges
+     * lower the score, and special abilities that are useful for a role raise the
+     * score.
      *
-     * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
+     * This method calculates AlphaStrike statistics for the Entity as the first
+     * step in the calculation.
      *
-     * @param entity      The unit to be checked for role qualification
-     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     * @param entity The unit to be checked for role qualification
+     * @return Boolean value indicating whether the unit meets the qualifications
+     *         for this role.
      */
     public boolean qualifiesForRole(Entity entity) {
         return qualifiesForRole(ASConverter.convert(entity), 0);
@@ -142,18 +149,23 @@ public enum UnitRole {
 
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
-     * qualifies for a particular role. As the canon unit roles do not themselves adhere
-     * strictly to the guidelines, there is some allowance for fuzziness in applying the
-     * criteria by computing a score. Stats outside the given ranges lower the score, and
-     * special abilities that are useful for a role raise the score.
+     * qualifies for a particular role. As the canon unit roles do not themselves
+     * adhere strictly to the guidelines, there is some allowance for fuzziness in
+     * applying the criteria by computing a score. Stats outside the given ranges
+     * lower the score, and special abilities that are useful for a role raise the
+     * score.
      *
-     * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
+     * This method calculates AlphaStrike statistics for the Entity as the first
+     * step in the calculation.
      *
-     * @param entity      The unit to be checked for role qualification
-     * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
-     *                  more or less by the book, while values below 0 are more liberal and above 0 are
+     * @param entity    The unit to be checked for role qualification
+     * @param tolerance A measure of how strictly to apply the qualifications. A
+     *                  value of zero is
+     *                  more or less by the book, while values below 0 are more
+     *                  liberal and above 0 are
      *                  more strict.
-     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     * @return Boolean value indicating whether the unit meets the qualifications
+     *         for this role.
      */
     public boolean qualifiesForRole(Entity entity, double tolerance) {
         return qualifiesForRole(ASConverter.convert(entity), tolerance);
@@ -161,13 +173,15 @@ public enum UnitRole {
 
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
-     * qualifies for a particular role. As the canon unit roles do not themselves adhere
-     * strictly to the guidelines, there is some allowance for fuzziness in applying the
-     * criteria by computing a score. Stats outside the given ranges lower the score, and
-     * special abilities that are useful for a role raise the score.
+     * qualifies for a particular role. As the canon unit roles do not themselves
+     * adhere strictly to the guidelines, there is some allowance for fuzziness in
+     * applying the criteria by computing a score. Stats outside the given ranges
+     * lower the score, and special abilities that are useful for a role raise the
+     * score.
      *
-     * @param unit      The unit to be checked for role qualification
-     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     * @param unit The unit to be checked for role qualification
+     * @return Boolean value indicating whether the unit meets the qualifications
+     *         for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit) {
         return qualifiesForRole(unit, 0);
@@ -175,21 +189,26 @@ public enum UnitRole {
 
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
-     * qualifies for a particular role. As the canon unit roles do not themselves adhere
-     * strictly to the guidelines, there is some allowance for fuzziness in applying the
-     * criteria by computing a score. Stats outside the given ranges lower the score, and
-     * special abilities that are useful for a role raise the score.
+     * qualifies for a particular role. As the canon unit roles do not themselves
+     * adhere strictly to the guidelines, there is some allowance for fuzziness in
+     * applying the criteria by computing a score. Stats outside the given ranges
+     * lower the score, and special abilities that are useful for a role raise the
+     * score.
      *
-     * @param unit		The unit to be checked for role qualification
-     * @param tolerance	A measure of how strictly to apply the qualifications. A value of zero is
-     * 					more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
-     * 					stricter.
-     * @return			Boolean value indicating whether the unit meets the qualifications for this role.
+     * @param unit      The unit to be checked for role qualification
+     * @param tolerance A measure of how strictly to apply the qualifications. A
+     *                  value of zero is
+     *                  more or less by the book, while values &lt; 0 are more
+     *                  liberal and &gt; 0 are
+     *                  stricter.
+     * @return Boolean value indicating whether the unit meets the qualifications
+     *         for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
         if (!isAvailableTo(unit)) {
             return false;
         }
+
         double score = 0;
         int speed = unit.getPrimaryMovementValue();
         switch (this) {
@@ -207,41 +226,38 @@ public enum UnitRole {
                         || unit.hasSUA(BattleForceSUA.LMAS)) {
                     score++;
                 }
-                if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case BRAWLER:
                 /* Not too slow, preference for medium range */
                 score += Math.min(0, speed - 8);
-                if (unit.getStandardDamage().M.damage >=
-                        unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage >
-                        unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case JUGGERNAUT:
                 /* Slow and heavily armored and armed, preference for short range */
                 score -= Math.max(0, speed - 6) * 0.5;
-                /* Per ASC, a Juggernaut should have an armor value of 7, but there are a large number
-                 * of smaller units with lower armor values that have an official role of juggernaut.*/
-                score += Math.min(0,  unit.getFullArmor() - (unit.getSize() + 4));
+                /*
+                 * Per ASC, a Juggernaut should have an armor value of 7, but there are a large
+                 * number of smaller units with lower armor values that have an official role of
+                 * juggernaut.
+                 */
+                score += Math.min(0, unit.getFullArmor() - (unit.getSize() + 4));
                 if (Math.max(unit.getStandardDamage().S.damage,
-                            unit.getStandardDamage().M.damage)* 2 >= unit.getFullArmor()) {
+                        unit.getStandardDamage().M.damage) * 2 >= unit.getFullArmor()) {
                     score++;
                 }
-                if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 if (unit.hasSUA(BattleForceSUA.MEL)
@@ -275,7 +291,10 @@ public enum UnitRole {
                         || unit.hasSUA(BattleForceSUA.ARTSC)
                         || unit.hasSUA(BattleForceSUA.ARTLTC);
             case SCOUT:
-                /* Fast (jump, WiGE, or VTOL helpful but not required), lightly armored, preference for short range */
+                /*
+                 * Fast (jump, WiGE, or VTOL helpful but not required), lightly armored,
+                 * preference for short range
+                 */
                 score += Math.min(0, speed - 8) * 0.5;
                 score -= Math.max(0, unit.getFullArmor() - 4);
                 if (unit.getMovementModes().contains("j") || unit.getMovementModes().contains("g")
@@ -294,11 +313,9 @@ public enum UnitRole {
                 if (unit.hasSUA(BattleForceSUA.ECM)) {
                     score++;
                 }
-                if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -310,12 +327,10 @@ public enum UnitRole {
                     score += Math.min(0, speed - 9) * 0.5;
                 }
                 score += Math.min(0, unit.getFullArmor() - 4) + Math.min(0, 8 - unit.getFullArmor());
-                if (unit.getStandardDamage().M.damage >=
-                        unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage >
-                        unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -326,46 +341,38 @@ public enum UnitRole {
                 /* Fast and light-medium armor, preference for short range */
                 score += Math.min(0, speed - 9) * 0.5;
                 score -= Math.max(0, unit.getFullArmor() - 5);
-                if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case ATTACK_FIGHTER:
                 /* Slow, preference for short range */
                 score -= Math.max(0, speed - 5);
-                if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage >
-                        unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case DOGFIGHTER:
                 /* Medium speed, preference for medium range */
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed) * 0.5;
-                if (unit.getStandardDamage().M.damage >=
-                        unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage >
-                        unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case FAST_DOGFIGHTER:
                 /* Fast with preference for medium range */
                 score += Math.min(0, speed - 7) + Math.min(0, 9 - speed) * 0.5;
-                if (unit.getStandardDamage().M.damage >=
-                        unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage >
-                        unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -379,12 +386,10 @@ public enum UnitRole {
             case INTERCEPTOR:
                 /* Very fast, preference for damage at medium range */
                 score += Math.min(0, speed - 10);
-                if (unit.getStandardDamage().M.damage >=
-                        unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage >
-                        unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;

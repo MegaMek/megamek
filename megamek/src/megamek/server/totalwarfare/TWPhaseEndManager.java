@@ -281,9 +281,13 @@ class TWPhaseEndManager {
                 }
                 break;
             case VICTORY:
+                // FIXME: Sending this event here in the Server makes no sense at all, there are no listeners:
                 GameVictoryEvent gve = new GameVictoryEvent(this, gameManager.getGame());
                 gameManager.getGame().processGameEvent(gve);
+
                 gameManager.transmitGameVictoryEventToAll();
+
+                // FIXME: Why force-reset the game? Just let it stand
                 gameManager.resetGame();
                 break;
             default:

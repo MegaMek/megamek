@@ -1,24 +1,54 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
-import megamek.client.ratgenerator.*;
-import megamek.client.ratgenerator.Ruleset.ProgressListener;
-import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.swing.*;
+
+import megamek.client.ratgenerator.*;
+import megamek.client.ratgenerator.Ruleset.ProgressListener;
+import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.UnitType;
+import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * Controls to set options for force generator.
@@ -26,6 +56,8 @@ import java.util.stream.Collectors;
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
+    private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
+
     private int currentYear;
     private Consumer<ForceDescriptor> onGenerate;
 
@@ -43,13 +75,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JComboBox<Integer> cbWeightClass;
     private JCheckBox chkAttachments;
 
-    private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>
-    (Messages.getString("ForceGeneratorDialog.general"),
+    private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>(
+            Messages.getString("ForceGeneratorDialog.general"),
             fRec -> fRec.getName(currentYear));
 
-    private HashMap<String,String> ratingDisplayNames = new HashMap<>();
-    private HashMap<String,String> formationDisplayNames = new HashMap<>();
-    private HashMap<String,String> flagDisplayNames = new HashMap<>();
+    private HashMap<String, String> ratingDisplayNames = new HashMap<>();
+    private HashMap<String, String> formationDisplayNames = new HashMap<>();
+    private HashMap<String, String> flagDisplayNames = new HashMap<>();
 
     private JPanel panGroundRole;
     private JPanel panInfRole;
@@ -266,8 +298,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
         // Cargo needs more work to select cargo dropships.
-        //        panTransport.add(new JLabel("Cargo Tonnage:"));
-        //        panTransport.add(txtCargo, gbc);
+        // panTransport.add(new JLabel("Cargo Tonnage:"));
+        // panTransport.add(txtCargo, gbc);
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
@@ -548,7 +580,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             txtCargo.setText("0");
         }
 
-        ProgressMonitor monitor = new ProgressMonitor(this, Messages.getString("ForceGeneratorDialog.generateFormation"), "", 0, 100);
+        ProgressMonitor monitor = new ProgressMonitor(this,
+                Messages.getString("ForceGeneratorDialog.generateFormation"), "", 0, 100);
         monitor.setProgress(0);
         GenerateTask task = new GenerateTask(fd);
         task.addPropertyChangeListener(e -> {
@@ -632,7 +665,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                LogManager.getLogger().warn("No unit type node found.");
+                logger.warn("No unit type node found.");
                 cbUnitType.addItem(null);
             }
         } else {
@@ -707,7 +740,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            LogManager.getLogger().warn("No eschelon node found.");
+            logger.warn("No eschelon node found.");
         }
 
         if (hasCurrent) {
@@ -751,7 +784,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                LogManager.getLogger().warn("No rating found.");
+                logger.warn("No rating found.");
             }
         }
 
@@ -886,15 +919,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     void exportMUL(ForceDescriptor fd) {
         ArrayList<Entity> list = new ArrayList<>();
         fd.addAllEntities(list);
-        //Create a fake game so we can write the entities to a file without adding them to the real game.
+        // Create a fake game so we can write the entities to a file without adding them
+        // to the real game.
         Game game = new Game();
-        //Add a player to prevent complaining in the log file
+        // Add a player to prevent complaining in the log file
         Player p = new Player(1, "Observer");
         game.addPlayer(1, p);
         game.setOptions(clientGui.getClient().getGame().getOptions());
         list.stream().forEach(en -> {
             en.setOwner(p);
-            // If we don't set the id, the first unit will be left at -1, which in most cases is interpreted
+            // If we don't set the id, the first unit will be left at -1, which in most
+            // cases is interpreted
             // as no entity
             en.setId(game.getNextEntityId());
             game.addEntity(en);
@@ -904,7 +939,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Searches recursively for nodes that are flagged with C3 networks and configures them.
+     * Searches recursively for nodes that are flagged with C3 networks and
+     * configures them.
      *
      * @param fd
      */
@@ -929,7 +965,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            // Even if we haven't reworked this into a full C3i network, we can still connect
+            // Even if we haven't reworked this into a full C3i network, we can still
+            // connect
             // any C3i units that happen to be present.
             Entity first = null;
             int nodes = 0;
@@ -973,7 +1010,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Worker function that updates various things that need to be updated when the year is changed.
+     * Worker function that updates various things that need to be updated when the
+     * year is changed.
      */
     private void yearUpdated() {
         txtYear.setText(String.valueOf(currentYear));
@@ -1006,13 +1044,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         private static final long serialVersionUID = 4895258839502183158L;
 
         private String nullVal;
-        private Function<T,String> toString;
+        private Function<T, String> toString;
 
         public CBRenderer(String nullVal) {
             this(nullVal, null);
         }
 
-        public CBRenderer(String nullVal, Function<T,String> strConverter) {
+        public CBRenderer(String nullVal, Function<T, String> strConverter) {
             this.nullVal = nullVal;
             toString = Objects.requireNonNullElseGet(strConverter, () -> Object::toString);
         }
@@ -1020,7 +1058,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @SuppressWarnings(value = "unchecked")
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object entry, int position,
-                                                      boolean arg3, boolean arg4) {
+                boolean arg3, boolean arg4) {
             if (entry == null) {
                 setText(nullVal);
             } else {
@@ -1058,7 +1096,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } catch (InterruptedException ignored) {
 
             } catch (ExecutionException ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
             } finally {
                 btnGenerate.setEnabled(true);
             }

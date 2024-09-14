@@ -18,8 +18,17 @@
  */
 package megamek.client;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.*;
+import megamek.common.ForceAssignable;
+import megamek.common.InGameObject;
+import megamek.common.Report;
 import megamek.common.actions.EntityAction;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -30,24 +39,22 @@ import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.util.ImageUtil;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import megamek.logging.MMLogger;
 
 /**
  * This is the game client for Strategic BattleForce games, as one would think.
  */
 public class SBFClient extends AbstractClient {
-
+    private final static MMLogger logger = MMLogger.create(SBFClient.class);
     /**
-     * The game object that holds all game information. This object is persistent, i.e. it is never replaced
-     * by another game object sent from the server. Instead, the info in this game object is added to
-     * or replaced as necessary. Therefore, other objects may keep a reference to this game object. Other
-     * objects however, like the players or units, *will* be replaced by objects sent from the server.
+     * The game object that holds all game information. This object is persistent,
+     * i.e. it is never replaced
+     * by another game object sent from the server. Instead, the info in this game
+     * object is added to
+     * or replaced as necessary. Therefore, other objects may keep a reference to
+     * this game object. Other
+     * objects however, like the players or units, *will* be replaced by objects
+     * sent from the server.
      */
     private final SBFGame game = new SBFGame();
 
@@ -91,7 +98,8 @@ public class SBFClient extends AbstractClient {
                     }
                 }
                 roundReport = assembleAndAddImages(receivedReports.get(game.getCurrentRound()));
-                // We don't really have a copy of the phase report at this point, so I guess we'll just use the
+                // We don't really have a copy of the phase report at this point, so I guess
+                // we'll just use the
                 // round report until the next phase actually completes.
                 phaseReport = roundReport;
                 break;
@@ -102,8 +110,8 @@ public class SBFClient extends AbstractClient {
                         initGameLog();
                     }
                     if (log != null) {
-                        //TODO
-//                        log.append(phaseReport);
+                        // TODO
+                        // log.append(phaseReport);
                     }
                 }
                 game.addReports((List<SBFReportEntry>) packet.getObject(0));
@@ -133,7 +141,7 @@ public class SBFClient extends AbstractClient {
 
     private String assembleAndAddImages(List<SBFReportEntry> reports) {
         if (reports == null) {
-            LogManager.getLogger().error("Received a null list of reports!");
+            logger.error("Received a null list of reports!");
             return "";
         }
 
@@ -162,12 +170,12 @@ public class SBFClient extends AbstractClient {
         game.setUnitList(newActiveUnits);
         if (newGraveyard != null) {
             game.setGraveyard(newGraveyard);
-            for (InGameObject e: newGraveyard) {
+            for (InGameObject e : newGraveyard) {
                 cacheImgTag(e);
             }
         }
         // cache the image data for the entities and set force for entities
-        for (InGameObject unit: newActiveUnits) {
+        for (InGameObject unit : newActiveUnits) {
             cacheImgTag(unit);
             if (unit instanceof ForceAssignable) {
                 ((ForceAssignable) unit).setForceId(game.getForces().getForceId((ForceAssignable) unit));
@@ -200,17 +208,17 @@ public class SBFClient extends AbstractClient {
     }
 
     /**
-     * Gets the current mech image
+     * Gets the current mek image
      */
     private Image getTargetImage(InGameObject e) {
         return e.getIcon();
-//        if (bv == null) {
-//            return null;
-//        } else if (e.isDestroyed()) {
-//            return bv.getTilesetManager().wreckMarkerFor(e, -1);
-//        } else {
-//            return bv.getTilesetManager().imageFor(e);
-//        }
+        // if (bv == null) {
+        // return null;
+        // } else if (e.isDestroyed()) {
+        // return bv.getTilesetManager().wreckMarkerFor(e, -1);
+        // } else {
+        // return bv.getTilesetManager().imageFor(e);
+        // }
     }
 
     public void moveUnit(SBFMovePath movePath) {

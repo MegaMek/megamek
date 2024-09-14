@@ -18,6 +18,21 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.Objects;
+
+import javax.swing.JDialog;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.commands.ClientCommand;
@@ -25,15 +40,11 @@ import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.event.*;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.LinkedList;
-import java.util.Objects;
+import megamek.logging.MMLogger;
 
 public class AccessibilityWindow extends JDialog {
+    private final static MMLogger logger = MMLogger.create(AccessibilityWindow.class);
+
     private static final String CLEAN_HTML_REGEX = "<[^>]*>";
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
@@ -107,7 +118,7 @@ public class AccessibilityWindow extends JDialog {
         }
     }
 
-    //region key listener
+    // region key listener
     private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent ev) {
@@ -121,7 +132,8 @@ public class AccessibilityWindow extends JDialog {
                     processAccessibleGUI();
                     systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
                 } else {
-                    // default to running commands in the accesibility window, added a say command for chat.
+                    // default to running commands in the accesibility window, added a say command
+                    // for chat.
                     systemEvent(gui.runCommand(ClientCommand.CLIENT_COMMAND + inputField.getText()));
                 }
                 inputField.setText("");
@@ -151,9 +163,9 @@ public class AccessibilityWindow extends JDialog {
             historyBookmark = -1;
         }
     }
-    //endregion
+    // endregion
 
-    //region game listener
+    // region game listener
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
@@ -241,7 +253,7 @@ public class AccessibilityWindow extends JDialog {
                                 e.getAction().toAccessibilityDescription(client) + ".";
                         systemEvent(actionText);
                     } catch (Exception ex) {
-                        LogManager.getLogger().warn("Couldn't obtain action accessibility description", ex);
+                        logger.warn(ex, "Couldn't obtain action accessibility description");
                         systemEvent("An unknown action happened");
                     }
                 }
@@ -258,5 +270,5 @@ public class AccessibilityWindow extends JDialog {
             systemEvent("Game Victory! (unneeded.)");
         }
     };
-    //endregion
+    // endregion
 }

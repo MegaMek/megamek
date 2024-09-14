@@ -18,12 +18,14 @@
  */
 package megamek.common.event;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import megamek.logging.MMLogger;
+
 class EventListener {
+    private static final MMLogger logger = MMLogger.create(EventListener.class);
+
     private final Object handler;
     private final Method method;
     private final Class<? extends MMEvent> eventType;
@@ -35,17 +37,17 @@ class EventListener {
         this.eventType = Objects.requireNonNull(eventType);
         this.info = method.getAnnotation(Subscribe.class);
     }
-    
+
     public void trigger(MMEvent event) {
         if (!event.isCancellable() || !event.isCancelled()) {
             try {
                 method.invoke(handler, event);
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
         }
     }
-    
+
     public int getPriority() {
         return info.priority();
     }

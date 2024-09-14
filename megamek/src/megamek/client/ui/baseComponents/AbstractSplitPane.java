@@ -18,42 +18,51 @@
  */
 package megamek.client.ui.baseComponents;
 
+import java.awt.Component;
+import java.util.ResourceBundle;
+
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+
 import megamek.MegaMek;
 import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ResourceBundle;
+import megamek.logging.MMLogger;
 
 /**
- * This is the default SplitPane. It handles preferences, resources, the frame, and setup.
+ * This is the default SplitPane. It handles preferences, resources, the frame,
+ * and setup.
  *
- * Inheriting classes must call initialize() in their constructor and override createLeftComponent()
+ * Inheriting classes must call initialize() in their constructor and override
+ * createLeftComponent()
  * and createRightComponent()
  *
- * This is directly tied to MekHQ's AbstractMHQSplitPane, and any changes here MUST be verified there.
+ * This is directly tied to MekHQ's AbstractMHQSplitPane, and any changes here
+ * MUST be verified there.
  */
 public abstract class AbstractSplitPane extends JSplitPane {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(AbstractSplitPane.class);
+
+    // region Variable Declarations
     private JFrame frame;
 
     protected final ResourceBundle resources;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     /**
-     * This creates an AbstractSplitPane using the default resource bundle. This is the normal
+     * This creates an AbstractSplitPane using the default resource bundle. This is
+     * the normal
      * constructor to use for an AbstractSplitPane.
      */
     protected AbstractSplitPane(final JFrame frame, final String name) {
-        this(frame, ResourceBundle.getBundle("megamek.client.messages", 
+        this(frame, ResourceBundle.getBundle("megamek.client.messages",
                 MegaMek.getMMOptions().getLocale()), name);
     }
 
     /**
-     * This creates an AbstractSplitPane using the specified resource bundle. This is not recommended
+     * This creates an AbstractSplitPane using the specified resource bundle. This
+     * is not recommended
      * by default.
      */
     protected AbstractSplitPane(final JFrame frame, final ResourceBundle resources, final String name) {
@@ -62,9 +71,9 @@ public abstract class AbstractSplitPane extends JSplitPane {
         setFrame(frame);
         this.resources = resources;
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public JFrame getFrame() {
         return frame;
     }
@@ -72,11 +81,12 @@ public abstract class AbstractSplitPane extends JSplitPane {
     public void setFrame(final JFrame frame) {
         this.frame = frame;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region Initialization
+    // region Initialization
     /**
-     * This initializes the Split Pane. It must be called by inheriting classes during their constructors
+     * This initializes the Split Pane. It must be called by inheriting classes
+     * during their constructors
      */
     protected void initialize() {
         setLeftComponent(createLeftComponent());
@@ -84,7 +94,8 @@ public abstract class AbstractSplitPane extends JSplitPane {
         try {
             finalizeInitialization();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error finalizing the split pane. Returning the created dialog, but this is likely to cause some oddities.", ex);
+            logger.error(ex,
+                    "Error finalizing the split pane. Returning the created dialog, but this is likely to cause some oddities.");
         }
     }
 
@@ -99,11 +110,15 @@ public abstract class AbstractSplitPane extends JSplitPane {
     protected abstract Component createRightComponent();
 
     /**
-     * This MUST be called at the end of initialization to finalize it. This is the key method for
+     * This MUST be called at the end of initialization to finalize it. This is the
+     * key method for
      * this being the abstract basis for all other split panes
-     * @throws Exception if there's an issue finishing initialization. Normally this means there's
-     * an issue setting the preferences, which normally means that a component has had its name
-     * value set.
+     *
+     * @throws Exception if there's an issue finishing initialization. Normally this
+     *                   means there's
+     *                   an issue setting the preferences, which normally means that
+     *                   a component has had its name
+     *                   value set.
      */
     protected void finalizeInitialization() throws Exception {
         setOneTouchExpandable(true);
@@ -111,40 +126,52 @@ public abstract class AbstractSplitPane extends JSplitPane {
     }
 
     /**
-     * This is used to set preferences based on the preference node for this class. It is overridden
+     * This is used to set preferences based on the preference node for this class.
+     * It is overridden
      * for MekHQ usage
-     * @throws Exception if there's an issue initializing the preferences. Normally this means
-     * a component has <strong>not</strong> had its name value set.
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally
+     *                   this means
+     *                   a component has <strong>not</strong> had its name value
+     *                   set.
      */
     protected void setPreferences() throws Exception {
         setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**
-     * This sets the base preferences for this class, and calls the custom preferences method
-     * @throws Exception if there's an issue initializing the preferences. Normally this means
-     * a component has <strong>not</strong> had its name value set.
+     * This sets the base preferences for this class, and calls the custom
+     * preferences method
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally
+     *                   this means
+     *                   a component has <strong>not</strong> had its name value
+     *                   set.
      */
     protected void setPreferences(final PreferencesNode preferences) throws Exception {
         try {
             preferences.manage(new JSplitPanePreference(this));
             setCustomPreferences(preferences);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to set preferences", ex);
+            logger.error(ex, "Failed to set preferences");
         }
     }
 
     /**
      * Adds custom preferences to the child pane.
      *
-     * By default, this pane will track preferences related to the location of the split
+     * By default, this pane will track preferences related to the location of the
+     * split
      * Other preferences can be added by overriding this method.
+     *
      * @param preferences the preference node for this pane
-     * @throws Exception if there's an issue initializing the preferences. Normally this means
-     * a component has <strong>not</strong> had its name value set.
+     * @throws Exception if there's an issue initializing the preferences. Normally
+     *                   this means
+     *                   a component has <strong>not</strong> had its name value
+     *                   set.
      */
     protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
 
     }
-    //endregion Initialization
+    // endregion Initialization
 }

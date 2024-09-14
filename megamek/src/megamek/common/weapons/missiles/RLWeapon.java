@@ -61,12 +61,12 @@ public abstract class RLWeapon extends MissileWeapon {
             WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new RLHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public boolean hasIndirectFire() {
         return false;
     }
-    
+
     @Override
     public boolean isAlphaStrikeIndirectFire() {
         return false;

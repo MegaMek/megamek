@@ -19,14 +19,14 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.icons.Camouflage;
-import megamek.common.options.OptionsConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
+
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.icons.Camouflage;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Represents a player in the game.
@@ -96,7 +96,7 @@ public final class Player extends TurnOrdered {
     private Vector<Minefield> visibleMinefields = new Vector<>();
 
     private boolean admitsDefeat = false;
-    
+
     private List<ICarryable> groundObjectsToPlace = new ArrayList<>();
 
     //Voting should not be stored in save game so marked transient
@@ -142,7 +142,7 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0) 
+        return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0)
         		|| getGroundObjectsToPlace().size() > 0;
     }
 
@@ -458,7 +458,7 @@ public final class Player extends TurnOrdered {
         if (null == other) {
             return true;
         }
-        return (id != other.getId()) 
+        return (id != other.getId())
             && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
@@ -622,7 +622,7 @@ public final class Player extends TurnOrdered {
                         && !entity.isOffBoard()
                         && entity.getCrew().isActive()
                         && !entity.isCaptured()
-                        && !(entity instanceof MechWarrior)) {
+                        && !(entity instanceof MekWarrior)) {
                     int bonus = 0;
                     if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
                         bonus = entity.getCrew().getCommandBonus();

@@ -18,14 +18,16 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.*;
-import megamek.common.alphaStrike.*;
-import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.loaders.EntityLoadingException;
+import static megamek.common.jacksonadapters.ASElementSerializer.AFT_ARC;
+import static megamek.common.jacksonadapters.ASElementSerializer.AS_TYPE;
+import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
+import static megamek.common.jacksonadapters.ASElementSerializer.NOSE_ARC;
+import static megamek.common.jacksonadapters.ASElementSerializer.OVERHEAT;
+import static megamek.common.jacksonadapters.ASElementSerializer.SIDE_ARC;
+import static megamek.common.jacksonadapters.ASElementSerializer.SQUADSIZE;
+import static megamek.common.jacksonadapters.ASElementSerializer.STRUCTURE;
+import static megamek.common.jacksonadapters.ASElementSerializer.STRUCTUREDAMAGE;
+import static megamek.common.jacksonadapters.MMUReader.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -35,8 +37,24 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static megamek.common.jacksonadapters.ASElementSerializer.*;
-import static megamek.common.jacksonadapters.MMUReader.*;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import megamek.common.Entity;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.UnitRole;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASTurretSummary;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.loaders.EntityLoadingException;
 
 /**
  * This Jackson deserializer reads an AlphaStrikeElement from an MMU file. When the MMU file
@@ -68,10 +86,10 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
         if (node.has(FULL_NAME)) {
             // This is a canon unit and can be converted
             String fullName = node.get(FULL_NAME).textValue();
-            MechSummary unit = MechSummaryCache.getInstance().getMech(fullName);
+            MekSummary unit = MekSummaryCache.getInstance().getMek(fullName);
             try {
                 if (unit != null) {
-                    Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+                    Entity entity = new MekFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
                     element = ASConverter.convert(entity);
                 } else {
                     throw new IllegalArgumentException("Could not retrieve unit " + fullName + " from cache!");

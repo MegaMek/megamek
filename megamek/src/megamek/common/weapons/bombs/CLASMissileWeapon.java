@@ -54,7 +54,7 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
         shortAV = 30;
         medAV = 30;
         longAV = 30;
-        flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+        flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
@@ -68,5 +68,5 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
 }

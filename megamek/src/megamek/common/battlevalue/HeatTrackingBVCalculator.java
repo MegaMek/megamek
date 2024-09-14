@@ -65,16 +65,16 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         if (entity.hasVibroblades()) {
-            Mounted vibroblade = getVibroblade(Mech.LOC_LARM);
+            Mounted<?> vibroblade = getVibroblade(Mek.LOC_LARM);
             if (vibroblade != null) {
-                double weaponHeat = entity.getActiveVibrobladeHeat(Mech.LOC_LARM, true);
+                double weaponHeat = entity.getActiveVibrobladeHeat(Mek.LOC_LARM, true);
                 double thisWeaponBV = processWeapon(vibroblade, false, false);
                 weaponRecords.add(new WeaponBvHeatRecord(vibroblade, thisWeaponBV, weaponHeat));
             }
 
-            vibroblade = getVibroblade(Mech.LOC_RARM);
+            vibroblade = getVibroblade(Mek.LOC_RARM);
             if (vibroblade != null) {
-                double weaponHeat = entity.getActiveVibrobladeHeat(Mech.LOC_LARM, true);
+                double weaponHeat = entity.getActiveVibrobladeHeat(Mek.LOC_LARM, true);
                 double thisWeaponBV = processWeapon(vibroblade, false, false);
                 weaponRecords.add(new WeaponBvHeatRecord(vibroblade, thisWeaponBV, weaponHeat));
             }
@@ -100,7 +100,10 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         heatEfficiencyExceeded = false;
     }
 
-    /** The weapon sorter. Will place weapons without heat first, then in descending order of BV > heat. */
+    /**
+     * The weapon sorter. Will place weapons without heat first, then in descending
+     * order of BV > heat.
+     */
     Comparator<WeaponBvHeatRecord> heatSorter = (obj1, obj2) -> {
         if ((obj1.heat == 0) && (obj2.heat > 0)) {
             return -1;
@@ -117,23 +120,23 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
     };
 
     static class WeaponBvHeatRecord {
-        Mounted weapon;
+        Mounted<?> weapon;
         double bv;
         double heat;
 
-        WeaponBvHeatRecord(Mounted weapon, double bv, double heat) {
+        WeaponBvHeatRecord(Mounted<?> weapon, double bv, double heat) {
             this.weapon = weapon;
             this.bv = bv;
             this.heat = heat;
         }
     }
 
-    private @Nullable Mounted getVibroblade(int location) {
+    private @Nullable Mounted<?> getVibroblade(int location) {
         for (int slot = 0; slot < entity.locations(); slot++) {
             CriticalSlot cs = entity.getCritical(location, slot);
 
             if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
-                Mounted mounted = cs.getMount();
+                Mounted<?> mounted = cs.getMount();
                 if ((mounted.getType() instanceof MiscType)
                         && ((MiscType) mounted.getType()).isVibroblade()) {
                     return mounted;
@@ -204,8 +207,10 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
                 .sum();
     }
 
-    /** @return True when the given mounted may count as explosive for BV purposes. */
-    protected boolean countsAsExplosive(Mounted mounted) {
+    /**
+     * @return True when the given mounted may count as explosive for BV purposes.
+     */
+    protected boolean countsAsExplosive(Mounted<?> mounted) {
         EquipmentType eType = mounted.getType();
         if (mounted.isWeaponGroup() || (mounted.getLocation() == Entity.LOC_NONE)
                 || !eType.isExplosive(mounted, true)) {

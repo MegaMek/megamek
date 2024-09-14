@@ -18,28 +18,42 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import megamek.MegaMek;
-import megamek.client.bot.BotClient;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.IStartingPositions;
-import megamek.common.Player;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
+import static megamek.client.ui.swing.util.UIUtil.WARNING_SIGN;
+import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.uiGreen;
+import static megamek.client.ui.swing.util.UIUtil.uiYellow;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+
+import megamek.MegaMek;
+import megamek.client.bot.BotClient;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Board;
+import megamek.common.IStartingPositions;
+import megamek.common.Player;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 class PlayerTable extends JTable {
     private static final long serialVersionUID = 6252953920509362407L;
@@ -157,7 +171,7 @@ class PlayerTable extends JTable {
         }
     }
 
-    class PlayerRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
+    class PlayerRenderer extends DefaultTableCellRenderer {
         private static final long serialVersionUID = 4947299735765324311L;
 
         public PlayerRenderer() {
@@ -224,9 +238,8 @@ class PlayerTable extends JTable {
                     result.append(", " + so);
                     result.append(", " + sw);
                 }
-            } else {
-                String msg_none = Messages.getString("ChatLounge.None");
-                result.append(msg_start + ": " + msg_none);
+            } else if (player.getStartingPos() > IStartingPositions.START_LOCATION_NAMES.length) {
+                result.append(msg_start + ": " + "Zone " + Board.decodeCustomDeploymentZoneID(player.getStartingPos()));
             }
             result.append("</FONT>");
 

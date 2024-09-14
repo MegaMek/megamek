@@ -14,32 +14,25 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ACAPHandler;
-import megamek.common.weapons.ACCaselessHandler;
-import megamek.common.weapons.ACFlakHandler;
-import megamek.common.weapons.ACFlechetteHandler;
-import megamek.common.weapons.ACIncendiaryHandler;
-import megamek.common.weapons.ACTracerHandler;
-import megamek.common.weapons.ACWeaponHandler;
-import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.RapidfireACWeaponHandler;
-import megamek.common.weapons.Weapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.common.weapons.*;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC.
- * (No difference between ACWeapon and AmmoWeapon except the ability to use special ammos
+ * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT
+ * ultras/LB/RAC.
+ * (No difference between ACWeapon and AmmoWeapon except the ability to use
+ * special ammos
  * (precision, AP, etc.))
+ *
  * @author Andrew Hunter
  * @since Sep 25, 2004
  */
@@ -49,7 +42,7 @@ public abstract class ACWeapon extends AmmoWeapon {
     public ACWeapon() {
         super();
 
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_AC;
         explosive = true; // when firing incendiary ammo
@@ -65,14 +58,15 @@ public abstract class ACWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+            TWGameManager gameManager) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked()
+                .getType();
 
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
         if (weapon.curMode().equals("Rapid")) {
-            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
-            return ah;
+            return new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
             return new ACAPHandler(toHit, waa, game, gameManager);
@@ -95,7 +89,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         }
 
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
-            return new ACCaselessHandler (toHit, waa, game, gameManager);
+            return new ACCaselessHandler(toHit, waa, game, gameManager);
         }
 
         return new ACWeaponHandler(toHit, waa, game, gameManager);

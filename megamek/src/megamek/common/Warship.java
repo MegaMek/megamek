@@ -43,18 +43,19 @@ public class Warship extends Jumpship {
     }
 
     // ASEW Missile Effects, per location
-    // Values correspond to Locations, as seen above: NOS, FLS, FRS, AFT, ALS, ARS, LBS, RBS
+    // Values correspond to Locations, as seen above: NOS, FLS, FRS, AFT, ALS, ARS,
+    // LBS, RBS
     private final int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     /*
-     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
+     * Accessor for the asewAffectedTurns array, which may be different for
+     * inheriting classes.
      */
     @Override
     protected int[] getAsewAffectedTurns() {
         return asewAffectedTurns;
     }
- 
-    
+
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
@@ -62,7 +63,7 @@ public class Warship extends Jumpship {
             .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
             .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         // Primitives don't distinguish between JumpShips and WarShips.
@@ -102,12 +103,12 @@ public class Warship extends Jumpship {
         // Helium Tanks make up about 2/3 of the drive core.
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
-    
+
     // broadside weapon arcs
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
-        
+        final Mounted<?> mounted = getEquipment(wn);
+
         int arc;
         switch (mounted.getLocation()) {
             case LOC_NOSE:
@@ -177,7 +178,7 @@ public class Warship extends Jumpship {
     public double getArmorWeight() {
         return getArmorWeight(locations() - 3); // No armor for RBS/LBS/HULL
     }
-    
+
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         return WarShipCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
@@ -187,7 +188,7 @@ public class Warship extends Jumpship {
     public double getPriceMultiplier() {
         return 2.0;
     }
-    
+
     /**
      * All warships automatically have ECM if in space
      */
@@ -222,14 +223,15 @@ public class Warship extends Jumpship {
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }
-    
+
     @Override
     public boolean canChangeSecondaryFacing() {
-        // flying warships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // flying warships can execute the "ECHO" maneuver (stratops 113), aka a torso
+        // twist,
         // if they have the MP for it
         return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
     }
-    
+
     /**
      * Can this warship "torso twist" in the given direction?
      */
@@ -242,7 +244,7 @@ public class Warship extends Jumpship {
         }
         return rotate == 0;
     }
-    
+
     /**
      * Return the nearest valid direction to "torso twist" in
      */
@@ -251,32 +253,32 @@ public class Warship extends Jumpship {
         if (isValidSecondaryFacing(dir)) {
             return dir;
         }
-        
+
         // can't twist without enough MP
         if (!canChangeSecondaryFacing()) {
             return getFacing();
         }
-        
+
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-        
+
         return (getFacing() + (rotate >= 3 ? 5 : 1)) % 6;
     }
-    
+
     /**
      * Handler for when the entity enters a new round
      */
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
-        
+
         if (getGame().useVectorMove()) {
             setFacing(getSecondaryFacing());
         }
-        
+
         setSecondaryFacing(getFacing());
     }
-    
+
     @Override
     public void postProcessFacingChange() {
         mpUsed += 2;
@@ -294,6 +296,6 @@ public class Warship extends Jumpship {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(-1.3484 + 0.9382*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(-1.3484 + 0.9382 * Math.log(getWeight())));
     }
 }

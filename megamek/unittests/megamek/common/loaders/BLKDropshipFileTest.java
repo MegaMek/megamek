@@ -18,16 +18,22 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.util.BuildingBlock;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Vector;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.BattleArmorBay;
+import megamek.common.Bay;
+import megamek.common.Dropship;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.util.BuildingBlock;
 
 public class BLKDropshipFileTest {
 
@@ -44,7 +50,7 @@ public class BLKDropshipFileTest {
         BuildingBlock bb = new BuildingBlock(is);
 
         // Instantiate Dropship with bb
-        IMechLoader loader = new BLKDropshipFile(bb);
+        IMekLoader loader = new BLKDropshipFile(bb);
 
         // Get Entity
         Entity m_entity = loader.getEntity();

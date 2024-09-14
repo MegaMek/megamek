@@ -19,27 +19,32 @@
  */
 package megamek.common.net.connections;
 
-import megamek.common.net.enums.PacketReadState;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+
+import megamek.common.net.enums.PacketReadState;
+import megamek.logging.MMLogger;
 
 /**
  * Implementation of the AbstractConnection that uses the DataInputStream and
  * DataOutputStream to send/receive data.
  */
 public class DataStreamConnection extends AbstractConnection {
+    private static final MMLogger logger = MMLogger.create(DataStreamConnection.class);
 
     private DataInputStream in;
     private DataOutputStream out;
 
     /**
      * Creates new server connection.
-     * 
+     *
      * @param socket The network socket to use
-     * @param id The connection ID
+     * @param id     The connection ID
      */
     public DataStreamConnection(Socket socket, int id) {
         super(socket, id);
@@ -47,10 +52,10 @@ public class DataStreamConnection extends AbstractConnection {
 
     /**
      * Creates new Client connection.
-     * 
+     *
      * @param host The host address
      * @param port The network port
-     * @param id The connection ID
+     * @param id   The connection ID
      */
     public DataStreamConnection(String host, int port, int id) {
         super(host, port, id);
@@ -121,11 +126,13 @@ public class DataStreamConnection extends AbstractConnection {
                 }
             }
         } catch (SocketException ignored) {
-            // close this connection, because it's broken. This can happen if the connection is closed while
-            // being written to, and it's not a big deal, since the connection is being broken anyway
+            // close this connection, because it's broken. This can happen if the connection
+            // is closed while
+            // being written to, and it's not a big deal, since the connection is being
+            // broken anyway
             close();
         } catch (IOException ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             // close this connection, because it's broken
             close();
         }

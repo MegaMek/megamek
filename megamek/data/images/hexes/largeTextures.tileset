@@ -761,3 +761,4 @@ base 10 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_0
 base -1 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_6.gif"
 base -2 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_7.gif"
 base -3 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_8.gif"
+super * "deployment_zone:*" "" "saxarba/misc/blank.png"

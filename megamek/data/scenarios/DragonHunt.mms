@@ -1,7 +1,7 @@
 #  A MegaMek Scenario file
 MMSVersion=1
 Name=DragonHunt
-Description=A Kuritan Fire Support Lance must defend a key ridge against mixed elements of a Davion Planetary Assault. 
+Description=A Kuritan Fire Support Lance must defend a key ridge against mixed elements of a Davion Planetary Assault.
 BoardWidth=2
 BoardHeight=2
 Maps=scenarios/ridge,scenarios/ridge,Map Set 6/16x17 Woodland,Map Set 6/16x17 Woodland

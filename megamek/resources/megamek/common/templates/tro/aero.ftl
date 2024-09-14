@@ -5,7 +5,7 @@ ${fullName}
 </#if>
 
 Type: ${chassis}
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Tonnage: ${tonnage}
 Battle Value: ${battleValue}
 
@@ -31,7 +31,7 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 <#if isOmni>
 Fixed Equipment
 	<#if fixedTonnage gt 0>
-${formatBasicDataRow("Location", "Fixed", "Tonnage")}	
+${formatBasicDataRow("Location", "Fixed", "Tonnage")}
 	<#list fixedEquipment as row>
 		<#if row.equipment != "None">
 ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}

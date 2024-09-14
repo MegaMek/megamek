@@ -21,7 +21,7 @@ package megamek.client.generator.skillGenerators;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.LandAirMech;
+import megamek.common.LandAirMek;
 import megamek.common.enums.SkillLevel;
 
 public class StratConSkillGenerator extends TotalWarfareSkillGenerator {
@@ -45,7 +45,7 @@ public class StratConSkillGenerator extends TotalWarfareSkillGenerator {
             default -> 2;
         };
 
-        if (entity instanceof LandAirMech) {
+        if (entity instanceof LandAirMek) {
             bonus += 1;
         }
 

@@ -710,7 +710,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
 
@@ -730,7 +730,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     @Override
-    public boolean isProtomech() {
+    public boolean isProtoMek() {
         return false;
     }
 
@@ -1481,7 +1481,7 @@ public class TestSupportVehicle extends TestEntity {
                 ArmorType armor = ArmorType.forEntity(supportVee, loc);
 
                 if (null != armor) {
-                    armorSlots += armor.getPatchworkSlotsMechSV();
+                    armorSlots += armor.getPatchworkSlotsMekSV();
                 }
             }
         }
@@ -1564,7 +1564,7 @@ public class TestSupportVehicle extends TestEntity {
                         TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
 
                 if (null != armor) {
-                    space += armor.getPatchworkSlotsMechSV();
+                    space += armor.getPatchworkSlotsMekSV();
                 }
             }
 

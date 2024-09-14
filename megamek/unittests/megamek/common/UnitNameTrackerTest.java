@@ -18,15 +18,20 @@
  */
 package megamek.common;
 
-import org.junit.jupiter.api.Test;
-
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
 
 public class UnitNameTrackerTest {
     @Test
     public void addEntitySetsDuplicateMarkerCorrectly() {
-        String shortNameRaw = "Mech MEK-01X";
+        String shortNameRaw = "Mek MEK-01X";
 
         Entity mockEntity = createEntity(shortNameRaw);
 
@@ -39,8 +44,8 @@ public class UnitNameTrackerTest {
 
     @Test
     public void addMultipleUnrelatedEntitiesSetsDuplicateMarkerCorrectly() {
-        String shortNameRaw0 = "Mech MEK-01X";
-        String shortNameRaw1 = "Mech MEK-02X";
+        String shortNameRaw0 = "Mek MEK-01X";
+        String shortNameRaw1 = "Mek MEK-02X";
 
         Entity mockEntity0 = createEntity(shortNameRaw0);
         Entity mockEntity1 = createEntity(shortNameRaw1);
@@ -56,7 +61,7 @@ public class UnitNameTrackerTest {
 
     @Test
     public void addMultipleRelatedEntitiesSetsDuplicateMarkerCorrectly() {
-        String shortNameRaw = "Mech MEK-01X";
+        String shortNameRaw = "Mek MEK-01X";
 
         Entity mockEntity0 = createEntity(shortNameRaw);
         Entity mockEntity1 = createEntity(shortNameRaw);
@@ -72,7 +77,7 @@ public class UnitNameTrackerTest {
 
     @Test
     public void removeEntityUpdatesDuplicateMarker() {
-        String shortNameRaw = "Mech MEK-01X";
+        String shortNameRaw = "Mek MEK-01X";
 
         Entity mockEntity0 = createEntity(shortNameRaw);
         Entity mockEntity1 = createEntity(shortNameRaw);
@@ -93,10 +98,10 @@ public class UnitNameTrackerTest {
         verify(mockEntity1, times(1)).updateDuplicateMarkerAfterDelete(eq(1));
         verify(mockEntity2, times(1)).updateDuplicateMarkerAfterDelete(eq(1));
     }
-    
+
     @Test
     public void removeEntityUpdatesDuplicateMarker2() {
-        String shortNameRaw = "Mech MEK-01X";
+        String shortNameRaw = "Mek MEK-01X";
 
         Entity mockEntity0 = createEntity(shortNameRaw);
         Entity mockEntity1 = createEntity(shortNameRaw);
@@ -120,7 +125,7 @@ public class UnitNameTrackerTest {
 
     @Test
     public void removeEntityUpdatesDuplicateMarker3() {
-        String shortNameRaw = "Mech MEK-01X";
+        String shortNameRaw = "Mek MEK-01X";
 
         Entity mockEntity0 = createEntity(shortNameRaw);
         Entity mockEntity1 = createEntity(shortNameRaw);
@@ -146,8 +151,8 @@ public class UnitNameTrackerTest {
 
     @Test
     public void removeEntityOnlyAffectsRelatedEntities() {
-        String shortNameRaw0 = "Mech MEK-01X";
-        String shortNameRaw1 = "Mech MEK-01Y";
+        String shortNameRaw0 = "Mek MEK-01X";
+        String shortNameRaw1 = "Mek MEK-01Y";
 
         Entity mockEntity0 = createEntity(shortNameRaw0);
         Entity mockEntity1 = createEntity(shortNameRaw0);
@@ -173,7 +178,7 @@ public class UnitNameTrackerTest {
 
     @Test
     public void clearEntities() {
-        String shortNameRaw = "Mech MEK-01X";
+        String shortNameRaw = "Mek MEK-01X";
 
         Entity mockEntity0 = createEntity(shortNameRaw);
         Entity mockEntity1 = createEntity(shortNameRaw);

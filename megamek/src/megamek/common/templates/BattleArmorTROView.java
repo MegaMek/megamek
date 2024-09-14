@@ -119,7 +119,7 @@ public class BattleArmorTROView extends TROView {
         }
     }
 
-    private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted manipulator) {
+    private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted<?> manipulator) {
         final Map<String, Object> retVal = new HashMap<>();
         retVal.put("locName", BattleArmor.getBaMountLocAbbr(mountLoc));
         if (null == manipulator) {
@@ -144,7 +144,7 @@ public class BattleArmorTROView extends TROView {
         final EquipmentType armor = EquipmentType.get(at);
         Map<String, Object> row;
         int nameWidth = 30;
-        for (final Mounted m : ba.getEquipment()) {
+        for (final Mounted<?> m : ba.getEquipment()) {
             if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
                     || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
                 continue;

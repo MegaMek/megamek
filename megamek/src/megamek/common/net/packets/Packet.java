@@ -19,10 +19,9 @@ import megamek.common.net.enums.PacketCommand;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.apache.commons.text.WordUtils.abbreviate;
-
 /**
- * Application layer data packet used to exchange information between client and server.
+ * Application layer data packet used to exchange information between client and
+ * server.
  */
 public class Packet implements Serializable {
     private PacketCommand command;

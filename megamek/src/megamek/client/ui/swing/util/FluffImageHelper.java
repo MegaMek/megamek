@@ -20,20 +20,22 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.common.BTObject;
-import megamek.common.Configuration;
-import megamek.common.Mech;
-import megamek.common.annotations.Nullable;
-import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
+import megamek.common.BTObject;
+import megamek.common.Configuration;
+import megamek.common.Mek;
+import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
+
 /**
- * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also
+ * This class provides methods for retrieving fluff images, for use in MM, MML
+ * and MHQ; also
  * for record sheets (where the fallback image "hud.png" is used).
  */
 public final class FluffImageHelper {
@@ -44,7 +46,7 @@ public final class FluffImageHelper {
     public static final String DIR_NAME_FIGHTER = "Fighter";
     public static final String DIR_NAME_INFANTRY = "Infantry";
     public static final String DIR_NAME_JUMPSHIP = "JumpShip";
-    public static final String DIR_NAME_MECH = "Mech";
+    public static final String DIR_NAME_MEK = "Mek";
     public static final String DIR_NAME_PROTOMEK = "ProtoMek";
     public static final String DIR_NAME_SMALLCRAFT = "Small Craft";
     public static final String DIR_NAME_SPACESTATION = "Space Station";
@@ -54,16 +56,24 @@ public final class FluffImageHelper {
             ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
-     * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
+     * Returns a fluff image for the given unit/object to be shown e.g. in the unit
+     * summary.
      *
-     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
-     * unit's file or is created by the unit itself, this is returned. Note that this
+     * <P>
+     * If a fluff image is stored in the unit/object itself, e.g. if it was part of
+     * the
+     * unit's file or is created by the unit itself, this is returned. Note that
+     * this
      * is not used for canon units, but may be used in custom ones by adding a fluff
      * image to the unit in MML.
      *
-     * <P>Otherwise, the fluff images directories are searched. First searches the user dir,
-     * then the internal dir. Tries to match the image by chassis + model or chassis alone.
-     * Chassis and model names are cleaned from " and / characters before matching. For
+     * <P>
+     * Otherwise, the fluff images directories are searched. First searches the user
+     * dir,
+     * then the internal dir. Tries to match the image by chassis + model or chassis
+     * alone.
+     * Chassis and model names are cleaned from " and / characters before matching.
+     * For
      * Meks with clan names, both names and the combinations are searched. The model
      * alone is not used to search.
      *
@@ -77,15 +87,17 @@ public final class FluffImageHelper {
     }
 
     /**
-     * Returns a fluff image for the given unit for the record sheet, with a fallback
-     * file named "hud.png" if that is present in the right fluff directory, or null if nothing
-     * can be found. See {@link #getFluffImage(BTObject)} for further comments on how the fluff
+     * Returns a fluff image for the given unit for the record sheet, with a
+     * fallback
+     * file named "hud.png" if that is present in the right fluff directory, or null
+     * if nothing
+     * can be found. See {@link #getFluffImage(BTObject)} for further comments on
+     * how the fluff
      * image is searched.
      *
      * @param unit The unit
      * @return a fluff image or null, if no match is found
      */
-    @SuppressWarnings("unused") // used in MML
     public static @Nullable Image getRecordSheetFluffImage(@Nullable BTObject unit) {
         return getFluffImage(unit, true);
     }
@@ -116,7 +128,8 @@ public final class FluffImageHelper {
         List<String> nameCandidates = nameCandidates(unit);
 
         // UserDir matches
-        // For internal use: in [user dir]/data/images/fluff/rs/<type> images for record sheets can be placed
+        // For internal use: in [user dir]/data/images/fluff/rs/<type> images for record
+        // sheets can be placed
         // These will be preferentially loaded when the recordSheet paremeter is true
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank() && new File(userDir).isDirectory()) {
@@ -167,8 +180,8 @@ public final class FluffImageHelper {
         String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
         nameCandidates.add((sanitizedChassis + " " + sanitizedModel).trim());
-        if (unit instanceof Mech && !((Mech) unit).getClanChassisName().isBlank()) {
-            Mech mek = (Mech) unit;
+        if (unit instanceof Mek && !((Mek) unit).getClanChassisName().isBlank()) {
+            Mek mek = (Mek) unit;
             String fullChassis = sanitize(mek.getFullChassis());
             nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
             String clanChassis = sanitize(mek.getClanChassisName());
@@ -180,7 +193,8 @@ public final class FluffImageHelper {
         return nameCandidates;
     }
 
-    private FluffImageHelper() { }
+    private FluffImageHelper() {
+    }
 
     /**
      * Returns the subdirectory in the fluff images directory suitable for the given
@@ -213,7 +227,7 @@ public final class FluffImageHelper {
         } else if (unit.isVehicle()) {
             return DIR_NAME_VEHICLE;
         } else {
-            return DIR_NAME_MECH;
+            return DIR_NAME_MEK;
         }
     }
 }

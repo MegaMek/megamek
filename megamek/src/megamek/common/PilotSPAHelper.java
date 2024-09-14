@@ -34,12 +34,18 @@ import java.util.stream.Collectors;
  */
 public final class PilotSPAHelper {
 
-    /** @return True when the given Mounted equipment is a valid choice for the Weapons Specialist SPA. */
-    public static boolean isWeaponSpecialistValid(Mounted mounted, @Nullable GameOptions options) {
+    /**
+     * @return True when the given Mounted equipment is a valid choice for the
+     *         Weapons Specialist SPA.
+     */
+    public static boolean isWeaponSpecialistValid(Mounted<?> mounted, @Nullable GameOptions options) {
         return isWeaponSpecialistValid(mounted.getType(), options);
     }
 
-    /** @return True when the given EquipmentType is a valid choice for the Weapons Specialist SPA. */
+    /**
+     * @return True when the given EquipmentType is a valid choice for the Weapons
+     *         Specialist SPA.
+     */
     public static boolean isWeaponSpecialistValid(EquipmentType equipmentType, @Nullable GameOptions options) {
         boolean amsAsWeapon = (options != null) && options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)
                 && (equipmentType.hasFlag(WeaponType.F_AMS));
@@ -52,10 +58,12 @@ public final class PilotSPAHelper {
     }
 
     /**
-     * Returns a List of distinct (each occuring only once) weapon names of weapons present on the given
+     * Returns a List of distinct (each occuring only once) weapon names of weapons
+     * present on the given
      * Entity that are valid choices for the Weapon Specialist SPA.
      *
-     * @return A list of weapon names from the given Entity that are valid choices for the Weapon Specialist SPA
+     * @return A list of weapon names from the given Entity that are valid choices
+     *         for the Weapon Specialist SPA
      */
     public static List<String> weaponSpecialistValidWeaponNames(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
@@ -67,37 +75,48 @@ public final class PilotSPAHelper {
     }
 
     /**
-     * Returns a List of weapons from those present on the given Entity that are valid choices for the
-     * Weapon Specialist SPA. Unlike {@link #weaponSpecialistValidWeaponNames(Entity, GameOptions)}, weapons
+     * Returns a List of weapons from those present on the given Entity that are
+     * valid choices for the
+     * Weapon Specialist SPA. Unlike
+     * {@link #weaponSpecialistValidWeaponNames(Entity, GameOptions)}, weapons
      * appear in this list as often as they are present on the given Entity.
      *
-     * @return A list of weapons from the given Entity that are valid choices for the Weapon Specialist SPA
+     * @return A list of weapons from the given Entity that are valid choices for
+     *         the Weapon Specialist SPA
      */
-    public static List<Mounted> weaponSpecialistValidWeapons(Entity entity, @Nullable GameOptions options) {
+    public static List<Mounted<?>> weaponSpecialistValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
                 .filter(mounted -> isWeaponSpecialistValid(mounted, options))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Returns true when the given Mounted equipment is a valid choice for the Sandblaster SPA, taking into account
-     * the given GameOptions, particularly, if TacOps RapidFire Autocannons is in use. When the given GameOptions
-     * is null, TacOps RapidFire Autocannons is assumed off. When TacOps RapidFire Autocannons is off,
+     * Returns true when the given Mounted equipment is a valid choice for the
+     * Sandblaster SPA, taking into account
+     * the given GameOptions, particularly, if TacOps RapidFire Autocannons is in
+     * use. When the given GameOptions
+     * is null, TacOps RapidFire Autocannons is assumed off. When TacOps RapidFire
+     * Autocannons is off,
      * standard ACs are considered invalid.
      *
-     * @return True when the given EquipmentType is a valid choice for the Sandblaster SPA.
+     * @return True when the given EquipmentType is a valid choice for the
+     *         Sandblaster SPA.
      */
-    public static boolean isSandblasterValid(Mounted mounted, @Nullable GameOptions options) {
+    public static boolean isSandblasterValid(Mounted<?> mounted, @Nullable GameOptions options) {
         return isSandblasterValid(mounted.getType(), options);
     }
 
     /**
-     * Returns true when the given EquipmentType is a valid choice for the Sandblaster SPA, taking into account
-     * the given GameOptions, particularly, if TacOps RapidFire Autocannons is in use. When the given GameOptions
-     * is null, TacOps RapidFire Autocannons is assumed off. When TacOps RapidFire Autocannons is off,
+     * Returns true when the given EquipmentType is a valid choice for the
+     * Sandblaster SPA, taking into account
+     * the given GameOptions, particularly, if TacOps RapidFire Autocannons is in
+     * use. When the given GameOptions
+     * is null, TacOps RapidFire Autocannons is assumed off. When TacOps RapidFire
+     * Autocannons is off,
      * standard ACs are considered invalid.
      *
-     * @return True when the given EquipmentType is a valid choice for the Sandblaster SPA.
+     * @return True when the given EquipmentType is a valid choice for the
+     *         Sandblaster SPA.
      */
     public static boolean isSandblasterValid(EquipmentType equipmentType, @Nullable GameOptions options) {
         boolean rapidFireAC = (options != null) && options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)
@@ -105,14 +124,16 @@ public final class PilotSPAHelper {
 
         return (equipmentType instanceof WeaponType)
                 && ((equipmentType instanceof UACWeapon) || (equipmentType instanceof LBXACWeapon) || rapidFireAC
-                || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTERTABLE);
+                        || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTERTABLE);
     }
 
     /**
-     * Returns a List of distinct (each occuring only once) weapon names of weapons present on the given
+     * Returns a List of distinct (each occuring only once) weapon names of weapons
+     * present on the given
      * Entity that are valid choices for the Sandblaster SPA.
      *
-     * @return A list of weapon names from the given Entity that are valid choices for the Sandblaster SPA
+     * @return A list of weapon names from the given Entity that are valid choices
+     *         for the Sandblaster SPA
      */
     public static List<String> sandblasterValidWeaponNames(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
@@ -123,17 +144,21 @@ public final class PilotSPAHelper {
     }
 
     /**
-     * Returns a List of weapons from those present on the given Entity that are valid choices for the
-     * Sandblaster SPA. Unlike {@link #sandblasterValidWeaponNames(Entity, GameOptions)}, weapons
+     * Returns a List of weapons from those present on the given Entity that are
+     * valid choices for the
+     * Sandblaster SPA. Unlike
+     * {@link #sandblasterValidWeaponNames(Entity, GameOptions)}, weapons
      * appear in this list as often as they are present on the given Entity.
      *
-     * @return A list of weapons from the given Entity that are valid choices for the Sandblaster SPA
+     * @return A list of weapons from the given Entity that are valid choices for
+     *         the Sandblaster SPA
      */
-    public static List<Mounted> sandblasterValidWeapons(Entity entity, @Nullable GameOptions options) {
+    public static List<Mounted<?>> sandblasterValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
                 .filter(mounted -> isSandblasterValid(mounted, options))
                 .collect(Collectors.toList());
     }
 
-    private PilotSPAHelper() { }
+    private PilotSPAHelper() {
+    }
 }

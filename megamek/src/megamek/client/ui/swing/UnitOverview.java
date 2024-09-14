@@ -14,6 +14,18 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Vector;
+
 import megamek.MMConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IDisplayable;
@@ -25,10 +37,6 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Vector;
 
 public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;
@@ -63,11 +71,11 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
     private final Image scrollDown;
     private final Image pageUp;
     private final Image pageDown;
-    
+
     public static int getUIWidth() {
         return ICON_WIDTH + DIST_SIDE;
     }
-    
+
     private final Image scrollUpG;
     private final Image scrollDownG;
     private final Image pageUpG;
@@ -96,7 +104,7 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
         PMUtil.setImage(pageUp, clientgui.getMainPanel());
         pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString());
         PMUtil.setImage(pageDown, clientgui.getMainPanel());
-        
+
         visible = GUIP.getShowUnitOverview();
         GUIP.addPreferenceChangeListener(this);
     }
@@ -192,7 +200,7 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
                 graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
                         null);
             }
-           
+
         }
 
     }
@@ -281,7 +289,7 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
     }
 
     private void drawHeat(Graphics graph, Entity entity, int x, int y) {
-        if (!((entity instanceof Mech) || (entity instanceof Aero))) {
+        if (!((entity instanceof Mek) || (entity instanceof Aero))) {
             return;
         }
         boolean mtHeat = false;
@@ -495,10 +503,10 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
                 }
             }
             return adjustString(iconName, metrics);
-        } else if (e instanceof Protomech) {
+        } else if (e instanceof ProtoMek) {
             String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
-        } else if ((e instanceof Infantry) || (e instanceof Mech) || (e instanceof GunEmplacement)
+        } else if ((e instanceof Infantry) || (e instanceof Mek) || (e instanceof GunEmplacement)
                 || (e instanceof Aero)) {
             return adjustString(e.getModel(), metrics);
         } else if (e instanceof Tank) {
@@ -507,13 +515,13 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
                 Vector<String> v = StringUtil.splitString(iconName, " ");
                 iconName = "";
-                for (String tok : v) {                  
+                for (String tok : v) {
                     String newName = iconName + " " + tok;
                     if (metrics.stringWidth(newName) <= ICON_NAME_MAX_LENGTH) {
                         iconName = newName;
                     } else {
                         break;
-                    }                    
+                    }
                 }
             }
             return adjustString(iconName, metrics);

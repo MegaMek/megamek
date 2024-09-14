@@ -17,8 +17,6 @@ import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
-import java.util.Enumeration;
-
 /**
  * @author Ben
  * @since March 30, 2002, 6:55 PM
@@ -73,9 +71,7 @@ public abstract class ServerCommand {
         }
 
         if (server.getPlayer(connId).isObserver()) {
-            for (Enumeration<Player> e = server.getGame().getPlayers(); e.hasMoreElements();) {
-                Player p = e.nextElement();
-
+            for (Player p : server.getGame().getPlayersList()) {
                 if (!p.isObserver() && !p.isGhost()) {
                     // There are non-Observer, non-Ghosts in the game, so
                     // Observers are locked out.

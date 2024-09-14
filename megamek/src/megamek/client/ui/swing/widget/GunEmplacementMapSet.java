@@ -3,14 +3,14 @@
  *           Copyright (C) 2005 Mike Gratton <mike@vee.net>
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.client.ui.swing.widget;
@@ -27,7 +27,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent GunEmplacement unit
- * in MechDisplay.ArmorPanel class.
+ * in MekDisplay.ArmorPanel class.
  */
 public class GunEmplacementMapSet implements DisplayMapSet {
 
@@ -63,15 +63,15 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     private void setContent() {
-       
+
     }
 
     private void setAreas() {
-       
+
     }
 
     private void setLabels() {
-        
+
     }
 
     private void setBackGround() {
@@ -149,7 +149,7 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     private void translateAreas() {
-    
+
     }
 
 }

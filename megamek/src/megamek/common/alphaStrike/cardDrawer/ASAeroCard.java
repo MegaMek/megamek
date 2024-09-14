@@ -27,8 +27,6 @@ import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 
-import static java.awt.Color.WHITE;
-
 public class ASAeroCard extends ASHeatTrackingCard {
 
     public ASAeroCard(ASCardDisplayable element) {
@@ -50,13 +48,15 @@ public class ASAeroCard extends ASHeatTrackingCard {
             int lowerY = 170 + baseInfoBoxHeight / 2 + 20;
 
             new StringDrawer("TP: ").at(44, upperY).centerY().maxWidth(55).font(headerFont).draw(g);
-            new StringDrawer(element.getASUnitType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64).draw(g);
+            new StringDrawer(element.getASUnitType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64)
+                    .draw(g);
 
             new StringDrawer("SZ: ").at(182, upperY).centerY().font(headerFont).maxWidth(56).draw(g);
             new StringDrawer(element.getSize() + "").at(244, upperY).useConfig(valueConfig).maxWidth(33).draw(g);
 
             new StringDrawer("THR: ").at(281, upperY).centerY().font(headerFont).maxWidth(94).draw(g);
-            new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(380, upperY).useConfig(valueConfig).maxWidth(44).draw(g);
+            new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(380, upperY).useConfig(valueConfig)
+                    .maxWidth(44).draw(g);
 
             new StringDrawer("ROLE: ").at(44, lowerY).centerY().font(headerFont).maxWidth(85).draw(g);
             new StringDrawer(element.getRole().toString()).at(138, lowerY).useConfig(valueConfig).maxWidth(250).draw(g);
@@ -116,7 +116,8 @@ public class ASAeroCard extends ASHeatTrackingCard {
 
         if (element != null) {
             int lowerY = armorBoxY + armorBoxHeight / 2 + 18;
-            new StringDrawer(element.getThreshold() + "").at(606, lowerY).useConfig(valueConfig).center().maxWidth(52).draw(g);
+            new StringDrawer(element.getThreshold() + "").at(606, lowerY).useConfig(valueConfig).center().maxWidth(52)
+                    .draw(g);
         }
     }
 
@@ -138,9 +139,13 @@ public class ASAeroCard extends ASHeatTrackingCard {
         new StringDrawer("L (+4)").at(posS + 2 * delta, upperY).center().maxWidth(110).draw(g);
         new StringDrawer("E (+6)").at(posS + 3 * delta, upperY).center().maxWidth(110).draw(g);
         g.setFont(valueFont);
-        new StringDrawer(damage.S.toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().maxWidth(110).draw(g);
-        new StringDrawer(damage.M.toStringWithZero()).at(posS + delta, lowerY).useConfig(valueConfig).center().maxWidth(110).draw(g);
-        new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center().maxWidth(110).draw(g);
-        new StringDrawer(damage.E.toStringWithZero()).at(posS + 3 * delta, lowerY).useConfig(valueConfig).center().maxWidth(110).draw(g);
+        new StringDrawer(damage.S.toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().maxWidth(110)
+                .draw(g);
+        new StringDrawer(damage.M.toStringWithZero()).at(posS + delta, lowerY).useConfig(valueConfig).center()
+                .maxWidth(110).draw(g);
+        new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center()
+                .maxWidth(110).draw(g);
+        new StringDrawer(damage.E.toStringWithZero()).at(posS + 3 * delta, lowerY).useConfig(valueConfig).center()
+                .maxWidth(110).draw(g);
     }
 }

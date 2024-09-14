@@ -1,5 +1,5 @@
 
-This readme has instructions for using the map editor.  It also contains 
+This readme has instructions for using the map editor.  It also contains
 information on the board file format, and the tileset file format.
 
   Introduction To The Map Editor
@@ -11,11 +11,11 @@ information on the board file format, and the tileset file format.
     line up properly on the computer.
 
     Saving a map is accomplished with the Save or Save As buttons, right below
-    the New and Load buttons.  The MegaMek server only checks files in the 
-    data/boards directory, and with the .board extension, when determining which 
+    the New and Load buttons.  The MegaMek server only checks files in the
+    data/boards directory, and with the .board extension, when determining which
     boards to load.  This means you should add a .board extension to all your
     filenames when saving.
-    
+
   Quick Reference:
   Left mouse button - paint terrain onto the board without changing elevation
   CTRL + left mouse - paint terrain onto the board and update elevation
@@ -34,14 +34,14 @@ information on the board file format, and the tileset file format.
     To load a hex from the board into the work area, hold the Alt key, then click
     the hex on the board you want to copy.  To make a small change to a single hex
     on the board, you will need to load the hex into the work area, edit it, and
-    then place it back on the map.  For efficient use, use the working hex like 
+    then place it back on the map.  For efficient use, use the working hex like
     a paintbrush to change all the applicable terrain of one type before moving
     to another type of terrain.
 
   Editing A Hex
     Each hex has an elevation and may have terrain.  A clear hex has no terrain
     listed.  Most hexes with terrain features in them will only have one type
-    of terrain feature, such as woods, or rough.  Some may have several, such 
+    of terrain feature, such as woods, or rough.  Some may have several, such
     as woods with a road running through them, or a building on fire.
 
     The elevation controls are right under the picture of the current hex.  Use
@@ -54,14 +54,14 @@ information on the board file format, and the tileset file format.
 
     To add terrain, select the type of terrain you wish to add, the level
     associated with that type of terrain, and press the Add/Set Terrain button.
-    The terrain will appear in the list in the format "terrain:level".  Each 
+    The terrain will appear in the list in the format "terrain:level".  Each
     individual type of terrain may only appear once in a hex.
 
     See the list below for details on the types of terrain and the levels that
     the game expects them at.
 
     The exits parameter is internally set by the game.  It is a 6-bit integer,
-    with each bit representing a side of the hex, starting at the top and 
+    with each bit representing a side of the hex, starting at the top and
     proceeding clockwise around the edges.  A bit is set if the hex in that
     direction has the same type of terrain present.  There is usually no reason
     to change this value, but if you want to, check the Set Exits checkbox,
@@ -107,13 +107,13 @@ information on the board file format, and the tileset file format.
         woods: 1-3; 1 for light woods, 2 for heavy woods, 3 for ultra-heavy woods
         rough: 1-2; 1 for normal rough, 2 for ultra-rough
         rubble: 1-6; 1-4 corresponding to building types, 5 for wall rubble, 6 for ultra rubble
-        water: 0+; the hex elevation is the elevation for the surface of the 
+        water: 0+; the hex elevation is the elevation for the surface of the
             water, and the water level is the depth of the water
         pavement: 1
         road: 1
         fire: 1-2; 1 for normal fire, 2 for inferno fire
         smoke: 1-2; 1 for light smoke, 2 for heavy smoke
-        swamp: 1-3; 1 for normal, 2 for just became quicksand, 3 for quicksand 
+        swamp: 1-3; 1 for normal, 2 for just became quicksand, 3 for quicksand
         building: 1-4; 1 = light ... 4 = hardened
         bldg_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bldg_elev: 1+; you must supply a number if a building is supplied.
@@ -126,8 +126,8 @@ information on the board file format, and the tileset file format.
             5: small basement
             6: single basement, head first fall
             7: double basement, head first fall
-        
-        bldg_class: 0-3; 0 for standard, 1 for hangar, 2 for fortress, 3 for gun emplacement, 
+
+        bldg_class: 0-3; 0 for standard, 1 for hangar, 2 for fortress, 3 for gun emplacement,
                          defaults to standard if not specified
         bldg_armor: 0-150
         bridge: 1-4 (not functional in 0.26); 1 = light ... 4 = reinforced
@@ -147,11 +147,11 @@ information on the board file format, and the tileset file format.
         snow: 1-2; 1 for thin snow, 2 for deep snow
         tundra: 1
         fields: 1; for planted fields
-        industrial: 1+; level indicates the height of the heavy industrial terrain     
+        industrial: 1+; level indicates the height of the heavy industrial terrain
         impassable: 1; this prevents units entering or deploying, e.g. for underground
-        elevator: (any); each exit corresponds to a die roll it will move on, and the 
+        elevator: (any); each exit corresponds to a die roll it will move on, and the
                          terrain level is the new elevation after it moves.
-  
+
 
 The board file format is plain text.  You will probably not need to edit the
 board files by hand.  This reference is just for creating a different editor.
@@ -160,7 +160,7 @@ board files by hand.  This reference is just for creating a different editor.
     As mentioned earlier, the server scans for files that have a .board
     extension, in the data/boards directory.
 
-    Board files consist of a keyword, usually followed by several parameters.  
+    Board files consist of a keyword, usually followed by several parameters.
     The four keywords used are "size", "option", "hex", and "end".  Keywords
     should begin the line of text they are on.  Parameters are separated by a
     space.  String parameters with a space in them, or empty string parameters
@@ -182,13 +182,13 @@ board files by hand.  This reference is just for creating a different editor.
     The end keyword indicates the end of data.  It has no parameters and appears
     on a line by itself.
 
-  The "hex" Keyword    
+  The "hex" Keyword
     The board data is indicated by the hex keyword, which should appear between
     the size and end lines.  The format goes:
         hex <coordinates> <elevation> <terrain attributes> <theme>
 
-    The coordinates should be as they appear on paper mapsheets: a four-digit 
-    number starting with 0101 in the upper left-hand corner and going as high 
+    The coordinates should be as they appear on paper mapsheets: a four-digit
+    number starting with 0101 in the upper left-hand corner and going as high
     as 1617 for a board of the default size.
 
     The elevation should be an integer, unquoted.
@@ -207,7 +207,7 @@ board files by hand.  This reference is just for creating a different editor.
     The theme of the hex is purely for cosmetic purposes.  It should be left
     blank for ordinary hexes by putting empty quotes in its place.  The theme
     is intended as a tag for the tileset file to indicate a special graphic for
-    the hex.  Its uses might include indicating a specific graphic for a 
+    the hex.  Its uses might include indicating a specific graphic for a
     building, or making rivers distinct from lakes.  In v0.29, only the "snow"
     theme is available.  Note, the "snow" theme does *not* implement the "ice"
     or "cold weather" rules from the BattleTech Master Rules; they just look
@@ -216,22 +216,22 @@ board files by hand.  This reference is just for creating a different editor.
     Hex data can appear in any order, as long as there is only one hex at any
     specific coordinates.  Any coordinates with no data will be filled in with
     level 0, clear terrain.
-    
+
   The "description" Keyword
     A human-readable description of the map can be given with the "description"
     keyword. Each entry is a new paragraph in the description. The format goes:
         description "quoted text for the description"
-        
+
   The "note" Keyword
     Certain hexes may have interesting features that should be called out,
     especially to users who are visually impaired. The "note" keyword allows
     annotations to be applied per hex. The format goes:
         note <coordinates> "quoted text for the annotation"
-        
+
     Each hex can have multiple annotations.
-    
+
 The graphics for maps are stored in tileset files.  These are located in the
-data/images/hexes directory.  The default tileset is called "atmospheric.tileset".  
+data/images/hexes directory.  The default tileset is called "atmospheric.tileset".
 Image files should be located in a subdirectory off of the data/images/hexes directory.
 The tileset used by the game can be changed in the MegaMek.cfg file, in the
 game base directory.
@@ -267,13 +267,13 @@ game base directory.
     First, let's talk about base hexes.  When trying to figure out a base
     graphic for a hex on the board, the program goes through all the base hex
     images in the tileset in the order that they are listed.  The first, best
-    match is used.  That is, the first base hex image that best matches the hex 
+    match is used.  That is, the first base hex image that best matches the hex
     on the board.
 
     Super images are listed first so that they can be matched first.  They match
     a little differently than base hexes, in that they must have an exact match
     for any elevation, terrain, or theme listed for that image in the tileset.
-    Any terrain matched exactly in this manner is then removed from 
+    Any terrain matched exactly in this manner is then removed from
     consideration for future matches.
 
     As an example of the matching process, take a hex on the board, at level 2,
@@ -296,8 +296,8 @@ game base directory.
     The relevant entry from the default tileset is:
         base 1 "woods:1;swamp:1" "" "swamp/light_forest_swamp_1.gif"
 
-    For the super image, the elevation is a match, because it's a wildcard.  
-    The hex being evaluated contains a perfect match for all terrain specified 
+    For the super image, the elevation is a match, because it's a wildcard.
+    The hex being evaluated contains a perfect match for all terrain specified
     by the super image, and the theme is a match because both are blank.
     After making this match, the road terrain in the hex being evaluated is
     removed from further evaluation.
@@ -307,10 +307,5 @@ game base directory.
     the light_forest_2.gif, with the road09.gif superimposed on top of it, as
     the image for this hex in the game.
 
-    
+
 Author: Ben Mazur
-
-  
-    
-
-

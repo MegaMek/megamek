@@ -34,7 +34,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASArcedDamageConverter extends ASAeroDamageConverter {
 
-    private final Map<Mounted, Integer> collectedWeapons = new HashMap<>();
+    private final Map<Mounted<?>, Integer> collectedWeapons = new HashMap<>();
 
     protected ASArcedDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -53,10 +53,11 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         }
         weaponsList = flattenedWeaponList;
         weaponsList.removeIf(Objects::isNull);
-        // Generate a Map of weapon and weapon count where the keys are equal for conversion purposes
-        for (Mounted weapon : weaponsList) {
+        // Generate a Map of weapon and weapon count where the keys are equal for
+        // conversion purposes
+        for (Mounted<?> weapon : weaponsList) {
             boolean foundKey = false;
-            for (Mounted presentKey : collectedWeapons.keySet()) {
+            for (Mounted<?> presentKey : collectedWeapons.keySet()) {
                 if (areConversionEqual(weapon, presentKey)) {
                     collectedWeapons.merge(presentKey, 1, Integer::sum);
                     foundKey = true;
@@ -69,14 +70,17 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         }
     }
 
-    /** @return True when the two weapons are equal for conversion purposes (same type, location and links). */
-    private boolean areConversionEqual(Mounted weapon1, Mounted weapon2) {
+    /**
+     * @return True when the two weapons are equal for conversion purposes (same
+     *         type, location and links).
+     */
+    private boolean areConversionEqual(Mounted<?> weapon1, Mounted<?> weapon2) {
         return weapon1.getType().equals(weapon2.getType())
                 && weapon1.getLocation() == weapon2.getLocation()
                 && weapon1.isRearMounted() == weapon2.isRearMounted()
                 && ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null)
-                || (weapon1.getLinkedBy() != null
-                && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
+                        || (weapon1.getLinkedBy() != null
+                                && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
     }
 
     @Override
@@ -119,16 +123,21 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     }
 
     @Override
-    protected int weaponHeat(Mounted weapon, boolean onlyRear, boolean onlyLongRange) {
+    protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         return weaponHeat((WeaponType) weapon.getType());
     }
 
     /**
-     * Processes damage values. The dmgType indicates the special ability for which this is (LRM, REAR, etc.).
-     * location indicates the target of this damage, i.e. if it is the unit's standard damage and
-     * standard ability block, the REAR ability or the TUR block, see ASLocationMapper.
-     * When the location is rearLocation, dmgType must be REAR (as REAR has no LRM damage or the like)
-     * When the location is turretLocation, TUR indicates it's the TUR's standard damage, LRM
+     * Processes damage values. The dmgType indicates the special ability for which
+     * this is (LRM, REAR, etc.).
+     * location indicates the target of this damage, i.e. if it is the unit's
+     * standard damage and
+     * standard ability block, the REAR ability or the TUR block, see
+     * ASLocationMapper.
+     * When the location is rearLocation, dmgType must be REAR (as REAR has no LRM
+     * damage or the like)
+     * When the location is turretLocation, TUR indicates it's the TUR's standard
+     * damage, LRM
      * indicates it's the LRM damage within the TUR block.
      */
     protected void processArcSpecial(ASArcs arc, BattleForceSUA dmgType) {
@@ -171,7 +180,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     }
 
     @Override
-    protected void reportAssignToLocations(Mounted weapon, BattleForceSUA sua, String abilityValue, int loc) {
+    protected void reportAssignToLocations(Mounted<?> weapon, BattleForceSUA sua, String abilityValue, int loc) {
         String locationText = " (" + ASLocationMapper.locationName(entity, loc) + ")";
         report.addLine(getWeaponDesc(weapon), sua.toString() + abilityValue + locationText);
     }
@@ -180,7 +189,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     protected double[] assembleSpecialDamage(BattleForceSUA dmgType, int location) {
         double[] rawDmg = new double[4];
         Arrays.fill(rawDmg, 0);
-        for (Mounted weapon : collectedWeapons.keySet()) {
+        for (Mounted<?> weapon : collectedWeapons.keySet()) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, location, weapon);
             if (!countsforSpecial(weapon, dmgType) || (locationMultiplier == 0)) {
@@ -209,7 +218,8 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     }
 
     @Override
-    protected void assembleAmmoCounts() { }
+    protected void assembleAmmoCounts() {
+    }
 
     @Override
     protected void writeLocationsToElement() {

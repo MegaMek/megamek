@@ -31,10 +31,10 @@ import org.junit.jupiter.api.Test;
 import megamek.common.Game;
 import megamek.common.Player;
 
-public class VictoryResultTest {
+class VictoryResultTest {
 
     @Test
-    public void testGetWinningPlayer() {
+    void testGetWinningPlayer() {
         // Trivial case: no players
         VictoryResult testResult = new VictoryResult(false);
         assertSame(Player.PLAYER_NONE, testResult.getWinningPlayer());
@@ -58,7 +58,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testGetWinningTeam() {
+    void testGetWinningTeam() {
         // Trivial case: no team
         VictoryResult testResult = new VictoryResult(false);
         assertSame(Player.TEAM_NONE, testResult.getWinningTeam());
@@ -82,7 +82,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testProcessVictory() {
+    void testProcessVictory() {
         // Trivial cases
         VictoryResult victoryResult = new VictoryResult(true);
 
@@ -122,14 +122,14 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testGetPlayerScoreNull() {
+    void testGetPlayerScoreNull() {
         VictoryResult victoryResult = new VictoryResult(true);
 
         assertEquals(0.0, victoryResult.getPlayerScore(1), 0.0);
     }
 
     @Test
-    public void testGetPlayerScore() {
+    void testGetPlayerScore() {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.setPlayerScore(1, 3);
 
@@ -137,7 +137,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testUpdateHiScore_Player() {
+    void testUpdateHiScore_Player() {
         VictoryResult victoryResult = new VictoryResult(false);
         victoryResult.setPlayerScore(1, 1);
         victoryResult.setPlayerScore(2, 2);
@@ -147,7 +147,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testUpdateHiScore_Team() {
+    void testUpdateHiScore_Team() {
         VictoryResult victoryResult = new VictoryResult(false);
         victoryResult.setTeamScore(1, 1);
         victoryResult.setTeamScore(2, 2);
@@ -157,7 +157,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testSetPlayerScore() {
+    void testSetPlayerScore() {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.setPlayerScore(1, 3);
 
@@ -166,7 +166,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testSetTeamScore() {
+    void testSetTeamScore() {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.setTeamScore(1, 3);
 

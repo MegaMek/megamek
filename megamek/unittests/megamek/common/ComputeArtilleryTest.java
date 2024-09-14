@@ -19,25 +19,26 @@
  */
 package megamek.common;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Martin "sleet01" Metke
  * @since 2024/02/12 2138 PST
  */
-public class ComputeArtilleryTest {
+class ComputeArtilleryTest {
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testSimpleLeadCalculations() {
+    void testSimpleLeadCalculations() {
         // Test lead from various locations against various speeds.
         Coords shooterPos = new Coords(15, 0);
         Coords targetPos = new Coords(15, 33);
@@ -79,7 +80,7 @@ public class ComputeArtilleryTest {
     }
 
     @Test
-    public void testComplexCalculateLead() {
+    void testComplexCalculateLead() {
         // Mock the board
         Board mockBoard = mock(Board.class);
         Game mockGame = mock(Game.class);

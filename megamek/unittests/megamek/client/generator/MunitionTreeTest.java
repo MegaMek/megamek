@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -46,11 +45,6 @@ class MunitionTreeTest {
     HashMap<String, String> lrmHash = new HashMap<>();
     HashMap<String, String> acHash = new HashMap<>();
     HashMap<String, String> ltHash = new HashMap<>();
-
-    @BeforeAll
-    static void setUp() {
-
-    }
 
     @Test
     void testInsertImperatives() {
@@ -243,7 +237,7 @@ class MunitionTreeTest {
 
     @Test
     void testRegex() {
-        // I despise Java regexes now.
+        // I despise Java regex's now.
         String regex = "\\w*[ -/\\\\](\\d{1,3})";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher("LRM-15");

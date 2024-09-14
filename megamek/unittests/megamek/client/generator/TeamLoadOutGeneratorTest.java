@@ -47,7 +47,7 @@ import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
-class TeamLoadoutGeneratorTest {
+class TeamLoadOutGeneratorTest {
 
     static GameOptions mockGameOptions = mock(GameOptions.class);
     static ClientGUI cg = mock(ClientGUI.class);
@@ -125,10 +125,10 @@ class TeamLoadoutGeneratorTest {
     void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Mauler", "MAL-1K", "Tyson");
-        Mounted bin1 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted bin3 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted bin4 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> bin3 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> bin4 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
 
         // Create a set of imperatives, some of which won't work
         MunitionTree mt = new MunitionTree();
@@ -151,8 +151,8 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
         MunitionTree mt = new MunitionTree();
 
         // We expect to see no change in loadouts
@@ -166,8 +166,8 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Dead-Fire");
@@ -194,10 +194,10 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         MunitionTree mt = new MunitionTree();
         // First, set all bins to Smoke
@@ -226,14 +226,14 @@ class TeamLoadoutGeneratorTest {
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mek mockMek2 = createMek("Catapult", "CPLT-C1", "John Q. Public");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin5 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin6 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin7 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted bin8 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin5 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin6 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin7 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin8 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         // Set up two loadouts: one for a named pilot, and one for all LRMs on any
         // Catapults
@@ -242,14 +242,14 @@ class TeamLoadoutGeneratorTest {
                 "Heat-Seeking", "Smoke");
         mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-guided");
 
-        // J. Robert H. should get the first loadout
+        // J. Robert H. should get the first load out
         tlg.reconfigureEntity(mockMek, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING));
         assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD));
 
-        // John Q. should get the generalized loadout; last bin should be set to
+        // John Q. should get the generalized load out; last bin should be set to
         // Standard
         tlg.reconfigureEntity(mockMek2, mt, "IS");
         assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
@@ -517,7 +517,7 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testIncreaseAntiTSMWeightOnly() {
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        ArrayList<String> tsmOnly = new ArrayList(List.of("Anti-TSM"));
+        ArrayList<String> tsmOnly = new ArrayList<>(List.of("Anti-TSM"));
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
@@ -530,13 +530,12 @@ class TeamLoadoutGeneratorTest {
         ReconfigurationParameters rp = new ReconfigurationParameters();
         rp.nukesBannedForMe = true;
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         // Have the Munition Tree generator use our pre-made mwc so we can see its
         // changes
 
         ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
-        MunitionTree mt = tlg.generateMunitionTree(rp, ownTeamEntities, "", mwc);
+        TeamLoadOutGenerator.generateMunitionTree(rp, ownTeamEntities, "", mwc);
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
         assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));
@@ -547,8 +546,8 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMek, 0.0f);
         assertEquals(0, bin1.getUsableShotsLeft());
@@ -562,8 +561,8 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMek, 0.1f);
         assertEquals(1, bin1.getUsableShotsLeft());
@@ -577,8 +576,8 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMek, 0.5f);
         assertEquals(4, bin1.getUsableShotsLeft());
@@ -591,8 +590,8 @@ class TeamLoadoutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
 
         tlg.clampAmmoShots(mockMek, 1.5f);
         assertEquals(8, bin1.getUsableShotsLeft());

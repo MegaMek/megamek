@@ -48,7 +48,6 @@ class AeroPathUtilTest {
 	@Test
 	void testAssertWillStallNotOnAtmosphereGroundMap() {
 		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-		when(mockEntity.isAirborne()).thenReturn(true);
 
 		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
 		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
@@ -61,8 +60,6 @@ class AeroPathUtilTest {
 	@Test
 	void testAssertWillStallAsSpheroidDropshipWithVLAND() {
 		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-		when(mockEntity.isAirborne()).thenReturn(true);
-		when(mockEntity.isAero()).thenReturn(true);
 		when(mockEntity.isSpheroid()).thenReturn(true);
 
 		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
@@ -79,7 +76,6 @@ class AeroPathUtilTest {
 	@Test
 	void testAssertWillCrashWithOutLandOrVland() {
 		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-		when(mockEntity.isAero()).thenReturn(true);
 
 		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
 		when(mockPath.getFinalVelocity()).thenReturn(1);
@@ -91,7 +87,6 @@ class AeroPathUtilTest {
 	@Test
 	void testAssertWillCrashWithLandOrVland() {
 		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-		when(mockEntity.isAero()).thenReturn(true);
 
 		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
 		when(mockPath.getFinalVelocity()).thenReturn(0);
@@ -101,5 +96,4 @@ class AeroPathUtilTest {
 		boolean result = AeroPathUtil.willCrash(mockPath);
 		assertFalse(result);
 	}
-
 }

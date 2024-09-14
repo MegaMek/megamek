@@ -37,19 +37,19 @@ import megamek.common.Jumpship;
 import megamek.common.NavalRepairFacility;
 import megamek.common.SpaceStation;
 
-public class TestAdvancedAerospaceTest {
+class TestAdvancedAerospaceTest {
 
     private static EntityVerifier verifier;
     private Vector<Bay> bays;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         File file = new File(TestAdvancedAerospaceTest.class.getResource("empty-verifier-options.xml").getFile());
         verifier = EntityVerifier.getInstance(file);
     }
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         bays = new Vector<>();
     }
 
@@ -71,7 +71,7 @@ public class TestAdvancedAerospaceTest {
     }
 
     @Test
-    public void correctBaysPassesWithSingleRepair() {
+    void correctBaysPassesWithSingleRepair() {
         Jumpship js = createJumpship();
         TestAdvancedAerospace test = new TestAdvancedAerospace(js, verifier.aeroOption, "test");
 
@@ -81,7 +81,7 @@ public class TestAdvancedAerospaceTest {
     }
 
     @Test
-    public void correctBaysFailsWhenRepairHasNoFacing() {
+    void correctBaysFailsWhenRepairHasNoFacing() {
         Jumpship js = createJumpship();
         TestAdvancedAerospace test = new TestAdvancedAerospace(js, verifier.aeroOption, "test");
 
@@ -91,7 +91,7 @@ public class TestAdvancedAerospaceTest {
     }
 
     @Test
-    public void correctBaysFailsWhenMultipleRepairHaveSameFacing() {
+    void correctBaysFailsWhenMultipleRepairHaveSameFacing() {
         SpaceStation ss = createStation();
         TestAdvancedAerospace test = new TestAdvancedAerospace(ss, verifier.aeroOption, "test");
 
@@ -102,7 +102,7 @@ public class TestAdvancedAerospaceTest {
     }
 
     @Test
-    public void correctBaysFailsWhenShipHasMultipleRepair() {
+    void correctBaysFailsWhenShipHasMultipleRepair() {
         Jumpship js = createJumpship();
         TestAdvancedAerospace test = new TestAdvancedAerospace(js, verifier.aeroOption, "test");
         bays.add(new NavalRepairFacility(500.0, 1, 1, Jumpship.LOC_NOSE, false));
@@ -111,7 +111,7 @@ public class TestAdvancedAerospaceTest {
     }
 
     @Test
-    public void correctBaysPassesWhenStationHasMultipleRepair() {
+    void correctBaysPassesWhenStationHasMultipleRepair() {
         SpaceStation ss = createStation();
         TestAdvancedAerospace test = new TestAdvancedAerospace(ss, verifier.aeroOption, "test");
 

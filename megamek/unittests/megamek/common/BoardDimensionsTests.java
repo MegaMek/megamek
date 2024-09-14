@@ -19,15 +19,17 @@
  */
 package megamek.common;
 
-import megamek.codeUtilities.MathUtility;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import megamek.codeUtilities.MathUtility;
 
-public class BoardDimensionsTests {
+class BoardDimensionsTests {
 
     @Test
-    public final void testInstantiation() {
+    final void testInstantiation() {
         BoardDimensions b = new BoardDimensions(1, 1);
         assertEquals(1, b.width());
         assertEquals(1, b.height());
@@ -50,7 +52,7 @@ public class BoardDimensionsTests {
     }
 
     @Test
-    public final void testEqualsObject() {
+    final void testEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
         assertEquals(b, b);
 
@@ -64,25 +66,26 @@ public class BoardDimensionsTests {
     }
 
     @Test
-    public final void testNotEqualsObject() {
+    final void testNotEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
         assertNotEquals(b, new BoardDimensions(10, 5));
         assertNotEquals(b, new BoardDimensions(5, 10));
     }
 
     @Test
-    public final void testToString() {
+    final void testToString() {
         assertEquals("10 x 10", new BoardDimensions(10, 10).toString());
         assertEquals("80 x 50", new BoardDimensions(80, 50).toString());
     }
 
     @Test
-    public final void testCompareTo() {
+    final void testCompareTo() {
         assertEquals(0,
                 new BoardDimensions(10, 10).compareTo(new BoardDimensions(10, 10)));
         assertEquals(0, new BoardDimensions(Integer.MAX_VALUE,
-                Integer.MAX_VALUE).compareTo(new BoardDimensions(
-                Integer.MAX_VALUE, Integer.MAX_VALUE)));
+                Integer.MAX_VALUE).compareTo(
+                        new BoardDimensions(
+                                Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
         int result = MathUtility.clamp(new BoardDimensions(10, 10).compareTo(new BoardDimensions(
                 Integer.MAX_VALUE, Integer.MAX_VALUE)), -1, 1);

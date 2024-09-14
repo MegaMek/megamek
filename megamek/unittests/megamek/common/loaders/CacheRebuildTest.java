@@ -34,13 +34,13 @@ import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CacheRebuildTest {
+class CacheRebuildTest {
 
     /**
      * Tests that every single unit can load successfully.
      */
     @Test
-    public void testCacheRebuild() {
+    void testCacheRebuild() {
         File cacheFile = new File(MekSummaryCache.getUnitCacheDir(), MekSummaryCache.FILENAME_UNITS_CACHE);
         if (cacheFile.exists()) {
             assertTrue(cacheFile.delete(), "Couldn't delete cache");
@@ -54,7 +54,8 @@ public class CacheRebuildTest {
         assertTrue(cache.getFailedFiles().isEmpty());
         // Sanity check to make sure the loader thread didn't fail outright
         int allMekCount = cache.getAllMeks().length;
-        assertEquals(9299, allMekCount);
+        int fileCount = cache.getFileCount();
+        assertEquals(fileCount, allMekCount);
     }
 
     /**
@@ -62,7 +63,7 @@ public class CacheRebuildTest {
      */
     @Test
     @Disabled("Behaves unpredictably and detects several units as being invalid when they show as valid in the full program.")
-    public void testInvalidCanonUnits() {
+    void testInvalidCanonUnits() {
         MekSummaryCache cache = MekSummaryCache.getInstance(true);
 
         boolean hasInvalidUnits = false;

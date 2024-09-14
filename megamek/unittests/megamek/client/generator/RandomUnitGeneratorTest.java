@@ -19,27 +19,28 @@
  */
 package megamek.client.generator;
 
-import megamek.client.generator.RandomUnitGenerator.RatEntry;
-import megamek.common.MekSummary;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Vector;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
+import org.junit.jupiter.api.Test;
+
+import megamek.client.generator.RandomUnitGenerator.RatEntry;
+import megamek.common.MekSummary;
+
 /**
  * @author Deric Page <deric dot page at gmail dot com>
  * @since 5/15/14 2:04 PM
  */
-public class RandomUnitGeneratorTest {
+class RandomUnitGeneratorTest {
 
     @Test
-    public void testGenerate() {
+    void testGenerate() {
         final String M1 = "Mek 1";
         final String M2 = "Mek 2";
         final String M3 = "Mek 3";

@@ -39,9 +39,9 @@ import megamek.common.Mek;
 import megamek.common.Mounted;
 import megamek.common.TripodMek;
 
-public class MtfFileTest {
+class MtfFileTest {
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
@@ -57,7 +57,7 @@ public class MtfFileTest {
     }
 
     @Test
-    public void testLoadEquipment() throws Exception {
+    void testLoadEquipment() throws Exception {
         Mek mek = new BipedMek();
         Mounted<?> mount = Mounted.createMounted(mek, EquipmentType.get("Medium Laser"));
         mount.setOmniPodMounted(true);
@@ -75,7 +75,7 @@ public class MtfFileTest {
     }
 
     @Test
-    public void setVGLFacing() throws Exception {
+    void setVGLFacing() throws Exception {
         Mek mek = new BipedMek();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
         mek.addEquipment(vgl, Mek.LOC_LT).setFacing(0);
@@ -97,7 +97,7 @@ public class MtfFileTest {
     }
 
     @Test
-    public void loadSuperheavyDoubleSlot() throws Exception {
+    void loadSuperheavyDoubleSlot() throws Exception {
         Mek mek = new BipedMek();
         mek.setWeight(120.0);
         mek.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
@@ -119,7 +119,7 @@ public class MtfFileTest {
     // slots, filling
     // the Left torso.
     @Test
-    public void loadSuperheavyVariableSizeSlot() throws Exception {
+    void loadSuperheavyVariableSizeSlot() throws Exception {
         Mek mek = new TripodMek();
         double varSize = 24.0;
         mek.setWeight(150.0);
@@ -140,7 +140,7 @@ public class MtfFileTest {
     // Should _not_ allow loading size 25 CommsGear; 25 / 2.0 -> 13 crits, 1 more
     // than allowed
     @Test
-    public void ExceptionLoadSuperheavyVariableSizeSlot() throws Exception {
+    void ExceptionLoadSuperheavyVariableSizeSlot() throws Exception {
         Mek mek = new TripodMek();
         double varSize = 25.0;
         mek.setWeight(150.0);

@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class EquipmentTypeTest {
+class EquipmentTypeTest {
     @Test
-    public void structureCostArraySameLengthAsStructureNames() {
+    void structureCostArraySameLengthAsStructureNames() {
         assertEquals(EquipmentType.structureCosts.length, EquipmentType.structureNames.length);
     }
 }

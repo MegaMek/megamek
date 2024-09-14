@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class JumpshipTest {
+class JumpshipTest {
 
     @Test
-    public void calculateArmorWeightISWithClanArmor() {
+    void calculateArmorWeightISWithClanArmor() {
         final Jumpship ship = new Jumpship();
         ship.setWeight(100000); // 1.0 for Clan, 0.8 for IS
         ship.set0SI(0); // ignore the extra armor from SI
@@ -41,7 +41,7 @@ public class JumpshipTest {
     }
 
     @Test
-    public void calculateArmorWeightClanWithISArmor() {
+    void calculateArmorWeightClanWithISArmor() {
         final Jumpship ship = new Jumpship();
         ship.setWeight(100000); // 1.0 for Clan, 0.8 for IS
         ship.set0SI(0); // ignore the extra armor from SI

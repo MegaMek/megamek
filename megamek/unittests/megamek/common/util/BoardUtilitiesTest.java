@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
  * @since 9/3/14 1:44 PM
  */
-public class BoardUtilitiesTest {
+class BoardUtilitiesTest {
 
     @Test
-    public void testCraterProfile() {
+    void testCraterProfile() {
         int craterRadius = 8;
         int maxDepth = 4;
 

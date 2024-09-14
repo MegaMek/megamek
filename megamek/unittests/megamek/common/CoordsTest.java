@@ -18,15 +18,19 @@
  */
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-public class CoordsTest {
+import org.junit.jupiter.api.Test;
+
+class CoordsTest {
 
     @Test
-    public void testTranslated() {
+    void testTranslated() {
         assertEquals(new Coords(0, 0).translated(2), new Coords(1, 0));
         assertEquals(new Coords(1, 0).translated(2), new Coords(2, 1));
         assertEquals(new Coords(2, 1).translated(2), new Coords(3, 1));
@@ -41,13 +45,13 @@ public class CoordsTest {
     }
 
     @Test
-    public void testDistance() {
+    void testDistance() {
         assertEquals(new Coords(13, 6).distance(new Coords(15, 1)), 6);
         assertEquals(new Coords(12, 2).distance(new Coords(9, 2)), 3);
     }
 
     @Test
-    public void testAdjacent() {
+    void testAdjacent() {
         assertEquals(new Coords(5, -5).allAtDistance(0).size(), 1);
 
         final List<Coords> expectedAdjacent = new ArrayList<>();
@@ -80,7 +84,7 @@ public class CoordsTest {
     }
 
     @Test
-    public void testHexRow() {
+    void testHexRow() {
         Coords center = new Coords(3, 7);
         assertFalse(center.isOnHexRow(-1, new Coords(0, 0)));
         assertFalse(center.isOnHexRow(6, new Coords(0, 0)));

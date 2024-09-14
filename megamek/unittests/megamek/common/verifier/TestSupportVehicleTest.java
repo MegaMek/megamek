@@ -33,15 +33,15 @@ import megamek.common.SupportTank;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
 
-public class TestSupportVehicleTest {
+class TestSupportVehicleTest {
 
     @BeforeAll
-    public static void initialize() {
+    static void initialize() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testChassisModLookup() {
+    void testChassisModLookup() {
         for (ChassisModification mod : ChassisModification.values()) {
             assertNotNull(mod.equipment);
             assertTrue(mod.equipment.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT));
@@ -50,7 +50,7 @@ public class TestSupportVehicleTest {
     }
 
     @Test
-    public void testBAR10ArmorCorrectSlots() {
+    void testBAR10ArmorCorrectSlots() {
         SupportTank st = new SupportTank();
         st.setArmorType(EquipmentType.T_ARMOR_SV_BAR_10);
         // Rating E should return CV slots for IS FF

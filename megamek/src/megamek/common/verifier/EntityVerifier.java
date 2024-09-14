@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -40,9 +38,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.UnitType;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -56,20 +54,21 @@ import megamek.utilities.xml.MMXMLUtility;
  */
 @XmlRootElement(name = "entityverifier")
 @XmlAccessorType(value = XmlAccessType.NONE)
-public class EntityVerifier implements MechSummaryCache.Listener {
+public class EntityVerifier implements MekSummaryCache.Listener {
+
     public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml";
 
     private static EntityVerifier instance = null;
 
-    private static MechSummaryCache mechSummaryCache = null;
+    private static MekSummaryCache mekSummaryCache = null;
 
     private static final MMLogger logger = MMLogger.create(EntityVerifier.class);
 
-    @XmlElement(name = "mech")
-    public TestXMLOption mechOption = new TestXMLOption();
+    @XmlElement(name = "mek")
+    public TestXMLOption mekOption = new TestXMLOption();
 
-    @XmlElement(name = "protomech")
-    public TestXMLOption protomechOption = new TestXMLOption();
+    @XmlElement(name = "protomek")
+    public TestXMLOption protomekOption = new TestXMLOption();
 
     @XmlElement(name = "tank")
     public TestXMLOption tankOption = new TestXMLOption();
@@ -183,7 +182,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         Entity entity = null;
 
         try {
-            entity = new MechFileParser(f, entityName).getEntity();
+            entity = new MekFileParser(f, entityName).getEntity();
         } catch (Exception ex) {
             logger.error(ex, "Unable to load entity.");
         }
@@ -191,26 +190,26 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         return entity;
     }
 
-    // This is the listener method that MechSummaryCache calls when it finishes
-    // loading all the mechs. This should only happen if no specific files were
+    // This is the listener method that MekSummaryCache calls when it finishes
+    // loading all the meks. This should only happen if no specific files were
     // passed to main() as arguments (which implies all units that are loaded when
     // MegaMek normally runs should be checked).
     @Override
     public void doneLoading() {
         String message = "";
-        MechSummary[] ms = mechSummaryCache.getAllMechs();
+        MekSummary[] ms = mekSummaryCache.getAllMeks();
 
         message = String.format("""
 
-                Mech Options: %s
-                Protomech Options: %s
+                Mek Options: %s
+                Protomek Options: %s
                 Tank Options: %s
                 Aero Options: %s
                 BattleArmor Options: %s
                 Infantry Options: %s
                         """,
-                mechOption.printOptions(),
-                protomechOption.printOptions(),
+                mekOption.printOptions(),
+                protomekOption.printOptions(),
                 tankOption.printOptions(),
                 aeroOption.printOptions(),
                 baOption.printOptions(),
@@ -333,21 +332,21 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             Entity entity;
 
             try {
-                entity = new MechFileParser(f, entityName).getEntity();
+                entity = new MekFileParser(f, entityName).getEntity();
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
                 return;
             }
 
             EntityVerifier.getInstance(config).checkEntity(entity, f.toString(), true);
         } else {
-            // No specific file passed, so have MegaMek load all the mechs it normally
+            // No specific file passed, so have MegaMek load all the meks it normally
             // would, then verify all of them.
             EntityVerifier ev = EntityVerifier.getInstance(config);
             ev.loadingVerbosity = verbose;
             ev.failsOnly = failsOnly;
-            mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);
-            mechSummaryCache.addListener(ev);
+            mekSummaryCache = MekSummaryCache.getInstance(ignoreUnofficial);
+            mekSummaryCache.addListener(ev);
         }
     }
 }

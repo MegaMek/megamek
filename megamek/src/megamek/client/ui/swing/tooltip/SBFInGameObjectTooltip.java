@@ -18,6 +18,14 @@
  */
 package megamek.client.ui.swing.tooltip;
 
+import static megamek.client.ui.swing.util.UIUtil.spanCSS;
+import static megamek.client.ui.swing.util.UIUtil.tdCSS;
+
+import java.awt.Color;
+import java.text.MessageFormat;
+import java.util.Objects;
+import java.util.Set;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
@@ -25,14 +33,12 @@ import megamek.common.InGameObject;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
-import megamek.common.strategicBattleSystems.*;
-
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.Objects;
-import java.util.Set;
-
-import static megamek.client.ui.swing.util.UIUtil.*;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFIGotSomethingUnitPlaceholder;
+import megamek.common.strategicBattleSystems.SBFPartialScanUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFSomethingOutThereUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 public final class SBFInGameObjectTooltip {
 

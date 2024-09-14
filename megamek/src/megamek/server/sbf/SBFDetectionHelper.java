@@ -18,31 +18,40 @@
  */
 package megamek.server.sbf;
 
+import java.util.List;
+
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Player;
+import megamek.common.Roll;
+import megamek.common.TargetRoll;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.planetaryconditions.*;
+import megamek.common.planetaryconditions.Fog;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Weather;
 import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFVisibilityStatus;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.List;
+import megamek.logging.MMLogger;
 
 /**
- * This class performs detection of formations in the Detection and Recon phase, IO:BF p.195 for the
+ * This class performs detection of formations in the Detection and Recon phase,
+ * IO:BF p.195 for the
  * SBFGameManager.
  */
 record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
+    private static final MMLogger logger = MMLogger.create(SBFDetectionHelper.class);
 
     /**
-     * Performs sensor detection for all formations of all players and updates the visibility status in the
+     * Performs sensor detection for all formations of all players and updates the
+     * visibility status in the
      * game accordingly. Does not send anything.
      */
     void performSensorDetection() {
         if (game().usesDoubleBlind()) {
             for (Player player : game().getPlayersList()) {
-                LogManager.getLogger().info("Detection for " + player.getName()); //TODO remove or move to protocol
+                logger.info("Detection for " + player.getName()); // TODO remove or move to protocol
                 performSensorDetection(player);
             }
         }
@@ -65,14 +74,15 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
                 if (!game().onSameBoard(viewingFormation, hostileFormation)) {
                     continue;
                 }
-                //TODO: aero units need special treatment
+                // TODO: aero units need special treatment
                 var detectionModifiers = new SBFDetectionModifiers(viewingFormation, hostileFormation);
                 if (detectionModifiers.getValue() != TargetRoll.CHECK_FALSE) {
                     Roll diceRoll = Compute.rollD6(2);
                     int rollResult = diceRoll.getIntValue() + detectionModifiers.getValue();
                     SBFVisibilityStatus detectionResult = sensorDetectionResult(rollResult);
-                    //TODO remove or move to protocol:
-                    LogManager.getLogger().info("Detected from "+viewingFormation.getId()+" to "+hostileFormation.getId()+" result "+detectionResult);
+                    // TODO remove or move to protocol:
+                    logger.info("Detected from " + viewingFormation.getId() + " to "
+                            + hostileFormation.getId() + " result " + detectionResult);
                     visibilityStatus = visibilityStatus.bestOf(detectionResult);
                 }
             }
@@ -124,7 +134,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
         Weather weather = conditions.getWeather();
         Fog fog = conditions.getFog();
         boolean sand = conditions.isBlowingSand();
-        //TODO: this is missing quite a few conditions
+        // TODO: this is missing quite a few conditions
         if (light.isMoonlessOrPitchBack()) {
             return 4;
         } else if (light.isDusk() || weather.isSleet() || sand) {

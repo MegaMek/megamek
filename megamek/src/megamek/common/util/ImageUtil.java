@@ -16,14 +16,25 @@
 package megamek.common.util;
 
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.awt.image.Kernel;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.UIManager;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.util.ImageAtlasMap;
@@ -32,15 +43,13 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import megamek.logging.MMLogger;
 
 /**
  * Generic utility methods for image data
  */
 public final class ImageUtil {
+    private static final MMLogger logger = MMLogger.create(ImageUtil.class);
     /**
      * The graphics configuration of the local graphic card/monitor combination,
      * if we aren't running in "headless" mode.
@@ -59,9 +68,9 @@ public final class ImageUtil {
 
     public static final int IMAGE_SCALE_BICUBIC = 1;
     public static final int IMAGE_SCALE_AVG_FILTER = 2;
-    
+
     /** Holds a drawn "fail" image that can be used when image loading fails. */
-    public static BufferedImage failStandardImage; 
+    public static BufferedImage failStandardImage;
 
     /**
      * @return an image in a format best fitting for hardware acceleration, if
@@ -82,16 +91,17 @@ public final class ImageUtil {
     }
 
     /**
-     * @return an image in a format best fitting for hardware acceleration, if possible
+     * @return an image in a format best fitting for hardware acceleration, if
+     *         possible
      */
     public static BufferedImage createAcceleratedImage(int w, int h) {
         return (GC == null) ? new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
                 : GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
     }
-    
-    /** 
-     * Returns a standard size (84x72) "fail" image having a red on white cross. 
-     * The image is drawn, not loaded and should therefore work in almost all cases. 
+
+    /**
+     * Returns a standard size (84x72) "fail" image having a red on white cross.
+     * The image is drawn, not loaded and should therefore work in almost all cases.
      */
     public static BufferedImage failStandardImage() {
         if (failStandardImage == null) {
@@ -106,7 +116,7 @@ public final class ImageUtil {
         }
         return failStandardImage;
     }
-    
+
     /**
      * Get a scaled version of the input image.
      *
@@ -118,7 +128,8 @@ public final class ImageUtil {
     }
 
     /**
-     * Converts the given image to a BufferedImage. If it already is a BufferedImage, the image is only
+     * Converts the given image to a BufferedImage. If it already is a
+     * BufferedImage, the image is only
      * returned with a type cast without doing any further conversion.
      *
      * @param image An Image of any type
@@ -133,22 +144,26 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns a scaled version of the given image. Scaling is adjusted so that the image fits in the
-     * given maximum width and maximum height, keeping the aspect ratio of the image. Either the height
-     * or the width of the resulting image will be equal to the given max width or height, while the other value
+     * Returns a scaled version of the given image. Scaling is adjusted so that the
+     * image fits in the
+     * given maximum width and maximum height, keeping the aspect ratio of the
+     * image. Either the height
+     * or the width of the resulting image will be equal to the given max width or
+     * height, while the other value
      * will be smaller than the given maximum. Uses the supplied scaling method.
      *
-     * @param image The image to scale
-     * @param maxWidth The maximum width of the resulting image
+     * @param image     The image to scale
+     * @param maxWidth  The maximum width of the resulting image
      * @param maxHeight The maximum height of the resulting image
-     * @param scaleType The scale type, {@link #IMAGE_SCALE_BICUBIC} or {@link #IMAGE_SCALE_AVG_FILTER}
-     * @return A scaled image fitting in a rectangle of the size (maxWidth, maxHeight)
+     * @param scaleType The scale type, {@link #IMAGE_SCALE_BICUBIC} or
+     *                  {@link #IMAGE_SCALE_AVG_FILTER}
+     * @return A scaled image fitting in a rectangle of the size (maxWidth,
+     *         maxHeight)
      */
     public static BufferedImage fitImage(Image image, int maxWidth, int maxHeight, int scaleType) {
         int width = maxWidth;
         int height = maxHeight;
-        if ((float) image.getWidth(null) / maxWidth >
-                (float) image.getHeight(null) / maxHeight) {
+        if ((float) image.getWidth(null) / maxWidth > (float) image.getHeight(null) / maxHeight) {
             height = image.getHeight(null) * maxWidth / image.getWidth(null);
         } else {
             width = image.getWidth(null) * maxHeight / image.getHeight(null);
@@ -190,7 +205,10 @@ public final class ImageUtil {
         IMAGE_LOADERS.add(new AWTImageLoader());
     }
 
-    /** Add a new image loader to the first position of the list, if it isn't there already */
+    /**
+     * Add a new image loader to the first position of the list, if it isn't there
+     * already
+     */
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
             IMAGE_LOADERS.add(0, loader);
@@ -198,9 +216,12 @@ public final class ImageUtil {
     }
 
     /**
-     * Loads and returns the image of the given fileName. This method does not make sure the image
-     * is fully loaded, this must be done by the caller when necessary (the simplest way is to
-     * create a new ImageIcon with the image). If the image cannot be loaded for any reason,
+     * Loads and returns the image of the given fileName. This method does not make
+     * sure the image
+     * is fully loaded, this must be done by the caller when necessary (the simplest
+     * way is to
+     * create a new ImageIcon with the image). If the image cannot be loaded for any
+     * reason,
      * the method returns a placeholder image but not null.
      *
      * @param fileName The image filename
@@ -219,7 +240,8 @@ public final class ImageUtil {
         return failStandardImage();
     }
 
-    private ImageUtil() {}
+    private ImageUtil() {
+    }
 
     /**
      * Interface that defines methods for an ImageLoader.
@@ -228,6 +250,7 @@ public final class ImageUtil {
 
         /**
          * Given a string representation of a file,
+         *
          * @param fileName
          * @return
          */
@@ -235,7 +258,8 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader implementation that expects a path to an image file, and that file is loaded
+     * ImageLoader implementation that expects a path to an image file, and that
+     * file is loaded
      * directly and the loaded image is returned.
      */
     public static class AWTImageLoader implements ImageLoader {
@@ -243,7 +267,7 @@ public final class ImageUtil {
         public @Nullable Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                LogManager.getLogger().error("Trying to load image for a non-existent file " + fileName);
+                logger.error("Trying to load image for a non-existent file " + fileName);
                 return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
@@ -259,13 +283,16 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have
-     * the format {imageFile}(X,Y-Width,Height), where X,Y is the start of the image tile, and
+     * ImageLoader that loads sub-regions from a larger atlas file. The filename is
+     * assumed to have
+     * the format {imageFile}(X,Y-Width,Height), where X,Y is the start of the image
+     * tile, and
      * Width,Height are the size of the image tile.
      */
     public static class TileMapImageLoader implements ImageLoader {
         /**
-         * Given a String with the format "X,Y" split this into the X,Y components, and use those to
+         * Given a String with the format "X,Y" split this into the X,Y components, and
+         * use those to
          * create a Coords object.
          *
          * @param c
@@ -289,8 +316,10 @@ public final class ImageUtil {
         }
 
         /**
-         * Given a string with the format {imageFile}(X,Y-W,H), load the image file and then use
-         * X,Y and W,H to find a sub-image within the original image and return that sub-image.
+         * Given a string with the format {imageFile}(X,Y-W,H), load the image file and
+         * then use
+         * X,Y and W,H to find a sub-image within the original image and return that
+         * sub-image.
          */
         @Override
         public @Nullable Image loadImage(String fileName) {
@@ -314,7 +343,7 @@ public final class ImageUtil {
             if (!baseFile.exists()) {
                 return null;
             }
-            LogManager.getLogger().info("Loading atlas: " + baseFile);
+            logger.info("Loading atlas: " + baseFile);
             Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if (null == base) {
                 return null;
@@ -323,7 +352,7 @@ public final class ImageUtil {
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
             Graphics2D g2d = result.createGraphics();
             g2d.drawImage(base, 0, 0, result.getWidth(), result.getHeight(),
-                start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+                    start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
             g2d.dispose();
             return result;
         }
@@ -347,7 +376,8 @@ public final class ImageUtil {
         @Override
         public Image loadImage(String fileName) {
             // The tileset could be using the tiling syntax to flip the image
-            // We may still need to look up the base file name in an atlas and then modify the image
+            // We may still need to look up the base file name in an atlas and then modify
+            // the image
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
 
@@ -358,7 +388,8 @@ public final class ImageUtil {
             if (tileAdjusting) {
                 String coords = fileName.substring(tileStart + 1, tileEnd);
                 int coordsSplitter = coords.indexOf('-');
-                // It's possible we have a unit with a paren in the name, we still want to try to load that
+                // It's possible we have a unit with a paren in the name, we still want to try
+                // to load that
                 if (coordsSplitter == -1) {
                     baseName = fileName;
                     tileAdjusting = false;
@@ -368,7 +399,8 @@ public final class ImageUtil {
                     if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
                         return null;
                     }
-                    // If we don't have any negative values, this entry isn't doing any image manipulation
+                    // If we don't have any negative values, this entry isn't doing any image
+                    // manipulation
                     // therefore, it must be a TileMapImageLoader entry, and we should ignore it
                     if (size.getX() > 0 && size.getY() > 0) {
                         return null;
@@ -388,13 +420,13 @@ public final class ImageUtil {
 
             // Check to see if we need to flip the image
             if (tileAdjusting) {
-               Image img = super.loadImage(imgFileToAtlasMap.get(p));
-               BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
-               Graphics2D g2d = result.createGraphics();
-               g2d.drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
-                   start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
-               g2d.dispose();
-               return img;
+                Image img = super.loadImage(imgFileToAtlasMap.get(p));
+                BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
+                Graphics2D g2d = result.createGraphics();
+                g2d.drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
+                        start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+                g2d.dispose();
+                return img;
             } else {
                 // Otherwise just return the image loaded from the atlas
                 return super.loadImage(imgFileToAtlasMap.get(p));
@@ -403,9 +435,10 @@ public final class ImageUtil {
     }
 
     /**
-     * Wait until the given toolkit image is fully loaded and return if the image is animated.
+     * Wait until the given toolkit image is fully loaded and return if the image is
+     * animated.
      *
-     * @param result  Returns true if the given image is animated.
+     * @param result Returns true if the given image is animated.
      * @return
      */
     private static boolean waitUntilLoaded(Image result) {
@@ -428,8 +461,8 @@ public final class ImageUtil {
     }
 
     private static class FinishedLoadingObserver implements ImageObserver {
-        private static final int DONE
-            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
+        private static final int DONE = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS
+                | ImageObserver.ALLBITS;
 
         private final Thread mainThread;
         private volatile boolean loaded = false;
@@ -460,7 +493,8 @@ public final class ImageUtil {
     }
 
     /**
-     * takes an image and converts it to text in the Base64 encoding. When the given image is null, an
+     * takes an image and converts it to text in the Base64 encoding. When the given
+     * image is null, an
      * empty String is returned.
      */
     public static String base64TextEncodeImage(@Nullable Image image) {
@@ -503,9 +537,12 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns a square normalized Kernel for a Gaussian Blur. The Kernel is has width x width elements.
-     * Sigma gives its Gauss sharpness. A high sigma of e.g. 1000 returns a flat Kernel of equal elements
-     * (= 1 / width ^ 2); sigma should not be smaller than about 0.2 (will lead to an exception).
+     * Returns a square normalized Kernel for a Gaussian Blur. The Kernel is has
+     * width x width elements.
+     * Sigma gives its Gauss sharpness. A high sigma of e.g. 1000 returns a flat
+     * Kernel of equal elements
+     * (= 1 / width ^ 2); sigma should not be smaller than about 0.2 (will lead to
+     * an exception).
      * Normal sigma values are in the area of 1 to 5.
      *
      * @param width The length and height of the Kernel
@@ -519,7 +556,8 @@ public final class ImageUtil {
         float sum = 0;
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < width; ++y) {
-                float value = (float) (Math.exp(-0.5 * (Math.pow((x - mean) / sigma, 2.0) + Math.pow((y - mean) / sigma, 2.0)))
+                float value = (float) (Math
+                        .exp(-0.5 * (Math.pow((x - mean) / sigma, 2.0) + Math.pow((y - mean) / sigma, 2.0)))
                         / (2 * Math.PI * sigma * sigma));
                 data[y * width + x] = value;
                 sum += value;

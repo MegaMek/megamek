@@ -17,7 +17,7 @@ package megamek.client.ui.swing.widget;
 /**
  * A class that contains state information that specifies a skin for the
  * UnitDisplay.
- * 
+ *
  * @author arlith
  */
 public class UnitDisplaySkinSpecification {
@@ -47,7 +47,7 @@ public class UnitDisplaySkinSpecification {
     private String topRightCorner = "tr_corner.gif";
     private String bottomRightCorner = "br_corner.gif";
 
-    private String mechOutline = "bg_mech.gif";
+    private String mekOutline = "bg_mek.gif";
 
     public String getGeneralTabIdle() {
         return generalTabIdle;
@@ -233,12 +233,12 @@ public class UnitDisplaySkinSpecification {
         this.bottomRightCorner = bottomRightCorner;
     }
 
-    public String getMechOutline() {
-        return mechOutline;
+    public String getMekOutline() {
+        return mekOutline;
     }
 
-    public void setMechOutline(String mechOutline) {
-        this.mechOutline = mechOutline;
+    public void setMekOutline(String mekOutline) {
+        this.mekOutline = mekOutline;
     }
 
 }

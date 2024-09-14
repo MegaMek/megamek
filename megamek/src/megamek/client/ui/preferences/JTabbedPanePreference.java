@@ -18,37 +18,42 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JTabbedPanePreference monitors the selected tab of a JTabbedPane. It sets the saved value when a
+ * JTabbedPanePreference monitors the selected tab of a JTabbedPane. It sets the
+ * saved value when a
  * dialog is loaded and changes it as it changes.
  *
- * Call preferences.manage(new JTabbedPanePreference(JTabbedPane)) to use this preference, on a
+ * Call preferences.manage(new JTabbedPanePreference(JTabbedPane)) to use this
+ * preference, on a
  * JTabbedPane that has called setName
  */
 public class JTabbedPanePreference extends PreferenceElement implements ChangeListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JTabbedPanePreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JTabbedPane> weakReference;
     private int selectedIndex;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JTabbedPanePreference(final JTabbedPane tabbedPane) throws Exception {
         super(tabbedPane.getName());
         setSelectedIndex(tabbedPane.getSelectedIndex());
         weakReference = new WeakReference<>(tabbedPane);
         tabbedPane.addChangeListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JTabbedPane> getWeakReference() {
         return weakReference;
     }
@@ -60,9 +65,9 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
     public void setSelectedIndex(final int selectedIndex) {
         this.selectedIndex = selectedIndex;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return Integer.toString(getSelectedIndex());
@@ -71,7 +76,8 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JTabbedPanePreference because of a null or blank input value");
+            logger
+                    .error("Cannot create a JTabbedPanePreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -93,9 +99,9 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region ChangeListener
+    // region ChangeListener
     @Override
     public void stateChanged(final ChangeEvent evt) {
         final JTabbedPane element = getWeakReference().get();
@@ -103,5 +109,5 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
             setSelectedIndex(element.getSelectedIndex());
         }
     }
-    //endregion ChangeListener
+    // endregion ChangeListener
 }

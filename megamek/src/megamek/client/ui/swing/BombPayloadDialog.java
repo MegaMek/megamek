@@ -15,17 +15,24 @@
 */
 package megamek.client.ui.swing;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Dimension2D;
 import java.util.StringTokenizer;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
 import megamek.common.BombType;
@@ -40,8 +47,8 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     private boolean confirm = false;
     private int limit;
-    private int internalBombLimit=6;
-    private int internalBombCount=0;
+    private int internalBombLimit = 6;
+    private int internalBombCount = 0;
     private int[] bombs;
 
     private JPanel panButtons = new JPanel();

@@ -53,9 +53,9 @@ public class CLIATM9 extends CLIATMWeapon {
                 .setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY);
     }
-    
+
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 2.7;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {

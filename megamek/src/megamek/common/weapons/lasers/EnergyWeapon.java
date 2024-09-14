@@ -32,14 +32,14 @@ public abstract class EnergyWeapon extends Weapon {
     private static final long serialVersionUID = 3128205629152612073L;
 
     public EnergyWeapon() {
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_ENERGY);
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_ENERGY);
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new EnergyWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);
@@ -59,7 +59,7 @@ public abstract class EnergyWeapon extends Weapon {
                 int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
                 for (; dmg >= 0; dmg--) {
                     removeMode("Damage " + dmg);
-                } 
+                }
             }
         }
     }

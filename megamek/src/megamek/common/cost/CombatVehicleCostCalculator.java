@@ -129,9 +129,11 @@ public class CombatVehicleCostCalculator {
             double techRatingMultiplier = 0.5 + (tank.getStructuralTechRating() * 0.25);
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
-            // IS has no variations, no Endo etc., but non-naval superheavies have heavier structure
+            // IS has no variations, no Endo etc., but non-naval superheavies have heavier
+            // structure
             if (!tank.isSuperHeavy() || tank.getMovementMode().equals(EntityMovementMode.NAVAL)
-                    || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE)) { // There are no superheavy hydrofoils
+                    || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE)) { // There are no superheavy
+                                                                                      // hydrofoils
                 costs[i++] = RoundWeight.nextHalfTon(tank.getWeight() / 10.0) * 10000;
             } else {
                 costs[i++] = RoundWeight.nextHalfTon(tank.getWeight() / 5.0) * 10000;
@@ -145,7 +147,7 @@ public class CombatVehicleCostCalculator {
         int sinks = TestEntity.calcHeatNeutralHSRequirement(tank);
         double turretWeight = 0;
         double paWeight = tank.getPowerAmplifierWeight();
-        for (Mounted m : tank.getWeaponList()) {
+        for (Mounted<?> m : tank.getWeaponList()) {
             if ((m.getLocation() == tank.getLocTurret()) || (m.getLocation() == tank.getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
@@ -187,7 +189,8 @@ public class CombatVehicleCostCalculator {
             cost += costs[x];
         }
 
-        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
+        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate
+        // code in getPriceMultiplier
         if (tank.isOmni()) { // Omni conversion cost goes here.
             cost *= 1.25;
             costs[i++] = -1.25;
@@ -195,12 +198,11 @@ public class CombatVehicleCostCalculator {
             costs[i++] = 0;
         }
 
-
         double multiplier = 1.0;
         if (tank.isSupportVehicle()
                 && (tank.getMovementMode().equals(EntityMovementMode.NAVAL)
-                || tank.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
-                || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE))) {
+                        || tank.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
+                        || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE))) {
             multiplier += tank.getWeight() / 100000.0;
         } else {
             switch (tank.getMovementMode()) {

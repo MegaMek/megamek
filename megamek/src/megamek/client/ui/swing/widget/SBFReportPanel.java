@@ -1,17 +1,42 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.client.ui.swing.widget;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Document;
 
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
@@ -32,19 +57,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.Document;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Shows reports, with an Okay JButton
@@ -200,21 +212,21 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         }
     }
 
-    private String addEntity(JComboBox comboBox, String name) {
+    private String addEntity(JComboBox<String> comboBox, String name) {
         boolean found = false;
         int len = (name.length() < MRD_MAXNAMELENGHT ? name.length() : MRD_MAXNAMELENGHT);
-        String displayNane = String.format("%-12s", name).substring(0, len);
+        String displayName = String.format("%-12s", name).substring(0, len);
         found = false;
         for (int i = 0; i < comboBox.getItemCount(); i++) {
-            if (comboBox.getItemAt(i).equals(displayNane)) {
+            if (comboBox.getItemAt(i).equals(displayName)) {
                 found = true;
                 break;
             }
         }
         if (!found) {
-            comboBox.addItem(displayNane);
+            comboBox.addItem(displayName);
         }
-        return displayNane;
+        return displayName;
     }
 
 //    private void updateEntityChoice() {

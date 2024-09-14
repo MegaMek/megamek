@@ -13,13 +13,27 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.table.MegamekTable;
-import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -28,12 +42,20 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
+
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.table.MegaMekTable;
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.EquipmentType;
+import megamek.common.Mek;
+import megamek.common.MekSearchFilter;
+import megamek.common.MiscType;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
+import megamek.common.WeaponType;
+import megamek.common.equipment.ArmorType;
 
 /**
  * JDialog that allows the user to create a unit filter.
@@ -45,67 +67,67 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         KeyListener, ListSelectionListener {
     private static final long serialVersionUID = 1L;
     private boolean isCanceled = true;
-    public MechSearchFilter mechFilter = null;
+    public MekSearchFilter mekFilter = null;
     private Vector<TWAdvancedSearchPanel.FilterTokens> filterToks;
     private JButton btnOkay = new JButton(Messages.getString("Okay"));
     private JButton btnCancel = new JButton(Messages.getString("Cancel"));
 
     private JButton btnLeftParen = new JButton("(");
     private JButton btnRightParen = new JButton(")");
-    private JButton btnAdd = new JButton(Messages.getString("MechSelectorDialog.Search.add"));
-    private JButton btnAnd = new JButton(Messages.getString("MechSelectorDialog.Search.and"));
-    private JButton btnOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
-    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+    private JButton btnAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
+    private JButton btnAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
+    private JButton btnOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
+    private JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
     private JButton btnBack = new JButton("Back");
 
-    private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
-    private JTextArea  txtEqExp = new JTextArea("");
+    private JLabel lblEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
+    private JTextArea txtEqExp = new JTextArea("");
     private JScrollPane expScroller = new JScrollPane(txtEqExp,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-    private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
+    private JLabel lblWalk = new JLabel(Messages.getString("MekSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
     private JTextField tEndWalk = new JTextField(4);
 
-    private JLabel lblJump = new JLabel(Messages.getString("MechSelectorDialog.Search.Jump"));
+    private JLabel lblJump = new JLabel(Messages.getString("MekSelectorDialog.Search.Jump"));
     private JTextField tStartJump = new JTextField(4);
     private JTextField tEndJump = new JTextField(4);
 
-    private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
+    private JLabel lblArmor = new JLabel(Messages.getString("MekSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
 
-    private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
-    private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
-    private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
-    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
+    private JLabel lblTableFilters = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilters"));
+    private JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
+    private JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
+    private JLabel lblTechLevel = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
     private JComboBox<String> cboUnitType = new JComboBox<>();
     private JComboBox<String> cboTechClass = new JComboBox<>();
     private JComboBox<String> cboTechLevel = new JComboBox<>();
 
-    private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
+    private JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
     private JScrollPane scrTableWeapons = new JScrollPane();
-    private MegamekTable tblWeapons;
+    private MegaMekTable tblWeapons;
     private WeaponsTableModel weaponsModel;
     private TableRowSorter<WeaponsTableModel> weaponsSorter;
 
-    private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
+    private JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
     private JScrollPane scrTableEquipment = new JScrollPane();
-    private MegamekTable tblEquipment;
+    private MegaMekTable tblEquipment;
     private EquipmentTableModel equipmentModel;
     private TableRowSorter<EquipmentTableModel> equipmentSorter;
 
-    private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
+    private JLabel lblYear = new JLabel(Messages.getString("MekSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
-    private JLabel lblCockpitType  = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
-    private JList<String> listCockpitType  = new JList<>(new DefaultListModel<String>());
+    private JLabel lblCockpitType = new JLabel(Messages.getString("MekSelectorDialog.Search.CockpitType"));
+    private JList<String> listCockpitType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
-    private JLabel lblArmorType  = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
-    private JList<String> listArmorType  = new JList<>(new DefaultListModel<String>());
+    private JLabel lblArmorType = new JLabel(Messages.getString("MekSelectorDialog.Search.ArmorType"));
+    private JList<String> listArmorType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spArmorType = new JScrollPane(listArmorType);
-    private JLabel lblInternalsType  = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
-    private JList<String> listInternalsType  = new JList<>(new DefaultListModel<String>());
+    private JLabel lblInternalsType = new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType"));
+    private JList<String> listInternalsType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
     private JComboBox<String> cboQty = new JComboBox<>();
 
@@ -116,21 +138,25 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     private static class NoSelectionModel extends DefaultListSelectionModel {
         @Override
-        public void setAnchorSelectionIndex(final int anchorIndex) {}
+        public void setAnchorSelectionIndex(final int anchorIndex) {
+        }
 
         @Override
-        public void setLeadAnchorNotificationEnabled(final boolean flag) {}
+        public void setLeadAnchorNotificationEnabled(final boolean flag) {
+        }
 
         @Override
-        public void setLeadSelectionIndex(final int leadIndex) {}
+        public void setLeadSelectionIndex(final int leadIndex) {
+        }
 
         @Override
-        public void setSelectionInterval(final int index0, final int index1) {}
+        public void setSelectionInterval(final int index0, final int index1) {
+        }
     }
 
-    private void toggleText(JList list, int index) {
+    private void toggleText(JList<String> list, int index) {
         ListModel<String> m = list.getModel();
-        DefaultListModel dlm  = new DefaultListModel();
+        DefaultListModel<String> dlm = new DefaultListModel<>();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
@@ -154,7 +180,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     /**
      * Constructs a new AdvancedSearchDialog.
      *
-     * @param frame  Parent frame
+     * @param frame Parent frame
      */
     public AdvancedSearchDialog(Frame frame, int yr) {
         super(frame, Messages.getString("AdvancedSearchDialog.title"), true);
@@ -163,7 +189,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         filterToks = new Vector<>(30);
 
-        //Initialize Items
+        // Initialize Items
         btnOkay.addActionListener(this);
         btnCancel.addActionListener(this);
         btnAnd.addActionListener(this);
@@ -177,13 +203,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         btnBack.setEnabled(false);
         btnAdd.setEnabled(false);
 
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Any"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor25"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor50"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor75"));
+        cArmor.addItem(Messages.getString("MekSelectorDialog.Search.Armor90"));
 
-        DefaultListModel<String> dlma  = new DefaultListModel<>();
+        DefaultListModel<String> dlma = new DefaultListModel<>();
 
         for (String armor : ArmorType.allArmorNames()) {
             dlma.addElement("\u2610 " + armor);
@@ -199,17 +225,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<String> list = (JList<String>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
             }
         });
 
-        DefaultListModel dlmc  = new DefaultListModel();
+        DefaultListModel<String> dlmc = new DefaultListModel<>();
 
-        for (int i = 0; i < Mech.COCKPIT_STRING.length; i++) {
-            dlmc.addElement("\u2610 " + Mech.COCKPIT_STRING[i]);
+        for (int i = 0; i < Mek.COCKPIT_STRING.length; i++) {
+            dlmc.addElement("\u2610 " + Mek.COCKPIT_STRING[i]);
         }
 
         listCockpitType.setModel(dlmc);
@@ -222,14 +248,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<String> list = (JList<String>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
             }
         });
 
-        DefaultListModel dlmi  = new DefaultListModel();
+        DefaultListModel<String> dlmi = new DefaultListModel<>();
 
         for (int i = 0; i < EquipmentType.structureNames.length; i++) {
             dlmi.addElement("\u2610 " + EquipmentType.structureNames[i]);
@@ -245,7 +271,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
+                    JList<String> list = (JList<String>) e.getSource();
                     int index = list.locationToIndex(e.getPoint());
                     toggleText(list, index);
                 }
@@ -257,16 +283,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
         cboQty.setSelectedIndex(0);
 
-        //Setup table filter combo boxes
+        // Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.MEK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.TANK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.BATTLE_ARMOR));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.INFANTRY));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.PROTOMEK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AEROSPACEFIGHTER));
-        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.setSelectedItem(Messages.getString("MekSelectorDialog.All"));
 
         cboUnitType.setModel(unitTypeModel);
         cboUnitType.addActionListener(this);
@@ -275,7 +301,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         for (int i = 0; i < TechConstants.SIZE; i++) {
             techLevelModel.addElement(TechConstants.getLevelDisplayableName(i));
         }
-        techLevelModel.setSelectedItem(TechConstants.getLevelDisplayableName(TechConstants.SIZE-1));
+        techLevelModel.setSelectedItem(TechConstants.getLevelDisplayableName(TechConstants.SIZE - 1));
         cboTechLevel.setModel(techLevelModel);
         cboTechLevel.addActionListener(this);
 
@@ -289,9 +315,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cboTechClass.setModel(techClassModel);
         cboTechClass.addActionListener(this);
 
-        //Setup Weapons Table
+        // Setup Weapons Table
         weaponsModel = new WeaponsTableModel();
-        tblWeapons = new MegamekTable(weaponsModel,WeaponsTableModel.COL_NAME);
+        tblWeapons = new MegaMekTable(weaponsModel, WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
                 WeaponsTableModel.COL_QTY);
         wpsCol.setCellEditor(new DefaultCellEditor(cboQty));
@@ -306,9 +332,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
         scrTableWeapons.setViewportView(tblWeapons);
 
-        //Setup Equipment Table
+        // Setup Equipment Table
         equipmentModel = new EquipmentTableModel();
-        tblEquipment = new MegamekTable(equipmentModel,
+        tblEquipment = new MegaMekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
         TableColumn eqCol = tblEquipment.getColumnModel().getColumn(
                 EquipmentTableModel.COL_QTY);
@@ -324,19 +350,19 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
         scrTableEquipment.setViewportView(tblEquipment);
 
-        //Populate Tables
+        // Populate Tables
         populateWeaponsAndEquipmentChoices();
 
-        //initialize with the weapons sorted alphabetically by name
+        // initialize with the weapons sorted alphabetically by name
         ArrayList<SortKey> sortlist = new ArrayList<>();
-        sortlist.add(new SortKey(WeaponsTableModel.COL_NAME,SortOrder.ASCENDING));
+        sortlist.add(new SortKey(WeaponsTableModel.COL_NAME, SortOrder.ASCENDING));
         tblWeapons.getRowSorter().setSortKeys(sortlist);
         ((DefaultRowSorter<?, ?>) tblWeapons.getRowSorter()).sort();
         tblWeapons.invalidate(); // force re-layout of window
 
-        //initialize with the equipment sorted alphabetically by chassis
+        // initialize with the equipment sorted alphabetically by chassis
         sortlist = new ArrayList<>();
-        sortlist.add(new SortKey(EquipmentTableModel.COL_NAME,SortOrder.ASCENDING));
+        sortlist.add(new SortKey(EquipmentTableModel.COL_NAME, SortOrder.ASCENDING));
         tblEquipment.getRowSorter().setSortKeys(sortlist);
         ((DefaultRowSorter<?, ?>) tblEquipment.getRowSorter()).sort();
         tblEquipment.invalidate(); // force re-layout of window
@@ -353,9 +379,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 10, 0, 0);
-        c.gridx = 0; c.gridy = 0;
+        c.gridx = 0;
+        c.gridy = 0;
         mainPanel.add(lblWalk, c);
-        c.gridx = 1; c.gridy = 0;
+        c.gridx = 1;
+        c.gridy = 0;
         c.insets = new Insets(0, 0, 0, 0);
         c.anchor = GridBagConstraints.EAST;
         JPanel panWalk = new JPanel();
@@ -363,20 +391,23 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         panWalk.add(new Label("-"));
         panWalk.add(tEndWalk);
         mainPanel.add(panWalk, c);
-        c.gridx = 3; c.gridy = 0;
+        c.gridx = 3;
+        c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel(new BorderLayout());
-        cockpitPanel.add(lblCockpitType,BorderLayout.NORTH);
-        cockpitPanel.add(spCockpitType,BorderLayout.SOUTH);
+        cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
+        cockpitPanel.add(spCockpitType, BorderLayout.SOUTH);
         mainPanel.add(cockpitPanel, c);
 
-        c.gridx = 0; c.gridy = 1;
+        c.gridx = 0;
+        c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 10, 0, 0);
         mainPanel.add(lblJump, c);
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridx = 1; c.gridy = 1;
+        c.gridx = 1;
+        c.gridy = 1;
         c.anchor = GridBagConstraints.EAST;
         JPanel panJump = new JPanel();
         panJump.add(tStartJump);
@@ -384,15 +415,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         panJump.add(tEndJump);
         mainPanel.add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
-        c.gridx = 3; c.gridy = 1;
+        c.gridx = 3;
+        c.gridy = 1;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel internalsPanel = new JPanel(new BorderLayout());
-        internalsPanel.add(lblInternalsType,BorderLayout.NORTH);
-        internalsPanel.add(spInternalsType,BorderLayout.EAST);
+        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
+        internalsPanel.add(spInternalsType, BorderLayout.EAST);
         mainPanel.add(internalsPanel, c);
 
         c.anchor = GridBagConstraints.WEST;
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         c.insets = new Insets(0, 10, 0, 0);
         mainPanel.add(lblArmor, c);
         c.insets = new Insets(0, 0, 0, 0);
@@ -401,16 +434,18 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridx = 3;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel armorPanel = new JPanel(new BorderLayout());
-        armorPanel.add(lblArmorType,BorderLayout.NORTH);
-        armorPanel.add(spArmorType,BorderLayout.EAST);
+        armorPanel.add(lblArmorType, BorderLayout.NORTH);
+        armorPanel.add(spArmorType, BorderLayout.EAST);
         mainPanel.add(armorPanel, c);
 
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(16, 0, 0, 0);
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(lblTableFilters, c);
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         c.gridwidth = 4;
         JPanel cboPanel = new JPanel();
         cboPanel.add(lblUnitType);
@@ -423,27 +458,30 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 1;
 
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(lblWeapons, c);
-
 
         c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(scrTableWeapons, c);
 
         c.gridwidth = 1;
         c.insets = new Insets(16, 0, 0, 0);
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(lblEquipment, c);
-
 
         c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(scrTableEquipment, c);
 
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         c.gridwidth = 4;
         JPanel btnPanel = new JPanel();
         btnPanel.add(btnAdd, c);
@@ -457,7 +495,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 1;
 
         // Filter Expression
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(lblEqExpTxt, c);
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 4;
@@ -466,8 +505,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
 
-        c.gridwidth  = 1;
-        c.gridx = 0; c.gridy++;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy++;
         mainPanel.add(lblYear, c);
         c.gridx = 1;
         JPanel designYearPanel = new JPanel();
@@ -477,7 +517,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mainPanel.add(designYearPanel, c);
 
         c.gridwidth = 1;
-        c.gridx = 2; c.gridy++;
+        c.gridx = 2;
+        c.gridy++;
         c.anchor = GridBagConstraints.EAST;
         c.insets = new Insets(0, 20, 10, 0);
         mainPanel.add(btnOkay, c);
@@ -499,10 +540,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         pack();
         int x = Math.max(0,
                 (frame.getLocation().x + (frame.getSize().width / 2)) -
-                (getSize().width / 2));
+                        (getSize().width / 2));
         int y = Math.max(0,
                 (frame.getLocation().y + (frame.getSize().height / 2)) -
-                (getSize().height / 2));
+                        (getSize().height / 2));
         setLocation(x, y);
     }
 
@@ -531,7 +572,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         boolean lastTokIsOperation;
         int tokSize = filterToks.size();
         lastTokIsOperation = ((tokSize == 0) ||
-                (filterToks.elementAt(tokSize-1) instanceof TWAdvancedSearchPanel.OperationFT));
+                (filterToks.elementAt(tokSize - 1) instanceof TWAdvancedSearchPanel.OperationFT));
         if (evt.getSource().equals(tblWeapons.getSelectionModel())) {
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblEquipment.clearSelection();
@@ -591,16 +632,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     }
 
     /**
-     *  Listener for button presses.
+     * Listener for button presses.
      */
     @Override
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource().equals(btnOkay)) {
             isCanceled = false;
             try {
-                mechFilter.createFilterExpressionFromTokens(filterToks);
+                mekFilter.createFilterExpressionFromTokens(filterToks);
                 setVisible(false);
-            } catch (MechSearchFilter.FilterParsingException e) {
+            } catch (MekSearchFilter.FilterParsingException e) {
                 JOptionPane.showMessageDialog(this,
                         "Error parsing filter expression!\n\n" + e.msg,
                         "Filter Expression Parsing Error",
@@ -609,20 +650,18 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         } else if (ev.getSource().equals(btnCancel)) {
             isCanceled = true;
             setVisible(false);
-         } else if (ev.getSource().equals(cboUnitType)
+        } else if (ev.getSource().equals(cboUnitType)
                 || ev.getSource().equals(cboTechLevel)
                 || ev.getSource().equals(cboTechClass)) {
             filterTables();
         } else if (ev.getSource().equals(btnAdd)) {
             int row = tblEquipment.getSelectedRow();
             if (row >= 0) {
-                String internalName = (String)
-                        tblEquipment.getModel().getValueAt(
-                                tblEquipment.convertRowIndexToModel(row),
-                                EquipmentTableModel.COL_INTERNAL_NAME);
+                String internalName = (String) tblEquipment.getModel().getValueAt(
+                        tblEquipment.convertRowIndexToModel(row),
+                        EquipmentTableModel.COL_INTERNAL_NAME);
                 String fullName = (String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
-                int qty = Integer.parseInt((String)
-                    tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
+                int qty = Integer.parseInt((String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
                 filterToks.add(new TWAdvancedSearchPanel.EquipmentFT(internalName, fullName, qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
@@ -631,13 +670,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             }
             row = tblWeapons.getSelectedRow();
             if (row >= 0) {
-                String internalName = (String)
-                        tblWeapons.getModel().getValueAt(
-                                tblWeapons.convertRowIndexToModel(row),
-                                WeaponsTableModel.COL_INTERNAL_NAME);
+                String internalName = (String) tblWeapons.getModel().getValueAt(
+                        tblWeapons.convertRowIndexToModel(row),
+                        WeaponsTableModel.COL_INTERNAL_NAME);
                 String fullName = (String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_NAME);
-                int qty = Integer.parseInt((String)
-                    tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
+                int qty = Integer.parseInt((String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
                 filterToks.add(new TWAdvancedSearchPanel.EquipmentFT(internalName, fullName, qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
@@ -661,13 +698,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             btnLeftParen.setEnabled(false);
             btnRightParen.setEnabled(false);
         } else if (ev.getSource().equals(btnAnd)) {
-            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.AND));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MekSearchFilter.BoolOp.AND));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
         } else if (ev.getSource().equals(btnOr)) {
-            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.OR));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MekSearchFilter.BoolOp.OR));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
@@ -701,23 +738,23 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         return ((t1 == TechConstants.T_ALL)
                 || (t1 == t2)
                 || ((t1 == TechConstants.T_IS_TW_ALL)
-                    && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-                     || ((t2) == TechConstants.T_INTRO_BOXSET))))
+                        && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
+                                || ((t2) == TechConstants.T_INTRO_BOXSET))))
                 || ((t1 == TechConstants.T_TW_ALL)
-                    && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-                     || (t2 <= TechConstants.T_INTRO_BOXSET)
-                     || (t2 <= TechConstants.T_CLAN_TW)))
+                        && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
+                                || (t2 <= TechConstants.T_INTRO_BOXSET)
+                                || (t2 <= TechConstants.T_CLAN_TW)))
                 || ((t1 == TechConstants.T_ALL_IS)
-                    && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-                     || (t2 == TechConstants.T_INTRO_BOXSET)
-                     || (t2 == TechConstants.T_IS_ADVANCED)
-                     || (t2 == TechConstants.T_IS_EXPERIMENTAL)
-                     || (t2 == TechConstants.T_IS_UNOFFICIAL)))
+                        && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
+                                || (t2 == TechConstants.T_INTRO_BOXSET)
+                                || (t2 == TechConstants.T_IS_ADVANCED)
+                                || (t2 == TechConstants.T_IS_EXPERIMENTAL)
+                                || (t2 == TechConstants.T_IS_UNOFFICIAL)))
                 || ((t1 == TechConstants.T_ALL_CLAN)
-                    && ((t2 == TechConstants.T_CLAN_TW)
-                     || (t2 == TechConstants.T_CLAN_ADVANCED)
-                     || (t2 == TechConstants.T_CLAN_EXPERIMENTAL)
-                     || (t2 == TechConstants.T_CLAN_UNOFFICIAL)));
+                        && ((t2 == TechConstants.T_CLAN_TW)
+                                || (t2 == TechConstants.T_CLAN_ADVANCED)
+                                || (t2 == TechConstants.T_CLAN_EXPERIMENTAL)
+                                || (t2 == TechConstants.T_CLAN_UNOFFICIAL)));
     }
 
     private boolean matchTechClass(String t1, String t2) {
@@ -737,7 +774,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
 
         switch (unitTypeFilter) {
-            case 5: //UnitType.AERO: the aero index is out of order
+            case 5: // UnitType.AERO: the aero index is out of order
                 if (eq.hasFlag(WeaponType.F_AERO_WEAPON)
                         || eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT)) {
                     return true;
@@ -755,8 +792,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 }
                 break;
             case UnitType.MEK:
-                if (eq.hasFlag(WeaponType.F_MECH_WEAPON)
-                        || eq.hasFlag(MiscType.F_MECH_EQUIPMENT)) {
+                if (eq.hasFlag(WeaponType.F_MEK_WEAPON)
+                        || eq.hasFlag(MiscType.F_MEK_EQUIPMENT)) {
                     return true;
                 }
                 break;
@@ -768,7 +805,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 break;
             case UnitType.PROTOMEK:
                 if (eq.hasFlag(WeaponType.F_PROTO_WEAPON)
-                        || eq.hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
+                        || eq.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
                     return true;
                 }
                 break;
@@ -784,7 +821,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         final int techLevel = cboTechLevel.getSelectedIndex();
         final String techClass = (String) cboTechClass.getSelectedItem();
         final int unitType = cboUnitType.getSelectedIndex() - 1;
-        //If current expression doesn't parse, don't update.
+        // If current expression doesn't parse, don't update.
         try {
             weaponFilter = new RowFilter<>() {
                 @Override
@@ -824,7 +861,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     }
 
     private String filterExpressionString() {
-        //Build the string representation of the new expression
+        // Build the string representation of the new expression
         StringBuilder filterExp = new StringBuilder();
         for (int i = 0; i < filterToks.size(); i++) {
             filterExp.append(" ").append(filterToks.elementAt(i).toString()).append(" ");
@@ -833,17 +870,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     }
 
     /**
-     * Show the dialog.  setVisible(true) blocks until setVisible(false).
+     * Show the dialog. setVisible(true) blocks until setVisible(false).
      *
      * @return Return the filter that was created with this dialog.
      */
-    public MechSearchFilter showDialog() {
-        //We need to save a copy since the user can alter the filter state
-        // and then click on the cancel button.  We want to make sure the
+    public MekSearchFilter showDialog() {
+        // We need to save a copy since the user can alter the filter state
+        // and then click on the cancel button. We want to make sure the
         // original filter state is saved.
-        MechSearchFilter currFilter = mechFilter;
-        mechFilter = new MechSearchFilter(currFilter);
-        txtEqExp.setText(mechFilter.getEquipmentExpression());
+        MekSearchFilter currFilter = mekFilter;
+        mekFilter = new MekSearchFilter(currFilter);
+        txtEqExp.setText(mekFilter.getEquipmentExpression());
         if ((filterToks == null) || filterToks.isEmpty()
                 || (filterToks.lastElement() instanceof TWAdvancedSearchPanel.OperationFT)) {
             disableOperationButtons();
@@ -854,16 +891,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
         setVisible(true);
         if (isCanceled) {
-            mechFilter = currFilter;
+            mekFilter = currFilter;
         } else {
-            updateMechSearchFilter();
+            updateMekSearchFilter();
         }
 
-        return mechFilter;
+        return mekFilter;
     }
 
     /**
-     *  Clear the filter.
+     * Clear the filter.
      */
     public void clearValues() {
         tStartWalk.setText("");
@@ -874,11 +911,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
-        mechFilter = null;
+        mekFilter = null;
         filterToks.clear();
         btnBack.setEnabled(false);
 
-        DefaultListModel dlmwa  = new DefaultListModel();
+        DefaultListModel<String> dlmwa = new DefaultListModel<>();
         ListModel<String> m = listArmorType.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -890,7 +927,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         m = listCockpitType.getModel();
 
-        DefaultListModel dlmc  = new DefaultListModel();
+        DefaultListModel<String> dlmc = new DefaultListModel<>();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
@@ -901,7 +938,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         m = listInternalsType.getModel();
 
-        DefaultListModel dlmi  = new DefaultListModel();
+        DefaultListModel<String> dlmi = new DefaultListModel<>();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
@@ -916,7 +953,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * Creates collections for all the possible <code>WeaponType</code>s and
-     * <code>EquipmentType</code>s.  These are used to populate the weapons
+     * <code>EquipmentType</code>s. These are used to populate the weapons
      * and equipment tables.
      */
     private void populateWeaponsAndEquipmentChoices() {
@@ -927,7 +964,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             EquipmentType et = e.nextElement();
             if ((et instanceof WeaponType)) {
                 weapons.add((WeaponType) et);
-                //Check for C3+Tag and C3 Master Booster
+                // Check for C3+Tag and C3 Master Booster
                 if (et.hasFlag(WeaponType.F_C3M) || et.hasFlag(WeaponType.F_C3MBS)) {
                     equipment.add(et);
                 }
@@ -940,37 +977,34 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         equipmentModel.setData(equipment);
     }
 
-
-    public MechSearchFilter getMechSearchFilter()
-    {
-        return mechFilter;
+    public MekSearchFilter getMekSearchFilter() {
+        return mekFilter;
     }
 
     /**
      * Update the search fields that aren't automatically updated.
      */
-    protected void updateMechSearchFilter() {
-        mechFilter.isDisabled = false;
-        mechFilter.sStartWalk = tStartWalk.getText();
-        mechFilter.sEndWalk = tEndWalk.getText();
+    protected void updateMekSearchFilter() {
+        mekFilter.isDisabled = false;
+        mekFilter.sStartWalk = tStartWalk.getText();
+        mekFilter.sEndWalk = tEndWalk.getText();
 
-        mechFilter.sStartJump = tStartJump.getText();
-        mechFilter.sEndJump = tEndJump.getText();
+        mekFilter.sStartJump = tStartJump.getText();
+        mekFilter.sEndJump = tEndJump.getText();
 
-        mechFilter.iArmor = cArmor.getSelectedIndex();
+        mekFilter.iArmor = cArmor.getSelectedIndex();
 
-        mechFilter.sStartYear = tStartYear.getText();
-        mechFilter.sEndYear = tEndYear.getText();
-
+        mekFilter.sStartYear = tStartYear.getText();
+        mekFilter.sEndYear = tEndYear.getText();
 
         ListModel<String> m = listArmorType.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
             if (ms.contains("\u2611")) {
-                mechFilter.armorType.add(i);
+                mekFilter.armorType.add(i);
             } else if (ms.contains("\u2612")) {
-                mechFilter.armorTypeExclude.add(i);
+                mekFilter.armorTypeExclude.add(i);
             }
         }
 
@@ -979,9 +1013,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
             if (ms.contains("\u2611")) {
-                mechFilter.cockpitType.add(i);
+                mekFilter.cockpitType.add(i);
             } else if (ms.contains("\u2612")) {
-                mechFilter.cockpitTypeExclude.add(i);
+                mekFilter.cockpitTypeExclude.add(i);
             }
         }
 
@@ -990,9 +1024,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
             if (ms.contains("\u2611")) {
-                mechFilter.internalsType.add(i);
+                mekFilter.internalsType.add(i);
             } else if (ms.contains("\u2612")) {
-                mechFilter.internalsTypeExclude.add(i);
+                mekFilter.internalsTypeExclude.add(i);
             }
         }
     }
@@ -1014,7 +1048,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         private static final int COL_LEVEL = 8;
         private static final int N_COL = 9;
         private static final int COL_INTERNAL_NAME = 9;
-
 
         private int[] qty;
 
@@ -1132,9 +1165,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 case COL_LONG:
                     return wp.getLongRange();
                 case COL_LEVEL:
-                        return TechConstants.getSimpleLevelName(TechConstants
-                                .convertFromNormalToSimple(wp
-                                        .getTechLevel(gameYear)));
+                    return TechConstants.getSimpleLevelName(TechConstants
+                            .convertFromNormalToSimple(wp
+                                    .getTechLevel(gameYear)));
                 case COL_INTERNAL_NAME:
                     return wp.getInternalName();
                 default:
@@ -1156,7 +1189,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     }
 
-            /**
+    /**
      * A table model for displaying weapon types
      */
 
@@ -1265,9 +1298,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 case COL_COST:
                     return eq.getRawCost();
                 case COL_LEVEL:
-                        return TechConstants.getSimpleLevelName(TechConstants
-                                .convertFromNormalToSimple(eq
-                                        .getTechLevel(gameYear)));
+                    return TechConstants.getSimpleLevelName(TechConstants
+                            .convertFromNormalToSimple(eq
+                                    .getTechLevel(gameYear)));
                 case COL_INTERNAL_NAME:
                     return eq.getInternalName();
                 default:
@@ -1301,9 +1334,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     @Override
     public void keyTyped(KeyEvent evt) {
         char keyChar = evt.getKeyChar();
-        //Ensure we've got a number or letter pressed
+        // Ensure we've got a number or letter pressed
         if (!(((keyChar >= '0') && (keyChar <= '9')) ||
-             ((keyChar >= 'a') && (keyChar <='z')) || (keyChar == ' '))) {
+                ((keyChar >= 'a') && (keyChar <= 'z')) || (keyChar == ' '))) {
             return;
         }
 
@@ -1314,9 +1347,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
     }
 
-
     /**
      * Base class for different tokens that can be in a filter expression.
+     * 
      * @author Arlith
      */
     public class FilterTokens {
@@ -1325,6 +1358,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * FilterTokens subclass that represents parenthesis.
+     * 
      * @author Arlith
      */
     public class ParensFT extends FilterTokens {
@@ -1342,6 +1376,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * FilterTokens subclass that represents equipment.
+     * 
      * @author Arlith
      */
     public class EquipmentFT extends FilterTokens {
@@ -1367,21 +1402,22 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * FilterTokens subclass that represents a boolean operation.
+     * 
      * @author Arlith
      *
      */
     public class OperationFT extends FilterTokens {
-        public MechSearchFilter.BoolOp op;
+        public MekSearchFilter.BoolOp op;
 
-        public OperationFT(MechSearchFilter.BoolOp o) {
+        public OperationFT(MekSearchFilter.BoolOp o) {
             op = o;
         }
 
         @Override
         public String toString() {
-            if (op == MechSearchFilter.BoolOp.AND) {
+            if (op == MekSearchFilter.BoolOp.AND) {
                 return "And";
-            } else if (op == MechSearchFilter.BoolOp.OR) {
+            } else if (op == MekSearchFilter.BoolOp.OR) {
                 return "Or";
             } else {
                 return "";

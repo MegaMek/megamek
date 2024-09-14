@@ -13,8 +13,8 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Andrew Hunter
@@ -63,7 +63,7 @@ public class ISSnubNosePPC extends PPCWeapon {
                 .setISApproximate(false, true, false, false, false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_DC,F_FW);
+                .setReintroductionFactions(F_DC, F_FW);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ISSnubNosePPC extends PPCWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted capacitor) {
+    public double getBattleForceDamage(int range, Mounted<?> capacitor) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
             return (capacitor != null) ? 0.75 : 1;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {

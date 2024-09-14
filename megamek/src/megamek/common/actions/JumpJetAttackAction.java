@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.common.actions;
@@ -47,7 +47,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * Damage that the specified mech does with a JJ attack
+     * Damage that the specified mek does with a JJ attack
      */
     public static int getDamageFor(Entity entity, int leg) {
         if (leg == BOTH) {
@@ -56,11 +56,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && !entity.isProne()) {
-            kickLegs[0] = Mech.LOC_RARM;
-            kickLegs[1] = Mech.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RARM;
+            kickLegs[1] = Mek.LOC_LARM;
         } else {
-            kickLegs[0] = Mech.LOC_RLEG;
-            kickLegs[1] = Mech.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RLEG;
+            kickLegs[1] = Mek.LOC_LLEG;
         }
 
         final int legLoc = kickLegs[(leg == RIGHT) ? 0 : 1];
@@ -71,7 +71,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         int damage = 0;
-        for (Mounted m : entity.getMisc()) {
+        for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET) && m.isReady()
                     && m.getLocation() == legLoc) {
                 damage += 3;
@@ -88,6 +88,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified leg to kick
+     * 
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
@@ -105,9 +106,9 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        // LAM AirMechs can only push when grounded.
-        if ((ae instanceof LandAirMech) && (ae.getConversionMode() != LandAirMech.CONV_MODE_MECH)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mech mode");
+        // LAM AirMeks can only push when grounded.
+        if ((ae instanceof LandAirMek) && (ae.getConversionMode() != LandAirMek.CONV_MODE_MEK)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mek mode");
         }
 
         Hex attHex = game.getBoard().getHex(ae.getPosition());
@@ -120,11 +121,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int[] kickLegs = new int[2];
         if (ae.entityIsQuad() && !ae.isProne()) {
-            kickLegs[0] = Mech.LOC_RARM;
-            kickLegs[1] = Mech.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RARM;
+            kickLegs[1] = Mek.LOC_LARM;
         } else {
-            kickLegs[0] = Mech.LOC_RLEG;
-            kickLegs[1] = Mech.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RLEG;
+            kickLegs[1] = Mek.LOC_LLEG;
         }
 
         ToHitData toHit;
@@ -134,14 +135,14 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
         }
 
-        // non-mechs can't kick
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
+        // non-meks can't kick
+        if (!(ae instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
         }
 
         if (leg == BOTH && !ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only prone mechs can attack with both legs");
+                    "Only prone meks can attack with both legs");
         }
 
         // check if legs are present & working
@@ -152,11 +153,12 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         // check if attacker even has jump jets!
         boolean hasJJ = false;
-        for (Mounted m : ae.getMisc()) {
+        for (Mounted<?> m : ae.getMisc()) {
             int loc = m.getLocation();
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)
                     && m.isReady()
-                    && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT)) || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
+                    && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT))
+                            || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
                 hasJJ = true;
                 break;
             }
@@ -172,7 +174,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         // check if attacker has fired leg-mounted weapons
-        for (Mounted mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound()) {
                 int loc = mounted.getLocation();
                 if (((leg == BOTH || leg == LEFT) && loc == kickLegs[0])

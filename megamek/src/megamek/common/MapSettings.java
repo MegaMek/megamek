@@ -13,25 +13,28 @@
  */
 package megamek.common;
 
-import jakarta.xml.bind.*;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import megamek.client.ui.swing.lobby.LobbyUtility;
-import megamek.common.util.BuildingTemplate;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.common.util.BuildingTemplate;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * MapSettings.java
@@ -42,6 +45,8 @@ import java.util.List;
 @XmlRootElement(name = "ENVIRONMENT")
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class MapSettings implements Serializable {
+    private static final MMLogger logger = MMLogger.create(MapSettings.class);
+
     private static final long serialVersionUID = -6163977970758303066L;
 
     @Deprecated
@@ -70,8 +75,8 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
 
-    private List<String> boardsSelected = new ArrayList<>();
-    private List<String> boardsAvailable = new ArrayList<>();
+    private ArrayList<String> boardsSelected = new ArrayList<>();
+    private ArrayList<String> boardsAvailable = new ArrayList<>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
     /**
@@ -149,7 +154,7 @@ public class MapSettings implements Serializable {
     /** probability for ultra woods, Range 0..100 */
     @XmlElement(name = "JUNGLEULTRAPROB")
     private int probUltraJungle = 0;
-    
+
     /** how much foliage at least */
     @XmlElement(name = "FOLIAGEMINSPOTS")
     private int minFoliageSpots = 0;
@@ -274,7 +279,7 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "RUBBLEMAXHEXES")
     private int maxRubbleSize = 6;
 
-    /** probability of a rubble  ultraspot */
+    /** probability of a rubble ultraspot */
     @XmlElement(name = "RUBBLEULTRAPROB")
     private int probUltraRubble = 0;
 
@@ -395,7 +400,7 @@ public class MapSettings implements Serializable {
 
     /**
      * Creates and returns a new default instance of MapSettings.
-     * 
+     *
      * @return a MapSettings with default settings values
      */
     public static MapSettings getInstance() {
@@ -406,7 +411,7 @@ public class MapSettings implements Serializable {
      * Creates and returns a clone of the given MapSettings.
      *
      * @param other
-     *            the MapSettings to clone
+     *              the MapSettings to clone
      * @return a MapSettings with the cloned settings values
      */
     public static MapSettings getInstance(final MapSettings other) {
@@ -416,10 +421,10 @@ public class MapSettings implements Serializable {
     /**
      * Creates and returns a new instance of MapSettings with default values
      * loaded from the given input stream.
-     * 
+     *
      * @param is
-     *            the input stream that contains an XML representation of the
-     *            map settings
+     *           the input stream that contains an XML representation of the
+     *           map settings
      * @return a MapSettings with the values from XML
      */
     public static MapSettings getInstance(final InputStream is) {
@@ -431,7 +436,7 @@ public class MapSettings implements Serializable {
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
         } catch (Exception e) {
-            LogManager.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
+            logger.error("Error loading XML for map settings: " + e.getMessage(), e);
         }
 
         return ms;
@@ -600,16 +605,16 @@ public class MapSettings implements Serializable {
     public int getMapHeight() {
         return mapHeight;
     }
-    
+
     public BoardDimensions getBoardSize() {
-        return new BoardDimensions(boardWidth, boardHeight);  
+        return new BoardDimensions(boardWidth, boardHeight);
     }
 
     public void setMapSize(int newWidth, int newHeight) {
         if ((mapWidth <= 0) || (mapHeight <= 0)) {
             throw new IllegalArgumentException("Map width and height must be at least 1!");
         }
-        
+
         // If the map size doesn't correspond to the size of boardsselected, correct
         // that first to be safe, as the changes below are always relative changes.
         // This happens with MapSettings construction
@@ -617,16 +622,16 @@ public class MapSettings implements Serializable {
             boardsSelected.clear();
             boardsSelected.addAll(Collections.nCopies(mapWidth * mapHeight, null));
         }
-        
+
         // Change in height
         if (newHeight > mapHeight) {
             boardsSelected.addAll(Collections.nCopies(mapWidth * newHeight - boardsSelected.size(), null));
         } else if (newHeight < mapHeight) {
             boardsSelected.subList(mapWidth * newHeight, boardsSelected.size()).clear();
         }
-        
+
         mapHeight = newHeight;
-        
+
         // Change in width
         if (newWidth > mapWidth) {
             // Add empty boards at the end of each row
@@ -639,7 +644,7 @@ public class MapSettings implements Serializable {
                 boardsSelected.subList(mapWidth * row + newWidth, mapWidth * (row + 1)).clear();
             }
         }
-        
+
         mapWidth = newWidth;
     }
 
@@ -670,9 +675,9 @@ public class MapSettings implements Serializable {
     public void setBoardBuildings(ArrayList<BuildingTemplate> buildings) {
         boardBuildings = buildings;
     }
-    
+
     /**
-     * Replaces all "Surprise..." boards with a random one of the chosen boards 
+     * Replaces all "Surprise..." boards with a random one of the chosen boards
      * (which are appended after the "Surprise" string in the board name.)
      */
     public void chooseSurpriseBoards() {
@@ -684,8 +689,6 @@ public class MapSettings implements Serializable {
             }
         }
     }
-    
-    
 
     /**
      * Replaces the specified type of board with random boards
@@ -741,11 +744,11 @@ public class MapSettings implements Serializable {
             String boardName = boardsSelected.get(i);
             if (boardName != null) {
                 boardName = boardName.replace(Board.BOARD_REQUEST_ROTATION, "");
-                
+
                 if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();
-                    for (String board: boards) {
+                    for (String board : boards) {
                         if (boardsAvailable.contains(board)) {
                             remainingBoards.add(board);
                         }
@@ -753,9 +756,9 @@ public class MapSettings implements Serializable {
                     if (remainingBoards.isEmpty()) {
                         boardsSelected.set(i, null);
                     } else if (remainingBoards.size() == 1) {
-                        boardsSelected.set(i, remainingBoards.get(0));   
+                        boardsSelected.set(i, remainingBoards.get(0));
                     } else {
-                        String remBoards = String.join("\n", boards); 
+                        String remBoards = String.join("\n", boards);
                         boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
                     }
                 } else {
@@ -767,7 +770,7 @@ public class MapSettings implements Serializable {
         }
     }
 
-    public List<String> getBoardsAvailableVector() {
+    public ArrayList<String> getBoardsAvailableVector() {
         return boardsAvailable;
     }
 
@@ -1063,7 +1066,7 @@ public class MapSettings implements Serializable {
      * and size as the parameter.
      *
      * @param other
-     *            The Mapsetting to which compare.
+     *              The Mapsetting to which compare.
      * @return True if settings are the same.
      */
     public boolean equalMapGenParameters(MapSettings other) {
@@ -1085,7 +1088,8 @@ public class MapSettings implements Serializable {
                 && (maxFoliageSpots == other.getMaxFoliageSpots()) && (minFoliageSize == other.getMinFoliageSize())
                 && (maxFoliageSize == other.getMaxFoliageSize()) && (probFoliageHeavy == other.getProbFoliageHeavy())
                 && (minRoughSpots == other.getMinRoughSpots()) && (maxRoughSpots == other.getMaxRoughSpots())
-                && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize() && (probUltraRough == other.getProbUltraRough()))
+                && (minRoughSize == other.getMinRoughSize())
+                && (maxRoughSize == other.getMaxRoughSize() && (probUltraRough == other.getProbUltraRough()))
                 && (minSandSpots == other.getMinSandSpots()) && (maxSandSpots == other.getMaxSandSpots())
                 && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
                 && (minSnowSpots == other.getMinSnowSpots()) && (maxSnowSpots == other.getMaxSnowSpots())
@@ -1102,7 +1106,9 @@ public class MapSettings implements Serializable {
                 && (maxPavementSpots == other.getMaxPavementSpots()) && (minPavementSize == other.getMinPavementSize())
                 && (maxPavementSize == other.getMaxPavementSize()) && (minRubbleSpots == other.getMinRubbleSpots())
                 && (maxRubbleSpots == other.getMaxRubbleSpots()) && (minRubbleSize == other.getMinRubbleSize())
-                && (maxRubbleSize == other.getMaxRubbleSize()) && (minFortifiedSpots == other.getMinFortifiedSpots() && (probUltraRubble == other.getProbUltraRubble()))
+                && (maxRubbleSize == other.getMaxRubbleSize())
+                && (minFortifiedSpots == other.getMinFortifiedSpots()
+                        && (probUltraRubble == other.getProbUltraRubble()))
                 && (maxFortifiedSpots == other.getMaxFortifiedSpots())
                 && (minFortifiedSize == other.getMinFortifiedSize())
                 && (maxFortifiedSize == other.getMaxFortifiedSize()) && (minIceSpots == other.getMinIceSpots())
@@ -1121,8 +1127,9 @@ public class MapSettings implements Serializable {
                 && (algorithmToUse == other.getAlgorithmToUse()) && (mountainHeightMin == other.getMountainHeightMin())
                 && (mountainHeightMax == other.getMountainHeightMax()) && (mountainPeaks == other.getMountainPeaks())
                 && (mountainStyle == other.getMountainStyle()) && (mountainWidthMin == other.getMountainWidthMin())
-                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings())
-                && (medium == other.medium));
+                && (mountainWidthMax == other.getMountainWidthMax())
+                && (boardBuildings.equals(other.getBoardBuildings())
+                        && (medium == other.medium));
     }
 
     public int getInvertNegativeTerrain() {
@@ -1181,9 +1188,13 @@ public class MapSettings implements Serializable {
         return maxForestSize;
     }
 
-    public int getProbHeavy() { return probHeavy; }
+    public int getProbHeavy() {
+        return probHeavy;
+    }
 
-    public int getProbUltra() { return probUltra; }
+    public int getProbUltra() {
+        return probUltra;
+    }
 
     public int getMinJungleSpots() {
         return minJungleSpots;
@@ -1201,10 +1212,14 @@ public class MapSettings implements Serializable {
         return maxJungleSize;
     }
 
-    public int getProbHeavyJungle() { return probHeavyJungle; }
+    public int getProbHeavyJungle() {
+        return probHeavyJungle;
+    }
 
-    public int getProbUltraJungle() { return probUltraJungle; }
-    
+    public int getProbUltraJungle() {
+        return probUltraJungle;
+    }
+
     public int getMinFoliageSpots() {
         return minFoliageSpots;
     }
@@ -1241,7 +1256,9 @@ public class MapSettings implements Serializable {
         return maxRoughSize;
     }
 
-    public int getProbUltraRough() {return probUltraRough; }
+    public int getProbUltraRough() {
+        return probUltraRough;
+    }
 
     public int getMinSandSpots() {
         return minSandSpots;
@@ -1267,7 +1284,9 @@ public class MapSettings implements Serializable {
         this.minSandSize = minSandSize;
     }
 
-    public int getMaxSandSize() { return maxSandSize; }
+    public int getMaxSandSize() {
+        return maxSandSize;
+    }
 
     public void setMaxSandSize(int maxSandSize) {
         this.maxSandSize = maxSandSize;
@@ -1297,7 +1316,9 @@ public class MapSettings implements Serializable {
         this.minSnowSize = minSnowSize;
     }
 
-    public int getMaxSnowSize() { return maxSnowSize; }
+    public int getMaxSnowSize() {
+        return maxSnowSize;
+    }
 
     public void setMaxSnowSize(int maxSnowSize) {
         this.maxSnowSize = maxSnowSize;
@@ -1327,7 +1348,9 @@ public class MapSettings implements Serializable {
         this.minTundraSize = minTundraSize;
     }
 
-    public int getMaxTundraSize() { return maxTundraSize; }
+    public int getMaxTundraSize() {
+        return maxTundraSize;
+    }
 
     public void setMaxTundraSize(int maxTundraSize) {
         this.maxTundraSize = maxTundraSize;
@@ -1600,7 +1623,7 @@ public class MapSettings implements Serializable {
         probHeavyJungle = probHeavy;
         probUltraJungle = probUltra;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1819,7 +1842,7 @@ public class MapSettings implements Serializable {
                     MapSettings.class, this);
             marshaller.marshal(element, os);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to write map settings xml", ex);
+            logger.error("Failed to write map settings xml", ex);
         }
     }
 }

@@ -47,7 +47,7 @@ public class ISAC10i extends ACWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_ACi;
         atClass = CLASS_AC;

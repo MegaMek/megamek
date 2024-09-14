@@ -18,9 +18,32 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.BoardViewSpriteHandler;
+import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
+import megamek.client.ui.swing.boardview.MovePathSpriteHandler;
+import megamek.client.ui.swing.boardview.MovementEnvelopeSpriteHandler;
+import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
+import megamek.client.ui.swing.boardview.SBFBoardViewTooltip;
+import megamek.client.ui.swing.boardview.SBFFormationSpriteHandler;
 import megamek.client.ui.swing.sbf.SBFFiringDisplay;
 import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -33,16 +56,10 @@ import megamek.common.event.GameListener;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.util.Distractable;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import megamek.logging.MMLogger;
 
 public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
+    private static final MMLogger logger = MMLogger.create(SBFClientGUI.class);
 
     public static final String CG_BOARDVIEW = "BoardView";
     public static final String CG_CHATLOUNGE = "ChatLounge";
@@ -92,7 +109,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
      * The <code>JPanel</code> containing the secondary display area.
      */
     private final JPanel panSecondary = new JPanel();
-
 
     private SBFReportDisplay reportDisplay;
 
@@ -198,7 +214,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             panTop.add(splitPaneA, BorderLayout.CENTER);
 
         } catch (Exception ex) {
-            LogManager.getLogger().fatal("", ex);
+            logger.fatal(ex, "");
             die();
         }
 
@@ -227,17 +243,17 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     @Override
     public void setChatBoxActive(boolean active) {
-        //TODO
+        // TODO
     }
 
     @Override
     public void clearChatBox() {
-        //TODO
+        // TODO
     }
 
     @Override
     protected boolean saveGame() {
-        //TODO
+        // TODO
         return true;
     }
 
@@ -249,9 +265,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     protected void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
-//        if (curPanel instanceof BoardViewListener) {
-//            bv.removeBoardViewListener((BoardViewListener) curPanel);
-//        }
+        // if (curPanel instanceof BoardViewListener) {
+        // bv.removeBoardViewListener((BoardViewListener) curPanel);
+        // }
 
         if (curPanel instanceof ActionListener) {
             menuBar.removeActionListener((ActionListener) curPanel);
@@ -271,21 +287,22 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
-//                // reset old report tabs and images, if any
-//                ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
-//                cb.setDoneButton(cl.butDone);
-//                cl.setBottom(cb.getComponent());
-//                getBoardView().getTilesetManager().reset();
+                // // reset old report tabs and images, if any
+                // ChatLounge cl = (ChatLounge)
+                // phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
+                // cb.setDoneButton(cl.butDone);
+                // cl.setBottom(cb.getComponent());
+                // getBoardView().getTilesetManager().reset();
                 break;
             default:
                 break;
         }
 
-//        maybeShowMinimap();
-//        maybeShowUnitDisplay();
-//        maybeShowForceDisplay();
+        // maybeShowMinimap();
+        // maybeShowUnitDisplay();
+        // maybeShowForceDisplay();
         showReportPanel();
-//        maybeShowPlayerList();
+        // maybeShowPlayerList();
 
         cardsMain.show(panMain, mainNames.get(name));
         String secondaryToShow = secondaryNames.get(name);
@@ -299,9 +316,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         }
 
         // Set the new panel's listeners
-//        if (curPanel instanceof BoardViewListener) {
-//            bv.addBoardViewListener((BoardViewListener) curPanel);
-//        }
+        // if (curPanel instanceof BoardViewListener) {
+        // bv.addBoardViewListener((BoardViewListener) curPanel);
+        // }
 
         if (curPanel instanceof ActionListener) {
             menuBar.addActionListener((ActionListener) curPanel);
@@ -312,9 +329,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         }
 
         // Make the new panel the focus, if the Client option says so
-//        if (GUIP.getFocus() && !(client instanceof BotClient)) {
-//            curPanel.requestFocus();
-//        }
+        // if (GUIP.getFocus() && !(client instanceof BotClient)) {
+        // curPanel.requestFocus();
+        // }
         clientGuiPanel.validate();
     }
 
@@ -360,7 +377,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         String main = CG_BOARDVIEW;
         switch (phase) {
             case LOUNGE:
-//                initializeSingleComponent(phase, new ChatLounge(this), CG_CHATLOUNGE);
+                // initializeSingleComponent(phase, new ChatLounge(this), CG_CHATLOUNGE);
                 break;
             case STARTING_SCENARIO:
                 initializeSingleComponent(phase, new StartingScenarioPanel(), CG_STARTINGSCENARIO);
@@ -369,18 +386,22 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 initializeSingleComponent(phase, new ReceivingGameDataPanel(), CG_EXCHANGE);
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
-//                initializeWithBoardView(phase, new SelectArtyAutoHitHexDisplay(this), CG_SELECTARTYAUTOHITHEXDISPLAY);
+                // initializeWithBoardView(phase, new SelectArtyAutoHitHexDisplay(this),
+                // CG_SELECTARTYAUTOHITHEXDISPLAY);
                 break;
             case DEPLOY_MINEFIELDS:
-//                initializeWithBoardView(phase, new DeployMinefieldDisplay(this), CG_DEPLOYMINEFIELDDISPLAY);
+                // initializeWithBoardView(phase, new DeployMinefieldDisplay(this),
+                // CG_DEPLOYMINEFIELDDISPLAY);
                 break;
             case DEPLOYMENT:
-//                initializeWithBoardView(phase, new DeploymentDisplay(this), CG_DEPLOYMINEFIELDDISPLAY);
+                // initializeWithBoardView(phase, new DeploymentDisplay(this),
+                // CG_DEPLOYMINEFIELDDISPLAY);
                 break;
             case TARGETING:
-//                initializeWithBoardView(phase, new TargetingPhaseDisplay(this, false), CG_DEPLOYMINEFIELDDISPLAY);
-//                component = new TargetingPhaseDisplay(this, false);
-//                ((TargetingPhaseDisplay) component).initializeListeners();
+                // initializeWithBoardView(phase, new TargetingPhaseDisplay(this, false),
+                // CG_DEPLOYMINEFIELDDISPLAY);
+                // component = new TargetingPhaseDisplay(this, false);
+                // ((TargetingPhaseDisplay) component).initializeListeners();
                 secondary = CG_TARGETINGPHASEDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -388,11 +409,11 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
-//                offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
+                // offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
             case PREMOVEMENT:
-//                component = new PrephaseDisplay(this, GamePhase.PREMOVEMENT);
-//                ((PrephaseDisplay) component).initializeListeners();
+                // component = new PrephaseDisplay(this, GamePhase.PREMOVEMENT);
+                // ((PrephaseDisplay) component).initializeListeners();
                 secondary = CG_PREMOVEMENTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -405,8 +426,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 initializeWithBoardView(phase, new SBFMovementDisplay(this), CG_MOVEMENTDISPLAY);
                 break;
             case OFFBOARD:
-//                component = new TargetingPhaseDisplay(this, true);
-//                ((TargetingPhaseDisplay) component).initializeListeners();
+                // component = new TargetingPhaseDisplay(this, true);
+                // ((TargetingPhaseDisplay) component).initializeListeners();
                 secondary = CG_OFFBOARDDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -416,8 +437,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case PREFIRING:
-//                component = new PrephaseDisplay(this, GamePhase.PREFIRING);
-//                ((PrephaseDisplay) component).initializeListeners();
+                // component = new PrephaseDisplay(this, GamePhase.PREFIRING);
+                // ((PrephaseDisplay) component).initializeListeners();
                 secondary = CG_PREFIRING;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -430,10 +451,12 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 initializeWithBoardView(phase, new SBFFiringDisplay(this), CG_FIRINGDISPLAY);
                 break;
             case POINTBLANK_SHOT:
-//                initializeWithBoardView(phase, new PointblankShotDisplay(this), CG_POINTBLANKSHOTDISPLAY);
+                // initializeWithBoardView(phase, new PointblankShotDisplay(this),
+                // CG_POINTBLANKSHOTDISPLAY);
                 break;
             case PHYSICAL:
-//                initializeWithBoardView(phase, new PhysicalDisplay(this), CG_PHYSICALDISPLAY);
+                // initializeWithBoardView(phase, new PhysicalDisplay(this),
+                // CG_PHYSICALDISPLAY);
                 break;
             case INITIATIVE_REPORT:
             case TARGETING_REPORT:
@@ -476,7 +499,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     /**
-     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is
+     * Shows the movement envelope in the BoardView for the given entity. The
+     * movement envelope data is
      * a map of move end Coords to movement points used.
      *
      * @param formation The entity for which the movement envelope is

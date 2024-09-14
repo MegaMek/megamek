@@ -45,7 +45,8 @@ public class ISBARL5 extends RLWeapon {
         cost = 6000;
         tonnage = .125;
         criticals = 4;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
+                .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
@@ -59,7 +60,7 @@ public class ISBARL5 extends RLWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         // This value gets divided by 10 for being one-shot
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.29 : 0;
     }

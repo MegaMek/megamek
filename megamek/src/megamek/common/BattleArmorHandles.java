@@ -13,17 +13,17 @@
  */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * Represents a set of handles on an OmniMech used by Battle Armor units
+ * Represents a set of handles on an OmniMek used by Battle Armor units
  * equipped with Boarding Claws to attach themselves for transport. This is
- * standard equipment on OmniMechs.
+ * standard equipment on OmniMeks.
  *
- * @see MechFileParser#postLoadInit
+ * @see MekFileParser#postLoadInit
  */
 class BattleArmorHandles implements Transporter {
     private static final long serialVersionUID = -7149931565043762975L;
@@ -44,7 +44,7 @@ class BattleArmorHandles implements Transporter {
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMech.");
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMek.");
         }
 
         // Assign the unit as our carried troopers.
@@ -89,7 +89,7 @@ class BattleArmorHandles implements Transporter {
     public void resetTransporter() {
         carriedUnit = Entity.NONE;
     }
-    
+
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         Entity carriedBA = game.getEntity(carriedUnit);
@@ -98,13 +98,13 @@ class BattleArmorHandles implements Transporter {
         } else {
             int tloc = BattleArmor.LOC_SQUAD;
             switch (loc) {
-                case Mech.LOC_CT:
+                case Mek.LOC_CT:
                     tloc = isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
                     break;
-                case Mech.LOC_LT:
+                case Mek.LOC_LT:
                     tloc = isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
                     break;
-                case Mech.LOC_RT:
+                case Mek.LOC_RT:
                     tloc = isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                     break;
             }
@@ -126,7 +126,7 @@ class BattleArmorHandles implements Transporter {
     public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
-    
+
     @Override
     public String toString() {
         return "BattleArmorHandles - troopers:" + carriedUnit;

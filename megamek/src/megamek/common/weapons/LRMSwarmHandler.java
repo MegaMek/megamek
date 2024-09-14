@@ -282,7 +282,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 newWaa.setAmmoId(waa.getAmmoId());
                 newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
                 newWaa.setAmmoCarrier(waa.getAmmoCarrier());
-                Mounted m = ae.getEquipment(waa.getWeaponId());
+                Mounted<?> m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 // increase ammo by one, we'll use one that we shouldn't use
                 // in the next line
@@ -387,7 +387,7 @@ public class LRMSwarmHandler extends LRMHandler {
             newWaa.setAmmoId(waa.getAmmoId());
             newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
             newWaa.setAmmoCarrier(waa.getAmmoCarrier());
-            Mounted m = ae.getEquipment(waa.getWeaponId());
+            Mounted<?> m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
@@ -447,8 +447,6 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         nMissilesModifier += amsMod;
 
-
-
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
@@ -460,9 +458,10 @@ public class LRMSwarmHandler extends LRMHandler {
                         isAdvancedAMS());
             }
         } else {
-            missilesHit = allShotsHit() ? wtype.getRackSize() : Compute
-                    .missilesHit(wtype.getRackSize(), nMissilesModifier,
-                            weapon.isHotLoaded(), false, isAdvancedAMS());
+            missilesHit = allShotsHit() ? wtype.getRackSize()
+                    : Compute
+                            .missilesHit(wtype.getRackSize(), nMissilesModifier,
+                                    weapon.isHotLoaded(), false, isAdvancedAMS());
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;

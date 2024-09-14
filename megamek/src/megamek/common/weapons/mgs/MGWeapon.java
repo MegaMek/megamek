@@ -32,7 +32,7 @@ public abstract class MGWeapon extends AmmoWeapon {
     public MGWeapon() {
         super();
         ammoType = AmmoType.T_MG;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_BALLISTIC).or(F_MG).or(F_PROTO_WEAPON)
                 .or(F_BURST_FIRE);
         atClass = CLASS_POINT_DEFENSE;
@@ -40,7 +40,7 @@ public abstract class MGWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -51,7 +51,7 @@ public abstract class MGWeapon extends AmmoWeapon {
             WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MGHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

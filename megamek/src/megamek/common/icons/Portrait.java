@@ -18,28 +18,33 @@
  */
 package megamek.common.icons;
 
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Node;
-
-import java.awt.*;
+import java.awt.Image;
 import java.io.File;
 import java.io.PrintWriter;
 
+import org.w3c.dom.Node;
+
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
 /**
- * Portrait is an implementation of AbstractIcon that contains and displays a Portrait from the
+ * Portrait is an implementation of AbstractIcon that contains and displays a
+ * Portrait from the
  * Portrait Directory.
+ *
  * @see AbstractIcon
  */
 public class Portrait extends AbstractIcon {
-    //region Variable Declarations
+    private static final MMLogger logger = MMLogger.create(Portrait.class);
+
+    // region Variable Declarations
     private static final long serialVersionUID = -7562297705213174435L;
     public static final String DEFAULT_PORTRAIT_FILENAME = "default.gif";
     public static final String XML_TAG = "portrait";
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public Portrait() {
         super();
     }
@@ -49,10 +54,14 @@ public class Portrait extends AbstractIcon {
     }
 
     /**
-     * Constructs a new portrait with the given file. Even though a file is accepted, this can only be used
-     * for portraits of the directories that are parsed automatically, i.e. the MM-internal portrait dir, the user dir
-     * and the story arcs directory! This method tries to parse the filename to find the portrait. This requires
-     * replacing Windows backslashes with normal slashes in order to find the file in the way portraits are
+     * Constructs a new portrait with the given file. Even though a file is
+     * accepted, this can only be used
+     * for portraits of the directories that are parsed automatically, i.e. the
+     * MM-internal portrait dir, the user dir
+     * and the story arcs directory! This method tries to parse the filename to find
+     * the portrait. This requires
+     * replacing Windows backslashes with normal slashes in order to find the file
+     * in the way portraits are
      * stored (see {@link megamek.common.util.fileUtils.AbstractDirectory})
      *
      * @param file The File, such as a file of "Female/Aerospace Pilot/ASF_F_3.png"
@@ -60,21 +69,21 @@ public class Portrait extends AbstractIcon {
     public Portrait(File file) {
         this(Camouflage.getDirectory(file), file.getName());
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     @Override
     public void setFilename(final @Nullable String filename) {
         this.filename = (filename == null) ? DEFAULT_PORTRAIT_FILENAME : filename;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region Boolean Methods
+    // region Boolean Methods
     @Override
     public boolean hasDefaultFilename() {
         return super.hasDefaultFilename() || DEFAULT_PORTRAIT_FILENAME.equals(getFilename());
     }
-    //endregion Boolean Methods
+    // endregion Boolean Methods
 
     /**
      * @return the current image, scaled and centered to a width of 72 pixels
@@ -103,13 +112,13 @@ public class Portrait extends AbstractIcon {
                         DEFAULT_PORTRAIT_FILENAME);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
 
         return portrait;
     }
 
-    //region File I/O
+    // region File I/O
     @Override
     public void writeToXML(final PrintWriter pw, final int indent) {
         writeToXML(pw, indent, XML_TAG);
@@ -120,12 +129,12 @@ public class Portrait extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return new Portrait();
         }
         return icon;
     }
-    //endregion File I/O
+    // endregion File I/O
 
     @Override
     public Portrait clone() {

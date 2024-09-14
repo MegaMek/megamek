@@ -29,7 +29,7 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * TAG for conventional infantry. Rules not found in TacOps 2nd printing are in
  * this forum post: http://bg.battletech.com/forums/index.php?topic=5902.0
- * 
+ *
  * @author Neoancient
  */
 public class InfantrySupportTAGWeapon extends InfantryWeapon {
@@ -37,7 +37,7 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
 
     public InfantrySupportTAGWeapon() {
         super();
-        flags = flags.andNot(F_MECH_WEAPON).or(F_INF_SUPPORT).or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
+        flags = flags.andNot(F_MEK_WEAPON).or(F_INF_SUPPORT).or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
 
         name = "TAG (Light, Man-Portable)";
         setInternalName(EquipmentTypeLookup.INFANTRY_TAG);

@@ -19,18 +19,10 @@
  */
 package megamek.common;
 
-import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +77,7 @@ public class ComputeArtilleryTest {
         when(target.getPriorPosition()).thenReturn(oldTargetPos);
 
     }
+
     @Test
     public void testComplexCalculateLead() {
         // Mock the board
@@ -115,7 +108,8 @@ public class ComputeArtilleryTest {
         assertEquals(15, leadPos.getX());
         assertEquals(13, leadPos.getY());
 
-        // Mobile target 1 map sheet away to the S (3) direction, speed 4, homing, should be closer to shooter
+        // Mobile target 1 map sheet away to the S (3) direction, speed 4, homing,
+        // should be closer to shooter
         // for better chance to catch mobile unit in TAG-able area
         setupTarget(target, new Coords(15, 25), new Coords(15, 29));
         leadPos = Compute.calculateArtilleryLead(mockGame, shooter, target, true);

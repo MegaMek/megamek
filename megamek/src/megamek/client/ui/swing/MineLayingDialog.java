@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -52,12 +52,12 @@ public class MineLayingDialog extends JDialog implements ActionListener {
      */
     private Entity entity;
     private JComboBox<String> chMines = new JComboBox<>();
-    private ArrayList<Mounted> vMines = new ArrayList<>();
+    private ArrayList<Mounted<?>> vMines = new ArrayList<>();
 
     /**
      * Display a dialog that shows the mines on the entity, and allows the
      * player to choose one.
-     * 
+     *
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that carries the mines.
      */
@@ -69,13 +69,13 @@ public class MineLayingDialog extends JDialog implements ActionListener {
                 entity.getDisplayName()));
 
         // Walk through the entity's misc equipment, looking for mines.
-        for (Mounted mount : entity.getMisc()) {
+        for (Mounted<?> mount : entity.getMisc()) {
 
             // Is this a Mine that can be layed?
             EquipmentType type = mount.getType();
-            if ((type.hasFlag(MiscType.F_MINE) || 
-                    type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) && 
-                 mount.canFire()) {
+            if ((type.hasFlag(MiscType.F_MINE) ||
+                    type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) &&
+                    mount.canFire()) {
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
                         .append(' ')
@@ -134,8 +134,9 @@ public class MineLayingDialog extends JDialog implements ActionListener {
         }
         setResizable(false);
         setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - size.width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - size.height / 2);
+                - size.width / 2,
+                parent.getLocation().y
+                        + parent.getSize().height / 2 - size.height / 2);
     }
 
     @Override
@@ -152,11 +153,11 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
     /**
      * Get the id of the mine the player wants to use.
-     * 
+     *
      * @return the <code>int</code> id of the mine to lay
      */
     public int getMine() {
-        Mounted mine = vMines.get(chMines.getSelectedIndex());
+        Mounted<?> mine = vMines.get(chMines.getSelectedIndex());
         return entity.getEquipmentNum(mine);
     }
 }

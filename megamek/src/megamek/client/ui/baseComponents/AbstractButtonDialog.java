@@ -18,76 +18,95 @@
  */
 package megamek.client.ui.baseComponents;
 
-import megamek.MegaMek;
-import megamek.client.ui.enums.DialogResult;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import megamek.MegaMek;
+import megamek.client.ui.enums.DialogResult;
+import megamek.logging.MMLogger;
+
 /**
- * This is the Base Dialog for a dialog with buttons in MegaMek. It extends Base Dialog, and adds a
- * button panel with base Ok and Cancel buttons. It also includes an enum tracker for the result of
- * the dialog.
+ * This is the Base Dialog for a dialog with buttons in MegaMek. It extends Base
+ * Dialog, and adds a button panel with base Ok and Cancel buttons. It also
+ * includes an enum tracker for the result of the dialog.
  *
- * Inheriting classes must call initialize() in their constructors and override createCenterPane()
+ * Inheriting classes must call initialize() in their constructors and override
+ * createCenterPane()
  *
- * The resources associated with this dialog need to contain at least the following keys:
+ * The resources associated with this dialog need to contain at least the
+ * following keys:
  * - "Ok.text" - text for the ok button
  * - "Ok.toolTipText" - toolTipText for the ok button
  * - "Cancel.text" - text for the cancel button
  * - "Cancel.toolTipText" - toolTipText for the cancel button
  *
- * This is directly tied to MekHQ's AbstractMHQButtonDialog, and any changes here MUST be verified
- * there.
+ * This is directly tied to MekHQ's AbstractMHQButtonDialog, and any changes
+ * here MUST be verified there.
  */
 public abstract class AbstractButtonDialog extends AbstractDialog {
-    //region Variable Declarations
-    private DialogResult result;
-    //endregion Variable Declarations
+    private static final MMLogger logger = MMLogger.create(AbstractButtonDialog.class);
 
-    //region Constructors
+    // region Variable Declarations
+    private DialogResult result;
+    // endregion Variable Declarations
+
+    // region Constructors
     /**
-     * This creates a modal AbstractButtonDialog using the default resource bundle. This is
-     * the normal constructor to use for an AbstractButtonDialog.
+     * This creates a modal AbstractButtonDialog using the default resource bundle.
+     * This is the normal constructor to use for an AbstractButtonDialog.
+     *
+     * @param frame Frame to connect to.
+     * @param name  Name for the button.
+     * @param title Title of the dialog.
      */
     protected AbstractButtonDialog(final JFrame frame, final String name, final String title) {
         this(frame, true, name, title);
     }
 
     /**
-     * This creates an AbstractButtonDialog using the default resource bundle. It allows one
-     * to create non-modal button dialogs.
+     * This creates an AbstractButtonDialog using the default resource bundle. It
+     * allows one to create non-modal button dialogs.
+     *
+     * @param frame Window frame to connect to.
+     * @param modal Whether to open modally
+     * @param name  Name on the button.
+     * @param title Title of window
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
-                                   final String title) {
+            final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages",
                 MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**
-     * This creates an AbstractButtonDialog using the specified resource bundle. This is not
-     * recommended by default.
+     * This creates an AbstractButtonDialog using the specified resource bundle.
+     * This is not recommended by default.
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
-                                   final String name, final String title) {
+            final String name, final String title) {
         super(frame, modal, resources, name, title);
         setResult(DialogResult.CANCELLED); // Default result is cancelled
     }
 
     /**
-     * This constructor is provided for uses cases where this dialog needs another dialog as a parent.
+     * This constructor is provided for uses cases where this dialog needs another
+     * dialog as a parent.
      */
-    protected AbstractButtonDialog(final JDialog dialog, final JFrame frame, final boolean modal, final ResourceBundle resources,
-                                   final String name, final String title) {
+    protected AbstractButtonDialog(final JDialog dialog, final JFrame frame, final boolean modal,
+            final ResourceBundle resources,
+            final String name, final String title) {
         super(dialog, frame, modal, resources, name, title);
         setResult(DialogResult.CANCELLED); // Default result is cancelled
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public DialogResult getResult() {
         return result;
     }
@@ -95,14 +114,16 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
     public void setResult(final DialogResult result) {
         this.result = result;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region Initialization
+    // region Initialization
     /**
-     * Initializes the dialog's UI and preferences. Needs to be called by child classes for initial
+     * Initializes the dialog's UI and preferences. Needs to be called by child
+     * classes for initial
      * setup.
      *
-     * Anything that overrides this method MUST end by calling {@link AbstractDialog#finalizeInitialization()}
+     * Anything that overrides this method MUST end by calling
+     * {@link AbstractDialog#finalizeInitialization()}
      */
     @Override
     protected void initialize() {
@@ -112,7 +133,8 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
         try {
             finalizeInitialization();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+            logger.error(ex,
+                    "Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.");
         }
     }
 
@@ -127,12 +149,15 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
                 resources.getString("Cancel.toolTipText"), this::cancelActionPerformed));
         return panel;
     }
-    //endregion Initialization
+    // endregion Initialization
 
-    //region Button Actions
+    // region Button Actions
     /**
-     * This is the default Action Event Listener for the Ok Button's action. This triggers the Ok
-     * Action, sets the result to confirmed, and then sets the dialog so that it is no longer visible.
+     * This is the default Action Event Listener for the Ok Button's action. This
+     * triggers the Ok
+     * Action, sets the result to confirmed, and then sets the dialog so that it is
+     * no longer visible.
+     *
      * @param evt the event triggering this
      */
     protected void okButtonActionPerformed(final ActionEvent evt) {
@@ -147,10 +172,11 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
     protected void okAction() {
 
     }
-    //endregion Button Actions
+    // endregion Button Actions
 
     /**
      * Sets the dialog to be visible, before returning the result
+     *
      * @return the result of showing the dialog
      */
     public DialogResult showDialog() {

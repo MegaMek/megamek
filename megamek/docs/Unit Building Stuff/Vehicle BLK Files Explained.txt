@@ -149,7 +149,7 @@ then we set the internal structure, armor and engine type:
 </engine_type>
 
 For internal structure, 0 means standard, 1 means Endo-Steel, 2 means Endo-Steel
-Prototype, 3 means reinforced, 4 means composite.  These are only really important for battlemechs.
+Prototype, 3 means reinforced, 4 means composite.  These are only really important for battlemeks.
 
 The armor values are 0 standard, 1 Ferro-Fibrous, 2 reactive, 3 reflective, 4
 hardened, 5 light ferro, 6 heavy ferro, 8 stealth, 9 ferro-fib prototype, 10
@@ -263,11 +263,11 @@ CLERSmallLaser
 CLERPPC
 CLLargePulseLaser
 </Left Wing Equipment>
-<Right Wing Equipment> 
+<Right Wing Equipment>
 CLERPPC
 CLLargePulseLaser
 </Right Wing Equipment>
-<Aft Equipment> 
+<Aft Equipment>
 CLERSmallLaser
 CLERSmallLaser
 </Aft Equipment>
@@ -321,10 +321,10 @@ SmallCraftBay:8:1
 CargoBay:91509:1
 </transporters>
 
-These denote cargo bays for holding fighters, 'mechs, cargo, etc.
+These denote cargo bays for holding fighters, 'meks, cargo, etc.
 Valid fields include:
 
-MechBay:62:2
+MekBay:62:2
 ASFBay:43:2
 InfantryBay:160:1
 BattleArmorBay:200:1
@@ -373,4 +373,3 @@ Now create your armies!
 
 Guide created by Harold "BATTLEMASTER" N.
 3/1/2011
-

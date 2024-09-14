@@ -8,14 +8,14 @@
 <#if includeFluff>
 <#include "fluff.ftlh">
 </#if>
-  
+
 	<p>
 	<b>Type:</b> ${chassis}<br/>
-	<b>Technology Base:</b> ${techBase}<br/> 
+	<b>Technology Base:</b> ${techBase}<br/>
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-	
+
 	<table>
 	<tr><th>Equipment</th><th/><th>Mass</th></tr>
 	<tr><td>Heat Sinks:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
@@ -31,7 +31,7 @@
 	<tr><td>Turret:</td><td></td><td align="center">${turretMass}</td</tr>
 </#if>
 	</table>
-	
+
 	<#if isOmni>
 	<b>Fixed Equipment</b><br/>
 		<#if fixedTonnage gt 0>
@@ -47,14 +47,14 @@
 			None
 		</#if>
 	</#if>
-	
+
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Tonnage</th></tr>
 		<#list equipment as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.slots}</td><td align="center">${eq.tonnage}</td></tr>
 		</#list>
 	</table>
-	
+
 	<#if quirks??>
 		<p>
 		Features the following design quirks: ${quirks}

@@ -19,19 +19,22 @@
 
 package megamek.client.ui.swing.audio;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
 public class SoundManager implements AudioService {
+    private static final MMLogger logger = MMLogger.create(SoundManager.class);
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final List<Sound> sounds = new ArrayList<>();
@@ -40,8 +43,8 @@ public class SoundManager implements AudioService {
      * Loads the sound files from the paths given in the client settings
      */
     @Override
-    public void loadSoundFiles()  {
-        if(!sounds.isEmpty()) {
+    public void loadSoundFiles() {
+        if (!sounds.isEmpty()) {
             sounds.clear();
         }
 
@@ -64,32 +67,32 @@ public class SoundManager implements AudioService {
 
     /**
      * Starts playback of a sound if it has been loaded
+     *
      * @param id - SoundType enum indicating which sound to play
      */
     @Override
     public void playSound(SoundType id) {
         Sound sound = null;
 
-        switch(id)
-        {
+        switch (id) {
             case BING_CHAT:
-                if(!GUIP.getSoundMuteChat()) {
+                if (!GUIP.getSoundMuteChat()) {
                     sound = sounds.get(0);
                 }
                 break;
             case BING_MY_TURN:
-                if(!GUIP.getSoundMuteMyTurn()) {
+                if (!GUIP.getSoundMuteMyTurn()) {
                     sound = sounds.get(1);
                 }
                 break;
             case BING_OTHERS_TURN:
-                if(!GUIP.getSoundMuteOthersTurn()) {
+                if (!GUIP.getSoundMuteOthersTurn()) {
                     sound = sounds.get(2);
                 }
                 break;
         }
 
-        if(sound != null) {
+        if (sound != null) {
             sound.play();
         }
     }
@@ -99,7 +102,7 @@ public class SoundManager implements AudioService {
      */
     @Override
     public void setVolume() {
-        for (var sound: sounds) {
+        for (var sound : sounds) {
             setVolume(sound);
         }
     }
@@ -112,7 +115,7 @@ public class SoundManager implements AudioService {
         final File file = new File(filename);
 
         if (!file.exists()) {
-            LogManager.getLogger().error(Messages.getString("SoundManager.failedToLoadAudioFile") + " " + filename);
+            logger.error(Messages.getString("SoundManager.failedToLoadAudioFile") + " " + filename);
             return null;
         }
 
@@ -123,7 +126,7 @@ public class SoundManager implements AudioService {
                 return clip;
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("SoundManager was unable to load the sound", ex);
+            logger.error(ex, "SoundManager was unable to load the sound");
             return null;
         }
     }

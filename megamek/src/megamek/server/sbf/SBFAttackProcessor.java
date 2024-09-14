@@ -18,16 +18,15 @@
  */
 package megamek.server.sbf;
 
+import java.util.List;
+
 import megamek.common.actions.EntityAction;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFToHitData;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.List;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
+import megamek.logging.MMLogger;
 
 record SBFAttackProcessor(SBFGameManager gameManager) implements SBFGameManagerHelper {
+    private static final MMLogger logger = MMLogger.create(SBFAttackProcessor.class);
 
     void processAttacks(List<EntityAction> actions, SBFFormation formation) {
         if (!validatePermitted(actions, formation)) {
@@ -43,13 +42,13 @@ record SBFAttackProcessor(SBFGameManager gameManager) implements SBFGameManagerH
 
     private boolean validatePermitted(List<EntityAction> actions, SBFFormation formation) {
         if (!game().getPhase().isFiring()) {
-            LogManager.getLogger().error("Server got attacks packet in wrong phase!");
+            logger.error("Server got attacks packet in wrong phase!");
             return false;
         } else if (formation.isDone()) {
-            LogManager.getLogger().error("Formation already done!");
+            logger.error("Formation already done!");
             return false;
         } else if (SBFToHitData.targetsOfFormation(formation, game()).size() > 2) {
-            getLogger().error("Formation targeting too many targets!");
+            logger.error("Formation targeting too many targets!");
             return false;
         }
 

@@ -89,14 +89,14 @@ public class EntityTest {
     @Test
     public void testCalculateWeight() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
         int expectedWeight, computedWeight;
 
         // Test 1/1
         try {
             f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp  = new MechFileParser(f);
+            mfp  = new MekFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;
             computedWeight = (int) e.getWeight();
@@ -112,16 +112,16 @@ public class EntityTest {
     @Test
     public void testCanon() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
         Vector<String> unitNames = new Vector<>();
         unitNames.add("Exterminator EXT-4A");
-        MechFileParser.setCanonUnitNames(unitNames);
+        MekFileParser.setCanonUnitNames(unitNames);
 
         // Test 1/1
         try {
             f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp  = new MechFileParser(f);
+            mfp  = new MekFileParser(f);
             e = mfp.getEntity();
             assertTrue(e.isCanon());
         } catch (Exception ex) {
@@ -135,15 +135,15 @@ public class EntityTest {
     @Test
     public void testForceCanonicityFailure() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
         Vector<String> unitNames = new Vector<>();
         unitNames.add("Beheadanator BHD-999.666Z");
-        MechFileParser.setCanonUnitNames(unitNames);
+        MekFileParser.setCanonUnitNames(unitNames);
 
         try {
             f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp  = new MechFileParser(f);
+            mfp  = new MekFileParser(f);
             e = mfp.getEntity();
             assertFalse(e.isCanon());
         } catch (Exception ex) {
@@ -158,20 +158,20 @@ public class EntityTest {
     @Test
     public void testCanonUnitInCanonUnitListFile() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
         File oulDir = new File("testresources/megamek/common/units/");
-        MechFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
+        MekFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
 
         try {
             // MTF file check
             f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp  = new MechFileParser(f);
+            mfp  = new MekFileParser(f);
             e = mfp.getEntity();
             assertTrue(e.isCanon());
             // BLK file check
             f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
-            mfp  = new MechFileParser(f);
+            mfp  = new MekFileParser(f);
             e = mfp.getEntity();
             assertTrue(e.isCanon());
         } catch (Exception ex) {
@@ -187,13 +187,13 @@ public class EntityTest {
     @Test
     public void testIsImmobilizedForJump() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
 
         // Test 1/1
         try {
             f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
-            mfp  = new MechFileParser(f);
+            mfp  = new MekFileParser(f);
             e = mfp.getEntity();
             Tank t = (Tank) e;
             Crew c = t.getCrew();

@@ -23,14 +23,19 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.FighterSquadron;
+import megamek.common.Infantry;
+import megamek.common.Mek;
+import megamek.common.ProtoMek;
+import megamek.common.Transporter;
 import megamek.common.equipment.WeaponMounted;
 
 /**
  * This class is for debugging Entity with respect to the internal state of
  * equipment.
  */
-@SuppressWarnings("unused") // for debugging use
 public final class DebugEntity {
 
     /**
@@ -110,10 +115,10 @@ public final class DebugEntity {
                         result.append("[").append(slot).append("] ").append(criticalSlot);
                         if (criticalSlot.getType() == 0) {
                             result.append(" (");
-                            if (entity instanceof Mech) {
-                                result.append(((Mech) entity).getSystemName(criticalSlot.getIndex()));
-                            } else if (entity instanceof Protomech) {
-                                result.append(Protomech.systemNames[criticalSlot.getIndex()]);
+                            if (entity instanceof Mek) {
+                                result.append(((Mek) entity).getSystemName(criticalSlot.getIndex()));
+                            } else if (entity instanceof ProtoMek) {
+                                result.append(ProtoMek.systemNames[criticalSlot.getIndex()]);
                             }
                             result.append(")");
                         }
@@ -135,5 +140,6 @@ public final class DebugEntity {
         return result.toString();
     }
 
-    private DebugEntity() { }
+    private DebugEntity() {
+    }
 }

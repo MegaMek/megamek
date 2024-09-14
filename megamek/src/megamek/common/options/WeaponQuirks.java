@@ -59,7 +59,7 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED, false);
 
     }
-    
+
     //TODO
     //unimplemented
     // ammo feed problem
@@ -71,7 +71,7 @@ public class WeaponQuirks extends AbstractOptions {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     @Override
@@ -121,19 +121,19 @@ public class WeaponQuirks extends AbstractOptions {
         if (!(wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             return false;
         }
-        
+
 /*        if ((wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
             return false;
         }*/
-        
-        if (en instanceof Protomech) {
+
+        if (en instanceof ProtoMek) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return false;
             }
         }
 
-        if (en instanceof Tank || en instanceof BattleArmor || en instanceof Protomech) {
+        if (en instanceof Tank || en instanceof BattleArmor || en instanceof ProtoMek) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
@@ -154,38 +154,38 @@ public class WeaponQuirks extends AbstractOptions {
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)) {
-            if (en instanceof Protomech
+            if (en instanceof ProtoMek
                 || en instanceof Aero
                 || en instanceof GunEmplacement)  {
 
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
-            if ((en instanceof Protomech) || (en instanceof Jumpship)) {
+            if ((en instanceof ProtoMek) || (en instanceof Jumpship)) {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
             if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)) {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
             if (en instanceof Aero) {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
             if (en instanceof Aero) {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             if (en instanceof Jumpship) {
                 return false;

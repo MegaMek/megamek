@@ -44,7 +44,7 @@ public class ISBALaserERMedium extends LaserWeapon {
         cost = 80000;
         shortAV = 5;
         medAV = 5;
-        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         maxRange = RANGE_MED;
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

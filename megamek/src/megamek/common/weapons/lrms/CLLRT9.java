@@ -35,10 +35,10 @@ public class CLLRT9 extends LRTWeapon {
         this.tonnage = 1.8;
         this.criticals = 0;
         this.bv = 95;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+                .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = "231, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

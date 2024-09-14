@@ -45,7 +45,7 @@ public class CLBAMG extends BAMGWeapon {
         bv = 5;
         cost = 5000;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE)
-                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

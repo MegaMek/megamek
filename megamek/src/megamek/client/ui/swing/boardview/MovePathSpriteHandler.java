@@ -23,8 +23,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;
 
-import java.awt.*;
-
 public class MovePathSpriteHandler extends BoardViewSpriteHandler {
 
     public MovePathSpriteHandler(BoardView boardView) {
@@ -40,24 +38,8 @@ public class MovePathSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
 
-        SBFMoveStep previousStep = null;
-
-        // first get the color for the vector
-        Color col = Color.blue;
-
         for (SBFMoveStep step : movePath.getSteps()) {
-//            if ((null != previousStep)
-//                    && ((step.getType() == MovePath.MoveStepType.UP)
-//                    || (step.getType() == MovePath.MoveStepType.DOWN)
-//                    || (step.getType() == MovePath.MoveStepType.DECN))) {
-//                // Mark the previous elevation change sprite hidden
-//                // so that we can draw a new one in it's place without
-//                // having overlap.
-//                currentSprites.get(currentSprites.size() - 1).setHidden(true);
-//            }
-
             currentSprites.add(new SBFStepSprite(boardView, step, movePath));
-            previousStep = step;
         }
 
         boardView.addSprites(currentSprites);

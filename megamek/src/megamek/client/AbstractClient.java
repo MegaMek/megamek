@@ -18,14 +18,33 @@
  */
 package megamek.client;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+
+import javax.swing.SwingUtilities;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Entity;
+import megamek.common.GameLog;
+import megamek.common.InGameObject;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummaryCache;
+import megamek.common.Player;
+import megamek.common.UnitNameTracker;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.force.Force;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -35,17 +54,19 @@ import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
-import javax.swing.*;
-import java.util.*;
-
+/**
+ * AbstractClient that handles basic client features.
+ */
 public abstract class AbstractClient implements IClient {
+    private static final MMLogger logger = MMLogger.create(AbstractClient.class);
 
     // Server connection information
-    protected String name;
     protected AbstractConnection connection;
     protected Thread connThread;
+
+    protected String name;
     protected boolean connected = false;
     protected boolean disconnectFlag = false;
     protected final String host;
@@ -62,7 +83,10 @@ public abstract class AbstractClient implements IClient {
 
     protected final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
-    /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
+    /**
+     * The bots controlled by the local player; maps a bot's name String to a bot's
+     * client.
+     */
     protected Map<String, AbstractClient> bots = new TreeMap<>(String::compareTo);
 
     // Image cache for storing unit icons in as base64 with the unit ID as key
@@ -138,11 +162,11 @@ public abstract class AbstractClient implements IClient {
             try {
                 log.close();
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to close the client game log file.", ex);
+                logger.error(ex, "Failed to close the client game log file.");
             }
         }
 
-        LogManager.getLogger().info(getName() + " client shutdown complete.");
+        logger.info("%s client shutdown complete.", getName());
     }
 
     /** The client has become disconnected from the server */
@@ -165,8 +189,10 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Called to determine whether the game log should be kept.
-     * Default implementation delegates to {@code PreferenceManager.getClientPreferences()}.
+     * Called to determine whether the game log should be kept. Default
+     * implementation delegates to {@link PreferenceManager#getClientPreferences()}.
+     *
+     * @return True/False if the game log is to be kept.
      */
     protected boolean keepGameLog() {
         return PreferenceManager.getClientPreferences().keepGameLog();
@@ -194,6 +220,9 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Broadcast a general chat message from the local player
+     *
+     * @param connId  Connection ID
+     * @param message Message to send
      */
     public void sendServerChat(int connId, String message) {
         send(new Packet(PacketCommand.CHAT, message, connId));
@@ -208,18 +237,26 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Receives player information from the message packet.
+     *
+     * @param packet The packet we received.
      */
-    protected void receivePlayerInfo(Packet c) {
-        int pindex = c.getIntValue(0);
-        Player newPlayer = (Player) c.getObject(1);
+    protected void receivePlayerInfo(Packet packet) {
+        int packetIndex = packet.getIntValue(0);
+
+        Player newPlayer = (Player) packet.getObject(1);
         if (!playerExists(newPlayer.getId())) {
-            getGame().addPlayer(pindex, newPlayer);
+            getGame().addPlayer(packetIndex, newPlayer);
         } else {
-            getGame().setPlayer(pindex, newPlayer);
+            getGame().setPlayer(packetIndex, newPlayer);
         }
     }
 
-    /** Sends the packet to the server, if this client is connected. Otherwise, does nothing. */
+    /**
+     * Sends the packet to the server, if this client is connected. Otherwise, does
+     * nothing.
+     *
+     * @param packet Packet to send over the connection.
+     */
     protected void send(Packet packet) {
         if (connection != null) {
             connection.send(packet);
@@ -239,9 +276,9 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Perform a dump of the current memory usage. This method is useful in tracking performance issues
-     * on various player's systems. You can activate it by changing the "memorydumpon" setting to
-     * "true" in the clientsettings.xml file.
+     * Perform a dump of the current memory usage. This method is useful in tracking
+     * performance issues on various player's systems. You can activate it by
+     * changing the "memorydumpon" setting to "true" in the clientsettings.xml file.
      *
      * @param where A String indicating which part of the game is making this call.
      */
@@ -250,9 +287,9 @@ public abstract class AbstractClient implements IClient {
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            LogManager.getLogger().error("Memory dump " + where
-                    + " ".repeat(Math.max(0, 25 - where.length())) + ": used (" + used
-                    + ") + free (" + free + ") = " + total);
+            String message = String.format("Memory dump %s%s : used(%d) + free(%d) = %d", where,
+                    " ".repeat(Math.max(0, 25 - where.length())), used, free, total);
+            logger.error(message);
         }
     }
 
@@ -287,6 +324,8 @@ public abstract class AbstractClient implements IClient {
      * Before we officially "add" this unit to the game, check and see if this
      * client (player) already has a unit in the game with the same name. If so,
      * add an identifier to the units name.
+     *
+     * @param entity The entity to check if it is duplicated.
      */
     protected synchronized void checkDuplicateNamesDuringAdd(Entity entity) {
         if (entity != null) {
@@ -309,27 +348,28 @@ public abstract class AbstractClient implements IClient {
      * This is used by external programs running megamek
      *
      * @param l
-     *            the game listener.
+     *          the game listener.
      */
-    @SuppressWarnings("unused")
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
     }
 
     /**
-     * This method is the starting point that handles all received Packets. This method should only
-     * be overriden in very special cases such as in Princess to call Precognition.
+     * This method is the starting point that handles all received Packets. This
+     * method should only
+     * be overridden in very special cases such as in Princess to call Precognition.
      *
      * @param packet The packet to handle
      */
     protected void handlePacket(Packet packet) {
         if (packet == null) {
-            LogManager.getLogger().error("Client: Received null packet!");
+            logger.error("Client: Received null packet!");
             return;
         }
         try {
             if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
-                //TODO gather any fired events and fire them only at the end of the packets, possibly only for SBF
+                // TODO gather any fired events and fire them only at the end of the packets,
+                // possibly only for SBF
                 @SuppressWarnings("unchecked")
                 var includedPackets = (List<Packet>) packet.getObject(0);
                 for (Packet includedPacket : includedPackets) {
@@ -339,24 +379,28 @@ public abstract class AbstractClient implements IClient {
                 boolean isHandled = handleGameIndependentPacket(packet);
                 isHandled |= handleGameSpecificPacket(packet);
                 if (!isHandled) {
-                    LogManager.getLogger().error("Unknown PacketCommand of {}", packet.getCommand().name());
+                    String message = String.format("Unknown PacketCommand of %s", packet.getCommand().name());
+                    logger.error(message);
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse Packet command {}", packet.getCommand(), ex);
+            String message = String.format("Failed to parse Packet command of %s", packet.getCommand());
+            logger.error(ex, message);
         }
     }
 
     /**
-     * Handles any Packets that are specific to the game type (TW, AS...). When implementing this,
-     * make sure that this doesn't do duplicate actions with {@link #handleGameIndependentPacket(Packet)}
-     * - but packets may be handled in both methods (all packets traverse both methods).
+     * Handles any Packets that are specific to the game type (TW, AS...). When
+     * implementing this, make sure that this doesn't do duplicate actions with
+     * {@link #handleGameIndependentPacket(Packet)} - but packets may be handled in
+     * both methods (all packets traverse both methods).
      *
-     * When making changes, do not forget to update Precognition which is a Client clone but unfortunately
-     * not a subclass.
+     * When making changes, do not forget to update Precognition which is a Client
+     * clone but unfortunately not a subclass.
      *
      * @param packet The packet to handle
      * @return True when the packet has been handled
+     * @throws Exception If some error occurred.
      */
     protected abstract boolean handleGameSpecificPacket(Packet packet) throws Exception;
 
@@ -380,17 +424,15 @@ public abstract class AbstractClient implements IClient {
                 disconnected();
                 break;
             case SERVER_VERSION_CHECK:
-                send(new Packet(PacketCommand.CLIENT_VERSIONS, MMConstants.VERSION, MegaMek.getMegaMekSHA256()));
+                send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, MegaMek.getMegaMekSHA256()));
                 break;
             case ILLEGAL_CLIENT_VERSION:
                 final Version serverVersion = (Version) packet.getObject(0);
                 final String message = String.format(
                         "Failed to connect to the server at %s because of version differences. " +
                                 "Cannot connect to a server running %s with a %s install.",
-                        getHost(), serverVersion, MMConstants.VERSION);
-                JOptionPane.showMessageDialog(null, message,
-                        "Connection Failure: Version Difference", JOptionPane.ERROR_MESSAGE);
-                LogManager.getLogger().error(message);
+                        getHost(), serverVersion, SuiteConstants.VERSION);
+                logger.error(message, "Connection Failure: Version Difference");
                 disconnected();
                 break;
             case LOCAL_PN:
@@ -452,6 +494,8 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Changes the game phase, and the displays that go along with it.
+     *
+     * @param phase the phase switching from.
      */
     public void changePhase(GamePhase phase) {
         getGame().receivePhase(phase);
@@ -462,20 +506,22 @@ public abstract class AbstractClient implements IClient {
                 break;
             case DEPLOYMENT:
                 // free some memory that's only needed in lounge
-                MechFileParser.dispose();
+                MekFileParser.dispose();
                 // We must do this last, as the name and unit generators can create
                 // a new instance if they are running
-                MechSummaryCache.dispose();
+                MekSummaryCache.dispose();
                 break;
             case LOUNGE:
                 iconCache.clear();
-                MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
-                if (MechSummaryCache.getInstance().isInitialized()) {
+                MekSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
+                if (MekSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();
                 }
                 synchronized (unitNameTracker) {
                     unitNameTracker.clear();
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -485,6 +531,11 @@ public abstract class AbstractClient implements IClient {
         return bots;
     }
 
+    /**
+     * Custom connection Listener for AbstractClient
+     *
+     * @see ConnectionListener
+     */
     protected ConnectionListener connectionListener = new ConnectionListener() {
 
         @Override
@@ -502,6 +553,9 @@ public abstract class AbstractClient implements IClient {
         }
     };
 
+    /**
+     * Custom ConnectionHandler for use with {@link AbstractClient}.
+     */
     protected class ConnectionHandler implements Runnable {
 
         boolean shouldStop = false;

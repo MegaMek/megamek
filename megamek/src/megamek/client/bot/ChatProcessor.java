@@ -1,37 +1,46 @@
 /*
- * MegaMek -
- * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot;
 
-import megamek.client.bot.princess.*;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.ChatCommands;
+import megamek.client.bot.princess.Princess;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
 
 public class ChatProcessor {
+    private final static MMLogger logger = MMLogger.create(ChatProcessor.class);
 
     boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
@@ -70,7 +79,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.getGame().getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersList()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
@@ -104,14 +113,14 @@ public class ChatProcessor {
         }
         String name = st.nextToken().trim();
         // who is the message from?
-        Enumeration<Player> e = bot.getGame().getPlayers();
-        Player p = null;
-        while (e.hasMoreElements()) {
-            p = e.nextElement();
-            if (name.equalsIgnoreCase(p.getName())) {
+        Player player = null;
+        for (Player gamePlayer : bot.getGame().getPlayersList()) {
+            if (name.equalsIgnoreCase(gamePlayer.getName())) {
+                player = gamePlayer;
                 break;
             }
         }
+
         if (name.equals(Server.ORIGIN)) {
             String msg = st.nextToken();
             if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
@@ -120,20 +129,20 @@ public class ChatProcessor {
                 bot.sendChat("/allowGM");
             }
             return;
-        } else if (p == null) {
+        } else if (player == null) {
             return;
         }
+
         additionalPrincessCommands(ge, (Princess) bot);
     }
 
     private Player getPlayer(Game game, String playerName) {
-        Enumeration<Player> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            Player testPlayer = players.nextElement();
-            if (playerName.equalsIgnoreCase(testPlayer.getName())) {
-                return testPlayer;
+        for (Player player : game.getPlayersList()) {
+            if (playerName.equalsIgnoreCase(player.getName())) {
+                return player;
             }
         }
+
         return null;
     }
 
@@ -147,7 +156,7 @@ public class ChatProcessor {
         }
 
         String msg = "Received message: \"" + chatEvent.getMessage() + "\".\tMessage Type: " + chatEvent.getEventName();
-        LogManager.getLogger().info(msg);
+        logger.info(msg);
 
         // First token should be who sent the message.
         String from = tokenizer.nextToken().trim();
@@ -156,7 +165,7 @@ public class ChatProcessor {
         String sentTo = tokenizer.nextToken().trim();
         Player princessPlayer = princess.getLocalPlayer();
         if (princessPlayer == null) {
-            LogManager.getLogger().error("Princess Player is NULL.");
+            logger.error("Princess Player is NULL.");
             return;
         }
         String princessName = princessPlayer.getName(); // Make sure the command is directed at the Princess player.
@@ -181,7 +190,7 @@ public class ChatProcessor {
         if (speakerPlayer == null) {
             speakerPlayer = getPlayer(princess.getGame(), from);
             if (speakerPlayer == null) {
-                LogManager.getLogger().error("speakerPlayer is NULL.");
+                logger.error("speakerPlayer is NULL.");
                 return;
             }
         }
@@ -190,7 +199,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_BEHAVIOR.getAbbreviation())) {
             msg = "Current Behavior: " + princess.getBehaviorSettings().toLog();
             princess.sendChat(msg);
-            LogManager.getLogger().info(msg);
+            logger.info(msg);
         }
 
         // List the available commands.
@@ -234,7 +243,7 @@ public class ChatProcessor {
         if ((princessTeam != speakerTeam) && !speakerPlayer.getGameMaster()) {
             msg = "You are not my boss. [wrong team]";
             princess.sendChat(msg);
-            LogManager.getLogger().warn(msg);
+            logger.warn(msg);
             return;
         }
 
@@ -261,7 +270,7 @@ public class ChatProcessor {
             }
 
             msg = "Received flee order - " + edge;
-            LogManager.getLogger().debug(msg);
+            logger.debug(msg);
             princess.sendChat(msg);
             princess.getBehaviorSettings().setDestinationEdge(edge);
             princess.setFallBack(true, msg);
@@ -272,7 +281,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.BEHAVIOR.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "No new behavior specified.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -280,7 +289,7 @@ public class ChatProcessor {
             BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behaviorName);
             if (newBehavior == null) {
                 msg = "Behavior '" + behaviorName + "' does not exist.";
-                LogManager.getLogger().warn(msg);
+                logger.warn(msg);
                 princess.sendChat(msg);
                 return;
             }
@@ -294,7 +303,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.CAUTION.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : caution : <+/->'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -313,7 +322,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.AVOID.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : avoid : <+/->'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -332,7 +341,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.AGGRESSION.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : aggression : <+/->'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -345,14 +354,14 @@ public class ChatProcessor {
             msg = "Aggression changed from " + currentAggression + " to " +
                     princess.getBehaviorSettings().getHyperAggressionIndex();
             princess.sendChat(msg);
-            princess.resetSpinupThreshold();
+            princess.resetSpinUpThreshold();
         }
 
         // Adjust herd mentality.
         if (command.toLowerCase().startsWith(ChatCommands.HERDING.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : herding : <+/->'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -371,7 +380,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.BRAVERY.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : brave : <+/->'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -390,7 +399,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.TARGET.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid syntax.  Should be 'princessName : target : hexNumber'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -398,7 +407,7 @@ public class ChatProcessor {
             String hex = arguments[0];
             if (hex.length() != 4 || !StringUtil.isPositiveInteger(hex)) {
                 msg = "Invalid hex number: " + hex;
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -408,7 +417,7 @@ public class ChatProcessor {
             Coords coords = new Coords(x, y);
             if (!princess.getGame().getBoard().contains(coords)) {
                 msg = "Board does not have hex " + hex;
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -422,14 +431,14 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.PRIORITIZE.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid syntax.  Should be 'princessName : priority : unitId'.";
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
             String id = arguments[0];
             if (!StringUtil.isPositiveInteger(id)) {
                 msg = "Invalid unit id number: " + id;
-                LogManager.getLogger().warn(msg + "\n" + chatEvent.getMessage());
+                logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -441,9 +450,10 @@ public class ChatProcessor {
 
         // Specify a priority unit target.
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_DISHONORED.getAbbreviation())) {
-            msg = "Dishonored Player ids: " + princess.getHonorUtil().getDishonoredEnemies().stream().map(Object::toString).collect(Collectors.joining(", "));
+            msg = "Dishonored Player ids: " + princess.getHonorUtil().getDishonoredEnemies().stream()
+                    .map(Object::toString).collect(Collectors.joining(", "));
             princess.sendChat(msg);
-            LogManager.getLogger().info(msg);
+            logger.info(msg);
         }
     }
 }

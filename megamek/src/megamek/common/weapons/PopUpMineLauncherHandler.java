@@ -15,22 +15,14 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(PopUpMineLauncherHandler.class);
+
     private static final long serialVersionUID = -6179453250580148965L;
 
     /**
@@ -46,7 +38,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -80,7 +72,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -93,8 +85,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                 toHit.getSideTable(), waa.getAimedLocation(),
                 waa.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
-        if (target instanceof Mech) {
-            hit = new HitData(Mech.LOC_CT);
+        if (target instanceof Mek) {
+            hit = new HitData(Mek.LOC_CT);
         } else { // te instanceof Tank
             hit = new HitData(Tank.LOC_FRONT);
         }
@@ -105,7 +97,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                         entityTarget,
                         hit.getLocation(), hit.isRear(),
                         entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
-                                : 0, 4);
+                                : 0,
+                        4);
 
         // Replace "no effect" results with 4 points of damage.
         if ((specialDamageReport.lastElement()).messageId == 6005) {
@@ -119,14 +112,15 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                             damage,
                             false,
                             ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
+                                    : damageType,
+                            false, false, throughFront,
                             underWater);
         } else {
             // add newline _before_ last report
             try {
                 (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
             } catch (Exception ignored) {
-                LogManager.getLogger().error("No previous report when trying to add newline");
+                logger.error("No previous report when trying to add newline");
             }
         }
         // Report the result
@@ -135,7 +129,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override

@@ -38,14 +38,14 @@ public abstract class NavalACWeapon extends AmmoWeapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC);
         capital = true;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL;
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         int maxRange = rackSize < 35 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
         return (range <= maxRange) ? rackSize : 0;
     }

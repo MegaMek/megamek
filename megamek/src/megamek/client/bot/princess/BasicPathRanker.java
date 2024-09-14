@@ -263,7 +263,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     double calculateKickDamagePotential(Entity enemy, MovePath path, Game game) {
-        if (!(enemy instanceof Mech)) {
+        if (!(enemy instanceof Mek)) {
             return 0.0;
         }
 
@@ -326,7 +326,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     double calculateMyKickDamagePotential(MovePath path, Entity enemy, Game game) {
-        if (!(path.getEntity() instanceof Mech)) {
+        if (!(path.getEntity() instanceof Mek)) {
             return 0.0;
         }
 
@@ -514,7 +514,7 @@ public class BasicPathRanker extends PathRanker {
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
-            if (enemy instanceof MechWarrior) {
+            if (enemy instanceof MekWarrior) {
                 continue;
             }
 
@@ -698,7 +698,7 @@ public class BasicPathRanker extends PathRanker {
                 damageStructure.firingDamage = myDamagePotential;
             }
 
-            if (path.getEntity() instanceof Mech) {
+            if (path.getEntity() instanceof Mek) {
                 PhysicalInfo myKick = new PhysicalInfo(
                         path.getEntity(), new EntityState(path), target,
                         null,
@@ -900,7 +900,7 @@ public class BasicPathRanker extends PathRanker {
         logMsg.append("\n\tCalculating building hazard:  ");
 
         // Protos, BA and Infantry move through buildings freely.
-        if (movingUnit instanceof Protomech || movingUnit instanceof Infantry) {
+        if (movingUnit instanceof ProtoMek || movingUnit instanceof Infantry) {
             logMsg.append("Safe for infantry and protos.");
             return 0;
         }
@@ -1043,7 +1043,7 @@ public class BasicPathRanker extends PathRanker {
         // Most other units are automatically destroyed. UMU-equipped units _may_ not
         // drown immediately,
         // but all other hazards (e.g. breaches, crush depth) still apply.
-        if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech ||
+        if (!(movingUnit instanceof Mek || movingUnit instanceof ProtoMek ||
                 movingUnit instanceof BattleArmor || movingUnit.hasUMU())) {
             logMsg.append("Ill drown (1000).");
             return UNIT_DESTRUCTION_FACTOR;
@@ -1051,14 +1051,14 @@ public class BasicPathRanker extends PathRanker {
 
         MoveStep lastStep = movePath.getLastStep();
         // Unsealed unit will drown.
-        if (movingUnit instanceof Mech
-                && ((Mech) movingUnit).isIndustrial()
+        if (movingUnit instanceof Mek
+                && ((Mek) movingUnit).isIndustrial()
                 && !movingUnit.hasEnvironmentalSealing()
                 && (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
                 && hex.depth() >= 1
                 && step.equals(lastStep)) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
-            logMsg.append(String.format("Industrial mechs drown too (%f).", destructionFactor));
+            logMsg.append(String.format("Industrial Meks drown too (%f).", destructionFactor));
             return destructionFactor;
         }
 
@@ -1067,24 +1067,24 @@ public class BasicPathRanker extends PathRanker {
         // Find the submerged locations.
         Set<Integer> submergedLocations = new HashSet<>();
         for (int loc = 0; loc < movingUnit.locations(); loc++) {
-            if (Mech.LOC_CLEG == loc && !(movingUnit instanceof TripodMech)) {
+            if (Mek.LOC_CLEG == loc && !(movingUnit instanceof TripodMek)) {
                 continue;
             }
 
             if ((hex.depth() >= 2) || step.isProne() ||
-                    !(movingUnit instanceof Mech)) {
+                    !(movingUnit instanceof Mek)) {
                 submergedLocations.add(loc);
                 continue;
             }
 
-            if (Mech.LOC_RLEG == loc || Mech.LOC_LLEG == loc ||
-                    Mech.LOC_CLEG == loc) {
+            if (Mek.LOC_RLEG == loc || Mek.LOC_LLEG == loc ||
+                    Mek.LOC_CLEG == loc) {
                 submergedLocations.add(loc);
                 continue;
             }
 
-            if ((movingUnit instanceof QuadMech) && (Mech.LOC_RARM == loc ||
-                    Mech.LOC_LARM == loc)) {
+            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RARM == loc ||
+                    Mek.LOC_LARM == loc)) {
                 submergedLocations.add(loc);
             }
         }
@@ -1101,15 +1101,15 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            // Mechs or Protomechs having a head or torso breach is deadly.
+            // Meks or ProtoMeks having a head or torso breach is deadly.
             // For other units, any breach is deadly.
             // noinspection ConstantConditions
-            if (Mech.LOC_HEAD == loc ||
-                    Mech.LOC_CT == loc ||
-                    Protomech.LOC_HEAD == loc ||
-                    Protomech.LOC_TORSO == loc ||
-                    (!(movingUnit instanceof Mech) &&
-                            !(movingUnit instanceof Protomech))) {
+            if (Mek.LOC_HEAD == loc ||
+                    Mek.LOC_CT == loc ||
+                    ProtoMek.LOC_HEAD == loc ||
+                    ProtoMek.LOC_TORSO == loc ||
+                    (!(movingUnit instanceof Mek) &&
+                            !(movingUnit instanceof ProtoMek))) {
                 logMsg.append(" breached and critical (1000).");
                 return UNIT_DESTRUCTION_FACTOR;
             }
@@ -1141,8 +1141,8 @@ public class BasicPathRanker extends PathRanker {
             return 25;
         }
 
-        // Protomechs risk location destruction.
-        if (movingUnit instanceof Protomech) {
+        // ProtoMeks risk location destruction.
+        if (movingUnit instanceof ProtoMek) {
             logMsg.append("Possible location destruction (50).");
             return 50;
         }
@@ -1230,9 +1230,9 @@ public class BasicPathRanker extends PathRanker {
             }
         }
 
-        // Non-mech units auto-destroyed.
-        if (!(movingUnit instanceof Mech)) {
-            logMsg.append("Non-mech instant destruction (1000).");
+        // Non-Mek units auto-destroyed.
+        if (!(movingUnit instanceof Mek)) {
+            logMsg.append("Non-Mek instant destruction (1000).");
             return UNIT_DESTRUCTION_FACTOR;
         }
 
@@ -1273,17 +1273,17 @@ public class BasicPathRanker extends PathRanker {
             dmg = 7 * movingUnit.locations();
             exposedArmor = movingUnit.getTotalArmor();
             logMsg.append("everything [prone] (");
-        } else if (movingUnit instanceof BipedMech) {
+        } else if (movingUnit instanceof BipedMek) {
             dmg = 14;
-            exposedArmor = List.of(Mech.LOC_LLEG, Mech.LOC_RLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
+            exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
             logMsg.append("legs (");
-        } else if (movingUnit instanceof TripodMech) {
-            exposedArmor = List.of(Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG).stream()
+        } else if (movingUnit instanceof TripodMek) {
+            exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).stream()
                     .mapToInt(a -> movingUnit.getArmor(a)).sum();
             dmg = 21;
             logMsg.append("legs (");
         } else {
-            exposedArmor = List.of(Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_LARM, Mech.LOC_RARM).stream()
+            exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM).stream()
                     .mapToInt(a -> movingUnit.getArmor(a)).sum();
             dmg = 28;
             logMsg.append("legs (");
@@ -1408,9 +1408,9 @@ public class BasicPathRanker extends PathRanker {
         logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
 
         // Mod is to difficulty, not to PSR roll results
-        // Quicksand makes PSRs an additional +3! Otherwise +1 for Mechs, +2 for all
+        // Quicksand makes PSRs an additional +3! Otherwise +1 for Meks, +2 for all
         // other types
-        int psrMod = (quicksand) ? +3 : (movingUnit instanceof Mech) ? +1 : +2;
+        int psrMod = (quicksand) ? +3 : (movingUnit instanceof Mek) ? +1 : +2;
 
         // Infantry use 4+ check instead of Pilot / Driving skill
         int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
@@ -1443,9 +1443,9 @@ public class BasicPathRanker extends PathRanker {
         int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
         double hazard;
 
-        if (movingUnit instanceof Mech) {
+        if (movingUnit instanceof Mek) {
             // The only hazard is the +1 to PSRs, which are difficult to quantify
-            // Even jumping mechs cannot bog down in mud.
+            // Even jumping Meks cannot bog down in mud.
             hazard = calcBogDownFactor(
                     "Mud", endHex, false, pilotSkill, psrMod, false, logMsg);
         } else {

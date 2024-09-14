@@ -18,14 +18,14 @@
  */
 package megamek.client.ui.swing.util;
 
+import java.awt.Color;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Messages;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
+import megamek.logging.MMLogger;
 
 public enum PlayerColour {
-    //region Enum Declarations
+    // region Enum Declarations
     BLUE(PlayerColour.PLAYERCOLOUR_BLUE),
     RED(PlayerColour.PLAYERCOLOUR_RED),
     GREEN(PlayerColour.PLAYERCOLOUR_GREEN),
@@ -50,10 +50,9 @@ public enum PlayerColour {
     CHARTREUSE(PlayerColour.PLAYERCOLOUR_CHARTREUSE),
     DEEP_PURPLE(PlayerColour.PLAYERCOLOUR_DEEP_PURPLE),
     YELLOW(PlayerColour.PLAYERCOLOUR_YELLOW);
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
-
-    //region Variable Declarations
+    // region Variable Declarations
     private final String text;
     private final String name;
     public static final String PLAYERCOLOUR_BLUE = "PlayerColour.BLUE.text";
@@ -80,18 +79,18 @@ public enum PlayerColour {
     public static final String PLAYERCOLOUR_CHARTREUSE = "PlayerColour.CHARTREUSE.text";
     public static final String PLAYERCOLOUR_DEEP_PURPLE = "PlayerColour.DEEP_PURPLE.text";
     public static final String PLAYERCOLOUR_YELLOW = "PlayerColour.YELLOW.text";
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    //region Constructors
+    // region Constructors
     PlayerColour(String text) {
         this.text = text;
         this.name = Messages.getString(text);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters
+    // region Getters
     public String getText() {
         return this.text;
     }
@@ -124,9 +123,9 @@ public enum PlayerColour {
     public String getHexString(int hex) {
         return Integer.toHexString(getHex() & hex);
     }
-    //endregion Getters
+    // endregion Getters
 
-    //region File I/O
+    // region File I/O
     public static PlayerColour parseFromString(String text) {
         try {
             return valueOf(text);
@@ -154,11 +153,12 @@ public enum PlayerColour {
 
         }
 
-        LogManager.getLogger().error("Unable to parse PlayerColour from text " + text + ", returning BLUE");
+        MMLogger.create(PlayerColour.class)
+                .error("Unable to parse PlayerColour from text " + text + ", returning BLUE");
 
         return BLUE;
     }
-    //endregion File I/O
+    // endregion File I/O
 
     @Override
     public String toString() {

@@ -40,7 +40,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -60,7 +60,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
         if (entityTarget instanceof BattleArmor) {
             if (diceRoll.getIntValue() >= 9) {
                 initHit(entityTarget);
-            
+
                 r = new Report(3706);
                 r.addDesc(entityTarget);
                 // shut down for rest of scenario, so we actually kill it
@@ -69,15 +69,15 @@ public class BATaserHandler extends AmmoWeaponHandler {
                 vPhaseReport.add(r);
                 entityTarget.destroyLocation(hit.getLocation());
                 // Check to see if the squad has been eliminated
-                if (entityTarget.getTransferLocation(hit).getLocation() == 
+                if (entityTarget.getTransferLocation(hit).getLocation() ==
                         Entity.LOC_DESTROYED) {
                     vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                             "all troopers eliminated", false));
                 }
                 done = true;
             }
-        } else if (entityTarget instanceof Mech) {
-            if (((Mech) entityTarget).isIndustrial()) {
+        } else if (entityTarget instanceof Mek) {
+            if (((Mek) entityTarget).isIndustrial()) {
                 if (diceRoll.getIntValue() >= 11) {
                     entityTarget.taserShutdown(3, true);
                 } else {
@@ -100,7 +100,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(1, 3, true);
                 }
             }
-        } else if ((entityTarget instanceof Protomech)
+        } else if ((entityTarget instanceof ProtoMek)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
             if (diceRoll.getIntValue() >= 11) {

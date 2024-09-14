@@ -47,7 +47,7 @@ public class ISBATaser extends AmmoWeapon {
         tonnage = 0.3;
         criticals = 3;
         flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER).or(F_BALLISTIC)
-                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "346, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
@@ -64,7 +64,7 @@ public class ISBATaser extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

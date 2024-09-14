@@ -27,13 +27,16 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package megamek.client.ui.swing.util;
 
-import org.apache.logging.log4j.LogManager;
+import java.awt.Component;
+import java.awt.Container;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
+
+import megamek.logging.MMLogger;
 
 /**
  * A 1.4 file that provides utility methods for
@@ -42,15 +45,16 @@ import java.awt.*;
  * SpringBox and SpringCompactGrid.
  */
 public class SpringUtilities {
+    private static final MMLogger logger = MMLogger.create(SpringUtilities.class);
 
     /**
      * A debugging utility that prints to stdout the component's
      * minimum, preferred, and maximum sizes.
      */
     public static void printSizes(Component c) {
-        System.out.println("minimumSize = " + c.getMinimumSize());
-        System.out.println("preferredSize = " + c.getPreferredSize());
-        System.out.println("maximumSize = " + c.getMaximumSize());
+        logger.debug("minimumSize = " + c.getMinimumSize());
+        logger.debug("preferredSize = " + c.getPreferredSize());
+        logger.debug("maximumSize = " + c.getMaximumSize());
     }
 
     /* Used by makeCompactGrid. */
@@ -68,24 +72,24 @@ public class SpringUtilities {
      * height is similarly determined for each row.
      * The parent is made just big enough to fit them all.
      *
-     * @param rows number of rows
-     * @param cols number of columns
+     * @param rows     number of rows
+     * @param cols     number of columns
      * @param initialX x location to start the grid at
      * @param initialY y location to start the grid at
-     * @param xPad x padding between cells
-     * @param yPad y padding between cells
+     * @param xPad     x padding between cells
+     * @param yPad     y padding between cells
      */
     public static void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY,
-                                       int xPad, int yPad) {
+            int xPad, int yPad) {
         SpringLayout layout;
         try {
             layout = (SpringLayout) parent.getLayout();
         } catch (ClassCastException exc) {
-            LogManager.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", exc);
+            logger.error("The first argument to makeCompactGrid must use SpringLayout.", exc);
             return;
         }
 
-        //Align all cells in each column and make them the same width.
+        // Align all cells in each column and make them the same width.
         Spring x = Spring.constant(initialX);
         for (int c = 0; c < cols; c++) {
             Spring width = Spring.constant(0);
@@ -100,7 +104,7 @@ public class SpringUtilities {
             x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
         }
 
-        //Align all cells in each row and make them the same height.
+        // Align all cells in each row and make them the same height.
         Spring y = Spring.constant(initialY);
         for (int r = 0; r < rows; r++) {
             Spring height = Spring.constant(0);
@@ -115,11 +119,12 @@ public class SpringUtilities {
             y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
         }
 
-        //Set the parent's size.
+        // Set the parent's size.
         SpringLayout.Constraints pCons = layout.getConstraints(parent);
         pCons.setConstraint(SpringLayout.SOUTH, y);
         pCons.setConstraint(SpringLayout.EAST, x);
     }
 
-    private SpringUtilities() { }
+    private SpringUtilities() {
+    }
 }

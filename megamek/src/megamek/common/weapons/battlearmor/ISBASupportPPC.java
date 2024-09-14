@@ -43,7 +43,7 @@ public class ISBASupportPPC extends PPCWeapon {
         waterExtremeRange = 6;
         tonnage = 0.25;
         criticals = 2;
-        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON)
+        flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         bv = 14;
         cost = 14000;

@@ -358,10 +358,10 @@ messages:
     # example to preserve paragraphs
     text: |
       ## Victory
-      
+
       The Second Sword of Light successfully broke through the line of the Davion defenses. They will not
       recover their Prince's body. This will be a heavy blow to their morale.
-      
+
       Yorinaga Kurita commends your performance by not being displeased.
     # Optional: the image is shown to the left of the text. The size is not fixed, but ~ 350 x 350 tends
     # to look good.
@@ -384,7 +384,7 @@ messages:
 
 trigger:
   # The battlefieldcontrol condition is met when only live units of a single team remain on the battlefield,
-  # disregarding MechWarriors, TeleMissiles, GunEmplacements, offboard and undeployed units.
+  # disregarding MekWarriors, TeleMissiles, GunEmplacements, offboard and undeployed units.
   type: battlefieldcontrol
 
 trigger:
@@ -392,7 +392,7 @@ trigger:
   type: killedunits
   # Optional: limit the test to the player's units
   player: Player A
-  # Optional: a list of units to limit the check to. This makes sense most of time to avoid counting MechWarriors
+  # Optional: a list of units to limit the check to. This makes sense most of time to avoid counting MekWarriors
   # or other spawns; when giving unit IDs, the player limitation is redundant
   # It also makes sense to set fixed IDs for all units to make sure this works correctly
   units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]

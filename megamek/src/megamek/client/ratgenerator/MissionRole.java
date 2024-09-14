@@ -26,7 +26,7 @@ import megamek.common.UnitType;
  * @author Neoancient
  */
 public enum MissionRole {
-    /*General combat roles */
+    /* General combat roles */
     RECON, RAIDER, INCENDIARY, EW_SUPPORT, ARTILLERY, MISSILE_ARTILLERY, APC, TRAINING, COMMAND,
     /* Non-combat roles */
     CARGO, SUPPORT, CIVILIAN,
@@ -37,8 +37,8 @@ public enum MissionRole {
     /* ASF roles */
     BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT,
     /* DropShip roles */
-    ASSAULT, MECH_CARRIER, ASF_CARRIER, VEE_CARRIER, INFANTRY_CARRIER, BA_CARRIER, TROOP_CARRIER,
-    TUG, POCKET_WARSHIP, PROTOMECH_CARRIER,
+    ASSAULT, MEK_CARRIER, ASF_CARRIER, VEE_CARRIER, INFANTRY_CARRIER, BA_CARRIER, TROOP_CARRIER,
+    TUG, POCKET_WARSHIP, PROTOMEK_CARRIER,
     /* WarShip roles */
     CORVETTE, DESTROYER, FRIGATE, CRUISER, BATTLESHIP,
     /* Mechanized Battle armor */
@@ -59,7 +59,8 @@ public enum MissionRole {
                         unitType != UnitType.SPACE_STATION &&
                         unitType != UnitType.AERO;
 
-            // EW_SUPPORT role applies to all ground units, VTOL, blue water naval, gun emplacement,
+            // EW_SUPPORT role applies to all ground units, VTOL, blue water naval, gun
+            // emplacement,
             // and small craft. Infantry and large spacecraft are excluded.
             case EW_SUPPORT:
                 return unitType == UnitType.MEK ||
@@ -75,9 +76,10 @@ public enum MissionRole {
             case SPOTTER:
                 return unitType <= UnitType.AEROSPACEFIGHTER;
 
-            // COMMAND role applies to all ground units, VTOLs, blue water naval, conventional
+            // COMMAND role applies to all ground units, VTOLs, blue water naval,
+            // conventional
             // fixed wing aircraft, and small craft. Conventional infantry, battle armor,
-            // ProtoMechs, gun emplacements, and large space vessels are excluded.
+            // ProtoMeks, gun emplacements, and large space vessels are excluded.
             case COMMAND:
                 return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
@@ -86,14 +88,18 @@ public enum MissionRole {
                         unitType == UnitType.CONV_FIGHTER ||
                         unitType == UnitType.SMALL_CRAFT;
 
-            // Fire support roles apply to most types except fixed wing aircraft and spacecraft
+            // Fire support roles apply to most types except fixed wing aircraft and
+            // spacecraft
             case FIRE_SUPPORT:
             case SR_FIRE_SUPPORT:
                 return unitType <= UnitType.GUN_EMPLACEMENT;
 
-            // Artillery roles apply to all ground units, VTOL, blue water naval, gun emplacements,
-            // and conventional fighters. Small craft and DropShips, which are capable of mounting
-            // artillery type weapons, are included.  ProtoMechs cannot carry any existing artillery
+            // Artillery roles apply to all ground units, VTOL, blue water naval, gun
+            // emplacements,
+            // and conventional fighters. Small craft and DropShips, which are capable of
+            // mounting
+            // artillery type weapons, are included. ProtoMeks cannot carry any existing
+            // artillery
             // weapons so are excluded.
             case ARTILLERY:
             case MISSILE_ARTILLERY:
@@ -107,19 +113,22 @@ public enum MissionRole {
                         unitType == UnitType.DROPSHIP;
 
             // URBAN role applies to all ground units. Although infantry are inherently
-            // urban-oriented this role should be reserved for mechanized (wheeled) and others which
+            // urban-oriented this role should be reserved for mechanized (wheeled) and
+            // others which
             // are not optimized for non-urban terrain.
             case URBAN:
                 return unitType <= UnitType.PROTOMEK;
 
-            // Infantry support roles are limited to ground units and VTOLs. This includes infantry
+            // Infantry support roles are limited to ground units and VTOLs. This includes
+            // infantry
             // and battle armor that are armed primarily with anti-infantry weapons.
             case ANTI_INFANTRY:
             case INF_SUPPORT:
                 return unitType <= UnitType.PROTOMEK ||
                         unitType == UnitType.VTOL;
 
-            // APC role is limited to units which can carry conventional infantry. Although blue
+            // APC role is limited to units which can carry conventional infantry. Although
+            // blue
             // water naval units can carry infantry they have limited use so are excluded.
             case APC:
                 return unitType == UnitType.TANK ||
@@ -129,19 +138,20 @@ public enum MissionRole {
             case MECHANIZED_BA:
                 return unitType == UnitType.BATTLE_ARMOR;
 
-            // Both battle armor and ProtoMechs can make use of mag clamps
+            // Both battle armor and ProtoMeks can make use of mag clamps
             case MAG_CLAMP:
                 return unitType == UnitType.BATTLE_ARMOR ||
                         unitType == UnitType.PROTOMEK;
 
-            // MARINE role applies to select battle armor and conventional infantry units equipped
+            // MARINE role applies to select battle armor and conventional infantry units
+            // equipped
             // for space combat
             case MARINE:
                 return unitType == UnitType.BATTLE_ARMOR ||
                         unitType == UnitType.INFANTRY;
 
             // Conventional infantry roles:
-            //    PARATROOPER may be added on non-foot infantry to designate 'airmobile'
+            // PARATROOPER may be added on non-foot infantry to designate 'airmobile'
             case MOUNTAINEER:
             case PARATROOPER:
             case ANTI_MEK:
@@ -149,22 +159,23 @@ public enum MissionRole {
             case XCT:
                 return unitType == UnitType.INFANTRY;
 
-            // CAVALRY applies to Mechs, ground vehicles, and ProtoMechs
+            // CAVALRY applies to Meks, ground vehicles, and ProtoMeks
             case CAVALRY:
                 return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
                         unitType == UnitType.PROTOMEK;
 
-            // RAIDER can be applied to Mechs, ground vehicles, ProtoMechs, and VTOLs
+            // RAIDER can be applied to Meks, ground vehicles, ProtoMeks, and VTOLs
             case RAIDER:
-                return  unitType == UnitType.MEK ||
+                return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
                         unitType == UnitType.PROTOMEK ||
                         unitType == UnitType.VTOL;
 
             // ANTI_AIRCRAFT role applies to all ground units, plus blue water naval and
-            // gun emplacements. Conventional infantry are included (field guns/artillery) but
-            // not battle armor or ProtoMechs.
+            // gun emplacements. Conventional infantry are included (field guns/artillery)
+            // but
+            // not battle armor or ProtoMeks.
             case ANTI_AIRCRAFT:
                 return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
@@ -177,7 +188,8 @@ public enum MissionRole {
             case INCENDIARY:
                 return unitType <= UnitType.PROTOMEK;
 
-            // SPECOPS role applies to Mechs, ground vehicles, VTOLs, conventional infantry, and
+            // SPECOPS role applies to Meks, ground vehicles, VTOLs, conventional infantry,
+            // and
             // battle armor.
             case SPECOPS:
                 return unitType == UnitType.MEK ||
@@ -186,8 +198,10 @@ public enum MissionRole {
                         unitType == UnitType.BATTLE_ARMOR ||
                         unitType == UnitType.VTOL;
 
-            // OMNI applies to all units which are capable of being built to make use of pod-mounted
-            // equipment.  This is primarily used to determine suitability for mechanized battle
+            // OMNI applies to all units which are capable of being built to make use of
+            // pod-mounted
+            // equipment. This is primarily used to determine suitability for mechanized
+            // battle
             // armor but other uses may be added later.
             case OMNI:
                 return unitType == UnitType.MEK ||
@@ -206,7 +220,7 @@ public enum MissionRole {
                         unitType == UnitType.SMALL_CRAFT;
 
             case ESCORT:
-                return  unitType == UnitType.CONV_FIGHTER ||
+                return unitType == UnitType.CONV_FIGHTER ||
                         unitType == UnitType.AEROSPACEFIGHTER ||
                         unitType == UnitType.SMALL_CRAFT;
 
@@ -218,10 +232,10 @@ public enum MissionRole {
                         unitType == UnitType.SMALL_CRAFT;
 
             case VEE_CARRIER:
-            case MECH_CARRIER:
+            case MEK_CARRIER:
             case TUG:
             case POCKET_WARSHIP:
-            case PROTOMECH_CARRIER:
+            case PROTOMEK_CARRIER:
                 return unitType == UnitType.DROPSHIP;
 
             // Mixed units carrier and aerospace carrier roles apply to DropShips and
@@ -238,8 +252,10 @@ public enum MissionRole {
             case BATTLESHIP:
                 return unitType == UnitType.WARSHIP;
 
-            // TRAINING applies to Mechs, ground vehicles, VTOLs, blue water naval, and conventional
-            // fighters. Infantry, battle armor, ProtoMechs, and gun emplacements are excluded.
+            // TRAINING applies to Meks, ground vehicles, VTOLs, blue water naval, and
+            // conventional
+            // fighters. Infantry, battle armor, ProtoMeks, and gun emplacements are
+            // excluded.
             case TRAINING:
                 return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
@@ -247,7 +263,7 @@ public enum MissionRole {
                         unitType == UnitType.NAVAL ||
                         unitType == UnitType.CONV_FIGHTER;
 
-            // ENGINEER applies to Mechs, ground vehicles, and conventional infantry
+            // ENGINEER applies to Meks, ground vehicles, and conventional infantry
             case ENGINEER:
                 return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
@@ -261,18 +277,23 @@ public enum MissionRole {
                         unitType == UnitType.BATTLE_ARMOR ||
                         unitType == UnitType.INFANTRY;
 
-            // SUPPORT applies to all non-combat ground units, VTOLs, blue water naval, conventional
-            // fighters, small craft, and some specialized aerospace. ProtoMechs, gun
+            // SUPPORT applies to all non-combat ground units, VTOLs, blue water naval,
+            // conventional
+            // fighters, small craft, and some specialized aerospace. ProtoMeks, gun
             // emplacements, and WarShips are excluded as these are strictly combat units.
             case SUPPORT:
                 return unitType != UnitType.PROTOMEK &&
                         unitType != UnitType.GUN_EMPLACEMENT &&
                         unitType != UnitType.WARSHIP;
 
-            // CIVILIAN applies to all non-combat vehicles in civilian service, which includes
-            // all ground units, VTOLs, blue water naval, conventional fighters, small craft,
-            // DropShips, JumpShips, space stations, and some specialized aerospace. ProtoMechs,
-            // gun emplacements, aerospace fighters, and WarShips are excluded as they are strictly
+            // CIVILIAN applies to all non-combat vehicles in civilian service, which
+            // includes
+            // all ground units, VTOLs, blue water naval, conventional fighters, small
+            // craft,
+            // DropShips, JumpShips, space stations, and some specialized aerospace.
+            // ProtoMeks,
+            // gun emplacements, aerospace fighters, and WarShips are excluded as they are
+            // strictly
             // combat units.
             case CIVILIAN:
                 return unitType != UnitType.PROTOMEK &&
@@ -280,7 +301,8 @@ public enum MissionRole {
                         unitType != UnitType.AEROSPACEFIGHTER &&
                         unitType != UnitType.WARSHIP;
 
-            // CARGO applies to ground vehicles, VTOLs, blue water naval, conventional fighters,
+            // CARGO applies to ground vehicles, VTOLs, blue water naval, conventional
+            // fighters,
             // small craft, and all large space vessels.
             case CARGO:
                 return unitType == UnitType.TANK ||
@@ -295,19 +317,24 @@ public enum MissionRole {
     }
 
     /**
-     * Adjusts the provided availability rating based on desired roles, the roles the provided
-     * unit has, and other factors such as unit type, movement speed, and weapon types.
+     * Adjusts the provided availability rating based on desired roles, the roles
+     * the provided
+     * unit has, and other factors such as unit type, movement speed, and weapon
+     * types.
+     * 
      * @param avRating     Availability rating as positive number, typically 0-10
-     * @param desiredRoles Roles that are desired or mandatory, use null for general use
+     * @param desiredRoles Roles that are desired or mandatory, use null for general
+     *                     use
      * @param mRec         ModelRecord of specific unit to check
      * @param year         Year to test in
      * @param strictness   Zero or higher, larger values are more restrictive
-     * @return             Modified avRating, higher if better suited for a specific role, lower if
-     *                     less suited, or null if unit is not compatible
+     * @return Modified avRating, higher if better suited for a specific role, lower
+     *         if
+     *         less suited, or null if unit is not compatible
      */
     public static Double adjustAvailabilityByRole(double avRating,
-                                                  Collection<MissionRole> desiredRoles,
-                                                  ModelRecord mRec, int year, int strictness) {
+            Collection<MissionRole> desiredRoles,
+            ModelRecord mRec, int year, int strictness) {
         boolean roleApplied = false;
         if (desiredRoles == null) {
             desiredRoles = new HashSet<>();
@@ -334,7 +361,7 @@ public enum MissionRole {
 
                     // Calling for recon units will exclude non-combat and civilian units.
                     // EW_SUPPORT, SPECOPS, and SPOTTER roles ARE included at a lower priority.
-                    // Additional fast VTOL, hovercraft, and light Mech/ProtoMech units may also
+                    // Additional fast VTOL, hovercraft, and light Mek/ProtoMek units may also
                     // be included if they do not explicitly have the role. All other units are
                     // excluded.
                     case RECON:
@@ -351,12 +378,13 @@ public enum MissionRole {
                         } else if ((mRec.getUnitType() == UnitType.MEK ||
                                 mRec.getUnitType() == UnitType.PROTOMEK) &&
                                 (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ||
-                                        mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) &&
+                                        mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)
+                                &&
                                 (mRec.getSpeed() >= 6)) {
-                            avRating = Math.max(avRating-strong_adjust, 1.0);
+                            avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else if (mRec.getUnitType() == UnitType.VTOL ||
                                 mRec.getMovementMode() == EntityMovementMode.HOVER) {
-                            avRating = Math.max(avRating-strong_adjust, 1.0);
+                            avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else {
                             return null;
                         }
@@ -371,7 +399,8 @@ public enum MissionRole {
                         }
                         break;
 
-                    // Calling for SPOTTER returns units with TAG for precision guided weapons. Other
+                    // Calling for SPOTTER returns units with TAG for precision guided weapons.
+                    // Other
                     // units, primarily infantry and battle armor, may be included at a lower
                     // priority especially in eras where TAG does not exist.
                     case SPOTTER:
@@ -381,7 +410,7 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(SPOTTER)) {
                             avRating += strong_adjust;
                         } else if (mRec.getUnitType() == UnitType.INFANTRY ||
-                                        mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
+                                mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
                             avRating -= medium_adjust;
                         } else if (mRec.getRoles().contains(RECON)) {
                             avRating -= medium_adjust;
@@ -532,7 +561,7 @@ public enum MissionRole {
                         break;
 
                     // Calling for INF_SUPPORT may include units with the APC, FIRE_SUPPORT, or
-                    // ANTI_AIRCRAFT role at a lower priority.  Units with artillery may also be
+                    // ANTI_AIRCRAFT role at a lower priority. Units with artillery may also be
                     // included at lower priority.
                     case INF_SUPPORT:
                         if (mRec.getRoles().contains(SUPPORT) ||
@@ -587,7 +616,7 @@ public enum MissionRole {
                         break;
 
                     // Calling for MAG_CLAMP should only return units equipped with
-                    // mag-clamp equipment, which includes ProtoMechs
+                    // mag-clamp equipment, which includes ProtoMeks
                     case MAG_CLAMP:
                         if (mRec.getRoles().contains(CIVILIAN) &&
                                 !desiredRoles.contains(CIVILIAN)) {
@@ -642,7 +671,7 @@ public enum MissionRole {
 
                     // Calling for ANTI_MEK assumes infantry with the role have the appropriate
                     // equipment. Other non-mechanized infantry may be included at a lower priority.
-                    // Infantry that cannot conduct anti-Mech attacks should be excluded.
+                    // Infantry that cannot conduct anti-Mek attacks should be excluded.
                     case ANTI_MEK:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
@@ -685,7 +714,7 @@ public enum MissionRole {
                         break;
 
                     // Calling for CAVALRY includes fast ground vehicle, and medium or heavy
-                    // Mechs/ProtoMechs, with a lower priority. All other units are excluded.
+                    // Meks/ProtoMeks, with a lower priority. All other units are excluded.
                     case CAVALRY:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
@@ -701,7 +730,7 @@ public enum MissionRole {
                                     mRec.getSpeed() >= 5) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
-                                    mRec.getSpeed() >=5 && mRec.getSpeed() <= 7) {
+                                    mRec.getSpeed() >= 5 && mRec.getSpeed() <= 7) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else {
                                 return null;
@@ -725,7 +754,7 @@ public enum MissionRole {
                         break;
 
                     // Calling for RAIDER includes faster and ammo-independent light, medium, or
-                    // heavy Mechs/ProtoMechs with a lower priority. All other units are excluded.
+                    // heavy Meks/ProtoMeks with a lower priority. All other units are excluded.
                     case RAIDER:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
@@ -738,7 +767,8 @@ public enum MissionRole {
                                 if ((mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
                                         mRec.getSpeed() >= 5) ||
                                         (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
-                                                mRec.getSpeed() >= 5) ||
+                                                mRec.getSpeed() >= 5)
+                                        ||
                                         (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
                                                 mRec.getSpeed() >= 4)) {
                                     if (mRec.getAmmoRequirement() < 0.2) {
@@ -955,13 +985,13 @@ public enum MissionRole {
                         }
                         break;
 
-                    // Calling for MECH_CARRIER may include troop (multi-type) transports at a
+                    // Calling for MEK_CARRIER may include troop (multi-type) transports at a
                     // lower priority. Other units are excluded.
-                    case MECH_CARRIER:
+                    case MEK_CARRIER:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
                         }
-                        if (mRec.getRoles().contains(MECH_CARRIER)) {
+                        if (mRec.getRoles().contains(MEK_CARRIER)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
                             avRating -= min_adjust;
@@ -970,12 +1000,12 @@ public enum MissionRole {
                         }
                         break;
 
-                    // Calling for PROTOMECH_CARRIER will only return units with this role
-                    case PROTOMECH_CARRIER:
+                    // Calling for PROTOMEK_CARRIER will only return units with this role
+                    case PROTOMEK_CARRIER:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
                         }
-                        if (!mRec.getRoles().contains(PROTOMECH_CARRIER)) {
+                        if (!mRec.getRoles().contains(PROTOMEK_CARRIER)) {
                             return null;
                         }
                         break;
@@ -1066,7 +1096,8 @@ public enum MissionRole {
                             if ((desiredRoles.contains(CARGO) &&
                                     mRec.getRoles().contains(CARGO)) ||
                                     (desiredRoles.contains(MINESWEEPER) &&
-                                            mRec.getRoles().contains(MINESWEEPER)) ||
+                                            mRec.getRoles().contains(MINESWEEPER))
+                                    ||
                                     (desiredRoles.contains(MINELAYER) &&
                                             mRec.getRoles().contains(MINELAYER))) {
                                 avRating += light_adjust;
@@ -1121,10 +1152,11 @@ public enum MissionRole {
                         break;
 
                     // Calling for SUPPORT non-combat units may include units with the APC,
-                    // CIVILIAN, CARGO, or ENGINEER roles at a lower priority. This should filter out
+                    // CIVILIAN, CARGO, or ENGINEER roles at a lower priority. This should filter
+                    // out
                     // all combat units, although some of the selected units may have weapons.
                     case SUPPORT:
-                        if (mRec.getRoles().contains(SUPPORT)){
+                        if (mRec.getRoles().contains(SUPPORT)) {
                             avRating += medium_adjust;
                             if (mRec.getRoles().contains(ENGINEER) ||
                                     mRec.getRoles().contains(CARGO)) {
@@ -1182,8 +1214,10 @@ public enum MissionRole {
             }
         }
 
-        // If no roles are required, or a role was requested that was not handled, then revert to
-        // generic checking.  This is much simpler, only checking for a few exclusions otherwise
+        // If no roles are required, or a role was requested that was not handled, then
+        // revert to
+        // generic checking. This is much simpler, only checking for a few exclusions
+        // otherwise
         // using the unmodified availability values.
         if (!roleApplied) {
 
@@ -1213,12 +1247,15 @@ public enum MissionRole {
     }
 
     /**
-     * Specialized units are those which are not intended to see direct combat. This includes
-     * non-combat military units, civilian units, and units only intended to provide long distance
+     * Specialized units are those which are not intended to see direct combat. This
+     * includes
+     * non-combat military units, civilian units, and units only intended to provide
+     * long distance
      * artillery fire.
+     * 
      * @param desiredRoles Roles which this unit should support
      * @param mRec         Unit to check
-     * @return             true, if unit is non-combat and desired roles are combat
+     * @return true, if unit is non-combat and desired roles are combat
      */
     private static boolean isSpecialized(Collection<MissionRole> desiredRoles,
             ModelRecord mRec) {
@@ -1228,18 +1265,22 @@ public enum MissionRole {
             return false;
         }
 
-        // Non-combat SUPPORT role being requested in a combat role is considered specialised
+        // Non-combat SUPPORT role being requested in a combat role is considered
+        // specialised
         if (mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains(SUPPORT)) {
             return true;
         }
 
-        // Civilian units are always considered specialized unless specifically asked for
+        // Civilian units are always considered specialized unless specifically asked
+        // for
         if (mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) {
             return true;
         }
 
-        // Units that only provide artillery are considered specialized enough to be non-combat.
-        // DropShips are excluded from this check as they provide additional functions even if they
+        // Units that only provide artillery are considered specialized enough to be
+        // non-combat.
+        // DropShips are excluded from this check as they provide additional functions
+        // even if they
         // mount artillery.
         return (mRec.getUnitType() != UnitType.DROPSHIP) &&
                 (mRec.getRoles().size() == 1) &&
@@ -1277,7 +1318,7 @@ public enum MissionRole {
             case "missile artillery":
                 return MISSILE_ARTILLERY;
             case "mixed artillery":
-                return  MIXED_ARTILLERY;
+                return MIXED_ARTILLERY;
             case "anti aircraft":
                 return ANTI_AIRCRAFT;
             case "anti infantry":
@@ -1302,8 +1343,8 @@ public enum MissionRole {
                 return TRAINING;
             case "assault":
                 return ASSAULT;
-            case "mech carrier":
-                return MECH_CARRIER;
+            case "mek carrier":
+                return MEK_CARRIER;
             case "asf carrier":
                 return ASF_CARRIER;
             case "vee carrier":
@@ -1312,8 +1353,8 @@ public enum MissionRole {
                 return INFANTRY_CARRIER;
             case "ba carrier":
                 return BA_CARRIER;
-            case "protomech carrier":
-                return PROTOMECH_CARRIER;
+            case "protomek carrier":
+                return PROTOMEK_CARRIER;
             case "tug":
                 return TUG;
             case "troop carrier":

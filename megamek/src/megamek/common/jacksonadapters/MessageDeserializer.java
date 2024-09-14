@@ -18,25 +18,28 @@
  */
 package megamek.common.jacksonadapters;
 
+import static megamek.common.jacksonadapters.MMUReader.requireFields;
+
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
 import megamek.client.ui.MMMarkdownRenderer;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.MessageTriggeredActiveEvent;
 import megamek.server.trigger.Trigger;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveEvent> {
+    private static final MMLogger logger = MMLogger.create(MessageDeserializer.class);
 
     private static final String TEXT = "text";
     private static final String HEADER = "header";
@@ -57,21 +60,26 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
     }
 
     /**
-     * Parses the given map: or maps: node to return a list of one or more boards (the list should
-     * ideally never be empty, an exception being thrown instead). Board files are tried first
-     * in the given basePath; if not found there, MM's data/boards/ is tried instead.
-
+     * Parses the given map: or maps: node to return a list of one or more boards
+     * (the list should
+     * ideally never be empty, an exception being thrown instead). Board files are
+     * tried first
+     * in the given basePath; if not found there, MM's data/boards/ is tried
+     * instead.
+     *
      * @param messageNode a map: or maps: node from a YAML definition file
-     * @param basePath a path to search board files in (e.g. scenario path)
+     * @param basePath    a path to search board files in (e.g. scenario path)
      * @return a list of parsed boards
-     * @throws IllegalArgumentException for illegal node combinations and other errors
+     * @throws IllegalArgumentException for illegal node combinations and other
+     *                                  errors
      */
     public static MessageTriggeredActiveEvent parse(JsonNode messageNode, File basePath) {
         requireFields("MessageScriptedEvent", messageNode, TEXT, HEADER, TRIGGER);
 
         String header = messageNode.get(HEADER).textValue();
         String text = messageNode.get(TEXT).textValue();
-        // By default, expect this to be markdown and render to HTML; this preserves line breaks and paragraphs
+        // By default, expect this to be markdown and render to HTML; this preserves
+        // line breaks and paragraphs
         text = MMMarkdownRenderer.getRenderedHtml(text);
         Trigger trigger = TriggerDeserializer.parseNode(messageNode.get(TRIGGER));
 
@@ -80,7 +88,7 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
             try {
                 image = loadImage(messageNode.get(IMAGE).asText(), basePath);
             } catch (IOException ex) {
-                LogManager.getLogger().warn(ex.getMessage());
+                logger.warn(ex.getMessage());
             }
         }
 

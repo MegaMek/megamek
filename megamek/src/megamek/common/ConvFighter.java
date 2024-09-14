@@ -14,7 +14,6 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ConvFighterCostCalculator;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -81,9 +80,9 @@ public class ConvFighter extends AeroSpaceFighter {
     }
 
     protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+            .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -103,7 +102,8 @@ public class ConvFighter extends AeroSpaceFighter {
     @Override
     public double getPriceMultiplier() {
         double priceMultiplier = 1.0;
-        // omni multiplier (leaving this in for now even though conventional fighters don't make for legal omnis)
+        // omni multiplier (leaving this in for now even though conventional fighters
+        // don't make for legal omnis)
         if (isOmni()) {
             priceMultiplier *= 1.25f;
         }
@@ -134,6 +134,6 @@ public class ConvFighter extends AeroSpaceFighter {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(2.943 + 0.795*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(2.943 + 0.795 * Math.log(getWeight())));
     }
 }

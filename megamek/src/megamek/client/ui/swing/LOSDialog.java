@@ -19,61 +19,76 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Container;
+import java.awt.GridLayout;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.border.EmptyBorder;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-
-/** Allows the player to select the type of entity in the hexes used by the LOS tool. */
+/**
+ * Allows the player to select the type of entity in the hexes used by the LOS
+ * tool.
+ */
 public class LOSDialog extends AbstractButtonDialog {
 
-    private final boolean isMechFirst;
-    private final boolean isMechSecond;
+    private final boolean isMekFirst;
+    private final boolean isMekSecond;
     private final JToggleButton[] toggles1 = new JToggleButton[2];
     private final JToggleButton[] toggles2 = new JToggleButton[2];
 
     /**
-     * Allows the player to select the height of the entities in the hexes used by the LOS tool.
-     * The dialog toggles are preset to the given mechInFirst and mechInSecond.
+     * Allows the player to select the height of the entities in the hexes used by
+     * the LOS tool.
+     * The dialog toggles are preset to the given mekInFirst and mekInSecond.
      */
-    public LOSDialog(JFrame parent, boolean mechInFirst, boolean mechInSecond) {
+    public LOSDialog(JFrame parent, boolean mekInFirst, boolean mekInSecond) {
         super(parent, "LOSDialog", "LOSDialog.title");
-        isMechFirst = mechInFirst;
-        isMechSecond = mechInSecond;
+        isMekFirst = mekInFirst;
+        isMekSecond = mekInSecond;
         initialize();
     }
 
     /**
-     * Returns true if the unit in the first hex should be counted as having Mech height (2 levels) and
+     * Returns true if the unit in the first hex should be counted as having Mek
+     * height (2 levels) and
      * false if it should be counted as having Tank height (1 level).
      */
-    public boolean getMechInFirst() {
+    public boolean getMekInFirst() {
         return toggles1[0].isSelected();
     }
 
     /**
-     * Returns true if the unit in the second hex should be counted as having Mech height (2 levels) and
+     * Returns true if the unit in the second hex should be counted as having Mek
+     * height (2 levels) and
      * false if it should be counted as having Tank height (1 level).
      */
-    public boolean getMechInSecond() {
+    public boolean getMekInSecond() {
         return toggles2[0].isSelected();
     }
 
     @Override
     protected Container createCenterPane() {
-        toggles1[0] = new JToggleButton(Messages.getString("LOSDialog.Mech"));
-        toggles1[1] = new JToggleButton(Messages.getString("LOSDialog.NonMech"));
+        toggles1[0] = new JToggleButton(Messages.getString("LOSDialog.Mek"));
+        toggles1[1] = new JToggleButton(Messages.getString("LOSDialog.NonMek"));
         var firstButtonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         firstButtonsPanel.add(toggles1[0]);
         firstButtonsPanel.add(toggles1[1]);
         var firstLinePanel = new UIUtil.FixedYPanel();
         firstLinePanel.add(firstButtonsPanel);
 
-        toggles2[0] = new JToggleButton(Messages.getString("LOSDialog.Mech"));
-        toggles2[1] = new JToggleButton(Messages.getString("LOSDialog.NonMech"));
+        toggles2[0] = new JToggleButton(Messages.getString("LOSDialog.Mek"));
+        toggles2[1] = new JToggleButton(Messages.getString("LOSDialog.NonMek"));
         var secondButtonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         secondButtonsPanel.add(toggles2[0]);
         secondButtonsPanel.add(toggles2[1]);
@@ -97,10 +112,10 @@ public class LOSDialog extends AbstractButtonDialog {
         centerPanel.add(secondLinePanel);
         centerPanel.add(Box.createVerticalGlue());
 
-        toggles1[0].setSelected(isMechFirst);
-        toggles1[1].setSelected(!isMechFirst);
-        toggles2[0].setSelected(isMechSecond);
-        toggles2[1].setSelected(!isMechSecond);
+        toggles1[0].setSelected(isMekFirst);
+        toggles1[1].setSelected(!isMekFirst);
+        toggles2[0].setSelected(isMekSecond);
+        toggles2[1].setSelected(!isMekSecond);
 
         ButtonGroup radioGroup1 = new ButtonGroup();
         radioGroup1.add(toggles1[0]);

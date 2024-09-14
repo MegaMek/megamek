@@ -52,7 +52,7 @@ public class CLHeavyMGA extends AmmoWeapon {
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to
         // the MGA
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_PROTO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
         cost = 1250;
         String[] modeStrings = { "Linked", "Off" };
@@ -70,7 +70,7 @@ public class CLHeavyMGA extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -78,12 +78,12 @@ public class CLHeavyMGA extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+            TWGameManager manager) {
         return new MGAWeaponHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

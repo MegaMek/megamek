@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
@@ -251,18 +269,18 @@ public class HeatMap {
 
 
     /**
-     * Get all hotspots (positions of high activity) in descending order
+     * Get all hot-spots (positions of high activity) in descending order
      *
      * @return  list of positions, or null if team activity tracker is empty
      */
     public List<Coords> getHotSpots () {
 
-        // If there are no hotspots, return null
+        // If there are no hot-spots, return null
         if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
             return null;
         }
 
-        // Sort the weighted positions by descending hotspot value
+        // Sort the weighted positions by descending hot-spot value
         List<Coords> rankedPositions = new ArrayList<>();
         List<Coords> workingPositions = teamActivity.
                 keySet().
@@ -291,18 +309,18 @@ public class HeatMap {
     }
 
     /**
-     * Get the closest hotspot (position of high activity). May return null if the activity tracker
+     * Get the closest hot-spot (position of high activity). May return null if the activity tracker
      * is empty.
-     * @return  {@link Coords} with nearest hotspot, or null if no valid position
+     * @return  {@link Coords} with nearest hot-spot, or null if no valid position
      */
     public Coords getHotSpot (Coords testPosition, boolean topOnly) {
 
-        // If there are no hotspots, return null
+        // If there are no hot-spots, return null
         if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
             return null;
         }
 
-        // Sort the weighted positions by descending hotspot value
+        // Sort the weighted positions by descending hot-spot value
         List<Coords> rankedPositions = new ArrayList<>();
         List<Coords> workingPositions = teamActivity.
                 keySet().
@@ -331,7 +349,7 @@ public class HeatMap {
             }
         }
 
-        // Get the hotspot closest to the provided position, with the highest value
+        // Get the hot-spot closest to the provided position, with the highest value
         int shortestRange = Integer.MAX_VALUE;
         Coords bestPosition = null;
         for (Coords curPosition : rankedPositions) {
@@ -345,7 +363,7 @@ public class HeatMap {
     }
 
     /**
-     * Get the hotspot (position with high activity) with the highest rating. If multiple hotspots
+     * Get the hotspot (position with high activity) with the highest rating. If multiple hot-spots
      * of equal value are present, any one of them may be returned.
      * @return   map position, may return null
      */

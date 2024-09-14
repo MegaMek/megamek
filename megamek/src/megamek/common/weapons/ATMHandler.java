@@ -25,7 +25,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Infantry;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -151,7 +151,7 @@ public class ATMHandler extends MissileWeaponHandler {
             }
         }
 
-        //Point Defenses engage the missiles still aimed at us
+        // Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
         av = av - counterAV;
 
@@ -196,13 +196,14 @@ public class ATMHandler extends MissileWeaponHandler {
         int missilesHit;
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        Mounted mLinker = weapon.getLinkedBy();
+        Mounted<?> mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
 
-        int nMissilesModifier = getClusterModifiers(atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
+        int nMissilesModifier = getClusterModifiers(
+                atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
 
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
@@ -215,7 +216,7 @@ public class ATMHandler extends MissileWeaponHandler {
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
+                        MiscType.F_ARTEMIS))
                 && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -262,8 +263,8 @@ public class ATMHandler extends MissileWeaponHandler {
                     .getAmmoType() == AmmoType.T_SRM))
                     || ((atype.getAmmoType() == AmmoType.T_MML)
                             && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
-                            .curMode() == null) || !weapon.curMode().equals(
-                            "Indirect")))) {
+                                    .curMode() == null) || !weapon.curMode().equals(
+                                            "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);

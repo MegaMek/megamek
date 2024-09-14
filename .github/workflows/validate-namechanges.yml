@@ -5,15 +5,15 @@ on:
     branches: [master]
     paths:
       # Necessary when the name_changes.txt list is updated or any unit file.
-      - "megamek/data/mechfiles/**.blk"
-      - "megamek/data/mechfiles/**.mtf"
-      - "megamek/data/mechfiles/name_changes.txt"
+      - "megamek/data/mekfiles/**.blk"
+      - "megamek/data/mekfiles/**.mtf"
+      - "megamek/data/mekfiles/name_changes.txt"
   pull_request:
     branches: [master]
     paths:
-      - "megamek/data/mechfiles/**.blk"
-      - "megamek/data/mechfiles/**.mtf"
-      - "megamek/data/mechfiles/name_changes.txt"
+      - "megamek/data/mekfiles/**.blk"
+      - "megamek/data/mekfiles/**.mtf"
+      - "megamek/data/mekfiles/name_changes.txt"
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"

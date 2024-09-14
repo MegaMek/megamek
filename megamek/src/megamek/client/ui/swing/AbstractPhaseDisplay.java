@@ -19,18 +19,21 @@
  */
 package megamek.client.ui.swing;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
+import java.util.Objects;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.widget.MegaMekBorder;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.common.event.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableDelegate;
-
-import java.util.Objects;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 /**
  * This is the base class for all the "displays" which take control during the local player's turn.
@@ -48,7 +51,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     public static final int DONE_BUTTON_WIDTH = 160;
 
-    protected final MegamekButton butDone;
+    protected final MegaMekButton butDone;
 
     private final DistractableDelegate distractableDelegate = new DistractableDelegate();
 
@@ -74,9 +77,9 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     protected AbstractPhaseDisplay(IClientGUI cg, String panelSkin, String buttonSkin) {
         super(panelSkin, 0);
         clientgui = Objects.requireNonNull(cg);
-        setBorder(new MegamekBorder(panelSkin));
+        setBorder(new MegaMekBorder(panelSkin));
 
-        butDone = new MegamekButton("DONE", buttonSkin);
+        butDone = new MegaMekButton("DONE", buttonSkin);
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.addActionListener(e -> done());

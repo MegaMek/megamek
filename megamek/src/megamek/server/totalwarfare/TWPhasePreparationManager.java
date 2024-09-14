@@ -18,21 +18,30 @@
  */
 package megamek.server.totalwarfare;
 
+import java.util.Vector;
+import java.util.stream.Collectors;
+
 import megamek.MegaMek;
-import megamek.common.*;
+import megamek.common.Aero;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.FighterSquadron;
+import megamek.common.GameTurn;
+import megamek.common.IAero;
+import megamek.common.MapSettings;
+import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.EmailService;
+import megamek.logging.MMLogger;
 import megamek.server.DynamicTerrainProcessor;
 import megamek.server.Server;
 import megamek.server.ServerBoardHelper;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 public class TWPhasePreparationManager {
+    private static final MMLogger logger = MMLogger.create(TWPhasePreparationManager.class);
 
     private final TWGameManager gameManager;
 
@@ -68,7 +77,8 @@ public class TWPhasePreparationManager {
                 // roll 'em
                 gameManager.resetActivePlayersDone();
                 gameManager.rollInitiative();
-                //Cockpit command consoles that switched crew on the previous round are ineligible for force
+                // Cockpit command consoles that switched crew on the previous round are
+                // ineligible for force
                 // commander initiative bonus. Now that initiative is rolled, clear the flag.
                 gameManager.getGame().getEntitiesVector().forEach(e -> e.getCrew().resetActedFlag());
 
@@ -92,7 +102,8 @@ public class TWPhasePreparationManager {
 
                 gameManager.bvReports(true);
 
-                LogManager.getLogger().info("Round " + gameManager.getGame().getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
+                logger.info(
+                        "Round " + gameManager.getGame().getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
@@ -192,7 +203,7 @@ public class TWPhasePreparationManager {
                 gameManager.resolveSelfDestruct();
                 gameManager.resolveShutdownCrashes();
                 gameManager.checkForIndustrialEndOfTurn();
-                gameManager.resolveMechWarriorPickUp();
+                gameManager.resolveMekWarriorPickUp();
                 gameManager.resolveVeeINarcPodRemoval();
                 gameManager.resolveFortify();
 
@@ -256,9 +267,11 @@ public class TWPhasePreparationManager {
                         if (currentSI > 0) {
                             a.setSI(currentSI);
                         }
-                        //Fix for #587. MHQ tracks fighters at standard scale and doesn't (currently)
-                        //track squadrons. Squadrons don't save to MUL either, so... only convert armor for JS/WS/SS?
-                        //Do we ever need to save capital fighter armor to the final MUL or entityStatus?
+                        // Fix for #587. MHQ tracks fighters at standard scale and doesn't (currently)
+                        // track squadrons. Squadrons don't save to MUL either, so... only convert armor
+                        // for JS/WS/SS?
+                        // Do we ever need to save capital fighter armor to the final MUL or
+                        // entityStatus?
                         if (!entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
                             scale = 1;
                         }
@@ -277,14 +290,13 @@ public class TWPhasePreparationManager {
                 }
                 EmailService mailer = Server.getServerInstance().getEmailService();
                 if (mailer != null) {
-                    for (var player: mailer.getEmailablePlayers(gameManager.getGame())) {
+                    for (var player : mailer.getEmailablePlayers(gameManager.getGame())) {
                         try {
                             var message = mailer.newReportMessage(
-                                    gameManager.getGame(), gameManager.getvPhaseReport(), player
-                            );
+                                    gameManager.getGame(), gameManager.getvPhaseReport(), player);
                             mailer.send(message);
                         } catch (Exception ex) {
-                            LogManager.getLogger().error("Error sending email" + ex);
+                            logger.error("Error sending email" + ex);
                         }
                     }
                 }

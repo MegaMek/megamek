@@ -72,7 +72,7 @@ public class CrewTest {
 
     @Test
     public void testMekCrewFatigue() {
-        Mech inf = mock(Mech.class);
+        Mek inf = mock(Mek.class);
         Crew crew = getMekCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
         inf.getCrew().setGunnery(5);

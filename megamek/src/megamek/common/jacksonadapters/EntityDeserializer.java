@@ -34,14 +34,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.scenario.Scenario;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -273,7 +265,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     }
 
     private void assignCrits(Entity entity, JsonNode node) {
-        if (!(entity instanceof Mech) || !node.has(CRITS)) {
+        if (!(entity instanceof Mek) || !node.has(CRITS)) {
             // Implementation very different for different entities; for now: Meks
             return;
         }
@@ -288,7 +280,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                         throw new IllegalArgumentException("Invalid slot " + location + ":" + slot + " on " + entity);
                     } else {
                         cs.setHit(true);
-                        if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
+                        if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
                             entity.engineHitsThisPhase++;
                         } else {
                             Mounted<?> mounted = cs.getMount();

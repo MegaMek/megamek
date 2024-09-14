@@ -134,6 +134,7 @@ public class MockGenerators {
 		final Entity mockAero = mock(Aero.class);
 		when(mockAero.isAero()).thenReturn(true);
 		when(mockAero.isAirborne()).thenReturn(true);
+		when(mockAero.isDropShip()).thenReturn(false);
 		when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
 		return generateMockEntity(x, y, mockAero);
 	}

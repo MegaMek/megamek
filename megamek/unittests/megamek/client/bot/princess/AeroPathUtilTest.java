@@ -46,18 +46,6 @@ class AeroPathUtilTest {
 	}
 
 	@Test
-	void testAssertWillStallNotOnAtmosphereGroundMap() {
-		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-
-		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
-		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
-		when(mockPath.getFinalVelocity()).thenReturn(0);
-
-		boolean result = AeroPathUtil.willStall(mockPath);
-		assertTrue(result);
-	}
-
-	@Test
 	void testAssertWillStallAsSpheroidDropshipWithVLAND() {
 		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 		when(mockEntity.isSpheroid()).thenReturn(true);

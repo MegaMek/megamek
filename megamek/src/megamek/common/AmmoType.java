@@ -1665,13 +1665,13 @@ public class AmmoType extends EquipmentType {
                         .setProductionFactions(F_TH)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "371, TO"));
-
+        // Tandem Charge Updated to alight with fluff text in TacOps.
         munitions.add(new MunitionMutator("Tandem-Charge", 2, Munitions.M_TANDEM_CHARGE,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
                         .setTechRating(RATING_E)
-                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                        .setISAdvancement(2757, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
-                        .setISApproximate(true, false, false, false, false)
+                        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E)
+                        .setISAdvancement(2757, DATE_NONE, DATE_NONE, 2784, 3062)
+                        .setISApproximate(true, false, false, true, true)
                         .setPrototypeFactions(F_TH)
                         .setProductionFactions(F_FS).setReintroductionFactions(F_FS)
                         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
@@ -2081,9 +2081,9 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder", 1, Munitions.M_THUNDER,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
                         .setTechRating(RATING_E)
-                        .setAvailability(RATING_D, RATING_X, RATING_D, RATING_D)
+                        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
                         .setISAdvancement(2618, 2620, 2650, 2840, 3052)
-                        .setISApproximate(true, false, false, false, false)
+                        .setISApproximate(true, false, false, true, false)
                         .setPrototypeFactions(F_TH)
                         .setProductionFactions(F_TH).setReintroductionFactions(F_LC, F_FS)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),

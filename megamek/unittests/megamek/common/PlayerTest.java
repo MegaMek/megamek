@@ -24,17 +24,20 @@ import org.junit.jupiter.api.Test;
 
 import megamek.client.ui.swing.util.PlayerColour;
 
-public class PlayerTest {
+class PlayerTest {
 
     @Test
-    public void testGetColorForPlayer() {
-        String playerName = "jefke";
+    void testGetColorForPlayerDefault() {
+        String playerName = "Test Player 1";
         Player player = new Player(0, playerName);
         assertEquals("<B><font color='8080b0'>" + playerName + "</font></B>", player.getColorForPlayer());
+    }
 
-        playerName = "Jeanke";
-        Player player2 = new Player(1, playerName);
-        player2.setColour(PlayerColour.FUCHSIA);
-        assertEquals("<B><font color='f000f0'>" + playerName + "</font></B>", player2.getColorForPlayer());
+    @Test
+    void testGetColorForPlayerFuchsia() {
+        String playerName = "Test Player 2";
+        Player player = new Player(1, playerName);
+        player.setColour(PlayerColour.FUCHSIA);
+        assertEquals("<B><font color='f000f0'>" + playerName + "</font></B>", player.getColorForPlayer());
     }
 }

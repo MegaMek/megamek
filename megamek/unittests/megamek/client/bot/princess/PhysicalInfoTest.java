@@ -47,12 +47,12 @@ import megamek.common.actions.PunchAttackAction;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 2/27/14 3:23 PM
  */
-public class PhysicalInfoTest {
+class PhysicalInfoTest {
 
     private static final double TOLERANCE = 0.0001;
 
     @Test
-    public void testInitDamage() {
+    void testInitDamage() {
         Princess mockPrincess = mock(Princess.class);
 
         FireControl mockFireControl = mock(FireControl.class);

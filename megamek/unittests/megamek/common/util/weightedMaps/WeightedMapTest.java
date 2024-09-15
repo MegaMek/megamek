@@ -18,15 +18,15 @@
  */
 package megamek.common.util.weightedMaps;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class WeightedMapTest {
+import org.junit.jupiter.api.Test;
+
+class WeightedMapTest {
 
     @Test
-    public void testWeightedIntMap() {
+    void testWeightedIntMap() {
         WeightedIntMap<Integer> weightedIntMap = new WeightedIntMap<>();
         int total = 0;
         for (int i = 0; i < 6; i++) {
@@ -49,7 +49,7 @@ public class WeightedMapTest {
     }
 
     @Test
-    public void testWeightedDoubleMap() {
+    void testWeightedDoubleMap() {
         WeightedDoubleMap<Integer> weightedDoubleMap = new WeightedDoubleMap<>();
         // Totals add up to 16.5, so that's the maximum number that can be handled
         weightedDoubleMap.add(0.0d, 0);

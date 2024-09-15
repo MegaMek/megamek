@@ -35,11 +35,11 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.util.BuildingBlock;
 
-public class BLKDropshipFileTest {
+class BLKDropshipFileTest {
 
     /**
-     *  Load a string of BLK-style blocks as an InputStream and create a new DropShip
-     *  produces the desired mix of tech, specifically with Clan tech and IS BA bays.
+     * Load a string of BLK-style blocks as an InputStream and create a new DropShip
+     * produces the desired mix of tech, specifically with Clan tech and IS BA bays.
      */
     private Dropship loadDropshipFromString(String strOfBLK) throws Exception {
 
@@ -59,13 +59,13 @@ public class BLKDropshipFileTest {
     }
 
     /**
-     *  Helper to troll through bays looking for a specific combination.
-     *  Can be extended as needed.
+     * Helper to troll through bays looking for a specific combination.
+     * Can be extended as needed.
      */
-    private boolean confirmBayTypeinBays(Vector<Bay> bays, String type) {
+    private boolean confirmBayTypeInBays(Vector<Bay> bays, String type) {
         boolean found = false;
-        for(Bay b: bays) {
-            switch(type) {
+        for (Bay b : bays) {
+            switch (type) {
                 case "BA_IS":
                     if (b instanceof BattleArmorBay) {
                         found = !b.isClan();
@@ -91,12 +91,12 @@ public class BLKDropshipFileTest {
     }
 
     @BeforeAll
-    public static void initialize() {
+    static void initialize() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testLoadNewFormatDSHasMixedBATechLevels() {
+    void testLoadNewFormatDSHasMixedBATechLevels() {
         boolean parsed = false;
         boolean mixedTech = false;
         boolean ISBACorrect = false;
@@ -109,10 +109,10 @@ public class BLKDropshipFileTest {
             parsed = true;
             mixedTech = ds.isMixedTech() && ds.isClan(); // confirm mixed-tech Clan design
             bays = ds.getTransportBays();
-            ISBACorrect = confirmBayTypeinBays(bays, "BA_IS");
-            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
-            ComStarBACorrect = confirmBayTypeinBays(bays, "BA_CS");
-        } catch (Exception e){
+            ISBACorrect = confirmBayTypeInBays(bays, "BA_IS");
+            ClanBACorrect = confirmBayTypeInBays(bays, "BA_CLAN");
+            ComStarBACorrect = confirmBayTypeInBays(bays, "BA_CS");
+        } catch (Exception e) {
             e.printStackTrace();
         }
         assertTrue(parsed);
@@ -123,7 +123,7 @@ public class BLKDropshipFileTest {
     }
 
     @Test
-    public void testLoadOldFormatClanDSHasClanBATech() {
+    void testLoadOldFormatClanDSHasClanBATech() {
         // We want to verify that the correct tech type is applied to non-mixed
         // Clan BA bays when loading old-format files.
         boolean parsed = false;
@@ -136,12 +136,12 @@ public class BLKDropshipFileTest {
         try {
             Dropship ds = loadDropshipFromString(oldFormatClanDSwithBA);
             parsed = true;
-            mixedTech = ds.isMixedTech();   // confirm not mixed tech
-            clan = ds.isClan();             // confirm clan tech base
+            mixedTech = ds.isMixedTech(); // confirm not mixed tech
+            clan = ds.isClan(); // confirm clan tech base
             bays = ds.getTransportBays();
-            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
-            ISBAExists = confirmBayTypeinBays(bays, "BA_IS");
-        } catch (Exception e){
+            ClanBACorrect = confirmBayTypeInBays(bays, "BA_CLAN");
+            ISBAExists = confirmBayTypeInBays(bays, "BA_IS");
+        } catch (Exception e) {
             e.printStackTrace();
         }
         assertTrue(parsed);
@@ -151,7 +151,7 @@ public class BLKDropshipFileTest {
         assertFalse(ISBAExists);
     }
 
-    //region DS definitions
+    // region DS definitions
     private static final String newFormatDSwithMixedBA = String.join(
             System.lineSeparator(),
             "<BlockVersion>",
@@ -260,8 +260,7 @@ public class BLKDropshipFileTest {
             "</life_boat>",
             "<escape_pod>",
             "0",
-            "</escape_pod>"
-    );
+            "</escape_pod>");
 
     private static final String oldFormatClanDSwithBA = String.join(
             System.lineSeparator(),
@@ -369,7 +368,6 @@ public class BLKDropshipFileTest {
             "</life_boat>",
             "<escape_pod>",
             "0",
-            "</escape_pod>"
-    );
-    //endregion
+            "</escape_pod>");
+    // endregion
 }

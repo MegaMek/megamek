@@ -29,7 +29,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -49,7 +48,7 @@ import megamek.common.event.GameListener;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/6/13 4:24 PM
  */
-public class AddBotUtilTest {
+class AddBotUtilTest {
 
         private static final String HUMAN_PLAYER_NAME = "MockHuman";
         private static final String BOT_PLAYER_NAME = "MockBot";
@@ -60,7 +59,7 @@ public class AddBotUtilTest {
         private AddBotUtil testAddBotUtil;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
                 final Player mockHumanPlayer = mock(Player.class);
                 when(mockHumanPlayer.getName()).thenReturn(HUMAN_PLAYER_NAME);
                 when(mockHumanPlayer.isGhost()).thenReturn(false);
@@ -72,8 +71,6 @@ public class AddBotUtilTest {
                 final Vector<Player> playerVector = new Vector<>(2);
                 playerVector.add(mockHumanPlayer);
                 playerVector.add(mockBotPlayer);
-
-                final Enumeration<Player> playerEnumeration = playerVector.elements();
 
                 mockGame = mock(Game.class);
                 when(mockGame.getPlayersList()).thenReturn(playerVector);
@@ -99,7 +96,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testReplacePlayerWithABot() {
+        void testReplacePlayerWithABot() {
                 // Test most basic version of command.
                 final String actual = testAddBotUtil.addBot(new String[] { "/replacePlayer", BOT_PLAYER_NAME },
                                 mockGame, mockClient.getHost(), mockClient.getPort());
@@ -107,7 +104,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testExplicitlySpecifyingPrincess() {
+        void testExplicitlySpecifyingPrincess() {
                 // Test explicitly specifying Princess.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", BOT_PLAYER_NAME }, mockGame,
@@ -116,7 +113,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testSpecifyingPrincessConfig() {
+        void testSpecifyingPrincessConfig() {
                 // Test specifying the config to be used with Princess.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "-c:BERSERK", "-p:" + BOT_PLAYER_NAME },
@@ -127,7 +124,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testSettingPrincessVerbosityLevel() {
+        void testSettingPrincessVerbosityLevel() {
                 // Test setting the verbosity level for Princess.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "-p:" + BOT_PLAYER_NAME }, mockGame,
@@ -136,7 +133,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testSettingPrincessConfig() {
+        void testSettingPrincessConfig() {
                 // Test setting both config and verbosity for Princess.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "-c:ESCAPE", "-p:" + BOT_PLAYER_NAME },
@@ -147,7 +144,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testReplacingNonGhostPlayer() {
+        void testReplacingNonGhostPlayer() {
                 // Test a non-ghost player.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", HUMAN_PLAYER_NAME }, mockGame,
@@ -156,7 +153,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testReplacingNonExistentPlayer() {
+        void testReplacingNonExistentPlayer() {
                 // Test a non-existent player.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "invalid player" }, mockGame,
@@ -165,7 +162,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testReplaceBotWithInvalidBotName() {
+        void testReplaceBotWithInvalidBotName() {
                 // Test an invalid bot name.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:InvalidBot", BOT_PLAYER_NAME }, mockGame,
@@ -175,7 +172,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testAddPrincessBotWithInvalidConfigName() {
+        void testAddPrincessBotWithInvalidConfigName() {
                 // Test an invalid config name for Princess.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "-c:invalid", "-p:" + BOT_PLAYER_NAME },
@@ -187,7 +184,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testAddPrincessWithMissingDelimiter() {
+        void testAddPrincessWithMissingDelimiter() {
                 // Test leaving out a delimiter.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "-c:ESCAPE", "-p:" + BOT_PLAYER_NAME },
@@ -198,7 +195,7 @@ public class AddBotUtilTest {
         }
 
         @Test
-        public void testAddPrincessWithOtherMissingDelimiter() {
+        void testAddPrincessWithOtherMissingDelimiter() {
                 // Test leaving out a different delimiter.
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:Princess", "ESCAPE", "-p:" + BOT_PLAYER_NAME },

@@ -16,19 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.codeUItilities;
-
-import megamek.codeUtilities.ObjectUtility;
-import megamek.common.Compute;
-import megamek.common.util.sorter.NaturalOrderComparator;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+package megamek.codeUtilities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,10 +25,22 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ObjectUtilityTest {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import megamek.common.Compute;
+import megamek.common.util.sorter.NaturalOrderComparator;
+
+class ObjectUtilityTest {
 
     @Test
-    public void testNonNullTwoArgs() {
+    void testNonNullTwoArgs() {
         final String first = "first";
         final String second = "second";
         assertEquals(first, ObjectUtility.nonNull(first, null));
@@ -50,7 +50,7 @@ public class ObjectUtilityTest {
     }
 
     @Test
-    public void testNonNullManyArgs() {
+    void testNonNullManyArgs() {
         final String first = "first";
         final String second = "second";
         final String third = "third";
@@ -68,7 +68,7 @@ public class ObjectUtilityTest {
     }
 
     @Test
-    public void testCompareNullable() {
+    void testCompareNullable() {
         final NaturalOrderComparator mockNaturalOrderComparator = mock(NaturalOrderComparator.class);
         final String test = "test";
         assertEquals(0, ObjectUtility.compareNullable(null, null, mockNaturalOrderComparator));
@@ -81,7 +81,7 @@ public class ObjectUtilityTest {
     }
 
     @Test
-    public void testGetRandomItemFromCollection() {
+    void testGetRandomItemFromCollection() {
         final Collection<String> nullCollection = null;
         assertNull(ObjectUtility.getRandomItem(nullCollection));
         final Collection<String> collection = new HashSet<>();
@@ -100,7 +100,7 @@ public class ObjectUtilityTest {
     }
 
     @Test
-    public void testGetRandomItemFromList() {
+    void testGetRandomItemFromList() {
         final List<String> nullList = null;
         assertNull(ObjectUtility.getRandomItem(nullList));
         final List<String> list = new ArrayList<>();

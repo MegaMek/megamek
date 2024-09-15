@@ -33,12 +33,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
 import megamek.common.containers.MunitionTree;
 
 class MunitionTreeTest {
@@ -46,11 +42,6 @@ class MunitionTreeTest {
     HashMap<String, String> lrmHash = new HashMap<>();
     HashMap<String, String> acHash = new HashMap<>();
     HashMap<String, String> ltHash = new HashMap<>();
-
-    @BeforeAll
-    static void setUp() {
-
-    }
 
     @Test
     void testInsertImperatives() {
@@ -153,31 +144,6 @@ class MunitionTreeTest {
     }
 
     @Test
-    @Disabled("Runtime is > 20 seconds")
-    void testPopulateAllPossibleUnits() {
-        MekSummaryCache instance = MekSummaryCache.getInstance(true);
-        // Make sure no units failed loading
-        assertTrue(instance.getFailedFiles().isEmpty());
-        // Sanity check to make sure the loader thread didn't fail outright
-        // assertTrue(instance.getAllMeks().length > 100);
-
-        MunitionTree mt = new MunitionTree();
-
-        // Populates one entry for each _specific_ chassis and model; this will not
-        // create an "any" entry for a given Chassis
-        for (MekSummary unit : instance.getAllMeks()) {
-            mt.insertImperative(unit.getFullChassis(), unit.getModel(), "any", "Machine Gun", "Standard");
-        }
-
-        // Random lookups
-        assertEquals(1, mt.getCountOfAmmoForKey("Catapult", "CPLT-C1", "any", "Machine Gun", "Standard"));
-        assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "MAL-1R", "any", "Machine Gun", "Standard"));
-
-        // Don't expect "any" variant lookups to work as they are not defined
-        assertEquals(0, mt.getCountOfAmmoForKey("Demolisher", "any", "any", "Machine Gun", "Standard"));
-    }
-
-    @Test
     void testADFFileFormatReading() throws IOException {
         StringReader sr = new StringReader(
                 String.join("\\\n",
@@ -243,7 +209,7 @@ class MunitionTreeTest {
 
     @Test
     void testRegex() {
-        // I despise Java regexes now.
+        // I despise Java regex's now.
         String regex = "\\w*[ -/\\\\](\\d{1,3})";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher("LRM-15");

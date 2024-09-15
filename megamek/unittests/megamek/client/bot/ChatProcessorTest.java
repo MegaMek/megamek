@@ -19,6 +19,24 @@
  */
 package megamek.client.bot;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
@@ -28,25 +46,13 @@ import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
 
 /**
  * User: Deric "Netzilla" Page (deric dot page at usa dot net)
  * Date: 8/17/13
  * Time: 9:32 AM
  */
-public class ChatProcessorTest {
+class ChatProcessorTest {
 
         private static BotClient mockBotHal;
         private static final Game MOCK_GAME = mock(Game.class);
@@ -57,7 +63,7 @@ public class ChatProcessorTest {
         private static Player mockHumanPlayerKirk;
 
         @BeforeAll
-        public static void beforeAll() {
+        static void beforeAll() {
                 mockHumanPlayerDave = mock(Player.class);
                 mockHumanPlayerKirk = mock(Player.class);
                 mockBotPlayerHal = mock(Player.class);
@@ -108,7 +114,7 @@ public class ChatProcessorTest {
         }
 
         @Test
-        public void testAdditionalPrincessCommands() {
+        void testAdditionalPrincessCommands() {
                 final ChatProcessor testChatProcessor = new ChatProcessor();
 
                 final Board mockBoard = mock(Board.class);
@@ -537,7 +543,7 @@ public class ChatProcessorTest {
 
                 // Test a chat message not directed at Princess.
                 mockChatEvent = mock(GamePlayerChatEvent.class);
-                chatMessage = "MovementDisplay: tried to select non-existant entity: -1";
+                chatMessage = "MovementDisplay: tried to select non-existent entity: -1";
                 when(mockChatEvent.getMessage()).thenReturn(chatMessage);
                 when(mockChatEvent.getPlayer()).thenReturn(null);
                 mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));

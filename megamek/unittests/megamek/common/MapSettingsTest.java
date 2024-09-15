@@ -19,26 +19,31 @@
  */
 package megamek.common;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * @author nderwin
  */
-public class MapSettingsTest {
+class MapSettingsTest {
 
     @TempDir
     private Path tempDirectory;
-    
+
     @Test
-    public void testSaveAndLoad() throws IOException {
+    void testSaveAndLoad() throws IOException {
         assertTrue(Files.isDirectory(tempDirectory));
         final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-map-settings.xml"));
         final File file = createdFilePath.toFile();

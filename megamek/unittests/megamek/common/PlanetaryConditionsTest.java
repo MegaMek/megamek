@@ -34,15 +34,15 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 
-public class PlanetaryConditionsTest {
+class PlanetaryConditionsTest {
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testWhyDoomed() {
+    void testWhyDoomed() {
         Game mockGame = mock(Game.class);
         Board mockBoard = mock(Board.class);
         Hex mockHex = mock(Hex.class);
@@ -183,7 +183,7 @@ public class PlanetaryConditionsTest {
     }
 
     @Test
-    public void testIsExtremeTemperature() {
+    void testIsExtremeTemperature() {
         // Extreme temperature - Heat
         PlanetaryConditions planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setTemperature(51);
@@ -201,7 +201,7 @@ public class PlanetaryConditionsTest {
     }
 
     @Test
-    public void testGetTemperatureDisplayableName() {
+    void testGetTemperatureDisplayableName() {
         // Extreme Heat
         assertEquals("51 (Extreme Heat)", PlanetaryConditions.getTemperatureDisplayableName(51));
 

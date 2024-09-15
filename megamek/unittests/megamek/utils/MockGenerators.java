@@ -107,30 +107,51 @@ public class MockGenerators {
 		return mockEntity;
 	}
 
+	/**
+	 * Generates a BipedMek at specific coordinates Vital statistics:
+	 * - No SPAs
+	 * - Default crew
+	 *
+	 * @param x X Coord on Board
+	 * @param y Y Coord on Board
+	 * @return
+	 */
+
 	public static Entity generateMockBipedMek(int x, int y) {
 		final Entity mockEntity = mock(BipedMek.class);
+		when(mockEntity.getWeight()).thenReturn(50.0);
 		return generateMockEntity(x, y, mockEntity);
 	}
 
+	/**
+	 * Generates an Aerospace Unit at specific coordinates Vital statistics:
+	 *
+	 * @param x X Coord on Board
+	 * @param y Y Coord on Board
+	 * @return
+	 */
 	public static Entity generateMockAerospace(int x, int y) {
 		final Entity mockAero = mock(Aero.class);
 		when(mockAero.isAero()).thenReturn(true);
 		when(mockAero.isAirborne()).thenReturn(true);
+		when(mockAero.isDropShip()).thenReturn(false);
 		when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
 		return generateMockEntity(x, y, mockAero);
 	}
 
 	/**
-	 * Generates a MockPath object when passed a given entity and coords to move to.
+	 * Generates a {@link MockPath} object when passed a given entity and coords to
+	 * move to.
 	 *
-	 * @param x
-	 * @param y
-	 * @param mockEntity
+	 * @param x          Where on the x axis to set the initial point.
+	 * @param y          Where on the y axis to set the initial point.
+	 * @param mockEntity The {@link Entity} to start with
 	 * @return
 	 */
 	public static MovePath generateMockPath(int x, int y, Entity mockEntity) {
 		final MovePath mockPath = mock(MovePath.class);
 		when(mockPath.getEntity()).thenReturn(mockEntity);
+		when(mockPath.clone()).thenReturn(mockPath);
 
 		final Coords mockMyCoords = new Coords(x, y);
 		when(mockPath.getFinalCoords()).thenReturn(mockMyCoords);
@@ -140,10 +161,11 @@ public class MockGenerators {
 	}
 
 	/**
-	 * Generates a MockPath object when passed a given entity and coords to move to.
+	 * Generates a {@link MockPath} object when passed a given entity and coords to
+	 * move to.
 	 *
-	 * @param coords
-	 * @param mockEntity
+	 * @param coords     The defined {@see Coords} to set the entity to.
+	 * @param mockEntity A mocked {@see Entity} to set a path for.
 	 * @return
 	 */
 	public static MovePath generateMockPath(Coords coords, Entity mockEntity) {
@@ -158,15 +180,25 @@ public class MockGenerators {
 	}
 
 	/**
-	 * Mock a Target Roll with a given value.
+	 * Mock a {@link TargetRoll} with a given value.
 	 *
-	 * @param value
-	 * @return
+	 * @param value The value to set the {@link TargetRoll} to.
+	 * @return A mocked {@link TargetRoll} with the requested value and "mock" as
+	 *         description.
 	 */
 	public static TargetRoll mockTargetRoll(int value) {
 		final TargetRoll mockTargetRoll = mock(TargetRoll.class);
 		when(mockTargetRoll.getValue()).thenReturn(value);
 		when(mockTargetRoll.getDesc()).thenReturn("mock");
 		return mockTargetRoll;
+	}
+
+	public static Player mockPlayer() {
+		Player mockPlayer = mock(Player.class);
+		when(mockPlayer.getConstantInitBonus()).thenReturn(0);
+		when(mockPlayer.getTurnInitBonus()).thenReturn(0);
+		when(mockPlayer.getInitCompensationBonus()).thenReturn(0);
+		when(mockPlayer.getCommandBonus()).thenReturn(0);
+		return mockPlayer;
 	}
 }

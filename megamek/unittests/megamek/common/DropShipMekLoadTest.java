@@ -36,10 +36,10 @@ import megamek.common.net.packets.Packet;
 import megamek.common.verifier.TestEntity;
 import megamek.server.totalwarfare.TWGameManager;
 
-public class DropShipMekLoadTest {
+class DropShipMekLoadTest {
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         MekSummaryCache instance = MekSummaryCache.getInstance(true);
         Mek atlas = (Mek) instance.getMek("Atlas AS7-D").loadEntity();
         atlas.setId(2);

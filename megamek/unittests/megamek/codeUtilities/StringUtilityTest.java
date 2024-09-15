@@ -16,19 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.codeUItilities;
-
-import megamek.codeUtilities.StringUtility;
-import org.junit.jupiter.api.Test;
+package megamek.codeUtilities;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class StringUtilityTest {
+import org.junit.jupiter.api.Test;
+
+class StringUtilityTest {
     @Test
-    public void testIsNullOrBlankString() {
+    void testIsNullOrBlankString() {
         final String nullString = null;
         assertTrue(StringUtility.isNullOrBlank(nullString));
         assertTrue(StringUtility.isNullOrBlank(""));
@@ -37,7 +36,7 @@ public class StringUtilityTest {
     }
 
     @Test
-    public void testIsNullOrBlankStringBuilder() {
+    void testIsNullOrBlankStringBuilder() {
         final StringBuilder nullStringBuilder = null;
         assertTrue(StringUtility.isNullOrBlank(nullStringBuilder));
         final StringBuilder mockStringBuilder = mock(StringBuilder.class);

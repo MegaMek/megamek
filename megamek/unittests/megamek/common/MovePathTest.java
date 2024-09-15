@@ -35,10 +35,10 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/23/13 9:16 AM
  */
-public class MovePathTest {
+class MovePathTest {
 
     @Test
-    public void testGetLastStep() {
+    void testGetLastStep() {
         Game mockGame = mock(Game.class);
         PlanetaryConditions mockPC = new PlanetaryConditions();
         mockPC.setGravity(1.0f);

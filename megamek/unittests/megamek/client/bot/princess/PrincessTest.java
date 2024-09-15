@@ -52,7 +52,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/22/13 8:33 AM
  */
-public class PrincessTest {
+class PrincessTest {
 
     static WeaponType mockAC5 = (WeaponType) EquipmentType.get("ISAC5");
     static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
@@ -61,12 +61,12 @@ public class PrincessTest {
     private BasicPathRanker mockPathRanker;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         mockPathRanker = mock(BasicPathRanker.class);
 
         MoraleUtil mockMoralUtil = mock(MoraleUtil.class);
@@ -79,7 +79,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testCalculateAdjustment() {
+    void testCalculateAdjustment() {
         when(mockPrincess.calculateAdjustment(anyString())).thenCallRealMethod();
 
         // Test a +3 adjustment.
@@ -102,7 +102,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testCalculateMoveIndex() {
+    void testCalculateMoveIndex() {
         final double TOLERANCE = 0.001;
         when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class)))
                 .thenCallRealMethod();
@@ -210,7 +210,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testGetEntityToMove() {
+    void testGetEntityToMove() {
         when(mockPrincess.getEntityToMove()).thenCallRealMethod();
         when(mockPrincess.isImmobilized(any(Entity.class))).thenCallRealMethod();
 
@@ -334,7 +334,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testWantsToFallBack() {
+    void testWantsToFallBack() {
         Entity mockMek = mock(BipedMek.class);
         when(mockMek.isCrippled()).thenReturn(false);
 
@@ -371,7 +371,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testIsFallingBack() {
+    void testIsFallingBack() {
         Entity mockMek = mock(BipedMek.class);
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isCrippled(anyBoolean())).thenReturn(false);
@@ -398,7 +398,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testMustFleeBoard() {
+    void testMustFleeBoard() {
         when(mockPrincess.mustFleeBoard(any(Entity.class))).thenCallRealMethod();
 
         // Unit is not yet falling back
@@ -459,7 +459,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testIsImmobilized() {
+    void testIsImmobilized() {
         when(mockPrincess.isImmobilized(any(Entity.class))).thenCallRealMethod();
         when(mockPrincess.getBooleanOption(eq("tacops_careful_stand"))).thenReturn(false);
 
@@ -568,7 +568,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testCalcAmmoForDefaultAggressionLevel() throws megamek.common.LocationFullException {
+    void testCalcAmmoForDefaultAggressionLevel() throws megamek.common.LocationFullException {
         // Expected toHitThresholds should equate to a TN of 12, 11, and 10 for ammo
         // values
         // of 7+, 3+, 1.
@@ -606,7 +606,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testCalcAmmoForMaxAggressionLevel() throws megamek.common.LocationFullException {
+    void testCalcAmmoForMaxAggressionLevel() throws megamek.common.LocationFullException {
         // Expected toHitThresholds should equate to a TN of 12, 12, and 10 for ammo
         // values
         // of 7+, 3+, 1.
@@ -643,7 +643,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testCalcAmmoForZeroAggressionLevel() throws megamek.common.LocationFullException {
+    void testCalcAmmoForZeroAggressionLevel() throws megamek.common.LocationFullException {
         // Expected toHitThresholds should equate to a TN of 10, 9, and 7 for ammo
         // values
         // of 7+, 3+, 1.
@@ -681,7 +681,7 @@ public class PrincessTest {
     }
 
     @Test
-    public void testCalcAmmoForOneShotWeapons() throws megamek.common.LocationFullException {
+    void testCalcAmmoForOneShotWeapons() throws megamek.common.LocationFullException {
         // Set aggression to the lowest level first
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(0);

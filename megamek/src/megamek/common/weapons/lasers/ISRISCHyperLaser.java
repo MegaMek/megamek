@@ -50,6 +50,8 @@ public class ISRISCHyperLaser extends LaserWeapon {
         cost = 750000;
         shortAV = 20;
         medAV = 20;
+        longAV = 20;
+        extAV = 20;
         maxRange = RANGE_EXT;
         explosionDamage = 10;
         explosive = true;
@@ -58,6 +60,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
                 .setISAdvancement(3134, DATE_NONE, DATE_NONE, 3141, DATE_NONE)
+                .setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

@@ -1999,8 +1999,8 @@ public class AmmoType extends EquipmentType {
 
         munitions.add(new MunitionMutator("Follow The Leader", 2, Munitions.M_FOLLOW_THE_LEADER,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_E)
-                        .setAvailability(RATING_F, RATING_X, RATING_E, RATING_X)
-                        .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, 3046)
+                        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+                        .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
                         .setISApproximate(true, false, false, true, false)
                         .setPrototypeFactions(F_TH)
                         .setReintroductionFactions(F_FS, F_LC)

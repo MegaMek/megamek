@@ -253,7 +253,8 @@ public class TestProtoMekTest {
         ProtoMek mockProtoMek = mock(ProtoMek.class);
         when(mockProtoMek.getWeight()).thenReturn(5.0);
         when(mockProtoMek.hasMainGun()).thenReturn(false);
-        when(mockProtoMek.getOArmor(anyInt())).thenAnswer(inv -> TestProtoMek.maxArmorFactor(mockProtoMek, inv.getArgument(0)) + 1);
+        when(mockProtoMek.getOArmor(anyInt()))
+                .thenAnswer(inv -> TestProtoMek.maxArmorFactor(mockProtoMek, inv.getArgument(0)) + 1);
         when(mockProtoMek.locations()).thenReturn(ProtoMek.NUM_PROTOMEK_LOCATIONS);
         TestProtoMek test = new TestProtoMek(mockProtoMek, option, null);
 

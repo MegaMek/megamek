@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Test;
 
 import megamek.common.equipment.WeaponMounted;
 
-public class MekFileParserTest {
+class MekFileParserTest {
 
     @Test
-    public void splitMGsBetweenMGAs() throws LocationFullException {
+    void splitMGsBetweenMGAs() throws LocationFullException {
         Mek mek = new BipedMek();
         WeaponMounted mga1 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
         mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
@@ -45,7 +45,7 @@ public class MekFileParserTest {
     }
 
     @Test
-    public void loadMGAsFromContiguousBlocks() throws LocationFullException {
+    void loadMGAsFromContiguousBlocks() throws LocationFullException {
         Mek mek = new BipedMek();
         WeaponMounted mga1 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISLMGA"), Mek.LOC_LT);
         WeaponMounted mga2 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
@@ -56,7 +56,8 @@ public class MekFileParserTest {
 
         MekFileParser.linkMGAs(mek);
 
-        // The first MGA should load the second and third, and the second MGA only the first
+        // The first MGA should load the second and third, and the second MGA only the
+        // first
         assertEquals(2, mga1.getBayWeapons().size());
         assertEquals(1, mga2.getBayWeapons().size());
         assertFalse(mek.hasLinkedMGA(lastMG));

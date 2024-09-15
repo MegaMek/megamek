@@ -19,9 +19,9 @@
  */
 package megamek.common.options;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,27 +30,27 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * @author nderwin
  */
-public class GameOptionsTest {
-    
+class GameOptionsTest {
+
     private GameOptions testMe;
 
     @TempDir
     private Path tempDirectory;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         testMe = new GameOptions();
     }
-    
+
     @Test
-    public void testSaveAndLoadOptions() throws IOException {
+    void testSaveAndLoadOptions() throws IOException {
         assertTrue(Files.isDirectory(tempDirectory));
         final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-game-options.xml"));
         final File file = createdFilePath.toFile();
@@ -60,7 +60,7 @@ public class GameOptionsTest {
         int count = 0;
         while (opts.hasMoreElements()) {
             IOption io = opts.nextElement();
-            
+
             switch (io.getType()) {
                 case IOption.STRING:
                 case IOption.CHOICE:
@@ -68,7 +68,7 @@ public class GameOptionsTest {
                     break;
 
                 case IOption.BOOLEAN:
-                    if (count%2==0) {
+                    if (count % 2 == 0) {
                         io.setValue(Boolean.TRUE);
                     } else {
                         io.setValue(Boolean.FALSE);
@@ -83,22 +83,22 @@ public class GameOptionsTest {
                     io.setValue(Float.valueOf("" + count));
                     break;
             }
-            
+
             options.add(io);
             count++;
         }
-        
+
         GameOptions.saveOptions(options, file.getAbsolutePath());
-        
+
         assertTrue(file.exists());
         assertTrue(file.length() > 0);
-        
+
         testMe.loadOptions(file, true);
         opts = testMe.getOptions();
         count = 0;
         while (opts.hasMoreElements()) {
             IOption io = opts.nextElement();
-            
+
             switch (io.getType()) {
                 case IOption.STRING:
                 case IOption.CHOICE:
@@ -116,7 +116,7 @@ public class GameOptionsTest {
                     assertEquals(Float.parseFloat("" + count), io.floatValue(), 0.0f);
                     break;
             }
-            
+
             count++;
         }
     }

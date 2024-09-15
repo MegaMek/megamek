@@ -18,14 +18,6 @@
  */
 package megamek.common;
 
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.EnumSet;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,11 +25,20 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.EnumSet;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
+
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 9/21/13 8:13 AM
  */
-public class AmmoTypeTest {
+class AmmoTypeTest {
     static WeaponType mockAC5 = mock(WeaponType.class);
     static AmmoType mockAC5AmmoType = mock(AmmoType.class);
     static AmmoMounted mockAmmoAC5 = mock(AmmoMounted.class);
@@ -59,7 +60,7 @@ public class AmmoTypeTest {
     static MiscMounted mockNotAmmo = mock(MiscMounted.class);
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         when(mockAC5.getAmmoType()).thenReturn(AmmoType.T_AC);
         when(mockAC5.getRackSize()).thenReturn(5);
         when(mockPPC.getAmmoType()).thenReturn(AmmoType.T_NA);
@@ -102,7 +103,7 @@ public class AmmoTypeTest {
     }
 
     @Test
-    public void testIsAmmoValid() {
+    void testIsAmmoValid() {
         // Test ammo that matches weapon.
         assertTrue(AmmoType.isAmmoValid(mockAmmoAC5, mockAC5));
         assertTrue(AmmoType.isAmmoValid(mockAmmoSrm4, mockSRM4));
@@ -128,7 +129,7 @@ public class AmmoTypeTest {
     }
 
     @Test
-    public void testCanSwitchToAmmo() {
+    void testCanSwitchToAmmo() {
         WeaponMounted mockWeapon = mock(WeaponMounted.class);
         when(mockWeapon.getLinkedAmmo()).thenReturn(mockAmmoSrm4);
 

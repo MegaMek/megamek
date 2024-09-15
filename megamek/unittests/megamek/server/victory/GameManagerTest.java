@@ -39,13 +39,12 @@ import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.server.totalwarfare.TWGameManager;
 
-public class GameManagerTest {
+class GameManagerTest {
 
     protected Game createMockedGame() {
         Game testGame = mock(Game.class);
         Forces testForces = new Forces(testGame);
         when(testGame.getGameListeners()).thenReturn(new Vector<>());
-        when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
         when(testGame.getEntitiesVector()).thenReturn(Collections.emptyList());
         when(testGame.getPlayersList()).thenReturn(Collections.emptyList());
         when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
@@ -56,7 +55,7 @@ public class GameManagerTest {
     }
 
     @Test
-    public void testVictory() {
+    void testVictory() {
         TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
@@ -77,7 +76,7 @@ public class GameManagerTest {
     }
 
     @Test
-    public void testVictoryDrawReport() {
+    void testVictoryDrawReport() {
         TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
         Game testGame = createMockedGame();
@@ -90,7 +89,7 @@ public class GameManagerTest {
     }
 
     @Test
-    public void testVictoryFalseReport() {
+    void testVictoryFalseReport() {
         TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
@@ -102,7 +101,7 @@ public class GameManagerTest {
     }
 
     @Test
-    public void testCancelVictory() {
+    void testCancelVictory() {
         TWGameManager gameManager = new TWGameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
@@ -115,7 +114,7 @@ public class GameManagerTest {
     }
 
     @Test
-    public void testVictoryWinReports() {
+    void testVictoryWinReports() {
         TWGameManager gameManager = new TWGameManager();
 
         int winner = 1;

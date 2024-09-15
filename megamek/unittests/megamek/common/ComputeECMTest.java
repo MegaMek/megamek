@@ -19,33 +19,38 @@
  */
 package megamek.common;
 
-import megamek.common.options.GameOptions;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Vector;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.options.GameOptions;
+
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/3/13 8:48 AM
  */
-public class ComputeECMTest {
+class ComputeECMTest {
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testEntityGetECMInfo() {
+    void testEntityGetECMInfo() {
         // Mock Player
         Player mockPlayer = mock(Player.class);
 
@@ -71,7 +76,7 @@ public class ComputeECMTest {
 
         try {
             f = new File("data/mekfiles/meks/3039u/Archer ARC-2R.mtf");
-            mfp  = new MekFileParser(f);
+            mfp = new MekFileParser(f);
             archer = mfp.getEntity();
         } catch (Exception exc) {
             fail(exc.getMessage());
@@ -106,8 +111,8 @@ public class ComputeECMTest {
         assertNull(eccmInfo);
 
         // Change mode from ECM to ECCM
-        Mounted ecm = null;
-        for (Mounted m : archer.getMisc()) {
+        Mounted<?> ecm = null;
+        for (Mounted<?> m : archer.getMisc()) {
             if (m.getType().equals(eType)) {
                 ecm = m;
             }
@@ -115,7 +120,7 @@ public class ComputeECMTest {
         assertNotNull(ecm);
         int rv = ecm.setMode("ECCM");
         assertEquals(1, rv);
-        // Need to update the round  to make the mode switch happen
+        // Need to update the round to make the mode switch happen
         archer.newRound(1);
 
         ECMInfo testInfoECCM = new ECMInfo(6, pos, mockPlayer, 0, 0);
@@ -150,7 +155,7 @@ public class ComputeECMTest {
         assertEquals(testInfoECCM, eccmInfo);
 
         // Add a second Angel ECM (adding a second Angel ECM shouldn't have
-        //  any effect)
+        // any effect)
         try {
             archer.addEquipment(eType, Mek.LOC_LARM);
         } catch (LocationFullException e) {
@@ -163,7 +168,7 @@ public class ComputeECMTest {
 
         archer.setGameOptions();
         ecm = null;
-        for (Mounted m : archer.getMisc()) {
+        for (Mounted<?> m : archer.getMisc()) {
             if (m.getType().equals(eType)) {
                 ecm = m;
             }
@@ -171,7 +176,7 @@ public class ComputeECMTest {
         assertNotNull(ecm);
         rv = ecm.setMode("ECM & ECCM");
         assertEquals(2, rv);
-        // Need to update the round  to make the mode switch happen
+        // Need to update the round to make the mode switch happen
         archer.newRound(2);
 
         ecmInfo = archer.getECMInfo();
@@ -181,17 +186,18 @@ public class ComputeECMTest {
     }
 
     /**
-     * Basic tests for ECM on ground maps, includes single enemy single ally single hex.
+     * Basic tests for ECM on ground maps, includes single enemy single ally single
+     * hex.
      */
     @Test
-    public void testBasicECM() {
+    void testBasicECM() {
         // Create a player
-        Player mockPlayer =  mock(Player.class);
+        Player mockPlayer = mock(Player.class);
         when(mockPlayer.isEnemyOf(mockPlayer)).thenReturn(false);
         when(mockPlayer.getName()).thenReturn("MockPlayer");
 
         // Create an enemy player
-        Player mockEnemy =  mock(Player.class);
+        Player mockEnemy = mock(Player.class);
         when(mockEnemy.isEnemyOf(mockEnemy)).thenReturn(false);
         when(mockEnemy.getName()).thenReturn("MockEnemy");
         when(mockPlayer.isEnemyOf(mockEnemy)).thenReturn(true);
@@ -247,8 +253,8 @@ public class ComputeECMTest {
         when(ae.getECMInfo()).thenReturn(null);
 
         // Basic ECM Test
-        //  Enemy has ECM, Player has no ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has no ECM
+        // Should be affected by ECM, no Angel, no ECCM
         boolean result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertTrue(result);
         result = ComputeECM.isAffectedByAngelECM(ae, aePos, aePos);
@@ -257,8 +263,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic ECM for Player
-        //  Enemy has ECM, Player has ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has ECM
+        // Should be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertTrue(result);
@@ -268,8 +274,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECM for Player
-        //  Enemy has ECM, Player has Angel ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has Angel ECM
+        // Should be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertTrue(result);
@@ -279,8 +285,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic ECCM for Player
-        //  Enemy has ECM, Player has ECCM
-        //  Should not be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has ECCM
+        // Should not be affected by ECM, no Angel, no ECCM
         when(ae.getECCMInfo()).thenReturn(aeECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertFalse(result);
@@ -290,8 +296,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECCM for Player
-        //  Enemy has ECM, Player has Angel ECCM
-        //  Should not be affected by ECM, no Angel, yes ECCM
+        // Enemy has ECM, Player has Angel ECCM
+        // Should not be affected by ECM, no Angel, yes ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         when(ae.getECCMInfo()).thenReturn(aeAngelECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
@@ -329,8 +335,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECM for Player
-        //  Enemy has Angel ECM, Player has ECM
-        //  Should be affected by ECM, Angel, no ECCM
+        // Enemy has Angel ECM, Player has ECM
+        // Should be affected by ECM, Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertTrue(result);
@@ -340,8 +346,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECM for Player
-        //  Enemy has Angel ECM, Player has Angel ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has Angel ECM, Player has Angel ECM
+        // Should be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertTrue(result);
@@ -351,8 +357,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic ECCM for Player
-        //  Enemy has Angel ECM, Player has ECCM
-        //  Should be affected by ECM, Angel, no ECCM
+        // Enemy has Angel ECM, Player has ECCM
+        // Should be affected by ECM, Angel, no ECCM
         when(ae.getECCMInfo()).thenReturn(aeECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
         assertTrue(result);
@@ -362,8 +368,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECCM for Player
-        //  Enemy has Angel ECM, Player has Angel ECCM
-        //  Should not be affected by ECM, no Angel, no ECCM
+        // Enemy has Angel ECM, Player has Angel ECCM
+        // Should not be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         when(ae.getECCMInfo()).thenReturn(aeAngelECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
@@ -414,17 +420,18 @@ public class ComputeECMTest {
     }
 
     /**
-     * Basic tests for ECM on ground maps, includes single enemy single ally multiple hexes.
+     * Basic tests for ECM on ground maps, includes single enemy single ally
+     * multiple hexes.
      */
     @Test
-    public void testBasicECMMultiHex() {
+    void testBasicECMMultiHex() {
         // Create a player
-        Player mockPlayer =  mock(Player.class);
+        Player mockPlayer = mock(Player.class);
         when(mockPlayer.isEnemyOf(mockPlayer)).thenReturn(false);
         when(mockPlayer.getName()).thenReturn("MockPlayer");
 
         // Create an enemy player
-        Player mockEnemy =  mock(Player.class);
+        Player mockEnemy = mock(Player.class);
         when(mockEnemy.isEnemyOf(mockEnemy)).thenReturn(false);
         when(mockEnemy.getName()).thenReturn("MockEnemy");
         when(mockPlayer.isEnemyOf(mockEnemy)).thenReturn(true);
@@ -482,8 +489,8 @@ public class ComputeECMTest {
         Coords targetPos = new Coords(3, 20);
 
         // Basic ECM Test
-        //  Enemy has ECM, Player has no ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has no ECM
+        // Should be affected by ECM, no Angel, no ECCM
         boolean result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertTrue(result);
         result = ComputeECM.isAffectedByAngelECM(ae, aePos, targetPos);
@@ -492,8 +499,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic ECM for Player
-        //  Enemy has ECM, Player has ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has ECM
+        // Should be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertTrue(result);
@@ -503,8 +510,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECM for Player
-        //  Enemy has ECM, Player has Angel ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has Angel ECM
+        // Should be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertTrue(result);
@@ -514,8 +521,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic ECCM for Player
-        //  Enemy has ECM, Player has ECCM
-        //  Should not be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has ECCM
+        // Should not be affected by ECM, no Angel, no ECCM
         when(ae.getECCMInfo()).thenReturn(aeECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertFalse(result);
@@ -525,8 +532,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECCM for Player
-        //  Enemy has ECM, Player has Angel ECCM
-        //  Should not be affected by ECM, no Angel, yes ECCM
+        // Enemy has ECM, Player has Angel ECCM
+        // Should not be affected by ECM, no Angel, yes ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         when(ae.getECCMInfo()).thenReturn(aeAngelECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
@@ -564,8 +571,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECM for Player
-        //  Enemy has Angel ECM, Player has ECM
-        //  Should be affected by ECM, Angel, no ECCM
+        // Enemy has Angel ECM, Player has ECM
+        // Should be affected by ECM, Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertTrue(result);
@@ -575,8 +582,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECM for Player
-        //  Enemy has Angel ECM, Player has Angel ECM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has Angel ECM, Player has Angel ECM
+        // Should be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertTrue(result);
@@ -586,8 +593,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic ECCM for Player
-        //  Enemy has Angel ECM, Player has ECCM
-        //  Should be affected by ECM, Angel, no ECCM
+        // Enemy has Angel ECM, Player has ECCM
+        // Should be affected by ECM, Angel, no ECCM
         when(ae.getECCMInfo()).thenReturn(aeECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
         assertTrue(result);
@@ -597,8 +604,8 @@ public class ComputeECMTest {
         assertFalse(result);
 
         // Basic Angel ECCM for Player
-        //  Enemy has Angel ECM, Player has Angel ECCM
-        //  Should not be affected by ECM, no Angel, no ECCM
+        // Enemy has Angel ECM, Player has Angel ECCM
+        // Should not be affected by ECM, no Angel, no ECCM
         when(ae.getECMInfo()).thenReturn(aeAngelECM);
         when(ae.getECCMInfo()).thenReturn(aeAngelECCM);
         result = ComputeECM.isAffectedByECM(ae, aePos, targetPos);
@@ -634,8 +641,8 @@ public class ComputeECMTest {
 
         // Test whether ECCM range is working properly, on account of bug #4577
         // Basic ECCM for Player
-        //  Enemy has ECM, Player has ECCM, Enemy ECM outside range of ECCM
-        //  Should be affected by ECM, no Angel, no ECCM
+        // Enemy has ECM, Player has ECCM, Enemy ECM outside range of ECCM
+        // Should be affected by ECM, no Angel, no ECCM
         entitiesVector = new Vector<>();
         Entity enemy1 = mock(Mek.class);
         Coords ecm1Pos = new Coords(14, 14);
@@ -661,7 +668,7 @@ public class ComputeECMTest {
 
     /**
      * Creates a single enemy with basic ECM owned by the supplied owner and
-     * returning the supplied game.  Other enemies are created without ECM.
+     * returning the supplied game. Other enemies are created without ECM.
      *
      * @param owner
      * @param mockGame

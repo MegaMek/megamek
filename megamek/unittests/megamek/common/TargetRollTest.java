@@ -18,15 +18,18 @@
  */
 package megamek.common;
 
-import megamek.common.options.GameOptions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import megamek.common.options.GameOptions;
 
-public class TargetRollTest {
+class TargetRollTest {
 
     @Test
-    public void removeAutomaticTest() {
+    void removeAutomaticTest() {
         TargetRoll roll = basicTargetRoll();
         roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "mod");
         roll.addModifier(TargetRoll.AUTOMATIC_FAIL, "mod");
@@ -51,7 +54,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void needsRollTest() {
+    void needsRollTest() {
         TargetRoll roll = basicTargetRoll();
         assertTrue(roll.needsRoll());
         roll.addModifier(TargetRoll.IMPOSSIBLE, "mod");
@@ -80,7 +83,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void impossibleTest() {
+    void impossibleTest() {
         TargetRoll roll = new TargetRoll(TargetRoll.IMPOSSIBLE, "inconceivable");
         assertEquals(TargetRoll.IMPOSSIBLE, roll.getValue());
         assertEquals("inconceivable", roll.getDesc());
@@ -92,7 +95,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void automaticFailureTest() {
+    void automaticFailureTest() {
         TargetRoll roll = new TargetRoll(TargetRoll.AUTOMATIC_FAIL, "inconceivable");
         assertEquals(TargetRoll.AUTOMATIC_FAIL, roll.getValue());
         assertEquals("inconceivable", roll.getDesc());
@@ -104,7 +107,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void automaticSuccessTest() {
+    void automaticSuccessTest() {
         TargetRoll roll = new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, "great success");
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, roll.getValue());
         assertEquals("great success", roll.getDesc());
@@ -116,7 +119,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void checkFalseTest() {
+    void checkFalseTest() {
         TargetRoll roll = new TargetRoll(TargetRoll.CHECK_FALSE, "check one, check one two");
         assertEquals(TargetRoll.CHECK_FALSE, roll.getValue());
         assertEquals("check one, check one two", roll.getDesc());
@@ -128,7 +131,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void checkFalseSupersedesTest() {
+    void checkFalseSupersedesTest() {
         TargetRoll roll = basicTargetRoll();
         roll.addModifier(TargetRoll.IMPOSSIBLE, "mod");
         roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "mod");
@@ -147,7 +150,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void getDescNegativeFirstMod() {
+    void getDescNegativeFirstMod() {
         TargetRoll roll = new TargetRoll();
 
         roll.addModifier(-1, "first");
@@ -160,7 +163,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void getDescPositiveFirstMod() {
+    void getDescPositiveFirstMod() {
         TargetRoll roll = new TargetRoll();
 
         roll.addModifier(1, "first");
@@ -181,7 +184,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void addOneForFlyingVTOL() {
+    void addOneForFlyingVTOL() {
         int distance = 1;
         boolean jumped = false;
         boolean vtol = true;
@@ -191,7 +194,7 @@ public class TargetRollTest {
     }
 
     @Test
-    public void addOneForJumping() {
+    void addOneForJumping() {
         int distance = 1;
         boolean jumped = true;
         boolean vtol = false;

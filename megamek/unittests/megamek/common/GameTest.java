@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
 
 import megamek.server.victory.VictoryResult;
 
-public class GameTest {
+class GameTest {
 
     @Test
-    public void testCancelVictory() {
+    void testCancelVictory() {
         // Default test
         Game game = new Game();
         game.cancelVictory();
@@ -50,7 +50,7 @@ public class GameTest {
     }
 
     @Test
-    public void testGetVictoryReport() {
+    void testGetVictoryReport() {
         Game game = new Game();
         game.createVictoryConditions();
         VictoryResult victoryResult = game.getVictoryResult();

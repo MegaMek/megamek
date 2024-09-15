@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.codeUItilities;
-
-import megamek.codeUtilities.MathUtility;
-import org.junit.jupiter.api.Test;
+package megamek.codeUtilities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MathUtilityTest {
-    //region Linear Interpolation
+import org.junit.jupiter.api.Test;
+
+class MathUtilityTest {
+    // region Linear Interpolation
     @Test
-    public void testLerpInt() {
+    void testLerpInt() {
         assertEquals(0, MathUtility.lerp(0, 1, 0d));
         assertEquals(1, MathUtility.lerp(0, 1, 1d));
         assertEquals(1, MathUtility.lerp(0, 1, 0.5));
@@ -37,7 +36,7 @@ public class MathUtilityTest {
     }
 
     @Test
-    public void testLerpDouble() {
+    void testLerpDouble() {
         assertEquals(0d, MathUtility.lerp(0d, 1d, 0d));
         assertEquals(1d, MathUtility.lerp(0d, 1d, 1d));
         assertEquals(0.5, MathUtility.lerp(0d, 1d, 0.5));
@@ -48,7 +47,7 @@ public class MathUtilityTest {
     }
 
     @Test
-    public void testLerpFloat() {
+    void testLerpFloat() {
         assertEquals(0f, MathUtility.lerp(0f, 1f, 0f));
         assertEquals(1f, MathUtility.lerp(0f, 1f, 1f));
         assertEquals(0.5f, MathUtility.lerp(0f, 1f, 0.5f));
@@ -59,7 +58,7 @@ public class MathUtilityTest {
     }
 
     @Test
-    public void testLerpLong() {
+    void testLerpLong() {
         assertEquals(0L, MathUtility.lerp(0L, 1L, 0d));
         assertEquals(1L, MathUtility.lerp(0L, 1L, 1d));
         assertEquals(1L, MathUtility.lerp(0L, 1L, 0.5));
@@ -68,11 +67,11 @@ public class MathUtilityTest {
         assertEquals(4L, MathUtility.lerp(0L, 9L, 0.4999));
         assertEquals(4L, MathUtility.lerp(0L, 8L, 0.5));
     }
-    //endregion Linear Interpolation
+    // endregion Linear Interpolation
 
-    //region Clamp
+    // region Clamp
     @Test
-    public void testClampInt() {
+    void testClampInt() {
         assertEquals(5, MathUtility.clamp(5, 1, 10));
         assertEquals(5, MathUtility.clamp(5, 1, 5));
         assertEquals(5, MathUtility.clamp(5, 5, 10));
@@ -81,7 +80,7 @@ public class MathUtilityTest {
     }
 
     @Test
-    public void testClampDouble() {
+    void testClampDouble() {
         assertEquals(5.5, MathUtility.clamp(5.5, 1.5, 10.5));
         assertEquals(5.5, MathUtility.clamp(5.5, 1.5, 5.5));
         assertEquals(5.5, MathUtility.clamp(5.5, 5.5, 10.5));
@@ -90,7 +89,7 @@ public class MathUtilityTest {
     }
 
     @Test
-    public void testClampFloat() {
+    void testClampFloat() {
         assertEquals(5f, MathUtility.clamp(5f, 1f, 10f));
         assertEquals(5f, MathUtility.clamp(5f, 1f, 5f));
         assertEquals(5f, MathUtility.clamp(5f, 5f, 10f));
@@ -99,12 +98,12 @@ public class MathUtilityTest {
     }
 
     @Test
-    public void testClampLong() {
+    void testClampLong() {
         assertEquals(5L, MathUtility.clamp(5L, 1L, 10L));
         assertEquals(5L, MathUtility.clamp(5L, 1L, 5L));
         assertEquals(5L, MathUtility.clamp(5L, 5L, 10L));
         assertEquals(6L, MathUtility.clamp(5L, 6L, 10L));
         assertEquals(5L, MathUtility.clamp(6L, 1L, 5L));
     }
-    //endregion Clamp
+    // endregion Clamp
 }

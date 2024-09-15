@@ -2918,7 +2918,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         updateEcmList();
-        highlightSelectedEntity();
+        highlightSelectedEntity(getSelectedEntity());
         scheduleRedraw();
     }
 
@@ -3027,7 +3027,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // Update ECM list, to ensure that Sprites are updated with ECM info
         updateEcmList();
         // Re-highlight a selected entity, if present
-        highlightSelectedEntity();
+        highlightSelectedEntity(getSelectedEntity());
 
         scheduleRedraw();
     }
@@ -4094,9 +4094,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         highlight(new Coords(x, y));
     }
 
-    public synchronized void highlightSelectedEntity() {
+    public synchronized void highlightSelectedEntity(Entity e) {
         for (EntitySprite sprite : entitySprites) {
-            sprite.setSelected(sprite.entity.equals(getSelectedEntity()));
+            sprite.setSelected(sprite.entity.equals(e));
         }
     }
 
@@ -4429,7 +4429,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public synchronized void selectEntity(Entity e) {
         checkFoVHexImageCacheClear();
         updateEcmList();
-        highlightSelectedEntity();
+        highlightSelectedEntity(e);
     }
 
     /**

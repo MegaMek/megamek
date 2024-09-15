@@ -653,17 +653,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         currentEntity = en;
         clientgui.setSelectedEntityNum(en);
+        updateUnitDisplay(ce);
+
         gear = MovementDisplay.GEAR_LAND;
-
         clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
-        clear();
 
+        clear();
         updateButtonsLater();
 
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        updateUnitDisplayLater(ce);
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -682,6 +682,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else {
             setStatusBarText(yourTurnMsg);
         }
+
         clientgui.clearFieldOfFire();
         computeMovementEnvelope(ce);
         updateMove();
@@ -697,21 +698,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Signals Unit Display to update later on the AWT event stack.
-     * See Issue:#4876 and #4444. This is done to prevent blank general tab when
-     * switching
-     * units when the map is zoomed all the way out.
+     * Updates the Unit Display Panels by selecting the current entity in the unit display
+     * and shows the MekPanelTabTrip if configured.
+     * @param ce
      */
-    private void updateUnitDisplayLater(Entity ce) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                clientgui.getUnitDisplay().displayEntity(ce);
-                if (GUIP.getMoveDisplayTabDuringMovePhases()) {
-                    clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
-                }
-            }
-        });
+    private void updateUnitDisplay(final Entity ce) {
+        clientgui.getUnitDisplay().displayEntity(ce);
+        if (GUIP.getMoveDisplayTabDuringMovePhases()) {
+            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
+        }
     }
 
     /**
@@ -724,13 +719,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateButtonsLater() {
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 updateButtons();
             }
-
-            ;
         });
     }
 

@@ -276,7 +276,8 @@ public class TestProtoMek extends TestEntity {
         Map<Integer, Double> weightByLoc = new HashMap<>();
         int meleeWeapons = 0;
         for (Mounted<?> mount : proto.getEquipment()) {
-            if (!requiresSlot(mount.getType())) {
+            if (!requiresSlot(mount.getType()) || (mount.getType() instanceof ArmorType)) {
+                // armor is added separately
                 continue;
             }
             slotsByLoc.merge(mount.getLocation(), 1, Integer::sum);

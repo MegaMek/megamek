@@ -1628,4 +1628,9 @@ public class ProtoMek extends Entity {
     protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
         return BLOCKED_FIRING_LOCATIONS;
     }
+
+    @Override
+    public boolean hasPatchworkArmor() {
+        return false;
+    }
 }

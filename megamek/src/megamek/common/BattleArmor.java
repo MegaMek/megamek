@@ -1487,11 +1487,6 @@ public class BattleArmor extends Infantry {
         return false;
     }
 
-    @Override
-    public boolean hasPatchworkArmor() {
-        return false;
-    }
-
     public void setIsExoskeleton(boolean exoskeleton) {
         this.exoskeleton = exoskeleton;
     }

@@ -921,4 +921,9 @@ public class SmallCraft extends Aero {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(-0.068 + 1.421 * Math.log(getWeight())));
     }
+
+    @Override
+    public boolean hasPatchworkArmor() {
+        return false;
+    }
 }

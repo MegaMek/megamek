@@ -22,6 +22,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6010: Fix patchwork armor weight calculation
 + PR #6011: Added Post-Name Change Compatibility Handlers to AbstractIcon.java
 + PR #6012: Jumpship/Warship code and comment cleanup and modernization
++ FIX #5997: Fall damage from high grav map using old ed rules
 + PR #6014: Remove incorrect dedicated pilot mod for QuadVee PSR
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

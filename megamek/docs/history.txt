@@ -15,6 +15,13 @@ MEGAMEK VERSION HISTORY:
 + PR #5981: Respecting Trademarks (Mech to Mek)
 + PR #5989: Another fix for various Board/GUI items being out of sync with the currently selected unit
 + Fix #6005: Aero damage of RISC Hyper Laser
++ PR #5982: Further MM Scenario Refactoring
++ PR #5996: Choosing Elevation at Deployment
++ PR #6007: Accompanying PR for MML: allow artillery on aeros according to TO:AUE
++ PR #6009: Allow Smart Robotic Control Systems on Small Craft
++ PR #6010: Fix patchwork armor weight calculation
++ PR #6011: Added Post-Name Change Compatibility Handlers to AbstractIcon.java
++ PR #6012: Jumpship/Warship code and comment cleanup and modernization
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

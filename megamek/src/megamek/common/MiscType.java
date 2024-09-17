@@ -4391,7 +4391,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.rulesRefs = "140, IO";
         misc.flags = misc.flags.or(F_SRCS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
-                .or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
+                .or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SC_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.subType = S_STANDARD;
         misc.omniFixedOnly = true;
@@ -4405,7 +4405,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedSmartRoboticControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Smart Robotic Control System (SRCS)(Improved)";
+        misc.name = "Smart Robotic Control System (SRCS) (Improved)";
         misc.setInternalName("ImprovedSmartRoboticControlSystem");
         misc.addLookupName("ImprovedSRCS");
         misc.shortName = "Improved SRCS";
@@ -4414,7 +4414,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.rulesRefs = "140, IO";
         misc.flags = misc.flags.or(F_SRCS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
-                .or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_WS_EQUIPMENT);
+                .or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SC_EQUIPMENT);
         misc.subType = S_IMPROVED;
         misc.omniFixedOnly = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL)

@@ -2860,10 +2860,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return 0;
     }
 
-    /**
-     * @return The number conventional marines available to vessels for boarding
-     *         actions.
-     */
     @Override
     public int getNMarines() {
         return 0;

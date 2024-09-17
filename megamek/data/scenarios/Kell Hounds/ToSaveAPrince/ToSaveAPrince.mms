@@ -95,7 +95,10 @@ factions:
     id: 106
     force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
     remaining:
-      RTR: 0
+      armor:
+        RTR: 0
+    crits:
+      LA: 5
     crew:
       name: Cletus Palmer
       piloting: 4
@@ -105,7 +108,12 @@ factions:
     id: 107
     force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
     remaining:
-      CT: 10
+      armor:
+        CT: 10
+    crits:
+      CT: 11
+      LL: [ 5, 6 ]
+      RL: [ 5, 6 ]
     crew:
       name: Tom Meyer
       callsign: Hands

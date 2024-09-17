@@ -28,8 +28,9 @@ singleplayer: yes                           # default: yes; the first player is 
 
 # Game Map -------------------------------------------------------------------------------------------
 map:
-  boardcolumns: 2                           # a 2x1 map, default: 1
-#  boardrows: 1                              # default: 1
+  # Optional: the columns to arrange boards in. Default: 1
+  # The number of rows follows from the number of boards given and the columns
+  cols: 2                           # a 2x1 map, default: 1
   boards:
     - board1.board                            # all files are first searched relative to the scenario file, and
     - board2.board                            # if not found there, then relative to the appropriate data/... directory
@@ -171,6 +172,12 @@ planetaryconditions:                        # default: standard conditions
 # Forces -------------------------------------------------------------------------------------------
 
 factions:
+  # The first player is assumed to be the human player, while the rest get bots assigned by default.
+  # To have the bots play all factions, insert a player without any units as the first player
+  # Only this line is required:
+  # - name: Human Observer
+
+
   - name: Player A
     team: 1                                   # default: each player goes into their own team
     deploy: N                                 # default: same as the home edge
@@ -188,11 +195,15 @@ factions:
     - vibra: 2
     camo: clans/wolf/Alpha Galaxy.jpg         # image file, relative to the scenario file, or in data/camos otherwise
                                               # use slashes
+
+    # Units are always an array (use dashes)
     units:
 #    - include: Annihilator ANH-13.mmu
       - fullname: Atlas AS7-D
-        # type: TW_UNIT                         # default: TW_UNIT other: ASElement
         # pre-deployed:
+        offboard: N                             # default: not offboard; values: N, E, S, W (TODO)
+        # Optional: when pre-deployed, set the facing. 5 = NW
+        facing: 5
         at: [7, 4]                            # position 0704 (pre-deployed)
   #      x: 7                                 # alternative way to give position
   #      y: 4                                    # must have both x and y or neither
@@ -208,11 +219,52 @@ factions:
         # the force ids are used to distinguish different forces with the same name (e.g. multiple "Assault Lance")
         force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
 
-        offboard: N                             # default: not offboard; values: N, E, S, W
-        crew:                                   # default: unnamed 4/5 pilot
+        # pre-applied damage may assign remaining armor and internal structure values. Values
+        # higher than the undamaged values of the unit are ignored. Negative values set to 0 (TODO)
+        remaining:
+          armor:
+            # remaining armor values, use the usual location names
+            LT: 2
+            CTR: 0
+          internal:
+            # remaining internal structure is independent of armor and does not create any crits
+            # TODO: have 0 internal destroy the location
+            LA: 2
+
+        # location crits
+        # this usually requires looking up the unit file
+        crits:
+          # the usual location names. Give the slots as an array ([ 4, 8 ] or using dashes on separate lines)
+          # slots are 1-based, i.e. CT has slots 1 to 12 (not 0)
+          # location crits will mark the equipment as damaged, but never have any secondary effects
+          # like explosions or pilot hits. Crits that destroy a unit are invalid (e.g. 3 engine hits)
+          LA: 4
+          RT: [ 1, 3 ]
+          CT: 1
+          # non-location crits (TODO)
+          # motive: 1
+          # firecontrol: 1
+
+        # ammo types and reduced amount
+        # this usually requires looking up the unit file and possibly AmmoType.java for the type designations
+        ammo:
+          LA:
+            slot: 5
+            shots: 2
+            # type: xyz (TODO)
+
+        # Optional: give details of the crew/pilot - currently only for single pilots (TODO)
+        # by default, the pilot is an unnamed 4/5 pilot
+        # all fields in crew are optional
+        crew:
           name: Cpt. Frederic Nguyen
+          callsign: MAGIC
           piloting: 4
           gunnery: 3
+          # Optional: pilot hits, 0 to 6
+          hits: 3
+          # Optional: a portrait, relative to data/images/portraits
+          portrait: Male/MechWarrior/MW_M_13.png
 
     # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present
     # player will deploy them. When pre-deployed (at: [ x, y ]), the owner is currently irrelevant.
@@ -438,3 +490,4 @@ trigger:
       units: 201
     - type: phasestart
       phase: movement
+

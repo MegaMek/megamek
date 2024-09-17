@@ -466,9 +466,7 @@ public class QuadVee extends QuadMek {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        if (getCrew().hasDedicatedPilot()) {
-            roll.addModifier(-1, "dedicated pilot");
-        } else {
+        if (!getCrew().hasDedicatedPilot()) {
             roll.addModifier(2, "pilot incapacitated");
         }
 

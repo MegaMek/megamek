@@ -2062,7 +2062,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        if (isAirborne()) {
+        if ((currElevation != 0) || isSpaceborne()) {
             return false;
         }
 

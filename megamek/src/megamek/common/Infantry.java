@@ -538,35 +538,24 @@ public class Infantry extends Entity {
         // mechanized units face fewer
         // terrain restrictions when pulling field artillery
 
-        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-            return true;
-        }
-        if (hex.containsTerrain(Terrains.MAGMA)) {
+        if (hex.containsAnyTerrainOf(Terrains.IMPASSABLE, Terrains.MAGMA)) {
             return true;
         }
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
 
-        // Additional restrictions for hidden units
         if (isHidden()) {
-            // Can't deploy in paved hexes
             if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
-            // Can't deploy on a bridge
             if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
-            // Can't deploy on the surface of water
             if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
                 return true;
             }
-        }
-
-        if (hex.containsTerrain(Terrains.MAGMA)) {
-            return true;
         }
 
         if (getMovementMode().isWheeled()) {
@@ -598,11 +587,24 @@ public class Infantry extends Entity {
             }
         }
 
-        if ((hex.terrainLevel(Terrains.WATER) <= 0) && getMovementMode().isSubmarine()) {
-            return (mount == null) || (mount.getSecondaryGroundMP() == 0);
+        if ((hex.terrainLevel(Terrains.WATER) <= 0) && getMovementMode().isSubmarine()
+                && ((mount == null) || (mount.getSecondaryGroundMP() == 0))) {
+            return true;
         }
 
-        if ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) {
+        if (currElevation < 0) {
+            if (mount == null) {
+                if (!getMovementMode().isUMUInfantry() && !getMovementMode().isSubmarine()) {
+                    return true;
+                }
+            } else {
+                if (-currElevation > mount.getMaxWaterDepth()) {
+                    return true;
+                }
+            }
+        }
+
+        if (hex.hasDepth1WaterOrDeeper() && !hex.containsTerrain(Terrains.ICE)) {
             if (mount == null) {
                 return !getMovementMode().isHover() && !getMovementMode().isUMUInfantry()
                         && !getMovementMode().isSubmarine() && !getMovementMode().isVTOL();

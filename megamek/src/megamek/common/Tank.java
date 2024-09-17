@@ -31,6 +31,9 @@ import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 import megamek.logging.MMLogger;
 
+import static megamek.common.Terrains.BLDG_ELEV;
+import static megamek.common.Terrains.BUILDING;
+
 /**
  * You know what tanks are, silly.
  */
@@ -661,6 +664,10 @@ public class Tank extends Entity {
                 && hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
 
+        if (hex.containsTerrain(BUILDING) && (currElevation <= hex.terrainLevel(BLDG_ELEV)) && (currElevation > 0)) {
+            return true;
+        }
+
         // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {
             case TRACKED:
@@ -754,12 +761,35 @@ public class Tank extends Entity {
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.JUNGLE))
-                        && hex.ceiling() > currElevation;
+                return isLocationProhibitedWiGE(c, currElevation);
             default:
                 return false;
         }
+    }
+
+    public boolean isLocationProhibitedWiGE(Coords c, int currElevation) {
+        Hex hex = game.getBoard().getHex(c);
+        if (hex.containsAnyTerrainOf(Terrains.IMPASSABLE, Terrains.SPACE, Terrains.SKY)) {
+            return true;
+        }
+
+        if (currElevation < 0) {
+            return true;
+        }
+
+        if (hex.containsTerrain(Terrains.BUILDING) && (currElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            return true;
+        }
+
+        if (hex.containsTerrain(Terrains.INDUSTRIAL) && (currElevation <= hex.terrainLevel(Terrains.INDUSTRIAL))) {
+            return true;
+        }
+
+        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (currElevation <= hex.vegetationCeiling())) {
+            return true;
+        }
+
+        return false;
     }
 
     public void lockTurret(int turret) {

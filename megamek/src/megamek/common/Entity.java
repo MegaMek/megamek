@@ -15771,4 +15771,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && getCrew().hasEdgeRemaining()
                 && getCrew().getOptions().booleanOption(option));
     }
+
+    public boolean hasFlotationHull() {
+        return hasWorkingMisc(MiscType.F_FLOTATION_HULL);
+    }
 }

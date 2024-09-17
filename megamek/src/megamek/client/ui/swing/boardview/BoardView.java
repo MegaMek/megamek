@@ -2925,7 +2925,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Clears all old entity sprites out of memory and sets up new ones.
      */
-    void redrawAllEntities() {
+    public void redrawAllEntities() {
         int numEntities = game.getNoOfEntities();
         // Prevent IllegalArgumentException
         numEntities = Math.max(1, numEntities);

@@ -22,22 +22,19 @@ package megamek.client.ui.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -114,6 +111,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
+    private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
+    private ElevationOption lastDeploymentOption = null;
 
     private final ClientGUI clientgui;
 
@@ -166,6 +165,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /** Selects an entity for deployment. */
     public void selectEntity(int en) {
+        lastHexDeploymentOptions.clear();
+        lastDeploymentOption = null;
+
         // hmm, sometimes this gets called when there's no ready entities?
         if (clientgui.getClient().getGame().getEntity(en) == null) {
             disableButtons();
@@ -357,39 +359,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
-        final Game game = clientgui.getClient().getGame();
-        final Entity en = ce();
-
+        final Entity entity = ce();
         if (checkNags()) {
             return;
         }
-
         disableButtons();
 
-        int elevation = en.getElevation();
-        // If elevation was set in lounge, try to preserve it
-        // Server.processDeployment will adjust elevation, so we want to account for
-        // this
-        Hex hex = game.getBoard().getHex(en.getPosition());
-        if ((en instanceof VTOL) && (elevation >= 1)) {
-            elevation = Math.max(0, elevation - (hex.ceiling() - hex.getLevel() + 1));
-        }
-        // Deploy grounded WiGEs on the roof of a building, and airborne at least one
-        // elevation above the roof.
-        if ((en.getMovementMode() == EntityMovementMode.WIGE) && hex.containsTerrain(Terrains.BLDG_ELEV)) {
-            int minElev = hex.terrainLevel(Terrains.BLDG_ELEV);
-            if (elevation > 0) {
-                minElev++;
-            }
-            elevation = Math.max(elevation, minElev);
-        }
+        int elevationOrAltitude = entity.isAero() ? entity.getAltitude() : entity.getElevation();
+        clientgui.getClient().deploy(entity.getId(), entity.getPosition(), entity.getFacing(),
+                elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
+        entity.setDeployed(true);
 
-        clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
-                elevation, en.getLoadedUnits(), assaultDropPreference);
-        en.setDeployed(true);
-
-        if (ce().isWeapOrderChanged()) {
-            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        if (entity.isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
         endMyTurn();
     }
@@ -491,212 +473,164 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void hexMoused(BoardViewEvent b) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
-            return;
-        }
-
-        // ignore buttons other than 1
-        if (!clientgui.getClient().isMyTurn() || (ce() == null) || ((b.getButton() != MouseEvent.BUTTON1))) {
-            return;
-        }
-
-        // control pressed means a line of sight check.
-        // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+        Coords coords = b.getCoords();
+        Entity entity = ce();
+        if (isIgnoringEvents()
+                || (coords == null)
+                || (entity == null)
+                || !clientgui.getClient().isMyTurn()
+                || (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED)
+                || (b.getButton() != MouseEvent.BUTTON1)
+                || ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
                 || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
-        // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+        try {
+            // Tooltips go above even modal dialogs; therefore hide them; try block makes sure they get re-enabled
+            ToolTipManager.sharedInstance().setEnabled(false);
 
-        // check for a deployment
-        Coords moveto = b.getCoords();
-        final Board board = clientgui.getClient().getGame().getBoard();
-        final Game game = clientgui.getClient().getGame();
-        final Hex deployhex = board.getHex(moveto);
-        final Building bldg = board.getBuildingAt(moveto);
-        boolean isAero = ce().isAero();
-        boolean isVTOL = ce() instanceof VTOL;
-        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
-        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK)
-                && !ce().hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
-                && !ce().isNaval()
-                && deployhex.containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE_ELEV);
-        String title, msg;
-        if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
-            ce().setFacing(ce().getPosition().direction(moveto));
-            ce().setSecondaryFacing(ce().getFacing());
-            clientgui.getBoardView().redrawEntity(ce());
-            clientgui.updateFiringArc(ce());
-            clientgui.showSensorRanges(ce());
-            turnMode = false;
-        } else if (ce().isBoardProhibited(board.getType())) {
-            // check if this type of unit can be on the given type of map
-            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(),
-                    Board.getTypeName(board.getType()));
-            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.WARNING_MESSAGE);
-            return;
-        } else if (!(board.isLegalDeployment(moveto, ce()) || assaultDropPreference)
-                || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
-            msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), moveto.getBoardNum());
-            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
-            return;
-        } else if (isAero && board.inAtmosphere() && (ce().getElevation() <= board.getHex(moveto).ceiling(true))) {
-            // Ensure aeros don't end up at lower elevation than the current hex
-            title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            msg = Messages.getString("DeploymentDisplay.elevationTooLow", ce().getShortName(), moveto.getBoardNum());
-            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
-            return;
-        } else if ((Compute.stackingViolation(game, ce().getId(), moveto, ce().climbMode()) != null)
-                && (bldg == null)) {
-            // check if deployed unit violates stacking
-            return;
-        } else {
-            // check for buildings and if found ask what level they want to deploy at
-            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
-                if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    boolean success = processBuildingDeploy(moveto);
-                    if (!success) {
-                        return;
-                    }
-                } else if (deployhex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-                    boolean success = processBridgeDeploy(moveto);
-                    if (!success) {
+            boolean shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+            Board board = clientgui.getClient().getGame().getBoard();
+            // When the unit is not already on the board, ignore turn mode and place the unit instead
+            if ((entity.getPosition() != null) && (shiftHeld || turnMode)) {
+                processTurn(entity, coords);
+                return;
+            } else if (entity.isBoardProhibited(board.getType())) {
+                showWrongBoardTypeMessage();
+                return;
+            } else if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
+                showOutsideDeployAreaMessage();
+                return;
+            }
+
+            if (!board.inSpace()) {
+                int finalElevation;
+                var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
+                        board.getHex(coords), clientgui.getClient().getGame());
+                List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
+
+                if (elevationOptions.isEmpty()) {
+                    showCannotDeployHereMessage(coords);
+                    return;
+                } else if (elevationOptions.size() == 1) {
+                    finalElevation = elevationOptions.get(0).elevation();
+                    lastHexDeploymentOptions.clear();
+                    lastHexDeploymentOptions.addAll(elevationOptions);
+                    lastDeploymentOption = elevationOptions.get(0);
+                } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
+                    // When the player clicks the same hex again, always ask for the elevation
+                    finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
+                } else {
+                    ElevationOption elevationOption = showElevationChoiceDialog(elevationOptions);
+                    if (elevationOption != null) {
+                        lastHexDeploymentOptions.clear();
+                        lastHexDeploymentOptions.addAll(elevationOptions);
+                        lastDeploymentOption = elevationOption;
+                        finalElevation = elevationOption.elevation();
+                    } else {
                         return;
                     }
                 }
-            } else if (!isAero && !isWiGE) {
-                // hovers and naval units go on the surface
-                if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
-                        || (ce().getMovementMode() == EntityMovementMode.HYDROFOIL)
-                        || (ce().getMovementMode() == EntityMovementMode.HOVER)) {
-                    ce().setElevation(0);
-                } else if (ce().getMovementMode().isSubmarine()) {
-                    // submarines have one level above the surface
-                    ce().setElevation(-ce().height());
-                } else if (isVTOL) {
-                    // VTOLs go to elevation 1... unless set in the Lounge.
-                    // or if mechanized BA, since VTOL movement is then illegal
-                    if ((ce().getElevation() < 1) && (ce().getExternalUnits().size() <= 0)) {
-                        ce().setElevation(1);
+
+                if ((entity instanceof IAero aero)
+                        && (!(entity instanceof LandAirMek lam) || (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) {
+                    entity.setAltitude(finalElevation);
+                    if (finalElevation == 0) {
+                        aero.land();
+                    } else {
+                        aero.liftOff(finalElevation);
                     }
                 } else {
-                    // everything else goes to elevation 0, or on the floor of a
-                    // water hex, except non-mechanized SCUBA infantry, which have a max depth of 2.
-                    if (deployhex.containsTerrain(Terrains.WATER) && (ce() instanceof Infantry)
-                            && ((Infantry) ce()).isNonMechSCUBA()) {
-                        ce().setElevation(Math.max(deployhex.floor() - deployhex.getLevel(), -2));
-                    } else {
-                        ce().setElevation(deployhex.floor() - deployhex.getLevel());
-                    }
+                    entity.setElevation(finalElevation);
                 }
             }
-            ce().setPosition(moveto);
-
-            clientgui.getBoardView().redrawEntity(ce());
-            clientgui.updateFiringArc(ce());
-            clientgui.showSensorRanges(ce());
+            entity.setPosition(coords);
+            clientgui.getBoardView().redrawAllEntities();
+            clientgui.updateFiringArc(entity);
+            clientgui.showSensorRanges(entity);
             clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);
-        }
-        if (!shiftheld) {
-            clientgui.getBoardView().select(moveto);
+            if (!shiftHeld) {
+                clientgui.getBoardView().select(coords);
+            }
+        } finally {
+            ToolTipManager.sharedInstance().setEnabled(true);
         }
     }
 
-    private boolean processBuildingDeploy(Coords moveto) {
-        final Board board = clientgui.getClient().getGame().getBoard();
-        final Game game = clientgui.getClient().getGame();
-
-        int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
-        if (ce().getMovementMode() == EntityMovementMode.WIGE) {
-            // TODO: Something seems to be missing here
-        }
-        ArrayList<String> floorNames = new ArrayList<>(height + 1);
-        ArrayList<Integer> floorValues = new ArrayList<>(height + 1);
-
-        if (Compute.stackingViolation(game, ce(), 0, moveto, null, ce().climbMode()) == null) {
-            floorNames.add(Messages.getString("DeploymentDisplay.ground"));
-            floorValues.add(0);
-        }
-
-        for (int loop = 1; loop < height; loop++) {
-            if (Compute.stackingViolation(game, ce(), loop, moveto, null, ce().climbMode()) == null) {
-                floorNames.add(Messages.getString("DeploymentDisplay.floor") + loop);
-                floorValues.add(loop);
-            }
-        }
-        if (Compute.stackingViolation(game, ce(), height, moveto, null, ce().climbMode()) == null) {
-            floorNames.add(Messages.getString("DeploymentDisplay.top"));
-            floorValues.add(height);
-        }
-
-        // No valid floors to deploy on
-        if (floorNames.size() < 1) {
-            String msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(),
-                    moveto.getBoardNum());
-            String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        String msg = Messages.getString("DeploymentDisplay.floorsDialog.message", ce().getShortName());
-        String title = Messages.getString("DeploymentDisplay.floorsDialog.title");
-        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(), msg, title,
-                JOptionPane.QUESTION_MESSAGE, null,
-                floorNames.toArray(), floorNames.get(0));
-        if (input != null) {
-            for (int i = 0; i < floorNames.size(); i++) {
-                if (input.equals(floorNames.get(i))) {
-                    ce().setElevation(floorValues.get(i));
-                    break;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean processBridgeDeploy(Coords moveto) {
-        final Board board = clientgui.getClient().getGame().getBoard();
-        final Hex deployhex = board.getHex(moveto);
-
-        int height = board.getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);
-        List<String> floors = new ArrayList<>(2);
-        if (!ce().isLocationProhibited(moveto)) {
-            floors.add(Messages.getString("DeploymentDisplay.belowbridge"));
-        }
-
-        // ships can't deploy to the top of a bridge
-        if (!ce().isNaval()) {
-            floors.add(Messages.getString("DeploymentDisplay.topbridge"));
-        }
-
-        String title = Messages.getString("DeploymentDisplay.bridgeDialog.title");
-        String msg = Messages.getString("DeploymentDisplay.bridgeDialog.message", ce().getShortName());
-        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(), msg,
-                title, JOptionPane.QUESTION_MESSAGE, null, floors.toArray(), null);
-        if (input != null) {
-            if (input.equals(Messages.getString("DeploymentDisplay.topbridge"))) {
-                ce().setElevation(height);
+    private @Nullable ElevationOption showElevationChoiceDialog(List<ElevationOption> elevationOptions) {
+        var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
+        DialogResult result = dlg.showDialog();
+        if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
+            if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
+                int elevation = showHighElevationChoiceDialog();
+                return (elevation == -1) ? null : new ElevationOption(elevation, DeploymentElevationType.ELEVATIONS_ABOVE);
             } else {
-                if (ce().isNaval() && (ce().getMovementMode() != EntityMovementMode.SUBMARINE)) {
-                    ce().setElevation(0);
-                } else {
-                    ce().setElevation(deployhex.floor() - deployhex.getLevel());
-                }
+                return dlg.getFirstChoice();
             }
-            return true;
         } else {
-            return false;
+            return null;
         }
+    }
+
+    private int showHighElevationChoiceDialog() {
+        String msg = Messages.getString("DeploymentDisplay.elevationChoice");
+        String input = JOptionPane.showInputDialog(clientgui.frame, msg);
+        try {
+            return Integer.parseInt(input);
+        } catch (Exception ex) {
+            return -1;
+        }
+    }
+
+    /**
+     * @return True when the last chosen elevation can be re-used without asking again. This is true
+     * when the options for the current hex have no option that the previous hex didn't and the previous
+     * deployment option is available in the new hex.
+     */
+    private boolean useLastDeployElevation(List<ElevationOption> currentOptions) {
+        return ((lastDeploymentOption != null)
+                && (lastDeploymentOption.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
+                && isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation()))
+                || ((currentOptions.size() <= lastHexDeploymentOptions.size())
+                && lastHexDeploymentOptions.containsAll(currentOptions)
+                && currentOptions.contains(lastDeploymentOption));
+    }
+
+    private boolean isHighElevationAvailable(List<ElevationOption> currentOptions, int elevation) {
+        return currentOptions.stream()
+                .filter(o -> o.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
+                .anyMatch(o -> o.elevation() <= elevation);
+    }
+
+    private void showWrongBoardTypeMessage() {
+        Board board = clientgui.getClient().getGame().getBoard();
+        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+        String msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(),
+                Board.getTypeName(board.getType()));
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showOutsideDeployAreaMessage() {
+        String msg = Messages.getString("DeploymentDisplay.outsideDeployArea");
+        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showCannotDeployHereMessage(Coords coords) {
+        String msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), coords.getBoardNum());
+        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void processTurn(Entity entity, Coords coords) {
+        entity.setFacing(entity.getPosition().direction(coords));
+        entity.setSecondaryFacing(entity.getFacing());
+        clientgui.getBoardView().redrawEntity(entity);
+        clientgui.updateFiringArc(entity);
+        clientgui.showSensorRanges(entity);
+        turnMode = false;
     }
 
     //

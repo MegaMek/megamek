@@ -414,10 +414,31 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return if there is pavement, a road or a bridge in the hex.
+     * @return True if there is pavement, a road or a bridge in the hex.
      */
     public boolean hasPavement() {
-        return containsTerrain(Terrains.PAVEMENT) || containsTerrain(Terrains.ROAD) || containsTerrain(Terrains.BRIDGE);
+        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
+    }
+
+    /**
+     * @return True if there is any woods or jungle in this hex, including foliage (i.e., height 1 woods/jungle).
+     */
+    public boolean hasVegetation() {
+        return containsAnyTerrainOf(Terrains.WOODS, Terrains.JUNGLE);
+    }
+
+    /**
+     * @return The height of woods or jungle in this hex (1, 2 or 3), or 0 if there isn't any.
+     */
+    public int vegetationCeiling() {
+        return containsTerrain(Terrains.FOLIAGE_ELEV) ? terrainLevel(Terrains.FOLIAGE_ELEV) : 0;
+    }
+
+    /**
+     * @return True if there is water in this hex of at least depth 1 (i.e., not depth 0)
+     */
+    public boolean hasDepth1WaterOrDeeper() {
+        return containsTerrain(Terrains.WATER) && (terrainLevel(Terrains.WATER) >= 1);
     }
 
     /**

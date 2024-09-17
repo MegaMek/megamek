@@ -953,10 +953,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * According to TM p.22, unit weights are to be rounded up to the nearest half
-     * ton or kilo, but in MML
-     * for construction at least we should be able to show the exact weight. This
-     * method returns the unrounded
+     * According to TM p.22, unit weights are to be rounded up to the nearest half ton or kilo, but in MML
+     * for construction at least we should be able to show the exact weight. This method returns the unrounded
      * weight.
      *
      * @return The unrounded weight of the unit.
@@ -967,7 +965,11 @@ public abstract class TestEntity implements TestEntityOption {
         weight += getWeightStructure();
         weight += getWeightControls();
         weight += getWeightHeatSinks();
-        weight += getWeightArmor();
+        if (getEntity().hasPatchworkArmor()) {
+            weight += getWeightAllocatedArmor();
+        } else {
+            weight += getWeightArmor();
+        }
         weight += getWeightMisc();
 
         weight += getWeightMiscEquip();

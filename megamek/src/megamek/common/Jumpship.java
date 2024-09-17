@@ -1437,4 +1437,9 @@ public class Jumpship extends Aero {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(0.0619 + 0.5607 * Math.log(getWeight())));
     }
+
+    @Override
+    public boolean hasPatchworkArmor() {
+        return false;
+    }
 }

@@ -981,7 +981,11 @@ public class TestAero extends TestEntity {
         weight += getWeightControls();
         weight += getWeightFuel();
         weight += getWeightHeatSinks();
-        weight += getWeightArmor();
+        if (getEntity().hasPatchworkArmor()) {
+            weight += getWeightAllocatedArmor();
+        } else {
+            weight += getWeightArmor();
+        }
         weight += getWeightMisc();
 
         weight += getWeightMiscEquip();

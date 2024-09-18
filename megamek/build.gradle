@@ -3,12 +3,12 @@ import java.time.LocalDateTime
 plugins {
     id 'application'
     id 'checkstyle'
+    id 'com.palantir.git-version' version '3.1.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
+    id "io.sentry.jvm.gradle" version '4.11.0'
     id 'jacoco'
     id 'java'
     id 'org.ec4j.editorconfig' version '0.1.0'
-    id "io.sentry.jvm.gradle" version '4.11.0'
-    id 'com.palantir.git-version' version '3.1.0'
 
 }
 

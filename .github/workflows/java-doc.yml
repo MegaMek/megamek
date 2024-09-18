@@ -1,4 +1,4 @@
-name: MegaMek CI with Gradle
+name: JavaDoc Generation
 
 on:
   pull_request:

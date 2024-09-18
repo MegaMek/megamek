@@ -2,11 +2,14 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
+    id 'checkstyle'
     id 'edu.sc.seis.launch4j' version '3.0.6'
     id 'jacoco'
     id 'java'
+    id 'org.ec4j.editorconfig' version '0.1.0'
     id "io.sentry.jvm.gradle" version '4.11.0'
     id 'com.palantir.git-version' version '3.1.0'
+
 }
 
 java {
@@ -80,6 +83,12 @@ ext {
     userdata = 'userdata'
     fileStagingDir = "${buildDir}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+}
+
+checkstyle {
+    toolVersion '10.18.1'
+    configFile file("config/checkstyle/checkstyle.xml")
+    ignoreFailures false
 }
 
 run {
@@ -388,4 +397,13 @@ task unitFileMigrationTool(type: JavaExec, dependsOn: jar) {
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.UnitFileMigrationTool'
+}
+
+tasks.withType(Checkstyle) {
+    minHeapSize = "200m"
+    maxHeapSize = "1g"
+    reports {
+        xml.required = false
+        html.required = true
+    }
 }

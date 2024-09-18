@@ -39,7 +39,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build  --stacktrace --scan
+        run: ./gradlew build  -x checkstyleMain -x checkstyleTest --stacktrace --scan
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4

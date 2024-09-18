@@ -8,7 +8,7 @@ env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
 
 jobs:
-  ci_cd:
+  javadoc:
     runs-on: ${{ matrix.os }}
 
     strategy:

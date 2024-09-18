@@ -21,7 +21,7 @@ import megamek.common.verifier.TestEntity;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
+public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
 
     public BLKSmallCraftFile(BuildingBlock bb) {
         dataFile = bb;
@@ -234,14 +234,11 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
-                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
+                        Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
@@ -252,9 +249,6 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                             }
                         }
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = getLegacyVariableSize(equipName);
-                            }
                             mount.setSize(size);
                         }
                     } catch (LocationFullException ex) {
@@ -262,24 +256,6 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                     }
                 } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (mashOperatingTheaters > 0) {
-            for (Mounted m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }

@@ -18,77 +18,94 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public class MtfFileTest {
+import megamek.common.BipedMek;
+import megamek.common.CriticalSlot;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.EquipmentTypeLookup;
+import megamek.common.Mek;
+import megamek.common.Mounted;
+import megamek.common.TripodMek;
 
-    private MtfFile toMtfFile(Mech mech) throws EntityLoadingException {
-        if (!mech.hasEngine() || mech.getEngine().getEngineType() == Engine.NONE) {
-            mech.setWeight(20.0);
-            mech.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+class MtfFileTest {
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
+    private MtfFile toMtfFile(Mek mek) throws EntityLoadingException {
+        if (!mek.hasEngine() || mek.getEngine().getEngineType() == Engine.NONE) {
+            mek.setWeight(20.0);
+            mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
         }
-        String mtf = mech.getMtf();
+        String mtf = mek.getMtf();
         byte[] bytes = mtf.getBytes();
         InputStream istream = new ByteArrayInputStream(bytes);
         return new MtfFile(istream);
     }
 
     @Test
-    public void testLoadEquipment() throws Exception {
-        Mech mech = new BipedMech();
-        Mounted<?> mount = Mounted.createMounted(mech, EquipmentType.get("Medium Laser"));
+    void testLoadEquipment() throws Exception {
+        Mek mek = new BipedMek();
+        Mounted<?> mount = Mounted.createMounted(mek, EquipmentType.get("Medium Laser"));
         mount.setOmniPodMounted(true);
-        mount.setMechTurretMounted(true);
+        mount.setMekTurretMounted(true);
         mount.setArmored(true);
-        mech.addEquipment(mount, Mech.LOC_LT, true);
+        mek.addEquipment(mount, Mek.LOC_LT, true);
 
-        MtfFile loader = toMtfFile(mech);
-        Mounted<?> found = loader.getEntity().getCritical(Mech.LOC_LT, 0).getMount();
+        MtfFile loader = toMtfFile(mek);
+        Mounted<?> found = loader.getEntity().getCritical(Mek.LOC_LT, 0).getMount();
 
         assertEquals(mount.getType(), found.getType());
         assertTrue(found.isRearMounted());
-        assertTrue(found.isMechTurretMounted());
+        assertTrue(found.isMekTurretMounted());
         assertTrue(found.isArmored());
     }
 
     @Test
-    public void setVGLFacing() throws Exception {
-        Mech mech = new BipedMech();
+    void setVGLFacing() throws Exception {
+        Mek mek = new BipedMek();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
-        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(0);
-        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(1);
-        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(2);
-        mech.addEquipment(vgl, Mech.LOC_LT, true).setFacing(3);
-        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(4);
-        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(5);
+        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(0);
+        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(1);
+        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(2);
+        mek.addEquipment(vgl, Mek.LOC_LT, true).setFacing(3);
+        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(4);
+        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(5);
 
-        MtfFile loader = toMtfFile(mech);
+        MtfFile loader = toMtfFile(mek);
         Entity loaded = loader.getEntity();
 
-        assertEquals(0, loaded.getCritical(Mech.LOC_LT, 0).getMount().getFacing());
-        assertEquals(1, loaded.getCritical(Mech.LOC_LT, 1).getMount().getFacing());
-        assertEquals(2, loaded.getCritical(Mech.LOC_LT, 2).getMount().getFacing());
-        assertEquals(3, loaded.getCritical(Mech.LOC_LT, 3).getMount().getFacing());
-        assertEquals(4, loaded.getCritical(Mech.LOC_LT, 4).getMount().getFacing());
-        assertEquals(5, loaded.getCritical(Mech.LOC_LT, 5).getMount().getFacing());
+        assertEquals(0, loaded.getCritical(Mek.LOC_LT, 0).getMount().getFacing());
+        assertEquals(1, loaded.getCritical(Mek.LOC_LT, 1).getMount().getFacing());
+        assertEquals(2, loaded.getCritical(Mek.LOC_LT, 2).getMount().getFacing());
+        assertEquals(3, loaded.getCritical(Mek.LOC_LT, 3).getMount().getFacing());
+        assertEquals(4, loaded.getCritical(Mek.LOC_LT, 4).getMount().getFacing());
+        assertEquals(5, loaded.getCritical(Mek.LOC_LT, 5).getMount().getFacing());
     }
 
     @Test
-    public void loadSuperheavyDoubleSlot() throws Exception {
-        Mech mech = new BipedMech();
-        mech.setWeight(120.0);
-        mech.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
+    void loadSuperheavyDoubleSlot() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(120.0);
+        mek.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
         EquipmentType hs = EquipmentType.get(EquipmentTypeLookup.SINGLE_HS);
-        mech.addEquipment(hs, hs, Mech.LOC_LT, true, true);
+        mek.addEquipment(hs, hs, Mek.LOC_LT, true, true);
 
-        MtfFile loader = toMtfFile(mech);
-        CriticalSlot slot = loader.getEntity().getCritical(Mech.LOC_LT, 0);
+        MtfFile loader = toMtfFile(mek);
+        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
 
         assertEquals(hs, slot.getMount().getType());
         assertEquals(hs, slot.getMount2().getType());
@@ -98,47 +115,47 @@ public class MtfFileTest {
     }
 
     // Exercises new MtfFile.java code
-    // We should be able to load a Size 24 CommsGear component into 12 Superheavy slots, filling
+    // We should be able to load a Size 24 CommsGear component into 12 Superheavy
+    // slots, filling
     // the Left torso.
     @Test
-    public void loadSuperheavyVariableSizeSlot() throws Exception {
-        Mech mech = new TripodMech();
+    void loadSuperheavyVariableSizeSlot() throws Exception {
+        Mek mek = new TripodMek();
         double varSize = 24.0;
-        mech.setWeight(150.0);
-        mech.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
-        EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mech.addEquipment(commo, Mech.LOC_LT, false);
+        mek.setWeight(150.0);
+        mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
+        EquipmentType commsGear = EquipmentType.get("CommsGear");
+        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LT, false);
         mount.setSize(varSize);
 
-        MtfFile loader = toMtfFile(mech);
-        CriticalSlot slot = loader.getEntity().getCritical(Mech.LOC_LT, 0);
+        MtfFile loader = toMtfFile(mek);
+        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
 
-        assertEquals(commo, slot.getMount().getType());
+        assertEquals(commsGear, slot.getMount().getType());
         assertEquals(varSize, slot.getMount().getSize());
         assertFalse(slot.getMount().isOmniPodMounted());
         assertFalse(slot.isArmored());
     }
 
-    // Should _not_ allow loading size 25 CommsGear; 25 / 2.0 -> 13 crits, 1 more than allowed
+    // Should _not_ allow loading size 25 CommsGear; 25 / 2.0 -> 13 crits, 1 more
+    // than allowed
     @Test
-    public void ExceptionLoadSuperheavyVariableSizeSlot() throws Exception {
-        Mech mech = new TripodMech();
+    void ExceptionLoadSuperheavyVariableSizeSlot() throws Exception {
+        Mek mek = new TripodMek();
         double varSize = 25.0;
-        mech.setWeight(150.0);
-        mech.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
+        mek.setWeight(150.0);
+        mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
         EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mech.addEquipment(commo, Mech.LOC_LT, false);
+        Mounted<?> mount = mek.addEquipment(commo, Mek.LOC_LT, false);
         mount.setSize(varSize);
-        MtfFile loader = toMtfFile(mech);
+        MtfFile loader = toMtfFile(mek);
 
         Exception e = assertThrowsExactly(
                 Exception.class,
-                () -> loader.getEntity().getCritical(Mech.LOC_LT, 0)
-        );
+                () -> loader.getEntity().getCritical(Mek.LOC_LT, 0));
         assertEquals(
                 "java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12",
-                e.getMessage()
-        );
+                e.getMessage());
 
     }
 }

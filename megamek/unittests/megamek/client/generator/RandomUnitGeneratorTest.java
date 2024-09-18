@@ -19,35 +19,36 @@
  */
 package megamek.client.generator;
 
-import megamek.client.generator.RandomUnitGenerator.RatEntry;
-import megamek.common.MechSummary;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Vector;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
+import org.junit.jupiter.api.Test;
+
+import megamek.client.generator.RandomUnitGenerator.RatEntry;
+import megamek.common.MekSummary;
+
 /**
  * @author Deric Page <deric dot page at gmail dot com>
  * @since 5/15/14 2:04 PM
  */
-public class RandomUnitGeneratorTest {
+class RandomUnitGeneratorTest {
 
     @Test
-    public void testGenerate() {
-        final String M1 = "Mech 1";
-        final String M2 = "Mech 2";
-        final String M3 = "Mech 3";
-        final String M4 = "Mech 4";
-        final String M5 = "Mech 5";
-        final String M6 = "Mech 6";
-        final String M7 = "Mech 7";
-        final String M8 = "Mech 8";
+    void testGenerate() {
+        final String M1 = "Mek 1";
+        final String M2 = "Mek 2";
+        final String M3 = "Mek 3";
+        final String M4 = "Mek 4";
+        final String M5 = "Mek 5";
+        final String M6 = "Mek 6";
+        final String M7 = "Mek 7";
+        final String M8 = "Mek 8";
 
         RandomUnitGenerator testRug = spy(new RandomUnitGenerator());
 
@@ -83,40 +84,40 @@ public class RandomUnitGeneratorTest {
         when(mockOtherRat.getWeights()).thenReturn(otherWeights);
         testRug.addRat("Other RAT", mockOtherRat);
 
-        MechSummary mockMech1 = mock(MechSummary.class);
-        doReturn(mockMech1).when(testRug).getMechByName(M1);
-        MechSummary mockMech2 = mock(MechSummary.class);
-        doReturn(mockMech2).when(testRug).getMechByName(M2);
-        MechSummary mockMech3 = mock(MechSummary.class);
-        doReturn(mockMech3).when(testRug).getMechByName(M3);
-        MechSummary mockMech4 = mock(MechSummary.class);
-        doReturn(mockMech4).when(testRug).getMechByName(M4);
-        MechSummary mockMech5 = mock(MechSummary.class);
-        doReturn(mockMech5).when(testRug).getMechByName(M5);
-        MechSummary mockMech6 = mock(MechSummary.class);
-        doReturn(mockMech6).when(testRug).getMechByName(M6);
-        MechSummary mockMech7 = mock(MechSummary.class);
-        doReturn(mockMech7).when(testRug).getMechByName(M7);
-        MechSummary mockMech8 = mock(MechSummary.class);
-        doReturn(mockMech8).when(testRug).getMechByName(M8);
+        MekSummary mockMek1 = mock(MekSummary.class);
+        doReturn(mockMek1).when(testRug).getMekByName(M1);
+        MekSummary mockMek2 = mock(MekSummary.class);
+        doReturn(mockMek2).when(testRug).getMekByName(M2);
+        MekSummary mockMek3 = mock(MekSummary.class);
+        doReturn(mockMek3).when(testRug).getMekByName(M3);
+        MekSummary mockMek4 = mock(MekSummary.class);
+        doReturn(mockMek4).when(testRug).getMekByName(M4);
+        MekSummary mockMek5 = mock(MekSummary.class);
+        doReturn(mockMek5).when(testRug).getMekByName(M5);
+        MekSummary mockMek6 = mock(MekSummary.class);
+        doReturn(mockMek6).when(testRug).getMekByName(M6);
+        MekSummary mockMek7 = mock(MekSummary.class);
+        doReturn(mockMek7).when(testRug).getMekByName(M7);
+        MekSummary mockMek8 = mock(MekSummary.class);
+        doReturn(mockMek8).when(testRug).getMekByName(M8);
 
-        ArrayList<MechSummary> expected = new ArrayList<>(1);
-        expected.add(mockMech1);
+        ArrayList<MekSummary> expected = new ArrayList<>(1);
+        expected.add(mockMek1);
         doReturn(0.1).when(testRug).getRandom();
         assertEquals(expected, testRug.generate(1, "mockRat"));
 
         expected = new ArrayList<>(1);
-        expected.add(mockMech2);
+        expected.add(mockMek2);
         doReturn(0.5).when(testRug).getRandom();
         assertEquals(expected, testRug.generate(1, "mockRat"));
 
         expected = new ArrayList<>(1);
-        expected.add(mockMech3);
+        expected.add(mockMek3);
         doReturn(0.9).when(testRug).getRandom();
         assertEquals(expected, testRug.generate(1, "mockRat"));
 
         expected = new ArrayList<>(1);
-        expected.add(mockMech8);
+        expected.add(mockMek8);
         doReturn(0.99).when(testRug).getRandom();
         assertEquals(expected, testRug.generate(1, "mockRat"));
     }

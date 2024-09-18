@@ -63,14 +63,14 @@ public class VehicleTROView extends TROView {
     @SuppressWarnings("unchecked")
     @Override
     protected void initModel(EntityVerifier verifier) {
-        setModelData("formatArmorRow", new FormatTableRowMethod(new int[]{20, 10, 10},
-                new Justification[]{Justification.LEFT, Justification.CENTER, Justification.CENTER}));
+        setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
+                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
         addBasicData(tank);
         addArmorAndStructure();
         final int nameWidth = addEquipment(tank);
         setModelData("formatEquipmentRow",
-                new FormatTableRowMethod(new int[]{nameWidth, 12, 12}, new Justification[]{Justification.LEFT,
-                        Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER}));
+                new FormatTableRowMethod(new int[] { nameWidth, 12, 12 }, new Justification[] { Justification.LEFT,
+                        Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER }));
         addFluff();
         setModelData("isOmni", tank.isOmni());
         setModelData("isVTOL", tank.hasETypeFlag(Entity.ETYPE_VTOL));
@@ -122,7 +122,7 @@ public class VehicleTROView extends TROView {
     }
 
     private void addFluff() {
-        addMechVeeAeroFluff(tank);
+        addMekVeeAeroFluff(tank);
         if (tank.getJumpMP() > 0) {
             setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, tank.getFluff(),
                     () -> Messages.getString("TROView.jjVehicle")));
@@ -130,13 +130,13 @@ public class VehicleTROView extends TROView {
         }
     }
 
-    private static final int[][] TANK_ARMOR_LOCS = {{Tank.LOC_FRONT}, {Tank.LOC_RIGHT, Tank.LOC_LEFT},
-            {Tank.LOC_REAR}, {Tank.LOC_TURRET}, {Tank.LOC_TURRET_2}, {VTOL.LOC_ROTOR}};
+    private static final int[][] TANK_ARMOR_LOCS = { { Tank.LOC_FRONT }, { Tank.LOC_RIGHT, Tank.LOC_LEFT },
+            { Tank.LOC_REAR }, { Tank.LOC_TURRET }, { Tank.LOC_TURRET_2 }, { VTOL.LOC_ROTOR } };
 
-    private static final int[][] SH_TANK_ARMOR_LOCS = {{SuperHeavyTank.LOC_FRONT},
-            {SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT},
-            {SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT}, {SuperHeavyTank.LOC_REAR},
-            {SuperHeavyTank.LOC_TURRET}, {SuperHeavyTank.LOC_TURRET_2}};
+    private static final int[][] SH_TANK_ARMOR_LOCS = { { SuperHeavyTank.LOC_FRONT },
+            { SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT },
+            { SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT }, { SuperHeavyTank.LOC_REAR },
+            { SuperHeavyTank.LOC_TURRET }, { SuperHeavyTank.LOC_TURRET_2 } };
 
     private void addArmorAndStructure() {
         if (tank.hasETypeFlag(Entity.ETYPE_SUPER_HEAVY_TANK)) {
@@ -159,7 +159,7 @@ public class VehicleTROView extends TROView {
     }
 
     @Override
-    protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+    protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
         if (mounted.isSponsonTurretMounted()) {
             return Messages.getString("TROView.Sponson");
         }

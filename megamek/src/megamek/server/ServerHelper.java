@@ -18,31 +18,41 @@
  */
 package megamek.server;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
 import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-
-import java.util.*;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * This class contains computations carried out by the Server class.
  * Methods put in here should be static and self-contained.
+ * 
  * @author NickAragua
  */
 public class ServerHelper {
     /**
-     * Determines if the given entity is an infantry unit in the given hex is "in the open"
+     * Determines if the given entity is an infantry unit in the given hex is "in
+     * the open"
      * (and thus subject to double damage from attacks)
-     * @param te Target entity.
-     * @param te_hex Hex where target entity is located.
-     * @param game The current {@link Game}
-     * @param isPlatoon Whether the target unit is a platoon.
-     * @param ammoExplosion Whether we're considering a "big boom" ammo explosion from TacOps.
-     * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
+     * 
+     * @param te                         Target entity.
+     * @param te_hex                     Hex where target entity is located.
+     * @param game                       The current {@link Game}
+     * @param isPlatoon                  Whether the target unit is a platoon.
+     * @param ammoExplosion              Whether we're considering a "big boom" ammo
+     *                                   explosion from TacOps.
+     * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to
+     *                                   infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
     public static boolean infantryInOpen(Entity te, Hex te_hex, Game game,
-                                         boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
+            boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
 
@@ -68,7 +78,7 @@ public class ServerHelper {
      * Worker function that handles heat as applied to aerospace fighter
      */
     public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports,
-                                       int radicalHSBonus, int hotDogMod, GameManager s) {
+            int radicalHSBonus, int hotDogMod, TWGameManager s) {
         Report r;
 
         // If this aero is part of a squadron, we will deal with its
@@ -129,7 +139,7 @@ public class ServerHelper {
         // should we use a coolant pod?
         int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
         int possibleSinkage = ((Aero) entity).getHeatSinks();
-        for (Mounted m : entity.getEquipment()) {
+        for (Mounted<?> m : entity.getEquipment()) {
             if (m.getType() instanceof AmmoType) {
                 AmmoType at = (AmmoType) m.getType();
                 if ((at.getAmmoType() == AmmoType.T_COOLANT_POD) && m.isAmmoUsable()) {
@@ -409,9 +419,9 @@ public class ServerHelper {
         boolean heatArmor = false;
         boolean laserHS = false;
 
-        if (entity instanceof Mech) {
-            laserHS = ((Mech) entity).hasLaserHeatSinks();
-            heatArmor = ((Mech) entity).hasIntactHeatDissipatingArmor();
+        if (entity instanceof Mek) {
+            laserHS = ((Mek) entity).hasLaserHeatSinks();
+            heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
         }
 
         if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
@@ -468,8 +478,9 @@ public class ServerHelper {
     }
 
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-                                               boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
-        if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+            boolean jumpLanding, Vector<Report> vPhaseReport, TWGameManager gameManager) {
+        if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
 
             Roll diceRoll = Compute.rollD6(1);
@@ -497,9 +508,10 @@ public class ServerHelper {
     /**
      * Check for movement into magma hex and apply damage.
      */
-    public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, GameManager gameManager) {
+    public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
 
-        if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+        if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             gameManager.doMagmaDamage(entity, false);
         }
     }
@@ -507,7 +519,8 @@ public class ServerHelper {
     /**
      * Check for black ice when moving into pavement hex.
      */
-    public static boolean checkEnteringBlackIce(GameManager gameManager, Coords curPos, Hex curHex, boolean useBlackIce, boolean goodTemp, boolean isIceStorm) {
+    public static boolean checkEnteringBlackIce(TWGameManager gameManager, Coords curPos, Hex curHex,
+            boolean useBlackIce, boolean goodTemp, boolean isIceStorm) {
         boolean isPavement = curHex.hasPavement();
         if (isPavement && ((useBlackIce && goodTemp) || isIceStorm)) {
             if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
@@ -527,13 +540,15 @@ public class ServerHelper {
     /**
      * Loops through all active entities in the game and performs mine detection
      */
-    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, GameManager gameManager) {
+    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, TWGameManager gameManager) {
         boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
 
         // if the entity is on the board
         // and it either a) hasn't moved or b) we're not using TacOps BAP rules
-        // if we are not using the TacOps BAP rules, that means we only check the entity's final hex
-        // if we are using TacOps BAP rules, all moved entities have made all their checks already
+        // if we are not using the TacOps BAP rules, that means we only check the
+        // entity's final hex
+        // if we are using TacOps BAP rules, all moved entities have made all their
+        // checks already
         // so we just need to do the unmoved entities
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.isOffBoard() && entity.isDeployed() &&
@@ -545,10 +560,11 @@ public class ServerHelper {
 
     /**
      * Checks for minefields within the entity's active probe range.
+     * 
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
-                                           Vector<Report> vPhaseReport, GameManager gameManager) {
+            Vector<Report> vPhaseReport, TWGameManager gameManager) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
@@ -607,7 +623,7 @@ public class ServerHelper {
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-                                            Vector<Report> vPhaseReport, GameManager gameManager) {
+            Vector<Report> vPhaseReport, TWGameManager gameManager) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;
@@ -652,8 +668,8 @@ public class ServerHelper {
             boolean beyondPointBlankRange = dist > 1;
 
             // Check for Void/Null Sig - only detected by Bloodhound probes
-            if (beyondPointBlankRange && (detected instanceof Mech)) {
-                Mech m = (Mech) detected;
+            if (beyondPointBlankRange && (detected instanceof Mek)) {
+                Mek m = (Mek) detected;
                 if ((m.isVoidSigActive() || m.isNullSigActive()) && !detectorHasBloodhound) {
                     continue;
                 }
@@ -678,7 +694,8 @@ public class ServerHelper {
                 }
             }
 
-            LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(), false);
+            LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(),
+                    false);
             if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
                 gameManager.entityUpdate(detected.getId());
@@ -709,7 +726,7 @@ public class ServerHelper {
      * Loop through the game and clear 'blood stalker' flag for
      * any entities that have the given unit as the blood stalker target.
      */
-    public static void clearBloodStalkers(Game game, int stalkeeID, GameManager gameManager) {
+    public static void clearBloodStalkers(Game game, int stalkeeID, TWGameManager gameManager) {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getBloodStalkerTarget() == stalkeeID) {
                 entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
@@ -719,9 +736,12 @@ public class ServerHelper {
     }
 
     /**
-     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds
-     * of consecutive use, IO p.89. The first round of use means consecutiveRounds = 1; this is
+     * Returns the target number to avoid Radical Heat Sink Failure for the given
+     * number of rounds
+     * of consecutive use, IO p.89. The first round of use means consecutiveRounds =
+     * 1; this is
      * the minimum as 0 rounds of use would not trigger a roll.
+     * 
      * @param consecutiveRounds The rounds the RHS has been used
      * @return The roll target number to avoid failure
      */

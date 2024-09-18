@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Entity;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -56,10 +56,10 @@ public class AlphaStrikeMassConvert {
     public static void main(String[] args) throws EntityLoadingException {
         logger.debug("Starting AlphaStrike conversion.");
         StringBuilder table = new StringBuilder(clipboardHeaderString());
-        MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+        MekSummary[] units = MekSummaryCache.getInstance().getAllMeks();
 
-        for (MechSummary unit : units) {
-            Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+        for (MekSummary unit : units) {
+            Entity entity = new MekFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
 
             if (!ASConverter.canConvert(entity) || !entity.hasMulId()) {
                 continue;

@@ -15,26 +15,35 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.CriticalSlot;
+import megamek.common.Game;
+import megamek.common.HitData;
+import megamek.common.IBomber;
+import megamek.common.Mounted;
+import megamek.common.Report;
+import megamek.common.Roll;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
  * @since Sep 24, 2004
  */
 public class AmmoWeaponHandler extends WeaponHandler {
+    private static final MMLogger logger = MMLogger.create(AmmoWeaponHandler.class);
 
     private static final long serialVersionUID = -4934490646657484486L;
-    Mounted ammo;
+    Mounted<?> ammo;
 
     protected AmmoWeaponHandler() {
         // deserialization only
     }
 
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }
@@ -44,7 +53,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         checkAmmo();
         if (ammo == null) {
             // Can't happen. w/o legal ammo, the weapon *shouldn't* fire.
-            LogManager.getLogger().error("Handler can't find any ammo! Oh no!", new Exception());
+            logger.error("Handler can't find any ammo! Oh no!", new Exception());
             return;
         }
 
@@ -73,7 +82,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
      * For ammo weapons, this number can be less than the full number if the
      * amount of ammo is not high enough
      *
-     * @return the number of weapons of this type firing (for squadron weapon groups)
+     * @return the number of weapons of this type firing (for squadron weapon
+     *         groups)
      */
     @Override
     protected int getNumberWeapons() {
@@ -94,14 +104,15 @@ public class AmmoWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew up.
+     * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew
+     * up.
      */
     @Override
     protected boolean doAmmoFeedProblemCheck(Vector<Report> vPhaseReport) {
         // don't have neg ammo feed problem quirk
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
-        // attack roll was a 2, may explode
+            // attack roll was a 2, may explode
         } else if (roll.getIntValue() <= 2) {
             Roll diceRoll = Compute.rollD6(2);
 
@@ -131,7 +142,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
                 return false;
             }
-        // attack roll was not 2, won't explode
+            // attack roll was not 2, won't explode
         } else {
             return false;
         }
@@ -152,14 +163,15 @@ public class AmmoWeaponHandler extends WeaponHandler {
             if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             }
-            Mounted mounted = slot1.getMount();
+            Mounted<?> mounted = slot1.getMount();
             if (mounted.equals(weapon)) {
                 ae.hitAllCriticals(wloc, i);
                 break;
             }
         }
 
-        // if we're here, the weapon is going to explode whether it's flagged as explosive or not
+        // if we're here, the weapon is going to explode whether it's flagged as
+        // explosive or not
         vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon, true));
     }
 }

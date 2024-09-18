@@ -56,7 +56,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
         bvReport.startTentativeSection();
         bvReport.addLine("Explosive Equipment:", "", "");
         Set<AmmoType> ammos = new HashSet<>();
-        for (Mounted mounted : aero.getEquipment()) {
+        for (Mounted<?> mounted : aero.getEquipment()) {
             if (!countsAsExplosive(mounted)) {
                 continue;
             }
@@ -106,7 +106,8 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected void processDefensiveFactor() { }
+    protected void processDefensiveFactor() {
+    }
 
     @Override
     protected int heatEfficiency() {
@@ -115,17 +116,17 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected boolean isNominalRear(Mounted weapon) {
+    protected boolean isNominalRear(Mounted<?> weapon) {
         return switchRearAndFront ^ rearWeaponFilter().test(weapon);
     }
 
     @Override
-    protected Predicate<Mounted> frontWeaponFilter() {
+    protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> !weapon.isRearMounted() && !(weapon.getLocation() == Aero.LOC_AFT);
     }
 
     @Override
-    protected Predicate<Mounted> rearWeaponFilter() {
+    protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> weapon.isRearMounted() || (weapon.getLocation() == Aero.LOC_AFT);
     }
 

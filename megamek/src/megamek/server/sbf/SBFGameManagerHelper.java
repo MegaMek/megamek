@@ -18,11 +18,9 @@
  */
 package megamek.server.sbf;
 
-import megamek.common.ReportEntry;
 import megamek.common.net.packets.Packet;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
-import megamek.common.strategicBattleSystems.SBFReportMessages;
 import megamek.server.GameManagerPacketHelper;
 
 public interface SBFGameManagerHelper {

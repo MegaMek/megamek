@@ -14,6 +14,15 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -23,18 +32,14 @@ import megamek.common.Entity;
 import megamek.common.SuperHeavyTank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
  * Class which keeps set of all areas required to represent Tank unit in
- * MechDisplay.ArmorPanel class.
+ * MekDisplay.ArmorPanel class.
  */
 public class SuperHeavyTankMapSet implements DisplayMapSet {
 
     private UnitDisplay unitDisplay;
-    
+
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
     private PMSimpleLabel[] labels = new PMSimpleLabel[16];
@@ -116,9 +121,9 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorSmallFontSize());
+            GUIP.getUnitDisplayMekArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorLargeFontSize());
+            GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     public SuperHeavyTankMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;

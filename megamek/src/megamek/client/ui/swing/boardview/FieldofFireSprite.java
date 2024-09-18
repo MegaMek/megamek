@@ -1,4 +1,24 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
+
+import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -9,7 +29,6 @@ import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.image.ImageObserver;
-import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
@@ -17,16 +36,18 @@ import megamek.common.Coords;
 import megamek.common.RangeType;
 
 /**
- * This sprite is used to paint the field of fire 
- * for weapons. 
- * 
- * <BR><BR>Extends {@link MovementEnvelopeSprite}
- * 
+ * This sprite is used to paint the field of fire
+ * for weapons.
+ *
+ * <BR>
+ * <BR>
+ * Extends {@link MovementEnvelopeSprite}
+ *
  * @author Simon
  */
 public class FieldofFireSprite extends MovementEnvelopeSprite {
     // ### Control values
-    
+
     // thick border
     private static final int borderW = 10;
     private static final int borderOpac = 120;
@@ -39,18 +60,18 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private static final Stroke lineStroke = new BasicStroke(lineThickness, BasicStroke.CAP_BUTT,
             BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 2f }, 0f);
     // ### -------------
-    
-    // the fields control when and how borders are drawn 
+
+    // the fields control when and how borders are drawn
     // across a hex instead of along its borders
     private static final int[] bDir = {
-        0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5, 6, 5, 1, 5,
-        0, 5, 2, 5, 2, 2, 1, 5, 4, 4, 4, 4, 4, 4, 1, 4, 3, 3, 3, 3, 2, 2, 1, 0
+            0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0,
+            0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5, 6, 5, 1, 5,
+            0, 5, 2, 5, 2, 2, 1, 5, 4, 4, 4, 4, 4, 4, 1, 4, 3, 3, 3, 3, 2, 2, 1, 0
     };
     private static final int[] bTypes = {
-        0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 6, 1, 7, 2, 3, 0, 0, 0, 7,
-        0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
-        0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
+            0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 6, 1, 7, 2, 3, 0, 0, 0, 7,
+            0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
+            0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
     };
 
     private static final int COLORS_MAX = 5;
@@ -62,14 +83,13 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     // the board is zoomed
     private static Image[][] images = new Image[64][COLORS_MAX];
     private float oldZoom;
-    
+
     // individual sprite values
     private Color fillColor;
     private final int rangeBracket;
 
-
     public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
-                             int borders) {
+            int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
         Color c = getFieldOfFireColor(rangeBracket);
@@ -91,7 +111,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
             case RangeType.RANGE_EXTREME:
                 return GUIP.getFieldOfFireExtremeColor();
             default:
-                return new Color(0,0,0);
+                return new Color(0, 0, 0);
         }
     }
 
@@ -135,13 +155,13 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     public void prepare() {
         // adjust bounds (image size) to board zoom
         updateBounds();
-        
+
         // when the zoom hasn't changed and there is already
         // a prepared image for these borders, then do nothing more
         if ((bv.scale == oldZoom) && isReady()) {
             return;
         }
-        
+
         // when the board is rezoomed, ditch all images
         if (bv.scale != oldZoom) {
             oldZoom = bv.scale;
@@ -155,7 +175,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);
-        
+
         graph.setStroke(lineStroke);
 
         // this will take the right way to paint the borders
@@ -177,8 +197,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
             case 4: // twice two adjacent borders
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
                         getHexCrossLine01(bDir[borders], borderW));
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders]+3, borderW),
-                        getHexCrossLine01(bDir[borders]+3, borderW));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders] + 3, borderW),
+                        getHexCrossLine01(bDir[borders] + 3, borderW));
                 break;
             case 5: // three adjacent borders and one lone
                 drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
@@ -205,7 +225,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
 
         graph.dispose();
     }
-    
+
     protected void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {
         // 1) thick transparent border
         graph.setColor(fillColor);
@@ -225,7 +245,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.setColor(lineColor);
         graph.draw(getHexBorderLine(dir));
     }
-    
+
     protected void drawNormalBorders(Graphics2D graph) {
         // cycle through directions
         for (int i = 0; i < 6; i++) {
@@ -236,14 +256,14 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
 
                 graph.setColor(fillColor);
                 graph.fill(getHexBorderArea(i, cut, borderW));
-                
+
                 // 2) thin dashed line border
                 graph.setColor(lineColor);
-                graph.draw(getHexBorderLine(i, cut, lineThickness/2));
+                graph.draw(getHexBorderLine(i, cut, lineThickness / 2));
             }
-        } 
+        }
     }
-    
+
     @Override
     public boolean isReady() {
         return (bv.scale == oldZoom) && (images[borders][rangeBracket] != null);

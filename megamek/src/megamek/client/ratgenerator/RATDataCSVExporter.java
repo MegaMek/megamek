@@ -18,12 +18,6 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.client.ui.Messages;
-import megamek.common.UnitType;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -34,10 +28,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
+import megamek.client.ui.Messages;
+import megamek.common.UnitType;
+import megamek.logging.MMLogger;
+
 /**
- * This class provides export for MM's RAT data to an excel-optimized CSV file for exchanging data with the MUL team.
+ * This class provides export for MM's RAT data to an excel-optimized CSV file
+ * for exchanging data with the MUL team.
  */
 public class RATDataCSVExporter {
+    private static final MMLogger logger = MMLogger.create(RATDataCSVExporter.class);
 
     private static final String DELIMITER = ";";
     private static final ArrayList<String> EMPTY = new ArrayList<>();
@@ -51,7 +54,8 @@ public class RATDataCSVExporter {
     }
 
     /**
-     * Exports all RAT data from the given RATGenerator to a selectable file as an excel-optimized CSV.
+     * Exports all RAT data from the given RATGenerator to a selectable file as an
+     * excel-optimized CSV.
      */
     public static void exportToCSV(RATGenerator ratGenerator) {
         File saveFile = getSaveTargetFile();
@@ -65,7 +69,8 @@ public class RATDataCSVExporter {
         }
 
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "Model/Chassis Data" + DELIMITER + "MUL ID"
+            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "Model/Chassis Data" + DELIMITER
+                    + "MUL ID"
                     + DELIMITER + "Unit Type" + DELIMITER + "Intro Date" + DELIMITER + "Faction ID" + DELIMITER +
                     "Faction" + DELIMITER;
             columnNames += String.join(DELIMITER, eraYears) + "\n";
@@ -94,12 +99,12 @@ public class RATDataCSVExporter {
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "exportToCSV");
         }
     }
 
     private static void writeEraData2(HashMap<String, List<String>> ratings, StringBuilder csvLine, String faction) {
-        ratings.get(faction).forEach(availabilityCode ->  {
+        ratings.get(faction).forEach(availabilityCode -> {
             if (availabilityCode != null) {
                 csvLine.append("\"=\"\"");
                 csvLine.append(availabilityCode);
@@ -140,9 +145,9 @@ public class RATDataCSVExporter {
         csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
         csvLine.append("Model Data").append(DELIMITER);
-        csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
+        csvLine.append(record.getMekSummary().getMulId()).append(DELIMITER);
         csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
-        csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
+        csvLine.append(record.getMekSummary().getYear()).append(DELIMITER);
         csvLine.append("TBD").append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);
     }
@@ -201,5 +206,6 @@ public class RATDataCSVExporter {
         return choice;
     }
 
-    private RATDataCSVExporter() { }
+    private RATDataCSVExporter() {
+    }
 }

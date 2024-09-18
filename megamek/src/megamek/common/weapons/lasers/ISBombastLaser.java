@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BombastLaserWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -36,7 +36,7 @@ public class ISBombastLaser extends LaserWeapon {
         setInternalName(name);
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
-        String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10", 
+        String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10",
                 "Damage 9", "Damage 8", "Damage 7" };
         setModes(modeStrings);
         heat = 12;
@@ -76,12 +76,12 @@ public class ISBombastLaser extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+            TWGameManager manager) {
         return new BombastLaserWeaponHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
     }
 }

@@ -24,7 +24,7 @@ ${fluffHistory}
 Notable Unit:  ${notableUnit}
 </#if>
 </#if>
-Tech Base: ${techBase} 
+Tech Base: ${techBase}
 Tech Rating/Availability: ${techRating}
 Transport Weight:  ${transportWeight}
 Equipment:
@@ -37,7 +37,7 @@ Battle Value: ${battleValue}
 Introduction Year: ${year}
 Cost: ${cost} C-bills
 Notes: ${notes}
-	
+
 Platoon Type (Specialty): ${motiveType} (${specialty})
 <#if groundMP??>
     Ground MP: ${groundMP}<#if groundMP == 0>*</#if>

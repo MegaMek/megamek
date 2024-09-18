@@ -15,11 +15,11 @@
 
 package megamek.common.loaders;
 
+import java.util.Objects;
+
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
-
-import java.util.Objects;
 
 /**
  * BLkFile.java
@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * @author taharqa
  */
-public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
+public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
 
     // armor locatioms
     public static final int NOSE = 0;
@@ -73,7 +73,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
-        //support vees don't use engine ratings, so just use a value of 1
+        // support vees don't use engine ratings, so just use a value of 1
         a.setEngine(new Engine(1, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         loadSVArmor(a);
@@ -209,13 +209,10 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        Mounted<?> mount = t.addEquipment(etype, nLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
@@ -227,9 +224,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                             }
                         }
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = getLegacyVariableSize(equipName);
-                            }
                             mount.setSize(size);
                         } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
                                 && size > 1) {
@@ -247,26 +241,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                     }
                 } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
-                }
-            }
-        }
-
-        if (mashOperatingTheaters > 0) {
-            for (Mounted m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }

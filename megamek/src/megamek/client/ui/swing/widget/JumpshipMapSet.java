@@ -1,18 +1,27 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.client.ui.swing.widget;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
@@ -23,13 +32,9 @@ import megamek.common.Entity;
 import megamek.common.Jumpship;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
- * Class which keeps set of all areas required to 
- * represent ASF unit in MechDisplay.ArmorPanel class.
+ * Class which keeps set of all areas required to
+ * represent ASF unit in MekDisplay.ArmorPanel class.
  */
 public class JumpshipMapSet implements DisplayMapSet{
 
@@ -39,7 +44,7 @@ public class JumpshipMapSet implements DisplayMapSet{
     private PMValueLabel[] vLabels = new PMValueLabel[17];
     private Vector<BackGroundDrawer>  bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
-    
+
     UnitDisplay unitDisplay;
 
     //private static final int INT_STR_OFFSET = 4;
@@ -68,9 +73,9 @@ public class JumpshipMapSet implements DisplayMapSet{
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorSmallFontSize());
+            GUIP.getUnitDisplayMekArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorLargeFontSize());
+            GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     public JumpshipMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -218,7 +223,7 @@ public class JumpshipMapSet implements DisplayMapSet{
 
         //Value labels for all parts of the ship
         //front
-        fm =  comp.getFontMetrics(FONT_VALUE);   
+        fm =  comp.getFontMetrics(FONT_VALUE);
         vLabels[Jumpship.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm);
         //vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm);
         vLabels[Jumpship.LOC_FLS] = WidgetUtils.createValueLabel(30, 95, "", fm);

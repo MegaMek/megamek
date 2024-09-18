@@ -18,6 +18,18 @@
  */
 package megamek.common.battlevalue;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.AmmoType.T_AMS;
+import static megamek.common.AmmoType.T_APDS;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
@@ -29,15 +41,11 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.AmmoType.*;
-
-import java.util.*;
-import java.util.function.Predicate;
-
 /**
- * Base class for battle value calculators for all units. The subclasses implement overrides
- * as necessary for the bv calculation process that all unit types follow. To obtain the correct
+ * Base class for battle value calculators for all units. The subclasses
+ * implement overrides
+ * as necessary for the bv calculation process that all unit types follow. To
+ * obtain the correct
  * BVCalculator, use {@link #getBVCalculator(Entity)}.
  */
 public abstract class BVCalculator {
@@ -66,7 +74,7 @@ public abstract class BVCalculator {
     protected boolean switchRearAndFront = false;
     protected boolean heatEfficiencyExceeded = false;
     protected double heatSum;
-    private final Map<Mounted, Integer> collectedDefensiveEquipment = new HashMap<>();
+    private final Map<Mounted<?>, Integer> collectedDefensiveEquipment = new HashMap<>();
 
     /** The unit's BV without any force adjustments */
     protected double baseBV = -1;
@@ -82,9 +90,9 @@ public abstract class BVCalculator {
     }
 
     public static BVCalculator getBVCalculator(Entity entity) {
-        if (entity instanceof Mech) {
+        if (entity instanceof Mek) {
             return new MekBVCalculator(entity);
-        } else if (entity instanceof Protomech) {
+        } else if (entity instanceof ProtoMek) {
             return new ProtoMekBVCalculator(entity);
         } else if (entity instanceof BattleArmor) {
             return new BattleArmorBVCalculator(entity);
@@ -106,11 +114,15 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Calculate and return the current battle value of the entity of this calculator. Depending
-     * on the parameters C3 bonuses and/or pilot skill may be removed from the calculation.
+     * Calculate and return the current battle value of the entity of this
+     * calculator. Depending
+     * on the parameters C3 bonuses and/or pilot skill may be removed from the
+     * calculation.
      *
-     * @param ignoreC3 When true, the force bonus for C3 connections is not added.
-     * @param ignoreSkill When true, the pilot skill (including MD) is not factored in.
+     * @param ignoreC3    When true, the force bonus for C3 connections is not
+     *                    added.
+     * @param ignoreSkill When true, the pilot skill (including MD) is not factored
+     *                    in.
      * @return The newly calculated battle value.
      */
     public int calculateBV(boolean ignoreC3, boolean ignoreSkill) {
@@ -118,13 +130,17 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Calculate and return the current battle value of the entity of this calculator. Depending
-     * on the parameters C3 bonuses and/or pilot skill may be removed from the calculation. The
+     * Calculate and return the current battle value of the entity of this
+     * calculator. Depending
+     * on the parameters C3 bonuses and/or pilot skill may be removed from the
+     * calculation. The
      * given report is filled in.
      *
-     * @param ignoreC3 When true, the force bonus for C3 connections is not added.
-     * @param ignoreSkill When true, the pilot skill (including MD) is not factored in.
-     * @param bvReport The report to fill in with the calculation.
+     * @param ignoreC3    When true, the force bonus for C3 connections is not
+     *                    added.
+     * @param ignoreSkill When true, the pilot skill (including MD) is not factored
+     *                    in.
+     * @param bvReport    The report to fill in with the calculation.
      * @return The newly calculated battle value.
      */
     public int calculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
@@ -136,8 +152,10 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Calculate and return the base battle value of the entity of this calculator. The base BV
-     * does not include any force bonuses, i.e. external stores, C3, pilot skill and TAG bonuses.
+     * Calculate and return the base battle value of the entity of this calculator.
+     * The base BV
+     * does not include any force bonuses, i.e. external stores, C3, pilot skill and
+     * TAG bonuses.
      *
      * @return The newly calculated base unit battle value.
      */
@@ -146,8 +164,10 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Calculate and return the base battle value of the entity of this calculator. The base BV
-     * does not include any force bonuses, i.e. external stores, C3, pilot skill and TAG bonuses.
+     * Calculate and return the base battle value of the entity of this calculator.
+     * The base BV
+     * does not include any force bonuses, i.e. external stores, C3, pilot skill and
+     * TAG bonuses.
      * The given report is filled in with the calculation.
      *
      * @param bvReport The report to fill in with the calculation.
@@ -160,9 +180,12 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Retrieves a previously calculated base battle value of the unit without re-calculating
-     * it; see {@link #calculateBaseBV()}! This should only be used when it is certain
-     * that the value is still correct. The base BV does not include any force bonuses.
+     * Retrieves a previously calculated base battle value of the unit without
+     * re-calculating
+     * it; see {@link #calculateBaseBV()}! This should only be used when it is
+     * certain
+     * that the value is still correct. The base BV does not include any force
+     * bonuses.
      *
      * @return The stored base unit battle value.
      */
@@ -171,9 +194,12 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Retrieves a previously calculated battle value of the unit without re-calculating
-     * it. This BV includes the Tag force bonus but no other force bonuses! it can be
-     * used as a basis for calculating the C3 bonus without recalculating all units repeatedly.
+     * Retrieves a previously calculated battle value of the unit without
+     * re-calculating
+     * it. This BV includes the Tag force bonus but no other force bonuses! it can
+     * be
+     * used as a basis for calculating the C3 bonus without recalculating all units
+     * repeatedly.
      * This should only be used when it is certain that the value is still correct.
      *
      * @return The stored unit battle value including Tag bonus.
@@ -183,8 +209,10 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Retrieves a previously calculated full battle value of the unit without re-calculating
-     * it; see {@link #calculateBV(boolean, boolean)}! This should only be used when it is certain
+     * Retrieves a previously calculated full battle value of the unit without
+     * re-calculating
+     * it; see {@link #calculateBV(boolean, boolean)}! This should only be used when
+     * it is certain
      * that the value is still correct. The full BV includes all force bonuses.
      *
      * @return The stored full unit battle value.
@@ -282,16 +310,22 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Sets the running MP as used for battle value calculations. This value should not factor
-     * in gravity or weather (as these aren't well visible in the calculation, may change over
+     * Sets the running MP as used for battle value calculations. This value should
+     * not factor
+     * in gravity or weather (as these aren't well visible in the calculation, may
+     * change over
      * the course of a battle and aren't available in MHQ).
      * It also should not factor in player-controlled transients such as
-     * cargo, trailers, bombs, heat, movement mode changes (LAM, WiGE, QuadVees), grounded/landed
-     * status (Aero) as these would also change BV in battle in strange ways. Also, it should
-     * ignore advanced rules such as TO Infantry Fast Movement to prevent base BV values
+     * cargo, trailers, bombs, heat, movement mode changes (LAM, WiGE, QuadVees),
+     * grounded/landed
+     * status (Aero) as these would also change BV in battle in strange ways. Also,
+     * it should
+     * ignore advanced rules such as TO Infantry Fast Movement to prevent base BV
+     * values
      * different from those on the MUL.
      *
-     * It should factor in intransient modifiers such as TSM, modular or hardened armor as well as
+     * It should factor in intransient modifiers such as TSM, modular or hardened
+     * armor as well as
      * damage to the unit (engine hits, motive damage, immobile status).
      */
     protected void setRunMP() {
@@ -299,7 +333,8 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Sets the jumping MP as used for battle value calculations. Here the same rules apply as with
+     * Sets the jumping MP as used for battle value calculations. Here the same
+     * rules apply as with
      * {@link #setRunMP()}.
      */
     protected void setJumpMP() {
@@ -307,17 +342,20 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Sets the UMU MP as used for battle value calculations. Here the same rules apply as with
+     * Sets the UMU MP as used for battle value calculations. Here the same rules
+     * apply as with
      * {@link #setRunMP()}.
      */
     protected void setUmuMP() {
         umuMP = entity.getActiveUMUCount();
     }
 
-    protected void processTypeModifier() { }
+    protected void processTypeModifier() {
+    }
 
     /**
-     * Returns true when the given location is valid for armor BV calculations. Returns
+     * Returns true when the given location is valid for armor BV calculations.
+     * Returns
      * true by default. Override to exclude locations, e.g. hull on Aeros.
      *
      * @param location The location to check
@@ -329,7 +367,8 @@ public abstract class BVCalculator {
 
     protected void processArmor() {
         double totalArmorBV = 0;
-        // Units with patchwork armor or Harjel II/III calculate and list every location separately
+        // Units with patchwork armor or Harjel II/III calculate and list every location
+        // separately
         if (entity.hasPatchworkArmor() || entity.hasWorkingMisc(MiscType.F_HARJEL_II)
                 || entity.hasWorkingMisc(MiscType.F_HARJEL_III)) {
             bvReport.addLine("Armor:", "", "");
@@ -392,31 +431,35 @@ public abstract class BVCalculator {
             totalArmorBV = totalArmor * armorMultiplier * barRating;
             String calculation = entity.getTotalArmor() + "";
             calculation += (modularArmor > 0) ? " + " + modularArmor + " (Mod.)" : "";
-            calculation += (torsoMountedCockpit > 0) ? " + " + formatForReport(torsoMountedCockpit) + " (Torso-m. Cockpit)" : "";
+            calculation += (torsoMountedCockpit > 0)
+                    ? " + " + formatForReport(torsoMountedCockpit) + " (Torso-m. Cockpit)"
+                    : "";
             if (totalArmor > entity.getTotalArmor()) {
                 calculation = "(" + calculation + ")";
             }
 
             calculation += " x " + formatForReport(armorFactor());
-            calculation += (armorMultiplier != 1) ?
-                    " x " + formatForReport(armorMultiplier) + " ("
-                            + ArmorType.forEntity(entity).getName() + ")" : "";
-            calculation += (barRating != 1) ?
-                    " x " + formatForReport(barRating) + " (BAR)" : "";
+            calculation += (armorMultiplier != 1) ? " x " + formatForReport(armorMultiplier) + " ("
+                    + ArmorType.forEntity(entity).getName() + ")" : "";
+            calculation += (barRating != 1) ? " x " + formatForReport(barRating) + " (BAR)" : "";
             defensiveValue += totalArmorBV * armorFactor();
             bvReport.addLine("Armor:", calculation, "= " + formatForReport(defensiveValue));
         }
     }
 
-    /** @return The base factor to multiply armor by, i.e. 25 for capital aerosapce and 2.5 for all others. */
+    /**
+     * @return The base factor to multiply armor by, i.e. 25 for capital aerosapce
+     *         and 2.5 for all others.
+     */
     protected double armorFactor() {
         return 2.5;
     }
 
-    protected String equipmentDescriptor(Mounted mounted) {
+    protected String equipmentDescriptor(Mounted<?> mounted) {
         if (mounted.getType() instanceof WeaponType) {
-            String descriptor = mounted.getType().getShortName() + " (" + entity.getLocationAbbr(mounted.getLocation()) + ")";
-            if (mounted.isMechTurretMounted()) {
+            String descriptor = mounted.getType().getShortName() + " (" + entity.getLocationAbbr(mounted.getLocation())
+                    + ")";
+            if (mounted.isMekTurretMounted()) {
                 descriptor += TURRET;
             }
             if (mounted.isRearMounted() || isRearFacingVGL(mounted)) {
@@ -462,7 +505,7 @@ public abstract class BVCalculator {
         bvReport.addLine("Internal Structure:", calculation, "= " + formatForReport(defensiveValue));
     }
 
-    protected boolean countsAsDefensiveEquipment(Mounted equipment) {
+    protected boolean countsAsDefensiveEquipment(Mounted<?> equipment) {
         if (equipment.isDestroyed() || equipment.isWeaponGroup()
                 || (equipment.getType() instanceof BayWeapon)) {
             return false;
@@ -504,7 +547,7 @@ public abstract class BVCalculator {
         double screenBV = 0;
         double screenAmmoBV = 0;
         boolean hasDefensiveEquipment = false;
-        for (Mounted ammo : entity.getAmmo()) {
+        for (Mounted<?> ammo : entity.getAmmo()) {
             if (ammo.getUsableShotsLeft() == 0) {
                 continue;
             }
@@ -522,16 +565,16 @@ public abstract class BVCalculator {
             }
         }
 
-        for (Mounted equipment : entity.getEquipment()) {
+        for (Mounted<?> equipment : entity.getEquipment()) {
             if (countsAsDefensiveEquipment(equipment)) {
-                Mounted key = collectedDefensiveEquipment.keySet().stream()
+                Mounted<?> key = collectedDefensiveEquipment.keySet().stream()
                         .filter(p -> equipment.getType() == p.getType()).findFirst().orElse(equipment);
                 collectedDefensiveEquipment.merge(key, 1, Integer::sum);
             }
         }
 
-        for (Map.Entry<Mounted, Integer> equipmentEntry : collectedDefensiveEquipment.entrySet()) {
-            Mounted equipment = equipmentEntry.getKey();
+        for (Map.Entry<Mounted<?>, Integer> equipmentEntry : collectedDefensiveEquipment.entrySet()) {
+            Mounted<?> equipment = equipmentEntry.getKey();
             EquipmentType eType = equipment.getType();
             double equipmentBV = eType.getBV(entity);
             if (eType instanceof MiscType) {
@@ -567,7 +610,8 @@ public abstract class BVCalculator {
         }
         if (screenAmmoBV > 0) {
             double nonExcessiveBV = Math.min(screenBV, screenAmmoBV);
-            String calculation = "+ " + formatForReport(nonExcessiveBV) + ((screenAmmoBV > screenBV) ? " (Excessive)" : "");
+            String calculation = "+ " + formatForReport(nonExcessiveBV)
+                    + ((screenAmmoBV > screenBV) ? " (Excessive)" : "");
             defensiveValue += nonExcessiveBV;
             bvReport.addLine("- Screen Launcher Ammo", calculation, "= " + formatForReport(defensiveValue));
             hasDefensiveEquipment = true;
@@ -575,7 +619,8 @@ public abstract class BVCalculator {
         bvReport.finalizeTentativeSection(hasDefensiveEquipment);
     }
 
-    protected void processExplosiveEquipment() { }
+    protected void processExplosiveEquipment() {
+    }
 
     protected void processDefensiveFactor() {
         int tmmRunning = getRunningTMM();
@@ -618,8 +663,8 @@ public abstract class BVCalculator {
     }
 
     protected void determineFront() {
-        Predicate<Mounted> frontFilter = frontWeaponFilter();
-        Predicate<Mounted> rearFilter = rearWeaponFilter();
+        Predicate<Mounted<?>> frontFilter = frontWeaponFilter();
+        Predicate<Mounted<?>> rearFilter = rearWeaponFilter();
         double weaponsBVFront = processWeaponSection(false, frontFilter, false);
         double weaponsBVRear = processWeaponSection(false, rearFilter, false);
         switchRearAndFront = weaponsBVFront < weaponsBVRear;
@@ -637,20 +682,20 @@ public abstract class BVCalculator {
         }
     }
 
-    protected boolean isRearFacingVGL(Mounted weapon) {
+    protected boolean isRearFacingVGL(Mounted<?> weapon) {
         // vehicular grenade launchers facing to the rear sides count for rear BV, too
         return weapon.getType().hasFlag(WeaponType.F_VGL) &&
-             (weapon.getFacing() >= 2) && (weapon.getFacing() <= 4);
+                (weapon.getFacing() >= 2) && (weapon.getFacing() <= 4);
     }
 
-    protected boolean isFrontFacingVGL(Mounted weapon) {
+    protected boolean isFrontFacingVGL(Mounted<?> weapon) {
         // vehicular grenade launchers facing to the rear sides count for rear BV, too
         return weapon.getType().hasFlag(WeaponType.F_VGL) &&
                 ((weapon.getFacing() == 1) || (weapon.getFacing() >= 5));
     }
 
-    protected double processWeaponSection(boolean showInReport, Predicate<Mounted> weaponFilter,
-                                          boolean addToOffensiveValue) {
+    protected double processWeaponSection(boolean showInReport, Predicate<Mounted<?>> weaponFilter,
+            boolean addToOffensiveValue) {
         return entity.getEquipment().stream()
                 .filter(this::countAsOffensiveWeapon)
                 .filter(weaponFilter)
@@ -660,84 +705,101 @@ public abstract class BVCalculator {
 
     /**
      * Returns true when a weapon is to be counted and calculated as a rear weapon.
-     * For units that deal with rear weapons this is usually true when the weapon is actually
-     * rear-facing but may be false when weapon facing is reversed (when the front weapons BV
+     * For units that deal with rear weapons this is usually true when the weapon is
+     * actually
+     * rear-facing but may be false when weapon facing is reversed (when the front
+     * weapons BV
      * is smaller than the rear weapon BV).
-     * This method should rely on the switchRearAndFront field to decide the return value.
+     * This method should rely on the switchRearAndFront field to decide the return
+     * value.
      * switchRearAndFront is set before weapons are processed by the call to
      * {@link #determineFront()}.
-     * By default, this returns false which is correct for units that do not deal with rear
+     * By default, this returns false which is correct for units that do not deal
+     * with rear
      * weapons such as ProtoMeks.
-     * This is overridden as necessary for units that deal with rear weapons (Mek, Aero, Tanks,
+     * This is overridden as necessary for units that deal with rear weapons (Mek,
+     * Aero, Tanks,
      * but not large aerospace that use arcs).
      *
      * @param weapon The Mounted equipment to check
      * @return True when the weapon is to be counted as if it was rear-facing
      */
-    protected boolean isNominalRear(Mounted weapon) {
+    protected boolean isNominalRear(Mounted<?> weapon) {
         return switchRearAndFront ^ rearWeaponFilter().test(weapon);
     }
 
     /**
-     * Returns true when a weapon is to be counted and calculated as a "rear" arc weapon in
-     * large aerospace units. The nominal rear arcs are those that are valued at 25% only.
+     * Returns true when a weapon is to be counted and calculated as a "rear" arc
+     * weapon in
+     * large aerospace units. The nominal rear arcs are those that are valued at 25%
+     * only.
      * By default, this returns false. This is overridden for large aerospace units.
      *
      * @param weapon The Mounted equipment to check
      * @return True when the weapon is to be counted as in a "rear" arc
      */
-    protected boolean isNominalRearArc(Mounted weapon) {
+    protected boolean isNominalRearArc(Mounted<?> weapon) {
         return false;
     }
 
     /**
      * @return True when rear and front weapon switching has been decided and
-     * the given weapon is to be counted as rear-facing.
+     *         the given weapon is to be counted as rear-facing.
      */
-    private boolean isDecidedAsNominalRear(Mounted weapon) {
+    private boolean isDecidedAsNominalRear(Mounted<?> weapon) {
         return frontAndRearDecided && isNominalRear(weapon);
     }
 
     /**
-     * @return When true, will show individual weapon heat sums. Used in Meks, AF, CF, and SC.
+     * @return When true, will show individual weapon heat sums. Used in Meks, AF,
+     *         CF, and SC.
      */
     protected boolean usesWeaponHeat() {
         return false;
     }
 
     /**
-     * @return The multiplier for the arc that the given equipment is in (1, 0.5, or 0.25).
-     * Overridden for large aerospace units. When not 1, the factor is shown in the report
-     * and multiplied into the resulting BV.
+     * @return The multiplier for the arc that the given equipment is in (1, 0.5, or
+     *         0.25).
+     *         Overridden for large aerospace units. When not 1, the factor is shown
+     *         in the report
+     *         and multiplied into the resulting BV.
      */
-    protected double arcFactor(Mounted equipment) {
+    protected double arcFactor(Mounted<?> equipment) {
         return 1;
     }
 
     /**
-     * Forwards to {@link #processWeapon(Mounted, boolean, boolean, int)} with a weaponCount
+     * Forwards to {@link #processWeapon(Mounted<?>, boolean, boolean, int)} with a
+     * weaponCount
      * parameter of 1 (single weapon).
      */
-    protected double processWeapon(Mounted weapon, boolean showInReport,
-                                   boolean addToOffensiveValue) {
+    protected double processWeapon(Mounted<?> weapon, boolean showInReport,
+            boolean addToOffensiveValue) {
         return processWeapon(weapon, showInReport, addToOffensiveValue, 1);
     }
 
     /**
      * Determines the BV for one or more weapons of a single type which may include
      * a WeaponType, MiscType or AmmoType.
-     * When showInReport is false, nothing is written to the report. Otherwise, a line
-     * with the weapon's name and (if it has a WeaponType) location as well as the calculation
+     * When showInReport is false, nothing is written to the report. Otherwise, a
+     * line
+     * with the weapon's name and (if it has a WeaponType) location as well as the
+     * calculation
      * and modifiers is shown.
      *
-     * @param weapon The Mounted to process - may include a WeaponType, MiscType or AmmoType
-     * @param showInReport When true, will write a line for this weapon to the report.
-     * @param weaponCount The number of this particular type of weapon (multiplies the BV)
-     * @param addToOffensiveValue When true, will add the result to offensiveValue and show the result
+     * @param weapon              The Mounted to process - may include a WeaponType,
+     *                            MiscType or AmmoType
+     * @param showInReport        When true, will write a line for this weapon to
+     *                            the report.
+     * @param weaponCount         The number of this particular type of weapon
+     *                            (multiplies the BV)
+     * @param addToOffensiveValue When true, will add the result to offensiveValue
+     *                            and show the result
      * @return The BV for this weapon
      */
     protected double processWeapon(Mounted<?> weapon, boolean showInReport,
-                                   boolean addToOffensiveValue, int weaponCount) {
+            boolean addToOffensiveValue, int weaponCount) {
         double weaponBV = weapon.getType().getBV(entity);
 
         // MG Arrays need to sum up their linked MGs
@@ -796,7 +858,7 @@ public abstract class BVCalculator {
 
             // artemis bumps up the value
             if ((weapon.getLinkedBy() != null) && (weapon.getLinkedBy().getType() instanceof MiscType)) {
-                Mounted linkedBy = weapon.getLinkedBy();
+                Mounted<?> linkedBy = weapon.getLinkedBy();
                 if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     weaponBV *= 1.2;
                     calculation += " x 1.2 (Art-IV)";
@@ -809,7 +871,8 @@ public abstract class BVCalculator {
                 } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
                         || linkedBy.getType().hasFlag(MiscType.F_APOLLO)) {
                     weaponBV *= 1.15;
-                    calculation += " x 1.15 (" + (linkedBy.getType().hasFlag(MiscType.F_APOLLO) ? "Apollo)" : "RISC LPM)");
+                    calculation += " x 1.15 ("
+                            + (linkedBy.getType().hasFlag(MiscType.F_APOLLO) ? "Apollo)" : "RISC LPM)");
                 }
             }
 
@@ -844,34 +907,44 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Returns a Predicate that determines if a weapon is counted as a front or nose arc weapon -ONLY-
-     * for the purpose of determining if the weapon BV of front weapons exceeds that of
+     * Returns a Predicate that determines if a weapon is counted as a front or nose
+     * arc weapon -ONLY-
+     * for the purpose of determining if the weapon BV of front weapons exceeds that
+     * of
      * rear weapons on unit types that care about rear weapons.
-     * By default, returns true so that all weapons count safely as front weapons. Should be
-     * overridden for all unit types that account for rear-facing weapons. Does not need to
+     * By default, returns true so that all weapons count safely as front weapons.
+     * Should be
+     * overridden for all unit types that account for rear-facing weapons. Does not
+     * need to
      * be overridden for unit types that don't (such as ProtoMeks).
      *
-     * @return A Predicate identifying if a weapon counts as a front weapon (read above!)
+     * @return A Predicate identifying if a weapon counts as a front weapon (read
+     *         above!)
      */
-    protected Predicate<Mounted> frontWeaponFilter() {
+    protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> true;
     }
 
     /**
-     * Returns a Predicate that determines if a weapon is counted as a rear or aft arc weapon -ONLY-
-     * for the purpose of determining if the weapon BV of front weapons exceeds that of
+     * Returns a Predicate that determines if a weapon is counted as a rear or aft
+     * arc weapon -ONLY-
+     * for the purpose of determining if the weapon BV of front weapons exceeds that
+     * of
      * rear weapons on unit types that care about rear weapons.
-     * By default, returns false so that all weapons count safely as front weapons. Should be
-     * overridden for all unit types that account for rear-facing weapons. Does not need to
+     * By default, returns false so that all weapons count safely as front weapons.
+     * Should be
+     * overridden for all unit types that account for rear-facing weapons. Does not
+     * need to
      * be overridden for unit types that don't (such as ProtoMeks).
      *
-     * @return A Predicate identifying if a weapon counts as a front weapon (read above!)
+     * @return A Predicate identifying if a weapon counts as a front weapon (read
+     *         above!)
      */
-    protected Predicate<Mounted> rearWeaponFilter() {
+    protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> false;
     }
 
-    protected boolean countAsOffensiveWeapon(Mounted equipment) {
+    protected boolean countAsOffensiveWeapon(Mounted<?> equipment) {
         if (equipment.getType() instanceof AmmoType) {
             return false;
         } else if (equipment.getType() instanceof MiscType) {
@@ -887,13 +960,13 @@ public abstract class BVCalculator {
         }
     }
 
-    protected boolean countMiscAsOffensiveWeapon(Mounted misc) {
+    protected boolean countMiscAsOffensiveWeapon(Mounted<?> misc) {
         MiscType miscType = (MiscType) misc.getType();
         return (miscType.getBV(entity) > 0)
                 && !misc.isHit() && !misc.isInoperable()
                 && !misc.isWeaponGroup()
                 && (miscType.isVibroblade() || miscType.hasFlag(MiscType.F_VIBROCLAW)
-                || miscType.hasFlag(MiscType.F_MAGNET_CLAW));
+                        || miscType.hasFlag(MiscType.F_MAGNET_CLAW));
     }
 
     /** @return The BV modifier for AFC or BFC. Override as necessary. */
@@ -912,7 +985,7 @@ public abstract class BVCalculator {
         bvReport.startTentativeSection();
         bvReport.addLine("Offensive Equipment:", "", "");
         boolean hasOffensiveEquipment = false;
-        for (Mounted misc : entity.getMisc()) {
+        for (Mounted<?> misc : entity.getMisc()) {
             MiscType mtype = (MiscType) misc.getType();
 
             // don't count destroyed equipment
@@ -1002,12 +1075,15 @@ public abstract class BVCalculator {
         }
     }
 
-    /** @return The unit's heat dissipation for BV purposes. Override as necessary. */
+    /**
+     * @return The unit's heat dissipation for BV purposes. Override as necessary.
+     */
     protected int heatEfficiency() {
         return NO_HEAT;
     }
 
-    protected void processWeight() { }
+    protected void processWeight() {
+    }
 
     protected void processSpeedFactor() {
         double speedFactor = offensiveSpeedFactor(offensiveSpeedFactorMP());
@@ -1019,6 +1095,7 @@ public abstract class BVCalculator {
 
     /**
      * Returns the Speed Factor (TM p.316) for the given MP parameter
+     *
      * @param mp The MP value for the unit (base value: Walk + 1/2 Jump/UMU)
      * @return The Speed Factor as a two-digit-rounded double such as 1.76
      */
@@ -1026,15 +1103,22 @@ public abstract class BVCalculator {
         return Math.round(Math.pow(1 + ((mp - 5) / 10.0), 1.2) * 100.0) / 100.0;
     }
 
-    /** @return the MP value to use for the Offensive Speed Factor (TM p.316) for this unit. */
+    /**
+     * @return the MP value to use for the Offensive Speed Factor (TM p.316) for
+     *         this unit.
+     */
     protected int offensiveSpeedFactorMP() {
         return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
     }
 
     /** Processes unit type modifiers of TM, p.316. */
-    protected void processOffensiveTypeModifier() { }
+    protected void processOffensiveTypeModifier() {
+    }
 
-    /** @return true when the given ammo (must be AmmoType) counts towards offensive ammo BV calculation. */
+    /**
+     * @return true when the given ammo (must be AmmoType) counts towards offensive
+     *         ammo BV calculation.
+     */
     protected boolean ammoCounts(AmmoMounted ammo) {
         AmmoType ammoType = ammo.getType();
         return (ammo.getUsableShotsLeft() > 0)
@@ -1044,7 +1128,10 @@ public abstract class BVCalculator {
                 && !ammo.isOneShot();
     }
 
-    /** Processes the sum of offensive and defensive battle rating and modifiers that affect this sum. */
+    /**
+     * Processes the sum of offensive and defensive battle rating and modifiers that
+     * affect this sum.
+     */
     protected void processSummarize() {
         double cockpitMod = 1;
         String modifier = "";
@@ -1093,7 +1180,7 @@ public abstract class BVCalculator {
         for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             WeaponType wtype = weapon.getType();
 
-            if (weapon.isDestroyed() //|| wtype.hasFlag(WeaponType.F_AMS)
+            if (weapon.isDestroyed() // || wtype.hasFlag(WeaponType.F_AMS)
                     || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)
                     || wtype instanceof BayWeapon || weapon.isWeaponGroup()) {
                 continue;
@@ -1118,7 +1205,7 @@ public abstract class BVCalculator {
         }
     }
 
-    protected double getAmmoBV(Mounted ammo) {
+    protected double getAmmoBV(Mounted<?> ammo) {
         return ammo.getType().getBV(entity);
     }
 
@@ -1156,22 +1243,25 @@ public abstract class BVCalculator {
     }
 
     private static final double[][] bvMultipliers = new double[][] {
-            {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
-            {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
-            {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
-            {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
-            {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-            {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
-            {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
-            {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
-            {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
+            { 2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50 },
+            { 2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38 },
+            { 1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21 },
+            { 1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04 },
+            { 1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85 },
+            { 1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77 },
+            { 1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72 },
+            { 1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68 },
+            { 1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64 },
     };
 
     /**
-     * Returns the BV multiplier for the gunnery/piloting of the given entity's pilot (TM p.315) as well as MD
+     * Returns the BV multiplier for the gunnery/piloting of the given entity's
+     * pilot (TM p.315) as well as MD
      * implants of the pilot.
-     * Returns 1 if the given entity's crew is null. Special treatment is given to infantry units where
-     * units unable to make anti-mek attacks use 5 as their anti-mek (piloting) value as well as LAM pilots that
+     * Returns 1 if the given entity's crew is null. Special treatment is given to
+     * infantry units where
+     * units unable to make anti-mek attacks use 5 as their anti-mek (piloting)
+     * value as well as LAM pilots that
      * use the average of their aero and mek values.
      *
      * @param entity The entity to get the skill modifier for
@@ -1180,7 +1270,7 @@ public abstract class BVCalculator {
     public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
         if (entity.getCrew() == null) {
             if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-                return bvSkillMultiplier(4, Infantry.ANTI_MECH_SKILL_NO_GEAR);
+                return bvSkillMultiplier(4, Infantry.ANTI_MEK_SKILL_NO_GEAR);
             } else {
                 return bvSkillMultiplier(4, 5);
             }
@@ -1189,14 +1279,14 @@ public abstract class BVCalculator {
         int piloting = entity.getCrew().getPiloting();
 
         if (((entity instanceof Infantry) && (!((Infantry) entity).canMakeAntiMekAttacks()))
-                || (entity instanceof Protomech)) {
+                || (entity instanceof ProtoMek)) {
             piloting = 5;
         } else if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-            piloting = Infantry.ANTI_MECH_SKILL_NO_GEAR;
+            piloting = Infantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (entity.getCrew() instanceof LAMPilot) {
             LAMPilot lamPilot = (LAMPilot) entity.getCrew();
-            gunnery = (lamPilot.getGunneryMech() + lamPilot.getGunneryAero()) / 2;
-            piloting = (lamPilot.getPilotingMech() + lamPilot.getPilotingAero()) / 2;
+            gunnery = (lamPilot.getGunneryMek() + lamPilot.getGunneryAero()) / 2;
+            piloting = (lamPilot.getPilotingMek() + lamPilot.getPilotingAero()) / 2;
         }
         double skillMultiplier = bvSkillMultiplier(gunnery, piloting);
         if (skillMultiplier != 1) {
@@ -1212,13 +1302,13 @@ public abstract class BVCalculator {
             pilotModifiers.add("Comm. Implant");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
@@ -1231,7 +1321,7 @@ public abstract class BVCalculator {
             pilotModifiers.add("Sensory Implants");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI)
-                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
             piloting = Math.max(0, piloting - 3);
             gunnery = Math.max(0, gunnery - 2);
             pilotModifiers.add("Proto DNI");
@@ -1248,7 +1338,8 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Returns the BV multiplier for the given gunnery and piloting values. Returns 1 for the neutral
+     * Returns the BV multiplier for the given gunnery and piloting values. Returns
+     * 1 for the neutral
      * values 4/5.
      *
      * @param gunnery  the gunnery skill of a pilot
@@ -1260,9 +1351,11 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Processes the BV bonus that a unit with TAG, LTAG or C3M gets for friendly units that have semi-guided
+     * Processes the BV bonus that a unit with TAG, LTAG or C3M gets for friendly
+     * units that have semi-guided
      * or Arrow IV homing ammunition
-     * (TO:AUE p.198, https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/)
+     * (TO:AUE p.198,
+     * https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/)
      */
     public void processTagBonus() {
         long tagCount = workingTAGCount(entity);
@@ -1272,19 +1365,20 @@ public abstract class BVCalculator {
 
         bvReport.startTentativeSection();
         bvReport.addLine("TAG Bonus (" + tagCount + " Tag" + (tagCount == 1 ? "" : "s") + "):", "", "");
-        // In the lobby, bombs are represented as a bombChoices array, only later is it real Mounteds.
+        // In the lobby, bombs are represented as a bombChoices array, only later is it
+        // real Mounteds.
         boolean hasGuided = false;
 
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity == entity) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
-            for (Mounted mounted : otherEntity.getAmmo()) {
+            for (Mounted<?> mounted : otherEntity.getAmmo()) {
                 AmmoType atype = (AmmoType) mounted.getType();
                 EnumSet<AmmoType.Munitions> munitionType = atype.getMunitionType();
                 if ((mounted.getUsableShotsLeft() > 0)
                         && ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
-                            || (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
+                                || (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
                     adjustedBV += mounted.getType().getBV(entity) * tagCount;
                     bvReport.addLine("- " + equipmentDescriptor(mounted),
                             "+ " + tagCount + " x " + formatForReport(mounted.getType().getBV(entity))
@@ -1327,12 +1421,14 @@ public abstract class BVCalculator {
     protected void processExternalStores() {
         bvReport.startTentativeSection();
         bvReport.addLine("External Stores:", "", "");
-        // In the lobby, bombs are represented as a bombChoices array, only later is it real Mounteds.
+        // In the lobby, bombs are represented as a bombChoices array, only later is it
+        // real Mounteds.
         boolean hasBombs = false;
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;
             for (BombType bombType : BombType.allBombTypes()) {
-                int bombCount = asBomber.getBombChoices()[BombType.getBombTypeFromInternalName(bombType.getInternalName())];
+                int bombCount = asBomber.getBombChoices()[BombType
+                        .getBombTypeFromInternalName(bombType.getInternalName())];
                 double bombTypeBV = bombType.getBV(entity);
                 if ((bombCount > 0) && (bombTypeBV > 0)) {
                     double bombBV = bombType.getBV(entity) * bombCount;
@@ -1343,7 +1439,7 @@ public abstract class BVCalculator {
                     hasBombs = true;
                 }
             }
-            for (Mounted bomb : entity.getBombs()) {
+            for (Mounted<?> bomb : entity.getBombs()) {
                 double bombBV = processWeapon(bomb, true, false);
                 if (bombBV > 0) {
                     adjustedBV += bombBV;

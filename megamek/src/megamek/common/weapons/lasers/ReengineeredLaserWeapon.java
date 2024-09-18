@@ -19,14 +19,14 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ReengineeredLaserWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public abstract class ReengineeredLaserWeapon extends PulseLaserWeapon {
 
     private static final long serialVersionUID = 2113437667446946251L;
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ReengineeredLaserWeaponHandler(toHit, waa, game, manager);
     }
     

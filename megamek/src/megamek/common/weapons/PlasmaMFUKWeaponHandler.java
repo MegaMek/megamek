@@ -19,25 +19,31 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.*;
+import java.util.Vector;
+
+import megamek.common.Building;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.Game;
+import megamek.common.Mek;
+import megamek.common.Report;
+import megamek.common.TargetRoll;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
-import megamek.server.GameManager;
-import megamek.server.Server;
-
-import java.util.Vector;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -6816799343788643259L;
 
-    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
                                       Building bldg, int hits, int nCluster, int bldgAbsorbs) {
-        if (entityTarget instanceof Mech) {
+        if (entityTarget instanceof Mek) {
             if (!bSalvo) {
                 // hits
                 Report r = new Report(3390);

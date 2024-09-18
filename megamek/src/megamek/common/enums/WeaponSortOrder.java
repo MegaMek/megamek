@@ -18,16 +18,21 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
-import megamek.common.*;
-import megamek.common.equipment.WeaponMounted;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import megamek.MegaMek;
+import megamek.common.Entity;
+import megamek.common.WeaponComparatorArc;
+import megamek.common.WeaponComparatorCustom;
+import megamek.common.WeaponComparatorDamage;
+import megamek.common.WeaponComparatorNum;
+import megamek.common.WeaponComparatorRange;
+import megamek.common.equipment.WeaponMounted;
+import megamek.logging.MMLogger;
+
 public enum WeaponSortOrder {
-    //region Enum Declarations
+    // region Enum Declarations
     DEFAULT("WeaponSortOrder.DEFAULT.text"),
     RANGE_LOW_HIGH("WeaponSortOrder.RANGE_LOW_HIGH.text"),
     RANGE_HIGH_LOW("WeaponSortOrder.RANGE_HIGH_LOW.text"),
@@ -35,21 +40,21 @@ public enum WeaponSortOrder {
     DAMAGE_HIGH_LOW("WeaponSortOrder.DAMAGE_HIGH_LOW.text"),
     WEAPON_ARC("WeaponSortOrder.WEAPON_ARC.text"),
     CUSTOM("WeaponSortOrder.CUSTOM.text");
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
-    //region Variable Declarations
+    // region Variable Declarations
     private final String name;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     WeaponSortOrder(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Boolean Comparisons
+    // region Boolean Comparisons
     public boolean isDefault() {
         return this == DEFAULT;
     }
@@ -77,12 +82,13 @@ public enum WeaponSortOrder {
     public boolean isCustom() {
         return this == CUSTOM;
     }
-    //endregion Boolean Comparisons
+    // endregion Boolean Comparisons
 
     /**
      * @param entity the entity to compare weapons for
-     * @return the comparator for weapon sorting, or the default weapon sort comparator if the sort
-     * order isn't handled yet.
+     * @return the comparator for weapon sorting, or the default weapon sort
+     *         comparator if the sort
+     *         order isn't handled yet.
      */
     public Comparator<WeaponMounted> getWeaponSortComparator(final Entity entity) {
         switch (this) {
@@ -101,7 +107,7 @@ public enum WeaponSortOrder {
             case CUSTOM:
                 return new WeaponComparatorCustom(entity);
             default:
-                LogManager.getLogger().error(String.format(
+                MMLogger.create(WeaponSortOrder.class).error(String.format(
                         "Attempted to get weapon sort comparator for unknown WeaponSortOrder %s, returning the DEFAULT weapon sort comparator.",
                         name()));
                 return DEFAULT.getWeaponSortComparator(entity);

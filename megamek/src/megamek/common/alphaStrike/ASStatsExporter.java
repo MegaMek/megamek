@@ -18,11 +18,6 @@
  */
 package megamek.common.alphaStrike;
 
-import freemarker.template.Template;
-import megamek.common.annotations.Nullable;
-import megamek.common.templates.TemplateConfiguration;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -30,11 +25,18 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import freemarker.template.Template;
+import megamek.common.annotations.Nullable;
+import megamek.common.templates.TemplateConfiguration;
+import megamek.logging.MMLogger;
+
 /**
- * This class is used to create a short text summary of an Alpha Strike element (or MechSummary) for export. The
+ * This class is used to create a short text summary of an Alpha Strike element
+ * (or MekSummary) for export. The
  * format is the same as that used in Mordel's unit overview.
  */
 public class ASStatsExporter {
+    private static final MMLogger logger = MMLogger.create(ASStatsExporter.class);
 
     private final static String TEMPLATE_FILENAME = "alphaStrike/as_stats_export.ftl";
 
@@ -43,17 +45,19 @@ public class ASStatsExporter {
     private Map<String, Object> model;
 
     /**
-     * Creates a new stats exporter for the given Alpha Strike element or MechSummary. The stats can be obtained
+     * Creates a new stats exporter for the given Alpha Strike element or
+     * MekSummary. The stats can be obtained
      * by calling {@link #getStats()}.
      *
-     * @param element The Alpha Strike element or MechSummary to create a stats text for
+     * @param element The Alpha Strike element or MekSummary to create a stats text
+     *                for
      */
     public ASStatsExporter(@Nullable ASCardDisplayable element) {
         this.element = element;
         try {
             template = TemplateConfiguration.getInstance().getTemplate(TEMPLATE_FILENAME);
         } catch (final IOException e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -106,7 +110,8 @@ public class ASStatsExporter {
     }
 
     /**
-     * Returns a stats summary of the Alpha Strike element (or MechSummary). If there is an error with
+     * Returns a stats summary of the Alpha Strike element (or MekSummary). If there
+     * is an error with
      * generating the summary the returned string contains this error.
      *
      * @return The stats summary of the Alpha Strike element
@@ -118,11 +123,12 @@ public class ASStatsExporter {
         if (model == null) {
             prepareData();
         }
-        try (final ByteArrayOutputStream os = new ByteArrayOutputStream(); final Writer out = new OutputStreamWriter(os)) {
+        try (final ByteArrayOutputStream os = new ByteArrayOutputStream();
+                final Writer out = new OutputStreamWriter(os)) {
             template.process(model, out);
             return os.toString();
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return "Error: could not create the Alpha Strike stats text.";
         }
     }

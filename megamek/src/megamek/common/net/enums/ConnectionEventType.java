@@ -23,17 +23,17 @@ import megamek.common.net.events.ConnectedEvent;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.net.listeners.ConnectionListener;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 public enum ConnectionEventType {
-    //region Enum Declarations
+    // region Enum Declarations
     CONNECTED,
     PACKET_RECEIVED,
     DISCONNECTED;
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
     public void processListener(final AbstractConnectionEvent event,
-                                final ConnectionListener listener) {
+            final ConnectionListener listener) {
         switch (this) {
             case CONNECTED:
                 listener.connected((ConnectedEvent) event);
@@ -45,7 +45,8 @@ public enum ConnectionEventType {
                 listener.disconnected((DisconnectedEvent) event);
                 break;
             default:
-                LogManager.getLogger().error("Received unknown connection event type of " + event.getType().name());
+                MMLogger.create(ConnectionEventType.class)
+                        .error("Received unknown connection event type of " + event.getType().name());
                 break;
         }
     }

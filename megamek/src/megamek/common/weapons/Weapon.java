@@ -20,7 +20,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.io.Serializable;
 
@@ -85,7 +85,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
     
 
-    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, GameManager gameManager) {
+    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager gameManager) {
         ToHitData toHit = waa.toHit(game);
         // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even
         // if the have an impossible to hit, because there might be other targets
@@ -96,7 +96,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager gameManager) {
+            WeaponAttackAction waa, Game game, TWGameManager gameManager) {
         return new WeaponHandler(toHit, waa, game, gameManager);
     }
     

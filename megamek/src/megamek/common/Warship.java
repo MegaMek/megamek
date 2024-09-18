@@ -16,11 +16,16 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.WarShipCostCalculator;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serial;
+
+import static megamek.common.Compute.*;
+
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
  */
 public class Warship extends Jumpship {
+    @Serial
     private static final long serialVersionUID = 4650692419224312511L;
 
     // additional Warship locations
@@ -42,19 +47,14 @@ public class Warship extends Jumpship {
         return UnitType.WARSHIP;
     }
 
-    // ASEW Missile Effects, per location
-    // Values correspond to Locations, as seen above: NOS, FLS, FRS, AFT, ALS, ARS, LBS, RBS
+    /** ASEW Missile Effects, per location; values correspond to NOS, FLS, FRS, AFT, ALS, ARS, LBS, RBS */
     private final int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    /*
-     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
-     */
     @Override
     protected int[] getAsewAffectedTurns() {
         return asewAffectedTurns;
     }
- 
-    
+
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
@@ -62,14 +62,11 @@ public class Warship extends Jumpship {
             .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
             .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         // Primitives don't distinguish between JumpShips and WarShips.
-        if (isPrimitive()) {
-            return super.getConstructionTechAdvancement();
-        }
-        return TA_WARSHIP;
+        return isPrimitive() ? super.getConstructionTechAdvancement() : TA_WARSHIP;
     }
 
     @Override
@@ -102,74 +99,21 @@ public class Warship extends Jumpship {
         // Helium Tanks make up about 2/3 of the drive core.
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
-    
-    // broadside weapon arcs
+
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
-        
-        int arc;
-        switch (mounted.getLocation()) {
-            case LOC_NOSE:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_NOSE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_NOSE;
-                break;
-            case LOC_FRS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_RIGHTSIDE_SPHERE;
-                break;
-            case LOC_FLS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_LEFTSIDE_SPHERE;
-                break;
-            case LOC_ARS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_RIGHTSIDEA_SPHERE;
-                break;
-            case LOC_ALS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_LEFTSIDEA_SPHERE;
-                break;
-            case LOC_AFT:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_AFT_WPL;
-                    break;
-                }
-                arc = Compute.ARC_AFT;
-                break;
-            case LOC_LBS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_LEFT_BROADSIDE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_LEFT_BROADSIDE;
-                break;
-            case LOC_RBS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_RIGHT_BROADSIDE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_RIGHT_BROADSIDE;
-                break;
-            default:
-                arc = Compute.ARC_360;
-                break;
-        }
+        final Mounted<?> mounted = getEquipment(wn);
+        int arc = switch (mounted.getLocation()) {
+            case LOC_NOSE -> mounted.isInWaypointLaunchMode() ? ARC_NOSE_WPL : ARC_NOSE;
+            case LOC_FRS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDE_SPHERE_WPL : ARC_RIGHTSIDE_SPHERE;
+            case LOC_FLS -> mounted.isInWaypointLaunchMode() ? ARC_LEFTSIDE_SPHERE_WPL : ARC_LEFTSIDE_SPHERE;
+            case LOC_ARS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDEA_SPHERE_WPL : ARC_RIGHTSIDEA_SPHERE;
+            case LOC_ALS -> mounted.isInWaypointLaunchMode() ? ARC_LEFTSIDEA_SPHERE_WPL : ARC_LEFTSIDEA_SPHERE;
+            case LOC_AFT -> mounted.isInWaypointLaunchMode() ? ARC_AFT_WPL : ARC_AFT;
+            case LOC_LBS -> mounted.isInWaypointLaunchMode() ? ARC_LEFT_BROADSIDE_WPL : ARC_LEFT_BROADSIDE;
+            case LOC_RBS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHT_BROADSIDE_WPL : ARC_RIGHT_BROADSIDE;
+            default -> Compute.ARC_360;
+        };
         return rollArcs(arc);
     }
 
@@ -177,7 +121,7 @@ public class Warship extends Jumpship {
     public double getArmorWeight() {
         return getArmorWeight(locations() - 3); // No armor for RBS/LBS/HULL
     }
-    
+
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         return WarShipCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
@@ -187,12 +131,10 @@ public class Warship extends Jumpship {
     public double getPriceMultiplier() {
         return 2.0;
     }
-    
-    /**
-     * All warships automatically have ECM if in space
-     */
+
     @Override
     public boolean hasActiveECM() {
+        // All warships automatically have ECM if in space
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
                 || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
@@ -200,12 +142,6 @@ public class Warship extends Jumpship {
         return getECMRange() >= 0;
     }
 
-    /**
-     * What's the range of the ECM equipment?
-     *
-     * @return the <code>int</code> range of this unit's ECM. This value will be
-     *         <code>Entity.NONE</code> if no ECM is active.
-     */
     @Override
     public int getECMRange() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
@@ -222,17 +158,14 @@ public class Warship extends Jumpship {
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }
-    
+
     @Override
     public boolean canChangeSecondaryFacing() {
-        // flying warships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // flying warships can execute the "ECHO" maneuver (stratops 113), aka a torso twist,
         // if they have the MP for it
         return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
     }
-    
-    /**
-     * Can this warship "torso twist" in the given direction?
-     */
+
     @Override
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
@@ -242,41 +175,35 @@ public class Warship extends Jumpship {
         }
         return rotate == 0;
     }
-    
-    /**
-     * Return the nearest valid direction to "torso twist" in
-     */
+
     @Override
     public int clipSecondaryFacing(int dir) {
         if (isValidSecondaryFacing(dir)) {
             return dir;
         }
-        
+
         // can't twist without enough MP
         if (!canChangeSecondaryFacing()) {
             return getFacing();
         }
-        
+
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-        
+
         return (getFacing() + (rotate >= 3 ? 5 : 1)) % 6;
     }
-    
-    /**
-     * Handler for when the entity enters a new round
-     */
+
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
-        
+
         if (getGame().useVectorMove()) {
             setFacing(getSecondaryFacing());
         }
-        
+
         setSecondaryFacing(getFacing());
     }
-    
+
     @Override
     public void postProcessFacingChange() {
         mpUsed += 2;
@@ -294,6 +221,6 @@ public class Warship extends Jumpship {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(-1.3484 + 0.9382*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(-1.3484 + 0.9382 * Math.log(getWeight())));
     }
 }

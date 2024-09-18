@@ -18,13 +18,21 @@
  */
 package megamek.common.alphaStrike;
 
-import megamek.common.annotations.Nullable;
+import static java.util.stream.Collectors.joining;
+import static megamek.common.alphaStrike.ASUnitType.AF;
+import static megamek.common.alphaStrike.ASUnitType.BM;
+import static megamek.common.alphaStrike.ASUnitType.DA;
+import static megamek.common.alphaStrike.ASUnitType.DS;
+import static megamek.common.alphaStrike.ASUnitType.JS;
+import static megamek.common.alphaStrike.ASUnitType.PM;
+import static megamek.common.alphaStrike.ASUnitType.SC;
+import static megamek.common.alphaStrike.ASUnitType.SS;
+import static megamek.common.alphaStrike.ASUnitType.WS;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.Map;
 
-import static java.util.stream.Collectors.joining;
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.common.annotations.Nullable;
 
 /**
  * This class contains static helper methods for AlphaStrike
@@ -58,7 +66,7 @@ public class AlphaStrikeHelper {
      * Returns the formatted String for a single movement mode of the given AS element. E.g., for the movemode
      * "j" and the moveValue 8, returns 8"j.
      *
-     * @param element The AS element (or MechSummary) having the movement mode
+     * @param element The AS element (or MekSummary) having the movement mode
      * @param moveMode The movement mode string, such as "" or "j" or "a"
      * @param moveValue The movement value, e.g. in inches for ground movement
      * @return The formatted String for a single movement mode entry, e.g. 4a or 12"j.

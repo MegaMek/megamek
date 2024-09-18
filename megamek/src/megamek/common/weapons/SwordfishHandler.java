@@ -16,8 +16,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -35,7 +34,7 @@ public class SwordfishHandler extends AmmoWeaponHandler {
      * @param g
      * @param m
      */
-    public SwordfishHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public SwordfishHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 

@@ -14,25 +14,33 @@
 */
 package megamek.common.pathfinder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.IAero;
+import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.logging.MMLogger;
-import megamek.server.AbstractGameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
 
 /**
- * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere
+ * This set of classes is intended for use for pathfinding by aerodyne units on
+ * ground maps with an atmosphere
  * Usage anywhere else may result in "unpredictable" behavior
  *
  * @author NickAragua
  */
 public class AeroGroundPathFinder {
+    private static final MMLogger logger = MMLogger.create(AeroGroundPathFinder.class);
 
-    private static final MMLogger logger = MMLogger.create(AbstractGameManager.class);
     public static final int OPTIMAL_STRIKE_ALTITUDE = 5; // also great for dive bombs
     public static final int NAP_OF_THE_EARTH = 1;
     public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
@@ -75,13 +83,16 @@ public class AeroGroundPathFinder {
             }
 
             // calculate maximum and minimum safe velocity
-            // in the case of aerospace units on ground maps, we want a velocity of at least 1 so we don't stall
-            // and at least 3 so we don't pointlessly fly around in circles or consume all available memory
+            // in the case of aerospace units on ground maps, we want a velocity of at least
+            // 1 so we don't stall
+            // and at least 3 so we don't pointlessly fly around in circles or consume all
+            // available memory
             IAero aero = (IAero) startingEdge.getEntity();
             maxThrust = AeroPathUtil.calculateMaxSafeThrust(aero);
             int maxVelocity = Math.min(getMaximumVelocity(aero), aero.getCurrentVelocity() + maxThrust);
             int minVelocity = Math.max(getMinimumVelocity(aero), aero.getCurrentVelocity() - maxThrust);
-            Collection<MovePath> validAccelerations = AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity, maxVelocity);
+            Collection<MovePath> validAccelerations = AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity,
+                    maxVelocity);
 
             for (MovePath acceleratedPath : validAccelerations) {
                 aeroGroundPaths.addAll(getAltitudeAdjustedPaths(GenerateAllPaths(acceleratedPath)));
@@ -97,9 +108,9 @@ public class AeroGroundPathFinder {
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
 
-            LogManager.getLogger().error(memoryMessage, e);
+            logger.error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
+            logger.error("", e); // do something, don't just swallow the exception, good lord
         }
     }
 
@@ -108,7 +119,9 @@ public class AeroGroundPathFinder {
     }
 
     /**
-     * This class removes all off-board paths, but keeps track of the shortest of all the paths removed
+     * This class removes all off-board paths, but keeps track of the shortest of
+     * all the paths removed
+     *
      * @author NickAragua
      */
     public static class AeroGroundOffBoardFilter extends Filter<MovePath> {
@@ -135,11 +148,13 @@ public class AeroGroundPathFinder {
                     filteredMoves.add(e);
                 } else {
                     // if the path *does* go off board, we want to compare its length to
-                    // our current shortest off-board path and keep it in mind if it's both shorter and safe
-                    // at the end of the process, we will add the shortest path off board to the list of moves
+                    // our current shortest off-board path and keep it in mind if it's both shorter
+                    // and safe
+                    // at the end of the process, we will add the shortest path off board to the
+                    // list of moves
                     if (shortestPath == null ||
                             (shortestPath.length() > e.length()) &&
-                            AeroPathUtil.isSafePathOffBoard(e)) {
+                                    AeroPathUtil.isSafePathOffBoard(e)) {
                         shortestPath = e;
                     }
                 }
@@ -161,11 +176,14 @@ public class AeroGroundPathFinder {
 
     }
 
-    // This object contains a hex and the shortest non-off-board path that has flown over it.
+    // This object contains a hex and the shortest non-off-board path that has flown
+    // over it.
     Map<Coords, MovePath> visitedHexes;
 
     /**
-     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of them.
+     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of
+     * them.
+     *
      * @param startingPaths The collection of paths to process
      * @return The new collection of resulting paths.
      */
@@ -175,7 +193,8 @@ public class AeroGroundPathFinder {
         for (MovePath start : startingPaths) {
             boolean choppedOffFlyOff = false;
 
-            // if we are going off board, we need to take some special actions, meaning chopping off the tail end
+            // if we are going off board, we need to take some special actions, meaning
+            // chopping off the tail end
             if (start.fliesOffBoard()) {
                 start.removeLastStep();
                 choppedOffFlyOff = true;
@@ -196,14 +215,16 @@ public class AeroGroundPathFinder {
 
     /**
      * Moves a given path towards the desired altitude.
-     * @param startingPath The path to adjust
+     *
+     * @param startingPath    The path to adjust
      * @param desiredAltitude The desired altitude
      * @return New instance of movepath with as much altitude adjustment as possible
      */
     private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
         MovePath altitudePath = startingPath.clone();
 
-        // generate a path that involves making changes that go up or down towards the desired altitude as far as possible
+        // generate a path that involves making changes that go up or down towards the
+        // desired altitude as far as possible
         while (altitudePath.getFinalAltitude() != desiredAltitude) {
             // up steps use thrust. Two points, to be exact
             if (altitudePath.getFinalAltitude() < desiredAltitude &&
@@ -211,12 +232,14 @@ public class AeroGroundPathFinder {
                 altitudePath.addStep(MoveStepType.UP);
             } else if ((altitudePath.getFinalAltitude() > desiredAltitude) &&
                     (altitudePath.getFinalAltitude() >= startingPath.getFinalAltitude() - 1)) {
-                // down steps don't use thrust, but if we take more than one, it changes the velocity,
+                // down steps don't use thrust, but if we take more than one, it changes the
+                // velocity,
                 // so just do one for now
                 // if we take more than two, it's a PSR, so definitely avoid that
                 altitudePath.addStep(MoveStepType.DOWN);
             } else {
-                // we've either reached the desired altitude or have hit some other stopping condition so that's enough of that
+                // we've either reached the desired altitude or have hit some other stopping
+                // condition so that's enough of that
                 break;
             }
         }
@@ -226,22 +249,26 @@ public class AeroGroundPathFinder {
 
     // the goal here is to generate a "tree-like" structure;
     //
-    //               \\\|///
-    //                \\|//
-    //                 \|/
-    //                  |
-    //                  |
+    // \\\|///
+    // \\|//
+    // \|/
+    // |
+    // |
     //
-    //  Then, generate smaller subtrees off the left and right sides of the tree, like so:
-    //             /-\\\|///-\
-    //            //--\\|//--\\
-    //                 \|/
-    //                  |
-    //                  |
+    // Then, generate smaller subtrees off the left and right sides of the tree,
+    // like so:
+    // /-\\\|///-\
+    // //--\\|//--\\
+    // \|/
+    // |
+    // |
     // And so on until we've run out of velocity
-    // if a branch runs off board, we discard it unless it's the shortest one so far, we'll want to keep one of those around
-    // if a branch runs out of velocity, then we make note of all the hexes it has visited so far.
-    // if a hex has already been visited by another branch, then we set the current one as the visitor only if it's shorter
+    // if a branch runs off board, we discard it unless it's the shortest one so
+    // far, we'll want to keep one of those around
+    // if a branch runs out of velocity, then we make note of all the hexes it has
+    // visited so far.
+    // if a hex has already been visited by another branch, then we set the current
+    // one as the visitor only if it's shorter
     protected List<MovePath> GenerateAllPaths(MovePath mp) {
         List<MovePath> retval = new ArrayList<>();
 
@@ -269,7 +296,8 @@ public class AeroGroundPathFinder {
         return retval;
     }
 
-    // generates and returns all paths that stick straight lines out of the current path to the right or left
+    // generates and returns all paths that stick straight lines out of the current
+    // path to the right or left
     protected List<MovePath> generateSidePaths(MovePath mp, MoveStepType stepType) {
         List<MovePath> retval = new ArrayList<>();
         MovePath straightLine = mp.clone();
@@ -282,7 +310,8 @@ public class AeroGroundPathFinder {
         while (mp.length() < STACK_DEPTH && straightLine.getFinalVelocityLeft() > 0 &&
                 game.getBoard().contains(straightLine.getFinalCoords())) {
 
-            // little dirty hack to get around the problem where if this is the first step of a path
+            // little dirty hack to get around the problem where if this is the first step
+            // of a path
             // we have no last step
             MoveStep currentStep = straightLine.getLastStep();
             if (currentStep == null) {
@@ -293,8 +322,9 @@ public class AeroGroundPathFinder {
 
             // if we can turn
             // *and* it's a legal turn
-            // ("early" turns before the "free turn" use thrust, so if we go over max thrust, it's an illegal move
-            //  and thus not worth evaluating further)
+            // ("early" turns before the "free turn" use thrust, so if we go over max
+            // thrust, it's an illegal move
+            // and thus not worth evaluating further)
             if (currentStep.canAeroTurn(game) &&
                     currentStep.getMpUsed() <= mp.getEntity().getRunMP() - turnCost) {
                 MovePath tiltedPath = straightLine.clone();
@@ -303,8 +333,10 @@ public class AeroGroundPathFinder {
                 // the first time we add a turn, we recurse in the same direction
                 if (firstTurn) {
                     // potential to do, depending on demonstrated princess performance:
-                    // If we are going to run ourselves off the board, also generate side paths in the opposite direction of stepType
-                    // This *may* result in a drastic increase in generated paths, so maybe hold off on it for now.
+                    // If we are going to run ourselves off the board, also generate side paths in
+                    // the opposite direction of stepType
+                    // This *may* result in a drastic increase in generated paths, so maybe hold off
+                    // on it for now.
                     retval.addAll(generateSidePaths(tiltedPath, stepType));
                 }
 
@@ -323,7 +355,8 @@ public class AeroGroundPathFinder {
         return retval;
     }
 
-    // helper function to move the path forward until we run out of velocity or off the board
+    // helper function to move the path forward until we run out of velocity or off
+    // the board
     // "respect" board edges by attempting a turn
     protected void ForwardToTheEnd(MovePath mp) {
         while (mp.getFinalVelocityLeft() > 0) {
@@ -332,9 +365,11 @@ public class AeroGroundPathFinder {
                 mp.addStep(MoveStepType.FORWARDS);
             }
 
-            // if we have arrived on the edge, and we can turn, then attempt to "bounce off" or "ride" the edge.
+            // if we have arrived on the edge, and we can turn, then attempt to "bounce off"
+            // or "ride" the edge.
             // as long as we're not trying to go off board, then forget about it
-            // this slightly increases the area covered by the aero in cases where the path takes it near the edge
+            // this slightly increases the area covered by the aero in cases where the path
+            // takes it near the edge
             if (mp.nextForwardStepOffBoard()
                     && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
                 final MoveStep lastStep = mp.getLastStep(); // using to prevent unnecessary computation
@@ -344,13 +379,15 @@ public class AeroGroundPathFinder {
                     // ||
                     // |\
                     // | \
-                    // |  \
+                    // | \
                     // at this point, we can know that going forward will take us off board
                     // we can either turn right or left
                     // if turning right and going forwards still takes us off board, then we go left
-                    // you can approach the top and bottom edges of the board in such a way that neither left
+                    // you can approach the top and bottom edges of the board in such a way that
+                    // neither left
                     // nor right produces an off-board path
-                    // there's probably a better mathematical way to formulate this but I'm not really a math guy.
+                    // there's probably a better mathematical way to formulate this but I'm not
+                    // really a math guy.
                     mp.addStep(MoveStepType.TURN_RIGHT);
                     if (mp.nextForwardStepOffBoard()) {
                         mp.removeLastStep();
@@ -377,9 +414,11 @@ public class AeroGroundPathFinder {
     }
 
     private Map<Coords, MovePath> visitedCoords = new HashMap<>();
+
     /**
      * Determines if the given move path is "redundant".
      * In this case, it means that the path has not visited any new hexes.
+     *
      * @param mp The move path to examine.
      * @return Whether or not the move path is redundant.
      */

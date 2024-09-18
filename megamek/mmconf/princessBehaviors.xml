@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><princessBehaviors>
+<?xml version="1.0" encoding="UTF-8"?>
+<princessBehaviors>
   <behavior>
     <name>Skirmisher (pPT)</name>
     <destinationEdge>NONE</destinationEdge>
@@ -12,7 +13,7 @@
     <herdMentalityIndex>4</herdMentalityIndex>
     <braveryIndex>3</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>Sniper (pPT)</name>
@@ -27,7 +28,7 @@
     <herdMentalityIndex>2</herdMentalityIndex>
     <braveryIndex>4</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>Scout (pPT)</name>
@@ -42,7 +43,7 @@
     <herdMentalityIndex>3</herdMentalityIndex>
     <braveryIndex>7</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>LRM Missile Boat (pPT)</name>
@@ -57,7 +58,7 @@
     <herdMentalityIndex>3</herdMentalityIndex>
     <braveryIndex>6</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>SRM Missile Boat (pPT)</name>
@@ -72,7 +73,7 @@
     <herdMentalityIndex>7</herdMentalityIndex>
     <braveryIndex>6</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>Striker (pPT)</name>
@@ -87,7 +88,7 @@
     <herdMentalityIndex>7</herdMentalityIndex>
     <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>Juggernaut (pPT)</name>
@@ -102,7 +103,7 @@
     <herdMentalityIndex>5</herdMentalityIndex>
     <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>BERSERK v2</name>
@@ -117,8 +118,8 @@
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-</behavior>
+    <strategicBuildingTargets />
+  </behavior>
   <behavior>
     <name>Brawler (pPT)</name>
     <destinationEdge>NONE</destinationEdge>
@@ -132,7 +133,7 @@
     <herdMentalityIndex>2</herdMentalityIndex>
     <braveryIndex>8</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>ESCAPE</name>
@@ -147,7 +148,7 @@
     <herdMentalityIndex>4</herdMentalityIndex>
     <braveryIndex>8</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>DEFAULT</name>
@@ -162,7 +163,7 @@
     <herdMentalityIndex>5</herdMentalityIndex>
     <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>DEFAULT v2 BRAVER</name>
@@ -177,7 +178,7 @@
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
   <behavior>
     <name>COWARDLY</name>
@@ -192,9 +193,9 @@
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
-    <behavior>
+  <behavior>
     <name>Ambusher</name>
     <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
@@ -207,6 +208,6 @@
     <herdMentalityIndex>4</herdMentalityIndex>
     <braveryIndex>7</braveryIndex>
     <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
+    <strategicBuildingTargets />
   </behavior>
 </princessBehaviors>

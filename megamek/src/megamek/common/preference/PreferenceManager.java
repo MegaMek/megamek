@@ -14,14 +14,6 @@
  */
 package megamek.common.preference;
 
-import jakarta.xml.bind.*;
-import jakarta.xml.bind.annotation.*;
-import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +24,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.xml.namespace.QName;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+import megamek.common.Configuration;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
+
 public class PreferenceManager {
+    private static final MMLogger logger = MMLogger.create(PreferenceManager.class);
 
     public static final String DEFAULT_CFG_FILE_NAME = "clientsettings.xml";
     public static final String CFG_FILE_OPTION_NAME = "cfgfilename";
@@ -74,8 +84,7 @@ public class PreferenceManager {
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
                 CFG_FILE_OPTION_NAME,
-                new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString()
-        );
+                new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString());
         load(cfgName);
         clientPreferences = new ClientPreferences(clientPreferenceStore);
     }
@@ -91,7 +100,7 @@ public class PreferenceManager {
 
         try {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             Settings opts = (Settings) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
 
@@ -108,21 +117,21 @@ public class PreferenceManager {
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Error loading XML for client settings: " + e.getMessage(), e);
+            logger.error("Error loading XML for client settings: " + e.getMessage(), e);
         }
     }
 
     public void save() {
         save(new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).getFile());
     }
-    
+
     public void save(final File file) {
         try {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
-            
+
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            
+
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
@@ -130,7 +139,7 @@ public class PreferenceManager {
                     Settings.class, new Settings(clientPreferenceStore, stores));
             marshaller.marshal(element, file);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed writing client settings XML", ex);
+            logger.error("Failed writing client settings XML", ex);
         }
     }
 
@@ -143,12 +152,12 @@ public class PreferenceManager {
 
         @XmlElement(name = "store")
         List<Store> stores = new ArrayList<>();
-        
+
         Settings(final PreferenceStore clientPreferenceStore, final Map<String, IPreferenceStore> stores) {
             if (clientPreferenceStore != null) {
                 this.stores.add(new Store(CLIENT_SETTINGS_STORE_NAME, clientPreferenceStore));
             }
-            
+
             if (stores != null) {
                 for (Entry<String, IPreferenceStore> ps : stores.entrySet()) {
                     this.stores.add(new Store(ps.getKey(), (PreferenceStore) ps.getValue()));
@@ -162,24 +171,24 @@ public class PreferenceManager {
         @SuppressWarnings("unused")
         private Settings() {
         }
-        
+
     }
-    
+
     /**
      * A wrapper class for each PreferenceStore.
      */
     @XmlType
     private static class Store {
-        
+
         @XmlAttribute
         String name;
-        
+
         @XmlElement(name = "preference")
         List<XmlProperty> preferences = new ArrayList<>();
 
         Store(final String name, final PreferenceStore preferenceStore) {
             this.name = name;
-            
+
             for (Entry<Object, Object> prop : preferenceStore.properties.entrySet()) {
                 preferences.add(new XmlProperty(prop.getKey().toString(), prop.getValue().toString()));
             }
@@ -191,18 +200,18 @@ public class PreferenceManager {
         @SuppressWarnings("unused")
         private Store() {
         }
-        
+
     }
-    
+
     /**
      * A wrapper class for entries in a Properties object.
      */
     @XmlType
     private static class XmlProperty {
-        
+
         @XmlAttribute(name = "name")
         String key;
-        
+
         @XmlAttribute
         String value;
 

@@ -22,7 +22,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 
 /**
@@ -42,7 +42,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
      * @param g
      */
     public InfantryHeatWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
         bSalvo = true;
     }

@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
+ * MekSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
  * Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
  * Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
  * This program is free software; you can redistribute it and/or modify it
@@ -14,6 +14,37 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
@@ -22,8 +53,14 @@ import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.MekFileParser;
+import megamek.common.MekSearchFilter;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
@@ -31,30 +68,19 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.sorter.NaturalOrderComparator;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.event.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import java.util.*;
-import java.util.regex.PatternSyntaxException;
+import megamek.logging.MMLogger;
 
 /**
- * This is a heavily reworked version of the original MechSelectorDialog which
+ * This is a heavily reworked version of the original MekSelectorDialog which
  * brings up a list of units for the player to select to add to their forces.
  * The original list has been changed to a sortable table and a text filter
  * is used for advanced searching.
  */
 public abstract class AbstractUnitSelectorDialog extends JDialog implements Runnable, KeyListener,
         ActionListener, ListSelectionListener {
-    //region Variable Declarations
+    private static final MMLogger logger = MMLogger.create(AbstractUnitSelectorDialog.class);
+
+    // region Variable Declarations
     private static final long serialVersionUID = 8144354264100884817L;
 
     public static final String CLOSE_ACTION = "closeAction";
@@ -73,7 +99,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private JButton buttonAdvancedSearch;
     private JButton buttonResetSearch;
-    private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MechSelectorDialog.TogglePV"));
+    private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MekSelectorDialog.TogglePV"));
     protected JList<String> listTechLevel = new JList<>();
     private JLabel lblCount;
     /**
@@ -85,7 +111,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JComboBox<String> comboWeight = new JComboBox<>();
     private JScrollPane techLevelScroll;
     private JPanel panelFilterButtons;
-    protected JLabel labelImage = new JLabel(""); //inline to avoid potential null pointer issues
+    protected JLabel labelImage = new JLabel(""); // inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
     protected JTextField textGunnery;
@@ -99,20 +125,20 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     // how long after a key is typed does a new search begin
     private static final int KEY_TIMEOUT = 1000;
 
-    protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
-    protected MechSummary[] mechs;
+    protected static MekSummaryCache mscInstance = MekSummaryCache.getInstance();
+    protected MekSummary[] meks;
 
-    private final MechTableModel unitModel = new MechTableModel();
+    private final MekTableModel unitModel = new MekTableModel();
     private final XTableColumnModel unitColumnModel = new XTableColumnModel();
     private TableColumn pvColumn;
     private TableColumn bvColumn;
-    protected MechSearchFilter searchFilter;
+    protected MekSearchFilter searchFilter;
 
     protected JFrame frame;
     private final UnitLoadingDialog unitLoadingDialog;
     private AdvancedSearchDialog2 advancedSearchDialog2;
 
-    protected TableRowSorter<MechTableModel> sorter;
+    protected TableRowSorter<MekTableModel> sorter;
     private JScrollPane scrollTableUnits;
 
     protected GameOptions gameOptions = null;
@@ -124,12 +150,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
     protected boolean eraBasedTechLevel = false;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    //Create Client Preferences object to read values (for G/P BV #5333)
+    // Create Client Preferences object to read values (for G/P BV #5333)
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
-        super(frame, Messages.getString("MechSelectorDialog.title"), true);
+        super(frame, Messages.getString("MekSelectorDialog.title"), true);
         setName("UnitSelectorDialog");
         this.frame = frame;
         this.unitLoadingDialog = unitLoadingDialog;
@@ -142,32 +168,33 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     public abstract void updateOptionValues();
 
     /**
-     * This has been set up to permit preference implementation in anything that extends this
+     * This has been set up to permit preference implementation in anything that
+     * extends this
      */
     private void setUserPreferences() {
-        comboUnitType.setSelectedIndex(GUIP.getMechSelectorUnitType());
+        comboUnitType.setSelectedIndex(GUIP.getMekSelectorUnitType());
 
-        comboWeight.setSelectedIndex(GUIP.getMechSelectorWeightClass());
+        comboWeight.setSelectedIndex(GUIP.getMekSelectorWeightClass());
 
         updateTypeCombo();
 
         List<SortKey> sortList = new ArrayList<>();
         try {
-            sortList.add(new SortKey(GUIP.getMechSelectorSortColumn(),
-                    SortOrder.valueOf(GUIP.getMechSelectorSortOrder())));
+            sortList.add(new SortKey(GUIP.getMekSelectorSortColumn(),
+                    SortOrder.valueOf(GUIP.getMekSelectorSortOrder())));
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
+            logger.error(e, "Failed to set based on user preferences, attempting to use default");
 
-            sortList.add(new SortKey(GUIP.getMechSelectorDefaultSortColumn(),
-                    SortOrder.valueOf(GUIP.getMechSelectorDefaultSortOrder())));
+            sortList.add(new SortKey(GUIP.getMekSelectorDefaultSortColumn(),
+                    SortOrder.valueOf(GUIP.getMekSelectorDefaultSortOrder())));
         }
         tableUnits.getRowSorter().setSortKeys(sortList);
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
         tableUnits.invalidate(); // force re-layout of window
-        splitPane.setDividerLocation(GUIP.getMechSelectorSplitPos());
-        setSize(GUIP.getMechSelectorSizeWidth(), GUIP.getMechSelectorSizeHeight());
-        setLocation(GUIP.getMechSelectorPosX(), GUIP.getMechSelectorPosY());
+        splitPane.setDividerLocation(GUIP.getMekSelectorSplitPos());
+        setSize(GUIP.getMekSelectorSizeWidth(), GUIP.getMekSelectorSizeHeight());
+        setLocation(GUIP.getMekSelectorPosX(), GUIP.getMekSelectorPosY());
     }
 
     protected void initialize() {
@@ -186,13 +213,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         setMinimumSize(new Dimension(640, 480));
         getContentPane().setLayout(new GridBagLayout());
 
-        //region Unit Preview Pane
+        // region Unit Preview Pane
         panePreview = new EntityViewPane(frame, null);
-        panePreview.setMinimumSize(new Dimension(0,0));
-        panePreview.setPreferredSize(new Dimension(0,0));
-        //endregion Unit Preview Pane
+        panePreview.setMinimumSize(new Dimension(0, 0));
+        panePreview.setPreferredSize(new Dimension(0, 0));
+        // endregion Unit Preview Pane
 
-        //region Selection Panel
+        // region Selection Panel
         selectionPanel = new JPanel(new GridBagLayout());
 
         tableUnits = new JTable(unitModel);
@@ -208,16 +235,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         DefaultTableCellRenderer centeredRenderer = new DefaultTableCellRenderer();
         centeredRenderer.setHorizontalAlignment(JLabel.CENTER);
         tableUnits.setDefaultRenderer(Integer.class, centeredRenderer);
-        tableUnits.getColumnModel().getColumn(MechTableModel.COL_LEVEL).setCellRenderer(centeredRenderer);
+        tableUnits.getColumnModel().getColumn(MekTableModel.COL_LEVEL).setCellRenderer(centeredRenderer);
 
         tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(unitModel);
-        sorter.setComparator(MechTableModel.COL_CHASSIS, new NaturalOrderComparator());
-        sorter.setComparator(MechTableModel.COL_MODEL, new NaturalOrderComparator());
+        sorter.setComparator(MekTableModel.COL_CHASSIS, new NaturalOrderComparator());
+        sorter.setComparator(MekTableModel.COL_MODEL, new NaturalOrderComparator());
         tableUnits.setRowSorter(sorter);
         tableUnits.getSelectionModel().addListSelectionListener(
                 evt -> {
-                    // There can be multiple events for one selection. Check to see if this is the last.
+                    // There can be multiple events for one selection. Check to see if this is the
+                    // last.
                     if (!evt.getValueIsAdjusting()) {
                         refreshUnitView();
                     }
@@ -226,8 +254,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         for (int i = 0; i < unitModel.getColumnCount(); i++) {
             tableUnits.getColumnModel().getColumn(i).setPreferredWidth(unitModel.getPreferredWidth(i));
         }
-        bvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_BV);
-        pvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_PV);
+        bvColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_BV);
+        pvColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_PV);
         togglePV(false);
 
         scrollTableUnits = new JScrollPane(tableUnits);
@@ -248,20 +276,20 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         panelFilterButtons = new JPanel(new GridBagLayout());
 
-        JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
-        labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
+        JLabel labelType = new JLabel(Messages.getString("MekSelectorDialog.m_labelType"));
+        labelType.setToolTipText(Messages.getString("MekSelectorDialog.m_labelType.ToolTip"));
         gridBagConstraintsWest.insets = new Insets(5, 0, 0, 0);
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
-        listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
+        listTechLevel.setToolTipText(Messages.getString("MekSelectorDialog.m_labelType.ToolTip"));
         techLevelScroll = new JScrollPane(listTechLevel);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
 
-        JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
+        JLabel labelWeight = new JLabel(Messages.getString("MekSelectorDialog.m_labelWeightClass"));
         labelWeight.setName("labelWeight");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 1;
@@ -271,7 +299,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
-        weightModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        weightModel.addElement(Messages.getString("MekSelectorDialog.All"));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
         comboWeight.addActionListener(this);
@@ -279,7 +307,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 1;
         panelFilterButtons.add(comboWeight, gridBagConstraintsWest);
 
-        JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
+        JLabel labelUnitType = new JLabel(Messages.getString("MekSelectorDialog.m_labelUnitType"));
         labelUnitType.setName("labelUnitType");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -289,11 +317,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(labelUnitType, gridBagConstraints);
 
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.SupportVee"));
+        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setName("comboUnitType");
         comboUnitType.addActionListener(this);
@@ -301,7 +329,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
-        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
+        JLabel labelFilter = new JLabel(Messages.getString("MekSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 3;
@@ -331,15 +359,19 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
-        /** Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI **/
+        /**
+         * Add the Gunnery and Piloting entry boxes and labels to the filter panel in
+         * the UI
+         **/
 
-        JLabel lblGun = new JLabel(Messages.getString("MechSelectorDialog.m_labelGunnery"));
+        JLabel lblGun = new JLabel(Messages.getString("MekSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 4;
         if (CP.useGPinUnitSelection()) {
             panelFilterButtons.add(lblGun, gridBagConstraintsWest);
-        };
+        }
+        ;
         textGunnery = new JTextField("4");
         textGunnery.setName("textGunnery");
         if (CP.useGPinUnitSelection()) {
@@ -364,15 +396,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             gridBagConstraintsWest.gridx = 1;
             gridBagConstraintsWest.gridy = 4;
             panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
-        };
+        }
+        ;
 
-        JLabel lblPilot = new JLabel(Messages.getString("MechSelectorDialog.m_labelPiloting"));
+        JLabel lblPilot = new JLabel(Messages.getString("MekSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 5;
         if (CP.useGPinUnitSelection()) {
             panelFilterButtons.add(lblPilot, gridBagConstraintsWest);
-        };
+        }
+        ;
         textPilot = new JTextField("5");
         textPilot.setName("textPilot");
         if (CP.useGPinUnitSelection()) {
@@ -396,7 +430,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             gridBagConstraintsWest.gridx = 1;
             gridBagConstraintsWest.gridy = 5;
             panelFilterButtons.add(textPilot, gridBagConstraintsWest);
-        };
+        }
+        ;
 
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         labelImage.setName("labelImage");
@@ -420,14 +455,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
-        buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
+        buttonAdvancedSearch = new JButton(Messages.getString("MekSelectorDialog.AdvSearch"));
         buttonAdvancedSearch.setName("buttonAdvancedSearch");
         buttonAdvancedSearch.addActionListener(this);
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonAdvancedSearch, gridBagConstraintsWest);
 
-        buttonResetSearch = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+        buttonResetSearch = new JButton(Messages.getString("MekSelectorDialog.Reset"));
         buttonResetSearch.setName("buttonResetSearch");
         buttonResetSearch.addActionListener(this);
         buttonResetSearch.setEnabled(false);
@@ -454,7 +489,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = 0.0;
         gridBagConstraints.insets = new Insets(10, 10, 10, 0);
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
-        //endregion Selection Panel
+        // endregion Selection Panel
 
         JScrollPane selectionScrollPane = new JScrollPane(selectionPanel);
         JScrollPane previewScrollPane = new JScrollPane(panePreview);
@@ -515,7 +550,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         int[] selectedIndices = listTechLevel.getSelectedIndices();
 
         if (selectedIndices.length == 0) {
-            String option = GUIP.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
+            String option = GUIP.getMekSelectorRulesLevels().replaceAll("[\\[\\]]", "");
             if (!option.isBlank()) {
                 String[] strSelections = option.split(",");
                 selectedIndices = new int[strSelections.length];
@@ -582,14 +617,18 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This is used to create the bottom row of buttons for the interface
+     *
      * @return the panel containing the buttons to place in the interface
      */
     protected abstract JPanel createButtonsPanel();
 
     /**
-     * This is the function to add a unit to the current interface. That could be a purchase (MekHQ),
+     * This is the function to add a unit to the current interface. That could be a
+     * purchase (MekHQ),
      * addition (MekHQ), or unit selection (MegaMek/MegaMekLab)
-     * @param modifier a boolean to modify how the function will work. In MegaMek this is used to
+     *
+     * @param modifier a boolean to modify how the function will work. In MegaMek
+     *                 this is used to
      *                 close the dialog, in MekHQ to GM add.
      */
     protected abstract void select(boolean modifier);
@@ -598,7 +637,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This filters the units on the display. It is overwritten for MekHQ
      */
     protected void filterUnits() {
-        RowFilter<MechTableModel, Integer> unitTypeFilter;
+        RowFilter<MekTableModel, Integer> unitTypeFilter;
 
         List<Integer> techLevels = new ArrayList<>();
         for (Integer selectedIdx : listTechLevel.getSelectedIndices()) {
@@ -609,18 +648,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
-        final boolean checkSupportVee = Messages.getString("MechSelectorDialog.SupportVee")
+        final boolean checkSupportVee = Messages.getString("MekSelectorDialog.SupportVee")
                 .equals(comboUnitType.getSelectedItem());
         // If current expression doesn't parse, don't update.
         try {
             unitTypeFilter = new RowFilter<>() {
                 @Override
-                public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
-                    MechTableModel mechModel = entry.getModel();
-                    MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
+                public boolean include(Entry<? extends MekTableModel, ? extends Integer> entry) {
+                    MekTableModel mekModel = entry.getModel();
+                    MekSummary mek = mekModel.getMekSummary(entry.getIdentifier());
                     boolean techLevelMatch = false;
-                    int type = eraBasedTechLevel ?
-                            mech.getType(allowedYear) : mech.getType();
+                    int type = eraBasedTechLevel ? mek.getType(allowedYear) : mek.getType();
                     for (int tl : nTypes) {
                         if (type == tl) {
                             techLevelMatch = true;
@@ -628,23 +666,23 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         }
                     }
                     if (
-                            /* Year Limits */
-                            (!enableYearLimits || (mech.getYear() <= allowedYear))
-                                    /* Canon */
-                                    && (!canonOnly || mech.isCanon())
-                                    /* Invalid units */
-                                    && (allowInvalid || !mech.getLevel().equals("F"))
-                                    /* Weight */
-                                    && ((nClass == EntityWeightClass.SIZE) || (nClass == mech.getWeightClass()))
-                                    /* Technology Level */
-                                    && (techLevelMatch)
-                                    /* Support Vehicles */
-                                    && ((nUnit == -1) || (checkSupportVee && mech.isSupport())
-                                            || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit))))
-                                    /* Advanced Search */
-                                    && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
-                                    && advancedSearchDialog2.getASAdvancedSearch().matches(mech)) {
-                        return matchesTextFilter(mech);
+                    /* Year Limits */
+                    (!enableYearLimits || (mek.getYear() <= allowedYear))
+                            /* Canon */
+                            && (!canonOnly || mek.isCanon())
+                    /* Invalid units */
+                            && (allowInvalid || !mek.getLevel().equals("F"))
+                    /* Weight */
+                            && ((nClass == EntityWeightClass.SIZE) || (nClass == mek.getWeightClass()))
+                    /* Technology Level */
+                            && (techLevelMatch)
+                    /* Support Vehicles */
+                            && ((nUnit == -1) || (checkSupportVee && mek.isSupport())
+                                    || (!checkSupportVee && mek.getUnitType().equals(UnitType.getTypeName(nUnit))))
+                    /* Advanced Search */
+                            && ((searchFilter == null) || MekSearchFilter.isMatch(mek, searchFilter))
+                            && advancedSearchDialog2.getASAdvancedSearch().matches(mek)) {
+                        return matchesTextFilter(mek);
                     }
                     return false;
                 }
@@ -653,11 +691,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
-        String msg_unitcount = Messages.getString("MechSelectorDialog.UnitCount");
+        String msg_unitcount = Messages.getString("MekSelectorDialog.UnitCount");
         lblCount.setText(String.format(" %s %d", msg_unitcount, sorter.getViewRowCount()));
     }
 
-    protected boolean matchesTextFilter(MechSummary unit) {
+    protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
             String text = textFilter.getText().toLowerCase();
             String[] tokens = text.split(" ");
@@ -676,7 +714,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     protected Entity refreshUnitView() {
         Entity selectedEntity = getSelectedEntity();
-        panePreview.updateDisplayedEntity(selectedEntity, getSelectedMechSummary());
+        panePreview.updateDisplayedEntity(selectedEntity, getSelectedMekSummary());
         // Empty the unit preview icon if there's no entity selected
         if (selectedEntity == null) {
             labelImage.setIcon(null);
@@ -688,7 +726,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity
      */
     public @Nullable Entity getSelectedEntity() {
-        MechSummary ms = getSelectedMechSummary();
+        MekSummary ms = getSelectedMekSummary();
         if (ms == null) {
             return null;
         }
@@ -696,38 +734,38 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         try {
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
-            return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            LogManager.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
-                            + ": " + e.getMessage(), e);
+            logger.error(e, "Unable to load mek: " + ms.getSourceFile() + ": " + ms.getEntryName()
+                    + ": " + e.getMessage());
             return null;
         }
     }
 
-    /** @return The MechSummary for the selected unit. */
-    public @Nullable MechSummary getSelectedMechSummary() {
+    /** @return The MekSummary for the selected unit. */
+    public @Nullable MekSummary getSelectedMekSummary() {
         int view = tableUnits.getSelectedRow();
         if (view < 0) {
             // selection got filtered away
             return null;
         }
         int selected = tableUnits.convertRowIndexToModel(view);
-        return mechs[selected];
+        return meks[selected];
     }
 
     @Override
     public void run() {
-        // Loading mechs can take a while, so it will have its own thread for MegaMek
+        // Loading meks can take a while, so it will have its own thread for MegaMek
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
-        mechs = mscInstance.getAllMechs();
+        meks = mscInstance.getAllMeks();
         unitLoadingDialog.setVisible(false);
 
         // break out if there are no units to filter
-        if (mechs == null) {
-            LogManager.getLogger().error("No mechs were loaded");
+        if (meks == null) {
+            logger.error("No meks were loaded");
         } else {
-            SwingUtilities.invokeLater(() -> unitModel.setData(mechs));
+            SwingUtilities.invokeLater(() -> unitModel.setData(meks));
         }
     }
 
@@ -755,27 +793,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles processing windows events
+     *
      * @param e the event to process
      */
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            GUIP.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
-            GUIP.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-            GUIP.setMechSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
-            GUIP.setMechSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
-            GUIP.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
-            GUIP.setMechSelectorSizeHeight(getSize().height);
-            GUIP.setMechSelectorSizeWidth(getSize().width);
-            GUIP.setMechSelectorPosX(getLocation().x);
-            GUIP.setMechSelectorPosY(getLocation().y);
-            GUIP.setMechSelectorSplitPos(splitPane.getDividerLocation());
+            GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            GUIP.setMekSelectorWeightClass(comboWeight.getSelectedIndex());
+            GUIP.setMekSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
+            GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
+            GUIP.setMekSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
+            GUIP.setMekSelectorSizeHeight(getSize().height);
+            GUIP.setMekSelectorSizeWidth(getSize().width);
+            GUIP.setMekSelectorPosX(getLocation().x);
+            GUIP.setMekSelectorPosY(getLocation().y);
+            GUIP.setMekSelectorSplitPos(splitPane.getDividerLocation());
         }
     }
 
     /**
      * This handles key released events
+     *
      * @param ke the key that was released
      */
     @Override
@@ -784,6 +824,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles key pressed events
+     *
      * @param ke the pressed key
      */
     @Override
@@ -798,12 +839,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * Searches the table for any entity with a name that starts with the search string
+     * Searches the table for any entity with a name that starts with the search
+     * string
+     *
      * @param search the search parameters
      */
     private void searchFor(String search) {
-        for (int i = 0; i < mechs.length; i++) {
-            if (mechs[i].getName().toLowerCase().startsWith(search)) {
+        for (int i = 0; i < meks.length; i++) {
+            if (meks[i].getName().toLowerCase().startsWith(search)) {
                 int selected = tableUnits.convertRowIndexToView(i);
                 if (selected > -1) {
                     tableUnits.changeSelection(selected, 0, false, false);
@@ -815,6 +858,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     /**
      * This handles key typed events
+     *
      * @param ke the typed key
      */
     @Override
@@ -822,7 +866,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * This handles the primary action events (any that can come from buttons in this class)
+     * This handles the primary action events (any that can come from buttons in
+     * this class)
+     *
      * @param ev the event containing the performed action
      */
     @Override
@@ -842,7 +888,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         } else if (ev.getSource().equals(buttonAdvancedSearch)) {
             advancedSearchDialog2.setVisible(true);
-            searchFilter = advancedSearchDialog2.getTWAdvancedSearch().getMechSearchFilter();
+            searchFilter = advancedSearchDialog2.getTWAdvancedSearch().getMekSearchFilter();
             setResetSearchEnabledStatus();
             filterUnits();
         } else if (ev.getSource().equals(buttonResetSearch)) {
@@ -863,7 +909,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * This handles list selection events, which are only thrown by MegaMek/MegaMekLab
+     * This handles list selection events, which are only thrown by
+     * MegaMek/MegaMekLab
+     *
      * @param evt the event to process
      */
     @Override
@@ -873,7 +921,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
     }
 
-    /** Toggles between showing the Point Value column and the Battle Value column. */
+    /**
+     * Toggles between showing the Point Value column and the Battle Value column.
+     */
     private void togglePV(boolean showPV) {
         unitColumnModel.setColumnVisible(pvColumn, showPV);
         unitColumnModel.setColumnVisible(bvColumn, !showPV);
@@ -882,7 +932,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * A table model for displaying work items
      */
-    protected class MechTableModel extends AbstractTableModel {
+    protected class MekTableModel extends AbstractTableModel {
         private static final long serialVersionUID = -5457068129532709857L;
         private static final int COL_CHASSIS = 0;
         private static final int COL_MODEL = 1;
@@ -895,7 +945,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         private static final int N_COL = 8;
         private int modified_bv = 0;
 
-        private MechSummary[] data = new MechSummary[0];
+        private MekSummary[] data = new MekSummary[0];
 
         @Override
         public int getRowCount() {
@@ -950,11 +1000,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return getValueAt(0, col).getClass();
         }
 
-        public MechSummary getMechSummary(int i) {
+        public MekSummary getMekSummary(int i) {
             return data[i];
         }
 
-        public void setData(MechSummary[] ms) {
+        public void setData(MekSummary[] ms) {
             data = ms;
             fireTableDataChanged();
         }
@@ -964,7 +1014,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             if (data.length <= row) {
                 return "?";
             }
-            MechSummary ms = data[row];
+            MekSummary ms = data[row];
             if (col == COL_MODEL) {
                 return ms.getModel();
             } else if (col == COL_CHASSIS) {
@@ -979,33 +1029,44 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
-                /** This code allows for Gunnery and BV to be read from the UI, and update the BV values in the table as a result  **/
+                /**
+                 * This code allows for Gunnery and BV to be read from the UI, and update the BV
+                 * values in the table as a result
+                 **/
                 int gunnery = 4;
                 int piloting = 5;
                 if (textGunnery.getText().matches("\\d+")) {
                     gunnery = Integer.parseInt(textGunnery.getText());
                     if (gunnery > 8) {
                         gunnery = 4;
-                    };
-                };
+                    }
+                    ;
+                }
+                ;
                 if (textPilot.getText().matches("\\d+")) {
                     piloting = Integer.parseInt(textPilot.getText());
                     if (piloting > 8) {
                         piloting = 5;
-                    };
-                };
+                    }
+                    ;
+                }
+                ;
 
-                double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery,piloting);
+                double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery, piloting);
                 int modified_bv = (int) Math.round(ms.getBV() * gp_multiply);
                 return modified_bv;
             } else if (col == COL_PV) {
-                /** This code allows for Gunnery to be read from the UI, and update the PV values in the table as a result
-                 * It uses Gunnery as the skill **/
+                /**
+                 * This code allows for Gunnery to be read from the UI, and update the PV values
+                 * in the table as a result
+                 * It uses Gunnery as the skill
+                 **/
                 int gunnery = 4;
                 double modifier = 1;
                 if (textGunnery.getText().matches("\\d+")) {
                     gunnery = Integer.parseInt(textGunnery.getText());
-                };
+                }
+                ;
                 if (gunnery == 4) {
                     modifier = 1;
                 } else if (gunnery == 3) {
@@ -1048,8 +1109,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         @Override
         public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
-                                                       final boolean isSelected, final boolean hasFocus,
-                                                       final int row, final int column) {
+                final boolean isSelected, final boolean hasFocus,
+                final int row, final int column) {
             if (value instanceof Double) {
                 setHorizontalAlignment(JLabel.RIGHT);
                 double weight = (Double) value;
@@ -1073,8 +1134,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         @Override
         public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
-                                                       final boolean isSelected, final boolean hasFocus,
-                                                       final int row, final int column) {
+                final boolean isSelected, final boolean hasFocus,
+                final int row, final int column) {
             if (value instanceof Long) {
                 setHorizontalAlignment(JLabel.RIGHT);
                 super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -1098,10 +1159,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     TableColumnModelListener columnModelListener = new TableColumnModelListener() {
 
         @Override
-        public void columnAdded(TableColumnModelEvent e) { }
+        public void columnAdded(TableColumnModelEvent e) {
+        }
 
         @Override
-        public void columnRemoved(TableColumnModelEvent e) { }
+        public void columnRemoved(TableColumnModelEvent e) {
+        }
 
         @Override
         public void columnMoved(TableColumnModelEvent e) {
@@ -1115,7 +1178,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         @Override
         public void columnSelectionChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) UIUtil.updateRowHeightsForEqualHeights(tableUnits);
+            if (!e.getValueIsAdjusting())
+                UIUtil.updateRowHeightsForEqualHeights(tableUnits);
         }
     };
 }

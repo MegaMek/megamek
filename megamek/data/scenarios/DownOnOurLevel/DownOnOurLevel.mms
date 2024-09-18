@@ -21,10 +21,10 @@ Unit_Drakons_6=Spider SDR-7M,Kavallerister David Solstrand,3,4,S,15,01
 Unit_Drakons_7=Panther PNT-10K,Kavallerister Øystein Andvik,3,4,SE,02,03
 Unit_Drakons_8=Locust LCT-3M,Kavallerister Jamie Henderson,3,4,SE,16,11
 Unit_Wolves_1=Black Hawk (Nova) A,Star Commander Svetlana Kerensky,3,4,NW,09,08
-Unit_Wolves_2=Fenris (Ice Ferret) Prime,Mechwarrior Yidir,3,4,S,08,07
-Unit_Wolves_3=Dragonfly (Viper) B,Mechwarrior Arja,3,4,S,08,05
-Unit_Wolves_4=Puma (Adder) Prime,Mechwarrior Tynan,3,4,S,08,03
-Unit_Wolves_5=Uller (Kit Fox) B, Mechwarrior Quincy,3,4,S,08,09
+Unit_Wolves_2=Fenris (Ice Ferret) Prime,MekWarrior Yidir,3,4,S,08,07
+Unit_Wolves_3=Dragonfly (Viper) B,MekWarrior Arja,3,4,S,08,05
+Unit_Wolves_4=Puma (Adder) Prime,MekWarrior Tynan,3,4,S,08,03
+Unit_Wolves_5=Uller (Kit Fox) B, MekWarrior Quincy,3,4,S,08,09
 
 # Additional advantages to add to pilots. Most of these require the 'MaxTech
 # Level3 Pilot Advantages' game option to be turned on. The possible values

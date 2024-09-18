@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -32,7 +32,7 @@ public class CLIATMHandler extends ATMHandler {
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
 
-    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
     }
@@ -75,7 +75,8 @@ public class CLIATMHandler extends ATMHandler {
 
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump - gets calculated in the sub functions
+        // conventional infantry gets hit in one lump - gets calculated in the sub
+        // functions
         // don't need to check for BAs, because BA can't mount ATMs
         AmmoType atype = (AmmoType) ammo.getType();
         // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
@@ -86,7 +87,7 @@ public class CLIATMHandler extends ATMHandler {
 
         // If we use IIW or IMP we are done.
         if ((atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
-            || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
+                || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
             return hits;
         }
 
@@ -160,7 +161,7 @@ public class CLIATMHandler extends ATMHandler {
         // suffer from spread too
         if (((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
                 || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))
-            && tacopscluster && !allShotsHit()) {
+                && tacopscluster && !allShotsHit()) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
@@ -181,7 +182,6 @@ public class CLIATMHandler extends ATMHandler {
             nMissilesModifier -= 3;
         }
 
-
         // Don't need to check for ECM here since we can't have artemis boni.
         // And Streak bonus is allready handled.
 
@@ -190,7 +190,8 @@ public class CLIATMHandler extends ATMHandler {
         // doesn't work with IDF, I can skip the Artemis part here.
         // Also, I don't think iATM missiles are narc enabled.
 
-        // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the ATM.
+        // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the
+        // ATM.
         if (weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
             if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
                 Report r = new Report(3330);
@@ -287,7 +288,7 @@ public class CLIATMHandler extends ATMHandler {
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         if (!bMissed
-            && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
+                && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
             Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
@@ -332,7 +333,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)
-            && (roll.getIntValue() >= toHit.getValue())) {
+                && (roll.getIntValue() >= toHit.getValue())) {
             super.addHeat();
         }
     }
@@ -400,7 +401,8 @@ public class CLIATMHandler extends ATMHandler {
     }
 
     /**
-     * Streak effect only works for iATM when not firing indirectly, and not at all for fusillade.
+     * Streak effect only works for iATM when not firing indirectly, and not at all
+     * for fusillade.
      */
     private boolean streakInactive() {
         return weapon.curMode().equals("Indirect")
@@ -488,7 +490,7 @@ public class CLIATMHandler extends ATMHandler {
             // Set Margin of Success/Failure.
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                      && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
                 r = new Report(3189);
                 r.subject = ae.getId();
@@ -584,7 +586,7 @@ public class CLIATMHandler extends ATMHandler {
                     WeaponAttackAction newWaa = new WeaponAttackAction(
                             ae.getId(), entity.getId(), waa.getWeaponId());
                     newWaa.setNemesisConfused(true);
-                    Mounted m = ae.getEquipment(waa.getWeaponId());
+                    Mounted<?> m = ae.getEquipment(waa.getWeaponId());
                     Weapon w = (Weapon) m.getType();
                     AttackHandler ah = w.fire(newWaa, game, gameManager);
                     // increase ammo by one, because we just incorrectly used
@@ -658,7 +660,7 @@ public class CLIATMHandler extends ATMHandler {
             // Set Margin of Success/Failure.
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                      && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
                 r = new Report(3189);
                 r.subject = ae.getId();
@@ -794,7 +796,7 @@ public class CLIATMHandler extends ATMHandler {
                 int nDamage;
                 // targeting a hex for igniting
                 if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
-                    || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                     handleIgnitionDamage(vPhaseReport, bldg, hits);
                     return false;
                 }
@@ -809,18 +811,18 @@ public class CLIATMHandler extends ATMHandler {
                     // The building takes the full brunt of the attack.
                     nDamage = nDamPerHit * hits;
                     handleBuildingDamage(vPhaseReport, bldg, nDamage,
-                                         target.getPosition());
+                            target.getPosition());
                     // And we're done!
                     return false;
                 }
                 if (entityTarget != null) {
                     handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                                       nCluster, bldgAbsorbs);
+                            nCluster, bldgAbsorbs);
                     gameManager.creditKill(entityTarget, ae);
                     hits -= nCluster;
                     firstHit = false;
                     // do IMP stuff here!
-                    if ((entityTarget instanceof Mech)
+                    if ((entityTarget instanceof Mek)
                             || (entityTarget instanceof Aero)
                             || (entityTarget instanceof Tank)) {
                         entityTarget.addIMPHits(Math.max(0,

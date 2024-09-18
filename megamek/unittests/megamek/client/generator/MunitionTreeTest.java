@@ -1,30 +1,47 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.generator;
 
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.containers.MunitionTree;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.containers.MunitionTree;
 
 class MunitionTreeTest {
 
     HashMap<String, String> lrmHash = new HashMap<>();
     HashMap<String, String> acHash = new HashMap<>();
     HashMap<String, String> ltHash = new HashMap<>();
-
-    @BeforeAll
-    static void setUp() {
-
-    }
 
     @Test
     void testInsertImperatives() {
@@ -70,9 +87,11 @@ class MunitionTreeTest {
     @Test
     void testCompositeLevelImperatives() {
         // We want to be able to composite more- and less-explicit imperatives, e.g.
-        // 1. A specific pilot in a specific model of a chassis has one set of imperatives
+        // 1. A specific pilot in a specific model of a chassis has one set of
+        // imperatives
         // 2. All units have a more broad set of imperatives
-        // We want anything not covered in the specific case to look for the higher-level imperatives
+        // We want anything not covered in the specific case to look for the
+        // higher-level imperatives
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("any", "any", "any", "AC", "Standard:Precision");
         mt.insertImperative("any", "any", "any", "LRM", "Standard:Heat-Seeking:Semi-Guided");
@@ -116,46 +135,21 @@ class MunitionTreeTest {
         ltHash.put("Long Tom", "Standard:FAE:Flak:Thunder:Flare:Smoke");
         mt.insertImperatives("Paladin Defense System", "any", "any", ltHash);
 
-        // Expect Standard to be first; this will be used if all imperatives are fulfilled and bins remain
-        List<String> ammoOrdering = mt.getPriorityList("Paladin Defense System","any", "any", "Long Tom");
+        // Expect Standard to be first; this will be used if all imperatives are
+        // fulfilled and bins remain
+        List<String> ammoOrdering = mt.getPriorityList("Paladin Defense System", "any", "any", "Long Tom");
         assertEquals("Standard", ammoOrdering.get(0));
         assertEquals("Thunder", ammoOrdering.get(3));
         assertEquals("Smoke", ammoOrdering.get(ammoOrdering.size() - 1));
     }
 
     @Test
-    @Disabled("Runtime is > 20 seconds")
-    void testPopulateAllPossibleUnits() {
-        MechSummaryCache instance = MechSummaryCache.getInstance(true);
-        // Make sure no units failed loading
-        assertTrue(instance.getFailedFiles().isEmpty());
-        // Sanity check to make sure the loader thread didn't fail outright
-        // assertTrue(instance.getAllMechs().length > 100);
-
-        MunitionTree mt = new MunitionTree();
-
-        // Populates one entry for each _specific_ chassis and model; this will not create an "any" entry for a given Chassis
-        for (MechSummary unit: instance.getAllMechs()) {
-            mt.insertImperative(unit.getFullChassis(), unit.getModel(), "any", "Machine Gun", "Standard");
-        }
-
-        // Random lookups
-        assertEquals(1, mt.getCountOfAmmoForKey("Catapult", "CPLT-C1", "any", "Machine Gun", "Standard"));
-        assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "MAL-1R", "any", "Machine Gun", "Standard"));
-
-        // Don't expect "any" variant lookups to work as they are not defined
-        assertEquals(0, mt.getCountOfAmmoForKey("Demolisher", "any", "any", "Machine Gun", "Standard"));
-    }
-
-    @Test
     void testADFFileFormatReading() throws IOException {
         StringReader sr = new StringReader(
-            String.join("\\\n",
-        "Mauler:any:any::LRM:Smoke::AC/5:AP",
-                "Catapult:CPLT-C1:any::LRM-15:Standard:Dead-Fire:inferno",
-                "Shadow Hawk:any:any::SRM:Inferno::LRM:Dead-Fire::AC:Precision"
-            )
-        );
+                String.join("\\\n",
+                        "Mauler:any:any::LRM:Smoke::AC/5:AP",
+                        "Catapult:CPLT-C1:any::LRM-15:Standard:Dead-Fire:inferno",
+                        "Shadow Hawk:any:any::SRM:Inferno::LRM:Dead-Fire::AC:Precision"));
 
         BufferedReader br = new BufferedReader(sr);
         MunitionTree mt = new MunitionTree();
@@ -185,11 +179,13 @@ class MunitionTreeTest {
         mt.writeToADFFormat(bw);
         String[] lines = sw.toString().split("\\n");
         // Lines are generated in map key order, so basically random.
-        for (String line: lines) {
+        for (String line : lines) {
             if (line.startsWith("any:any:any::")) {
-                assertTrue(line.toLowerCase().contains("any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided".toLowerCase()));
+                assertTrue(line.toLowerCase().contains(
+                        "any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided".toLowerCase()));
             } else if (line.startsWith("Mauler:")) {
-                assertTrue(line.toLowerCase().contains("Mauler:MAL-5X:Tsubaki Yonjuro::AC/5:Precision:Tracer:".toLowerCase()));
+                assertTrue(line.toLowerCase()
+                        .contains("Mauler:MAL-5X:Tsubaki Yonjuro::AC/5:Precision:Tracer:".toLowerCase()));
             } else if (line.startsWith("Shadow Hawk:")) {
                 assertTrue(line.toLowerCase().contains("Shadow Hawk:SHD-2D:any::".toLowerCase()));
             }
@@ -213,7 +209,7 @@ class MunitionTreeTest {
 
     @Test
     void testRegex() {
-        // I despise Java regexes now.
+        // I despise Java regex's now.
         String regex = "\\w*[ -/\\\\](\\d{1,3})";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher("LRM-15");

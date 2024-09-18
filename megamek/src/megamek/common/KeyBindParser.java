@@ -14,21 +14,27 @@
  */
 package megamek.common;
 
+import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.ArrayList;
 
 /**
  * This class provides a static method to read in the defaultKeybinds.xml and
@@ -38,27 +44,29 @@ import java.util.ArrayList;
  * @author arlith
  */
 public class KeyBindParser {
+    private static final MMLogger logger = MMLogger.create(KeyBindParser.class);
 
     /**
      * Default path to the key bindings XML file.
      */
     public static String DEFAULT_BINDINGS_FILE = "defaultKeyBinds.xml";
 
-    //XML tag defines
+    // XML tag defines
     public static String KEY_BIND = "KeyBind";
     public static String KEY_CODE = "keyCode";
     public static String KEY_MODIFIER = "modifier";
     public static String COMMAND = "command";
     public static String IS_REPEATABLE = "isRepeatable";
-    
-    // Keybinds change event 
+
+    // Keybinds change event
     private static ArrayList<IPreferenceChangeListener> listeners = new ArrayList<>();
     public static final String KEYBINDS_CHANGED = "keyBindsChanged";
 
     public static void parseKeyBindings(MegaMekController controller) {
-        // Always register the hard-coded defaults first so that new binds get their keys
+        // Always register the hard-coded defaults first so that new binds get their
+        // keys
         registerDefaultKeyBinds(controller);
-        
+
         // Get the path to the default bindings file.
         File file = new MegaMekFile(Configuration.configDir(), DEFAULT_BINDINGS_FILE).getFile();
         if (!file.exists() || !file.isFile()) {
@@ -68,14 +76,14 @@ public class KeyBindParser {
         // Build the XML document.
         try {
             DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
-            LogManager.getLogger().debug("Parsing " + file.getName());
+            logger.debug("Parsing " + file.getName());
             Document doc = builder.parse(file);
-            LogManager.getLogger().debug("Parsing finished.");
+            logger.debug("Parsing finished.");
 
             // Get the list of units.
             NodeList listOfUnits = doc.getElementsByTagName(KEY_BIND);
             int totalBinds = listOfUnits.getLength();
-            LogManager.getLogger().debug("Total number of key binds parsed: " + totalBinds);
+            logger.debug("Total number of key binds parsed: " + totalBinds);
 
             for (int bindCount = 0; bindCount < totalBinds; bindCount++) {
 
@@ -85,7 +93,7 @@ public class KeyBindParser {
                 // Get the key code
                 Element elem = (Element) bindingList.getElementsByTagName(KEY_CODE).item(0);
                 if (elem == null) {
-                    LogManager.getLogger().error("Missing " + KEY_CODE + " element #" + bindCount);
+                    logger.error("Missing " + KEY_CODE + " element #" + bindCount);
                     continue;
                 }
                 int keyCode = Integer.parseInt(elem.getTextContent());
@@ -93,16 +101,15 @@ public class KeyBindParser {
                 // Get the modifier.
                 elem = (Element) bindingList.getElementsByTagName(KEY_MODIFIER).item(0);
                 if (elem == null) {
-                    LogManager.getLogger().error("Missing " + KEY_MODIFIER + " element #" + bindCount);
+                    logger.error("Missing " + KEY_MODIFIER + " element #" + bindCount);
                     continue;
                 }
                 int modifiers = Integer.parseInt(elem.getTextContent());
 
-
                 // Get the command
                 elem = (Element) bindingList.getElementsByTagName(COMMAND).item(0);
                 if (elem == null) {
-                    LogManager.getLogger().error("Missing " + COMMAND + " element #" + bindCount);
+                    logger.error("Missing " + COMMAND + " element #" + bindCount);
                     continue;
                 }
                 String command = elem.getTextContent();
@@ -110,16 +117,15 @@ public class KeyBindParser {
                 // Get the isRepeatable
                 elem = (Element) bindingList.getElementsByTagName(IS_REPEATABLE).item(0);
                 if (elem == null) {
-                    LogManager.getLogger().error("Missing " + IS_REPEATABLE + " element #" + bindCount);
+                    logger.error("Missing " + IS_REPEATABLE + " element #" + bindCount);
                     continue;
                 }
-                boolean isRepeatable =
-                        Boolean.parseBoolean(elem.getTextContent());
+                boolean isRepeatable = Boolean.parseBoolean(elem.getTextContent());
 
                 KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
 
                 if (keyBind == null) {
-                    LogManager.getLogger().error("Unknown command: " + command + ", element #" + bindCount);
+                    logger.error("Unknown command: " + command + ", element #" + bindCount);
                 } else {
                     keyBind.key = keyCode;
                     keyBind.modifiers = modifiers;
@@ -128,7 +134,7 @@ public class KeyBindParser {
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error parsing key bindings!", ex);
+            logger.error("Error parsing key bindings!", ex);
             controller.removeAllKeyCommandBinds();
             registerDefaultKeyBinds(controller);
         }
@@ -161,7 +167,7 @@ public class KeyBindParser {
 
             for (KeyCommandBind kcb : KeyCommandBind.values()) {
                 output.write("    <KeyBind>\n");
-                output.write("         <command>"+kcb.cmd+"</command> ");
+                output.write("         <command>" + kcb.cmd + "</command> ");
                 String keyTxt = "";
                 if (kcb.modifiers != 0) {
                     keyTxt = KeyEvent.getModifiersExText(kcb.modifiers);
@@ -169,10 +175,10 @@ public class KeyBindParser {
                 }
                 keyTxt += KeyEvent.getKeyText(kcb.key);
                 output.write("<!-- " + keyTxt + " -->\n");
-                output.write("        <keyCode>"+kcb.key+"</keyCode>\n");
-                output.write("        <modifier>"+kcb.modifiers+"</modifier>\n");
-                output.write("        <isRepeatable>"+kcb.isRepeatable
-                        +"</isRepeatable>\n");
+                output.write("        <keyCode>" + kcb.key + "</keyCode>\n");
+                output.write("        <modifier>" + kcb.modifiers + "</modifier>\n");
+                output.write("        <isRepeatable>" + kcb.isRepeatable
+                        + "</isRepeatable>\n");
                 output.write("    </KeyBind>\n");
                 output.write("\n");
             }
@@ -181,27 +187,32 @@ public class KeyBindParser {
             output.close();
             fireKeyBindsChangeEvent();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error writing keybindings file!", ex);
+            logger.error("Error writing keybindings file!", ex);
         }
     }
-    
+
     /**
-     * Register an object that wishes to be alerted when the key binds (may) have changed.
-     * When the keybinds change, a PreferenceChange with the name KeyBindParser.KEYBINDS_CHANGED
+     * Register an object that wishes to be alerted when the key binds (may) have
+     * changed.
+     * When the keybinds change, a PreferenceChange with the name
+     * KeyBindParser.KEYBINDS_CHANGED
      * is fired.
      *
-     * @param listener the <code>PreferenceListener</code> that wants to register itself.
-     */    
-    public synchronized static void addPreferenceChangeListener(IPreferenceChangeListener listener) {
+     * @param listener the <code>PreferenceListener</code> that wants to register
+     *                 itself.
+     */
+    public static synchronized void addPreferenceChangeListener(IPreferenceChangeListener listener) {
         if (!listeners.contains((listener))) {
             listeners.add(listener);
         }
     }
 
     /**
-     * De-register an object from being alerted when the key binds (may) have changed.
+     * De-register an object from being alerted when the key binds (may) have
+     * changed.
      *
-     * @param listener the <code>PreferenceListener</code> that wants to remove itself.
+     * @param listener the <code>PreferenceListener</code> that wants to remove
+     *                 itself.
      */
     public synchronized static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
         listeners.remove(listener);

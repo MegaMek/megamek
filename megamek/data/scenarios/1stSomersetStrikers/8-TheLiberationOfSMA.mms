@@ -9,7 +9,7 @@ Maps=scenarios/citytech(SMA),Map Set 2/16x17 BattleTech
 Factions=1stSomersetStrikers,BlackVision
 Location_1stSomersetStrikers=any
 Location_BlackVision=any
-# Strikers Lance: 
+# Strikers Lance:
 Unit_1stSomersetStrikers_1=Awesome AWS-9Ma,Major Adam Steiner,1,1,N,16,08
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,2,3,N,08,12
 Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,3,2,N,16,09
@@ -24,12 +24,12 @@ Unit_1stSomersetStrikers_10=Foot Platoon (Laser),B2,4,4,N,09,12
 Unit_1stSomersetStrikers_11=Foot Platoon (Laser),B3,4,4,N,09,13
 # Strikers Air Support:
 # Unit_1stSomersetStrikers_12=Banshee BSE-X2,Franklin Sakamoto,3,4
-# Black Vision, Redmond's Star: 
+# Black Vision, Redmond's Star:
 Unit_BlackVision_1=Vulture (Mad Dog) Prime,Star Colonel Kristen Redmond,2,2,S,08,01
-Unit_BlackVision_2=Hunchback IIC (Standard),Mechwarrior Pytor,2,2,S,09,01
-Unit_BlackVision_3=Mad Cat (Timber Wolf) Prime,Mechwarrior Jentry,3,4,S,10,01
-Unit_BlackVision_4=Mad Cat (Timber Wolf) Prime,Mechwarrior Elston,3,4,S,06,01
-Unit_BlackVision_5=Mad Cat (Timber Wolf) Prime,Mechwarrior Althea,3,4,S,07,01
+Unit_BlackVision_2=Hunchback IIC (Standard),MekWarrior Pytor,2,2,S,09,01
+Unit_BlackVision_3=Mad Cat (Timber Wolf) Prime,MekWarrior Jentry,3,4,S,10,01
+Unit_BlackVision_4=Mad Cat (Timber Wolf) Prime,MekWarrior Elston,3,4,S,06,01
+Unit_BlackVision_5=Mad Cat (Timber Wolf) Prime,MekWarrior Althea,3,4,S,07,01
 # Somerset Garrison Infantry:
 Unit_BlackVision_6=Elemental Battle Armor [Laser],Elemental,4,4,S,08,06
 Unit_BlackVision_7=Clan Foot Point (Laser),Foot Point,4,4,S,08,08

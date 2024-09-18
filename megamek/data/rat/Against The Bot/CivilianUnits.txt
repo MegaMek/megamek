@@ -2,7 +2,7 @@
 # Tables adapted from the Against the Bot Campaign Civilian Units Tables    #
 #   Original tables can be found here:                                      #
 #     http://bg.battletech.com/forums/index.php/topic,23390.msg521754.html#msg521754   #
-#   As noted in the original files (probably), these are fan works 
+#   As noted in the original files (probably), these are fan works
 #   and should not be taken as official in any way.                         #
 #                                                                           #
 # Adaptation performed by user Obvious from                                 #
@@ -87,7 +87,7 @@ Savior Repair Vehicle (Standard),3
 Stoat Scout Car (Standard),9
 Transportable Field Repair Unit JI-100,9
 Wayland Mobile Base (Standard),3
-#IndustrialMechs
+#IndustrialMeks
 Arbiter ARB-001 SecurityMech,1
 Buster BC XV-M HaulerMech MOD,18
 Buster BC XV-M-B HaulerMech MOD,18
@@ -174,7 +174,7 @@ Uni ATAE-70 CargoMech (Standard),18
 Uni ATAE-70T CargoMech (Standard),9
 Uni ATAE-70 MilitiaMech (Standard),9
 Vampyr SC-V-1 SalvageMech (Standard),3
-#Primitive Mechs
+#Primitive Meks
 Archer ARC-1A,7
 Banshee BNC-1E,5
 BattleAxe BKX-1X,7

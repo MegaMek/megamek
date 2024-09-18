@@ -13,22 +13,23 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
  */
 public class BayWeaponHandler extends WeaponHandler {
+    private static final MMLogger logger = MMLogger.create(BayWeaponHandler.class);
+
     private static final long serialVersionUID = -1618484541772117621L;
     AmmoMounted ammo;
 
@@ -36,13 +37,13 @@ public class BayWeaponHandler extends WeaponHandler {
         // deserialization only
     }
 
-    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -72,14 +73,13 @@ public class BayWeaponHandler extends WeaponHandler {
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (int) Math.ceil(av);
     }
-    
 
     @Override
     protected void addHeat() {
         // Only add heat for first shot in strafe
         if (isStrafing && !isStrafingFirstShot()) {
             return;
-        }        
+        }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 for (WeaponMounted m : weapon.getBayWeapons()) {
@@ -101,7 +101,7 @@ public class BayWeaponHandler extends WeaponHandler {
      * ground targets, they should make one to-hit roll, but the AV of each
      * weapon should be applied separately as damage - that needs a special
      * handler
-     * 
+     *
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
@@ -115,10 +115,10 @@ public class BayWeaponHandler extends WeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
 
-        if ((((null == entityTarget) || entityTarget.isAirborne()) 
-                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
-                &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
+        if ((((null == entityTarget) || entityTarget.isAirborne())
+                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
+                        && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
+                        && target.getTargetType() != Targetable.TYPE_BUILDING))
                 || game.getBoard().inSpace()
                 // Capital missile launchers should return the root handler...
                 || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
@@ -294,7 +294,7 @@ public class BayWeaponHandler extends WeaponHandler {
                     && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
-            
+
             // Attacking infantry in buildings from same building
             if (targetInBuilding && (bldg != null)
                     && (toHit.getThruBldg() != null)
@@ -325,7 +325,7 @@ public class BayWeaponHandler extends WeaponHandler {
         Report.addNewline(vPhaseReport);
         return false;
     }
-    
+
     /**
      * Calculate the starting armor value of a flight of Capital Missiles
      * Used for Aero Sanity. This is done in calcAttackValue() otherwise
@@ -368,19 +368,20 @@ public class BayWeaponHandler extends WeaponHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
-        
-        // Handle point defense fire. For cluster hit missile launchers, we'll report later.
+
+        // Handle point defense fire. For cluster hit missile launchers, we'll report
+        // later.
         CounterAV = calcCounterAV();
-        
+
         // We need this for thunderbolt bays
         CapMissileAMSMod = calcCapMissileAMSMod();
-        
+
         // Set up Capital Missile (thunderbolt) armor
         CapMissileArmor = initializeCapMissileArmor();
-        
+
         // and now damage it
         CapMissileArmor = (CapMissileArmor - CounterAV);
-        
+
         // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
@@ -388,22 +389,24 @@ public class BayWeaponHandler extends WeaponHandler {
                 CapMissileMissed = true;
             }
         }
-        
-        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
+
+        // Report any AMS bay action against Capital missiles that doesn't destroy them
+        // all.
         if (amsBayEngagedCap && CapMissileArmor > 0) {
             r = new Report(3358);
             r.add(CapMissileAMSMod);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-                    
-        // Report any PD bay action against Capital missiles that doesn't destroy them all.
+
+            // Report any PD bay action against Capital missiles that doesn't destroy them
+            // all.
         } else if (pdBayEngagedCap && CapMissileArmor > 0) {
             r = new Report(3357);
             r.add(CapMissileAMSMod);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
-        
+
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
@@ -456,8 +459,9 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-        // Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
-        
+        // Don't add heat here, because that will be handled by individual weapons (even
+        // if heat by arc)
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
@@ -472,7 +476,7 @@ public class BayWeaponHandler extends WeaponHandler {
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
-        
+
         // Large missiles
         // use this if AMS counterfire destroys all the missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -498,7 +502,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 return false;
             }
         }
-        
+
         // Report point defense effects
         // Set up a cluster hits table modifier
         double counterAVMod = getCounterAV();
@@ -510,13 +514,13 @@ public class BayWeaponHandler extends WeaponHandler {
                         || pdBayEngaged
                         || pdBayEngagedCap
                         || pdBayEngagedMissile))) {
-            r = new Report (3359);
+            r = new Report(3359);
             r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
         } else if (pdOverheated) {
             // Report a partial failure
-            r = new Report (3361);
+            r = new Report(3361);
             r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
@@ -535,7 +539,8 @@ public class BayWeaponHandler extends WeaponHandler {
         }
 
         Report.addNewline(vPhaseReport);
-        // New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+        // New toHit data to hold our bay auto hit. We want to be able to get
+        // glacing/direct blow
         // data from the 'real' toHit data of this bay handler
         ToHitData autoHit = new ToHitData();
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
@@ -547,14 +552,15 @@ public class BayWeaponHandler extends WeaponHandler {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
                             waa.getTargetId(), m.getEquipmentNum());
-                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, gameManager);
+                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
+                            gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true
                     if (bayWHandler instanceof WeaponHandler) {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
                     } else {
-                        LogManager.getLogger().error("bayWHandler " +  bayWHandler.getClass()
+                        logger.error("bayWHandler " + bayWHandler.getClass()
                                 + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }

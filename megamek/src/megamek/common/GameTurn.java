@@ -77,11 +77,11 @@ public class GameTurn extends AbstractPlayerTurn {
     public boolean isValidEntity(final @Nullable Entity entity, final Game game,
                                  final boolean useValidNonInfantryCheck) {
         return (entity != null) && (entity.getOwnerId() == playerId()) && entity.isSelectableThisTurn()
-                // This next bit enforces the "A players Infantry/ProtoMechs move after that player's other units" options.
+                // This next bit enforces the "A players Infantry/ProtoMeks move after that player's other units" options.
                 && !(useValidNonInfantryCheck && game.getPhase().isMovement()
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
-                || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
-                && game.checkForValidNonInfantryAndOrProtomechs(playerId()));
+                || ((entity instanceof ProtoMek) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
+                && game.checkForValidNonInfantryAndOrProtoMeks(playerId()));
     }
 
     @Override

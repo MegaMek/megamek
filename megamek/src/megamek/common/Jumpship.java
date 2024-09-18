@@ -18,17 +18,22 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static megamek.common.Compute.*;
 
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
  */
 public class Jumpship extends Aero {
+    @Serial
     private static final long serialVersionUID = 9154398176617208384L;
+
     // Additional Jumpship locations (FLS, FRS and ALS override Aero locations)
     public static final int LOC_FLS = 1;
     public static final int LOC_FRS = 2;
@@ -39,15 +44,16 @@ public class Jumpship extends Aero {
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
     public static final int GRAV_DECK_HUGE_MAX = 1500;
-    
-    public static final int DRIVE_CORE_STANDARD    = 0;
-    public static final int DRIVE_CORE_COMPACT     = 1;
-    public static final int DRIVE_CORE_SUBCOMPACT  = 2;
-    public static final int DRIVE_CORE_NONE        = 3;
-    public static final int DRIVE_CORE_PRIMITIVE   = 4;
-    
+
+    public static final int DRIVE_CORE_STANDARD = 0;
+    public static final int DRIVE_CORE_COMPACT = 1;
+    public static final int DRIVE_CORE_SUBCOMPACT = 2;
+    public static final int DRIVE_CORE_NONE = 3;
+    public static final int DRIVE_CORE_PRIMITIVE = 4;
+
     // The percentage of the total unit weight taken up by the drive core. The value
-    // given for primitive assumes a 30ly range, but the final value has to be computed.
+    // given for primitive assumes a 30ly range, but the final value has to be
+    // computed.
     private static final double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
     private static final String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
@@ -69,7 +75,7 @@ public class Jumpship extends Aero {
     private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive JumpShips can have a reduced range
-    
+
     // lithium fusion
     boolean hasLF = false;
 
@@ -78,7 +84,7 @@ public class Jumpship extends Aero {
     private int nOtherCrew = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
-    
+
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
@@ -91,18 +97,19 @@ public class Jumpship extends Aero {
     /**
      * Keep track of all of the grav decks and their sizes.
      *
-     * This is a new approach for storing grav decks, which allows the size of each deck to be stored.  Previously,
+     * This is a new approach for storing grav decks, which allows the size of each deck to be stored. Previously,
      * we just stored the number of standard, large and huge grav decks, and could not specify the exact size of the
      * deck.
      */
     private final List<Integer> gravDecks = new ArrayList<>();
-    
+
     /**
      * Keep track of all of the grav decks and their damage status
      *
-     * Stores the number of hits on each grav deck by the index value from the list gravDecks
+     * Stores the number of hits on each grav deck by the index value from the list
+     * gravDecks
      */
-    private final Map<Integer,Integer> damagedGravDecks = new HashMap<>();
+    private final Map<Integer, Integer> damagedGravDecks = new HashMap<>();
 
     // station-keeping thrust and accumulated thrust
     private final double stationThrust = 0.2;
@@ -128,18 +135,23 @@ public class Jumpship extends Aero {
     // ASEW Missile Effects, per location
     // Values correspond to Locations: NOS, FLS, FRS, AFT, ALS, ARS
     private final int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0 };
-    
+
     /*
-     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
+     * Accessor for the asewAffectedTurns array, which may be different for
+     * inheriting classes.
      */
     protected int[] getAsewAffectedTurns() {
         return asewAffectedTurns;
     }
-    
+
     /*
-     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
+     * Sets the number of rounds a specified firing arc is affected by an ASEW
+     * missile
+     * 
      * @param arc - integer representing the desired firing arc
-     * @param turns - integer specifying the number of end phases that the effects last through
+     * 
+     * @param turns - integer specifying the number of end phases that the effects
+     * last through
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
@@ -147,9 +159,11 @@ public class Jumpship extends Aero {
             getAsewAffectedTurns()[arc] = turns;
         }
     }
-    
+
     /*
-     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
+     * Returns the number of rounds a specified firing arc is affected by an ASEW
+     * missile
+     * 
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
@@ -158,11 +172,12 @@ public class Jumpship extends Aero {
         }
         return 0;
     }
-    
+
     /**
-     * Primitive JumpShips may be constructed with standard docking collars, or with pre-boom collars.
+     * Primitive JumpShips may be constructed with standard docking collars, or with
+     * pre-boom collars.
      */
-    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_STANDARD = 0;
     public static final int COLLAR_NO_BOOM = 1;
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
@@ -176,12 +191,12 @@ public class Jumpship extends Aero {
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive() ? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
-    
+
     /**
      * Tech advancement data for lithium fusion batteries
      */
@@ -195,7 +210,7 @@ public class Jumpship extends Aero {
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-    
+
     /**
      * Tech advancement data for the jump sail
      */
@@ -207,7 +222,7 @@ public class Jumpship extends Aero {
                 .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-    
+
     /**
      * @return Returns the autoEject setting (always off for large craft)
      */
@@ -218,71 +233,45 @@ public class Jumpship extends Aero {
 
     @Override
     public String getCritDamageString() {
-        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
-        boolean first = toReturn.length() == 0;
+        List<String> damageStrings = new ArrayList<>();
+        String superResult = super.getCritDamageString();
+        if (!superResult.isBlank()) {
+            damageStrings.add(superResult);
+        }
         if (getTotalDamagedGravDeck() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Jumpship.gravDeckDamageString"), getTotalDamagedGravDeck()));
-            first = false;
+            String resourceString = Messages.getString("Jumpship.gravDeckDamageString");
+            damageStrings.add(String.format(resourceString, getTotalDamagedGravDeck()));
         }
         if (getTotalDamagedDockingCollars() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Jumpship.dockingCollarsDamageString"), getTotalDamagedDockingCollars()));
-            first = false;
+            String resourceString = Messages.getString("Jumpship.dockingCollarsDamageString");
+            damageStrings.add(String.format(resourceString, getTotalDamagedDockingCollars()));
         }
         if (getKFDriveCoilHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Jumpship.driveCoilDamageString"));
-            first = false;
+            damageStrings.add(Messages.getString("Jumpship.driveCoilDamageString"));
         }
         if (getKFDriveControllerHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Jumpship.driveControllerDamageString"));
-            first = false;
+            damageStrings.add(Messages.getString("Jumpship.driveControllerDamageString"));
         }
         if (getKFHeliumTankHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Jumpship.heliumTankDamageString"));
-            first = false;
+            damageStrings.add(Messages.getString("Jumpship.heliumTankDamageString"));
         }
         if (getKFFieldInitiatorHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Jumpship.fieldInitiatorDamageString"));
-            first = false;
+            damageStrings.add(Messages.getString("Jumpship.fieldInitiatorDamageString"));
         }
         if (getKFChargingSystemHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Jumpship.chargingSystemDamageString"));
-            first = false;
+            damageStrings.add(Messages.getString("Jumpship.chargingSystemDamageString"));
         }
         if (getLFBatteryHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Jumpship.lfBatteryDamageString"));
+            damageStrings.add(Messages.getString("Jumpship.lfBatteryDamageString"));
         }
-        return toReturn.toString();
+        return String.join(", ", damageStrings);
     }
 
     @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
-    
+
     @Override
     public int locations() {
         return 7;
@@ -292,7 +281,7 @@ public class Jumpship extends Aero {
     public int getBodyLocation() {
         return LOC_HULL;
     }
-    
+
     /**
      * Get the docking collar type used by the ship.
      *
@@ -301,12 +290,12 @@ public class Jumpship extends Aero {
     public int getDockingCollarType() {
         return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
     }
-    
+
     /** Returns the number of free Docking Collars. */
     public int getFreeDockingCollars() {
         return getDockingCollars().stream().mapToInt(dc -> (int) dc.getUnused()).sum();
     }
-    
+
     /**
      * Get the number of damaged docking collars on the ship.
      * Used by crit damage string on unit display
@@ -314,13 +303,7 @@ public class Jumpship extends Aero {
      * @return the number of damaged docking collars
      */
     public int getTotalDamagedDockingCollars() {
-        int count = 0;
-        for (DockingCollar collar : getDockingCollars()) {
-            if (collar.isDamaged()) {
-                count++;
-            }
-        }
-        return count;
+        return (int) getDockingCollars().stream().filter(DockingCollar::isDamaged).count();
     }
 
     /**
@@ -331,7 +314,7 @@ public class Jumpship extends Aero {
     public int getTotalGravDeck() {
         return gravDecks.size();
     }
-    
+
     /**
      * Get the number of damaged grav decks on the ship.
      * Used by JS/WS MapSet widget to display critical hits
@@ -339,35 +322,31 @@ public class Jumpship extends Aero {
      * @return the number of damaged grav decks
      */
     public int getTotalDamagedGravDeck() {
-        int count = 0;
-        for (int hits : damagedGravDecks.values()) {
-            if (hits == 1) {
-                count++;
-            }
-        }
-        return count;
+        return (int) damagedGravDecks.values().stream().filter(hits -> hits == 1).count();
     }
 
     /**
      * Adds a grav deck whose size in meters is specified.
      *
-     * @param size  The size in meters of the grav deck.
+     * @param size The size in meters of the grav deck.
      */
     public void addGravDeck(int size) {
         gravDecks.add(size);
     }
 
     /**
-     * Get a list of all grav decks mounted on this ship. Returns the size in meters of the deck
+     * Get a list of all grav decks mounted on this ship. Returns the size in meters
+     * of the deck
      *
      * @return a list of grav deck diameters, in meters
      */
     public List<Integer> getGravDecks() {
         return gravDecks;
     }
-    
+
     /**
-     * Adds a grav deck damage value that maps to the index of each deck size in meters
+     * Adds a grav deck damage value that maps to the index of each deck size in
+     * meters
      *
      */
     public void initializeGravDeckDamage(int index) {
@@ -382,11 +361,12 @@ public class Jumpship extends Aero {
     public int getGravDeckDamageFlag(int key) {
         return damagedGravDecks.get(key);
     }
-    
+
     /**
-     * Sets the damage flag for the grav deck with the specified key to the specified value
+     * Sets the damage flag for the grav deck with the specified key to the
+     * specified value
      *
-     * @param key - the id of the deck to affect
+     * @param key     - the id of the deck to affect
      * @param damaged - 0 (undamaged), 1 (damaged)
      */
     public void setGravDeckDamageFlag(int key, int damaged) {
@@ -394,7 +374,8 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Old style for setting the number of grav decks.  This allows the user to specify N standard grav decks, which
+     * Old style for setting the number of grav decks. This allows the user to
+     * specify N standard grav decks, which
      * will get added at a default value.
      *
      * @param n The number of grav decks
@@ -407,20 +388,16 @@ public class Jumpship extends Aero {
 
     /**
      * Get the number of standard grav decks
+     * 
      * @return the number of 0-99 meter grav decks installed
      */
     public int getGravDeck() {
-        int count = 0;
-        for (int deck : gravDecks) {
-            if (deck < GRAV_DECK_STANDARD_MAX) {
-                count++;
-            }
-        }
-        return count;
+        return (int) gravDecks.stream().filter(deck -> deck < GRAV_DECK_STANDARD_MAX).count();
     }
 
     /**
-     * Old style method for adding N large grav decks. A default value is chosen that is half-way
+     * Old style method for adding N large grav decks. A default value is chosen
+     * that is half-way
      * between the standard and huge sizes.
      *
      * @param n The number of grav decks
@@ -437,17 +414,15 @@ public class Jumpship extends Aero {
      * @return the number of 100-249 meter grav decks installed
      */
     public int getGravDeckLarge() {
-        int count = 0;
-        for (int deck : gravDecks) {
-            if (deck >= GRAV_DECK_STANDARD_MAX && deck <= GRAV_DECK_LARGE_MAX) {
-                count++;
-            }
-        }
-        return count;
+        return (int) gravDecks.stream()
+                .filter(deck -> deck >= GRAV_DECK_STANDARD_MAX)
+                .filter(deck -> deck <= GRAV_DECK_LARGE_MAX)
+                .count();
     }
 
     /**
-     * Old style method for adding N huge grav decks. A default value is chosen that is the current
+     * Old style method for adding N huge grav decks. A default value is chosen that
+     * is the current
      * large maximum plus half that value.
      *
      * @param n The number of grav decks
@@ -464,13 +439,7 @@ public class Jumpship extends Aero {
      * @return the number of 250 meter and larger grav decks installed
      */
     public int getGravDeckHuge() {
-        int count = 0;
-        for (int deck : gravDecks) {
-            if (deck > GRAV_DECK_LARGE_MAX) {
-                count++;
-            }
-        }
-        return count;
+        return (int) gravDecks.stream().filter(deck -> deck > GRAV_DECK_LARGE_MAX).count();
     }
 
     public void setHPG(boolean b) {
@@ -501,19 +470,12 @@ public class Jumpship extends Aero {
     public int getEscapePods() {
         return escapePods;
     }
-    
-    /**
-     * Returns the total number of escape pods launched so far
-     */
+
     @Override
     public int getLaunchedEscapePods() {
         return escapePodsLaunched;
     }
-    
-    /**
-     * Updates the total number of escape pods launched so far
-     * @param n The number to change
-     */
+
     @Override
     public void setLaunchedEscapePods(int n) {
         escapePodsLaunched = n;
@@ -527,19 +489,12 @@ public class Jumpship extends Aero {
     public int getLifeBoats() {
         return lifeBoats;
     }
-    
-    /**
-     * Returns the total number of life boats launched so far
-     */
+
     @Override
     public int getLaunchedLifeBoats() {
         return lifeBoatsLaunched;
     }
-    
-    /**
-     * Updates the total number of life boats launched so far
-     * @param n The number to change
-     */
+
     @Override
     public void setLaunchedLifeBoats(int n) {
         lifeBoatsLaunched = n;
@@ -563,21 +518,21 @@ public class Jumpship extends Aero {
     public void setNOfficers(int officer) {
         nOfficers = officer;
     }
-    
+
     @Override
     public int getNOfficers() {
         return nOfficers;
     }
-    
+
     public void setNGunners(int gunners) {
         nGunners = gunners;
     }
-    
+
     @Override
     public int getNGunners() {
         return nGunners;
     }
-    
+
     @Override
     public int getNPassenger() {
         return nPassenger;
@@ -588,9 +543,6 @@ public class Jumpship extends Aero {
         nMarines = m;
     }
 
-    /**
-     * @return the number of marines assigned to a unit; Used for abandoning a unit
-     */
     @Override
     public int getNMarines() {
         return nMarines;
@@ -612,7 +564,7 @@ public class Jumpship extends Aero {
     public int getNOtherCrew() {
         return nOtherCrew;
     }
-    
+
     @Override
     public double getFuelPointsPerTon() {
         double ppt;
@@ -672,8 +624,8 @@ public class Jumpship extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
-    
-    //Methods for dealing with the K-F Drive, Sail and L-F Battery
+
+    // Methods for dealing with the K-F Drive, Sail and L-F Battery
 
     public void setKFIntegrity(int kf) {
         kf_integrity = kf;
@@ -694,8 +646,8 @@ public class Jumpship extends Aero {
     public int getKFDriveDamage() {
         return (getOKFIntegrity() - getKFIntegrity());
     }
-    
-    //Is any part of the KF Drive damaged?  Used by MHQ for repairs.
+
+    // Is any part of the KF Drive damaged? Used by MHQ for repairs.
     public boolean isKFDriveDamaged() {
         return (getKFHeliumTankHit()
                 || getKFDriveCoilHit()
@@ -708,8 +660,9 @@ public class Jumpship extends Aero {
     public void setKFHeliumTankIntegrity(int ht) {
         helium_tankage = ht;
     }
-    
-    //Used by MHQ when repairing the helium tanks. Allows restoration of up to 2/3 of the total drive integrity
+
+    // Used by MHQ when repairing the helium tanks. Allows restoration of up to 2/3
+    // of the total drive integrity
     public int getKFHeliumTankIntegrity() {
         return helium_tankage;
     }
@@ -781,14 +734,15 @@ public class Jumpship extends Aero {
     public int getSailIntegrity() {
         return sail_integrity;
     }
-    
+
     /**
-     * @return Whether this ship has a jump sail (optional on space stations and primitive jumpships)
+     * @return Whether this ship has a jump sail (optional on space stations and
+     *         primitive jumpships)
      */
     public boolean hasSail() {
         return sail;
     }
-    
+
     /**
      * @param sail Whether this ship has an energy collection sail
      */
@@ -806,18 +760,18 @@ public class Jumpship extends Aero {
         int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
-        //Helium Tanks make up about 2/3 of the drive core.
+        // Helium Tanks make up about 2/3 of the drive core.
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
 
     public boolean canJump() {
         return kf_integrity > 0;
     }
-    
+
     public int getDriveCoreType() {
         return driveCoreType;
     }
-    
+
     public void setDriveCoreType(int driveCoreType) {
         this.driveCoreType = driveCoreType;
     }
@@ -828,14 +782,14 @@ public class Jumpship extends Aero {
     public int getJumpRange() {
         return jumpRange;
     }
-    
+
     /**
      * Set maximum jump range (used for primitive jumpships)
      */
     public void setJumpRange(int range) {
         jumpRange = range;
     }
-    
+
     /**
      * @return The weight of the jump drive core for this unit
      */
@@ -847,64 +801,21 @@ public class Jumpship extends Aero {
         return Math.ceil(getWeight() * pct);
     }
 
-    // different firing arcs
-    // different firing arcs
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
-
-        int arc;
-        switch (mounted.getLocation()) {
-            case LOC_NOSE:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_NOSE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_NOSE;
-                break;
-            case LOC_FRS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_RIGHTSIDE_SPHERE;
-                break;
-            case LOC_FLS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_LEFTSIDE_SPHERE;
-                break;
-            case LOC_ARS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_RIGHTSIDEA_SPHERE;
-                break;
-            case LOC_ALS:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
-                    break;
-                }
-                arc = Compute.ARC_LEFTSIDEA_SPHERE;
-                break;
-            case LOC_AFT:
-                if (mounted.isInWaypointLaunchMode()) {
-                    arc = Compute.ARC_AFT_WPL;
-                    break;
-                }
-                arc = Compute.ARC_AFT;
-                break;
-            default:
-                arc = Compute.ARC_360;
-                break;
-        }
+        final Mounted<?> mounted = getEquipment(wn);
+        int arc = switch (mounted.getLocation()) {
+            case LOC_NOSE -> mounted.isInWaypointLaunchMode() ? ARC_NOSE_WPL : ARC_NOSE;
+            case LOC_FRS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDE_SPHERE_WPL : ARC_RIGHTSIDE_SPHERE;
+            case LOC_FLS -> mounted.isInWaypointLaunchMode() ? ARC_LEFTSIDE_SPHERE_WPL : ARC_LEFTSIDE_SPHERE;
+            case LOC_ARS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDEA_SPHERE_WPL : ARC_RIGHTSIDEA_SPHERE;
+            case LOC_ALS -> mounted.isInWaypointLaunchMode() ? ARC_LEFTSIDEA_SPHERE_WPL : ARC_LEFTSIDEA_SPHERE;
+            case LOC_AFT -> mounted.isInWaypointLaunchMode() ? ARC_AFT_WPL : ARC_AFT;
+            default -> ARC_360;
+        };
         return rollArcs(arc);
     }
 
-    // different hit locations
     @Override
     public HitData rollHitLocation(int table, int side) {
 
@@ -990,7 +901,7 @@ public class Jumpship extends Aero {
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
-            // normal left-side hits
+            // normal right-side hits
             switch (roll) {
                 case 2:
                     setPotCrit(CRIT_AVIONICS);
@@ -1041,14 +952,11 @@ public class Jumpship extends Aero {
                 case 5:
                     setPotCrit(CRIT_RIGHT_THRUSTER);
                     return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-                case 6:
+                case 6, 8:
                     setPotCrit(CRIT_ENGINE);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 8:
-                    setPotCrit(CRIT_ENGINE);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_LEFT_THRUSTER);
@@ -1073,7 +981,6 @@ public class Jumpship extends Aero {
     }
 
     public int getArcswGuns() {
-        // return the number
         int nArcs = 0;
         for (int i = 0; i < locations(); i++) {
             if (hasWeaponInArc(i)) {
@@ -1084,34 +991,24 @@ public class Jumpship extends Aero {
     }
 
     public boolean hasWeaponInArc(int loc) {
-        for (Mounted weap : getWeaponList()) {
-            if (weap.getLocation() == loc) {
-                return true;
-            }
-        }
-        return false;
+        return getWeaponList().stream().anyMatch(weapon -> weapon.getLocation() == loc);
     }
 
     public double getFuelPerTon() {
-
-        double points = 10.0;
-
         if (weight >= 250000) {
-            points = 2.5;
-            return points;
+            return 2.5;
         } else if (weight >= 110000) {
-            points = 5.0;
-            return points;
+            return 5;
+        } else {
+            return 10;
         }
-
-        return points;
     }
-    
+
     @Override
     public double getArmorWeight() {
         return getArmorWeight(locations() - 1); // no armor in hull location
     }
-    
+
     @Override
     public double getArmorWeight(int locCount) {
         double armorPoints = getTotalOArmor();
@@ -1123,7 +1020,6 @@ public class Jumpship extends Aero {
         }
 
         double baseArmor = ArmorType.forEntity(this).getPointsPerTon(this);
-
         return RoundWeight.standard(armorPoints / baseArmor, this);
     }
 
@@ -1137,7 +1033,6 @@ public class Jumpship extends Aero {
         return 1.25;
     }
 
-
     @Override
     public boolean doomedOnGround() {
         return true;
@@ -1148,31 +1043,28 @@ public class Jumpship extends Aero {
         return true;
     }
 
-    /**
-     * need to check bay location before loading ammo
-     */
     @Override
     public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
-        boolean success = false;
+        // need to check bay location before loading ammo
         WeaponType wtype = mounted.getType();
         AmmoType atype = mountedAmmo.getType();
 
         if (mounted.getLocation() != mountedAmmo.getLocation()) {
-            return success;
+            return false;
         }
 
         // for large craft, ammo must be in the same ba
         WeaponMounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
-            return success;
+            return false;
         }
 
         if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
                 && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
-            success = true;
+            return true;
         }
-        return success;
+        return false;
     }
 
     @Override
@@ -1184,21 +1076,14 @@ public class Jumpship extends Aero {
 
     @Override
     public int getOppositeLocation(int loc) {
-        switch (loc) {
-            case LOC_NOSE:
-                return LOC_AFT;
-            case LOC_FLS:
-                return LOC_ARS;
-            case LOC_FRS:
-                return LOC_ALS;
-            case LOC_ALS:
-                return LOC_FRS;
-            case LOC_ARS:
-                return LOC_FLS;
-            case LOC_AFT:
-            default:
-                return LOC_NOSE;
-        }
+        return switch (loc) {
+            case LOC_NOSE -> LOC_AFT;
+            case LOC_FLS -> LOC_ARS;
+            case LOC_FRS -> LOC_ALS;
+            case LOC_ALS -> LOC_FRS;
+            case LOC_ARS -> LOC_FLS;
+            default -> LOC_NOSE;
+        };
     }
 
     /**
@@ -1230,14 +1115,9 @@ public class Jumpship extends Aero {
         }
         int range = 1;
         // the range might be affected by sensor/FCS damage
-        range = range - getSensorHits() - getCICHits();
-        return range;
+        return range - getSensorHits() - getCICHits();
     }
 
-    /**
-     * @return is the crew of this vessel protected from gravitational effects,
-     *         see StratOps, pg. 36
-     */
     @Override
     public boolean isCrewProtected() {
         return isMilitary() && (getOriginalWalkMP() > 4);
@@ -1259,14 +1139,11 @@ public class Jumpship extends Aero {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // accumulate some more
-        // We assume that  will be accumulated. If this is proven wrong by
-        // the movement
-        // then we make the proper adjustments in server#processMovement
-        // until I hear from Welshman, I am assuming that you cannot "hold back"
-        // thrust. So once you
-        // get 1 thrust point, you have to spend it before you can accumulate
-        // more
+        // Accumulate some more thrust
+        // We assume that will be accumulated. If this is proven wrong by the movement then we make the
+        // proper adjustments in server#processMovement until I hear from Welshman, I am assuming that
+        // you cannot "hold back" thrust. So once you get 1 thrust point, you have to spend it before
+        // you can accumulate more
         if (isDeployed() && isBattleStation()) {
             setAccumulatedThrust(1);
         }
@@ -1283,85 +1160,12 @@ public class Jumpship extends Aero {
         }
         return (int) Math.floor(getAccumulatedThrust());
     }
-    
+
     /**
      * @return Whether this ship has station-keeping drive instead of transit drive.
      */
     public boolean hasStationKeepingDrive() {
         return walkMP == 0;
-    }
-
-    /**
-     * find the adjacent firing arc on this vessel clockwise
-     */
-    public int getAdjacentArcCW(int arc) {
-        switch (arc) {
-            case Compute.ARC_NOSE:
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            case Compute.ARC_LEFTSIDE_SPHERE:
-                return Compute.ARC_NOSE;
-            case Compute.ARC_RIGHTSIDE_SPHERE:
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            case Compute.ARC_LEFTSIDEA_SPHERE:
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            case Compute.ARC_RIGHTSIDEA_SPHERE:
-                return Compute.ARC_AFT;
-            case Compute.ARC_AFT:
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            default:
-                return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * find the adjacent firing arc on this vessel counter-clockwise
-     */
-    public int getAdjacentArcCCW(int arc) {
-        switch (arc) {
-            case Compute.ARC_NOSE:
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            case Compute.ARC_RIGHTSIDE_SPHERE:
-                return Compute.ARC_NOSE;
-            case Compute.ARC_LEFTSIDE_SPHERE:
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            case Compute.ARC_LEFTSIDEA_SPHERE:
-                return Compute.ARC_AFT;
-            case Compute.ARC_RIGHTSIDEA_SPHERE:
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            case Compute.ARC_AFT:
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            default:
-                return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * Finds the arc on the opposite side of the ship. Used in BV calculations.
-     *
-     * @param arc A firing arc constant from <code>Compute</code>
-     * @return    The arc on the opposite side of the ship.
-     */
-    public int getOppositeArc(int arc) {
-        switch (arc) {
-            case Compute.ARC_NOSE:
-                return Compute.ARC_AFT;
-            case Compute.ARC_LEFTSIDE_SPHERE:
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            case Compute.ARC_RIGHTSIDE_SPHERE:
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            case Compute.ARC_LEFTSIDEA_SPHERE:
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            case Compute.ARC_RIGHTSIDEA_SPHERE:
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            case Compute.ARC_LEFT_BROADSIDE:
-                return Compute.ARC_RIGHT_BROADSIDE;
-            case Compute.ARC_RIGHT_BROADSIDE:
-                return Compute.ARC_LEFT_BROADSIDE;
-            case Compute.ARC_AFT:
-                return Compute.ARC_NOSE;
-            default:
-                return Integer.MIN_VALUE;
-        }
     }
 
     @Override
@@ -1409,6 +1213,11 @@ public class Jumpship extends Aero {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(0.0619 + 0.5607*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(0.0619 + 0.5607 * Math.log(getWeight())));
+    }
+
+    @Override
+    public boolean hasPatchworkArmor() {
+        return false;
     }
 }

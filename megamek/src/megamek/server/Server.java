@@ -924,8 +924,8 @@ public class Server implements Runnable {
                 gzi = is;
             }
 
-            XStream xstream = SerializationHelper.getLoadSaveGameXStream();
-            newGame = (Game) xstream.fromXML(gzi);
+            XStream xStream = SerializationHelper.getLoadSaveGameXStream();
+            newGame = (Game) xStream.fromXML(gzi);
         } catch (Exception e) {
             message = String.format("Unable to load file: %s", f);
             logger.error(e, message);
@@ -1449,7 +1449,6 @@ public class Server implements Runnable {
      * Adds a roll report to the GameManager's current pending report list.
      *
      * @param roll The roll to add
-     * @see GameManager#getvPhaseReport()
      */
     public void reportRoll(Roll roll) {
         gameManager.addReport(getGame().getNewReport(1230).addRoll(roll));

@@ -29,14 +29,14 @@ import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.Mounted;
-import megamek.common.VTOL;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 
 /**
- * This class loads the default quirks list from the mmconf/cannonUnitQuirks.xml file.
+ * This class loads the default quirks list from the mmconf/cannonUnitQuirks.xml
+ * file.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 2012-03-05
@@ -51,8 +51,8 @@ public class QuirksPanel extends JPanel {
     private boolean editable;
     private DialogOptionListener parent;
 
-    public QuirksPanel(Entity entity, Quirks quirks, boolean editable, DialogOptionListener parent, HashMap<Integer,
-            WeaponQuirks> h_wpnQuirks) {
+    public QuirksPanel(Entity entity, Quirks quirks, boolean editable, DialogOptionListener parent,
+            HashMap<Integer, WeaponQuirks> h_wpnQuirks) {
         this.entity = entity;
         this.quirks = quirks;
         this.editable = editable;
@@ -69,11 +69,11 @@ public class QuirksPanel extends JPanel {
             h_wpnQuirkComps.put(eqNum, new ArrayList<>());
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements(); ) {
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             add(new JLabel(group.getDisplayableName()), GBC.eol());
 
-            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
+            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 if (null == option || !Quirks.isQuirkLegalFor(option, entity)) {
@@ -89,14 +89,14 @@ public class QuirksPanel extends JPanel {
         Iterator<Integer> iter = set.iterator();
         while (iter.hasNext()) {
             int key = iter.next();
-            Mounted m = entity.getEquipment(key);
+            Mounted<?> m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
             JLabel labWpn = new JLabel(m.getName() + " ("
                     + entity.getLocationName(m.getLocation()) + ")");
             add(labWpn, GBC.eol());
-            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
+            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements();) {
                 IOptionGroup group = i.nextElement();
-                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
+                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements();) {
                     IOption option = j.nextElement();
                     if (!WeaponQuirks.isQuirkLegalFor(option, entity, m.getType())) {
                         continue;
@@ -126,10 +126,11 @@ public class QuirksPanel extends JPanel {
         for (final Object newVar : quirkComps) {
             DialogOptionComponent comp = (DialogOptionComponent) newVar;
             option = comp.getOption();
-            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) {
+            if ((comp.getValue() == Messages.getString("CustomMekDialog.None"))) {
                 entity.getQuirks().getOption(option.getName()).setValue("None");
             } else if (option.getName().equals("internal_bomb")) {
-                // Need to set the quirk, and only then force re-computing bomb bay space for Aero-derived units
+                // Need to set the quirk, and only then force re-computing bomb bay space for
+                // Aero-derived units
                 entity.getQuirks().getOption(option.getName()).setValue(comp.getValue());
                 if (entity.isAero()) {
                     ((Aero) entity).autoSetMaxBombPoints();
@@ -141,12 +142,12 @@ public class QuirksPanel extends JPanel {
         // now for weapon quirks
         Set<Integer> set = h_wpnQuirkComps.keySet();
         for (Integer key : set) {
-            Mounted m = entity.getEquipment(key);
+            Mounted<?> m = entity.getEquipment(key);
             ArrayList<DialogOptionComponent> wpnQuirkComps = h_wpnQuirkComps.get(key);
             for (final Object newVar : wpnQuirkComps) {
                 DialogOptionComponent comp = (DialogOptionComponent) newVar;
                 option = comp.getOption();
-                if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) {
+                if ((comp.getValue() == Messages.getString("CustomMekDialog.None"))) {
                     m.getQuirks().getOption(option.getName()).setValue("None");
                 } else {
                     m.getQuirks().getOption(option.getName()).setValue(comp.getValue());

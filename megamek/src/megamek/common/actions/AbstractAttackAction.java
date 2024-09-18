@@ -24,7 +24,8 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import java.util.Enumeration;
 
 /**
- * Abstract superclass for any action where an entity is attacking another entity.
+ * Abstract superclass for any action where an entity is attacking another
+ * entity.
  */
 public abstract class AbstractAttackAction extends AbstractEntityAction implements AttackAction {
     private static final long serialVersionUID = -897197664652217134L;
@@ -69,7 +70,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     /**
-     * Gets the entity associated with this attack action, using the passed-in game object.
+     * Gets the entity associated with this attack action, using the passed-in game
+     * object.
+     * 
      * @return the entity even if it was destroyed or fled.
      */
     public @Nullable Entity getEntity(Game g) {
@@ -78,11 +81,13 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
 
     /**
      * Gets an entity with the given ID, using the passed-in game object.
+     * 
      * @return the entity even if it was destroyed or fled.
      */
     public @Nullable Entity getEntity(Game g, int entityID) {
         Entity e = g.getEntity(entityID);
-        // if we have an artyattack, we might need to get an out-of-game entity if it died or fled
+        // if we have an artyattack, we might need to get an out-of-game entity if it
+        // died or fled
         return (e == null) ? g.getOutOfGameEntity(entityID) : e;
     }
 
@@ -93,7 +98,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * @param game The current {@link Game}
      */
     public static ToHitData nightModifiers(Game game, Targetable target, AmmoType atype,
-                                           Entity attacker, boolean isWeapon) {
+            Entity attacker, boolean isWeapon) {
         Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
         ToHitData toHit = new ToHitData();
 
@@ -166,7 +171,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         }
 
         // Laser heatsinks
-        if ((night_modifier > 0) && (te instanceof Mech) && ((Mech) te).hasLaserHeatSinks()) {
+        if ((night_modifier > 0) && (te instanceof Mek) && ((Mek) te).hasLaserHeatSinks()) {
             boolean lhsused = false;
             if (te.heat > 0) {
                 toHit.addModifier(-night_modifier, "target overheated with laser heatsinks");
@@ -182,7 +187,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                     if (a instanceof WeaponAttackAction) {
                         WeaponAttackAction waa = (WeaponAttackAction) a;
                         if (waa.getEntityId() == te.getId()) {
-                            Mounted weapon = te.getEquipment(waa.getWeaponId());
+                            Mounted<?> weapon = te.getEquipment(waa.getWeaponId());
                             if ((weapon.getCurrentHeat() != 0) || weapon.isRapidfire()) {
                                 // target fired a weapon that generates heat
                                 lhsused = true;

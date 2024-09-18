@@ -123,6 +123,7 @@ public class CreateImageAtlases {
         });
 
         int numRows = (int) Math.ceil(imageFiles.length / (imagesPerRow + 0.0));
+
         // No images, nothing to do
         if (numRows <= 0) {
             return;
@@ -211,7 +212,8 @@ public class CreateImageAtlases {
      *
      * or from the jar file with
      *
-     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases <optional filename>
+     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases %lt;optional
+     * filename%gt;
      *
      * @param args
      */

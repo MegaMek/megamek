@@ -18,8 +18,29 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.border.EmptyBorder;
+
 import megamek.client.AbstractClient;
-import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
@@ -30,16 +51,11 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
 import megamek.common.Player;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import megamek.logging.MMLogger;
 
 public class EditBotsDialog extends AbstractButtonDialog {
+    private final static MMLogger logger = MMLogger.create(EditBotsDialog.class);
+
     // replace ghost combo box choices
     private static final int REPLACE_WITH_PRINCESS_INDEX = 1;
 
@@ -87,14 +103,13 @@ public class EditBotsDialog extends AbstractButtonDialog {
         try {
             finalizeInitialization();
         } catch (Exception ex) {
-            LogManager.getLogger().error(
-                    "Error finalizing the EditBotsDialog. Returning the created dialog, but this is likely to cause some oddities.",
-                    ex);
+            logger.error(ex,
+                    "Error finalizing the EditBotsDialog. Returning the created dialog, but this is likely to cause some oddities.");
         }
     }
 
     protected void refreshPlayers() {
-        ghostAndBotPlayers = game.getPlayersVector().stream()
+        ghostAndBotPlayers = game.getPlayersList().stream()
                 .filter(client -> client.isGhost() || client.isBot())
                 .sorted(Comparator.comparingInt(Player::getId)).collect(Collectors.toList());
         ghostAndBotPlayers.forEach(player -> botConfigs.put(player, new BehaviorSettings()));
@@ -150,7 +165,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
                         // Copy to protect the saved settings
                         botConfigs.put(player, savedSettings.get(player.getName()).getCopy());
                     } catch (PrincessException ex) {
-                        LogManager.getLogger().error("", ex);
+                        logger.error(ex, "");
                         // fallback to default
                     }
                 }
@@ -171,7 +186,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
                         // Copy to protect the current settings
                         botConfigs.put(player, princess.getBehaviorSettings().getCopy());
                     } catch (PrincessException e) {
-                        LogManager.getLogger().error("", e);
+                        logger.error(e, "");
                         // fallback to default
                     }
 
@@ -272,7 +287,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 // Don't change the existing saved settings
                 botConfigs.put(botOrGhost, savedSettings.get(botOrGhost.getName()).getCopy());
             } catch (PrincessException e) {
-                LogManager.getLogger().error("", e);
+                logger.error(e, "");
                 // fallback to default
             }
         }
@@ -342,7 +357,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
      * Returns the result of the dialog with respect to selected princess bots to be
      * kicked
      * The result may be empty, but not null.
-     * 
+     *
      * @return a Set of bot player names to be kicked. May be empty but not null
      */
     public Set<String> getKickBots() {

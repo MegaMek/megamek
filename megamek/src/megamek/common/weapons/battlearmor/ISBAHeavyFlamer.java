@@ -44,7 +44,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         bv = 15;
         cost = 11250;
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
-                .or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .or(F_BURST_FIRE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "312, TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
 			.setTechRating(RATING_C)
@@ -55,7 +55,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
 			.setClanApproximate(false, true, false, false, false)
 			.setPrototypeFactions(F_LC)
 			.setProductionFactions(F_LC,F_CJF);
-        
+
     }
 
     @Override

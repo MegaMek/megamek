@@ -1,21 +1,44 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
 import megamek.common.options.OptionsConstants;
 
 /**
- * Class containing static functions that perform visibility computations related to an entity
+ * Class containing static functions that perform visibility computations
+ * related to an entity
  * without the need to be a part of the Entity class itself.
+ *
  * @author NickAragua
  *
  */
 public class EntityVisibilityUtils {
     /**
-     * Logic lifted from BoardView1.redrawEntity() that checks whether the given player playing the given game
-     * can see the given entity. Takes into account double blind, hidden units, team vision, etc.
+     * Logic lifted from BoardView1.redrawEntity() that checks whether the given
+     * player playing the given game
+     * can see the given entity. Takes into account double blind, hidden units, team
+     * vision, etc.
      * Game Master is excluded.
+     *
      * @param localPlayer The player to check.
-     * @param game The current {@link Game}
-     * @param entity The entity to check
+     * @param game        The current {@link Game}
+     * @param entity      The entity to check
      * @return Whether or not the player can see the entity.
      */
     public static boolean detectedOrHasVisual(Player localPlayer, Game game, Entity entity) {
@@ -42,7 +65,8 @@ public class EntityVisibilityUtils {
     public static boolean onlyDetectedBySensors(Player localPlayer, Entity entity) {
         boolean sensors = (entity.getGame().getOptions().booleanOption(
                 OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
+                || entity.getGame().getOptions()
+                        .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = entity.getGame().getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = entity.getGame().getOptions().booleanOption(
@@ -61,7 +85,7 @@ public class EntityVisibilityUtils {
 
     /**
      * We only want to show double-blind visibility indicators on our own
-     * mechs and teammates mechs (assuming team vision option).
+     * meks and teammates meks (assuming team vision option).
      */
     public static boolean trackThisEntitiesVisibilityInfo(Player localPlayer, Entity e) {
         if (localPlayer == null) {
@@ -71,7 +95,7 @@ public class EntityVisibilityUtils {
         if (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && ((e.getOwner().getId() == localPlayer.getId()) ||
                         (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
-                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
+                                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
 

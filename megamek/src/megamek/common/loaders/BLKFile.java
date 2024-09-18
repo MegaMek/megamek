@@ -163,70 +163,6 @@ public class BLKFile {
         }
     }
 
-    /**
-     * Legacy support for Drone Carrier Control System capacity using additional
-     * equipment
-     */
-    int legacyDCCSCapacity = 0;
-    /** Legacy support for MASH capacity using additional equipment */
-    int mashOperatingTheaters = 0;
-
-    /**
-     * Legacy support for variable sized equipment that expands capacity by using an
-     * additional MiscType.
-     *
-     * @param lookup The lookup name
-     */
-    boolean checkLegacyExtraEquipment(String lookup) {
-        switch (lookup) {
-            case "MASH Operation Theater":
-                mashOperatingTheaters++;
-                return true;
-            case "ISDroneExtra":
-            case "CLDroneExtra":
-                legacyDCCSCapacity++;
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Legacy support for variable equipment that had a separate EquipmentType entry
-     * for each possible
-     * size
-     *
-     * @param eqName The equipment lookup name
-     * @return The size of the equipment
-     */
-    static double getLegacyVariableSize(String eqName) {
-        if (eqName.startsWith("Cargo")
-                || eqName.startsWith("Liquid Storage")
-                || eqName.startsWith("Communications Equipment")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf(" ton")));
-        }
-        if (eqName.startsWith("CommsGear")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
-        }
-        if (eqName.startsWith("Mission Equipment Storage")) {
-            int pos = eqName.indexOf("(");
-            if (pos > 0) {
-                return Double.parseDouble(eqName.substring(pos + 1,
-                        eqName.indexOf("kg")).trim());
-            } else {
-                // If the internal name does not include a size, it's the original 20 kg
-                // version.
-                return 0.02;
-            }
-        }
-        if (eqName.startsWith("Ladder")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf("m)")));
-        }
-        return 1.0;
-    }
-
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
@@ -294,9 +230,6 @@ public class BLKFile {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 // The stealth armor mount is added when the armor type is set
                 if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
@@ -305,7 +238,7 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, false,
+                        Mounted<?> mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted, isOmniMounted);
                         // Need to set facing for VGLs
@@ -318,9 +251,6 @@ public class BLKFile {
                             }
                         }
                         if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = getLegacyVariableSize(equipName);
-                            }
                             mount.setSize(size);
                         } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
                                 && size > 1) {
@@ -338,24 +268,6 @@ public class BLKFile {
                     }
                 } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (mashOperatingTheaters > 0) {
-            for (Mounted m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted m : t.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }
@@ -608,10 +520,10 @@ public class BLKFile {
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");
-        } else if (t instanceof Protomech) {
-            blk.writeBlockData("UnitType", "ProtoMech");
-        } else if (t instanceof Mech) {
-            blk.writeBlockData("UnitType", "Mech");
+        } else if (t instanceof ProtoMek) {
+            blk.writeBlockData("UnitType", "ProtoMek");
+        } else if (t instanceof Mek) {
+            blk.writeBlockData("UnitType", "Mek");
         } else if (t instanceof GunEmplacement) {
             blk.writeBlockData("UnitType", "GunEmplacement");
         } else if (t instanceof LargeSupportTank) {
@@ -688,9 +600,6 @@ public class BLKFile {
                     type = "IS Level 4";
                     break;
                 case TechConstants.T_IS_UNOFFICIAL:
-                default:
-                    type = "IS Level 5";
-                    break;
                 case TechConstants.T_CLAN_TW:
                     type = "Clan Level 2";
                     break;
@@ -703,6 +612,10 @@ public class BLKFile {
                 case TechConstants.T_CLAN_UNOFFICIAL:
                     type = "Clan Level 5";
                     break;
+                default:
+                    type = "IS Level 5";
+                    break;
+
             }
         }
         blk.writeBlockData("type", type);
@@ -721,7 +634,7 @@ public class BLKFile {
         }
 
         List<String> weaponQuirkList = new ArrayList<>();
-        for (Mounted equipment : t.getEquipment()) {
+        for (Mounted<?> equipment : t.getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
                 weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(equipment.getLocation()) + ":"
                         + t.slotNumber(equipment) + ":" + equipment.getType().getInternalName());
@@ -757,10 +670,10 @@ public class BLKFile {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
-                if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                if (t.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                     blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
                     blk.writeBlockData("interface_cockpit",
-                            String.valueOf(((Protomech) t).hasInterfaceCockpit()));
+                            String.valueOf(((ProtoMek) t).hasInterfaceCockpit()));
                 }
             }
         }
@@ -887,7 +800,7 @@ public class BLKFile {
             eq.add(new Vector<>());
         }
         for (Mounted<?> m : t.getEquipment()) {
-            // Ignore Mounteds that represent a WeaponGroup
+            // Ignore Mounted's that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
             if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
                 continue;
@@ -1198,7 +1111,7 @@ public class BLKFile {
         return blk;
     }
 
-    private static String encodeEquipmentLine(Mounted m) {
+    private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
         if (m.isRearMounted()) {
             name = "(R) " + name;
@@ -1206,7 +1119,7 @@ public class BLKFile {
         if (m.isSponsonTurretMounted()) {
             name = name + "(ST)";
         }
-        if (m.isMechTurretMounted()) {
+        if (m.isMekTurretMounted()) {
             name = name + "(T)";
         }
         if (m.isPintleTurretMounted()) {
@@ -1236,11 +1149,11 @@ public class BLKFile {
         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
             name += ":TU";
         }
-        // For BattleArmor and ProtoMechs, we need to save how many shots are in this
+        // For BattleArmor and ProtoMeks, we need to save how many shots are in this
         // location but they have different formats, yay!
         if ((m.getEntity() instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
-        } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
+        } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
         } else if (m.getType().isVariableSize()
                 || (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
@@ -1319,7 +1232,7 @@ public class BLKFile {
                             break;
                         case "mechbay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            e.addTransporter(new MekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;
                         case "lightvehiclebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1355,7 +1268,7 @@ public class BLKFile {
                         case "protomechbay":
                             // Backward compatibility
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                            e.addTransporter(new ProtoMekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
                                     isPod);
                             break;
                         case "dropshuttlebay":

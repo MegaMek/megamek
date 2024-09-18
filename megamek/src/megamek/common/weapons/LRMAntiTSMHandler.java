@@ -18,8 +18,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -34,7 +33,7 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
      * @param m
      */
     public LRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " anti-TSM missile(s) ";
         damageType = DamageType.ANTI_TSM;
@@ -42,7 +41,7 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -60,13 +59,13 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        
+
         // AMS mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
@@ -74,7 +73,7 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
                 nMissilesModifier -= getAeroSanityAMSHitsMod();
             }
         }
-        
+
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen

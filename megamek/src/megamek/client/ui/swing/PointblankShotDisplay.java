@@ -14,11 +14,25 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.event.ListSelectionEvent;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
@@ -31,13 +45,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.*;
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
  * This display is used for when hidden units are taking pointblank shots.
@@ -45,12 +53,14 @@ import java.util.*;
  * @author arlith
  *
  */
-public class PointblankShotDisplay extends FiringDisplay implements ItemListener, ListSelectionListener {
+public class PointblankShotDisplay extends FiringDisplay {
+    private static final MMLogger logger = MMLogger.create(PointblankShotDisplay.class);
+
     private static final long serialVersionUID = -58785096133753153L;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the pointblank phase.  Each command has a string for
+     * carried out during the pointblank phase. Each command has a string for
      * the command plus a flag that determines what unit type it is
      * appropriate for.
      *
@@ -103,9 +113,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
             String msg_left = Messages.getString("Left");
             String msg_right = Messages.getString("Right");
-            String msg_next= Messages.getString("Next");
+            String msg_next = Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
-
 
             switch (this) {
                 case FIRE_TWIST:
@@ -119,7 +128,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     break;
                 case FIRE_SKIP:
                     result = "<BR>";
-                    result +=  "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
@@ -140,7 +149,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     }
 
     // buttons
-    protected Map<FiringCommand, MegamekButton> buttons;
+    protected Map<FiringCommand, MegaMekButton> buttons;
 
     /**
      * Creates and lays out a new pointblank phase display for the specified
@@ -232,11 +241,11 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
+    protected ArrayList<MegaMekButton> getButtonList() {
         if (buttons == null) {
             return new ArrayList<>();
         }
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         int i = 0;
         FiringCommand[] commands = FiringCommand.values();
         CommandComparator comparator = new CommandComparator();
@@ -266,7 +275,6 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         return buttonList;
     }
 
-
     /**
      * Selects an entity, by number, for firing.
      */
@@ -293,12 +301,12 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
             // only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing()
-                            && ce().getCrew().isActive());
+                    && ce().getCrew().isActive());
 
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
         } else {
-            LogManager.getLogger().error("Tried to select non-existent entity " + en);
+            logger.error("Tried to select non-existent entity " + en);
         }
 
         clientgui.clearTemporarySprites();
@@ -383,7 +391,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 int totalheat = 0;
                 for (EntityAction action : attacks) {
                     if (action instanceof WeaponAttackAction) {
-                        Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
+                        Mounted<?> weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
                         totalheat += weapon.getCurrentHeat();
                     }
                 }
@@ -529,7 +537,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // declare searchlight, if possible
         if (GUIP.getAutoDeclareSearchlight()
-            && ce().isUsingSearchlight()) {
+                && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
@@ -547,7 +555,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         if ((mounted.getLinked() != null)
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)
                 && (mounted.getLinked().getType() instanceof AmmoType)) {
-            Mounted ammoMount = mounted.getLinked();
+            Mounted<?> ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             EnumSet<AmmoType.Munitions> ammoMunitionType = ammoType.getMunitionType();
@@ -561,7 +569,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
-                waa.setHomingShot(ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) && ammoMount.curMode().equals("Homing"));
+                waa.setHomingShot(ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING)
+                        && ammoMount.curMode().equals("Homing"));
             }
         }
 
@@ -588,14 +597,14 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1)
-            && GUIP.getAutoEndFiring()) {
+                && GUIP.getAutoEndFiring()) {
             ready();
             return;
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.getUnitDisplay().wPan.displayMech(ce());
-        Mounted nextMounted = ce().getEquipment(nextWeapon);
+        clientgui.getUnitDisplay().wPan.displayMek(ce());
+        Mounted<?> nextMounted = ce().getEquipment(nextWeapon);
         if (!mounted.getType().hasFlag(WeaponType.F_VGL) && (nextMounted != null)
                 && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
             clientgui.getUnitDisplay().wPan.setPrevTarget(target);
@@ -614,7 +623,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             return;
         }
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Mounted weapon = ce().getEquipment(weaponId);
+        Mounted<?> weapon = ce().getEquipment(weaponId);
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing;
@@ -655,7 +664,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
-               && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
+                && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
                 WeaponMounted weapon = (WeaponMounted) ce().getEquipment(weaponId);
@@ -666,7 +675,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true,
                             WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
-                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
+                    clientgui.getUnitDisplay().wPan.setTarget(target,
+                            Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
 
                 } else {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target, weaponId, Entity.LOC_NONE,
@@ -687,7 +697,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
             WeaponMounted m = ce().getWeapon(weaponId);
             // If we have a Centurion Weapon System selected, we may need to
-            //  update ranges.
+            // update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
             }
@@ -717,7 +727,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         }
 
         if ((weaponId != -1) && (ce() != null)) {
-            Mounted m = ce().getEquipment(weaponId);
+            Mounted<?> m = ce().getEquipment(weaponId);
             setFireModeEnabled(m.isModeSwitchable());
         }
 
@@ -736,13 +746,13 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // ignore buttons other than 1
         if (!clientgui.isProcessingPointblankShot()
-            || ((b.getButton() != MouseEvent.BUTTON1))) {
+                || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
         if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
@@ -773,7 +783,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         Coords evtCoords = b.getCoords();
         if (clientgui.isProcessingPointblankShot() && (evtCoords != null)
-            && (ce() != null)) {
+                && (ce() != null)) {
             if (!evtCoords.equals(ce().getPosition())) {
                 if (shiftheld) {
                     updateFlipArms(false);
@@ -827,7 +837,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
-                   || (ev.getActionCommand().equals(FiringCommand.FIRE_CANCEL.getCmd()))) {
+                || (ev.getActionCommand().equals(FiringCommand.FIRE_CANCEL.getCmd()))) {
             clear();
         }
     }

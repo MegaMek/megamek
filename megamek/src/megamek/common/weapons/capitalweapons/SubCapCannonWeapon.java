@@ -39,14 +39,14 @@ public abstract class SubCapCannonWeapon extends AmmoWeapon {
         capital = true;
         subCapital = true;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SUBCAPITAL;
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         int maxRange = shortAV < 4 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
         return (range <= maxRange) ? shortAV : 0;
     }

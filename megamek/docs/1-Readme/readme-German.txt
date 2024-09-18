@@ -17,7 +17,7 @@ oder kurt VM. Diese Java VMs sind für die meisten Systeme aus unterschiedlichen
 Quellen verfügbar. Die meisten Systeme haben eine standardmässig installiert.
 
 Windows Nutzer: Um MegaMek zu starten, starte die MegaMek.bat Datei. Wenn das
-nicht funktioniert, siehe die "INSTALLATION ODER AKTUALISIERUNG DER JAVA 
+nicht funktioniert, siehe die "INSTALLATION ODER AKTUALISIERUNG DER JAVA
 LAUFZEIT UMGEBUNG" Sektion, weiter unten.
 
 Andere graphische Betriebssysteme: Viele andere graphische Betriebssysteme, wie
@@ -37,7 +37,7 @@ Wenn keine der obigen Optionen funktioniert, siehe die "INSTALLATION ODER
 AKTUALISIERUNG DER JAVA LAUFZEIT UMGEBUNG" Sektion, weiter unten.
 
 Wenn Du eine VM hast, diese aber keine .jar Dateien unterstützt, benutze das
-Entpackprogramm Deiner Wahl um "MegaMek.jar", "collections.jar", "TinyXML.jar" 
+Entpackprogramm Deiner Wahl um "MegaMek.jar", "collections.jar", "TinyXML.jar"
 und "Ostermiller.jar" in ein neues "classes" Verzeichnis (erstelle dieses
 im "megamek" Ordner) zu entpacken. Wenn Du das durchgeführt hast (dies muss
 nur einmal gemacht werden), muss der classpath auf das "classes" Verzeichnis
@@ -80,22 +80,22 @@ MegaMek funktioniert nur schlecht mit dieser VM - sie ist nicht empfohlen.
 
 VERBINDEN
 ---------
-MegaMek ist ein Netzwerk Spiel. Ein Spieler öffnet den Server für das Spiel 
+MegaMek ist ein Netzwerk Spiel. Ein Spieler öffnet den Server für das Spiel
 und der Rest muss sich mit diesem Server verbinden. Die verbindenden Spieler
 können von überall her mit der TCP/IP Verbindung zum Server connecten,
-inklusive des selben Computer auf dem der Server läuft. 
+inklusive des selben Computer auf dem der Server läuft.
 (Siehe Hotseat, weiter unten)
 
 Um einen Server zu starten, klickt man auf den "Host a New Game..." Button
 im Main Menü.  Bestimmt euren Namen und klickt dann auf "Okay". Das password
 Feld erlaubt es, ein bestimmtes Passwort für bestimmte Serverbefehle zu setzen
-(Tippe /help im Chatfenster um eine Liste der Serverbefehle zu bekommen). 
+(Tippe /help im Chatfenster um eine Liste der Serverbefehle zu bekommen).
 Wenn dann der Lobby Bildschirm auftaucht, können die anderen Spieler connecten,
 und das Spiel kann beginnen. Die anderen Spieler müssen die IP Adresse des
 Servers kennen um sich mit ihm zu verbinden. Um diese unter Windows 95,
 98 oder ME zu erfahren muss man ins Startemenü gehen, und dann bei "AUSFÜHREN"
 "WINIPCFG" eingeben. In Windows 2000 oder XP dort zuerst "CMD" und im dann
-aufspringenden Fenster "IPCONFIG" eingeben. Ausserdem gibt es einige 
+aufspringenden Fenster "IPCONFIG" eingeben. Ausserdem gibt es einige
 Internetseiten, wie zum Beispiel www.whatismyip.com, wo sie euch gezeigt wird
 (dies funktioniert aber nicht, wenn der PC sich hinter einem Proxy oder Gateway
 befindet.)
@@ -132,11 +132,11 @@ DAS SPIEL SPIELEN
 
 VOR-DEM-SPIEL BERICHT:
 
-Hier kann man chatten, seine Mechs aussuchen, die Karte wählen, seinen
+Hier kann man chatten, seine Meks aussuchen, die Karte wählen, seinen
 Startpunkt aussuchen, und seine Spielerfarbe einstellen . Sobald jeder
-mindesten einen Mech hat, können alle auf "ready" klicken und das Spiel kann
+mindesten einen Mek hat, können alle auf "ready" klicken und das Spiel kann
 beginnen. Die meisten Änderungen an den Spiel Parametern setzten den ready
-status zurück, also sollte man am besten warten bis alle ihre Mechs und
+status zurück, also sollte man am besten warten bis alle ihre Meks und
 Positionen gewöhlt haben.
 
 EINLEITUNGS-REPORT:
@@ -146,7 +146,7 @@ hier angezeigt.
 
 AUFSTELLUNGSPHASE:
 
-In dieser Phase kann man seine Einheiten in den gelb umrandeten Hexfeldern 
+In dieser Phase kann man seine Einheiten in den gelb umrandeten Hexfeldern
 aufstellen, falls vorher eine bestimmte Startposition gewählt wurde. Anonsten
 kann man seine Einheiten aufstellen, wo man will.
 
@@ -177,7 +177,7 @@ man die Sicht-Richtung der gewählten Einheit bestimmen, ohne die Einheit zu
 bewegen. Am besten macht man das am Ende des Zuges.
 
 Um sich zurück zu bewegen, drückt man den "Back Up" Knopf bevor man den Weg hinter
-dem Mech festlegt. Um zurück zu springen, drückt man erst "Back Up" und dann "Jump".
+dem Mek festlegt. Um zurück zu springen, drückt man erst "Back Up" und dann "Jump".
 Sichtrichtungs wechsel während des Sprunges sind frei.
 
 Hingefallene Einheiten können die Sichtrichtung ändern, ohne aufzustehen.
@@ -187,14 +187,14 @@ und sich dabei zurück zu ziehen, muss man erst "Get Up" anklicken, und dann "Ba
 und dann das gewünschte Feld oder die gewünschte Richtung. Man kann im selben Zug nicht
 aufstehen und springen.
 
-Den Piloten eines Mechs kann man über den 'EJECT' Knopf aussteigen lassen, dieser Mech
+Den Piloten eines Meks kann man über den 'EJECT' Knopf aussteigen lassen, dieser Mek
 ist dann sofort aus dem Spiel.
 
 Rammen und Todessprung (D.F.A.) sind Aangriffe, die während der Bewegungsphase
 hemacht werden müssen. Man Klickt auf den "Charge" oder "D.F.A." Knopf und klickt
 dann auf die Einheit die man angreifen will. Wenn der Angriff durchgeführt werden kann,
 wird es sofort ausgeführt, und der Zug ist beendet. Das Ergebnis wird dann bei den
-physischen Anngriffen aufgeführt. Sollte MEGAMEK nicht denn gewünschten Weg benutzen, 
+physischen Anngriffen aufgeführt. Sollte MEGAMEK nicht denn gewünschten Weg benutzen,
 kann man selber den Pfad auswehlen, indem man einen eigenen Weg in die Nähe des Ziels
 aufbaut, und dann auf "Charge" oder "D.F.A." klickt um den Angriff zu beenden.
 
@@ -211,7 +211,7 @@ WAFFEN-FEUER PHASE:
 
 Wenn Du Entfernung und Sichtline (LoS) zwischen zwei Hexfeldern überprüfen
 willst, hast Du die Wahl zwischen zwei Tools: Das "LoS tool" und den "Ruler".
-Um das "LoS tool" zu benutzen, halte STRG und clicke die beiden Hexfelder die 
+Um das "LoS tool" zu benutzen, halte STRG und clicke die beiden Hexfelder die
 du überprüfen willst. Der "Ruler" funktioniert wie das "LoS tool", nutzt aber
 die ALT Taste anstatt der STRG Taste. Der "ruler" kann auch genutzt werden,
 indem man mit der mittleren Maustaste einer drei-Tasten Maus die beiden Hex-
@@ -220,9 +220,9 @@ zwischen den beiden Feldern liegt und ob eins oder beide Hexfelder teilweise
 Deckung hat. Der "ruler" zieht ausserdem die Sichtlinie auf dem Spielfeld, so
 das man sehen kann durch welche Hexfelder die Los geht.
 
-Du kannst zwischen 'Mech und nicht-'Mech Sichtlinie im "LoS Setting" Fenster
+Du kannst zwischen 'Mek und nicht-'Mek Sichtlinie im "LoS Setting" Fenster
 umschalten, dies erreichst Du über das "View" Menü am oberen Ende des Fensters.
-'Mech- und nicht-'Mech Sichtlinie unterscheidet sich dadurch, das 'Mechs von
+'Mek- und nicht-'Mek Sichtlinie unterscheidet sich dadurch, das 'Meks von
 einem Level höher als das Höhenlevel des Terrains "gucken", während Infantrie
 und Panzer nur das Höhenlevel des Terrains beanspruchen.
 
@@ -236,12 +236,12 @@ Um auf Wälder zu zielen, klickt man diese mit der rechten Maustaste an und
 wählt, ob man sie roden oder in Brand setzen möchte.
 Mit dem "MODE" Knopf kann man bei einigen Waffen den Feuermodus umschalten,
 z.B. bei Ultra- oder Rotations-Autokanonen oder bei LBX-Autokanonen.
-Die Zielinformationen über die grade gewählte Waffe werden dann im 
+Die Zielinformationen über die grade gewählte Waffe werden dann im
 MECHINFORMATIONSFELD angezeigt. Um die gewählte Waffe aufs Ziel abzufeuer,
 drückt man den "FIRE" Knopf. Um zu einer anderen Waffe zu wechseln, klickt auf
 den Namen der Waffe in der Liste im MECHINFORMATIONSFELD. So kann man sein Feuer
 auf verschiedene Ziele verteilen, indem man diese Schritte wiederholt. Wenn alle
-Waffen auf ihre Ziele ausgerichtet sind, bzw. nicht abgefeuert werden können, 
+Waffen auf ihre Ziele ausgerichtet sind, bzw. nicht abgefeuert werden können,
 drückt man den "DONE" Knopf.
 
 Die Waffen werden dann in der Reihenfolge abgefeuert, in der sie ausgewählt worden
@@ -296,7 +296,7 @@ Solltet ihr noch irgendwelche Unterschide feststellen, kontaktet bitte den
 Autor (wie, steht in "CONTACT" unten.)
 
 - Man kann jeden Weg springen, nicht nur den kürzesten.
-    
+
 - Wenn die Feuerlinie entlang zweier Hex-Feld-Kanten liegt, wählte im
 Brettspiel der Verteidiger aus, über welches Feld der Angreifer schiessen
 muss, Derzeit wählt MEGAMEK einfach das für den Verteidiger vorteilhaftere
@@ -306,7 +306,7 @@ Feld aus (so daß der Verteidiger schwerer zu treffen ist)
 dies möglich ist. Das heisst, du kannst nicht zwei Ziele in einer Runde
 schlagen.
 
-- Bei einem Tritt, benutzt der Mech automatisch das Bein, das bessere Chancen
+- Bei einem Tritt, benutzt der Mek automatisch das Bein, das bessere Chancen
 auf einen Treffer hat.
 
 - Es gibt viele Situationen, besonder den ANGRIFF VON OBEN (D.F.A *DEATH
@@ -315,7 +315,7 @@ Normal kann der Spieler dieses Feld selbst wählen, MEGAMEK allerdings
 bestimmt derzeit diese Feld noch selbst für sie (und wählt dabei das Feld
 mit der höchsten Höhenstufe, so daß unbeabsichtiges Fallen von Klippen
 vermieden wird)
-    
+
 - Ein paar die ich vergessen habe...
 
 
@@ -337,14 +337,13 @@ bmazur@sev.org
 COPYRIGHT & LICENSE INFORMATION
 -------------------------------
 MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
-  
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the Free 
-Software Foundation; either version 2 of the License, or (at your option) 
-any later version.
-  
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-for more details.
 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+for more details.

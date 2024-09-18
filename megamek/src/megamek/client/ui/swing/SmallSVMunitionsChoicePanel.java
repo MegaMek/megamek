@@ -14,17 +14,28 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.weapons.infantry.InfantryWeapon;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
+import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.EquipmentTypeLookup;
+import megamek.common.LocationFullException;
+import megamek.common.Mounted;
+import megamek.common.weapons.infantry.InfantryWeapon;
+
 /**
- * Panel that allows splitting ammo between standard and inferno for light and medium weapons
+ * Panel that allows splitting ammo between standard and inferno for light and
+ * medium weapons
  * that have inferno variants.
  */
 public class SmallSVMunitionsChoicePanel extends JPanel {
@@ -39,7 +50,7 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 10, 0);
 
-        for (Mounted weapon : entity.getWeaponList()) {
+        for (Mounted<?> weapon : entity.getWeaponList()) {
             if ((weapon.getType() instanceof InfantryWeapon)
                     && ((InfantryWeapon) weapon.getType()).hasInfernoAmmo()) {
                 AmmoRowPanel row = new AmmoRowPanel(weapon);
@@ -51,8 +62,10 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
     }
 
     /**
-     * Distribute the ammo between the standard and inferno bins. Original shots in each bin will
-     * be set to the number of shots rounded up to full clips. Any completely empty clips will
+     * Distribute the ammo between the standard and inferno bins. Original shots in
+     * each bin will
+     * be set to the number of shots rounded up to full clips. Any completely empty
+     * clips will
      * be assigned to the standard bin.
      */
     public void apply() {
@@ -67,26 +80,26 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
     }
 
     class AmmoRowPanel extends JPanel {
-        private final Mounted weapon;
-        private final Mounted stdAmmo;
-        private final Mounted infernoAmmo;
+        private final Mounted<?> weapon;
+        private final Mounted<?> stdAmmo;
+        private final Mounted<?> infernoAmmo;
         private final int shotsPerClip;
         private final int maxShots;
 
         private final JSpinner spnStandard;
         private final JSpinner spnInferno;
 
-        AmmoRowPanel(Mounted weapon) {
+        AmmoRowPanel(Mounted<?> weapon) {
             this.weapon = weapon;
             shotsPerClip = ((InfantryWeapon) weapon.getType()).getShots();
             maxShots = (int) weapon.getSize() * ((InfantryWeapon) weapon.getType()).getShots();
             if (weapon.getLinked() == null) {
-                Mounted ammo = addAmmoMount(EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO), maxShots);
+                Mounted<?> ammo = addAmmoMount(EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO), maxShots);
                 weapon.setLinked(ammo);
             }
             stdAmmo = weapon.getLinked();
             if (stdAmmo.getLinked() == null) {
-                Mounted ammo = addAmmoMount(EquipmentType.get(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO), 0);
+                Mounted<?> ammo = addAmmoMount(EquipmentType.get(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO), 0);
                 stdAmmo.setLinked(ammo);
             }
             infernoAmmo = stdAmmo.getLinked();
@@ -105,7 +118,7 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
-            add(new JLabel(String.format(Messages.getString("CustomMechDialog.formatSmSVAmmoShots"),
+            add(new JLabel(String.format(Messages.getString("CustomMekDialog.formatSmSVAmmoShots"),
                     shotsPerClip, (int) weapon.getSize())), gbc);
 
             gbc.gridx = 0;
@@ -124,8 +137,8 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
             recalcMaxValues();
         }
 
-        private Mounted addAmmoMount(EquipmentType ammo, int shots) {
-            Mounted mount = Mounted.createMounted(weapon.getEntity(), ammo);
+        private Mounted<?> addAmmoMount(EquipmentType ammo, int shots) {
+            Mounted<?> mount = Mounted.createMounted(weapon.getEntity(), ammo);
             mount.setOmniPodMounted(mount.isOmniPodMounted());
             mount.setShotsLeft(shots);
             mount.setOriginalShots(shots);

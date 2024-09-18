@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CenturionWeaponSystemHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -51,7 +51,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         waterLongRange = 10;
         waterExtremeRange = 14;
         maxRange = RANGE_MED;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_CWS);
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_CWS);
         rulesRefs = "85, IO";
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_X)
@@ -59,7 +59,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
                 .setISApproximate(true, false, false, true, false)
                 .setPrototypeFactions(F_TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -70,7 +70,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new CenturionWeaponSystemHandler(toHit, waa, game, manager);
     }
 }

@@ -28,10 +28,10 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
  *
  * @author Neoancient
  */
-public class QuadVee extends QuadMech {
+public class QuadVee extends QuadMek {
     private static final long serialVersionUID = 1283551018632228647L;
 
-    public static final int CONV_MODE_MECH    = 0;
+    public static final int CONV_MODE_MEK    = 0;
     public static final int CONV_MODE_VEHICLE = 1;
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
@@ -67,10 +67,10 @@ public class QuadVee extends QuadMech {
     @Override
     public String getSystemName(int index) {
         if (index == SYSTEM_GYRO) {
-            return Mech.getGyroDisplayString(gyroType);
+            return Mek.getGyroDisplayString(gyroType);
         }
         if (index == SYSTEM_COCKPIT) {
-            return Mech.getCockpitDisplayString(cockpitType);
+            return Mek.getCockpitDisplayString(cockpitType);
         }
         return systemNames[index];
     }
@@ -127,7 +127,7 @@ public class QuadVee extends QuadMech {
     }
 
     /**
-     * This is used to identify Mechs that have tracks mounted as industrial equipment.
+     * This is used to identify MEKs that have tracks mounted as industrial equipment.
      */
     @Override
     public boolean hasTracks() {
@@ -141,7 +141,7 @@ public class QuadVee extends QuadMech {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        // Current MP is calculated differently depending on whether the QuadVee is in Mech
+        // Current MP is calculated differently depending on whether the QuadVee is in MEK
         // or vehicle mode. During conversion we use the mode we started in:
         // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)) {
@@ -349,7 +349,7 @@ public class QuadVee extends QuadMech {
         if (mode.isTrackedOrWheeled()) {
             setConversionMode(CONV_MODE_VEHICLE);
         } else {
-            setConversionMode(CONV_MODE_MECH);
+            setConversionMode(CONV_MODE_MEK);
         }
         super.setMovementMode(mode);
     }
@@ -359,7 +359,7 @@ public class QuadVee extends QuadMech {
         if (mode == getConversionMode()) {
             return;
         }
-        if (mode == CONV_MODE_MECH) {
+        if (mode == CONV_MODE_MEK) {
             super.setMovementMode(EntityMovementMode.QUAD);
         } else if (mode == CONV_MODE_VEHICLE) {
             super.setMovementMode(motiveType == MOTIVE_WHEEL
@@ -380,7 +380,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
-        return getConversionMode() == CONV_MODE_MECH || (convertingNow && game.getPhase().isMovement());
+        return getConversionMode() == CONV_MODE_MEK || (convertingNow && game.getPhase().isMovement());
     }
 
     /**
@@ -431,7 +431,7 @@ public class QuadVee extends QuadMech {
     }
 
     /**
-     * Can this mech torso twist in the given direction?
+     * Can this mek torso twist in the given direction?
      */
     @Override
     public boolean isValidSecondaryFacing(int dir) {
@@ -443,7 +443,7 @@ public class QuadVee extends QuadMech {
             return true;
         }
 
-        // In 'Mech mode the torso rotation can be limited by gyro damage.
+        // In 'Mek mode the torso rotation can be limited by gyro damage.
         int gyroHits = getGyroHits();
         if (getGyroType() == GYRO_HEAVY_DUTY) {
             gyroHits--;
@@ -466,9 +466,7 @@ public class QuadVee extends QuadMech {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        if (getCrew().hasDedicatedPilot()) {
-            roll.addModifier(-1, "dedicated pilot");
-        } else {
+        if (!getCrew().hasDedicatedPilot()) {
             roll.addModifier(2, "pilot incapacitated");
         }
 
@@ -537,7 +535,7 @@ public class QuadVee extends QuadMech {
      */
     @Override
     public boolean isEligibleForPhysical() {
-        return getConversionMode() == CONV_MODE_MECH && super.isEligibleForPhysical();
+        return getConversionMode() == CONV_MODE_MEK && super.isEligibleForPhysical();
     }
 
     @Override
@@ -551,6 +549,6 @@ public class QuadVee extends QuadMech {
 
     @Override
     public long getEntityType() {
-        return Entity.ETYPE_MECH | Entity.ETYPE_QUAD_MECH | Entity.ETYPE_QUADVEE;
+        return Entity.ETYPE_MEK | Entity.ETYPE_QUAD_MEK | Entity.ETYPE_QUADVEE;
     }
 }

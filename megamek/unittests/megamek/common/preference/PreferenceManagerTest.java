@@ -20,9 +20,8 @@
  */
 package megamek.common.preference;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,18 +29,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * @author nderwin
  */
-public class PreferenceManagerTest {
+class PreferenceManagerTest {
 
     private static final String DAMAGE_LEVEL_KEY = "ShowDamageLevel";
 
     private static final String GUI_PREFERENCES_STORE = "megamek.client.ui.swing.GUIPreferences";
-    
+
     private static final String LOCALE_KEY = "Locale";
 
     private PreferenceManager testMe;
@@ -50,17 +50,18 @@ public class PreferenceManagerTest {
     private Path tempDirectory;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         testMe = new PreferenceManager();
     }
 
     @Test
-    public void testSaveAndLoad() throws IOException {
+    void testSaveAndLoad() throws IOException {
         assertTrue(Files.isDirectory(tempDirectory));
         final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-client-settings.xml"));
         final File file = createdFilePath.toFile();
 
-        testMe.getPreferenceStore(PreferenceManager.CLIENT_SETTINGS_STORE_NAME).setValue(LOCALE_KEY, Locale.GERMAN.getLanguage());
+        testMe.getPreferenceStore(PreferenceManager.CLIENT_SETTINGS_STORE_NAME).setValue(LOCALE_KEY,
+                Locale.GERMAN.getLanguage());
         testMe.getPreferenceStore(GUI_PREFERENCES_STORE).setValue(DAMAGE_LEVEL_KEY, true);
 
         testMe.save(file);
@@ -70,7 +71,8 @@ public class PreferenceManagerTest {
 
         testMe.load(file.toString());
 
-        assertEquals(Locale.GERMAN.getLanguage(), testMe.getPreferenceStore(PreferenceManager.CLIENT_SETTINGS_STORE_NAME).getString(LOCALE_KEY));
+        assertEquals(Locale.GERMAN.getLanguage(),
+                testMe.getPreferenceStore(PreferenceManager.CLIENT_SETTINGS_STORE_NAME).getString(LOCALE_KEY));
         assertTrue(testMe.getPreferenceStore(GUI_PREFERENCES_STORE).getBoolean(DAMAGE_LEVEL_KEY));
     }
 }

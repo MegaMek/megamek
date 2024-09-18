@@ -5,7 +5,7 @@ ${fullName}
 </#if>
 
 Type: ${chassis}
-Technology Base: ${techBase} 
+Technology Base: ${techBase}
 Movement Type: ${moveType}
 Tonnage: ${tonnage}
 Battle Value: ${battleValue}
@@ -29,7 +29,7 @@ ${formatBasicDataRow("Turret:", "", turretMass)}
 <#if isOmni>
 Fixed Equipment
 	<#if fixedTonnage gt 0>
-${formatBasicDataRow("Location", "Fixed", "Tonnage")}	
+${formatBasicDataRow("Location", "Fixed", "Tonnage")}
 	<#list fixedEquipment as row>
 		<#if row.equipment != "None">
 ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
@@ -41,11 +41,11 @@ None
 </#if>
 
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Tonnage")}	
+${formatEquipmentRow("and Ammo", "Location", "Tonnage")}
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.tonnage)}
 </#list>
-	
+
 <#if quirks??>
 Features the following design quirks: ${quirks}
 </#if>

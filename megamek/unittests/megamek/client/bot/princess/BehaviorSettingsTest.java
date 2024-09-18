@@ -19,31 +19,37 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.utilities.xml.MMXMLUtility;
-import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 8/19/13 6:30 AM
  */
-public class BehaviorSettingsTest {
+class BehaviorSettingsTest {
 
     @Test
-    public void testSetDescription() throws PrincessException {
+    void testSetDescription() throws PrincessException {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
 
         // Test a normal description.
@@ -71,7 +77,7 @@ public class BehaviorSettingsTest {
     }
 
     @Test
-    public void testStrategicBuildingTargets() {
+    void testStrategicBuildingTargets() {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
         final String goodHexTarget = "1234";
         final String goodHexTarget2 = "4567";
@@ -127,7 +133,7 @@ public class BehaviorSettingsTest {
     }
 
     @Test
-    public void testPreferredUnitTargets() {
+    void testPreferredUnitTargets() {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
         final int goodUnitTarget = 1;
         final int goodUnitTarget2 = 4;
@@ -183,7 +189,7 @@ public class BehaviorSettingsTest {
     }
 
     @Test
-    public void testFromXml() throws ParserConfigurationException, IOException, SAXException, PrincessException {
+    void testFromXml() throws ParserConfigurationException, IOException, SAXException, PrincessException {
         DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
 
         // Test loading good behavior settings.
@@ -194,12 +200,13 @@ public class BehaviorSettingsTest {
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         Set<Integer> expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         BehaviorSettings behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
@@ -224,7 +231,8 @@ public class BehaviorSettingsTest {
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
@@ -247,12 +255,13 @@ public class BehaviorSettingsTest {
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals("null", behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
@@ -275,7 +284,7 @@ public class BehaviorSettingsTest {
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         try {
             behaviorSettings.fromXml(testBehaviorElement);
@@ -292,25 +301,27 @@ public class BehaviorSettingsTest {
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertSame(behaviorSettings.getRetreatEdge(), CardinalEdge.NONE);
 
         // Test loading behavior settings w/ a NULL forced withdrawal.
-        reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL.toCharArray());
+        reader = new CharArrayReader(
+                BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(2);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertFalse(behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
@@ -332,12 +343,13 @@ public class BehaviorSettingsTest {
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertFalse(behaviorSettings.shouldAutoFlee());
@@ -354,19 +366,21 @@ public class BehaviorSettingsTest {
 
         // Test loading behavior settings w/ a Fall Shame > 10.
         // All other indexes use the same method for validation.
-        reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_BIG_FALL_SHAME.toCharArray());
+        reader = new CharArrayReader(
+                BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_BIG_FALL_SHAME.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(2);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
@@ -383,19 +397,21 @@ public class BehaviorSettingsTest {
 
         // Test loading behavior settings w/ a Fall Shame < 0.
         // All other indexes use the same method for validation.
-        reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_SMALL_FALL_SHAME.toCharArray());
+        reader = new CharArrayReader(
+                BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_SMALL_FALL_SHAME.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(2);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_1);
         expectedTargets.add(BehaviorSettingsTestConstants.STRATEGIC_TARGET_2);
         expectedUnits = new HashSet<>(1);
-        expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
+        expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
@@ -411,7 +427,8 @@ public class BehaviorSettingsTest {
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
 
         // Test loading behavior settings w/ a NULL strategic target.
-        reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_STRATEGIC_TARGET.toCharArray());
+        reader = new CharArrayReader(
+                BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_STRATEGIC_TARGET.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(1);
@@ -421,7 +438,8 @@ public class BehaviorSettingsTest {
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
@@ -437,7 +455,8 @@ public class BehaviorSettingsTest {
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
 
         // Test loading behavior settings w/ an Empty strategic target.
-        reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET.toCharArray());
+        reader = new CharArrayReader(
+                BehaviorSettingsTestConstants.BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(0);
@@ -446,7 +465,8 @@ public class BehaviorSettingsTest {
         behaviorSettings.fromXml(testBehaviorElement);
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
+                behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());

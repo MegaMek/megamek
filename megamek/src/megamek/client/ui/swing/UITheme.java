@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
 import java.util.Objects;
@@ -12,6 +30,7 @@ public class UITheme {
 
     /**
      * Creates a new {@code UITheme} class.
+     * 
      * @param className The class name to load the UI Theme.
      */
     public UITheme(String className) {
@@ -20,7 +39,8 @@ public class UITheme {
 
     /**
      * Creates a new {@code UITheme} class.
-     * @param name The optional name of the UI Theme.
+     * 
+     * @param name      The optional name of the UI Theme.
      * @param className The class name to load the UI Theme.
      */
     public UITheme(String className, String name) {
@@ -30,6 +50,7 @@ public class UITheme {
 
     /**
      * Gets the name of the theme.
+     * 
      * @return The name of the theme.
      */
     public String getName() {
@@ -38,6 +59,7 @@ public class UITheme {
 
     /**
      * Gets the class name to load the theme with.
+     * 
      * @return The class name of the theme.
      */
     public String getClassName() {

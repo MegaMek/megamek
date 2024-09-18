@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ruleset faction="SOC" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="SOC" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>%STAR%</eschelon>
 		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
 	</defaults>
-	
+
 	<toc>
 		<unitType>
 			<option>Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
-		
+
 		<eschelon>
 			<option ifUnitType="Tank|VTOL">%STAR%,%POINT%</option>
 			<option>%BINARY%,%STAR%,%POINT%</option>
@@ -21,14 +22,14 @@
 
 	<force eschelon="%BINARY%" eschName="Sept">
 		<co>%STAR_CAPTAIN%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 		</weightClass>
-		
+
 		<subforces>
 			<subforceOption ifWeightClass="A" ifUnitType="Mek">
 				<option role="+command" weightClass="A" weight="2">%POINT%</option>
@@ -75,7 +76,7 @@
 
 	<force eschelon="%STAR%" eschName="Trey">
 		<co>%STAR_CMDR%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
@@ -119,7 +120,7 @@
 				<option weight="1" role="+urban">Urban</option>
 				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
 				<option weight="8" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>
 			</formation>
 		</ruleGroup>
 
@@ -159,7 +160,7 @@
 
 	<force eschelon="%POINT%" eschName="Un" ifUnitType="Tank|VTOL">
 		<co>%STAR_CMDR%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
@@ -189,10 +190,10 @@
 				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
 				<option weight="32" ifWeightClass="L|M" role="+recon">Recon</option>
 				<option weight="10" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>
 			</formation>
- 		</ruleGroup>
-		
+		</ruleGroup>
+
 		<subforces>
 			<subforceOption>
 				<option weightClass="A,H,M,M,M,M,L">%ELEMENT%</option>
@@ -210,10 +211,11 @@
 			</subforceOption>
 		</subforces>
 	</force>
-	
-	<force eschelon="%POINT%" eschName="Un" ifUnitType="Infantry|ProtoMek|AeroSpaceFighter|Conventional Fighter">
+
+	<force eschelon="%POINT%" eschName="Un"
+		ifUnitType="Infantry|ProtoMek|AeroSpaceFighter|Conventional Fighter">
 		<co>%POINT_CMDR%</co>
-		
+
 		<weightClass>
 			<option weight="1">A</option>
 			<option weight="3">H</option>
@@ -253,5 +255,5 @@
 	</force>
 
 
-	<force eschelon="%POINT%" eschName="Un"/>
+	<force eschelon="%POINT%" eschName="Un" />
 </ruleset>

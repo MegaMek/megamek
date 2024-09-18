@@ -19,16 +19,16 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
 /**
- * Construction data used by transport bays for mechs, vees, and aerospace units.
- * 
+ * Construction data used by transport bays for meks, vees, and aerospace units.
+ *
  * @author Neoancient
  *
  */
 public enum BayData {
-    MECH ("Mech", 150.0, 2, MechBay.techAdvancement(),
-            (size, num) -> new MechBay(size, 1, num)),
-    PROTOMECH ("Protomech", 10.0, 6, ProtomechBay.techAdvancement(),
-            (size, num) -> new ProtomechBay(size, 1, num)),
+    MEK ("Mek", 150.0, 2, MekBay.techAdvancement(),
+            (size, num) -> new MekBay(size, 1, num)),
+    PROTOMEK ("Protomek", 10.0, 6, ProtoMekBay.techAdvancement(),
+            (size, num) -> new ProtoMekBay(size, 1, num)),
     VEHICLE_HEAVY ("Heavy Vehicle", 100.0, 8, HeavyVehicleBay.techAdvancement(),
             (size, num) -> new HeavyVehicleBay(size, 1, num)),
     VEHICLE_LIGHT ("Light Vehicle", 50.0, 5, LightVehicleBay.techAdvancement(),
@@ -41,7 +41,7 @@ public enum BayData {
             (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.JUMP)),
     INFANTRY_MOTORIZED ("Infantry (Motorized)", 7.0, 0, InfantryBay.techAdvancement(),
             (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MOTORIZED)),
-    INFANTRY_MECHANIZED ("Infantry (Mech. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
+    INFANTRY_MECHANIZED ("Infantry (Mek. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
             (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MECHANIZED)),
     IS_BATTLE_ARMOR ("BattleArmor (IS)", 8.0, 6, BattleArmorBay.techAdvancement(),
             (size, num) -> new BattleArmorBay(size, 1, num, false, false)),
@@ -79,13 +79,13 @@ public enum BayData {
             (size, num) -> new InsulatedCargoBay(size, 1, num)),
     LIVESTOCK_CARGO ("Cargo Livestock)", 1/0.83, 0, CargoBay.techAdvancement(),
             (size, num) -> new LivestockCargoBay(size, 1, num));
-    
+
     private final String name;
     private final double weight;
     private final int personnel;
     private final TechAdvancement techAdvancement;
     private final BiFunction<Double,Integer,Bay> init;
-    
+
     BayData(String name, double weight, int personnel,
             TechAdvancement techAdvancement, BiFunction<Double,Integer,Bay> init) {
         this.name = name;
@@ -94,7 +94,7 @@ public enum BayData {
         this.techAdvancement = techAdvancement;
         this.init = init;
     }
-    
+
     /**
      * @return A String identifying the type of bay suitable for display.
      */
@@ -104,14 +104,14 @@ public enum BayData {
 
     /**
      * The weight of a single unit of capacity. For unit transport bays this is the weight of a single
-     * cubicle. For cargo this is the weight of one ton of cargo capacity. 
-     * 
+     * cubicle. For cargo this is the weight of one ton of cargo capacity.
+     *
      * @return The weight of a single unit.
      */
     public double getWeight() {
         return weight;
     }
-    
+
     /**
      * @return The number of bay personnel normally quartered per unit capacity.
      */
@@ -121,7 +121,7 @@ public enum BayData {
 
     /**
      * Creates a new bay of the type.
-     * 
+     *
      * @param size    The size of bay in cubicles (units) or tons (cargo; this is bay tonnage, not capacity).
      * @param bayNum  The bay number; this should be unique for the unit.
      * @return        The new bay.
@@ -134,7 +134,7 @@ public enum BayData {
             return init.apply(size, bayNum);
         }
     }
-    
+
     /**
      * @return The tech progression for the bay type.
      */
@@ -144,16 +144,16 @@ public enum BayData {
 
     /**
      * Identifies the type of bay.
-     * 
-     * @param bay A <code>Bay</code> that is (or can be) mounted on a unit. 
+     *
+     * @param bay A <code>Bay</code> that is (or can be) mounted on a unit.
      * @return    The enum value for the bay. Returns null if the bay is not a transport by
      *            (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
-        if (bay instanceof MechBay) {
-            return MECH;
-        } else if (bay instanceof ProtomechBay) {
-            return PROTOMECH;
+        if (bay instanceof MekBay) {
+            return MEK;
+        } else if (bay instanceof ProtoMekBay) {
+            return PROTOMEK;
         } else if (bay instanceof HeavyVehicleBay) {
             return VEHICLE_HEAVY;
         } else if (bay instanceof LightVehicleBay) {
@@ -171,7 +171,7 @@ public enum BayData {
                 case FOOT:
                 default:
                     return INFANTRY_FOOT;
-                
+
             }
         } else if (bay instanceof BattleArmorBay) {
             if (bay.getWeight() / bay.getCapacity() == 12) {
@@ -209,7 +209,7 @@ public enum BayData {
             return null;
         }
     }
-    
+
     /**
      * @return true if the bay is a type of cargo bay rather than a unit transport bay.
      */
@@ -224,18 +224,18 @@ public enum BayData {
         return (ordinal() >= INFANTRY_FOOT.ordinal())
                 && (ordinal() <= CS_BATTLE_ARMOR.ordinal());
     }
-    
+
     /**
      * Determines whether the bay is legal to mount on a given <code>Entity</code>. Whether it is
      * technically possible or practical is another matter.
-     * 
+     *
      * @param en The entity
      * @return   Whether the bay is legal
      */
     public boolean isLegalFor(Entity en) {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by
-        // industrial but not battlemechs.
-        if (en.hasETypeFlag(Entity.ETYPE_MECH)) {
+        // industrial but not battlemeks.
+        if (en.hasETypeFlag(Entity.ETYPE_MEK)) {
             return isCargoBay() && (this != LIVESTOCK_CARGO);
         } else if ((this == DROPSHUTTLE)
                 || (this == REPAIR_UNPRESSURIZED)
@@ -267,4 +267,3 @@ public enum BayData {
         return this != DROPSHUTTLE;
     }
 }
-

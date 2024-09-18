@@ -18,20 +18,22 @@
  */
 package megamek.common.alphaStrike;
 
-import megamek.common.BTObject;
-import megamek.common.CombatRole;
-import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+import static megamek.common.alphaStrike.ASUnitType.*;
+import static megamek.common.alphaStrike.BattleForceSUA.LG;
+import static megamek.common.alphaStrike.BattleForceSUA.SLG;
+import static megamek.common.alphaStrike.BattleForceSUA.VLG;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.common.BTObject;
+import megamek.common.CombatRole;
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
 /**
  * This interface is implemented by classes that can be displayed on an AlphaStrike card
  * {@link megamek.common.alphaStrike.cardDrawer.ASCard}. Implementing classes must be able to return
- * the AlphaStrike values printed on a card. Currently implemented by MechSummary and 
+ * the AlphaStrike values printed on a card. Currently implemented by MekSummary and
  * AlphaStrikeElement.
  * This interface also offers some utility methods for unit information that can be directly derived from
  * the available data; those don't require any overriding (e.g. {@link #isLargeAerospace()}.

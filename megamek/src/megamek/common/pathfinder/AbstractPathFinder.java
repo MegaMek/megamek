@@ -19,9 +19,17 @@
  */
 package megamek.common.pathfinder;
 
-import org.apache.logging.log4j.LogManager;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.PriorityQueue;
 
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides a skeletal implementation of pathfinder algorithm in a
@@ -49,9 +57,10 @@ import java.util.*;
  * @param <E> the type of directed edges used by the graph.
  */
 public class AbstractPathFinder<N, C, E> {
+    private static final MMLogger logger = MMLogger.create(AbstractPathFinder.class);
 
     // after switching to java 8 and including java.util.function some of this
-    //subclasses should be removed
+    // subclasses should be removed
 
     /**
      * Factory for retrieving neighbouring edges.
@@ -92,8 +101,8 @@ public class AbstractPathFinder<N, C, E> {
         /**
          * Relaxes an edge.
          *
-         * @param v best value till now. Might be null.
-         * @param e candidate for the new best value
+         * @param v          best value till now. Might be null.
+         * @param e          candidate for the new best value
          * @param comparator edge comparator
          * @return new best value or null if no relaxation happened
          */
@@ -101,7 +110,8 @@ public class AbstractPathFinder<N, C, E> {
     }
 
     /**
-     * Represents a function that allows removing unwanted objects from a collection.
+     * Represents a function that allows removing unwanted objects from a
+     * collection.
      */
     public static abstract class Filter<T> {
         /**
@@ -217,13 +227,14 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * @param edgeDestinationMap functional interface for retrieving destination
-     *            node of an edge.
-     * @param edgeRelaxer functional interface for calculating relaxed cost.
-     * @param edgeAdjacencyMap functional interface for retrieving neighbouring
-     *            edges.
-     * @param edgeComparator implementation of path comparator. Each path is
-     *            defined by its last edge. <i>(path:= edge concatenated with
-     *            best path to the source of the edge)</i>
+     *                           node of an edge.
+     * @param edgeRelaxer        functional interface for calculating relaxed cost.
+     * @param edgeAdjacencyMap   functional interface for retrieving neighbouring
+     *                           edges.
+     * @param edgeComparator     implementation of path comparator. Each path is
+     *                           defined by its last edge. <i>(path:= edge
+     *                           concatenated with
+     *                           best path to the source of the edge)</i>
      */
     public AbstractPathFinder(DestinationMap<N, E> edgeDestinationMap, EdgeRelaxer<C, E> edgeRelaxer,
             AdjacencyMap<E> edgeAdjacencyMap, Comparator<E> edgeComparator) {
@@ -298,12 +309,14 @@ public class AbstractPathFinder<N, C, E> {
                 }
             }
         } catch (OutOfMemoryError ex) {
-            LogManager.getLogger().error("Not enough memory to analyse all options. Try setting time limit to lower value, or increase java memory limit.", ex);
+            logger.error(
+                    "Not enough memory to analyse all options. Try setting time limit to lower value, or increase java memory limit.",
+                    ex);
         } catch (IllegalArgumentException ex) {
-            LogManager.getLogger().debug("Lost sight of a unit while plotting predicted paths", ex);
+            logger.debug("Lost sight of a unit while plotting predicted paths", ex);
         } catch (Exception ex) {
             // Do something, don't just swallow the exception, good lord
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
@@ -325,7 +338,8 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * @param node
-     * @return calculated cost for this node or null if this node has not been reached.
+     * @return calculated cost for this node or null if this node has not been
+     *         reached.
      */
     protected C getCostOf(N node) {
         return pathsCosts.get(node);
@@ -356,8 +370,9 @@ public class AbstractPathFinder<N, C, E> {
      * Sets comparator.
      *
      * @param comparator implementation of path comparator. Each path is
-     *            uniquely defined by its last edge. <i>(path:= an edge
-     *            concatenated with the best path to the source of the edge)</i>
+     *                   uniquely defined by its last edge. <i>(path:= an edge
+     *                   concatenated with the best path to the source of the
+     *                   edge)</i>
      */
     public void setComparator(Comparator<E> comparator) {
         this.comparator = Objects.requireNonNull(comparator);

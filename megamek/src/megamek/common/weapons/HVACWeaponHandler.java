@@ -26,7 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.SmokeCloud;
 
 /**
@@ -41,13 +41,13 @@ public class HVACWeaponHandler extends ACWeaponHandler {
      * @param g
      * @param m
      */
-    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handle(megamek.common.Game.Phase,
      * java.util.Vector)
@@ -57,7 +57,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && !conditions.getAtmosphere().isVacuum()) {
-            int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon.getFacing() : 0)) % 6;
+            int rear = (ae.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
             Board board = game.getBoard();
@@ -69,8 +69,9 @@ public class HVACWeaponHandler extends ACWeaponHandler {
                 rearCoords = src;
             } else if ((board.getBuildingAt(rearCoords) != null)
                     && ((board.getHex(rearCoords).terrainLevel(
-                            Terrains.BLDG_ELEV) + board.getHex(rearCoords)
-                            .getLevel()) > currentHex.getLevel())) {
+                            Terrains.BLDG_ELEV)
+                            + board.getHex(rearCoords)
+                                    .getLevel()) > currentHex.getLevel())) {
                 rearCoords = src;
             }
 
@@ -81,7 +82,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -89,7 +90,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
+
         if (roll.getIntValue() == 2) {
             Report r = new Report(3162);
             r.subject = subjectId;
@@ -98,11 +99,11 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             int wloc = weapon.getLocation();
             for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
                 CriticalSlot slot1 = ae.getCritical(wloc, i);
-                if ((slot1 == null) || 
+                if ((slot1 == null) ||
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
-                Mounted mounted = slot1.getMount();
+                Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
                     ae.hitAllCriticals(wloc, i);
                     break;

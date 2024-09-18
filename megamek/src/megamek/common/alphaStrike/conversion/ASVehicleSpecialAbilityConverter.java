@@ -27,19 +27,21 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
-     * Constructs a special ability converter for Combat and ground support vehicles.
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
+     * instead.
+     * Constructs a special ability converter for Combat and ground support
+     * vehicles.
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASVehicleSpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
     }
 
     @Override
-    protected void processSEALandSOA(Mounted misc) {
+    protected void processSEALandSOA(Mounted<?> misc) {
         MiscType miscType = (MiscType) misc.getType();
         if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
             assign(misc, SEAL);

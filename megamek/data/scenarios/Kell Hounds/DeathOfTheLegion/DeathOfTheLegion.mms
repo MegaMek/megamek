@@ -46,7 +46,7 @@ factions:
       force: Command Lance|1
       crew:
         name: Lt. Col. Patrick M. Kell
-        portrait: Male/MechWarrior/MW_M_27.png
+        portrait: Male/MekWarrior/MW_M_27.png
         gunnery: 2
         piloting: 3
 
@@ -55,7 +55,7 @@ factions:
       force: Command Lance|1
       crew:
         name: Lt. Anne Finn
-        portrait: Female/MechWarrior/MW_F_41.png
+        portrait: Female/MekWarrior/MW_F_41.png
         gunnery: 3
         piloting: 4
 
@@ -64,7 +64,7 @@ factions:
       force: Command Lance|1
       crew:
         name: Sgt. Clarence Wilson
-        portrait: Male/MechWarrior/MW_M_103.png
+        portrait: Male/MekWarrior/MW_M_103.png
         callsign: Cat
         gunnery: 2
         piloting: 3
@@ -74,7 +74,7 @@ factions:
       force: Command Lance|1
       crew:
         name: Bethany Connor
-        portrait: Female/MechWarrior/MW_F_48.png
+        portrait: Female/MekWarrior/MW_F_48.png
         gunnery: 4
         piloting: 5
 
@@ -83,7 +83,7 @@ factions:
       force: Assault Lance|2
       crew:
         name: Maj. Salome Ward
-        portrait: Female/MechWarrior/MW_F_46.png
+        portrait: Female/MekWarrior/MW_F_46.png
         gunnery: 2
         piloting: 3
 
@@ -92,7 +92,7 @@ factions:
       force: Assault Lance|2
       crew:
         name: Lt. Mike Fitzhugh
-        portrait: Male/MechWarrior/MW_M_88.png
+        portrait: Male/MekWarrior/MW_M_88.png
         gunnery: 3
         piloting: 4
 
@@ -101,7 +101,7 @@ factions:
       force: Assault Lance|2
       crew:
         name: Sgt. Diane McWilliams
-        portrait: Female/MechWarrior/MW_F_85.png
+        portrait: Female/MekWarrior/MW_F_85.png
         gunnery: 3
         piloting: 4
 
@@ -110,7 +110,7 @@ factions:
       force: Assault Lance|2
       crew:
         name: Mary Lasker
-        portrait: Female/MechWarrior/MW_F_5.png
+        portrait: Female/MekWarrior/MW_F_5.png
         gunnery: 4
         piloting: 5
 
@@ -119,7 +119,7 @@ factions:
       force: Scout Lance|3
       crew:
         name: Cpt. Daniel W. Allard
-        portrait: Male/MechWarrior/MW_M_37.png
+        portrait: Male/MekWarrior/MW_M_37.png
         gunnery: 3
         piloting: 4
 
@@ -128,7 +128,7 @@ factions:
       force: Scout Lance|3
       crew:
         name: Lt. Austin Brand
-        portrait: Male/MechWarrior/MW_M_5.png
+        portrait: Male/MekWarrior/MW_M_5.png
         gunnery: 3
         piloting: 4
 
@@ -138,7 +138,7 @@ factions:
       crew:
         name: Sgt. Margaret Lang
         callsign: Meg
-        portrait: Female/MechWarrior/MW_F_1.png
+        portrait: Female/MekWarrior/MW_F_1.png
         gunnery: 4
         piloting: 5
 
@@ -147,7 +147,7 @@ factions:
       force: Scout Lance|3
       crew:
         name: Eddie Baker
-        portrait: Male/MechWarrior/MW_M_65.png
+        portrait: Male/MekWarrior/MW_M_65.png
         gunnery: 4
         piloting: 5
 
@@ -433,7 +433,7 @@ messages:
   - header: Pilot Message
     text: |
       *Sgt. Clarence Wilson:* Sir, reporting the pirate's leader lance is gone. This will surely demoralize them.
-    image: portraits/Male/MechWarrior/MW_M_103.png
+    image: portraits/Male/MekWarrior/MW_M_103.png
     trigger:
       type: and
       triggers:
@@ -450,7 +450,7 @@ messages:
     text: |
       *Sgt. Clarence Wilson:* Sir, Jump Infantry is reporting several of the pirates who've fled have been caught and captured
       or destroyed.
-    image: portraits/Male/MechWarrior/MW_M_103.png
+    image: portraits/Male/MekWarrior/MW_M_103.png
     trigger:
       type: and
       triggers:
@@ -466,7 +466,7 @@ messages:
   - header: Pilot Message
     text: |
       *Lt. Mike Fitzhugh:* One pirate down.
-    image: portraits/Male/MechWarrior/MW_M_88.png
+    image: portraits/Male/MekWarrior/MW_M_88.png
     trigger:
       type: and
       triggers:

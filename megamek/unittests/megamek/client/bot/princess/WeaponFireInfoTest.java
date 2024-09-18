@@ -18,14 +18,6 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.WeaponMounted;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -36,11 +28,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.client.bot.princess.FireControl.FireControlType;
+import megamek.common.*;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
+
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:02 PM
  */
-public class WeaponFireInfoTest {
+class WeaponFireInfoTest {
 
     private static final int SHOOTER_ID = 1;
     private static final int TARGET_ID = 2;
@@ -54,9 +55,9 @@ public class WeaponFireInfoTest {
     private static ToHitData mockToHitEight;
     private static ToHitData mockToHitSix;
     private static ToHitData mockToHitThirteen;
-    private static BipedMech mockShooter;
+    private static BipedMek mockShooter;
     private static EntityState mockShooterState;
-    private static BipedMech mockTarget;
+    private static BipedMek mockTarget;
     private static EntityState mockTargetState;
     private static Game mockGame;
     private static WeaponMounted mockWeapon;
@@ -67,7 +68,7 @@ public class WeaponFireInfoTest {
     private static FireControl mockFireControl;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         mockGame = mock(Game.class);
 
         mockToHitSix = mock(ToHitData.class);
@@ -81,14 +82,15 @@ public class WeaponFireInfoTest {
 
         mockFireControl = mock(FireControl.class);
         when(mockFireControl.guessToHitModifierForWeapon(any(Entity.class), any(EntityState.class),
-                any(Targetable.class), any(EntityState.class), any(WeaponMounted.class), any(AmmoMounted.class), any(Game.class)))
+                any(Targetable.class), any(EntityState.class), any(WeaponMounted.class), any(AmmoMounted.class),
+                any(Game.class)))
                 .thenReturn(mockToHitEight);
 
         mockPrincess = mock(Princess.class);
         when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         when(mockPrincess.getMaxWeaponRange(any(Entity.class))).thenReturn(21);
 
-        mockShooter = mock(BipedMech.class);
+        mockShooter = mock(BipedMek.class);
         when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
         when(mockShooter.getWeight()).thenReturn(75.0);
         when(mockShooter.getId()).thenReturn(SHOOTER_ID);
@@ -98,7 +100,7 @@ public class WeaponFireInfoTest {
         mockShooterState = mock(EntityState.class);
         when(mockShooterState.getPosition()).thenReturn(SHOOTER_COORDS);
 
-        mockTarget = mock(BipedMech.class);
+        mockTarget = mock(BipedMek.class);
         when(mockTarget.getPosition()).thenReturn(TARGET_COORDS_9);
         when(mockTarget.isLocationBad(anyInt())).thenReturn(false);
         when(mockTarget.getId()).thenReturn(TARGET_ID);
@@ -171,8 +173,9 @@ public class WeaponFireInfoTest {
         testWeaponFireInfo.setGame(mockGame);
         return testWeaponFireInfo;
     }
+
     @Test
-    public void testInitDamage() {
+    void testInitDamage() {
         final double DELTA = 0.00001;
         final double ROLL_TWO = 0.028;
         final double CRIT_COUNT = 0.611;
@@ -193,7 +196,8 @@ public class WeaponFireInfoTest {
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
+                testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
@@ -210,7 +214,8 @@ public class WeaponFireInfoTest {
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
+                testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
@@ -228,7 +233,8 @@ public class WeaponFireInfoTest {
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
+                testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
@@ -246,7 +252,8 @@ public class WeaponFireInfoTest {
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
+                testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);

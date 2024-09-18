@@ -25,6 +25,7 @@ import megamek.common.weapons.Weapon;
 /**
  * Added per IO Pg 53 - Tech Manual shows this is an IS weapon only
  * But IO seems to have made this a Clan weapon as well
+ * 
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
@@ -52,7 +53,7 @@ public class CLBAMortarHeavy extends Weapon {
         tonnage = 0.4;
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTARTYPE_INDIRECT)
-                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
@@ -87,7 +88,7 @@ public class CLBAMortarHeavy extends Weapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         if (range <= AlphaStrikeElement.SHORT_RANGE) {
             return 0.249;
         } else if (range <= AlphaStrikeElement.MEDIUM_RANGE) {

@@ -18,17 +18,19 @@
  */
 package megamek.common.net.connections;
 
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /**
  * Wrapper around a LinkedList for keeping a queue of packets
  * to send. Note that this implementation is not synchronized.
  */
 class SendQueue {
+    private static final MMLogger logger = MMLogger.create(SendQueue.class);
+
     private final LinkedList<SendPacket> queue = new LinkedList<>();
     private boolean finished = false;
 
@@ -60,7 +62,7 @@ class SendQueue {
             final String sb = queue.stream()
                     .map(p -> '\n' + p.getCommand().toString()).collect(
                             Collectors.joining("", "Contents of Send Queue:\n", ""));
-            LogManager.getLogger().warn(sb);
+            logger.warn(sb);
         }
     }
 }

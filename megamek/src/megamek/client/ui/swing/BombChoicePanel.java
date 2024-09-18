@@ -13,10 +13,13 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -35,7 +38,7 @@ import megamek.common.IBomber;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 2012-04-07
  */
-public class BombChoicePanel extends JPanel implements Serializable, ItemListener {
+public class BombChoicePanel extends JPanel implements ItemListener {
     private final IBomber bomber;
     private final boolean at2Nukes;
     private final boolean allowAdvancedAmmo;
@@ -44,10 +47,9 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
 
     private static final long serialVersionUID = 483782753790544050L;
 
-    @SuppressWarnings("rawtypes")
     private JPanel interiorPanel;
     private JPanel exteriorPanel;
-    private HashMap<String, JComboBox[]> b_choices = new HashMap<String, JComboBox[]>();
+    private HashMap<String, JComboBox<String>[]> b_choices = new HashMap<String, JComboBox<String>[]>();
     private HashMap<String, JLabel[]> b_labels = new HashMap<String, JLabel[]>();
     private HashMap<String, Integer> maxPoints = new HashMap<String, Integer>();
     private HashMap<String, Integer> maxSize = new HashMap<String, Integer>();
@@ -100,7 +102,6 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         return currentPoints;
     }
 
-    @SuppressWarnings("unchecked")
     private void initPanel() {
         maxPoints.put(INTNAME, bomber.getMaxIntBombPoints());
         maxPoints.put(EXTNAME, bomber.getMaxExtBombPoints());
@@ -227,7 +228,6 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void itemStateChanged(ItemEvent ie) {
 
         for (String title: new String[]{INTNAME, EXTNAME}){

@@ -16,17 +16,25 @@
 */
 package megamek.client.ui.swing.skinEditor;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.Configuration;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
+import megamek.common.Configuration;
 
 /**
  * Panel with elements for viewing and adjusting a specific
@@ -179,7 +187,7 @@ public class UnitDisplaySpecPanel extends JPanel {
     private BorderElement topRightCorner;
     private BorderElement bottomRightCorner;
 
-    private BorderElement mechOutline;
+    private BorderElement mekOutline;
 
     SkinSpecEditor skinEditor;
 
@@ -221,7 +229,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         udSpec.setTopRightCorner(topRightCorner.getPath());
         udSpec.setBottomRightCorner(bottomRightCorner.getPath());
 
-        udSpec.setMechOutline(mechOutline.getPath());
+        udSpec.setMekOutline(mekOutline.getPath());
     }
 
     /**
@@ -359,10 +367,10 @@ public class UnitDisplaySpecPanel extends JPanel {
         gbc.gridwidth = 1;
         gbc.gridy++;
 
-        // Mech Outline
+        // Mek Outline
         gbc.gridwidth = 2;
-        mechOutline = new BorderElement(this, Messages.getString("SkinEditor.mechOutline"), udSpec.getMechOutline());
-        borderPanel.add(mechOutline, gbc);
+        mekOutline = new BorderElement(this, Messages.getString("SkinEditor.mekOutline"), udSpec.getMekOutline());
+        borderPanel.add(mekOutline, gbc);
         gbc.gridwidth = 1;
         gbc.gridy++;
 
@@ -404,7 +412,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         topRightCorner.setEnabled(enabled);
         bottomRightCorner.setEnabled(enabled);
 
-        mechOutline.setEnabled(enabled);
+        mekOutline.setEnabled(enabled);
     }
 
     public void signalValidate() {

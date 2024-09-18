@@ -48,7 +48,7 @@ public class CLLaserAMS extends LaserWeapon {
         bv = 45;
         atClass = CLASS_AMS;
         // we need to remove the direct fire flag again, so TC weight is not affected
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .andNot(F_PROTO_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_ENERGY)
                 .and(F_DIRECT_FIRE.not());
         setModes(new String[] { "On", "Off" });
@@ -67,7 +67,7 @@ public class CLLaserAMS extends LaserWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

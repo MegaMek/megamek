@@ -1,55 +1,79 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.generator;
 
-import megamek.common.Configuration;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import org.apache.logging.log4j.LogManager;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import megamek.common.Configuration;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.logging.MMLogger;
+
 /**
- * This class sets up a random unit generator that can then
- * be used to read in user-created input files of random assignment tables
+ * This class sets up a random unit generator that can then be used to read in
+ * user-created input files of random assignment tables
  * <p>
- * Files must be located in in the directory defined by {@link Configuration#armyTablesDir()}.
- * All files should comma-delimited text files.
+ * Files must be located in in the directory defined by
+ * {@link Configuration#armyTablesDir()}. All files should comma-delimited text
+ * files.
  * </p>
  * <p>
  * The first line of the file should contain the title of the RAT The second
  * line of the file should give the unit type number corresponding to
  * UnitType.java The remaining lines should be comma split. The first field
  * should give the frequency of that unit and the second line should give the
- * name of that unit written as { Model } { Chassis }. Comment lines can also be added with "#".
+ * name of that unit written as { Model } { Chassis }. Comment lines can also be
+ * added with "#".
  * </p>
  *
  * @author Jay Lawson
  */
 public class RandomUnitGenerator implements Serializable {
+    private static final MMLogger logger = MMLogger.create(RandomUnitGenerator.class);
+
     private static final long serialVersionUID = 5765118329881301375L;
 
-    // The RATs are stored in a hashmap of string vectors. The keys are the RAT names
-    // and the vectors just contain the unit names listed a number of times equal to the frequency
+    // The RATs are stored in a hashmap of string vectors. The keys are the RAT
+    // names and the vectors just contain the unit names listed a number of times
+    // equal to the frequency
     private final Map<String, RatEntry> rats = new HashMap<>();
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
@@ -116,7 +140,7 @@ public class RandomUnitGenerator implements Serializable {
     private String chosenRAT;
 
     public RandomUnitGenerator() {
-        chosenRAT = "TW Heavy Mech (Kurita)";
+        chosenRAT = "House Kurita Heavy 'Mek";
         listeners = new ArrayList<>();
     }
 
@@ -128,7 +152,7 @@ public class RandomUnitGenerator implements Serializable {
         initRatTree();
 
         // Give the MSC some time to initialize
-        MechSummaryCache msc = MechSummaryCache.getInstance();
+        MekSummaryCache msc = MekSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
         while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
@@ -150,14 +174,13 @@ public class RandomUnitGenerator implements Serializable {
         listeners.add(l);
     }
 
-
     /**
      * Notifies all the listeners that initialization is finished
      */
     public void notifyListenersOfInitialization() {
         if (initialized) {
             for (ActionListener l : listeners) {
-                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"rugInitialized"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "rugInitialized"));
             }
         }
     }
@@ -166,9 +189,9 @@ public class RandomUnitGenerator implements Serializable {
         rats.put(ratName, ratEntry);
     }
 
-    private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
+    private void readRat(InputStream is, RatTreeNode node, String fileName, MekSummaryCache msc) throws IOException {
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-             BufferedReader reader = new BufferedReader(isr)) {
+                BufferedReader reader = new BufferedReader(isr)) {
             int lineNumber = 0;
             String key = "Huh";
             float totalWeight = 0.0f;
@@ -189,7 +212,7 @@ public class RandomUnitGenerator implements Serializable {
                 } else {
                     String[] values = line.split(",");
                     if (values.length < 2) {
-                        LogManager.getLogger().error(String.format("Not enough fields in %s on %d",
+                        logger.error(String.format("Not enough fields in %s on %d",
                                 fileName, lineNumber));
                         continue;
                     }
@@ -198,22 +221,22 @@ public class RandomUnitGenerator implements Serializable {
                     try {
                         weight = Integer.parseInt(values[1].trim());
                     } catch (NumberFormatException nef) {
-                        LogManager.getLogger().error(String.format(
+                        logger.error(nef, String.format(
                                 "The frequency field could not be interpreted on line %d of %s",
                                 lineNumber, fileName));
                         continue;
                     }
 
                     if (weight <= 0.0f) {
-                        LogManager.getLogger().error(String.format(
+                        logger.error(String.format(
                                 "The frequency field is zero or negative (%d) on line %d of %s",
                                 Math.round(weight), lineNumber, fileName));
                         continue;
                     }
 
                     // The @ symbol denotes a reference to another RAT rather than a unit.
-                    if (!name.startsWith("@") && (null == msc.getMech(name))) {
-                        LogManager.getLogger().error(String.format(
+                    if (!name.startsWith("@") && (null == msc.getMek(name))) {
+                        logger.error(String.format(
                                 "The unit %s could not be found in the %s RAT (%s)",
                                 name, key, fileName));
                         continue;
@@ -263,16 +286,16 @@ public class RandomUnitGenerator implements Serializable {
 
     private void cleanupNode(RatTreeNode node) {
         for (RatTreeNode child : node.children) {
-               cleanupNode(child);
+            cleanupNode(child);
         }
         Collections.sort(node.children);
     }
 
-    private void loadRatsFromDirectory(File dir, MechSummaryCache msc) {
+    private void loadRatsFromDirectory(File dir, MekSummaryCache msc) {
         loadRatsFromDirectory(dir, msc, ratTree);
     }
 
-    private void loadRatsFromDirectory(File dir, MechSummaryCache msc, RatTreeNode node) {
+    private void loadRatsFromDirectory(File dir, MekSummaryCache msc, RatTreeNode node) {
         if (interrupted) {
             return;
         }
@@ -326,7 +349,7 @@ public class RandomUnitGenerator implements Serializable {
                         }
                     }
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
+                    logger.error(ex, "Unable to load " + ratFile.getName());
                 }
             }
 
@@ -337,7 +360,7 @@ public class RandomUnitGenerator implements Serializable {
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
             } catch (Exception ex) {
-                LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
+                logger.error(ex, "Unable to load " + ratFile.getName());
             }
         }
     }
@@ -347,7 +370,7 @@ public class RandomUnitGenerator implements Serializable {
      *
      * @return - a string giving the name
      */
-    public ArrayList<MechSummary> generate(int numRolls, String ratName) {
+    public ArrayList<MekSummary> generate(int numRolls, String ratName) {
         return generate(numRolls, ratName, null);
     }
 
@@ -355,37 +378,38 @@ public class RandomUnitGenerator implements Serializable {
      * Generate a list of units from the RAT.
      *
      * @param numRolls - the number of units to roll from the RAT
-     * @param ratName - name of the RAT to roll on
-     * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
+     * @param ratName  - name of the RAT to roll on
+     * @param filter   - entries in the RAT must pass this condition to be included.
+     *                 If null, no filter is applied.
      * @return - a list of units determined by the random rolls
      */
-    public ArrayList<MechSummary> generate(int numRolls, String ratName, Predicate<MechSummary> filter) {
-        ArrayList<MechSummary> units = new ArrayList<>();
+    public ArrayList<MekSummary> generate(int numRolls, String ratName, Predicate<MekSummary> filter) {
+        ArrayList<MekSummary> units = new ArrayList<>();
 
         try {
             int retryCount = 0;
-            
+
             // give the RATs a few seconds to load
             while (!initialized && (retryCount < 5)) {
                 try {
                     Thread.sleep(1000);
                 } catch (Exception ignored) {
-                    
+
                 }
 
                 retryCount++;
             }
-            
+
             Map<String, RatEntry> ratMap = getRatMap();
             if (null != ratMap) {
                 RatEntry re = ratMap.get(ratName);
                 if (filter != null) {
                     RatEntry filtered = new RatEntry();
                     float totalWeight = 0.0f;
-                    MechSummaryCache msc = MechSummaryCache.getInstance();
+                    MekSummaryCache msc = MekSummaryCache.getInstance();
                     for (int i = 0; i < re.getUnits().size(); i++) {
                         if (!re.getUnits().get(i).startsWith("@")) {
-                            MechSummary ms = msc.getMech(re.getUnits().get(i));
+                            MekSummary ms = msc.getMek(re.getUnits().get(i));
                             if (ms == null || !filter.test(ms)) {
                                 continue;
                             }
@@ -415,7 +439,7 @@ public class RandomUnitGenerator implements Serializable {
                             continue;
                         }
 
-                        MechSummary unit = getMechByName(name);
+                        MekSummary unit = getMekByName(name);
                         if (null != unit) {
                             units.add(unit);
                         }
@@ -423,24 +447,24 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error(e, "generate");
         }
         return units;
     }
 
-    protected MechSummary getMechByName(String name) {
-        return MechSummaryCache.getInstance().getMech(name);
+    protected MekSummary getMekByName(String name) {
+        return MekSummaryCache.getInstance().getMek(name);
     }
 
     protected double getRandom() {
         return Math.random();
     }
 
-    public ArrayList<MechSummary> generate(int numRolls) {
+    public ArrayList<MekSummary> generate(int numRolls) {
         return generate(numRolls, getChosenRAT(), null);
     }
 
-    public ArrayList<MechSummary> generate(int numRolls, Predicate<MechSummary> filter) {
+    public ArrayList<MekSummary> generate(int numRolls, Predicate<MekSummary> filter) {
         return generate(numRolls, getChosenRAT(), filter);
     }
 
@@ -476,8 +500,8 @@ public class RandomUnitGenerator implements Serializable {
                 long start = System.currentTimeMillis();
                 rug.populateUnits();
                 long end = System.currentTimeMillis();
-                LogManager.getLogger().info("Loaded Rats in: " + (end - start) + "ms.");
-            }, "Random Unit Generator unit populator");
+                logger.info("Loaded Rats in: " + (end - start) + "ms.");
+            }, "Random Unit Generator unit populater");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rug.loader.start();
         }

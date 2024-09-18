@@ -34,7 +34,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -54,7 +54,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param m
      */
     public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -106,7 +106,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
                         range, bayW.getEquipmentNum());
                 av = av + current_av;
-                //If these are thunderbolts, they'll have missile armor
+                // If these are thunderbolts, they'll have missile armor
                 weaponarmor += bayWType.getMissileArmor();
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
@@ -125,10 +125,10 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 }
             }
         }
-        //Bracketing fire reduces the number of missiles that hit
+        // Bracketing fire reduces the number of missiles that hit
         av = (int) Math.floor(getBracketingMultiplier() * av);
 
-        //Point Defenses engage the missiles still aimed at us
+        // Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
         if (isTbolt()) {
             CapMissileArmor = weaponarmor - (int) counterAV;
@@ -137,7 +137,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             av = av - counterAV;
         }
 
-        //Apply direct/glancing blow modifiers to the survivors
+        // Apply direct/glancing blow modifiers to the survivors
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -149,7 +149,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile
+     * this is
      */
     @Override
     protected void setAMSBayReportingFlag() {
@@ -161,7 +162,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile
+     * this is
      */
     @Override
     protected void setPDBayReportingFlag() {
@@ -172,7 +174,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         }
     }
 
-    //Check for Thunderbolt. We'll use this for single AMS resolution
+    // Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
         return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
@@ -207,9 +209,9 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected double updateAVforAmmo(double current_av, AmmoType atype,
-                                     WeaponType bayWType, int range, int wId) {
-        Mounted bayW = ae.getEquipment(wId);
-        Mounted mLinker = bayW.getLinkedBy();
+            WeaponType bayWType, int range, int wId) {
+        Mounted<?> bayW = ae.getEquipment(wId);
+        Mounted<?> mLinker = bayW.getLinkedBy();
         int bonus = 0;
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -217,7 +219,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         MiscType.F_ARTEMIS))
                 && atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
                 bonus = 2;
             }
             current_av = current_av + bonus;
@@ -231,7 +233,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
                 bonus = 2;
             }
         }
@@ -270,8 +272,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
         if ((((null == entityTarget) || entityTarget.isAirborne())
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
-                &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
+                        && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
+                        && target.getTargetType() != Targetable.TYPE_BUILDING))
                 || game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
         }
@@ -370,7 +372,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         // This only gets used in atmosphere/ground battles
         // Non AMS point defenses only work in space
         CounterAV = getCounterAV();
-        //use this if counterfire destroys all the missiles
+        // use this if counterfire destroys all the missiles
         if (amsBayEngaged && (attackValue <= 0)) {
             r = new Report(3356);
             r.indent();

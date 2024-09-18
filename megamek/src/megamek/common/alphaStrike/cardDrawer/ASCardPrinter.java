@@ -18,15 +18,9 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
-import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.alphaStrike.ASCardDisplayable;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -36,9 +30,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+
+import megamek.MMConstants;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.alphaStrike.ASCardDisplayable;
+
 /**
  * This class prints a collection of one or more Alpha Strike cards. The cards to be printed can be created
- * from either an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link megamek.common.MechSummary}.
+ * from either an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link megamek.common.MekSummary}.
  * It shows a progress bar dialog but the printing happens in the background and the calling window is not blocked.
  */
 public class ASCardPrinter implements Printable {
@@ -56,7 +67,7 @@ public class ASCardPrinter implements Printable {
 
     /**
      * Creates a new ASCardPrinter object for the given ASCardDisplayable elements (either
-     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link megamek.common.MechSummary}.
+     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link megamek.common.MekSummary}.
      * The parent is used for the progress dialog. Print the cards by calling {@link #printCards()}.
      */
     public ASCardPrinter(Collection<? extends ASCardDisplayable> elements, JFrame parent) {

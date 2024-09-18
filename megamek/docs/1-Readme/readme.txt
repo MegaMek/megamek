@@ -8,7 +8,7 @@ Operations are constantly in the works, and many of those rules and weapons are 
 implemented.
 
 Players can create their own units, maps, and scenarios for use with MegaMek. MegaMek supports
-all unit types, from infantry, BattleMechs, and vehicles, to Aerospace fighters, DropShips,
+all unit types, from infantry, BattleMek, and vehicles, to Aerospace fighters, DropShips,
 and warships. Ground battles as well as space battles can be played.
 
 If you would like information about how to play the game, see the "PLAYING THE GAME" section,
@@ -189,7 +189,7 @@ immediately after getting up are free. To get up and back up, click "Get Up," th
 then the destination hex and/or facing. You cannot get up and jump in the same turn.
 
 Charging and death from above attacks are also declared during the movement phase. Click the
-"Charge" or "D.F.A." button and then click on the mech you wish to target. If the attack is
+"Charge" or "D.F.A." button and then click on the mek you wish to target. If the attack is
 valid, it will be sent to the server immediately (but resolve during the physical attack
 phase.) If the program is not using the path you want for your attack, you may plot a path near
 the target using the appropriate type of movement and then use the charge or dfa button to
@@ -245,9 +245,9 @@ hexes with a three-button mouse. Both tools will pop up a window that tells you 
 intervening and whether one or both hexes has partial cover. The ruler tool also draws the line
 of sight on the board so that you can see which hexes LoS passes through.
 
-You can switch between 'Mech line of sight and non-'Mech line of sight in the "LoS Setting"
-panel, located under the "View" menu at the top of the screen. 'Mech line of sight and
-non-'Mech line of sight differ in that 'Mechs are assumed to be "looking" from one elevation
+You can switch between 'Mek line of sight and non-'Mek line of sight in the "LoS Setting"
+panel, located under the "View" menu at the top of the screen. 'Mek line of sight and
+non-'Mek line of sight differ in that 'Meks are assumed to be "looking" from one elevation
 level above that of the hex they are in, whereas infantry and vehicles only take up the
 elevation level of their hex.
 
@@ -256,9 +256,9 @@ or commit to your currently declared fire. Again, you do not need to declare fir
 first selected unit first.
 
 To target another unit, click on it on the board. Targeting information for your current weapon
-should appear in the mech display window. To fire your current weapon at the target, press the
+should appear in the mek display window. To fire your current weapon at the target, press the
 "Fire" button at the bottom of the screen. To switch to another weapon, click on its name at
-the top of the mech display window. Spread your fire among multiple targets by repeating these
+the top of the mek display window. Spread your fire among multiple targets by repeating these
 steps using unassigned weapons. When all desired weapons have been assigned to a target, press
 the "Done" button at the bottom of the screen.
 
@@ -322,24 +322,24 @@ After this phase, it's time for initiative again! Hurrah!
 
 ### CUSTOM UNITS
 
-All units (mechs, vehicles, infantry, etc.) are located in the data/mechfiles directory. They
+All units (meks, vehicles, infantry, etc.) are located in the data/mekfiles directory. They
 may be individual files or zipped up into archives (".zip"), and you may also create
 subdirectories if you like.
 
-We recommend creating a folder called Customs in the data/mechfiles directory. Then using this
+We recommend creating a folder called Customs in the data/mekfiles directory. Then using this
 folder to store all custom units.
 
 As of 0.49.13 We've removed the unsupported and unofficial folders. Over the years the
 unsupported units dropped to only a couple. The unofficial folder is available from
 [the Extras repository](https://github.com/MegaMek/megamek-extras).
 
-Over the years the number of custom mech builders that support MegaMek has shrunk. For best
+Over the years the number of custom mek builders that support MegaMek has shrunk. For best
 compatibility we recommend using MegaMekLab. Any issues from the use of other programs should
 be directed to their developers for support.
 
 #### Note of file types
 
-MegaMek uses two file types for units. Files with the extension MTF are mechs, and all other
+MegaMek uses two file types for units. Files with the extension MTF are meks, and all other
 unit types are BLK files.  Both our editable with a quality text editor, but we recommend not
 hand editing files as it can break the programs.
 
@@ -354,7 +354,7 @@ the values from the basic settings._
   - **Amount of elevation** - changes the "roughness" of the map, a low number will have less elevation changes than a high number Elevation range: height difference between the lowest and highest hex on the map. Level 0 is set to the most common height.
   - **Probability of inverting** - % chance to make a sinkhole instead of a mountain.
   - **Algorithm** - 0 generates rolling hills, 1 generates spiky terrain, 2 combines both generators. 0 is likely to have less LOS blocking terrain.
-  - **Cliffs** - % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all be moved to level 0, giving a cliff for mechs to hide behind. The effect is quite subtle unless you have quite a high elevation range to begin with.
+  - **Cliffs** - % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all be moved to level 0, giving a cliff for meks to hide behind. The effect is quite subtle unless you have quite a high elevation range to begin with.
 - **Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice):** Each of these work the same way, but place a different type of terrain.
   - **Number of XXX** - the number of patches which would be present on a 16x17 map. scales up if you have a bigger map.
   - **XXX size in hexes** - the size of each patch of terrain

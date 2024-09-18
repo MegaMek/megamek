@@ -33,7 +33,7 @@ public class PilotingRollData extends TargetRoll {
     }
 
     /**
-     * Double-logging style for situations where the mech automatically falls,
+     * Double-logging style for situations where the mek automatically falls,
      * but the pilot can still save to avoid damage. The game will later strip
      * out any automatic rolls when it lets the pilot roll to save.
      */

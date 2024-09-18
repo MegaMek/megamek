@@ -103,7 +103,7 @@ public class QuadVee extends QuadMek {
     }
 
     public static int getMotiveTypeForString(String inType) {
-        if ((inType == null) || (inType.length() < 1)) {
+        if ((inType == null) || (inType.isEmpty())) {
             return MOTIVE_UNKNOWN;
         }
         for (int x = 0; x < MOTIVE_STRING.length; x++) {
@@ -275,14 +275,11 @@ public class QuadVee extends QuadMek {
             return  mpBoosters;
         }
 
-        switch (mpBoosters) {
-            case MASC_AND_SUPERCHARGER:
-                return MPBoosters.SUPERCHARGER_ONLY;
-            case MASC_ONLY:
-                return MPBoosters.NONE;
-            default:
-                return mpBoosters;
-        }
+        return switch (mpBoosters) {
+            case MASC_AND_SUPERCHARGER -> MPBoosters.SUPERCHARGER_ONLY;
+            case MASC_ONLY -> MPBoosters.NONE;
+            default -> mpBoosters;
+        };
     }
 
     /**

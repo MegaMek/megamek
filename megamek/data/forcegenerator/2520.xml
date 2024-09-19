@@ -180,8 +180,7 @@
 	</factions>
 	<units>
 		<chassis name='AC/2 Carrier' unitType='Tank'>
-			<availability>
-				CC:4,MOC:3,IS:4,Periphery.Deep:4,RWR:4,FS:5,Periphery:4,TC:4,OA:4,TH:4,LA:5,FWL:4,DC:5</availability>
+			<availability>CC:4,MOC:3,IS:4,Periphery.Deep:4,RWR:4,FS:5,Periphery:4,TC:4,OA:4,TH:4,LA:5,FWL:4,DC:5</availability>
 			<model name=''>
 				<roles>fire_support</roles>
 				<availability>General:4,Periphery.Deep:4,Periphery:4</availability>
@@ -1087,8 +1086,7 @@
 			</model>
 		</chassis>
 		<chassis name='Leopard' unitType='Dropship'>
-			<availability>
-				CC:4,MOC:4,IS:4,Periphery.Deep:4,RWR:4,FS:4,Periphery:4,TC:4,OA:4,TH:4,LA:4,FWL:4,DC:4</availability>
+			<availability>CC:4,MOC:4,IS:4,Periphery.Deep:4,RWR:4,FS:4,Periphery:4,TC:4,OA:4,TH:4,LA:4,FWL:4,DC:4</availability>
 			<model name='(2537)'>
 				<roles>mek_carrier</roles>
 				<availability>General:8</availability>
@@ -1560,8 +1558,7 @@
 			</model>
 		</chassis>
 		<chassis name='Sabre' unitType='AeroSpaceFighter'>
-			<availability>
-				CC:3-,MOC:5-,OA:5-,LA:5-,FWL:5-,IS:5-,Periphery.Deep:5-,FS:5-,MERC:5-,DC:6-,Periphery:5-</availability>
+			<availability>CC:3-,MOC:5-,OA:5-,LA:5-,FWL:5-,IS:5-,Periphery.Deep:5-,FS:5-,MERC:5-,DC:6-,Periphery:5-</availability>
 			<model name='SB-26'>
 				<availability>DC:6</availability>
 			</model>

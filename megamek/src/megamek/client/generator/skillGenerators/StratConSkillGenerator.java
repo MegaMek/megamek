@@ -18,11 +18,8 @@
  */
 package megamek.client.generator.skillGenerators;
 
-import megamek.codeUtilities.MathUtility;
-import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.LandAirMek;
-import megamek.common.enums.SkillLevel;
 
 public class StratConSkillGenerator extends TotalWarfareSkillGenerator {
     /**
@@ -35,35 +32,24 @@ public class StratConSkillGenerator extends TotalWarfareSkillGenerator {
      */
     @Override
     public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
-        int bonus = switch (getLevel()) {
-            case ULTRA_GREEN -> 0;
-            case GREEN -> 1;
-            case VETERAN -> 3;
-            case ELITE -> 4;
-            case HEROIC -> 5;
-            case LEGENDARY -> 6;
-            default -> 2;
+        int skillLevel = switch (getLevel()) {
+            case ULTRA_GREEN -> 2;
+            case GREEN -> 3;
+            case VETERAN -> 5;
+            case ELITE -> 6;
+            case HEROIC -> 7;
+            case LEGENDARY -> 8;
+            default -> 4; // Regular
         };
 
         if (entity instanceof LandAirMek) {
-            bonus += 1;
+            skillLevel += 1;
         }
 
-        // this will give us a SkillLevel 1 above or below the default rate, or at the default rate
-        final int roll = MathUtility.clamp(Compute.randomInt(3) - 1 + bonus, 0, 6);
+        skillLevel += determineBonus(entity, clanPilot, forceClan);
 
-        SkillLevel skillLevel = switch (roll) {
-            case 0 -> SkillLevel.ULTRA_GREEN;
-            case 1 -> SkillLevel.GREEN;
-            case 2 -> SkillLevel.REGULAR;
-            case 3 -> SkillLevel.VETERAN;
-            case 4 -> SkillLevel.ELITE;
-            case 5 -> SkillLevel.HEROIC;
-            case 6 -> SkillLevel.LEGENDARY;
-            default -> throw new IllegalStateException("Unexpected value in megamek/client/generator/skillGenerators/StratConSkillGenerator.java/generateRandomSkills: "
-                    + roll);
-        };
-
-        return generateRandomSkills(skillLevel, entity, clanPilot, forceClan);
+        return cleanReturn(entity,
+                SKILL_LEVELS[0][Math.min(skillLevel, SKILL_LEVELS[0].length)],
+                SKILL_LEVELS[1][Math.min(skillLevel, SKILL_LEVELS[1].length)]);
     }
 }

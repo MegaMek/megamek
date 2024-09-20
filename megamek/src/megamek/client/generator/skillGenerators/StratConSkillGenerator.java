@@ -18,6 +18,7 @@
  */
 package megamek.client.generator.skillGenerators;
 
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.LandAirMek;
 
@@ -44,6 +45,14 @@ public class StratConSkillGenerator extends TotalWarfareSkillGenerator {
 
         if (entity instanceof LandAirMek) {
             skillLevel += 1;
+        }
+
+        int roll = Compute.d6(1);
+
+        if (roll == 1) {
+            skillLevel--;
+        } else if (roll == 6) {
+            skillLevel++;
         }
 
         skillLevel += determineBonus(entity, clanPilot, forceClan);

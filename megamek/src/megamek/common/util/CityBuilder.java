@@ -51,7 +51,7 @@ public class CityBuilder {
     /**
      * This function will generate a city with a grid lay out. 4 rounds running
      * North and South and 4 roads running east west
-     * 
+     *
      * @author Torren (Jason Tighe)
      * @return
      */
@@ -383,7 +383,7 @@ public class CityBuilder {
 
     /**
      * Build a bridge across an obstacle
-     * 
+     *
      * @todo: use a bridge not a road when bridges are working
      * @param start
      * @param direction
@@ -436,6 +436,11 @@ public class CityBuilder {
                     + Compute.randomInt(1 + mapSettings.getCityMaxCF()
                             - mapSettings.getCityMinCF());
 
+            if (cf == 0) {
+                // some city settings can lead to 0 CF bridges; use a default CF in this case
+                cf = 40;
+            }
+
             for (Enumeration<Coords> e = hexes.elements(); e.hasMoreElements();) {
                 Coords c = e.nextElement();
                 addBridge(board.getHex(c), exits, elev1, cf);
@@ -484,7 +489,7 @@ public class CityBuilder {
 
     /**
      * Utility function for setting building type from CF table
-     * 
+     *
      * @param cf
      * @return building type
      */

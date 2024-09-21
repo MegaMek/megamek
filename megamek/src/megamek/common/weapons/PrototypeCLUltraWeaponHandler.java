@@ -47,6 +47,9 @@ public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
+        if (ae.isConventionalInfantry()) {
+            return false;
+        }
         
         if ((roll.getIntValue() <= 3) && (howManyShots == 2)) {
             Report r = new Report(3160);

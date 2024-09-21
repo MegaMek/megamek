@@ -113,7 +113,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
             // attack roll was a 2, may explode
-        } else if (roll.getIntValue() <= 2) {
+        } else if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
             Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3173);

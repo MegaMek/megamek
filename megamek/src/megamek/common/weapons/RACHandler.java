@@ -49,9 +49,7 @@ public class RACHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        }
-
-        if (ae instanceof Infantry) {
+        } else if (ae.isConventionalInfantry()) {
             return false;
         }
         boolean jams = false;

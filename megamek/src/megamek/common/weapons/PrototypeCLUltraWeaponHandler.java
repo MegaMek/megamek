@@ -46,8 +46,7 @@ public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        }
-        if (ae.isConventionalInfantry()) {
+        } else if (ae.isConventionalInfantry()) {
             return false;
         }
         

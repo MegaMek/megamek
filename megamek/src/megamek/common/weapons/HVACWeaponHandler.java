@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,6 +19,7 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.*;
@@ -33,25 +34,13 @@ import megamek.server.SmokeCloud;
  * @author Jason Tighe
  */
 public class HVACWeaponHandler extends ACWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 7326881584091651519L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
     public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.WeaponHandler#handle(megamek.common.Game.Phase,
-     * java.util.Vector)
-     */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -80,11 +69,6 @@ public class HVACWeaponHandler extends ACWeaponHandler {
         return super.handle(phase, vPhaseReport);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
-     */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
@@ -117,5 +101,4 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             return super.doChecks(vPhaseReport);
         }
     }
-
 }

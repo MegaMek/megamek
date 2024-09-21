@@ -1,18 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
@@ -37,26 +44,17 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public class LRMSwarmHandler extends LRMHandler {
+    @Serial
     private static final long serialVersionUID = 7962873403915683220L;
+
     private int swarmMissilesNowLeft = 0;
     private boolean handledHeat = false;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
     public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " swarm missile(s) ";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
-     */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -317,17 +315,11 @@ public class LRMSwarmHandler extends LRMHandler {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     *
-     * This needs to override the superclass method because in case of swarm
-     * the damage to adjacent infantry should be based on the missiles left over,
-     * not the total rack size.
-     */
     @Override
     protected int calcDamagePerHit() {
+        // This needs to override the superclass method because in case of swarm
+        // the damage to adjacent infantry should be based on the missiles left over,
+        // not the total rack size.
         if (target.isConventionalInfantry()) {
             int missiles = waa.isSwarmingMissiles() ? waa.getSwarmMissiles()
                     : wtype.getRackSize();
@@ -343,13 +335,6 @@ public class LRMSwarmHandler extends LRMHandler {
         return 1;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
-     * .Entity, boolean, megamek.common.Building, java.util.Vector)
-     */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean bldgDamagedOnMiss, Building bldg,
             Vector<Report> vPhaseReport, GamePhase phase) {
@@ -416,11 +401,6 @@ public class LRMSwarmHandler extends LRMHandler {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump

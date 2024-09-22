@@ -155,7 +155,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
+        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);

@@ -86,30 +86,29 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             vPhaseReport.add(r);
         }
         //Large craft suffer a to-hit penalty for the location struck.
-        if (entityTarget instanceof Dropship d) {
-            int loc = hit.getLocation();
-            d.setASEWAffected(loc, 2);
+        if (entityTarget instanceof Dropship dropship) {
+            dropship.setASEWAffected(hit.getLocation(), 2);
             //Report the arc affected by the attack and the duration of the effects
             r = new Report(3472);
             r.subject = subjectId;
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.add(r);
-        } else if (entityTarget instanceof Jumpship j) {
+        } else if (entityTarget instanceof Jumpship jumpship) {
             int loc = hit.getLocation();
-            j.setASEWAffected(loc, 2);
+            jumpship.setASEWAffected(loc, 2);
             //If a Warship is hit in the fore or aft side, the broadside arc is also affected
-            if ((j instanceof Warship)
+            if ((jumpship instanceof Warship)
                     && (loc == Jumpship.LOC_FLS || loc == Jumpship.LOC_ALS)) {
-                j.setASEWAffected(Warship.LOC_LBS, 2);
+                jumpship.setASEWAffected(Warship.LOC_LBS, 2);
                 //Report the arc hit by the attack and the associated broadside and the duration of the effects
                 r = new Report(3474);
                 r.subject = subjectId;
                 r.add(entityTarget.getLocationAbbr(hit));
                 r.add("LBS");
                 vPhaseReport.add(r);
-            } else if ((j instanceof Warship)
+            } else if ((jumpship instanceof Warship)
                     && (loc == Jumpship.LOC_FRS || loc == Jumpship.LOC_ARS)) {
-                j.setASEWAffected(Warship.LOC_RBS, 2);
+                jumpship.setASEWAffected(Warship.LOC_RBS, 2);
                 //Report the arc hit by the attack and the associated broadside and the duration of the effects
                 r = new Report(3474);
                 r.subject = subjectId;
@@ -117,11 +116,11 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
                 r.add("RBS");
                 vPhaseReport.add(r);
             } else {
-            //If the nose or aft is hit, just report the arc affected by the attack and the duration of the effects
-            r = new Report(3472);
-            r.subject = subjectId;
-            r.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.add(r);
+                //If the nose or aft is hit, just report the arc affected by the attack and the duration of the effects
+                r = new Report(3472);
+                r.subject = subjectId;
+                r.add(entityTarget.getLocationAbbr(hit));
+                vPhaseReport.add(r);
             }
         } else {
             // Other units just suffer a flat +4 penalty until the effects expire
@@ -133,11 +132,6 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         }
     }
 
-    /**
-     * Calculate the attack value based on range
-     *
-     * @return an <code>int</code> representing the attack value at that range.
-     */
     @Override
     protected int calcAttackValue() {
         calcCounterAV();

@@ -38,16 +38,15 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
-import megamek.common.weapons.LegAttack;
-import megamek.common.weapons.StopSwarmAttack;
-import megamek.common.weapons.SwarmAttack;
-import megamek.common.weapons.SwarmWeaponAttack;
+import megamek.common.weapons.*;
+import megamek.common.weapons.infantry.InfantryArchaicAxeWeapon;
 import megamek.logging.MMLogger;
 
 public final class UnitToolTip {
@@ -784,9 +783,14 @@ public final class UnitToolTip {
      * special Infantry attacks (Swarm Attacks and the like).
      */
     private static boolean isNotTTRelevant(WeaponType wtype) {
-        return wtype.hasFlag(WeaponType.F_C3M) || wtype.hasFlag(WeaponType.F_C3MBS)
-                || wtype instanceof LegAttack || wtype instanceof SwarmAttack
-                || wtype instanceof StopSwarmAttack || wtype instanceof SwarmWeaponAttack;
+        return wtype.hasFlag(WeaponType.F_C3M) || wtype.hasFlag(WeaponType.F_C3MBS) || wtype instanceof InfantryAttack;
+    }
+
+    /**
+     * @return True if the given MiscType should be excluded from the tooltip. True for everything except clubs.
+     */
+    private static boolean isNotTTRelevant(MiscType wtype) {
+        return !wtype.hasFlag(MiscType.F_CLUB);
     }
 
     private static final String RAPIDFIRE = "|RF|";
@@ -927,6 +931,45 @@ public final class UnitToolTip {
                         wpInfos.put(curWp.getName() + msg_ammo, currAmmo);
                     }
                 }
+            }
+        }
+
+        // Also show hatchets and such equipment in the tooltip as weaponry
+        for (MiscMounted misc : entity.getMisc()) {
+            MiscType type = misc.getType();
+            if (isNotTTRelevant(type)) {
+                continue;
+            }
+
+            String weapDesc = misc.getDesc();
+
+            if (GUIP.getShowWpsLocinTT() && (entity.locations() > 1)) {
+                weapDesc += " [" + entity.getLocationAbbr(misc.getLocation()) + ']';
+            }
+            if (weapDesc.startsWith("+")) {
+                weapDesc = weapDesc.substring(1);
+            }
+            if (misc.getType().isClan()) {
+                weapDesc += CLANWP;
+            }
+
+            String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
+            String msg_clanparens = Messages.getString("BoardView1.Tooltip.ClanParens");
+            weapDesc = weapDesc.replace(msg_clanbrackets, "").replace(msg_clanparens, "").trim();
+            if (wpInfos.containsKey(weapDesc)) {
+                currentWp = wpInfos.get(weapDesc);
+                currentWp.count++;
+                wpInfos.put(weapDesc, currentWp);
+            } else {
+                currentWp = new WeaponInfo();
+                currentWp.name = weapDesc;
+                currentWp.sortString = misc.getName();
+                // Sort active weapons below destroyed to keep them close to their ammo
+                if (!misc.isDestroyed()) {
+                    currentWp.sortString += "1";
+                }
+                currentWp.isClan = type.isClan();
+                wpInfos.put(weapDesc, currentWp);
             }
         }
 

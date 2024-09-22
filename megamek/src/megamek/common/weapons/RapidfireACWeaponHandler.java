@@ -52,7 +52,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         if (kindRapidFire) {
             jamLevel = 2;
         }
-        if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !(ae instanceof Infantry)) {
+        if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !ae.isConventionalInfantry()) {
             if (roll.getIntValue() > 2 || kindRapidFire) {
                 Report r = new Report(3161);
                 r.subject = subjectId;

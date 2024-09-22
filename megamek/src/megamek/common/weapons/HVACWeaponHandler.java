@@ -75,7 +75,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             return true;
         }
 
-        if (roll.getIntValue() == 2) {
+        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setJammed(true);

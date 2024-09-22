@@ -110,8 +110,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // don't have neg ammo feed problem quirk
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
+        } else if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
             // attack roll was a 2, may explode
-        } else if (roll.getIntValue() <= 2) {
             Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3173);
@@ -140,8 +140,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
                 return false;
             }
-            // attack roll was not 2, won't explode
         } else {
+            // attack roll was not 2, won't explode
             return false;
         }
 

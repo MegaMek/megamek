@@ -49,8 +49,30 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         }
         result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation()));
         result.removeIf(o -> Compute.stackingViolation(game, entity, o.elevation(), coords, null, entity.climbMode()) != null);
+
+        if (entity.getMovementMode().isWiGE()) {
+            addAirborneWigeOptions(result);
+        }
+
         Collections.sort(result);
         return result;
+    }
+
+    /**
+     * Adds airborne elevations where the WiGE could deploy landed.
+     *
+     * @param result The current options where the WiGE is landed
+     */
+    private void addAirborneWigeOptions(List<ElevationOption> result) {
+        // WiGE may also deploy flying wherever they can be grounded
+        List<ElevationOption> wigeOptions = new ArrayList<>();
+        for (ElevationOption currentOption : result) {
+            if (!hasElevationOption(result, currentOption.elevation() + 1)) {
+                // If an elevation already exists, it is probably a bridge; at that elevation, the WiGE is landed
+                wigeOptions.add(new ElevationOption(currentOption.elevation() + 1, ELEVATION));
+            }
+        }
+        result.addAll(wigeOptions);
     }
 
     private List<ElevationOption> allowedAeroAltitudes() {
@@ -77,14 +99,6 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         }
         if (!hasZeroElevationOption(result)) {
             result.addAll(allowedZeroElevation());
-        }
-        if (entity.getMovementMode().isWiGE()) {
-            // WiGE may also deploy flying wherever they can be grounded
-            List<ElevationOption> wigeOptions = new ArrayList<>();
-            for (ElevationOption currentOption : result) {
-                wigeOptions.add(new ElevationOption(currentOption.elevation() + 1, ELEVATION));
-            }
-            result.addAll(wigeOptions);
         }
 
         // Bridges block deployment for units of more than 1 level height if they intersect; height() == 0 is 1 level
@@ -160,8 +174,18 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         return result;
     }
 
+    /**
+     * @return True if the given options contain at least one with elevation 0.
+     */
     private boolean hasZeroElevationOption(List<ElevationOption> options) {
-        return options.stream().anyMatch(o -> o.elevation() == 0);
+        return hasElevationOption(options, 0);
+    }
+
+    /**
+     * @return True if the given options contain at least one of the given elevation.
+     */
+    private boolean hasElevationOption(List<ElevationOption> options, int elevation) {
+        return options.stream().anyMatch(o -> o.elevation() == elevation);
     }
 
     private List<ElevationOption> findAllowedElevationsWithBuildings() {

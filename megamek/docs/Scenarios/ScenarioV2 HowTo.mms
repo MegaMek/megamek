@@ -547,11 +547,21 @@ area:
         - [ 3, 3 ]
 
 area:
-  # A halfplane is all hexes above, below, to left or to right of a given coordinate value, including the coordinate
-  # itself.
+  # There are two versions of halfplane
+  # One is cartesian, i.e. vertical or horizontal, i.e. all hexes above, below, to left or to right of a
+  # given coordinate value, including the coordinate (line) itself
   halfplane:
     coordinate: 4
+    # The direction the halfplane extends to: above, below, left or right. A toleft halfplane includes all
+    # hexes of x <= coordinate
+    extends: above
+
+  # The other is delimited by a hex row in one of the 3 directions N/S, NE/SW and NW/SE. The plane extends to
+  # either the right or left of that (there is no above/below, as the hex row cannot be horizontal). The
+  # directions are, as always N = 0, SE = 2 ...; opposite directions have the same result
+  halfplane:
+    point: [4,5]
+    direction: 2
     # The direction the halfplane extends to: above, below, to_left or to_right. A toleft halfplane includes all
     # hexes of x <= coordinate
-    direction: above
-
+    extends: left

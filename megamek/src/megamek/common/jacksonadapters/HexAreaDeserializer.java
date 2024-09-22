@@ -28,8 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static megamek.common.hexarea.HexHalfPlaneShape.HalfPlaneType;
-
 public final class HexAreaDeserializer {
 
     private static final String UNION = "union";
@@ -44,6 +42,7 @@ public final class HexAreaDeserializer {
     private static final String HALF_PLANE = "halfplane";
     private static final String COORDINATE = "coordinate";
     private static final String DIRECTION = "direction";
+    private static final String EXTENDS = "extends";
     private static final String LIST = "list";
     private static final String RECTANGLE = "rectangle";
     private static final String LINE = "line";
@@ -123,10 +122,17 @@ public final class HexAreaDeserializer {
     }
 
     private static HexAreaShape parseHalfPlane(JsonNode node) {
-        MMUReader.requireFields("Halfplane HexArea", node, COORDINATE, DIRECTION);
-        int coordinate = node.get(COORDINATE).intValue() - 1;
-        HalfPlaneType type = HalfPlaneType.valueOf(node.get(DIRECTION).asText().toUpperCase());
-        return new HexHalfPlaneShape(coordinate, type);
+        MMUReader.requireFields("Halfplane HexArea", node, DIRECTION);
+        if (node.has(COORDINATE)) {
+            int coordinate = node.get(COORDINATE).intValue() - 1;
+            var type = HexHalfPlaneShape.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
+            return new HexHalfPlaneShape(coordinate, type);
+        } else {
+            Coords point = CoordsDeserializer.parseNode(node.get(POINT));
+            int direction = node.get(DIRECTION).intValue();
+            var type = HexRowHalfPlaneShape.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
+            return new HexRowHalfPlaneShape(point, direction, type);
+        }
     }
 
     private static HexAreaShape parseLine(JsonNode node) {

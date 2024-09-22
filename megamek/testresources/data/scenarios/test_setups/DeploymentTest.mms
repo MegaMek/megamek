@@ -9,15 +9,10 @@ factions:
 
     deploy:
       area:
-        union:
-          first:
-            line:
-              point: [3,3]
-              direction: 5
-          second:
-            ray:
-              point: [5,4]
-              direction: 3
+        halfplane:
+          point: [2,7]
+          direction: 1
+          extends: right
 
     units:
 #      - fullname: Intruder (3056)

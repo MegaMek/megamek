@@ -31,15 +31,15 @@ import megamek.common.Coords;
  */
 public record HexHalfPlaneShape(int coordinate, HalfPlaneType halfPlaneDirection) implements HexAreaShape {
 
-    public enum HalfPlaneType { ABOVE, BELOW, TO_RIGHT, TO_LEFT }
+    public enum HalfPlaneType { ABOVE, BELOW, RIGHT, LEFT }
 
     @Override
     public boolean containsCoords(Coords coords) {
         return switch (halfPlaneDirection) {
             case ABOVE -> coords.getY() <= coordinate;
             case BELOW -> coords.getY() >= coordinate;
-            case TO_RIGHT -> coords.getX() >= coordinate;
-            case TO_LEFT -> coords.getX() <= coordinate;
+            case RIGHT -> coords.getX() >= coordinate;
+            case LEFT -> coords.getX() <= coordinate;
         };
     }
 }

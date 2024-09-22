@@ -39,7 +39,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = -4801130911083653548L;
     boolean advancedAMS;
-    boolean advancedPD;
     boolean multiAMS;
 
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {

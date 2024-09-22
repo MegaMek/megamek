@@ -7,6 +7,18 @@ map: testiceonwater.board
 factions:
   - name: Test Player
 
+    deploy:
+      area:
+        union:
+          first:
+            line:
+              point: [3,3]
+              direction: 5
+          second:
+            ray:
+              point: [5,4]
+              direction: 3
+
     units:
 #      - fullname: Intruder (3056)
 #      - fullname: Ares Assault Craft Mk.III

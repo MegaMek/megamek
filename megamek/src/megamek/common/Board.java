@@ -34,6 +34,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
+import megamek.common.hexarea.HexArea;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
@@ -129,7 +130,11 @@ public class Board implements Serializable {
 
     private final int boardId = 0;
 
-    private transient Map<Integer, Set<Coords>> deploymentZones = null;
+    /**
+     * The board's deployment zones. These may come as terrains from the board file or they may be set by code.
+     * The field is not transient as zones set by code cannot be reconstructed from terrain.
+     */
+    private Map<Integer, Set<Coords>> deploymentZones = null;
 
     // endregion Variable Declarations
 
@@ -971,8 +976,7 @@ public class Board implements Serializable {
                 return (c.getX() >= (width / 3)) && (c.getX() <= ((2 * width) / 3)) && (c.getY() >= (height / 3))
                         && (c.getY() <= ((2 * height) / 3));
             default: // this could signify a custom deployment zone
-                Set<Coords> customDeploymentZone = getCustomDeploymentZone(
-                        Board.decodeCustomDeploymentZoneID(zoneType));
+                Set<Coords> customDeploymentZone = getCustomDeploymentZone(decodeCustomDeploymentZoneID(zoneType));
                 return (customDeploymentZone != null) && customDeploymentZone.contains(c);
         }
     }
@@ -2013,6 +2017,22 @@ public class Board implements Serializable {
                 }
             }
         }
+    }
+
+    /**
+     * Adds a deployment zone with the given ID and the hexes described by the given HexArea to this board,
+     * replacing the previously present zone of that ID, if there had been one. Note that the zone Id can
+     * be outside those reachable by board files; e.g. the zone Id can be 1000. Note however that zone IDs
+     * in the range of 0 to 50 should be avoided as they'll overwrite terrain deployment zones.
+     *
+     * @param zoneId The zone Id
+     * @param hexArea The hexes comprising this deployment zone
+     */
+    public void setDeploymentZone(int zoneId, HexArea hexArea) {
+        if (deploymentZones == null) {
+            initializeDeploymentZones();
+        }
+        deploymentZones.put(zoneId - NUM_ZONES_X2, hexArea.getCoords(this));
     }
 
     /**

@@ -110,13 +110,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void assignPosition(Entity entity, JsonNode node) {
         try {
             if (node.has(AT)) {
-                List<Integer> xyList = new ArrayList<>();
-                node.get(AT).elements().forEachRemaining(n -> xyList.add(n.asInt()));
-                setDeployedPosition(entity, new Coords(xyList.get(0), xyList.get(1)));
-
+                setDeployedPosition(entity, CoordsDeserializer.parseNode(node.get(AT)));
             } else if (node.has(X) || node.has(Y)) {
-                requireFields("Entity", node, X, Y);
-                setDeployedPosition(entity, new Coords(node.get(X).asInt(), node.get(Y).asInt()));
+                setDeployedPosition(entity, CoordsDeserializer.parseNode(node));
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Illegal position information for entity " + entity, e);

@@ -188,6 +188,19 @@ factions:
       offset: 0
       # width is 3 by default
       width: 1
+    # OR
+    deploy:
+      # see also area definitions
+      area:
+        union:
+          first:
+            circle:
+              center: [ 10, 10 ]
+              radius: 7
+          second:
+            list:
+              - [2,2]
+              - [5,5]
 
     minefields:                               # optional, availability depending on game type
     - conventional: 2
@@ -490,4 +503,55 @@ trigger:
       units: 201
     - type: phasestart
       phase: movement
+
+
+
+# ###############################################
+# Areas
+# are used to define places on the map. They are either a single shape or a combination of shapes. They are
+# never given as a list, only a single element that is either the shape or the combination type.
+# Areas need not be contiguous
+area:
+  # Combinations are union, difference and intersection (see "Constructive Solid Geometry" on wikipedia)
+  # Each combination requires the "first:" and "second:" area to be given. These are areas in turn, i.e.,
+  # they are themselves either shapes or combinations. In other words, this can be nested to any depth.
+  union:
+    first:
+      # A hex circle (or more like, hex-shape) is all hexes around the center at a distance of at most the
+      # given radius (the circle is filled). To get only the hexes at the distance 7, use a difference
+      # of two circles, the second of radius 6 can be used.
+      circle:
+        center: [ 10, 10 ]
+        radius: 7
+    # In union and intersection, it does not matter which area is first and second. In a difference, the second
+    # area is subtracted from the first, so reversing the two changes the result.
+    second:
+      # A list is simply a list of hex coordinates
+      list:
+        - [2,2]
+        - [5,5]
+
+area:
+  difference:
+    first:
+      # A rectangle is given by its corners. The order of the values does not matter, i.e. the corners can be
+      # upper left and lower right or upper right and lower left in any order. The rectangle is filled and includes
+      # its border
+      rectangle:
+        - [ 2, 2 ]
+        - [ 5, 5 ]
+    second:
+      # Subtracting a smaller rectangle leaves the border of the first rectangle
+      rectangle:
+        - [ 4, 4 ]
+        - [ 3, 3 ]
+
+area:
+  # A halfplane is all hexes above, below, to left or to right of a given coordinate value, including the coordinate
+  # itself.
+  halfplane:
+    coordinate: 4
+    # The direction the halfplane extends to: above, below, to_left or to_right. A toleft halfplane includes all
+    # hexes of x <= coordinate
+    direction: above
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -24,10 +24,13 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+
 /**
  * @author Sebastian Brocks
  */
 public class SRMAXHandler extends SRMHandler {
+    @Serial
     private static final long serialVersionUID = 8049199984294733124L;
 
     public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {

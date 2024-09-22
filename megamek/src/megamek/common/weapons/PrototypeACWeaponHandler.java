@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,6 +19,7 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Game;
@@ -31,6 +32,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public class PrototypeACWeaponHandler extends ACWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 1562727719699124106L;
 
     public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {

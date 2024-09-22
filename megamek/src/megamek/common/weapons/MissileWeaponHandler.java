@@ -1,19 +1,25 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
@@ -30,10 +36,10 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public class MissileWeaponHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -4801130911083653548L;
-    boolean advancedAMS = false;
-    boolean advancedPD = false;
-    boolean multiAMS = false;
+    boolean advancedAMS;
+    boolean multiAMS;
 
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -356,8 +362,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     }
 
     /**
-     * Sets the appropriate AMS Bay reporting flag depending on what type of missile
-     * this is
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
     @Override
     protected void setAMSBayReportingFlag() {
@@ -365,8 +370,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     }
 
     /**
-     * Sets the appropriate PD Bay reporting flag depending on what type of missile
-     * this is
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
     @Override
     protected void setPDBayReportingFlag() {

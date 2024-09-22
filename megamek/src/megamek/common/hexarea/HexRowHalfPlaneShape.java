@@ -53,9 +53,9 @@ public class HexRowHalfPlaneShape implements HexAreaShape {
 
     @Override
     public boolean containsCoords(Coords coords) {
-        int comparison = hexLine.judgePoint(coords);
+        int comparison = hexLine.isAbsoluteLeftOrRight(coords);
         return (comparison == 0)
-            || ((comparison == -1) && (planeDirection == HalfPlaneType.RIGHT))
-            || ((comparison == 1) && (planeDirection == HalfPlaneType.LEFT));
+            || ((comparison == 1) && (planeDirection == HalfPlaneType.RIGHT))
+            || ((comparison == -1) && (planeDirection == HalfPlaneType.LEFT));
     }
 }

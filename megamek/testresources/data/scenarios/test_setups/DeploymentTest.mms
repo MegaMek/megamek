@@ -11,8 +11,8 @@ factions:
       area:
         halfplane:
           point: [2,7]
-          direction: 1
-          extends: right
+          direction: 3
+          extends: left
 
     units:
 #      - fullname: Intruder (3056)

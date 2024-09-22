@@ -108,17 +108,19 @@ public class BotGeometry {
      * Coords stores x and y values. Since these are hexes, coordinates with odd x
      * values are a half-hex down. Directions work clockwise around the hex,
      * starting with zero at the top.
-     * -y
-     * 0
-     * _____
-     * 5 / \ 1
-     * -x / \ +x
-     * \ /
-     * 4 \_____/ 2
-     * 3
-     * +y
+     * <pre>
+     *       -y
+     *        0
+     *      _____
+     *   5 /     \ 1
+     * -x /       \ +x
+     *    \       /
+     *   4 \_____/ 2
+     *        3
+     *       +y
+     * </pre>
      * ------------------------------
-     * Direction is stored as above, but the meaning of 'intercept' depends
+     * <BR>Direction is stored as above, but the meaning of 'intercept' depends
      * on the direction. For directions 0, 3, intercept means the y=0 intercept
      * for directions 1, 2, 4, 5 intercept is the x=0 intercept
      */
@@ -144,6 +146,8 @@ public class BotGeometry {
          * returns -1 if the point is to the left of the line
          * +1 if the point is to the right of the line
          * and 0 if the point is on the line
+         * Note that this evaluation depends on the "view" direction of this line. The
+         * result is reversed for HexLines of opposite directions, e.g. directions 0 and 3.
          */
         public int judgePoint(Coords c) {
             HexLine comparor = new HexLine(c, getDirection());
@@ -154,6 +158,24 @@ public class BotGeometry {
             }
 
             return 0;
+        }
+
+        /**
+         * @return -1 if the point is to the left of the line,
+         * +1 if the point is to the right of the line
+         * and 0 if the point is on the line
+         * Note that this evaluation is independent of the "view" direction of this line. The
+         * result is the same for HexLines of opposite directions, e.g. directions 0 and 3.
+         */
+        public int isAbsoluteLeftOrRight(Coords c) {
+            HexLine comparor = new HexLine(c, getDirection());
+            if (comparor.getIntercept() == getIntercept()) {
+                return 0;
+            } else if (comparor.getIntercept() < getIntercept()) {
+                return ((getDirection() == 2) || (getDirection() == 5)) ? 1 : -1;
+            } else {
+                return ((getDirection() == 2) || (getDirection() == 5)) ? -1 : 1;
+            }
         }
 
         /**

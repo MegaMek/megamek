@@ -29,12 +29,12 @@ import megamek.common.Coords;
  * @param coordinate The x or y value where the half plane starts/ends
  * @param halfPlaneDirection The direction in which the half plane extends
  */
-public record HexHalfPlaneShape(int coordinate, HalfPlaneType halfPlaneDirection) implements HexAreaShape {
+public record HalfPlaneHexArea(int coordinate, HalfPlaneType halfPlaneDirection) implements HexArea {
 
     public enum HalfPlaneType { ABOVE, BELOW, RIGHT, LEFT }
 
     @Override
-    public boolean containsCoords(Coords coords) {
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
         return switch (halfPlaneDirection) {
             case ABOVE -> coords.getY() <= coordinate;
             case BELOW -> coords.getY() >= coordinate;

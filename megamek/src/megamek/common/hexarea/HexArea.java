@@ -20,90 +20,129 @@ package megamek.common.hexarea;
 
 import megamek.common.Board;
 import megamek.common.Coords;
+import megamek.common.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This class represents an area composed of hexes. The area can be defined by adding, subtracting
- * or intersecting basic shapes.
- * Note:
+ * This class represents an area composed of hexes. The area can be a basic shape or be defined by adding,
+ * subtracting or intersecting basic shapes. The area can be used to define a deployment zone in code using
+ * {@link Board#setDeploymentZone(int, HexArea)}
+ * <P>Note:
  * <BR>- A HexArea can be empty if its shapes result in no valid hexes;
  * <BR>- A HexArea can be infinite; therefore, its hexes can only be retrieved by limiting the results
- * to a rectangle;
+ * to a rectangle, e.g. a Board;
+ * <BR>- A HexArea can be absolute (independent of the rectangle) or relative to the rectangle that limit
+ * the results;
  * <BR>- A HexArea can appear empty when its shapes do not contain any hexes within the given rectangle;
  * <BR>- A HexArea does not have to be contiguous;
  * <P>HexArea is immutable.
+ * <P>Note that the shape can have any complexity by being itself constructed from other shapes. For example,
+ * the intersection of two circles can be created by calling
+ * <pre>{@code
+ * new HexAreaIntersection(
+ *       new HexCircleShape(new Coords(20, 5), 14),
+ *       new HexCircleShape(new Coords(0, 5), 14));}</pre>
+ *
+ * @see HexAreaUnion
+ * @see HexAreaDifference
+ * @see HexAreaIntersection
+ * @see BorderHexArea
  */
-public class HexArea {
-
-    private final HexAreaShape shape;
+public interface HexArea {
 
     /**
-     * Creates a HexArea from the given shape. Note that the shape can have any complexity by being itself
-     * constructed from other shapes. For example, the intersection of two circles can be created by
-     * calling
-     * <pre>{@code
-     * new HexArea(new HexAreaIntersection(
-     *                 new HexCircleShape(new Coords(20, 5), 14),
-     *                 new HexCircleShape(new Coords(0, 5), 14)));}</pre>
+     * Returns true if this shape contains the given coords. Returns false when the given coords is null.
+     * The given rectangle is the area (e.g. the board) that is looked at currently.
+     * If this shape is absolute, i.e. does not depend on parameters outside itself, the rectangle does not
+     * matter. Some shapes however may be relative to the rectangle, e.g. a shape that returns the borders
+     * of the board. Note that the corner coordinates can be given in any order, i.e. x1 <= x2 or x1 > x2
+     * and likewise for y1 and y2.
      *
-     * @param shape The shape
-     * @see HexAreaUnion
-     * @see HexAreaDifference
-     * @see HexAreaIntersection
+     * @param coords The coords that are tested if they are part of this shape
+     * @param x1 The first corner x of the rectangle limiting the results
+     * @param y1 The first corner y of the rectangle limiting the results
+     * @param x2 The second corner x of the rectangle limiting the results
+     * @param y2 The second corner y of the rectangle limiting the results
+     * @return True if this shape contains the coords
      */
-    public HexArea(HexAreaShape shape) {
-        this.shape = Objects.requireNonNull(shape);
+    boolean containsCoords(@Nullable Coords coords, int x1, int y1, int x2, int y2);
+
+    /**
+     * @return True if this shape is, by itself, finite and small enough and absolute (independent of a board)
+     * that its coords can be given directly. If false, its coords cannot be retrieved,
+     * only {@link #containsCoords(Coords, int, int, int, int)}
+     * can be used. Always call this method and only if it returns true, call {@link #getCoords()}.
+     * <BR><BR>
+     * Implementation note: By default, this method returns false.
+     * <BR>
+     * This method may be overridden to return true for finite, small shapes, such as a hex circle
+     * of diameter 4. In that case, getCoords must also be overriden to return the coords of this
+     * shape.
+     */
+    default boolean isSmall() {
+        // Some shapes, even if finite, have 10000 or more Coords. It may be good to avoid retrieving
+        // those to find the resulting Coords on a small board.
+        // On the other hand, the board may have 10000 hexes and this shape may only have a handful,
+        // making it better to process these coords directly rather than cycle the whole board.
+        // This method exists so both cases can be dealt with as efficiently as possible.
+        return false;
     }
 
     /**
-     * Returns a set of the coords of this HexArea that lie on the given board. The board is only
-     * used to limit the area to its own size. All returned Coords satisfy Board::contains.
+     * Returns all coords of this shape, if it is finite and small enough and an absolute shape. Only use this when
+     * {@link #isSmall()} returns true - it will throw an exception otherwise.
+     * <BR><BR>Implementation note: Throws an exception by default. Override together with {@link #isSmall()}
+     * for small absolute shapes.
      *
-     * @param board A board, the size of which limits the returned coords
+     * @return All Coords of this shape
+     * @throws IllegalStateException when this method is called on a shape where
+     * {@link #isSmall()} returns false
+     * @see #getCoords(int, int, int, int)
+     */
+    default Set<Coords> getCoords() {
+        throw new IllegalStateException("Can only be used on small, finite shapes.");
+    }
+
+    /**
+     * Returns a set of the coords of this Shape that lie on the given board.
+     * This method should not be overridden.
+     *
+     * @param board The board to limit the results to
      * @return Coords of this shape that lie within the board
      */
-    public Set<Coords> getCoords(Board board) {
-        return getCoords(new Coords(board.getWidth(), board.getHeight()));
-    }
-
-    /**
-     * Returns a set of the coords of this HexArea that lie in the rectangle defined by (0, 0) and
-     * the given upper right corner. All returned Coords satisfy Board::contains.
-     * Note that the x and y value of the upper right corner must be at least 0 for the result to not
-     * be empty; for negative values of x or y, use {@link #getCoords(Coords, Coords)} instead.
-     *
-     * @param upperRight The second corner of the rectangle limiting the results
-     * @return Coords of this shape that lie within the rectangle
-     */
-    public Set<Coords> getCoords(Coords upperRight) {
-        return getCoords(new Coords(0, 0), upperRight);
+    default Set<Coords> getCoords(Board board) {
+        return getCoords(0, 0, board.getWidth(), board.getHeight());
     }
 
     /**
      * Returns a set of the coords of this HexArea that lie in the rectangle defined by the given lower
-     * left and upper right corner. All returned Coords satisfy Board::contains. The lower left corner's
-     * x and y should be smaller than the upper right corner's or the result will be empty.
-     * All coordinates may be negative.
+     * left and upper right corner.
+     * This method should not be overridden.
      *
-     * @param lowerLeft The first corner of the rectangle limiting the results
-     * @param upperRight The second corner of the rectangle limiting the results
+     * @param x1 The first corner x of the rectangle limiting the results
+     * @param y1 The first corner y of the rectangle limiting the results
+     * @param x2 The second corner x of the rectangle limiting the results
+     * @param y2 The second corner y of the rectangle limiting the results
      * @return Coords of this shape that lie within the rectangle
      */
-    public Set<Coords> getCoords(Coords lowerLeft, Coords upperRight) {
-        if (shape.isSmall()) {
-            return shape.getCoords().stream()
-                    .filter(c -> isInRectangle(c, lowerLeft, upperRight))
-                    .collect(Collectors.toSet());
+    default Set<Coords> getCoords(int x1, int y1, int x2, int y2) {
+        int xl = Math.min(x1, x2);
+        int xu = Math.max(x1, x2);
+        int yl = Math.min(y1, y2);
+        int yu = Math.max(y1, y2);
+        if (isSmall()) {
+            return getCoords().stream()
+                .filter(coords -> isInRectangle(coords, xl, yl, xu, yu))
+                .collect(Collectors.toSet());
         } else {
             Set<Coords> result = new HashSet<>();
-            for (int y = lowerLeft.getY(); y <= upperRight.getY(); y++) {
-                for (int x = lowerLeft.getX(); x <= upperRight.getX(); x++) {
+            for (int y = yl; y <= yu; y++) {
+                for (int x = xl; x <= xu; x++) {
                     Coords coords = new Coords(x, y);
-                    if (shape.containsCoords(coords)) {
+                    if (containsCoords(coords, xl, yl, xu, yu)) {
                         result.add(coords);
                     }
                 }
@@ -112,8 +151,12 @@ public class HexArea {
         }
     }
 
-    private boolean isInRectangle(Coords coords, Coords upperRight, Coords lowerLeft) {
-        return coords.getX() >= lowerLeft.getX() && coords.getX() <= upperRight.getX()
-                && coords.getY() >= lowerLeft.getY() && coords.getY() <= upperRight.getY();
+    /**
+     * @return True if the coords is in the rectangle given by the corner values which must be sorted
+     * so x1 <= x2 and y1 <= y2. Coords equal to any of the x and y values are counted as in the rectangle.
+     */
+    private boolean isInRectangle(Coords coords, int x1, int y1, int x2, int y2) {
+        return coords.getX() >= x1 && coords.getX() <= x2
+            && coords.getY() >= y1 && coords.getY() <= y2;
     }
 }

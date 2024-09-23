@@ -28,11 +28,11 @@ import java.util.Set;
  * @param firstShape The first of the two shapes; the ordering of the shapes is not relevant
  * @param secondShape The second of the two shapes
  */
-public record HexAreaUnion(HexAreaShape firstShape, HexAreaShape secondShape) implements HexAreaShape {
+public record HexAreaUnion(HexArea firstShape, HexArea secondShape) implements HexArea {
 
     @Override
-    public boolean containsCoords(Coords coords) {
-        return firstShape().containsCoords(coords) || secondShape().containsCoords(coords);
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+        return firstShape().containsCoords(coords, x1, y1, x2, y2) || secondShape().containsCoords(coords, x1, y1, x2, y2);
     }
 
     @Override

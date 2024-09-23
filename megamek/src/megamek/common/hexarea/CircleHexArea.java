@@ -24,10 +24,10 @@ import megamek.common.Coords;
 import java.util.HashSet;
 import java.util.Set;
 
-public record HexCircleShape(Coords center, int diameter) implements HexAreaShape {
+public record CircleHexArea(Coords center, int diameter) implements HexArea {
 
     @Override
-    public boolean containsCoords(Coords coords) {
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
         return (coords != null) && coords.distance(center) <= diameter;
     }
 
@@ -41,7 +41,7 @@ public record HexCircleShape(Coords center, int diameter) implements HexAreaShap
         if (isSmall()) {
             return new HashSet<>(center.allAtDistanceOrLess(diameter));
         } else {
-            return HexAreaShape.super.getCoords();
+            return HexArea.super.getCoords();
         }
     }
 }

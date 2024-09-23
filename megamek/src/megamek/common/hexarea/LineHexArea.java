@@ -27,10 +27,10 @@ import megamek.common.Coords;
  * @param point A hex that this line goes through
  * @param direction The direction of the line, 0 = N, 2 = SE ...
  */
-public record HexLineShape(Coords point, int direction) implements HexAreaShape {
+public record LineHexArea(Coords point, int direction) implements HexArea {
 
     @Override
-    public boolean containsCoords(Coords coords) {
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
         return (direction >= 0) && (direction <= 5)
                 && (point.equals(coords)
                 || point.isOnHexRow(direction, coords)

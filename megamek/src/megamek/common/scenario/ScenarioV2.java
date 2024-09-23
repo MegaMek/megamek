@@ -217,7 +217,7 @@ public class ScenarioV2 implements Scenario {
             if (!playerNode.get(DEPLOY).isContainerNode()) {
                 edge = playerNode.get(DEPLOY).textValue();
             } else if (playerNode.get(DEPLOY).has(AREA)) {
-                deploymentAreas.add(HexAreaDeserializer.parseNode(playerNode.get(DEPLOY).get(AREA)));
+                deploymentAreas.add(HexAreaDeserializer.parseShape(playerNode.get(DEPLOY).get(AREA)));
                 player.setStartingPos(1000 + deploymentAreas.size() - 1);
                 return;
             } else {

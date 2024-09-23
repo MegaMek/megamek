@@ -48,12 +48,9 @@ public final class HexAreaDeserializer {
     private static final String LINE = "line";
     private static final String POINT = "point";
     private static final String RAY = "ray";
+    private static final String BORDER = "border";
 
-    public static HexArea parseNode(JsonNode node) {
-        return new HexArea(parseShape(node));
-    }
-
-    private static HexAreaShape parseShape(JsonNode node) {
+    public static HexArea parseShape(JsonNode node) {
         if (node.has(UNION)) {
             return parseUnion(node.get(UNION));
         } else if (node.has(DIFFERENCE)) {
@@ -72,47 +69,49 @@ public final class HexAreaDeserializer {
             return parseLine(node.get(LINE));
         } else if (node.has(RAY)) {
             return parseRay(node.get(RAY));
+        } else if (node.has(BORDER)) {
+            return parseBorder(node.get(BORDER));
         } else {
             throw new IllegalStateException("Cannot parse area node!");
         }
     }
 
-    private static HexAreaShape parseUnion(JsonNode node) {
+    private static HexArea parseUnion(JsonNode node) {
         MMUReader.requireFields("HexArea", node, FIRST, SECOND);
         return new HexAreaUnion(parseShape(node.get(FIRST)), parseShape(node.get(SECOND)));
     }
 
-    private static HexAreaShape parseDifference(JsonNode node) {
+    private static HexArea parseDifference(JsonNode node) {
         MMUReader.requireFields("HexArea", node, FIRST, SECOND);
         return new HexAreaDifference(parseShape(node.get(FIRST)), parseShape(node.get(SECOND)));
     }
 
-    private static HexAreaShape parseIntersection(JsonNode node) {
+    private static HexArea parseIntersection(JsonNode node) {
         MMUReader.requireFields("HexArea", node, FIRST, SECOND);
         return new HexAreaIntersection(parseShape(node.get(FIRST)), parseShape(node.get(SECOND)));
     }
 
-    private static HexAreaShape parseCircle(JsonNode node) {
+    private static HexArea parseCircle(JsonNode node) {
         MMUReader.requireFields("HexArea", node, CENTER, RADIUS);
-        return new HexCircleShape(CoordsDeserializer.parseNode(node.get(CENTER)), node.get(RADIUS).intValue());
+        return new CircleHexArea(CoordsDeserializer.parseNode(node.get(CENTER)), node.get(RADIUS).intValue());
     }
 
-    private static HexAreaShape parseList(JsonNode node) {
+    private static HexArea parseList(JsonNode node) {
         if (node.isArray()) {
             Set<Coords> coords = new HashSet<>();
             node.forEach(n -> coords.add(CoordsDeserializer.parseNode(n)));
-            return new HexListShape(coords);
+            return new ListHexArea(coords);
         } else {
-            return new HexListShape(CoordsDeserializer.parseNode(node));
+            return new ListHexArea(CoordsDeserializer.parseNode(node));
         }
     }
 
-    private static HexAreaShape parseRectangle(JsonNode node) {
+    private static HexArea parseRectangle(JsonNode node) {
         if (node.isArray()) {
             List<Coords> coords = new ArrayList<>();
             node.forEach(n -> coords.add(CoordsDeserializer.parseNode(n)));
             if (coords.size() == 2) {
-                return new HexRectangleShape(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY());
+                return new RectangleHexArea(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY());
             } else {
                 throw new IllegalArgumentException("A Rectangle must be defined by two corner coords!");
             }
@@ -121,28 +120,33 @@ public final class HexAreaDeserializer {
         }
     }
 
-    private static HexAreaShape parseHalfPlane(JsonNode node) {
+    private static HexArea parseHalfPlane(JsonNode node) {
         MMUReader.requireFields("Halfplane HexArea", node, DIRECTION);
         if (node.has(COORDINATE)) {
             int coordinate = node.get(COORDINATE).intValue() - 1;
-            var type = HexHalfPlaneShape.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
-            return new HexHalfPlaneShape(coordinate, type);
+            var type = HalfPlaneHexArea.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
+            return new HalfPlaneHexArea(coordinate, type);
         } else {
             Coords point = CoordsDeserializer.parseNode(node.get(POINT));
             int direction = node.get(DIRECTION).intValue();
-            var type = HexRowHalfPlaneShape.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
-            return new HexRowHalfPlaneShape(point, direction, type);
+            var type = RowHalfPlaneHexArea.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
+            return new RowHalfPlaneHexArea(point, direction, type);
         }
     }
 
-    private static HexAreaShape parseLine(JsonNode node) {
+    private static HexArea parseLine(JsonNode node) {
         MMUReader.requireFields("Line HexArea", node, POINT, DIRECTION);
-        return new HexLineShape(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+        return new LineHexArea(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
     }
 
-    private static HexAreaShape parseRay(JsonNode node) {
+    private static HexArea parseRay(JsonNode node) {
         MMUReader.requireFields("Ray HexArea", node, POINT, DIRECTION);
-        return new HexRayShape(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+        return new RayHexArea(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+    }
+
+    private static HexArea parseBorder(JsonNode node) {
+        List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node, "north", "south", "east", "west");
+        return new BorderHexArea(borders.contains("north"), borders.contains("south"), borders.contains("east"), borders.contains("west"));
     }
 
     private HexAreaDeserializer() { }

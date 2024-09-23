@@ -30,9 +30,9 @@ import megamek.common.Coords;
  * @param y1 The first y corner coordinate
  * @param y2 The second y corner coordinate
  */
-public record HexRectangleShape(int x1, int y1, int x2, int y2) implements HexAreaShape {
+public record RectangleHexArea(int x1, int y1, int x2, int y2) implements HexArea {
 
-    public HexRectangleShape(int x1, int y1, int x2, int y2) {
+    public RectangleHexArea(int x1, int y1, int x2, int y2) {
         this.x1 = Math.min(x1, x2);
         this.x2 = Math.max(x1, x2);
         this.y1 = Math.min(y1, y2);
@@ -40,7 +40,7 @@ public record HexRectangleShape(int x1, int y1, int x2, int y2) implements HexAr
     }
 
     @Override
-    public boolean containsCoords(Coords coords) {
-        return (coords.getX() >= x1) && (coords.getX() <= x2) && (coords.getY() >= y1) && (coords.getY() <= y2);
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+        return (coords.getX() >= this.x1) && (coords.getX() <= this.x2) && (coords.getY() >= this.y1) && (coords.getY() <= this.y2);
     }
 }

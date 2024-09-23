@@ -512,7 +512,7 @@ trigger:
 # never given as a list, only a single element that is either the shape or the combination type.
 # Areas need not be contiguous
 area:
-  # Combinations are union, difference and intersection (see "Constructive Solid Geometry" on wikipedia)
+  # Combinations are union, difference and intersection (as in "Constructive Solid Geometry")
   # Each combination requires the "first:" and "second:" area to be given. These are areas in turn, i.e.,
   # they are themselves either shapes or combinations. In other words, this can be nested to any depth.
   union:
@@ -565,3 +565,32 @@ area:
     # The direction the halfplane extends to: above, below, to_left or to_right. A toleft halfplane includes all
     # hexes of x <= coordinate
     extends: left
+
+area:
+  intersection:
+    first:
+      # A line along one of the hex row directions (N = 0, SE = 2; opposite directions have the same result)
+      # through one hex; the line is infinite
+      line:
+        point: [ 0, 5 ]
+        direction: 1
+    second:
+      union:
+        first:
+          # A ray along one of the hex row directions (N = 0, SE = 2) starting at a hex; the ray is similar to the
+          # line with the same values but it is cut off at the hex (the ray includes the start hex)
+          ray:
+            point: [ 0, 5 ]
+            direction: 1
+        second:
+          # This area is the north border of the board (all hexes with y = 0)
+          border: north
+
+area:
+  # Two or more borders of the board can be given as a list.
+  # The absolute hexes that these represent depend on
+  # the rectangle that the area is applied to (e.g. the board size)
+  # The east (left) border is all hexes at x = 0; south is all hexes at y = board height; west all hexes at
+  # x = board width
+  border: [ south, east, west ]
+

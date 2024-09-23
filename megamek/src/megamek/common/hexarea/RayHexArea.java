@@ -28,10 +28,10 @@ import megamek.common.Coords;
  * @param point The hex that this line starts at.
  * @param direction The direction of the line, 0 = N, 2 = SE ...
  */
-public record HexRayShape(Coords point, int direction) implements HexAreaShape {
+public record RayHexArea(Coords point, int direction) implements HexArea {
 
     @Override
-    public boolean containsCoords(Coords coords) {
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
         return (direction >= 0) && (direction <= 5)
                 && (point.equals(coords) || point.isOnHexRow(direction, coords));
     }

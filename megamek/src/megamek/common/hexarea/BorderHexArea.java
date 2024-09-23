@@ -20,30 +20,20 @@ package megamek.common.hexarea;
 
 import megamek.common.Coords;
 
-import java.util.Set;
-
 /**
- * This class represents the intersection of two HexAreaShapes.
+ * This class represents one or more of the borders of the any given board or rectangle. It is a relative shape,
+ * i.e. its hexes depend on the rectangle that the HexArea is given when requesting its hexes.
  *
- * @param firstShape The first of the two shapes; the ordering of the shapes is not relevant
- * @param secondShape The second of the two shapes
+ * @param north When true, includes the hexes of the upper board edge (usually at y = 0)
+ * @param south When true, includes the hexes of the lower board edge (usually at y = board height)
+ * @param west When true, includes the hexes of the left board edge (usually at x = 0)
+ * @param east When true, includes the hexes of the right board edge (usually at x = board width)
  */
-public record HexAreaIntersection(HexArea firstShape, HexArea secondShape) implements HexArea {
+public record BorderHexArea(boolean north, boolean south, boolean east, boolean west) implements HexArea {
 
     @Override
     public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
-        return firstShape().containsCoords(coords, x1, y1, x2, y2) && secondShape().containsCoords(coords, x1, y1, x2, y2);
-    }
-
-    @Override
-    public boolean isSmall() {
-        return firstShape().isSmall() && secondShape().isSmall();
-    }
-
-    @Override
-    public Set<Coords> getCoords() {
-        Set<Coords> result = firstShape().getCoords();
-        result.retainAll(secondShape().getCoords());
-        return result;
+        return (north && coords.getY() == Math.min(y1, y2)) || (west && coords.getX() == Math.min(x1, x2))
+            || (south && coords.getY() == Math.max(y1, y2) - 1) || (east && coords.getX() == Math.max(x1, x2) - 1);
     }
 }

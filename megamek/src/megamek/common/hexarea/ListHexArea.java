@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * This class represents a shape formed by a given list of one or more Coords.
  */
-public class HexListShape implements HexAreaShape {
+public class ListHexArea implements HexArea {
 
     private final Set<Coords> coordList = new HashSet<>();
 
@@ -37,7 +37,7 @@ public class HexListShape implements HexAreaShape {
      *
      * @param coordList A collection of coords to form the shape
      */
-    public HexListShape(Collection<Coords> coordList) {
+    public ListHexArea(Collection<Coords> coordList) {
         this.coordList.addAll(coordList);
     }
 
@@ -47,7 +47,7 @@ public class HexListShape implements HexAreaShape {
      * @param coords A coord to form the shape
      * @param moreCoords optional further coords to form the shape
      */
-    public HexListShape(Coords coords, Coords... moreCoords) {
+    public ListHexArea(Coords coords, Coords... moreCoords) {
         coordList.add(coords);
         if ((moreCoords != null) && moreCoords.length > 0) {
             coordList.addAll(Arrays.asList(moreCoords));
@@ -55,7 +55,7 @@ public class HexListShape implements HexAreaShape {
     }
 
     @Override
-    public boolean containsCoords(Coords coords) {
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
         return coordList.contains(coords);
     }
 

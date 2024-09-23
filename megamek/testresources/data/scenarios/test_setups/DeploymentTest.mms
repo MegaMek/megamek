@@ -9,10 +9,7 @@ factions:
 
     deploy:
       area:
-        halfplane:
-          point: [2,7]
-          direction: 3
-          extends: left
+        border: [ north, west, south ]
 
     units:
 #      - fullname: Intruder (3056)

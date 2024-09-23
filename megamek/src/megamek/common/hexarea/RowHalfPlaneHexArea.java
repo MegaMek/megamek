@@ -30,7 +30,7 @@ import java.util.Objects;
  * is the same as a vertical HexHalfPlaneShape. When the line is tilted (directions 1, 2, 4 and 5), the plane
  * extends to the (lower or upper) right or left.
  */
-public class HexRowHalfPlaneShape implements HexAreaShape {
+public class RowHalfPlaneHexArea implements HexArea {
 
     public enum HalfPlaneType { RIGHT, LEFT }
 
@@ -46,13 +46,13 @@ public class HexRowHalfPlaneShape implements HexAreaShape {
      * @param direction The direction of the hex line, 0 = N, 2 = SE ...
      * @param planeDirection The direction the plane extends to
      */
-    public HexRowHalfPlaneShape(Coords point, int direction, HalfPlaneType planeDirection) {
+    public RowHalfPlaneHexArea(Coords point, int direction, HalfPlaneType planeDirection) {
         this.planeDirection = Objects.requireNonNull(planeDirection);
         hexLine = new BotGeometry.HexLine(Objects.requireNonNull(point), direction);
     }
 
     @Override
-    public boolean containsCoords(Coords coords) {
+    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
         int comparison = hexLine.isAbsoluteLeftOrRight(coords);
         return (comparison == 0)
             || ((comparison == 1) && (planeDirection == HalfPlaneType.RIGHT))

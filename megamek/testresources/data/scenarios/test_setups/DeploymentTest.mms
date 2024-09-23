@@ -9,7 +9,14 @@ factions:
 
     deploy:
       area:
-        border: [ north, west, south ]
+        difference:
+          first:
+            border:
+              edges: [ east, north ]
+              mindistance: 2
+              maxdistance: 3
+          second:
+            border: [south, west]
 
     units:
 #      - fullname: Intruder (3056)

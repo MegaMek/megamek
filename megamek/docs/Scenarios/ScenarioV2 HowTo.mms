@@ -594,3 +594,12 @@ area:
   # x = board width
   border: [ south, east, west ]
 
+area:
+  # for a thicker border or inset border, use the "edges:" node
+  border:
+    edges: [ east, north ]
+    # optional: the minimum distance from the edge; 0 means start at the edge hexes
+    mindistance: 2
+    # optional: the maximum distance from the edge
+    maxdistance: 3
+

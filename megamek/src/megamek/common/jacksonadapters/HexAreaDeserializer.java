@@ -49,6 +49,13 @@ public final class HexAreaDeserializer {
     private static final String POINT = "point";
     private static final String RAY = "ray";
     private static final String BORDER = "border";
+    private static final String MIN_DISTANCE = "mindistance";
+    private static final String MAX_DISTANCE = "maxdistance";
+    private static final String NORTH = "north";
+    private static final String SOUTH = "south";
+    private static final String WEST = "west";
+    private static final String EAST = "east";
+    private static final String EDGES = "edges";
 
     public static HexArea parseShape(JsonNode node) {
         if (node.has(UNION)) {
@@ -145,8 +152,23 @@ public final class HexAreaDeserializer {
     }
 
     private static HexArea parseBorder(JsonNode node) {
-        List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node, "north", "south", "east", "west");
-        return new BorderHexArea(borders.contains("north"), borders.contains("south"), borders.contains("east"), borders.contains("west"));
+        if (node.has(EDGES)) {
+            List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node.get(EDGES), NORTH, SOUTH, EAST, WEST);
+            int mindistance = 0;
+            int maxdistance = 0;
+            if (node.has(MIN_DISTANCE)) {
+                mindistance = node.get(MIN_DISTANCE).intValue();
+            }
+            if (node.has(MAX_DISTANCE)) {
+                maxdistance = node.get(MAX_DISTANCE).intValue();
+            }
+            maxdistance = Math.max(maxdistance, mindistance);
+            return new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST), borders.contains(WEST),
+                mindistance, maxdistance);
+        } else {
+            List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node, NORTH, SOUTH, EAST, WEST);
+            return new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST), borders.contains(WEST));
+        }
     }
 
     private HexAreaDeserializer() { }

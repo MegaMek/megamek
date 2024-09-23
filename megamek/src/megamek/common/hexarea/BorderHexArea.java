@@ -29,11 +29,17 @@ import megamek.common.Coords;
  * @param west When true, includes the hexes of the left board edge (usually at x = 0)
  * @param east When true, includes the hexes of the right board edge (usually at x = board width)
  */
-public record BorderHexArea(boolean north, boolean south, boolean east, boolean west) implements HexArea {
+public record BorderHexArea(boolean north, boolean south, boolean east, boolean west, int minInset, int maxInset) implements HexArea {
+
+    public BorderHexArea(boolean north, boolean south, boolean east, boolean west) {
+        this(north, south, east, west, 0, 0);
+    }
 
     @Override
     public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
-        return (north && coords.getY() == Math.min(y1, y2)) || (west && coords.getX() == Math.min(x1, x2))
-            || (south && coords.getY() == Math.max(y1, y2) - 1) || (east && coords.getX() == Math.max(x1, x2) - 1);
+        return (north && (coords.getY() >= Math.min(y1, y2) + minInset) && (coords.getY() <= Math.min(y1, y2) + maxInset))
+            || (west && (coords.getX() >= Math.min(x1, x2) + minInset) && (coords.getX() <= Math.min(x1, x2) + maxInset))
+            || (south && (coords.getY() <= Math.max(y1, y2) - 1 - minInset) && (coords.getY() >= Math.max(y1, y2) - 1 - maxInset))
+            || (east && (coords.getX() <= Math.max(x1, x2) - 1 - minInset) && (coords.getX() >= Math.max(x1, x2) - 1 - maxInset));
     }
 }

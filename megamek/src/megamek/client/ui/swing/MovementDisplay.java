@@ -1558,6 +1558,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
+        // Check for unused velocity for airborne and space craft.
         if (needNagForOther()) {
             if ((ce() != null)
                     && (null != cmd)
@@ -1582,9 +1583,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         && !cmd.contains(MoveStepType.EJECT)) {
                     String title = Messages.getString("MovementDisplay.VelocityLeft.title");
                     String body = Messages.getString("MovementDisplay.VelocityLeft.message");
-                    if (!clientgui.doYesNoDialog(title, body)) {
-                        return true;
-                    }
+                    clientgui.doAlertDialog(title, body);
+                    // always return true here, or airborne units will make illegal moves.
+                    return true;
                 }
             }
         }

@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.1-SNAPSHOT on 2024-09-22
 <UnitType>
 VTOL
 </UnitType>
@@ -28,6 +19,10 @@ Ferret Light Scout VTOL
 3076
 </year>
 
+<originalBuildYear>
+3076
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis) Experimental
 </type>
@@ -35,6 +30,11 @@ Mixed (IS Chassis) Experimental
 <role>
 Scout
 </role>
+
+<quirks>
+low_profile
+imp_sensors
+</quirks>
 
 <motion_type>
 VTOL
@@ -53,11 +53,11 @@ troopspace:1.0
 </engine_type>
 
 <armor_type>
-8
+22
 </armor_type>
 
 <armor_tech>
-7
+1
 </armor_tech>
 
 <armor>
@@ -69,8 +69,8 @@ troopspace:1.0
 </armor>
 
 <Body Equipment>
-Stealth
 CLECMSuite
+IS Vehicular Stealth
 </Body Equipment>
 
 <Front Equipment>
@@ -95,9 +95,4 @@ XTR: Phantoms
 <tonnage>
 5.0
 </tonnage>
-
-<quirks>
-imp_sensors
-low_profile
-</quirks>
 

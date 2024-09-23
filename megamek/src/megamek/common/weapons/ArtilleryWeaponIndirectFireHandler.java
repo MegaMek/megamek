@@ -39,13 +39,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     boolean handledAmmoAndReport = false;
     private int shootingBA = -1;
 
-    /**
-     * This constructor can only be used for deserialization.
-     */
-    protected ArtilleryWeaponIndirectFireHandler() {
-        super();
-    }
-
     public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         if (w.getEntity(g) instanceof BattleArmor) {

@@ -1,18 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Compute;
@@ -31,17 +38,14 @@ import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
- * @since Sep 24, 2004
  */
 public class AmmoWeaponHandler extends WeaponHandler {
+    @Serial
+    private static final long serialVersionUID = -4934490646657484486L;
+
     private static final MMLogger logger = MMLogger.create(AmmoWeaponHandler.class);
 
-    private static final long serialVersionUID = -4934490646657484486L;
     Mounted<?> ammo;
-
-    protected AmmoWeaponHandler() {
-        // deserialization only
-    }
 
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -79,11 +83,9 @@ public class AmmoWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * For ammo weapons, this number can be less than the full number if the
-     * amount of ammo is not high enough
+     * For ammo weapons, this number can be less than the full number if the amount of ammo is not high enough.
      *
-     * @return the number of weapons of this type firing (for squadron weapon
-     *         groups)
+     * @return the number of weapons of this type firing (for squadron weapon groups)
      */
     @Override
     protected int getNumberWeapons() {
@@ -92,10 +94,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             return weapon.getNWeapons();
         }
         int totalShots = ae.getTotalAmmoOfType(ammo.getType());
-        return Math.min(
-                weapon.getNWeapons(),
-                (int) Math.floor((double) totalShots
-                        / (double) weapon.getCurrentShots()));
+        return Math.min(weapon.getNWeapons(), (int) Math.floor((double) totalShots / (double) weapon.getCurrentShots()));
     }
 
     @Override
@@ -104,16 +103,15 @@ public class AmmoWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew
-     * up.
+     * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew up.
      */
     @Override
     protected boolean doAmmoFeedProblemCheck(Vector<Report> vPhaseReport) {
         // don't have neg ammo feed problem quirk
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
+        } else if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
             // attack roll was a 2, may explode
-        } else if (roll.getIntValue() <= 2) {
             Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3173);
@@ -142,8 +140,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
                 return false;
             }
-            // attack roll was not 2, won't explode
         } else {
+            // attack roll was not 2, won't explode
             return false;
         }
 
@@ -170,8 +168,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             }
         }
 
-        // if we're here, the weapon is going to explode whether it's flagged as
-        // explosive or not
+        // if we're here, the weapon is going to explode whether it's flagged as explosive or not
         vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon, true));
     }
 }

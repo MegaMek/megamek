@@ -54,6 +54,8 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
+import megamek.common.hexarea.EmptyHexArea;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
 import megamek.common.options.GameOptions;
@@ -907,6 +909,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * icon.
      */
     protected Base64Image icon = new Base64Image();
+
+    private boolean hasFleeInformation = false;
+    private HexArea fleeArea = new EmptyHexArea();
 
     /**
      * Generates a new, blank, entity.
@@ -15774,5 +15779,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean hasFlotationHull() {
         return hasWorkingMisc(MiscType.F_FLOTATION_HULL);
+    }
+
+    @Override
+    public boolean hasFleeArea() {
+        return hasFleeInformation;
+    }
+
+    @Override
+    public HexArea getFleeFromArea() {
+        return fleeArea;
+    }
+
+    /**
+     * Sets the board area this unit may flee from. The area may be empty, in which case the unit may not flee.
+     *
+     * @param fleeArea The new flee area.
+     */
+    public void setFleeArea(HexArea fleeArea) {
+        this.fleeArea = fleeArea;
     }
 }

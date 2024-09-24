@@ -21,8 +21,8 @@ package megamek.common.hexarea;
 import megamek.common.Coords;
 
 /**
- * This class represents one or more of the borders of the any given board or rectangle. It is a relative shape,
- * i.e. its hexes depend on the rectangle that the HexArea is given when requesting its hexes.
+ * This class represents one or more of the borders of any given board or rectangle. It is a relative shape,
+ * i.e. its hexes depend on the rectangle that the HexArea is given when checking its coords.
  *
  * @param north When true, includes the hexes of the upper board edge (usually at y = 0)
  * @param south When true, includes the hexes of the lower board edge (usually at y = board height)

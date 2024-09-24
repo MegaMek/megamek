@@ -36,6 +36,7 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.force.Forces;
+import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 
 /**
@@ -44,6 +45,8 @@ import megamek.server.scriptedevent.TriggeredEvent;
  * (InGameObjects) and Forces (even if empty); the base class manages these.
  */
 public abstract class AbstractGame implements IGame {
+
+    private static final MMLogger LOGGER = MMLogger.create(AbstractGame.class);
 
     private static final int AWAITING_FIRST_TURN = -1;
 
@@ -443,5 +446,26 @@ public abstract class AbstractGame implements IGame {
         groundObjects.clear();
         currentRound = -1;
         forces = new Forces(this);
+    }
+
+    /**
+     * Returns true when the given unit can flee from the given coords, as set either for the unit itself or for its owner.
+     *
+     * @param unit   The unit that wants to flee
+     * @param coords The hex coords it wants to flee from
+     * @return True when it can indeed flee
+     */
+    public boolean canFleeFrom(Deployable unit, Coords coords) {
+        if ((unit == null) || (coords == null)) {
+            LOGGER.warn("Received null unit or coords!");
+            return false;
+        }
+        if (unit.hasFleeArea()) {
+            return unit.getFleeFromArea().containsCoords(coords, getBoard());
+        } else if (unit instanceof InGameObject inGameObject) {
+            return getPlayer(inGameObject.getOwnerId()).getFleeFromArea().containsCoords(coords, getBoard());
+        } else {
+            return false;
+        }
     }
 }

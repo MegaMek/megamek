@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.hexarea.EmptyHexArea;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
@@ -102,6 +104,8 @@ public final class Player extends TurnOrdered {
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
     private transient boolean votedToAllowGameMaster = false;
+
+    private HexArea fleeArea = new EmptyHexArea();
     //endregion Variable Declarations
 
     //region Constructors
@@ -730,5 +734,23 @@ public final class Player extends TurnOrdered {
         copy.admitsDefeat = admitsDefeat;
 
         return copy;
+    }
+
+    /**
+     * @return The area of the board this player's units are allowed to flee from; An empty area as return value means they
+     * may not flee at all.
+     */
+    public HexArea getFleeFromArea() {
+        return fleeArea;
+    }
+
+    /**
+     * Sets the board area this player's units may flee from. The area may be empty, in which case the units may not flee.
+     *
+     * @param fleeArea The new flee area.
+     * @see megamek.common.hexarea.BorderHexArea
+     */
+    public void setFleeArea(HexArea fleeArea) {
+        this.fleeArea = fleeArea;
     }
 }

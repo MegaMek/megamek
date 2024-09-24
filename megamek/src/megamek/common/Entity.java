@@ -4834,6 +4834,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The formatted heat capacity
      */
     public String formatHeat() {
+        // This method might make sense as an abstract method with overrides in Mek and Aero,
+        // But since the implementation would be the same in both classes, this way avoids code duplication.
         int sinks;
         if (this instanceof Mek m) {
             sinks = m.getActiveSinks();

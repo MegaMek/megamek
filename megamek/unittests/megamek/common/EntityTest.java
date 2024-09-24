@@ -122,7 +122,7 @@ class EntityTest {
             f = new File("testresources/megamek/common/units/Sagittaire SGT-14D.mtf");
             mfp = new MekFileParser(f);
             e = mfp.getEntity();
-            expectedHeat = "28 [42]";
+            expectedHeat = "28, 42 with RHS";
             computedHeat = e.formatHeat();
             assertEquals(expectedHeat, computedHeat);
         } catch (Exception ex) {

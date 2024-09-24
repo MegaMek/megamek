@@ -1566,6 +1566,16 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return capacity;
     }
 
+    @Override
+    public String formatHeat() {
+        int capacity = (getHeatSinks() * (getHeatType() + 1));
+        if (hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            return "%d [%d]".formatted(capacity, capacity + getHeatSinks());
+        } else {
+            return Integer.toString(capacity);
+        }
+    }
+
     // If the aero is in the water, it is dead so no worries
     @Override
     public int getHeatCapacityWithWater() {
@@ -1804,7 +1814,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-    
+
      */
     @Override
     public void setOmni(boolean omni) {

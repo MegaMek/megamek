@@ -4827,6 +4827,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public abstract int getHeatCapacity(boolean radicalHeatSink);
 
     /**
+     * Pretty-prints the heat capacity of a unit, including optional heat sinking systems.
+     * Typically, this is equivalent to {@link #getHeatCapacity()},
+     * but in the presence of Radical Heat Sinks, Coolant Pods, or the RISC Emergency Coolant System,
+     * produces strings like "24 [36]" or "12 [+MoS]".
+     * @return The formatted heat capacity
+     */
+    public String formatHeat() {
+        return Integer.toString(getHeatCapacity(true));
+    }
+
+    /**
      * Returns the amount of heat that the entity can sink each turn, factoring
      * in whether the entity is standing in water.
      */

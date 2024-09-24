@@ -34,6 +34,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.IBasicOption;
@@ -1635,6 +1636,36 @@ public abstract class Mek extends Entity {
         }
 
         return Math.max(capacity, 0);
+    }
+
+    @Override
+    public String formatHeat() {
+        StringBuilder sb = new StringBuilder();
+        int capacity = getHeatCapacity(true, false);
+        sb.append(capacity);
+
+        // Radical Heatsinks
+        if (hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += getActiveSinks();
+            sb.append(" [").append(capacity).append("]");
+        }
+
+        // Coolant Pod
+        for (AmmoMounted m : getAmmo()) {
+            if (m.getType().ammoType == AmmoType.T_COOLANT_POD) {
+                capacity += getActiveSinks();
+                sb.append(" [").append(capacity).append("]");
+                break;
+            }
+        }
+
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                sb.append(" [+MoS]");
+            }
+        }
+
+        return sb.toString();
     }
 
     /**

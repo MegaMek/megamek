@@ -18,7 +18,7 @@
 #
 # Based on Battlecorps Scenario 3011, Lowering the Boom, originally published in FASA's "Kell Hounds" sourcebook
 MMSVersion: 2
-name: Lowering the Boom
+name: Lowering the Boom [Flee]
 planet: Castor
 description: >
   Playing as the Marik side -- 
@@ -146,12 +146,13 @@ factions:
     edge: S
 
   bot:
-    # Optional: which edge am I trying to reach? This is used for the "flee" status
-    destination: SOUTH
-
-    # Optional: flee = will try to reach the destinationEdge even when not crippled
-    # forcedwithdrawal = follow the Forced Withdrawal rules
-    status: flee
+    # must be pretty berserk to hunt down the Mariks in this scenario
+    selfpreservation: 2
+    fallshame: 2
+    hyperaggression: 9
+    herdmentality: 3
+    bravery: 8
+    forcedwithdrawal: false
 
   victory:
     - modify: onlyatend

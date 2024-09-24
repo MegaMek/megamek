@@ -23,7 +23,7 @@ import megamek.common.Player;
 import megamek.common.jacksonadapters.PrincessSettingsBuilder;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.IGameManager;
 import megamek.server.trigger.Trigger;
 import org.apache.logging.log4j.LogManager;
@@ -57,7 +57,7 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
             return;
         }
 
-        GameManager gm = (GameManager) gameManager;
+        TWGameManager gm = (TWGameManager) gameManager;
         int id = findPlayerId(playerName, gm);
         BehaviorSettings newSettings = settingsBuilder.build(gm.getGame().getBotSettings().get(playerName));
         gm.getGame().getBotSettings().put(playerName, newSettings);
@@ -65,7 +65,7 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
     }
 
     private boolean validateData(IGameManager gameManager) {
-        if (!(gameManager instanceof GameManager gm)) {
+        if (!(gameManager instanceof TWGameManager gm)) {
             LogManager.getLogger().error("PrincessSettingsEvent is only available in TW games");
             return false;
         } else if (findPlayerId(playerName, gameManager) == Player.PLAYER_NONE) {

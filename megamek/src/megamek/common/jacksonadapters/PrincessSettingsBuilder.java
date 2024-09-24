@@ -28,6 +28,17 @@ import megamek.logging.MMLogger;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.*;
 
+/**
+ * This class is a builder for settings for a Princess bot (BehaviorSettings) and also supports parsing
+ * such settings from a yaml MM scenario definition. The difference to BehaviorSettings itself is
+ * that this builder can work with incomplete settings, such as only a change to herdmentality or
+ * only a change to auto-flee. When building the final BehaviorSettings, either default values or
+ * the values of a given other BehaviorSettings are used where the builder has no value.
+ *
+ * @see BehaviorSettings
+ * @see PrincessSettingsBuilder#build()
+ * @see PrincessSettingsBuilder#build(BehaviorSettings)
+ */
 @JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, setterVisibility = NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PrincessSettingsBuilder {
@@ -38,8 +49,8 @@ public class PrincessSettingsBuilder {
     private static final String PRINCESS_FALL_SHAME = "fallshame";
     private static final String PRINCESS_AGGRESSION = "hyperaggression";
     private static final String PRINCESS_HERDING = "herdmentality";
-    private static final String PRINCESS_DESTINATION = "destination";
-    private static final String PRINCESS_RETREAT = "retreat";
+    private static final String PRINCESS_DESTINATION = "fleeto";
+    private static final String PRINCESS_RETREAT = "withdrawto";
     private static final String PRINCESS_FLEE = "flee";
     private static final String PRINCESS_FORCED_WITHDRAW = "forcedwithdraw";
 
@@ -75,21 +86,25 @@ public class PrincessSettingsBuilder {
 
     private String description = null;
 
+    @SuppressWarnings("unused")
     public PrincessSettingsBuilder selfPreservation(int selfPreservation) {
         this.selfPreservation = selfPreservation;
         return this;
     }
 
+    @SuppressWarnings("unused")
     public PrincessSettingsBuilder fallShame(int fallShame) {
         this.fallShame = fallShame;
         return this;
     }
 
+    @SuppressWarnings("unused")
     public PrincessSettingsBuilder hyperAgression(int hyperAgression) {
         this.hyperAgression = hyperAgression;
         return this;
     }
 
+    @SuppressWarnings("unused")
     public PrincessSettingsBuilder herdMentality(int herdMentality) {
         this.herdMentality = herdMentality;
         return this;
@@ -136,7 +151,7 @@ public class PrincessSettingsBuilder {
 
     /**
      * Returns new BehaviorSettings based on the given settings. Settings that are present in this builder
-     * overwrite the previous settings, others are untouched.
+     * overwrite the previous settings, otherwise the previous settings are left unchanged.
      *
      * @param previousSettings Settings to base the new settings on
      * @return New BehaviorSettings that incorporate the settings of this builder
@@ -193,7 +208,7 @@ public class PrincessSettingsBuilder {
 
     /**
      * Returns new BehaviorSettings based on the Princess default settings. Settings that are present in this
-     * builder overwrite the default settings, others are untouched.
+     * builder overwrite the default settings, others are left at their default values.
      *
      * @return New BehaviorSettings that incorporate the settings of this builder
      */

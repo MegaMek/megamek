@@ -18,7 +18,7 @@
 #
 # Based on Battlecorps Scenario 3011, Lowering the Boom, originally published in FASA's "Kell Hounds" sourcebook
 MMSVersion: 2
-name: Lowering the Boom
+name: Lowering the Boom [Hunt]
 planet: Castor
 description: >
   Playing as the Kell Hound side --  
@@ -114,13 +114,20 @@ factions:
           piloting: 4
           gunnery: 4
 
+  # OPFOR ----------------------------
   - name: Thirtieth Marik Militia
     camo: Free Worlds League/Marik Militia/Marik Militia.jpg
     deploy: N
 
     bot:
-      destination: north
-      status: flee
+      # try to get away
+      selfpreservation: 8
+      fallshame: 8
+      hyperaggression: 4
+      herdmentality: 1
+      bravery: 3
+      fleeto: north
+      flee: true
 
     victory:
       - trigger:
@@ -252,15 +259,12 @@ messages:
     text: |
       ## Defender's Task
       
-      In this scenario, it is your task to save Col. Oliver Nage and his elements of 1st Company, 1st Battalion 
-      from the attacking Kell Hounds. Try to escape by retreating off the north edge of the map with 
-      as many Meks as possible.
+      In this scenario, it is your task to stop Col. Oliver Nage and his elements of 1st Company, 1st Battalion 
+      from reaching the weapons depot which lies beyond the north edge of the map. They will try to reach and
+      escape from this edge with as many Meks as possible.
       
-      Be careful! Some of your Meks have already sustained damage.
-      
-      *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory. 
-      If you do this, Princess will be sad.*
-    image: loweringboom_map.png
+      Some of their Meks have already sustained damage.
+    image: loweringboom_map_reverse.png
     trigger:
       type: and
       triggers:

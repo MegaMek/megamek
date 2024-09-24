@@ -310,11 +310,11 @@ factions:
       # Optional: use forced Withdrawal, this is true by default
       forcedwithdrawal: true
       # Optional: the edge to retreat to, nearest by default; use south, north, west, east, nearest
-      retreat: nearest
+      withdrawto: nearest
       # Optional: flee = true will try to reach the destination edge even when not crippled
       flee: true
       # Optional: the edge to flee to; use south, north, west, east, nearest
-      destination: none
+      fleeto: none
 
       #      private boolean goHome = false; // Should I immediately proceed to my home board edge?
       #      private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to blow up?

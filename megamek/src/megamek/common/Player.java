@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.hexarea.BorderHexArea;
 import megamek.common.hexarea.EmptyHexArea;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -105,7 +106,7 @@ public final class Player extends TurnOrdered {
     private transient boolean votedToAllowTeamChange = false;
     private transient boolean votedToAllowGameMaster = false;
 
-    private HexArea fleeArea = new EmptyHexArea();
+    private HexArea fleeArea = new BorderHexArea(true, true, true, true);
     //endregion Variable Declarations
 
     //region Constructors

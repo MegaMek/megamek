@@ -9546,9 +9546,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && !isShutDown()
                 && !getCrew().isUnconscious()
                 && (getSwarmTargetId() == NONE)
-                && (isOffBoard() || ((pos != null)
-                        && ((pos.getX() == 0) || (pos.getX() == (getGame().getBoard().getWidth() - 1))
-                                || (pos.getY() == 0) || (pos.getY() == (getGame().getBoard().getHeight() - 1)))));
+                && (isOffBoard() || ((pos != null) && game.canFleeFrom(this, pos)));
     }
 
     public void setEverSeenByEnemy(boolean b) {

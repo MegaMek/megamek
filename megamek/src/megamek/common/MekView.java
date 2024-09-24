@@ -450,7 +450,7 @@ public class MekView {
                 hsString.append(" (").append(a.getPodHeatSinks()).append(" ")
                         .append(Messages.getString("MekView.Pod")).append(")");
             }
-            if (a.getHeatCapacity() > a.getHeatSinks()) {
+            if (!a.formatHeat().equals(Integer.toString(a.getHeatSinks()))) {
                 hsString.append(" [")
                         .append(a.formatHeat()).append("]");
             }
@@ -468,7 +468,7 @@ public class MekView {
             Mek aMek = (Mek) entity;
             StringBuilder hsString = new StringBuilder();
             hsString.append(aMek.heatSinks());
-            if (aMek.getHeatCapacity() > aMek.heatSinks()) {
+            if (!aMek.formatHeat().equals(Integer.toString(aMek.heatSinks()))) {
                 hsString.append(" [").append(aMek.formatHeat()).append("]");
             }
             if (aMek.damagedHeatSinks() > 0) {

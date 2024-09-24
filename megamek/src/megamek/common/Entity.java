@@ -4834,7 +4834,42 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The formatted heat capacity
      */
     public String formatHeat() {
-        return Integer.toString(getHeatCapacity(true));
+        int sinks;
+        if (this instanceof Mek m) {
+            sinks = m.getActiveSinks();
+        } else if (this instanceof Aero a) {
+            sinks = a.getHeatSinks();
+        } else {
+            return "(none)";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int capacity = getHeatCapacity(false);
+        sb.append(capacity);
+
+        // Radical Heat Sinks
+        if (hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += sinks;
+            sb.append(", ").append(capacity).append(" with RHS");
+        }
+
+        // Coolant Pod
+        for (AmmoMounted m : getAmmo()) {
+            if (m.getType().ammoType == AmmoType.T_COOLANT_POD) {
+                capacity += sinks;
+                sb.append(", ").append(capacity).append(" with Coolant Pod");
+                break;
+            }
+        }
+
+        // RISC ECS
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                sb.append(", +MoS with RISC ECS");
+            }
+        }
+
+        return sb.toString();
     }
 
     /**

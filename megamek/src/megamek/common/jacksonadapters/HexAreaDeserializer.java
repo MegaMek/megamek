@@ -56,6 +56,7 @@ public final class HexAreaDeserializer {
     private static final String WEST = "west";
     private static final String EAST = "east";
     private static final String EDGES = "edges";
+    private static final String EMPTY = "empty";
 
     public static HexArea parseShape(JsonNode node) {
         if (node.has(UNION)) {
@@ -78,6 +79,8 @@ public final class HexAreaDeserializer {
             return parseRay(node.get(RAY));
         } else if (node.has(BORDER)) {
             return parseBorder(node.get(BORDER));
+        } else if (node.has(EMPTY)) {
+            return new EmptyHexArea();
         } else {
             throw new IllegalStateException("Cannot parse area node!");
         }

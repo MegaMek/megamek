@@ -15790,11 +15790,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Sets the board area this unit may flee from. The area may be empty, in which case the unit may not flee.
+     * Sets the board area this unit may flee from. The area may be empty, in which case the unit may not flee. Also sets this unit to know
+     * that it has a flee area and should respect it.
      *
      * @param fleeArea The new flee area.
      */
     public void setFleeArea(HexArea fleeArea) {
         this.fleeArea = fleeArea;
+        hasFleeInformation = true;
+    }
+
+    /**
+     * Resets the flee information this unit has. It will not consider to have its own flee area; the game will refer to its owner to see if
+     * it can flee from a hex.
+     */
+    public void removeFleeArea() {
+        fleeArea = new EmptyHexArea();
+        hasFleeInformation = false;
     }
 }

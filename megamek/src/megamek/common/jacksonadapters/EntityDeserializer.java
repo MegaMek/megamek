@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import megamek.common.*;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.scenario.Scenario;
 
@@ -59,6 +60,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String AMMO = "ammo";
     private static final String SLOT = "slot";
     private static final String SHOTS = "shots";
+    private static final String FLEE_AREA = "fleefrom";
 
     public EntityDeserializer() {
         this(null);
@@ -89,6 +91,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignRemaining(entity, node);
         assignCrits(entity, node);
         assignAmmos(entity, node);
+        assignFleeArea(entity, node);
         return entity;
     }
 
@@ -313,6 +316,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             } else {
                 throw new IllegalArgumentException("Invalid ammo slot " + location + ":" + (slot + 1) + " on " + entity);
             }
+        }
+    }
+
+    private void assignFleeArea(Entity entity, JsonNode node) {
+        if (node.has(FLEE_AREA)) {
+            entity.setFleeArea(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
         }
     }
 

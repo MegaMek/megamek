@@ -504,7 +504,35 @@ trigger:
     - type: phasestart
       phase: movement
 
+trigger:
+  # The position condition is met when the given number(s) of units are in the given area
+  type: position
+  area:
+    border:
+      edges: north
+      maxdistance: 3
+  # Optional: limit the test to the player's units
+  player: Player A
+  # Optional: a list of units to limit the check to. This makes sense most of time to avoid counting MekWarriors
+  # or other spawns; when giving unit IDs, the player limitation is redundant
+  # It also makes sense to set fixed IDs for all units to make sure this works correctly
+  units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+  # At least the given number of units must be in the given area, can be alone or combined with atmost
+  atleast: 7
+  # At most the given number of units must be in the given area, can be alone or combined with atleast
+  atmost: 10
+  # OR: the exact number of units must be in the given area; this cannot be combined with atmost/atleast
+  count: 2
 
+trigger:
+  # This is a simpler way to write a position condition that is met when the unit is in the given area
+  type: position
+  area:
+    border:
+      edges: north
+      maxdistance: 3
+  # The unit ID to be checked
+  unit: 201
 
 # ###############################################
 # Areas
@@ -602,4 +630,8 @@ area:
     mindistance: 2
     # optional: the maximum distance from the edge
     maxdistance: 3
+
+area:
+  # The empty area has no hexes. Can be used to prevent units from fleeing the board
+  empty:
 

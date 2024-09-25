@@ -27,8 +27,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//TODO: add flee from ... field to entity, fallback to player, fallback to team -> game method
-//TODO: check fleefrom in movementdisplay
+//TODO: read flee area for player
+//TODO: show flee area in some way
+//TODO: positional trigger: read yaml
+//TODO: positional trigger: test
+//TODO: positional trigger: write how to
+
 
 /**
  * This class represents an area composed of hexes. The area can be a basic shape or be defined by adding, subtracting or intersecting basic

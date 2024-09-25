@@ -32,7 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import megamek.common.*;
-import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.scenario.Scenario;
 
@@ -61,6 +60,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String SLOT = "slot";
     private static final String SHOTS = "shots";
     private static final String FLEE_AREA = "fleefrom";
+    private static final String AREA = "area";
 
     public EntityDeserializer() {
         this(null);
@@ -321,7 +321,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
 
     private void assignFleeArea(Entity entity, JsonNode node) {
         if (node.has(FLEE_AREA)) {
-            entity.setFleeArea(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
+            // allow using or omitting "area:"
+            if (node.get(FLEE_AREA).has(AREA)) {
+                entity.setFleeArea(HexAreaDeserializer.parseShape(node.get(FLEE_AREA).get(AREA)));
+            } else {
+                entity.setFleeArea(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
+            }
         }
     }
 

@@ -25,7 +25,6 @@ factions:
 #      - fullname: Invader Jumpship (2631) (LF)
 #      - fullname: Fensalir Combat WiGE
         fleefrom:
-#          area:
             intersection:
               first:
                 border: north

@@ -717,7 +717,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private final Vector<Integer> hitBySwarmsWeapon = new Vector<>();
 
     /**
-     * True if and only if this is a canon (published) unit.
+     * True if and only if this is a canon (published) unit. This is established
+     * by checking against a text file in the docs folder; "OfficialUnitList.txt".
+     * @see MekFileParser
      */
     private boolean canon;
 

@@ -22,7 +22,7 @@ import megamek.common.Board;
 import megamek.common.Coords;
 
 /**
- * This class represents one or more of the borders of any given board or rectangle. It is a relative shape, i.e. its hexes depend on the
+ * This class represents one or more of the edge of any given board. It is a relative shape, i.e. its hexes depend on the
  * board that the HexArea is given when checking its coords.
  */
 public class BorderHexArea extends AbstractHexArea {

@@ -287,6 +287,14 @@ public class ScenarioV2 implements Scenario {
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
 
+            // The flee area
+            if (playerNode.has(EntityDeserializer.FLEE_AREA)) {
+                JsonNode fleeNode = playerNode.get(EntityDeserializer.FLEE_AREA);
+                // allow using or omitting "area:"
+                JsonNode areaNode = fleeNode.has(AREA) ? fleeNode.get(AREA) : fleeNode;
+                player.setFleeArea(HexAreaDeserializer.parseShape(areaNode));
+            }
+
             // TODO minefields
 
             // Carryables

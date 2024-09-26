@@ -41,7 +41,10 @@ planetaryconditions:
 factions:
 - name: Zakahashi's Zombies
   camo: Draconis Combine/Dieron Regulars/Dieron Regulars.jpg
-  deploy: N
+  deploy: S
+
+  fleefrom:
+    border: south
 
   victory:
     - trigger:
@@ -321,9 +324,6 @@ messages:
       Meks off the southern map edge by the end of round 15.
 
       The temperature in this desert area is at 70°C, adding heat to all Meks.
-
-      *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory.
-      If you do this, Princess will be sad.*
     image: tosaveaprince_map.png
     trigger:
       type: and
@@ -389,6 +389,7 @@ end:
   - trigger:
       type: killedunits
       units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+      # can't get through with half the force anymore when 7 are killed
       atleast: 7
 
   - trigger:

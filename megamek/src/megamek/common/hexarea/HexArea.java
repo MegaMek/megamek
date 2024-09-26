@@ -25,12 +25,15 @@ import megamek.common.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Set;
 
-//TODO: read flee area for player
+//read flee area for player
 //TODO: show flee area in some way
 //TODO: positional trigger: read yaml
 //TODO: positional trigger: test
 //TODO: positional trigger: write how to
-//TODO: Terrain-type HexArea?
+//Terrain-type HexArea?
+//TODO: cache results in TerrainHexArea when distance > 0
+//TODO: read terrainhex and hexlevel from yaml
+//limit fleeing in scenarios LoweringBoom
 
 
 /**

@@ -59,7 +59,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String AMMO = "ammo";
     private static final String SLOT = "slot";
     private static final String SHOTS = "shots";
-    private static final String FLEE_AREA = "fleefrom";
+    public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
 
     public EntityDeserializer() {

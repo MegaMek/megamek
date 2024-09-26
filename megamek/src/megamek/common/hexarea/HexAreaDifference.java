@@ -32,7 +32,7 @@ public class HexAreaDifference extends AbstractHexArea {
     private final HexArea secondShape;
 
     /**
-     * Creates a difference between the two given hex areas.
+     * Creates an area that is the difference between the two given hex areas, firstShape - secondShape.
      *
      * @param firstShape  The first of the two shapes; the ordering of the shapes is relevant
      * @param secondShape The second of the two shapes

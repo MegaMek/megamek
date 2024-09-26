@@ -50,7 +50,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * The information is encoded in a series of classes that implement a common
  * {@link ViewElement}
  * interface, which can format the element either in html or in plain text.
- * 
+ *
  * @author Ryan McConnell
  * @since January 20, 2003
  */
@@ -450,9 +450,9 @@ public class MekView {
                 hsString.append(" (").append(a.getPodHeatSinks()).append(" ")
                         .append(Messages.getString("MekView.Pod")).append(")");
             }
-            if (a.getHeatCapacity() > a.getHeatSinks()) {
+            if (!a.formatHeat().equals(Integer.toString(a.getHeatSinks()))) {
                 hsString.append(" [")
-                        .append(a.getHeatCapacity()).append("]");
+                        .append(a.formatHeat()).append("]");
             }
             if (a.getHeatSinkHits() > 0) {
                 hsString.append(warningStart()).append(" (").append(a.getHeatSinkHits())
@@ -468,8 +468,8 @@ public class MekView {
             Mek aMek = (Mek) entity;
             StringBuilder hsString = new StringBuilder();
             hsString.append(aMek.heatSinks());
-            if (aMek.getHeatCapacity() > aMek.heatSinks()) {
-                hsString.append(" [").append(aMek.getHeatCapacity()).append("]");
+            if (!aMek.formatHeat().equals(Integer.toString(aMek.heatSinks()))) {
+                hsString.append(" [").append(aMek.formatHeat()).append("]");
             }
             if (aMek.damagedHeatSinks() > 0) {
                 hsString.append(" ").append(warningStart()).append("(")
@@ -640,7 +640,7 @@ public class MekView {
     /**
      * The head section includes the title (unit name), tech level and availability,
      * tonnage, bv, and cost.
-     * 
+     *
      * @return The data from the head section.
      */
     public String getMekReadoutHead() {
@@ -651,7 +651,7 @@ public class MekView {
      * The basic section includes general details such as movement, system equipment
      * (cockpit, gyro, etc.)
      * and armor.
-     * 
+     *
      * @return The data from the basic section
      */
     public String getMekReadoutBasic() {
@@ -660,7 +660,7 @@ public class MekView {
 
     /**
      * The invalid section includes reasons why the unit is invalid
-     * 
+     *
      * @return The data from the invalid section
      */
     public String getMekReadoutInvalid() {
@@ -670,7 +670,7 @@ public class MekView {
     /**
      * The loadout includes weapons, ammo, and other equipment broken down by
      * location.
-     * 
+     *
      * @return The data from the loadout section.
      */
     public String getMekReadoutLoadout() {
@@ -681,7 +681,7 @@ public class MekView {
      * The fluff section includes fluff details like unit history and deployment
      * patterns
      * as well as quirks.
-     * 
+     *
      * @return The data from the fluff section.
      */
     public String getMekReadoutFluff() {
@@ -1683,7 +1683,7 @@ public class MekView {
      * Marks warning text; in html the text is displayed in red. In plain text it is
      * preceded and followed
      * by an asterisk.
-     * 
+     *
      * @return A String that is used to mark the beginning of a warning.
      */
     private String warningStart() {
@@ -1701,7 +1701,7 @@ public class MekView {
 
     /**
      * Returns the end element of the warning text.
-     * 
+     *
      * @return A String that is used to mark the end of a warning.
      */
     private String warningEnd() {
@@ -1721,7 +1721,7 @@ public class MekView {
      * Marks the beginning of a section of italicized text if using html output. For
      * plain text
      * returns an empty String.
-     * 
+     *
      * @return The starting element for italicized text.
      */
     private String italicsStart() {
@@ -1739,7 +1739,7 @@ public class MekView {
 
     /**
      * Marks the end of a section of italicized text.
-     * 
+     *
      * @return The ending element for italicized text.
      */
     private String italicsEnd() {

@@ -4829,6 +4829,54 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public abstract int getHeatCapacity(boolean radicalHeatSink);
 
     /**
+     * Pretty-prints the heat capacity of a unit, including optional heat sinking systems.
+     * Typically, this is equivalent to {@link #getHeatCapacity()},
+     * but in the presence of Radical Heat Sinks, Coolant Pods, or the RISC Emergency Coolant System,
+     * produces strings like "24 [36]" or "12 [+MoS]".
+     * @return The formatted heat capacity
+     */
+    public String formatHeat() {
+        // This method might make sense as an abstract method with overrides in Mek and Aero,
+        // But since the implementation would be the same in both classes, this way avoids code duplication.
+        int sinks;
+        if (this instanceof Mek m) {
+            sinks = m.getActiveSinks();
+        } else if (this instanceof Aero a) {
+            sinks = a.getHeatSinks();
+        } else {
+            return "(none)";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int capacity = getHeatCapacity(false);
+        sb.append(capacity);
+
+        // Radical Heat Sinks
+        if (hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += sinks;
+            sb.append(", ").append(capacity).append(" with RHS");
+        }
+
+        // Coolant Pod
+        for (AmmoMounted m : getAmmo()) {
+            if (m.getType().ammoType == AmmoType.T_COOLANT_POD) {
+                capacity += sinks;
+                sb.append(", ").append(capacity).append(" with Coolant Pod");
+                break;
+            }
+        }
+
+        // RISC ECS
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                sb.append(", +MoS with RISC ECS");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
      * Returns the amount of heat that the entity can sink each turn, factoring
      * in whether the entity is standing in water.
      */

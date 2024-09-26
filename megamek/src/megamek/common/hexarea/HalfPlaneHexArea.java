@@ -18,23 +18,36 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 /**
- * This class represents a half plane shape. The plane is delimited by the given coordinate, which is
- * either a hex column or row (x or y) depending on the halfPlaneDirection given. A half plane with
- * coordinate 5 and direction ABOVE extends from Coords (x, 5) upwards, i.e. (0, 0) is within that plane,
- * (0, 10) is not. The given coordinate itself is part of the half plane.
- *
- * @param coordinate The x or y value where the half plane starts/ends
- * @param halfPlaneDirection The direction in which the half plane extends
+ * This class represents a half plane shape. The plane is delimited by the given coordinate, which is either a hex column or row (x or y)
+ * depending on the halfPlaneDirection given. A half plane with coordinate 5 and direction ABOVE extends from Coords (x, 5) upwards, i.e.
+ * (0, 0) is within that plane, (0, 10) is not. The given coordinate itself is part of the half plane.
  */
-public record HalfPlaneHexArea(int coordinate, HalfPlaneType halfPlaneDirection) implements HexArea {
+public class HalfPlaneHexArea extends AbstractHexArea {
 
-    public enum HalfPlaneType { ABOVE, BELOW, RIGHT, LEFT }
+    public enum HalfPlaneType {ABOVE, BELOW, RIGHT, LEFT}
+
+    private final int coordinate;
+    private final HalfPlaneType halfPlaneDirection;
+
+    /**
+     * Creates a half plane shape. The plane is delimited by the given coordinate, which is either a hex column or row (x or y) depending on
+     * the halfPlaneDirection given. A half plane with coordinate 5 and direction ABOVE extends from Coords (x, 5) upwards, i.e. (0, 0) is
+     * within that plane, (0, 10) is not. The given coordinate itself is part of the half plane.
+     *
+     * @param coordinate         The x or y value where the half plane starts/ends
+     * @param halfPlaneDirection The direction in which the half plane extends
+     */
+    public HalfPlaneHexArea(int coordinate, HalfPlaneType halfPlaneDirection) {
+        this.coordinate = coordinate;
+        this.halfPlaneDirection = halfPlaneDirection;
+    }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+    public boolean containsCoords(Coords coords, Board board) {
         return switch (halfPlaneDirection) {
             case ABOVE -> coords.getY() <= coordinate;
             case BELOW -> coords.getY() >= coordinate;

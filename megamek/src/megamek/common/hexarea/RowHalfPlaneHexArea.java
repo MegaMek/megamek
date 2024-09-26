@@ -20,6 +20,7 @@
 package megamek.common.hexarea;
 
 import megamek.client.bot.princess.BotGeometry;
+import megamek.common.Board;
 import megamek.common.Coords;
 
 import java.util.Objects;
@@ -30,7 +31,7 @@ import java.util.Objects;
  * is the same as a vertical HexHalfPlaneShape. When the line is tilted (directions 1, 2, 4 and 5), the plane
  * extends to the (lower or upper) right or left.
  */
-public class RowHalfPlaneHexArea implements HexArea {
+public class RowHalfPlaneHexArea extends AbstractHexArea {
 
     public enum HalfPlaneType { RIGHT, LEFT }
 
@@ -52,7 +53,7 @@ public class RowHalfPlaneHexArea implements HexArea {
     }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+    public boolean containsCoords(Coords coords, Board board) {
         int comparison = hexLine.isAbsoluteLeftOrRight(coords);
         return (comparison == 0)
             || ((comparison == 1) && (planeDirection == HalfPlaneType.RIGHT))

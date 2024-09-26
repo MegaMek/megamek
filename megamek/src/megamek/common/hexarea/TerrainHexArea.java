@@ -16,31 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.common.hexarea;
 
 import megamek.common.Board;
 import megamek.common.Coords;
 
-import java.util.HashSet;
 import java.util.Set;
 
-/**
- * This HexArea has no coords at all. It can be used as a placeholder to avoid null values.
- */
-public class EmptyHexArea extends AbstractHexArea {
+public class TerrainHexArea extends AbstractHexArea {
+
+    private final int terrainType;
+
+    public TerrainHexArea(int terrainType) {
+        this.terrainType = terrainType;
+    }
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return false;
-    }
-
-    @Override
-    public boolean isSmall() {
-        return true;
-    }
-
-    @Override
-    public Set<Coords> getCoords() {
-        return new HashSet<>();
+        return board.contains(coords) && board.getHex(coords).containsTerrain(terrainType);
     }
 }

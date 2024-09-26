@@ -18,21 +18,33 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 /**
- * This class represents a line of hexes starting at the given point and extending in the given hex row direction.
- * The direction must be between 0 and 5. Contrary to HexLineShape, this shape does not extend in both
- * directions, so opposite directions result in different rays.
- *
- * @param point The hex that this line starts at.
- * @param direction The direction of the line, 0 = N, 2 = SE ...
+ * This class represents a line of hexes starting at the given point and extending in the given hex row direction. The direction must be
+ * between 0 and 5. Contrary to HexLineShape, this shape does not extend in both directions, so opposite directions result in different
+ * rays.
  */
-public record RayHexArea(Coords point, int direction) implements HexArea {
+public class RayHexArea extends AbstractHexArea {
+
+    private final Coords point;
+    private final int direction;
+
+    /**
+     * Creates a line of hexes starting at the given point in the given direction. The direction must be between 0 and 5.
+     *
+     * @param point     A hex that this line goes through
+     * @param direction The direction of the line, 0 = N, 2 = SE ...
+     */
+    public RayHexArea(Coords point, int direction) {
+        this.point = point;
+        this.direction = direction;
+    }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+    public boolean containsCoords(Coords coords, Board board) {
         return (direction >= 0) && (direction <= 5)
-                && (point.equals(coords) || point.isOnHexRow(direction, coords));
+            && (point.equals(coords) || point.isOnHexRow(direction, coords));
     }
 }

@@ -16,32 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public record CircleHexArea(Coords center, int diameter) implements HexArea {
+public class CircleHexArea extends AbstractHexArea {
+
+    private final Coords center;
+    private final int radius;
+
+    public CircleHexArea(Coords center, int radius) {
+        this.center = center;
+        this.radius = radius;
+    }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
-        return (coords != null) && coords.distance(center) <= diameter;
+    public boolean containsCoords(Coords coords, Board board) {
+        return (coords != null) && coords.distance(center) <= radius;
     }
 
     @Override
     public boolean isSmall() {
-        return diameter < 10;
+        return radius < 15;
     }
 
     @Override
     public Set<Coords> getCoords() {
         if (isSmall()) {
-            return new HashSet<>(center.allAtDistanceOrLess(diameter));
+            return new HashSet<>(center.allAtDistanceOrLess(radius));
         } else {
-            return HexArea.super.getCoords();
+            return super.getCoords();
         }
     }
 }

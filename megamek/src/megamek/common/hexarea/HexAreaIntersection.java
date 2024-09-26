@@ -18,32 +18,49 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 import java.util.Set;
 
 /**
  * This class represents the intersection of two HexAreaShapes.
- *
- * @param firstShape The first of the two shapes; the ordering of the shapes is not relevant
- * @param secondShape The second of the two shapes
  */
-public record HexAreaIntersection(HexArea firstShape, HexArea secondShape) implements HexArea {
+public class HexAreaIntersection extends AbstractHexArea {
+
+    private final HexArea firstShape;
+    private final HexArea secondShape;
+
+    /**
+     * Creates an intersection of the two given shapes.
+     *
+     * @param firstShape The first of the two shapes; the ordering of the shapes is not relevant
+     * @param secondShape The second of the two shapes
+     */
+    public HexAreaIntersection(HexArea firstShape, HexArea secondShape) {
+        this.firstShape = firstShape;
+        this.secondShape = secondShape;
+    }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
-        return firstShape().containsCoords(coords, x1, y1, x2, y2) && secondShape().containsCoords(coords, x1, y1, x2, y2);
+    public boolean containsCoords(Coords coords, Board board) {
+        return firstShape.containsCoords(coords,board) && secondShape.containsCoords(coords, board);
     }
 
     @Override
     public boolean isSmall() {
-        return firstShape().isSmall() && secondShape().isSmall();
+        return (firstShape instanceof AbstractHexArea firstAbstractHexArea) && firstAbstractHexArea.isSmall()
+            && (secondShape instanceof AbstractHexArea secondAbstractHexArea) && secondAbstractHexArea.isSmall();
     }
 
     @Override
     public Set<Coords> getCoords() {
-        Set<Coords> result = firstShape().getCoords();
-        result.retainAll(secondShape().getCoords());
-        return result;
+        if (isSmall()) {
+            Set<Coords> result = ((AbstractHexArea) firstShape).getCoords();
+            result.retainAll(((AbstractHexArea) secondShape).getCoords());
+            return result;
+        } else {
+            return super.getCoords();
+        }
     }
 }

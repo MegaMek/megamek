@@ -18,33 +18,49 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 import java.util.Set;
 
 /**
- * This class represents the subtraction (difference) of two HexAreaShapes. The order of the two given
- * shapes is relevant.
- *
- * @param firstShape The first of the two shapes
- * @param secondShape The second of the two shapes; this shape is subtracted from the first shape
+ * This class represents the subtraction (difference) of two HexAreaShapes. The order of the two given shapes is relevant.
  */
-public record HexAreaDifference(HexArea firstShape, HexArea secondShape) implements HexArea {
+public class HexAreaDifference extends AbstractHexArea {
+
+    private final HexArea firstShape;
+    private final HexArea secondShape;
+
+    /**
+     * Creates a difference between the two given hex areas.
+     *
+     * @param firstShape  The first of the two shapes; the ordering of the shapes is relevant
+     * @param secondShape The second of the two shapes
+     */
+    public HexAreaDifference(HexArea firstShape, HexArea secondShape) {
+        this.firstShape = firstShape;
+        this.secondShape = secondShape;
+    }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
-        return firstShape().containsCoords(coords, x1, y1, x2, y2) && !secondShape().containsCoords(coords, x1, y1, x2, y2);
+    public boolean containsCoords(Coords coords, Board board) {
+        return firstShape.containsCoords(coords, board) && !secondShape.containsCoords(coords, board);
     }
 
     @Override
     public boolean isSmall() {
-        return firstShape().isSmall() && secondShape().isSmall();
+        return (firstShape instanceof AbstractHexArea firstAbstractHexArea) && firstAbstractHexArea.isSmall()
+            && (secondShape instanceof AbstractHexArea secondAbstractHexArea) && secondAbstractHexArea.isSmall();
     }
 
     @Override
     public Set<Coords> getCoords() {
-        Set<Coords> result = firstShape().getCoords();
-        result.removeAll(secondShape().getCoords());
-        return result;
+        if (isSmall()) {
+            Set<Coords> result = ((AbstractHexArea) firstShape).getCoords();
+            result.removeAll(((AbstractHexArea) secondShape).getCoords());
+            return result;
+        } else {
+            return super.getCoords();
+        }
     }
 }

@@ -18,22 +18,35 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 /**
- * This class represents a line of hexes through the given point in one of the hex row directions. The direction
- * must be between 0 and 5. Opposite directions are equal, e.g. directions 1 and 4 result in the same line.
- *
- * @param point A hex that this line goes through
- * @param direction The direction of the line, 0 = N, 2 = SE ...
+ * This class represents a line of hexes through the given point in the given hex row direction. The direction must be between 0 and 5.
+ * Opposite directions are equal, e.g. directions 1 and 4 result in the same line.
  */
-public record LineHexArea(Coords point, int direction) implements HexArea {
+public class LineHexArea extends AbstractHexArea {
+
+    private final Coords point;
+    private final int direction;
+
+    /**
+     * Creates a line of hexes through the given point in the given direction. The direction must be between 0 and 5. Opposite directions
+     * are equal, e.g. directions 1 and 4 result in the same line.
+     *
+     * @param point     A hex that this line goes through
+     * @param direction The direction of the line, 0 = N, 2 = SE ...
+     */
+    public LineHexArea(Coords point, int direction) {
+        this.point = point;
+        this.direction = direction;
+    }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+    public boolean containsCoords(Coords coords, Board board) {
         return (direction >= 0) && (direction <= 5)
-                && (point.equals(coords)
-                || point.isOnHexRow(direction, coords)
-                || point.isOnHexRow((direction + 3) % 6, coords));
+            && (point.equals(coords)
+            || point.isOnHexRow(direction, coords)
+            || point.isOnHexRow((direction + 3) % 6, coords));
     }
 }

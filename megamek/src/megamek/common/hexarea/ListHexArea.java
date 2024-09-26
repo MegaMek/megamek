@@ -18,6 +18,7 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 import java.util.Arrays;
@@ -28,7 +29,7 @@ import java.util.Set;
 /**
  * This class represents a shape formed by a given list of one or more Coords.
  */
-public class ListHexArea implements HexArea {
+public class ListHexArea extends AbstractHexArea {
 
     private final Set<Coords> coordList = new HashSet<>();
 
@@ -55,7 +56,7 @@ public class ListHexArea implements HexArea {
     }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
+    public boolean containsCoords(Coords coords, Board board) {
         return coordList.contains(coords);
     }
 

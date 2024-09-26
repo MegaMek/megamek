@@ -18,28 +18,60 @@
  */
 package megamek.common.hexarea;
 
+import megamek.common.Board;
 import megamek.common.Coords;
 
 /**
- * This class represents one or more of the borders of any given board or rectangle. It is a relative shape,
- * i.e. its hexes depend on the rectangle that the HexArea is given when checking its coords.
- *
- * @param north When true, includes the hexes of the upper board edge (usually at y = 0)
- * @param south When true, includes the hexes of the lower board edge (usually at y = board height)
- * @param west When true, includes the hexes of the left board edge (usually at x = 0)
- * @param east When true, includes the hexes of the right board edge (usually at x = board width)
+ * This class represents one or more of the borders of any given board or rectangle. It is a relative shape, i.e. its hexes depend on the
+ * board that the HexArea is given when checking its coords.
  */
-public record BorderHexArea(boolean north, boolean south, boolean east, boolean west, int minInset, int maxInset) implements HexArea {
+public class BorderHexArea extends AbstractHexArea {
 
+    private final boolean north;
+    private final boolean south;
+    private final boolean east;
+    private final boolean west;
+    private final int minInset;
+    private final int maxInset;
+
+    /**
+     * Creates a border hex area for the given edges of the board. minInset gives the minimum distance from the board edge; 0 means the edge
+     * itself. maxInset gives the maximum distance from the board edge; 0 means the edge itself. maxInset is always set to at least the
+     * value of minInset. Negative values are set to 0.
+     *
+     * @param north When true, includes the hexes of the upper board edge (at y = 0)
+     * @param south When true, includes the hexes of the lower board edge (at y = board height)
+     * @param west  When true, includes the hexes of the left board edge (at x = 0)
+     * @param east  When true, includes the hexes of the right board edge (at x = board width)
+     * @param minInset the distance from the edges the area begins
+     * @param maxInset the distance from the edges the area ends
+     */
+    public BorderHexArea(boolean north, boolean south, boolean east, boolean west, int minInset, int maxInset) {
+        this.north = north;
+        this.south = south;
+        this.east = east;
+        this.west = west;
+        this.minInset = Math.max(minInset, 0);
+        this.maxInset = Math.max(minInset, maxInset);
+    }
+
+    /**
+     * Creates a border hex area for the given edges of the board.
+     *
+     * @param north When true, includes the hexes of the upper board edge (at y = 0)
+     * @param south When true, includes the hexes of the lower board edge (at y = board height)
+     * @param west  When true, includes the hexes of the left board edge (at x = 0)
+     * @param east  When true, includes the hexes of the right board edge (at x = board width)
+     */
     public BorderHexArea(boolean north, boolean south, boolean east, boolean west) {
         this(north, south, east, west, 0, 0);
     }
 
     @Override
-    public boolean containsCoords(Coords coords, int x1, int y1, int x2, int y2) {
-        return (north && (coords.getY() >= Math.min(y1, y2) + minInset) && (coords.getY() <= Math.min(y1, y2) + maxInset))
-            || (west && (coords.getX() >= Math.min(x1, x2) + minInset) && (coords.getX() <= Math.min(x1, x2) + maxInset))
-            || (south && (coords.getY() <= Math.max(y1, y2) - 1 - minInset) && (coords.getY() >= Math.max(y1, y2) - 1 - maxInset))
-            || (east && (coords.getX() <= Math.max(x1, x2) - 1 - minInset) && (coords.getX() >= Math.max(x1, x2) - 1 - maxInset));
+    public boolean containsCoords(Coords coords, Board board) {
+        return (north && (coords.getY() >= minInset) && (coords.getY() <= maxInset))
+            || (west && (coords.getX() >= minInset) && (coords.getX() <= maxInset))
+            || (south && (coords.getY() <= board.getHeight() - 1 - minInset) && (coords.getY() >= board.getHeight() - 1 - maxInset))
+            || (east && (coords.getX() <= board.getWidth() - 1 - minInset) && (coords.getX() >= board.getWidth() - 1 - maxInset));
     }
 }

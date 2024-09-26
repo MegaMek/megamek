@@ -31,6 +31,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6031: WiGE deployment options
 + PR #6029: Show hatchets and other club misc weapons in the unit tooltip
 + PR #6021: Improved StratConSkillGenerator
++ PR #6033: Better display of radical heat sinking in preview
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

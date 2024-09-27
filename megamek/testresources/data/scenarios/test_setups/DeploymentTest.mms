@@ -24,12 +24,4 @@ factions:
 #      - fullname: Bandit Hovercraft G
 #      - fullname: Invader Jumpship (2631) (LF)
 #      - fullname: Fensalir Combat WiGE
-        fleefrom:
-            intersection:
-              first:
-                border: north
-              second:
-                border: east
 #      - fullname: Foot Platoon (MG)
-
-

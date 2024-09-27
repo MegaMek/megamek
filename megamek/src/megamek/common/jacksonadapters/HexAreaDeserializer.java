@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.jacksonadapters;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import megamek.common.Coords;
+import megamek.common.Terrains;
 import megamek.common.hexarea.*;
 
 import java.util.ArrayList;
@@ -57,6 +57,12 @@ public final class HexAreaDeserializer {
     private static final String EAST = "east";
     private static final String EDGES = "edges";
     private static final String EMPTY = "empty";
+    private static final String TERRAIN = "terrain";
+    private static final String TYPE = "type";
+    private static final String LEVEL = "level";
+    private static final String HEX_LEVEL = "hexlevel";
+    private static final String MIN_LEVEL = "minlevel";
+    private static final String MAX_LEVEL = "maxlevel";
 
     public static HexArea parseShape(JsonNode node) {
         if (node.has(UNION)) {
@@ -81,6 +87,10 @@ public final class HexAreaDeserializer {
             return parseBorder(node.get(BORDER));
         } else if (node.has(EMPTY)) {
             return new EmptyHexArea();
+        } else if (node.has(TERRAIN)) {
+            return parseTerrainArea(node.get(TERRAIN));
+        } else if (node.has(HEX_LEVEL)) {
+            return parseHexLevelArea(node.get(HEX_LEVEL));
         } else {
             throw new IllegalStateException("Cannot parse area node!");
         }
@@ -171,6 +181,49 @@ public final class HexAreaDeserializer {
         } else {
             List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node, NORTH, SOUTH, EAST, WEST);
             return new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST), borders.contains(WEST));
+        }
+    }
+
+    private static HexArea parseTerrainArea(JsonNode node) {
+        int minLevel = 0;
+        int maxLevel = Integer.MAX_VALUE;
+        int terrainType = Terrains.getType(node.get(TYPE).asText());
+        if (terrainType == 0) {
+            throw new IllegalArgumentException("Invalid terrain type: " + node.get(TERRAIN).asText());
+        }
+        if (node.has(LEVEL)) {
+            minLevel = node.get(LEVEL).intValue();
+        } else if (node.has(MIN_LEVEL)) {
+            minLevel = node.get(MIN_LEVEL).intValue();
+            if (node.has(MAX_LEVEL)) {
+                maxLevel = node.get(MAX_LEVEL).intValue();
+            }
+        }
+
+        int minDistance = 0;
+        int maxDistance = 0;
+        if (node.has(MIN_DISTANCE)) {
+            minDistance = node.get(MIN_DISTANCE).intValue();
+            if (node.has(MAX_DISTANCE)) {
+                maxDistance = node.get(MAX_DISTANCE).intValue();
+            }
+        }
+        return new TerrainHexArea(terrainType, minLevel, maxLevel, minDistance, maxDistance);
+    }
+
+    private static HexArea parseHexLevelArea(JsonNode node) {
+        if (node.isValueNode()) {
+            return new HexLevelArea(node.asInt());
+        } else {
+            int minLevel = Integer.MIN_VALUE;
+            int maxLevel = Integer.MAX_VALUE;
+            if (node.has(MIN_LEVEL)) {
+                minLevel = node.get(MIN_LEVEL).intValue();
+            }
+            if (node.has(MAX_LEVEL)) {
+                maxLevel = node.get(MAX_LEVEL).intValue();
+            }
+            return new HexLevelArea(minLevel, maxLevel);
         }
     }
 

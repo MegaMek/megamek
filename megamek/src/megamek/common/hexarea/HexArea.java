@@ -27,13 +27,14 @@ import java.util.Set;
 
 //read flee area for player
 //TODO: show flee area in some way
-//TODO: positional trigger: read yaml
-//TODO: positional trigger: test
-//TODO: positional trigger: write how to
+//positional trigger: read yaml
+//positional trigger: test
+//positional trigger: write how to
 //Terrain-type HexArea?
-//TODO: cache results in TerrainHexArea when distance > 0
-//TODO: read terrainhex and hexlevel from yaml
+//read terrainhex and hexlevel from yaml
 //limit fleeing in scenarios LoweringBoom
+//TODO: check to replace isSmall with getSize() = Integer.MAX; -> compare with board size to determine how to best get coords
+//TODO: building floor area?
 
 
 /**

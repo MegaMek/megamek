@@ -505,8 +505,8 @@ trigger:
       phase: movement
 
 trigger:
-  # The position condition is met when the given number(s) of units are in the given area
-  type: position
+  # The positions condition is met when the given number(s) of units are in the given area
+  type: positions
   area:
     border:
       edges: north
@@ -635,3 +635,30 @@ area:
   # The empty area has no hexes. Can be used to prevent units from fleeing the board
   empty:
 
+area:
+  # the area can be given as a terrain type
+  terrain:
+    # required: the terrain type to include in the area
+    type: woods
+    # optional: the terrain level to include; when omitted, any terrain level is included
+    level: 1
+    # OR optional: a range of terrain levels to include
+    minlevel: 1
+    maxlevel: 2
+    # optional: the minimum distance from any hex with the terrain; 0 means only the hexes themselves
+    mindistance: 2
+    # optional: the maximum distance from any hex with the terrain
+    # be careful with distances of more than 3 or so on big boards: this leads to exploding calculation times
+    maxdistance: 3
+
+area:
+  # the area can be given as hex levels to include
+  # either a single hex level
+  hexlevel: 0
+
+area:
+  # OR a range
+  hexlevel:
+    minlevel: 1
+    # optional: the maximum hex level
+    maxlevel: 2

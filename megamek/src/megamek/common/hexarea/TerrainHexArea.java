@@ -22,6 +22,10 @@ import megamek.common.Board;
 import megamek.common.Coords;
 import megamek.common.Hex;
 
+/**
+ * This class represents a hex area that is based on the terrain of the hex itself or even terrain in some distance to the present hex. The
+ * terrain can be limited to terrain levels and a minimum and maximum distance from the present hex can be used.
+ */
 public class TerrainHexArea extends AbstractHexArea {
 
     private final int terrainType;
@@ -30,6 +34,17 @@ public class TerrainHexArea extends AbstractHexArea {
     private final int minDistance;
     private final int maxDistance;
 
+    /**
+     * Creates a hex area that includes hexes of the board that have the given terrain type of the given minimum and maximum level in hexes
+     * that are the given minimum to maximum distance away. *NOTE* be careful with distances other than 0 as this multiplies calculation
+     * times.
+     *
+     * @param terrainType The terrain type, e.g. Terrains.WATER
+     * @param minLevel the minimum terrain level
+     * @param maxLevel the maximum terrain level
+     * @param minDistance the minimum distance to the present hex when detecting included hexes
+     * @param maxDistance the maximum distance to the present hex when detecting included hexes
+     */
     public TerrainHexArea(int terrainType, int minLevel, int maxLevel, int minDistance, int maxDistance) {
         this.terrainType = terrainType;
         this.minLevel = minLevel;
@@ -38,14 +53,32 @@ public class TerrainHexArea extends AbstractHexArea {
         this.maxDistance = maxDistance;
     }
 
+    /**
+     * Creates a hex area that includes hexes of the board that have the given terrain type.
+     *
+     * @param terrainType The terrain type, e.g. Terrains.WATER
+     */
     public TerrainHexArea(int terrainType) {
-        this(terrainType, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+        this(terrainType, 0, Integer.MAX_VALUE, 0, 0);
     }
 
+    /**
+     * Creates a hex area that includes hexes of the board that have the given terrain type of the given level-
+     *
+     * @param terrainType The terrain type, e.g. Terrains.WATER
+     * @param terrainLevel The terrain level
+     */
     public TerrainHexArea(int terrainType, int terrainLevel) {
         this(terrainType, terrainLevel, terrainLevel, 0, 0);
     }
 
+    /**
+     * Creates a hex area that includes hexes of the board that have the given terrain type of the given minimum and maximum level.
+     *
+     * @param terrainType The terrain type, e.g. Terrains.WATER
+     * @param minLevel the minimum terrain level
+     * @param maxLevel the maximum terrain level
+     */
     public TerrainHexArea(int terrainType, int minLevel, int maxLevel) {
         this(terrainType, minLevel, maxLevel, 0, 0);
     }

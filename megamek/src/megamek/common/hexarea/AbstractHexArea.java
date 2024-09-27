@@ -20,34 +20,24 @@ package megamek.common.hexarea;
 
 import megamek.common.Board;
 import megamek.common.Coords;
-import megamek.common.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This is a base class for HexAreas that provides an implementation for {@link #getCoords(Board)}. The {@link #isSmall()} method can be
+ * overridden when a shape has not too many hexes and is independent of the board. A HexArea composed of only small shapes can be evaluated
+ * quickly even on a big board.
+ */
 abstract class AbstractHexArea implements HexArea {
 
     /**
-     * Returns true if this shape contains the given coords. Returns false when the given coords is null. If this shape is absolute, i.e.
-     * does not depend on parameters outside itself, the board does not matter. Some shapes however may be relative to the board size, e.g.
-     * a shape that returns the borders of the board.
-     *
-     * @param coords The coords that are tested if they are part of this shape
-     * @param board  The board to limit the area coords to
-     * @return True if this shape contains the coords
-     */
-    public abstract boolean containsCoords(@Nullable Coords coords, Board board);
-
-    /**
      * @return True if this shape is, by itself, finite and small enough and absolute (independent of a board) that its coords can be given
-     * directly. If false, its coords cannot be retrieved, only {@link #containsCoords(Coords, Board)} can be used. Always call
-     * this method and only if it returns true, call {@link #getCoords()}.
-     * <BR><BR>
-     * Implementation note: By default, this method returns false.
-     * <BR>
-     * This method may be overridden to return true for finite, small shapes, such as a hex circle of diameter 4. In that case, getCoords
-     * must also be overriden to return the coords of this shape.
+     * directly. If false, its coords cannot be retrieved, only {@link #containsCoords(Coords, Board)} can be used. Always call this method
+     * and only if it returns true, call {@link #getCoords()}.
+     * @apiNote By default, this method returns false. It may be overridden to return true for finite, small shapes, such as a hex circle of
+     * diameter 4. In that case, getCoords must also be overriden to return the coords of this shape.
      */
     boolean isSmall() {
         // Some shapes, even if finite, have 10000 or more Coords. It may be good to avoid retrieving
@@ -61,11 +51,10 @@ abstract class AbstractHexArea implements HexArea {
     /**
      * Returns all coords of this shape, if it is finite and small enough and an absolute shape. Only use this when {@link #isSmall()}
      * returns true - it will throw an exception otherwise.
-     * <BR><BR>Implementation note: Throws an exception by default. Override together with {@link #isSmall()}
-     * for small absolute shapes.
      *
      * @return All Coords of this shape
      * @throws IllegalStateException when this method is called on a shape where {@link #isSmall()} returns false
+     * @apiNote Throws an exception by default. Override together with {@link #isSmall()} for small board-independent shapes.
      */
     Set<Coords> getCoords() {
         throw new IllegalStateException("Can only be used on small, finite shapes.");
@@ -78,6 +67,7 @@ abstract class AbstractHexArea implements HexArea {
      * @param board The board to check the area against
      * @return Coords of this shape that lie within the rectangle
      */
+    @Override
     public final Set<Coords> getCoords(Board board) {
         if (isSmall()) {
             return getCoords().stream().filter(board::contains).collect(Collectors.toSet());

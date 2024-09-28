@@ -36,6 +36,7 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.force.Forces;
+import megamek.common.hexarea.HexArea;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 
@@ -459,13 +460,27 @@ public abstract class AbstractGame implements IGame {
         if ((unit == null) || (coords == null)) {
             LOGGER.warn("Received null unit or coords!");
             return false;
-        }
-        if (unit.hasFleeArea()) {
-            return unit.getFleeFromArea().containsCoords(coords, getBoard());
-        } else if (unit instanceof InGameObject inGameObject) {
-            return getPlayer(inGameObject.getOwnerId()).getFleeFromArea().containsCoords(coords, getBoard());
         } else {
-            return false;
+            return getFleeZone(unit).containsCoords(coords, getBoard());
+        }
+    }
+
+    /**
+     * Returns the {@link HexArea} a given unit can flee from, as set either for the unit itself or for its owner.
+     *
+     * @param unit The unit that wants to flee
+     * @return The area it may flee from
+     */
+    public HexArea getFleeZone(Deployable unit) {
+        if (unit == null) {
+            LOGGER.warn("Received null unit!");
+            return HexArea.EMPTY_AREA;
+        } else if (unit.hasFleeZone()) {
+            return unit.getFleeZone();
+        } else if ((unit instanceof InGameObject inGameObject) && hasPlayer(inGameObject.getOwnerId())) {
+            return getPlayer(inGameObject.getOwnerId()).getFleeZone();
+        } else {
+            return HexArea.EMPTY_AREA;
         }
     }
 }

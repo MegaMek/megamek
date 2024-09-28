@@ -73,8 +73,8 @@ abstract class AbstractHexArea implements HexArea {
             return getCoords().stream().filter(board::contains).collect(Collectors.toSet());
         } else {
             Set<Coords> result = new HashSet<>();
-            for (int y = 0; y <= board.getHeight(); y++) {
-                for (int x = 0; x <= board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                for (int x = 0; x < board.getWidth(); x++) {
                     Coords coords = new Coords(x, y);
                     if (containsCoords(coords, board)) {
                         result.add(coords);

@@ -86,7 +86,7 @@ public final class HexAreaDeserializer {
         } else if (node.has(BORDER)) {
             return parseBorder(node.get(BORDER));
         } else if (node.has(EMPTY)) {
-            return new EmptyHexArea();
+            return HexArea.EMPTY_AREA;
         } else if (node.has(TERRAIN)) {
             return parseTerrainArea(node.get(TERRAIN));
         } else if (node.has(HEX_LEVEL)) {

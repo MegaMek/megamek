@@ -323,9 +323,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         if (node.has(FLEE_AREA)) {
             // allow using or omitting "area:"
             if (node.get(FLEE_AREA).has(AREA)) {
-                entity.setFleeArea(HexAreaDeserializer.parseShape(node.get(FLEE_AREA).get(AREA)));
+                entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA).get(AREA)));
             } else {
-                entity.setFleeArea(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
+                entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
             }
         }
     }

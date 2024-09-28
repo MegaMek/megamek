@@ -26,7 +26,6 @@ import java.util.Vector;
 
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.hexarea.BorderHexArea;
-import megamek.common.hexarea.EmptyHexArea;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
@@ -741,7 +740,7 @@ public final class Player extends TurnOrdered {
      * @return The area of the board this player's units are allowed to flee from; An empty area as return value means they
      * may not flee at all.
      */
-    public HexArea getFleeFromArea() {
+    public HexArea getFleeZone() {
         return fleeArea;
     }
 

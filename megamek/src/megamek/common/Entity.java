@@ -54,7 +54,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
-import megamek.common.hexarea.EmptyHexArea;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
@@ -911,7 +910,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected Base64Image icon = new Base64Image();
 
     private boolean hasFleeInformation = false;
-    private HexArea fleeArea = new EmptyHexArea();
+    private HexArea fleeArea = HexArea.EMPTY_AREA;
 
     /**
      * Generates a new, blank, entity.
@@ -15780,12 +15779,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     @Override
-    public boolean hasFleeArea() {
+    public boolean hasFleeZone() {
         return hasFleeInformation;
     }
 
     @Override
-    public HexArea getFleeFromArea() {
+    public HexArea getFleeZone() {
         return fleeArea;
     }
 
@@ -15795,17 +15794,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param fleeArea The new flee area.
      */
-    public void setFleeArea(HexArea fleeArea) {
+    public void setFleeZone(HexArea fleeArea) {
         this.fleeArea = fleeArea;
         hasFleeInformation = true;
     }
 
     /**
-     * Resets the flee information this unit has. It will not consider to have its own flee area; the game will refer to its owner to see if
-     * it can flee from a hex.
+     * Resets the flee information this unit has. After calling this method, the unit will no longer consider to have its own flee area; the
+     * game will refer to the unit's owner to see if it can flee from a hex.
      */
-    public void removeFleeArea() {
-        fleeArea = new EmptyHexArea();
+    public void removeFleeZone() {
+        fleeArea = HexArea.EMPTY_AREA;
         hasFleeInformation = false;
     }
 }

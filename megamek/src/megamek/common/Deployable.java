@@ -18,7 +18,6 @@
  */
 package megamek.common;
 
-import megamek.common.hexarea.EmptyHexArea;
 import megamek.common.hexarea.HexArea;
 
 /**
@@ -43,17 +42,17 @@ public interface Deployable {
     /**
      * @return True if this unit has its own area it is allowed to flee the board(s) from; false if the unit's team should be asked instead.
      */
-    default boolean hasFleeArea() {
+    default boolean hasFleeZone() {
         return false;
     }
 
     /**
-     * @return The area of the board(s) this unit is allowed to flee from; the return value is only valid when {@link #hasFleeArea()}
+     * @return The area of the board(s) this unit is allowed to flee from; the return value is only valid when {@link #hasFleeZone()}
      * returns true. Normally this method should not be called, use {@link AbstractGame#canFleeFrom(Deployable, Coords)} instead.
      * @see AbstractGame#canFleeFrom(Deployable, Coords)
-     * @see #hasFleeArea()
+     * @see #hasFleeZone()
      */
-    default HexArea getFleeFromArea() {
-        return new EmptyHexArea();
+    default HexArea getFleeZone() {
+        return HexArea.EMPTY_AREA;
     }
 }

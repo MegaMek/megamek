@@ -464,6 +464,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         updateDisplay();
         if (clientgui != null) {
             clientgui.clearFieldOfFire();
+            clientgui.hideFleeZone();
         }
     }
 

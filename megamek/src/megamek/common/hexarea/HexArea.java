@@ -26,7 +26,8 @@ import java.io.Serializable;
 import java.util.Set;
 
 //read flee area for player
-//TODO: show flee area in some way
+//show flee area in some way
+//how to use HexArea on multiple boards? -> need board id
 //positional trigger: read yaml
 //positional trigger: test
 //positional trigger: write how to
@@ -42,7 +43,7 @@ import java.util.Set;
 /**
  * This class represents an area composed of hexes. The area can be a basic shape or be defined by adding, subtracting or intersecting basic
  * shapes. Areas can be used to define deployment zones in code using {@link Board#addDeploymentZone(int, HexArea)}, to set a zone where
- * units may flee the board from in {@link Entity#setFleeArea(HexArea)} and in positional triggers for events
+ * units may flee the board from in {@link Entity#setFleeZone(HexArea)} and in positional triggers for events
  * ({@link UnitPositionTrigger}).
  * <P>Note:
  * <BR>- A HexArea can be empty if its shapes result in no valid hexes;
@@ -66,6 +67,8 @@ import java.util.Set;
  * @see BorderHexArea
  */
 public interface HexArea extends Serializable {
+
+    HexArea EMPTY_AREA = new EmptyHexArea();
 
     /**
      * Returns true if this shape contains the given coords. Returns false when the given coords is null. If this shape is absolute, i.e.

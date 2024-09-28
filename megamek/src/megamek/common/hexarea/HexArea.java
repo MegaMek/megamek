@@ -18,9 +18,9 @@
  */
 package megamek.common.hexarea;
 
-import megamek.common.Board;
-import megamek.common.Coords;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.server.trigger.UnitPositionTrigger;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -33,21 +33,25 @@ import java.util.Set;
 //Terrain-type HexArea?
 //read terrainhex and hexlevel from yaml
 //limit fleeing in scenarios LoweringBoom
-//TODO: check to replace isSmall with getSize() = Integer.MAX; -> compare with board size to determine how to best get coords
-//TODO: building floor area?
+//check to replace isSmall with getSize() = Integer.MAX;  no, cant combine getSize in union etc, hmm size1+size2? not worth it, just
+//2 small areas
+//building floor area? Does not work for deployment. No for now
+//store deploy areas as areas in board, only convert in init
 
 
 /**
  * This class represents an area composed of hexes. The area can be a basic shape or be defined by adding, subtracting or intersecting basic
- * shapes. The area can be used to define a deployment zone in code using {@link Board#setDeploymentZone(int, HexArea)}
+ * shapes. Areas can be used to define deployment zones in code using {@link Board#addDeploymentZone(int, HexArea)}, to set a zone where
+ * units may flee the board from in {@link Entity#setFleeArea(HexArea)} and in positional triggers for events
+ * ({@link UnitPositionTrigger}).
  * <P>Note:
  * <BR>- A HexArea can be empty if its shapes result in no valid hexes;
- * <BR>- A HexArea can be infinite; therefore, its hexes can only be retrieved by limiting the results to a rectangle, e.g. a Board;
- * <BR>- A HexArea can be absolute (independent of the rectangle) or relative to the rectangle that limit the results;
- * <BR>- A HexArea can appear empty when its shapes do not contain any hexes within the given rectangle;
+ * <BR>- A HexArea can be infinite; therefore, its hexes can only be retrieved by limiting the results to a Board;
+ * <BR>- A HexArea can be absolute (independent of the board's size and contents) or relative to the board;
+ * <BR>- A HexArea can appear empty when its shapes do not contain any hexes within the given board;
  * <BR>- A HexArea does not have to be contiguous;
  * <BR>- HexAreas are typically lightweight as they don't store their hexes (unless ListHexArea is misused to store thousands of hexes),
- * only the rules to create the hexes
+ * only the rules to create the hexes;
  * <P>HexArea is immutable.
  * <P>Note that the shape can have any complexity by being itself constructed from other shapes. For example, the intersection of two
  * circles can be created by calling

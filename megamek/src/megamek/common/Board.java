@@ -39,10 +39,11 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 public class Board implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -5744058872091016636L;
     private static final MMLogger logger = MMLogger.create(Board.class);
 
     // region Variable Declarations
-    private static final long serialVersionUID = -5744058872091016636L;
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
 
@@ -131,10 +132,15 @@ public class Board implements Serializable {
     private final int boardId = 0;
 
     /**
-     * The board's deployment zones. These may come as terrains from the board file or they may be set by code.
-     * The field is not transient as zones set by code cannot be reconstructed from terrain.
+     * The board's deployment zones. These may come as terrains from the board file or they may be set by code. The field is
+     * transient as zones can be reconstructed from terrain and the areas field and may have many coords.
      */
-    private Map<Integer, Set<Coords>> deploymentZones = null;
+    private transient Map<Integer, Set<Coords>> deploymentZones = null;
+
+    /**
+     * HexAreas that are set by code to be deployment zones.
+     */
+    private final Map<Integer, HexArea> areas = new HashMap<>();
 
     // endregion Variable Declarations
 
@@ -977,7 +983,7 @@ public class Board implements Serializable {
                         && (c.getY() <= ((2 * height) / 3));
             default: // this could signify a custom deployment zone
                 Set<Coords> customDeploymentZone = getCustomDeploymentZone(decodeCustomDeploymentZoneID(zoneType));
-                return (customDeploymentZone != null) && customDeploymentZone.contains(c);
+                return customDeploymentZone.contains(c);
         }
     }
 
@@ -1999,8 +2005,7 @@ public class Board implements Serializable {
     }
 
     /**
-     * Worker function that initializes any custom deployment zones present on the
-     * board
+     * Worker function that initializes any custom deployment zones present on the board
      */
     private void initializeDeploymentZones() {
         deploymentZones = new HashMap<>();
@@ -2017,28 +2022,31 @@ public class Board implements Serializable {
                 }
             }
         }
+        areas.forEach(this::convertDeploymentZone);
     }
 
     /**
-     * Adds a deployment zone with the given ID and the hexes described by the given HexArea to this board,
-     * replacing the previously present zone of that ID, if there had been one. Note that the zone Id can
-     * be outside those reachable by board files; e.g. the zone Id can be 1000. Note however that zone IDs
-     * in the range of 0 to 50 should be avoided as they'll overwrite terrain deployment zones.
-     *
-     * @param zoneId The zone Id
-     * @param hexArea The hexes comprising this deployment zone
+     * Converts a custom deployment zone from the hex area definition to board hexes; also translates the ID. Note that the deploymentZones
+     * field must not be null.
      */
-    public void setDeploymentZone(int zoneId, HexArea hexArea) {
-        if (deploymentZones == null) {
-            initializeDeploymentZones();
-        }
+    private void convertDeploymentZone(int zoneId, HexArea hexArea) {
         deploymentZones.put(zoneId - NUM_ZONES_X2, hexArea.getCoords(this));
     }
 
     /**
-     * Resets the "intermediate" deployment zones associated with this board, in
-     * case
-     * the deployment zones change
+     * Adds a deployment zone with the given ID and the hexes described by the given HexArea to this board, replacing the previously present
+     * zone of that ID, if there had been one. Note that the zone Id can be outside those reachable by board files; e.g. the zone Id can be
+     * 1000. Note however that zone IDs in the range of 0 to 50 should be avoided as they'll overwrite terrain deployment zones.
+     *
+     * @param zoneId  The zone Id
+     * @param hexArea The hexes comprising this deployment zone
+     */
+    public void addDeploymentZone(int zoneId, HexArea hexArea) {
+        areas.put(zoneId, hexArea);
+    }
+
+    /**
+     * Resets the "intermediate" deployment zones associated with this board, in case the deployment zones change
      */
     public void resetDeploymentZones() {
         deploymentZones = null;
@@ -2063,24 +2071,20 @@ public class Board implements Serializable {
             initializeDeploymentZones();
         }
 
-        return deploymentZones.getOrDefault(zoneID, null);
+        return deploymentZones.getOrDefault(zoneID, Set.of());
     }
 
     /**
-     * Use this method to convert a deployment zone ID as represented in the UI zone
-     * selectors
-     * (e.g. in the PlayerSettingsDialog) to a deployment zone ID as stored in the
-     * board.
+     * Use this method to convert a deployment zone ID as represented in the UI zone selectors (e.g. in the PlayerSettingsDialog) to a
+     * deployment zone ID as stored in the board.
      */
     public static int decodeCustomDeploymentZoneID(int zoneID) {
         return zoneID - NUM_ZONES_X2;
     }
 
     /**
-     * Use this method to convert a deployment zone ID as stored in the board to a
-     * number
-     * suitable for representation in the UI zone selectors (e.g.
-     * PlayerSettingsDialog)
+     * Use this method to convert a deployment zone ID as stored in the board to a number suitable for representation in the UI zone
+     * selectors (e.g. PlayerSettingsDialog)
      */
     public static int encodeCustomDeploymentZoneID(int zoneID) {
         return zoneID + NUM_ZONES_X2;

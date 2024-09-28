@@ -134,7 +134,7 @@ public class ScenarioV2 implements Scenario {
         game.setBoard(0, createBoard());
         int zone = 1000;
         for (HexArea hexArea : deploymentAreas) {
-            game.getBoard().setDeploymentZone(zone++, hexArea);
+            game.getBoard().addDeploymentZone(zone++, hexArea);
         }
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);

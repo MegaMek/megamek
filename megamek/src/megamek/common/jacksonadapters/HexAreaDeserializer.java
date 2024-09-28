@@ -30,6 +30,10 @@ import java.util.Set;
 
 public final class HexAreaDeserializer {
 
+    // Possible future improvements:
+    // read board-relative sizes, like mindistance = 50%W for half board width
+    // read rectangle as UL corner and W/H
+
     private static final String UNION = "union";
     private static final String DIFFERENCE = "difference";
     private static final String INTERSECTION = "intersection";
@@ -64,6 +68,12 @@ public final class HexAreaDeserializer {
     private static final String MIN_LEVEL = "minlevel";
     private static final String MAX_LEVEL = "maxlevel";
 
+    /**
+     * Parses a HexArea from the given YAML node. The node should be below the "area:" level.
+     *
+     * @param node The node to parse
+     * @return A HexArea parsed from the given node
+     */
     public static HexArea parseShape(JsonNode node) {
         if (node.has(UNION)) {
             return parseUnion(node.get(UNION));

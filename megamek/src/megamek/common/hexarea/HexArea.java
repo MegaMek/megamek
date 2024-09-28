@@ -25,21 +25,6 @@ import megamek.server.trigger.UnitPositionTrigger;
 import java.io.Serializable;
 import java.util.Set;
 
-//read flee area for player
-//show flee area in some way
-//how to use HexArea on multiple boards? -> need board id
-//positional trigger: read yaml
-//positional trigger: test
-//positional trigger: write how to
-//Terrain-type HexArea?
-//read terrainhex and hexlevel from yaml
-//limit fleeing in scenarios LoweringBoom
-//check to replace isSmall with getSize() = Integer.MAX;  no, cant combine getSize in union etc, hmm size1+size2? not worth it, just
-//2 small areas
-//building floor area? Does not work for deployment. No for now
-//store deploy areas as areas in board, only convert in init
-
-
 /**
  * This class represents an area composed of hexes. The area can be a basic shape or be defined by adding, subtracting or intersecting basic
  * shapes. Areas can be used to define deployment zones in code using {@link Board#addDeploymentZone(int, HexArea)}, to set a zone where
@@ -68,12 +53,15 @@ import java.util.Set;
  */
 public interface HexArea extends Serializable {
 
+    /**
+     * This area can be used whenever an empty area is required.
+     */
     HexArea EMPTY_AREA = new EmptyHexArea();
 
     /**
      * Returns true if this shape contains the given coords. Returns false when the given coords is null. If this shape is absolute, i.e.
      * does not depend on parameters outside itself, the board does not matter. Some shapes however may be relative to the board size, e.g.
-     * a shape that returns the borders of the board.
+     * a shape that returns the borders of the board; or even board contents, such as terrain.
      *
      * @param coords The coords that are tested if they are part of this shape
      * @param board  The board to limit the area coords to
@@ -82,10 +70,10 @@ public interface HexArea extends Serializable {
     boolean containsCoords(@Nullable Coords coords, Board board);
 
     /**
-     * Returns a set of the coords of this Shape that lie on the given board. This method should not be overridden.
+     * Returns a set of the coords of this area that are part of the given board.
      *
      * @param board The board to limit the results to
-     * @return Coords of this shape that lie within the board
+     * @return Coords of this shape that lie on the board
      */
     Set<Coords> getCoords(Board board);
 }

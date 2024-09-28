@@ -909,8 +909,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     protected Base64Image icon = new Base64Image();
 
-    private boolean hasFleeInformation = false;
-    private HexArea fleeArea = HexArea.EMPTY_AREA;
+    private boolean hasFleeZone = false;
+    private HexArea fleeZone = HexArea.EMPTY_AREA;
 
     /**
      * Generates a new, blank, entity.
@@ -15780,23 +15780,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public boolean hasFleeZone() {
-        return hasFleeInformation;
+        return hasFleeZone;
     }
 
     @Override
     public HexArea getFleeZone() {
-        return fleeArea;
+        return fleeZone;
     }
 
     /**
      * Sets the board area this unit may flee from. The area may be empty, in which case the unit may not flee. Also sets this unit to know
-     * that it has a flee area and should respect it.
+     * that it has a flee zone and the owning player should not be asked to provide this information.
      *
-     * @param fleeArea The new flee area.
+     * @param fleeZone The new flee zone
      */
-    public void setFleeZone(HexArea fleeArea) {
-        this.fleeArea = fleeArea;
-        hasFleeInformation = true;
+    public void setFleeZone(HexArea fleeZone) {
+        this.fleeZone = fleeZone;
+        hasFleeZone = true;
     }
 
     /**
@@ -15804,7 +15804,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * game will refer to the unit's owner to see if it can flee from a hex.
      */
     public void removeFleeZone() {
-        fleeArea = HexArea.EMPTY_AREA;
-        hasFleeInformation = false;
+        fleeZone = HexArea.EMPTY_AREA;
+        hasFleeZone = false;
     }
 }

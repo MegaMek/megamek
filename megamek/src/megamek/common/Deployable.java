@@ -40,7 +40,8 @@ public interface Deployable {
     int getDeployRound();
 
     /**
-     * @return True if this unit has its own area it is allowed to flee the board(s) from; false if the unit's team should be asked instead.
+     * @return True if this unit has its own area it is allowed to flee the board(s) from; false if the unit's owner should be asked
+     * instead.
      */
     default boolean hasFleeZone() {
         return false;

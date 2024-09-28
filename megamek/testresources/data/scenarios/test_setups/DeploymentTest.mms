@@ -11,7 +11,7 @@ factions:
 #      - fullname: Intruder (3056)
 #      - fullname: Ares Assault Craft Mk.III
 #      - fullname: Phoenix Hawk LAM PHX-HK2M
-      - fullname: Locust LCT-1M
+#      - fullname: Locust LCT-1M
 #      - fullname: Vedette Medium Tank
 #      - fullname: Mauna Kea Command Vessel
 #      - fullname: Moray Heavy Attack Submarine
@@ -23,5 +23,6 @@ factions:
 #      - fullname: Silverback Coastal Cutter
 #      - fullname: Bandit Hovercraft G
 #      - fullname: Invader Jumpship (2631) (LF)
-#      - fullname: Fensalir Combat WiGE
+      - fullname: Fensalir Combat WiGE
 #      - fullname: Foot Platoon (MG)
+

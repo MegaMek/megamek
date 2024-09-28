@@ -513,7 +513,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
-        fleeZoneSpriteHandler = new FleeZoneSpriteHandler(bv, client.getGame());
+        fleeZoneSpriteHandler = new FleeZoneSpriteHandler(bv);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler, sensorRangeSpriteHandler,
             flareSpritesHandler, collapseWarningSpriteHandler, groundObjectSpriteHandler, firingSolutionSpriteHandler,

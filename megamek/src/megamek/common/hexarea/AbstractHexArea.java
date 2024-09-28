@@ -60,13 +60,6 @@ abstract class AbstractHexArea implements HexArea {
         throw new IllegalStateException("Can only be used on small, finite shapes.");
     }
 
-    /**
-     * Returns a set of the coords of this HexArea that lie in the rectangle defined by the given lower left and upper right corner. This
-     * method should not be overridden.
-     *
-     * @param board The board to check the area against
-     * @return Coords of this shape that lie within the rectangle
-     */
     @Override
     public final Set<Coords> getCoords(Board board) {
         if (isSmall()) {

@@ -750,7 +750,7 @@ public final class Player extends TurnOrdered {
      * @param fleeArea The new flee area.
      * @see megamek.common.hexarea.BorderHexArea
      */
-    public void setFleeArea(HexArea fleeArea) {
+    public void setFleeZone(HexArea fleeArea) {
         this.fleeArea = fleeArea;
     }
 }

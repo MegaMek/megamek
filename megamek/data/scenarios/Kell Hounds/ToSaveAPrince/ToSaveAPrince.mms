@@ -41,7 +41,7 @@ planetaryconditions:
 factions:
 - name: Zakahashi's Zombies
   camo: Draconis Combine/Dieron Regulars/Dieron Regulars.jpg
-  deploy: S
+  deploy: N
 
   fleefrom:
     border: south
@@ -167,6 +167,7 @@ factions:
       piloting: 4
       gunnery: 5
 
+# OPFOR -----------------------
 
 - name: Kell Hounds, Second Battalion
   camo: Mercs/Kell Hounds.jpg

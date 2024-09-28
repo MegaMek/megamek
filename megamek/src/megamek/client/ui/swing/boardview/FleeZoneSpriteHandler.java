@@ -19,29 +19,21 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.event.GamePhaseChangeEvent;
 
 import java.util.Collection;
 
 public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
 
-    private final Game game;
-
-    public FleeZoneSpriteHandler(BoardView boardView, Game game) {
+    public FleeZoneSpriteHandler(BoardView boardView) {
         super(boardView);
-        this.game = game;
     }
 
     @Override
-    public void initialize() {
-//        game.addGameListener(this);
-    }
+    public void initialize() { }
 
     @Override
     public void dispose() {
         clear();
-//        game.removeGameListener(this);
     }
 
     public void renewSprites(Collection<Coords> coords) {
@@ -49,9 +41,4 @@ public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
         coords.stream().map(c -> new FieldofFireSprite(boardView, 1, c, 63)).forEach(currentSprites::add);
         boardView.addSprites(currentSprites);
     }
-
-//    @Override
-//    public void gamePhaseChange(GamePhaseChangeEvent e) {
-//        clear();
-//    }
 }

@@ -292,7 +292,7 @@ public class ScenarioV2 implements Scenario {
                 JsonNode fleeNode = playerNode.get(EntityDeserializer.FLEE_AREA);
                 // allow using or omitting "area:"
                 JsonNode areaNode = fleeNode.has(AREA) ? fleeNode.get(AREA) : fleeNode;
-                player.setFleeArea(HexAreaDeserializer.parseShape(areaNode));
+                player.setFleeZone(HexAreaDeserializer.parseShape(areaNode));
             }
 
             // TODO minefields

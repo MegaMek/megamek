@@ -135,6 +135,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // implementing it in
         // TODO : SuiteOptions
         try {
+            System.setProperty("flatlaf.uiScale", "1.4");
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
         } catch (Exception ex) {
             logger.error(ex, "Failed to set look and feel!");

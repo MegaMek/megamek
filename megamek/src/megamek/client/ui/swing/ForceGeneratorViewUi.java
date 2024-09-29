@@ -377,7 +377,6 @@ public class ForceGeneratorViewUi implements ActionListener {
                     item = new JMenuItem("Export as MUL");
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
-                    UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
@@ -422,7 +421,6 @@ public class ForceGeneratorViewUi implements ActionListener {
                     menu.add(UIUtil.menuItem(msg_viewcost, FGV_COST + eIds, true, ForceGeneratorViewUi.this,
                             Integer.MIN_VALUE));
 
-                    UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }

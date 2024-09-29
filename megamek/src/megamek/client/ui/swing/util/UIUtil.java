@@ -510,77 +510,54 @@ public final class UIUtil {
      * gui scale.
      */
     public static void adjustContainer(Container parentCon, int fontSize) {
-        int sf = scaleForGUI(fontSize);
-        int pad = 3;
-
-        for (Component comp : parentCon.getComponents()) {
-            if ((comp instanceof JButton) || (comp instanceof JLabel)
-                    || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
-                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
-                    || (comp instanceof JTable) || (comp instanceof JList) || (comp instanceof JProgressBar)
-                    || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
-                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
-                    comp.setFont(comp.getFont().deriveFont((float) sf));
-                }
-            }
-            if (comp instanceof JScrollPane
-                    && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
-                JScrollPane scrollPane = (JScrollPane) comp;
-                Border border = scrollPane.getBorder();
-                setTitledBorder(border, sf);
-                adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
-            } else if (comp instanceof JPanel) {
-                JPanel panel = (JPanel) comp;
-                Border border = panel.getBorder();
-                setTitledBorder(border, sf);
-                adjustContainer(panel, fontSize);
-            } else if (comp instanceof JTabbedPane) {
-                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
-                    comp.setFont(comp.getFont().deriveFont((float) sf));
-                }
-                JTabbedPane tabbedPane = (JTabbedPane) comp;
-                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-                    Component subComp = tabbedPane.getTabComponentAt(i);
-                    if (subComp instanceof JPanel) {
-                        adjustContainer((JPanel) subComp, fontSize);
-                    }
-                }
-                adjustContainer((JTabbedPane) comp, fontSize);
-            } else if (comp instanceof JTable) {
-                JTable table = (JTable) comp;
-                table.setRowHeight(calRowHeights(table, sf, pad));
-                JTableHeader header = table.getTableHeader();
-                if ((header != null)) {
-                    header.setFont(comp.getFont().deriveFont((float) sf));
-                }
-                adjustContainer((Container) comp, fontSize);
-            } else if (comp instanceof Container) {
-                adjustContainer((Container) comp, fontSize);
-            }
-        }
-    }
-
-    /**
-     * Adapt a JPopupMenu to the GUI scaling. Use after all menu items have been
-     * added.
-     */
-    public static void scaleMenu(final JComponent popup) {
-        for (Component comp : popup.getComponents()) {
-            if ((comp instanceof JMenuItem)) {
-                comp.setFont(getScaledFont());
-                scaleJMenuItem((JMenuItem) comp);
-            }
-        }
-    }
-
-    public static void scaleComp(JComponent comp, int fontSize) {
-        int sf = scaleForGUI(fontSize);
-
-        if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
-            comp.setFont(comp.getFont().deriveFont((float) sf));
-            Border border = comp.getBorder();
-            setTitledBorder(border, sf);
-        }
+//        int sf = scaleForGUI(fontSize);
+//        int pad = 3;
+//
+//        for (Component comp : parentCon.getComponents()) {
+//            if ((comp instanceof JButton) || (comp instanceof JLabel)
+//                    || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
+//                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
+//                    || (comp instanceof JTable) || (comp instanceof JList) || (comp instanceof JProgressBar)
+//                    || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
+//                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+//                    comp.setFont(comp.getFont().deriveFont((float) sf));
+//                }
+//            }
+//            if (comp instanceof JScrollPane
+//                    && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
+//                JScrollPane scrollPane = (JScrollPane) comp;
+//                Border border = scrollPane.getBorder();
+//                setTitledBorder(border, sf);
+//                adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
+//            } else if (comp instanceof JPanel) {
+//                JPanel panel = (JPanel) comp;
+//                Border border = panel.getBorder();
+//                setTitledBorder(border, sf);
+//                adjustContainer(panel, fontSize);
+//            } else if (comp instanceof JTabbedPane) {
+//                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+//                    comp.setFont(comp.getFont().deriveFont((float) sf));
+//                }
+//                JTabbedPane tabbedPane = (JTabbedPane) comp;
+//                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+//                    Component subComp = tabbedPane.getTabComponentAt(i);
+//                    if (subComp instanceof JPanel) {
+//                        adjustContainer((JPanel) subComp, fontSize);
+//                    }
+//                }
+//                adjustContainer((JTabbedPane) comp, fontSize);
+//            } else if (comp instanceof JTable) {
+//                JTable table = (JTable) comp;
+//                table.setRowHeight(calRowHeights(table, sf, pad));
+//                JTableHeader header = table.getTableHeader();
+//                if ((header != null)) {
+//                    header.setFont(comp.getFont().deriveFont((float) sf));
+//                }
+//                adjustContainer((Container) comp, fontSize);
+//            } else if (comp instanceof Container) {
+//                adjustContainer((Container) comp, fontSize);
+//            }
+//        }
     }
 
     /**

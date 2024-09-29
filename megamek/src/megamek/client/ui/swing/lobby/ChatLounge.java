@@ -63,7 +63,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -129,7 +128,6 @@ import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
-import megamek.utilities.BoardsTagger;
 
 public class ChatLounge extends AbstractPhaseDisplay implements
         ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
@@ -323,7 +321,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         setupUnitsPanel();
         setupMapPanel();
         refreshLabels();
-        adaptToGUIScale();
         setupListeners();
     }
 
@@ -3016,9 +3013,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
-            case GUIPreferences.GUI_SCALE:
-                adaptToGUIScale();
-                break;
             case ClientPreferences.SHOW_UNIT_ID:
                 setButUnitIDState();
                 mekModel.refreshCells();
@@ -3109,79 +3103,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         column.setPreferredWidth(GUIP.getInt(key));
-    }
-
-    /** Adapts the whole Lobby UI (both panels) to the current guiScale. */
-    private void adaptToGUIScale() {
-        updateTableHeaders();
-        refreshLabels();
-        refreshCamoButton();
-        refreshMapButtons();
-        mekModel.refreshCells();
-
-        Font scaledFont = UIUtil.getScaledFont();
-
-        UIUtil.adjustContainer(splitPaneMain, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
-        UIUtil.scaleComp(butOptions, UIUtil.FONT_SCALE2);
-        UIUtil.scaleComp(butAdd, UIUtil.FONT_SCALE2);
-        UIUtil.scaleComp(butArmy, UIUtil.FONT_SCALE2);
-
-        setTableRowHeights();
-
-        String searchTip = Messages.getString("ChatLounge.map.searchTip") + "<BR>";
-        searchTip += autoTagHTMLTable();
-        fldSearch.setToolTipText(UIUtil.scaleStringForGUI(searchTip));
-
-        ((TitledBorder) panUnitInfo.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder) panPlayerInfo.getBorder()).setTitleFont(scaledFont);
-
-        int scaledBorder = UIUtil.scaleForGUI(TEAMOVERVIEW_BORDER);
-        panTeam.setBorder(new EmptyBorder(scaledBorder, scaledBorder, scaledBorder, scaledBorder));
-
-        butBoardPreview
-                .setToolTipText(scaleStringForGUI(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip")));
-        butSaveMapSetup.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.map.saveMapSetupTip")));
-
-        Font scaledHelpFont = new Font(SuiteConstants.FONT_DIALOG, Font.PLAIN,
-                UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
-        butHelp.setFont(scaledHelpFont);
-
-        // Makes a new tooltip appear immediately (rescaled and possibly for a different
-        // unit)
-        ToolTipManager manager = ToolTipManager.sharedInstance();
-        long time = System.currentTimeMillis() - manager.getInitialDelay() + 1;
-        Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
-        Point locationOnComponent = new Point(locationOnScreen);
-        SwingUtilities.convertPointFromScreen(locationOnComponent, mekTable);
-        MouseEvent event = new MouseEvent(mekTable, -1, time, 0,
-                locationOnComponent.x, locationOnComponent.y, 0, 0, 1, false, 0);
-        manager.mouseMoved(event);
-    }
-
-    private String autoTagHTMLTable() {
-        String result = "<TABLE><TR>" + UIUtil.guiScaledFontHTML();
-        int colCount = 0;
-        var autoTags = BoardsTagger.Tags.values();
-        for (BoardsTagger.Tags tag : autoTags) {
-            if (colCount == 0) {
-                result += "<TR>";
-            }
-
-            result += "<TD>" + tag.getName() + "</TD>";
-            colCount++;
-
-            if (colCount == 3) {
-                colCount = 0;
-                result += "</TR>";
-            }
-        }
-
-        if (colCount != 0) {
-            result += "</TR>";
-        }
-        result += "</TABLE>";
-        return result;
     }
 
     /**

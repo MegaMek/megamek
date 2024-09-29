@@ -21,18 +21,12 @@ import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
@@ -236,12 +230,6 @@ public final class UIUtil {
             result.add(newLine);
         }
         return result;
-    }
-
-    public static ArrayList<String> arrangeInLines(int maxLength,
-            String sep, boolean sepAtEnd, String... origList) {
-
-        return arrangeInLines(Arrays.asList(origList), maxLength, sep, sepAtEnd);
     }
 
     /**
@@ -1179,53 +1167,12 @@ public final class UIUtil {
     }
 
     /**
-     * This class is a subclass of EmptyBorder. The given top, left, right, bottom
-     * values are scaled with the
-     * current GUI scale.
-     */
-    public static class ScaledEmptyBorder extends EmptyBorder {
-
-        /**
-         * Creates a version of EmptyBorder where top, left, right, bottom values are
-         * scaled with the current GUI scale.
-         */
-        public ScaledEmptyBorder(int top, int left, int bottom, int right) {
-            super(UIUtil.scaleForGUI(top), UIUtil.scaleForGUI(left), UIUtil.scaleForGUI(bottom),
-                    UIUtil.scaleForGUI(right));
-        }
-    }
-
-    /**
      * Returns true when a modal dialog such as the Camo Chooser or a Load Force
      * dialog is currently shown.
      */
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
-    }
-
-    /**
-     * Automatically determines the correct row height for the given JTable and sets
-     * it, assuming it has a
-     * uniform row height for all rows.
-     * Note: Just calling this after a data change or after
-     * {@link #adjustDialog(JDialog, int)} will
-     * typically not work well. Instead, it must be called from a
-     * {@link javax.swing.event.TableModelListener},
-     * a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is
-     * used) a
-     * {@link javax.swing.event.RowSorterListener} to be effective.
-     */
-    public static void updateRowHeightsForEqualHeights(JTable table) {
-        if (table.getRowCount() > 0) {
-            int row = 0;
-            int rowHeight = 0;
-            for (int column = 0; column < table.getColumnCount(); column++) {
-                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
-                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
-            }
-            table.setRowHeight(rowHeight);
-        }
     }
 
     // PRIVATE

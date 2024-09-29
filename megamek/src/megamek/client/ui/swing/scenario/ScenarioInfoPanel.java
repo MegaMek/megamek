@@ -25,6 +25,7 @@ import megamek.common.scenario.ScenarioV1;
 import megamek.common.scenario.Scenario;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -58,7 +59,7 @@ public class ScenarioInfoPanel extends JPanel {
         textDescription2.setFont(new Font("Noto Sans", Font.PLAIN, UIUtil.FONT_SCALE1));
         textDescription2.setAlignmentX(0.5f);
         textDescription2.setVerticalAlignment(SwingConstants.TOP);
-        textDescription2.setBorder(new UIUtil.ScaledEmptyBorder(0, 10, 0, 10));
+        textDescription2.setBorder(new EmptyBorder(0, 10, 0, 10));
         add(textDescription2);
     }
 

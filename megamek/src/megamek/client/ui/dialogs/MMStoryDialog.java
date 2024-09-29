@@ -20,10 +20,10 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.server.scriptedevent.NarrativeDisplayProvider;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -77,7 +77,7 @@ public abstract class MMStoryDialog extends JDialog {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.setBorder(BorderFactory.createCompoundBorder(
                 new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-                new UIUtil.ScaledEmptyBorder(10, 0, 10, 0)));
+                new EmptyBorder(10, 0, 10, 0)));
 
         Box verticalBox = Box.createVerticalBox();
         verticalBox.add(Box.createVerticalGlue());

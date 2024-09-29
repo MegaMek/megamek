@@ -152,7 +152,7 @@ class PlayerTable extends JTable {
 
         @Override
         public String getColumnName(int column) {
-            return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString("ChatLounge.colPlayer");
+            return Messages.getString("ChatLounge.colPlayer");
         }
 
         @Override
@@ -163,7 +163,6 @@ class PlayerTable extends JTable {
         @Override
         public Object getValueAt(int row, int col) {
             return getPlayerAt(row);
-
         }
 
         Player getPlayerAt(int row) {
@@ -188,7 +187,7 @@ class PlayerTable extends JTable {
 
             Player player = (Player) value;
 
-            StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
+            StringBuilder result = new StringBuilder("<HTML><NOBR>");
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
                     || lobby.client().getBots().containsKey(player.getName())) {
@@ -278,7 +277,7 @@ class PlayerTable extends JTable {
 
             setText(result.toString());
 
-            setIconTextGap(scaleForGUI(10));
+            setIconTextGap(10);
             Image camo = player.getCamouflage().getImage();
             int size = scaleForGUI(PLAYERTABLE_ROWHEIGHT) / 2;
             setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));

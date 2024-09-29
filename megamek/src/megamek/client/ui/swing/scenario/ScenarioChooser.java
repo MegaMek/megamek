@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -123,7 +124,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.setBorder(BorderFactory.createCompoundBorder(
                 new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-                new UIUtil.ScaledEmptyBorder(10, 0, 10, 0)));
+                new EmptyBorder(10, 0, 10, 0)));
 
         Box verticalBox = Box.createVerticalBox();
         verticalBox.add(Box.createVerticalGlue());

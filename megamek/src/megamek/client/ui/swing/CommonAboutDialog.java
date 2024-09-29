@@ -25,6 +25,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -74,12 +75,12 @@ public class CommonAboutDialog extends JDialog {
         copyButton.addActionListener(e -> copySystemData());
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
-        buttonPanel.setBorder(new UIUtil.ScaledEmptyBorder(25, 20, 10, 10));
+        buttonPanel.setBorder(new EmptyBorder(25, 20, 10, 10));
         buttonPanel.add(closeButton);
         buttonPanel.add(copyButton);
 
         Box contentPanel = Box.createVerticalBox();
-        contentPanel.setBorder(new UIUtil.ScaledEmptyBorder(35, 50, 0, 50));
+        contentPanel.setBorder(new EmptyBorder(35, 50, 0, 50));
         titleImageLabel.setAlignmentX(0.5f);
         contentPanel.add(titleImageLabel);
         contentPanel.add(UIUtil.scaledVerticalSpacer(35), BorderLayout.PAGE_START);

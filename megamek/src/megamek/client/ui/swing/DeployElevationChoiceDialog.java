@@ -24,6 +24,7 @@ import megamek.common.DeploymentElevationType;
 import megamek.common.ElevationOption;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<ElevationO
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBorder(BorderFactory.createCompoundBorder(
                 new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-                new UIUtil.ScaledEmptyBorder(10, 0, 10, 0)));
+                new EmptyBorder(10, 0, 10, 0)));
         buttonPanel.add(new ButtonEsc(new CloseAction(this)));
         return buttonPanel;
     }

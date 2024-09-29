@@ -411,21 +411,45 @@ public final class UIUtil {
         return uiBgBrightness() > 130 ? LIGHTUI_DARKBLUE : DARKUI_DARKBLUE;
     }
 
+    /**
+     * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't affect,
+     * e.g. images. Note that the given int value is scaled as a float and then rounded.
+     *
+     * @param value The value to scale up or down according to the current GUI scale
+     */
     public static int scaleForGUI(int value) {
         return Math.round(scaleForGUI((float) value));
     }
 
+    /**
+     * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't affect,
+     * e.g. images.
+     *
+     * @param value The value to scale up or down according to the current GUI scale
+     */
     public static float scaleForGUI(float value) {
         return GUIPreferences.getInstance().getGUIScale() * value;
     }
 
+    /**
+     * Returns the given dimension multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't
+     * affect, e.g. images. Note that the dimension is scaled as float values and then rounded.
+     *
+     * @param dim The dimension to scale up or down according to the current GUI scale
+     */
     public static Dimension scaleForGUI(Dimension dim) {
         return scaleForGUI(dim.width, dim.height);
     }
 
+    /**
+     * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the automatic scaling
+     * doesn't affect, e.g. images. Note that the dimension is scaled as float values and then rounded.
+     *
+     * @param width The width to scale up or down according to the current GUI scale
+     * @param height The height to scale up or down according to the current GUI scale
+     */
     public static Dimension scaleForGUI(int width, int height) {
-        float scale = GUIPreferences.getInstance().getGUIScale();
-        return new Dimension((int) (scale * width), (int) (scale * height));
+        return new Dimension(scaleForGUI(width), scaleForGUI(height));
     }
 
     /**
@@ -454,110 +478,6 @@ public final class UIUtil {
         int green = (color.getGreen() * (255 - gray) + mid) / 255;
         int blue = (color.getBlue() * (255 - gray) + mid) / 255;
         return new Color(red, green, blue, color.getAlpha());
-    }
-
-    /**
-     * Returns the given String str enclosed in HTML tags and with a font tag
-     * according to the guiScale.
-     */
-    public static String scaleStringForGUI(String str) {
-        return "<HTML>" + UIUtil.guiScaledFontHTML() + str + "</FONT></HTML>";
-    }
-
-    /**
-     * Returns the given String str enclosed in HTML tags and with a font tag
-     * according to the guiScale.
-     */
-    public static String scaleMessageForGUI(String str) {
-        return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
-    }
-
-    /**
-     * Call this for {@link #adjustContainer(Container, int)} with a dialog as
-     * parameter.
-     */
-    public static void adjustDialog(JDialog dialog, int fontSize) {
-        adjustContainer(dialog.getContentPane(), fontSize);
-    }
-
-    /** calculate the max row height in a table + pad */
-    public static int calRowHeights(JTable table, int sf, int pad) {
-        int rowHeight = sf;
-        for (int row = 0; row < table.getRowCount(); row++) {
-            for (int col = 0; col < table.getColumnCount(); col++) {
-                // Consider the preferred height of the column
-                TableCellRenderer renderer = table.getCellRenderer(row, col);
-                Component comp = table.prepareRenderer(renderer, row, col);
-                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
-            }
-        }
-        // Add a little margin to the rows
-        return rowHeight + pad;
-    }
-
-    /** set font size for the TitledBorder */
-    public static void setTitledBorder(Border border, int sf) {
-        if ((border instanceof TitledBorder)) {
-            ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
-        }
-    }
-
-    /**
-     * Applies the current gui scale to a given Container.
-     * For a dialog, pass getContentPane(). This can work well for simple dialogs,
-     * but it is of course "experimental". Complex dialogs must be hand-adapted to
-     * the
-     * gui scale.
-     */
-    public static void adjustContainer(Container parentCon, int fontSize) {
-//        int sf = scaleForGUI(fontSize);
-//        int pad = 3;
-//
-//        for (Component comp : parentCon.getComponents()) {
-//            if ((comp instanceof JButton) || (comp instanceof JLabel)
-//                    || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
-//                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
-//                    || (comp instanceof JTable) || (comp instanceof JList) || (comp instanceof JProgressBar)
-//                    || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
-//                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
-//                    comp.setFont(comp.getFont().deriveFont((float) sf));
-//                }
-//            }
-//            if (comp instanceof JScrollPane
-//                    && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
-//                JScrollPane scrollPane = (JScrollPane) comp;
-//                Border border = scrollPane.getBorder();
-//                setTitledBorder(border, sf);
-//                adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
-//            } else if (comp instanceof JPanel) {
-//                JPanel panel = (JPanel) comp;
-//                Border border = panel.getBorder();
-//                setTitledBorder(border, sf);
-//                adjustContainer(panel, fontSize);
-//            } else if (comp instanceof JTabbedPane) {
-//                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
-//                    comp.setFont(comp.getFont().deriveFont((float) sf));
-//                }
-//                JTabbedPane tabbedPane = (JTabbedPane) comp;
-//                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-//                    Component subComp = tabbedPane.getTabComponentAt(i);
-//                    if (subComp instanceof JPanel) {
-//                        adjustContainer((JPanel) subComp, fontSize);
-//                    }
-//                }
-//                adjustContainer((JTabbedPane) comp, fontSize);
-//            } else if (comp instanceof JTable) {
-//                JTable table = (JTable) comp;
-//                table.setRowHeight(calRowHeights(table, sf, pad));
-//                JTableHeader header = table.getTableHeader();
-//                if ((header != null)) {
-//                    header.setFont(comp.getFont().deriveFont((float) sf));
-//                }
-//                adjustContainer((Container) comp, fontSize);
-//            } else if (comp instanceof Container) {
-//                adjustContainer((Container) comp, fontSize);
-//            }
-//        }
     }
 
     /**
@@ -1167,8 +1087,7 @@ public final class UIUtil {
      * its width and adding HTML tags.
      */
     public static String formatSideTooltip(String text) {
-        String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
-        return scaleStringForGUI(result);
+        return "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
     }
 
     /**
@@ -1283,33 +1202,6 @@ public final class UIUtil {
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
-    }
-
-    /**
-     * Automatically determines the correct row heights for each row of the given
-     * JTable and sets it.
-     * Note: Just calling this after a data change or after
-     * {@link #adjustDialog(JDialog, int)} will
-     * typically not work well. Instead, it must be called from a
-     * {@link javax.swing.event.TableModelListener},
-     * a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is
-     * used) a
-     * {@link javax.swing.event.RowSorterListener} to be effective.
-     * Note: For tables of more than about 200 entries or with slow renderers this
-     * will become noticeably slow
-     * when drag-resizing the table. When the table has uniform row heights, better
-     * use
-     * {@link #updateRowHeightsForEqualHeights(JTable)}.
-     */
-    public static void updateRowHeights(JTable table) {
-        for (int row = 0; row < table.getRowCount(); row++) {
-            int rowHeight = table.getRowHeight();
-            for (int column = 0; column < table.getColumnCount(); column++) {
-                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
-                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
-            }
-            table.setRowHeight(row, rowHeight);
-        }
     }
 
     /**

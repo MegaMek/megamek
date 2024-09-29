@@ -306,7 +306,6 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             }
         }
 
-        adaptToGUIScale();
         validate();
     }
 
@@ -1085,10 +1084,6 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         panEquip.add(m_equip, GBC.std());
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-    }
-
     private void setStealth(Entity e, boolean stealthed) {
         int newStealth = (stealthed) ? 1 : 0;
         EquipmentMode newMode = (stealthed) ? EquipmentMode.getMode("On") : EquipmentMode.getMode("Off");
@@ -1408,7 +1403,6 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             m_equip.initialize();
         }
 
-        adaptToGUIScale();
         setResizable(true);
         return mainPanel;
     }

@@ -32,7 +32,6 @@ import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
 import static megamek.client.ui.swing.lobby.LobbyUtility.mekReadoutAction;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
 import static megamek.client.ui.swing.util.UIUtil.setHighQualityRendering;
 import static megamek.client.ui.swing.util.UIUtil.uiGray;
 import static megamek.common.util.CollectionUtil.theElement;
@@ -1873,7 +1872,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource() == butHelp) {
                 File helpfile = new File(CL_KEY_FILEPATH_MAPASSEMBLYHELP);
                 final JDialog dialog = new ClientDialog(clientgui.getFrame(),
-                        Messages.getString("ChatLounge.map.title.mapAssemblyHelp"), true, true);
+                        Messages.getString("ChatLounge.map.title.mapAssemblyHelp"), true);
                 final int height = 600;
                 final int width = 600;
 
@@ -2143,7 +2142,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         String txt = Messages.getString("ChatLounge.GameYear");
         txt += opts.intOption(OptionsConstants.ALLOWED_YEAR);
         lblGameYear.setText(txt);
-        lblGameYear.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
+        lblGameYear.setToolTipText(Messages.getString("ChatLounge.tooltip.techYear"));
 
         String tlString = TechConstants.getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
         IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECHLEVEL);
@@ -2151,7 +2150,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             tlString = tlOpt.stringValue();
         }
         lblTechLevel.setText(Messages.getString("ChatLounge.TechLevel") + tlString);
-        lblTechLevel.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
+        lblTechLevel.setToolTipText(Messages.getString("ChatLounge.tooltip.techYear"));
 
         txt = Messages.getString("ChatLounge.MapSummary");
         txt += (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x "
@@ -2176,7 +2175,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             selectedMaps.append("<br>");
         }
-        lblMapSummary.setToolTipText(scaleStringForGUI(selectedMaps.toString()));
+        lblMapSummary.setToolTipText(selectedMaps.toString());
     }
 
     @Override
@@ -3043,7 +3042,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         mekTable.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTREE_ROWHEIGHT_FULL;
         mekForceTree.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
-        tablePlayers.rescale();
     }
 
     /** Refreshes the table headers of the MekTable and PlayerTable. */
@@ -3403,7 +3401,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             // Found or created an icon; finish the panel
             setText("");
             if (lisBoardsAvailable.isEnabled()) {
-                setToolTipText(scaleStringForGUI(createBoardTooltip(board)));
+                setToolTipText(createBoardTooltip(board));
             } else {
                 setToolTipText(null);
             }

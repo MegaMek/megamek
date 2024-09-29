@@ -3134,13 +3134,4 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             return false;
         }
     }
-
-    public void adaptToGUIScale() {
-        scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
-        scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
-        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
-        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
-        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
-        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
-    }
 }

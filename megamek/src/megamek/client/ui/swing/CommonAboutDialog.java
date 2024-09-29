@@ -94,7 +94,6 @@ public class CommonAboutDialog extends JDialog {
 
         // Size and center
         getRootPane().setDefaultButton(closeButton);
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
         pack();
         setLocationRelativeTo(parentFrame);
         setResizable(false);

@@ -68,7 +68,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
     /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
     public PlanetaryConditionsDialog(ClientGUI cl) {
-        super(cl.frame, Messages.getString("PlanetaryConditionsDialog.title"), true, true);
+        super(cl.frame, Messages.getString("PlanetaryConditionsDialog.title"), true);
         client = cl;
         setupDialog();
         update(client.getClient().getGame().getPlanetaryConditions());
@@ -76,7 +76,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
     /** Creates new PlanetaryConditionsDialog and sets the given conditions. Used for scenarios. */
     public PlanetaryConditionsDialog(JFrame frame, PlanetaryConditions conditions) {
-        super(frame, Messages.getString("PlanetaryConditionsDialog.title"), true, true);
+        super(frame, Messages.getString("PlanetaryConditionsDialog.title"), true);
         setupDialog();
         update(conditions);
     }

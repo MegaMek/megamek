@@ -246,7 +246,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
-        adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
@@ -286,12 +285,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         labStatus.setText(text);
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
-        UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
-        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.BUTTONS_PER_ROW)) {
@@ -301,8 +294,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
-
-        adaptToGUIScale();
     }
 
     @Override

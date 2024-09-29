@@ -78,15 +78,6 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<ElevationO
                 + "</div></BODY></HTML>";
     }
 
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-            pack();
-        }
-        super.setVisible(visible);
-    }
-
     public static String styles() {
         int descriptionSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         int elevationSize = (int) (0.8 * UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));

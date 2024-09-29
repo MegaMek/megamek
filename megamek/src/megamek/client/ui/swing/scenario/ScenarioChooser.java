@@ -191,14 +191,6 @@ public class ScenarioChooser extends AbstractButtonDialog {
         return scenarioInfos.stream().collect(Collectors.groupingBy(this::getSubDirectory, Collectors.toList()));
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        if (b) {
-            UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        }
-        super.setVisible(b);
-    }
-
     private void selectFromFile(MouseEvent event) {
         JFileChooser fc = new JFileChooser(Configuration.scenariosDir());
         fc.setFileFilter(new FileNameExtensionFilter("Scenario files", "mms"));

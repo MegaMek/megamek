@@ -76,15 +76,6 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
                 + "</div></BODY></HTML>";
     }
 
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-            pack();
-        }
-        super.setVisible(visible);
-    }
-
     public static String styles() {
         float labelSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE2);
         int padding = UIUtil.scaleForGUI(BASE_PADDING);

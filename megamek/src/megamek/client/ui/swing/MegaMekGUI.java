@@ -134,12 +134,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // TODO : Move Theme setup to MegaMek::initializeSuiteSetups as part of
         // implementing it in
         // TODO : SuiteOptions
-        try {
-            System.setProperty("flatlaf.uiScale", "1.4");
-            UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
-        } catch (Exception ex) {
-            logger.error(ex, "Failed to set look and feel!");
-        }
+        updateGuiScaling();
 
         // TODO : Move ToolTip setup to MegaMek::initializeSuiteSetups as part of
         // implementing them
@@ -1086,27 +1081,17 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
-        // Update to reflect new skin
-        if (evt.getName().equals(GUIPreferences.SKIN_FILE)) {
-            showMainMenu();
-            frame.repaint();
-        } else if (evt.getName().equals(GUIPreferences.UI_THEME)) {
-            try {
-                UIManager.setLookAndFeel((String) evt.getNewValue());
-                // We went all Oprah and gave everybody frames...
-                // so now we have to let everybody who got a frame
-                // under their chair know that we updated our look
-                // and feel.
-                for (Frame f : Frame.getFrames()) {
-                    SwingUtilities.updateComponentTreeUI(f);
-                }
-                // ...and also all of our windows and dialogs, etc.
-                for (Window w : Window.getWindows()) {
-                    SwingUtilities.updateComponentTreeUI(w);
-                }
-            } catch (Exception ex) {
-                logger.error(ex, "");
-            }
+        switch (evt.getName()) {
+            case GUIPreferences.SKIN_FILE:
+                showMainMenu();
+                frame.repaint();
+                break;
+            case GUIPreferences.UI_THEME:
+                setLookAndFeel();
+                break;
+            case GUIPreferences.GUI_SCALE:
+                updateGuiScaling();
+                break;
         }
     }
 
@@ -1207,5 +1192,32 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
         return new BaseMultiResolutionImage(images.toArray(new Image[0]));
+    }
+
+    public static void updateGuiScaling() {
+        System.setProperty("flatlaf.uiScale", Double.toString(GUIPreferences.getInstance().getGUIScale()));
+        setLookAndFeel();
+    }
+
+    private static void setLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
+            updateAfterUiChange();
+        } catch (Exception ex) {
+            logger.error("setLookAndFeel() Exception", ex);
+        }
+    }
+
+    /**
+     * Updates all existing windows and frames. Use after a gui scale change or look-and-feel change.
+     */
+    public static void updateAfterUiChange() {
+        for (Window window : Window.getWindows()) {
+            SwingUtilities.updateComponentTreeUI(window);
+            window.invalidate();
+            window.validate();
+            window.pack();
+            window.repaint();
+        }
     }
 }

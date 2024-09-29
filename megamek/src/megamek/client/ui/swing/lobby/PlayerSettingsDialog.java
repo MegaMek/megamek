@@ -160,12 +160,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     };
 
     @Override
-    protected void finalizeInitialization() throws Exception {
-        adaptToGUIScale();
-        super.finalizeInitialization();
-    }
-
-    @Override
     protected void okAction() {
         apply();
     }
@@ -977,10 +971,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         } catch (NumberFormatException ex) {
             return 0;
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 
     public FactionRecord getFaction() {

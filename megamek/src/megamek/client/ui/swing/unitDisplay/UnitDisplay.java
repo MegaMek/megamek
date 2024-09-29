@@ -41,7 +41,6 @@ import megamek.client.ui.swing.UnitDisplayOrderPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.client.ui.swing.widget.PMUtil;
@@ -50,8 +49,6 @@ import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
@@ -59,7 +56,7 @@ import megamek.logging.MMLogger;
  * Displays the info for a mek. This is also a sort of interface for special
  * movement and firing actions.
  */
-public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
+public class UnitDisplay extends JPanel {
     private static final MMLogger logger = MMLogger.create(UnitDisplay.class);
 
     // buttons & gizmos for top level
@@ -278,9 +275,6 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         } else {
             setDisplayNonTabbed();
         }
-
-        adaptToGUIScale();
-        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -565,17 +559,5 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     @Nullable
     public ClientGUI getClientGUI() {
         return clientgui;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        }
     }
 }

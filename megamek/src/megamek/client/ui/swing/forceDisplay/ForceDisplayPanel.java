@@ -33,7 +33,6 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.util.ScalingPopup;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.event.*;
@@ -73,8 +72,6 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         forceTree.addMouseListener(mekForceTreeMouseListener);
         clientgui.getClient().getGame().addGameListener(this);
         GUIP.addPreferenceChangeListener(this);
-
-        adaptToGUIScale();
     }
 
     private void setupForce() {
@@ -338,16 +335,8 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         // noaction default
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        }
         if (e.getName().equals(GUIPreferences.FORCE_DISPLAY_ENABLED)) {
             refreshTree();
         }

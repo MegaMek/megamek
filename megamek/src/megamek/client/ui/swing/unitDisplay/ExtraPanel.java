@@ -52,7 +52,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
-class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPreferenceChangeListener {
+class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     private final UnitDisplay unitDisplay;
 
     private JPanel panelMain;
@@ -257,8 +257,6 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         c.weighty = 1;
         panelMain.add(new Label(" "), c);
 
-        adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
         setLayout(new BorderLayout());
         add(panelMain, BorderLayout.NORTH);
         panelMain.setOpaque(false);
@@ -662,20 +660,6 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         } else if (unitReadout.equals(ae.getSource())) {
             Entity entity = clientgui.getClient().getGame().getEntity(myMekId);
             LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
-        }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
-        scrollPane.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
-        scrollPane.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         }
     }
 }

@@ -25,7 +25,6 @@ import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.preferences.JTabbedPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 
 /**
@@ -37,7 +36,7 @@ public class EntityReadoutDialog extends AbstractDialog {
     private final Entity entity;
     private EntityViewPane entityView;
 
-    /** Constructs a non-modal dialog showing the readout (TRO) of the given entity. */ 
+    /** Constructs a non-modal dialog showing the readout (TRO) of the given entity. */
     public EntityReadoutDialog(final JFrame frame, final Entity entity) {
         this(frame, false, entity);
     }
@@ -55,19 +54,10 @@ public class EntityReadoutDialog extends AbstractDialog {
         entityView = new EntityViewPane(getFrame(), entity);
         return entityView;
     }
-    
+
     @Override
     protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
         super.setCustomPreferences(preferences);
         preferences.manage(new JTabbedPanePreference(entityView));
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        }
-
-        super.setVisible(visible);
     }
 }

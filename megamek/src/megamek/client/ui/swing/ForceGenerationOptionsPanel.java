@@ -38,7 +38,6 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.MekSummary;
@@ -250,8 +249,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weightx = 0.0;
         c.weighty = 0.5;
         add(panUnitTypeOptions, c);
-
-        adaptToGUIScale();
 
         if (!RATGenerator.getInstance().isInitialized()) {
             RATGenerator.getInstance().registerListener(this);
@@ -1218,9 +1215,5 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
     }
 }

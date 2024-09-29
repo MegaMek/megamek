@@ -170,16 +170,6 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     }
 
     @Override
-    protected void finalizeInitialization() throws Exception {
-        super.finalizeInitialization();
-        adaptToGUIScale();
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
-    }
-
-    @Override
     public void setVisible(boolean b) {
         if ((originalCamo != null) && b) {
             rotationSlider.setValue(originalCamo.getRotationAngle());

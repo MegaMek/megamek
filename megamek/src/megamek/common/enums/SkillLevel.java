@@ -18,13 +18,13 @@
  */
 package megamek.common.enums;
 
+import megamek.MegaMek;
+import megamek.logging.MMLogger;
+
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import megamek.MegaMek;
-import megamek.logging.MMLogger;
 
 public enum SkillLevel {
     // region Enum Declarations
@@ -189,6 +189,29 @@ public enum SkillLevel {
         MMLogger.create(SkillLevel.class).error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
 
         return REGULAR;
+    }
+
+    /**
+     * Parses an integer value to a {@link SkillLevel} enumeration.
+     *
+     * @param value the integer value to parse
+     * @return the {@link SkillLevel} enum corresponding to the given integer value
+     * @throws IllegalStateException if the integer value does not match any {@link SkillLevel} enum
+     * value
+     */
+    public static SkillLevel parseFromInteger(final int value) {
+        return switch (value) {
+            case 0 -> NONE;
+            case 1 -> ULTRA_GREEN;
+            case 2 -> GREEN;
+            case 3 -> REGULAR;
+            case 4 -> VETERAN;
+            case 5 -> ELITE;
+            case 6 -> HEROIC;
+            case 7 -> LEGENDARY;
+            default -> throw new IllegalStateException(
+                "Unexpected value in megamek/common/enums/SkillLevel.java: " + value);
+        };
     }
     // endregion File I/O
 

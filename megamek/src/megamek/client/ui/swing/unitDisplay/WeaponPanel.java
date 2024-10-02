@@ -238,6 +238,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             StringBuilder wn = new StringBuilder(mounted.getDesc());
             wn.append(" [");
             wn.append(en.getLocationAbbr(mounted.getLocation()));
+            //Check if mixedTech and add Clan or IS tag
+            if (en.isMixedTech()) {
+                wn.insert(0, wtype.isClan() ? "(C) " : "(IS) ");
+            }
             if (mounted.isSplit()) {
                 wn.append('/');
                 wn.append(en.getLocationAbbr(mounted.getSecondLocation()));
@@ -1371,7 +1375,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     /**
      * Selects the first valid weapon in the weapon list.
-     * 
+     *
      * @return The weapon id of the weapon selected
      */
     public int selectFirstWeapon() {
@@ -2794,7 +2798,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * Updates the Weapon Panel with the information for the given entity. If the
      * given entity
      * is `null`, this method will do nothing.
-     * 
+     *
      * @param entity - The weapon panel will update info based on the {@link Entity}
      *               provided.
      */

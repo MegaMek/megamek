@@ -51,6 +51,9 @@ factions:
         atleast: 4
       modify: onlyatend
 
+  fleefrom:
+    border: north
+
   units:
   - fullname: Thunderbolt TDR-5S
     id: 101
@@ -250,9 +253,6 @@ messages:
       as many Meks as possible.
 
       Be careful! Some of your Meks have already sustained damage.
-
-      *Technical note: you can currently retreat off any edge of the battlefield and it will count for victory.
-      If you do this, Princess will be sad.*
     image: loweringboom_map.png
     trigger:
       type: and

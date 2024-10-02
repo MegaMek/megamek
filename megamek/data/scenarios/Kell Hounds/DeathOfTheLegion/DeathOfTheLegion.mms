@@ -33,8 +33,6 @@ map:
       modify: rotate
 
 factions:
-#- name: Obser
-
 
 - name: Mek Company, Kell Hounds
   camo: Mercs/Kell Hounds.jpg

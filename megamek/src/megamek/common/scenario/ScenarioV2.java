@@ -39,14 +39,10 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
-import megamek.common.jacksonadapters.BoardDeserializer;
-import megamek.common.jacksonadapters.CarryableDeserializer;
-import megamek.common.jacksonadapters.MMUReader;
-import megamek.common.jacksonadapters.MessageDeserializer;
-import megamek.common.jacksonadapters.TriggerDeserializer;
-import megamek.common.jacksonadapters.VictoryDeserializer;
+import megamek.common.jacksonadapters.*;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.logging.MMLogger;
@@ -69,9 +65,12 @@ public class ScenarioV2 implements Scenario {
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
     private static final String VICTORY = "victory";
+    private static final String AREA = "area";
 
     private final JsonNode node;
     private final File scenariofile;
+
+    private final List<HexArea> deploymentAreas = new ArrayList<>();
 
     private static final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 
@@ -133,6 +132,10 @@ public class ScenarioV2 implements Scenario {
         game.setupTeams();
 
         game.setBoard(0, createBoard());
+        int zone = 1000;
+        for (HexArea hexArea : deploymentAreas) {
+            game.getBoard().addDeploymentZone(zone++, hexArea);
+        }
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
         }
@@ -213,6 +216,10 @@ public class ScenarioV2 implements Scenario {
         if (playerNode.has(DEPLOY)) {
             if (!playerNode.get(DEPLOY).isContainerNode()) {
                 edge = playerNode.get(DEPLOY).textValue();
+            } else if (playerNode.get(DEPLOY).has(AREA)) {
+                deploymentAreas.add(HexAreaDeserializer.parseShape(playerNode.get(DEPLOY).get(AREA)));
+                player.setStartingPos(1000 + deploymentAreas.size() - 1);
+                return;
             } else {
                 JsonNode deployNode = playerNode.get(DEPLOY);
                 if (deployNode.has(DEPLOY_EDGE)) {
@@ -279,6 +286,14 @@ public class ScenarioV2 implements Scenario {
 
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
+
+            // The flee area
+            if (playerNode.has(EntityDeserializer.FLEE_AREA)) {
+                JsonNode fleeNode = playerNode.get(EntityDeserializer.FLEE_AREA);
+                // allow using or omitting "area:"
+                JsonNode areaNode = fleeNode.has(AREA) ? fleeNode.get(AREA) : fleeNode;
+                player.setFleeZone(HexAreaDeserializer.parseShape(areaNode));
+            }
 
             // TODO minefields
 

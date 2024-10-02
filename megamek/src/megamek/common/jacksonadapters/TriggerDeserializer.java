@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.enums.GamePhase;
+import megamek.common.hexarea.HexArea;
 import megamek.server.trigger.*;
 
 import java.io.IOException;
@@ -46,6 +47,8 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String TYPE_ACTIVEUNITS = "activeunits";
     private static final String TYPE_KILLEDUNITS = "killedunits";
     private static final String TYPE_KILLEDUNIT = "killedunit";
+    private static final String TYPE_UNIT_POSITION = "position";
+    private static final String TYPE_UNITS_POSITION = "positions";
     private static final String TYPE_BATTLEFIELD_CONTROL = "battlefieldcontrol";
     private static final String PLAYER = "player";
     private static final String COUNT = "count";
@@ -59,6 +62,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String ONCE = "once";
     private static final String NOT = "not";
     private static final String AT_END = "atend";
+    private static final String AREA = "area";
 
     public TriggerDeserializer() {
         this(null);
@@ -90,6 +94,8 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             case TYPE_KILLEDUNITS -> parseKilledUnitsTrigger(node);
             case TYPE_KILLEDUNIT -> parseKilledUnitTrigger(node);
             case TYPE_BATTLEFIELD_CONTROL -> new BattlefieldControlTrigger();
+            case TYPE_UNIT_POSITION -> parseUnitPositionTrigger(node);
+            case TYPE_UNITS_POSITION -> parseUnitsPositionTrigger(node);
             case NOT -> parseNotTrigger(node);
             case ROUND -> new RoundTrigger(node.get(ROUND).asInt());
             default -> throw new IllegalStateException("Unexpected value: " + type);
@@ -214,6 +220,36 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             triggerNode.get(UNITS).iterator().forEachRemaining(id -> unitIds.add(id.asInt()));
         }
         return new KilledUnitsTrigger(player, unitIds, minCount, maxCount);
+    }
+
+    private static Trigger parseUnitPositionTrigger(JsonNode triggerNode) {
+        HexArea area = HexAreaDeserializer.parseShape(triggerNode.get(AREA));
+        return new UnitPositionTrigger(area, triggerNode.get(UNIT).asInt());
+    }
+
+    private static Trigger parseUnitsPositionTrigger(JsonNode triggerNode) {
+        HexArea area = HexAreaDeserializer.parseShape(triggerNode.get(AREA));
+        int minCount = Integer.MIN_VALUE;
+        int maxCount = Integer.MAX_VALUE;
+        if (triggerNode.has(AT_MOST)) {
+            maxCount = triggerNode.get(AT_MOST).asInt();
+        }
+        if (triggerNode.has(AT_LEAST)) {
+            minCount = triggerNode.get(AT_LEAST).asInt();
+        }
+        if (triggerNode.has(COUNT)) {
+            minCount = triggerNode.get(COUNT).asInt();
+            maxCount = triggerNode.get(COUNT).asInt();
+        }
+        String player = "";
+        List<Integer> unitIds = new ArrayList<>();
+        if (triggerNode.has(PLAYER)) {
+            player = triggerNode.get(PLAYER).asText();
+        }
+        if (triggerNode.has(UNITS)) {
+            triggerNode.get(UNITS).iterator().forEachRemaining(id -> unitIds.add(id.asInt()));
+        }
+        return new UnitPositionTrigger(area, player, unitIds, minCount, maxCount);
     }
 
     private static Trigger parseKilledUnitTrigger(JsonNode triggerNode) {

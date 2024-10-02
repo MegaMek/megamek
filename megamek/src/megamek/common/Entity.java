@@ -54,6 +54,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
 import megamek.common.options.GameOptions;
@@ -909,6 +910,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * icon.
      */
     protected Base64Image icon = new Base64Image();
+
+    private boolean hasFleeZone = false;
+    private HexArea fleeZone = HexArea.EMPTY_AREA;
 
     /**
      * Generates a new, blank, entity.
@@ -9591,9 +9595,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && !isShutDown()
                 && !getCrew().isUnconscious()
                 && (getSwarmTargetId() == NONE)
-                && (isOffBoard() || ((pos != null)
-                        && ((pos.getX() == 0) || (pos.getX() == (getGame().getBoard().getWidth() - 1))
-                                || (pos.getY() == 0) || (pos.getY() == (getGame().getBoard().getHeight() - 1)))));
+                && (isOffBoard() || ((pos != null) && game.canFleeFrom(this, pos)));
     }
 
     public void setEverSeenByEnemy(boolean b) {
@@ -15824,5 +15826,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean hasFlotationHull() {
         return hasWorkingMisc(MiscType.F_FLOTATION_HULL);
+    }
+
+    @Override
+    public boolean hasFleeZone() {
+        return hasFleeZone;
+    }
+
+    @Override
+    public HexArea getFleeZone() {
+        return fleeZone;
+    }
+
+    /**
+     * Sets the board area this unit may flee from. The area may be empty, in which case the unit may not flee. Also sets this unit to know
+     * that it has a flee zone and the owning player should not be asked to provide this information.
+     *
+     * @param fleeZone The new flee zone
+     */
+    public void setFleeZone(HexArea fleeZone) {
+        this.fleeZone = fleeZone;
+        hasFleeZone = true;
+    }
+
+    /**
+     * Resets the flee information this unit has. After calling this method, the unit will no longer consider to have its own flee area; the
+     * game will refer to the unit's owner to see if it can flee from a hex.
+     */
+    public void removeFleeZone() {
+        fleeZone = HexArea.EMPTY_AREA;
+        hasFleeZone = false;
     }
 }

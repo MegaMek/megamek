@@ -142,6 +142,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             getString("CommonMenuBar.viewToggleSensorRange"));
     private final JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(
             getString("CommonMenuBar.viewToggleFieldOfFire"));
+    private final JMenuItem toggleFleeZone = new JMenuItem(getString("CommonMenuBar.viewToggleFleeZone"));
     private final JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(
             getString("CommonMenuBar.viewToggleFovHighlight"));
     private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(
@@ -343,6 +344,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE);
         toggleFieldOfFire.setSelected(GUIP.getShowFieldOfFire());
         toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
+        initMenuItem(toggleFleeZone, menu, VIEW_TOGGLE_FLEE_ZONE);
+        toggleFleeZone.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFleeZoneToolTip"));
         initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
         toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
         toggleFiringSolutions.setSelected(GUIP.getShowFiringSolutions());
@@ -547,6 +550,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewUnitOverview.setEnabled(isInGameBoardView);
         toggleSensorRange.setEnabled(isInGameBoardView);
         toggleFieldOfFire.setEnabled(isInGameBoardView);
+        toggleFleeZone.setEnabled(isInGameBoardView);
         toggleFovHighlight.setEnabled(isInGameBoardView);
         toggleFovDarken.setEnabled(isInGameBoardView);
         toggleFiringSolutions.setEnabled(isInGameBoardView);

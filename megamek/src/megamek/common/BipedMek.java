@@ -915,6 +915,8 @@ public class BipedMek extends Mek {
                 && hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)
                 && !isLocationBad(Mek.LOC_RARM)
                 && !isLocationBad(Mek.LOC_LARM)
+                && !weaponFiredFrom(Mek.LOC_LARM)
+                && !weaponFiredFrom(Mek.LOC_RARM)
                 && !isProne();
     }
 

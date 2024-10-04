@@ -35,6 +35,11 @@ MEGAMEK VERSION HISTORY:
 + PR #6045: Hex areas and use for Deployment, Flee Zones and Triggers
 + pr #6046: Deleted StratConSkillGenerator.java
 + Fix #5991: Mix tech mech not showing origin of weapon equipped.
++ Fix #6056: Thumper and Sniper weapons swapped with one another on various units and Mechs
++ Fix #6037: Medium Missile Turret (3039) missing 2 Artemis
++ Fix #6017: Zweihander prompt when only one arm available
++ Fix #6049: Fixing missing Text string for Mechanical Jump Fall Damage
++ PR #6063: Enhance wordWrap with HTML Tags for Line Breaks
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

@@ -11,11 +11,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tooltip.EntityActionLog;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 /**
  * Sprite and info for an attack. Does not actually use the image buffer as
@@ -246,7 +245,7 @@ class AttackSprite extends Sprite {
         String sAttacherDesc = "";
 
         sAttacherDesc = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
-        result = guiScaledFontHTML(attackColor) + sAttacherDesc + "</FONT>";
+        result = UIUtil.colorHTML(attackColor) + sAttacherDesc + "</FONT>";
         String sAttacks = "";
         if ((phase.isFiring()) || (phase.isPhysical())) {
             for (String wpD : attacks.getDescriptions()) {

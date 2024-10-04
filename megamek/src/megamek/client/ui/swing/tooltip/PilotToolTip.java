@@ -127,7 +127,6 @@ public final class PilotToolTip {
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
-        result = UIUtil.guiScaledFontHTML() + result + "</FONT>";
         return new StringBuilder(result);
     }
 
@@ -146,7 +145,7 @@ public final class PilotToolTip {
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 String sNickName = "<B>'" + crew.getNickname(i).toUpperCase() + "'</B>";
-                sCrew += guiScaledFontHTML(UIUtil.uiNickColor()) + sNickName + "</FONT>";
+                sCrew += UIUtil.colorHTML(UIUtil.uiNickColor()) + sNickName + "</FONT>";
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 sCrew += crew.getName(i);
             } else {
@@ -158,7 +157,7 @@ public final class PilotToolTip {
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
-                sCrew += guiScaledFontHTML(GUIP.getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
+                sCrew += UIUtil.colorHTML(GUIP.getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
             result += sCrew + "<BR>";
         }
@@ -166,7 +165,6 @@ public final class PilotToolTip {
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
-        result = guiScaledFontHTML() + result + "</FONT>";
         String col = "<TD align=\"left\">" + result + "</TD>";
 
         return new StringBuilder().append(col);
@@ -185,7 +183,7 @@ public final class PilotToolTip {
         String col = "";
 
         if (!pickedUp.isEmpty()) {
-            pickedUp = guiScaledFontHTML(GUIP.getCautionColor()) + Messages.getString("BoardView1.Tooltip.PickedUp")
+            pickedUp = UIUtil.colorHTML(GUIP.getCautionColor()) + Messages.getString("BoardView1.Tooltip.PickedUp")
                     + pickedUp + "</FONT>";
             col = "<TD>" + pickedUp + "</TD>";
         }

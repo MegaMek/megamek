@@ -796,10 +796,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         for (int i : butStartPos.keySet()) {
             butText.get(i).append("<HTML><P ALIGN=CENTER>");
             if (!isValidStartPos(client.getGame(), client.getLocalPlayer(), i)) {
-                butText.get(i).append(guiScaledFontHTML(uiYellow()));
+                butText.get(i).append(UIUtil.colorHTML(uiYellow()));
                 butTT.get(i).append(Messages.getString("PlayerSettingsDialog.invalidStartPosTT"));
-            } else {
-                butText.get(i).append(guiScaledFontHTML());
             }
 
             if (i <= Board.NUM_ZONES) {
@@ -813,7 +811,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         for (Player listedPlayer : client.getGame().getPlayersList()) {
             int pos = listedPlayer.getStartingPos();
             if (!listedPlayer.equals(client.getLocalPlayer()) && (pos != Board.START_ANY)) {
-                butText.get(pos).append(guiScaledFontHTML(teamColor(listedPlayer, client.getLocalPlayer())));
+                butText.get(pos).append(UIUtil.colorHTML(teamColor(listedPlayer, client.getLocalPlayer())));
                 butText.get(pos).append("\u25A0</FONT>");
                 if (!hasPlayer.containsKey(pos)) {
                     if (butTT.get(pos).length() > 0) {
@@ -826,7 +824,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             }
         }
 
-        butText.get(currentPlayerStartPos).append(guiScaledFontHTML(GUIPreferences.getInstance().getMyUnitColor()));
+        butText.get(currentPlayerStartPos).append(UIUtil.colorHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
 
         for (int i : butStartPos.keySet()) {

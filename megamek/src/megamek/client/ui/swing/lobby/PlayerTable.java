@@ -67,17 +67,17 @@ class PlayerTable extends JTable {
         setDefaultRenderer(Player.class, new PlayerRenderer());
         TableColumn column = getColumnModel().getColumn(0);
         column.setHeaderValue(Messages.getString("ChatLounge.Players"));
-        setColumnHeights();
-        pm.addTableModelListener(e -> setColumnHeights());
+        setRowHeights();
+        pm.addTableModelListener(e -> setRowHeights());
     }
 
-    void setColumnHeights() {
+    void setRowHeights() {
         setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
     }
 
     @Override
     public void columnMarginChanged(ChangeEvent e) {
-        setColumnHeights();
+        setRowHeights();
         super.columnMarginChanged(e);
     }
 

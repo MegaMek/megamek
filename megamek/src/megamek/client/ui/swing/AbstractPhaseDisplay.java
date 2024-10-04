@@ -19,8 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-
 import java.util.Objects;
 
 import megamek.client.event.BoardViewEvent;
@@ -80,7 +78,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         setBorder(new MegaMekBorder(panelSkin));
 
         butDone = new MegaMekButton("DONE", buttonSkin);
-        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        String f = UIUtil.colorHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.addActionListener(e -> done());
 

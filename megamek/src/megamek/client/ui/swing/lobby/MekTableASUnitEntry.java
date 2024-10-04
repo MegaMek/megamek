@@ -40,7 +40,7 @@ public class MekTableASUnitEntry {
      * When blindDrop is true, the unit details are not given.
      */
     static String fullEntry(AlphaStrikeElement element, ChatLounge lobby, boolean forceView, boolean compactView) {
-        StringBuilder result = new StringBuilder("<HTML><NOBR>" + guiScaledFontHTML());
+        StringBuilder result = new StringBuilder("<HTML><NOBR>");
 
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
@@ -72,12 +72,12 @@ public class MekTableASUnitEntry {
         // First line
 
         // Unit Name
-        result.append(guiScaledFontHTML(uiLightGreen()));
+        result.append(colorHTML(uiLightGreen()));
         result.append("<B>").append(element.getName()).append("</B></FONT>");
 
         // ID
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            result.append(guiScaledFontHTML(uiGray()));
+            result.append(colorHTML(uiGray()));
             result.append(" [ID: ").append(element.getId()).append("]</FONT>");
         }
         if (!forceView && !compactView) {
@@ -87,7 +87,6 @@ public class MekTableASUnitEntry {
         }
 
         // Tonnage
-        result.append(guiScaledFontHTML());
         if (forceView) {
             result.append(DOT_SPACER);
         }
@@ -116,7 +115,7 @@ public class MekTableASUnitEntry {
 
         // ECM
         if (element.hasAnySUAOf(ECM, LECM, AECM)) {
-            result.append(DOT_SPACER).append(guiScaledFontHTML(uiC3Color()));
+            result.append(DOT_SPACER).append(colorHTML(uiC3Color()));
             result.append(ECM_SIGN + " ");
             result.append(Messages.getString("BoardView1.ecmSource"));
             result.append("</FONT>");

@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 
 import java.awt.Point;
@@ -102,7 +101,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     } else {
                         sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
                         String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
-                        sTerrain += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
+                        sTerrain += UIUtil.colorHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
                         sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
                     }
                 }
@@ -120,7 +119,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 }
             }
 
-            sTerrain = guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTerrain + "</FONT>";
+            sTerrain = UIUtil.colorHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTerrain + "</FONT>";
             String col = "<TD>" + sTerrain + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor())
@@ -137,7 +136,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     String sInvalidHex = Messages.getString("BoardView1.invalidHex");
                     sInvalidHex += "<BR>";
                     sInvalidHex += String.join("<BR>", errors);
-                    sInvalidHex = guiScaledFontHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
+                    sInvalidHex = UIUtil.colorHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
                     result += "<BR>" + sInvalidHex;
                 }
             }
@@ -157,7 +156,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     }
 
                     String sName = "&nbsp;&nbsp;" + player.getName();
-                    sName = guiScaledFontHTML(player.getColour().getColour()) + sName + "</FONT>";
+                    sName = UIUtil.colorHTML(player.getColour().getColour()) + sName + "</FONT>";
                     sAttilleryAutoHix += "<B>" + sName + "</B>";
                     sAttilleryAutoHix += "<BR>";
                 }
@@ -173,7 +172,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
             sAttilleryAutoHix += "<I>" + msg_artyautohit + "</I>";
 
-            sAttilleryAutoHix = guiScaledFontHTML(uiWhite()) + sAttilleryAutoHix + "</FONT>";
+            sAttilleryAutoHix = UIUtil.colorHTML(uiWhite()) + sAttilleryAutoHix + "</FONT>";
 
             String col = "<TD>" + sAttilleryAutoHix + "</TD>";
             String row = "<TR>" + col + "</TR>";
@@ -193,7 +192,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(coords)) {
                 String sWreck = wSprite.getTooltip().toString();
-                sWreck = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sWreck + "</FONT>";
+                sWreck = UIUtil.colorHTML(GUIP.getUnitToolTipAltFGColor()) + sWreck + "</FONT>";
                 String col = "<TD>" + sWreck + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String rows = row;
@@ -243,7 +242,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             }
             sUnitsInfo += " in this hex...";
 
-            sUnitsInfo = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + sUnitsInfo + "</FONT>";
+            sUnitsInfo = UIUtil.colorHTML(GUIP.getUnitToolTipBlockFGColor()) + sUnitsInfo + "</FONT>";
             String col = "<TD>" + sUnitsInfo + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor())
@@ -255,7 +254,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         for (AttackSprite aSprite : bv.getAttackSprites()) {
             if (aSprite.isInside(coords)) {
                 String sAttackSprite = aSprite.getTooltip().toString();
-                sAttackSprite = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sAttackSprite + "</FONT>";
+                sAttackSprite = UIUtil.colorHTML(GUIP.getUnitToolTipAltFGColor()) + sAttackSprite + "</FONT>";
                 String col = "<TD>" + sAttackSprite + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor())
@@ -294,7 +293,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
 
-            msg_artilleryatack = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + msg_artilleryatack + "</FONT>";
+            msg_artilleryatack = UIUtil.colorHTML(GUIP.getUnitToolTipBlockFGColor()) + msg_artilleryatack + "</FONT>";
             String col = "<TD>" + msg_artilleryatack + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor())
@@ -321,7 +320,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             } else {
                 msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAdjustment", amod);
             }
-            msg_artilleryautohit = guiScaledFontHTML(UIUtil.uiWhite()) + msg_artilleryautohit + "</FONT>";
+            msg_artilleryautohit = UIUtil.colorHTML(UIUtil.uiWhite()) + msg_artilleryautohit + "</FONT>";
             result += msg_artilleryautohit + "<BR>";
         }
 
@@ -350,7 +349,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     String buf = shd.getInfo();
                     buf = buf.replaceAll("\\n", "<BR>");
                     sSpecialHex += buf;
-                    sSpecialHex = guiScaledFontHTML(UIUtil.uiWhite()) + sSpecialHex + "</FONT>";
+                    sSpecialHex = UIUtil.colorHTML(UIUtil.uiWhite()) + sSpecialHex + "</FONT>";
                     sSpecialHex += "<BR>";
                 }
             }

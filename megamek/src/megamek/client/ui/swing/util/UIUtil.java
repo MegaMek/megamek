@@ -87,14 +87,16 @@ public final class UIUtil {
      * and the font size according to GUIScale.
      */
     public static String guiScaledFontHTML() {
-        return "<FONT FACE=Dialog " + sizeString() + ">";
+        return "<FONT>";
+//        return "<FONT FACE=Dialog " + sizeString() + ">";
     }
 
     /**
      * Returns an HTML FONT tag setting the color to the given col,
      * the font face to Dialog and the font size according to GUIScale.
      */
-    public static String guiScaledFontHTML(Color col) {
+    public static String colorHTML(Color col) {
+//        return "<FONT " + colorString(col) + ">";
         return "<FONT FACE=Dialog " + sizeString() + colorString(col) + ">";
     }
 
@@ -103,6 +105,7 @@ public final class UIUtil {
      * and the font size according to GUIScale.
      */
     public static String guiScaledFontHTML(float deltaScale) {
+//        return "<FONT>";
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + ">";
     }
 
@@ -111,17 +114,18 @@ public final class UIUtil {
      * the font face to Dialog and the font size according to GUIScale.
      */
     public static String guiScaledFontHTML(Color col, float deltaScale) {
+//        return colorHTML(col);
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + colorString(col) + ">";
     }
 
     /** Returns the yellow and gui-scaled warning sign. */
     public static String warningSign() {
-        return guiScaledFontHTML(uiYellow()) + WARNING_SIGN + "</FONT>";
+        return colorHTML(uiYellow()) + WARNING_SIGN + "</FONT>";
     }
 
     /** Returns the (usually) red and gui-scaled warning sign. */
     public static String criticalSign() {
-        return guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + WARNING_SIGN + "</FONT>";
+        return colorHTML(GUIPreferences.getInstance().getWarningColor()) + WARNING_SIGN + "</FONT>";
     }
 
     /**
@@ -1145,7 +1149,7 @@ public final class UIUtil {
      * size 14 and scaled with the current gui scaling.
      */
     public static Font getScaledFont() {
-        return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(FONT_SCALE1));
+        return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, FONT_SCALE1);
     }
 
     /**
@@ -1205,8 +1209,9 @@ public final class UIUtil {
      * "style=font-size:22").
      */
     private static String sizeString() {
-        int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);
-        return " style=font-size:" + fontSize + " ";
+        return "";
+//        int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);
+//        return " style=font-size:" + fontSize + " ";
     }
 
     /**
@@ -1217,10 +1222,10 @@ public final class UIUtil {
      * Suitable deltaScale values are usually between -0.4 and +0.4
      */
     private static String sizeString(float deltaScale) {
-        float guiScale = GUIPreferences.getInstance().getGUIScale();
-        float boundedScale = Math.max(ClientGUI.MIN_GUISCALE, guiScale + deltaScale);
-        boundedScale = Math.min(ClientGUI.MAX_GUISCALE, boundedScale);
-        int fontSize = (int) (boundedScale * FONT_SCALE1);
+//        float guiScale = GUIPreferences.getInstance().getGUIScale();
+//        float boundedScale = Math.max(ClientGUI.MIN_GUISCALE, guiScale + deltaScale);
+//        boundedScale = Math.min(ClientGUI.MAX_GUISCALE, boundedScale);
+        int fontSize = (int) ((1 + deltaScale) * FONT_SCALE1);
         return " style=font-size:" + fontSize + " ";
     }
 
@@ -1247,20 +1252,6 @@ public final class UIUtil {
 
     private static int colorBrightness(final Color color) {
         return (color.getRed() + color.getGreen() + color.getBlue()) / 3;
-    }
-
-    /** Internal helper method to adapt items in a JPopupmenu to the GUI scaling. */
-    private static void scaleJMenuItem(final @Nullable JMenuItem menuItem) {
-        Font scaledFont = getScaledFont();
-        if (menuItem instanceof JMenu) {
-            JMenu menu = (JMenu) menuItem;
-            menu.setFont(scaledFont);
-            for (int i = 0; i < menu.getItemCount(); i++) {
-                scaleJMenuItem(menu.getItem(i));
-            }
-        } else if (menuItem != null) {
-            menuItem.setFont(scaledFont);
-        }
     }
 
     /**

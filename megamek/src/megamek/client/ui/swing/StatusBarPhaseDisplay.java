@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 import java.awt.Color;
@@ -185,12 +184,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
             String title = Messages.getString(keyPrefix + cmd);
-            toolTip = guiScaledFontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
+            toolTip = UIUtil.colorHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
             toolTip += "<BR>";
         }
         if (Messages.keyExists(ttKey)) {
             String msg_key = Messages.getString(ttKey);
-            toolTip += guiScaledFontHTML() + msg_key + "</FONT>";
+            toolTip += msg_key;
         }
         if (!toolTip.isEmpty()) {
             String b = "<BODY>" + toolTip + "</BODY>";

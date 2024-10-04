@@ -30,10 +30,7 @@ import static megamek.client.ui.swing.lobby.LobbyUtility.invalidBoardTip;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isBoardFile;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
 import static megamek.client.ui.swing.lobby.LobbyUtility.mekReadoutAction;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-import static megamek.client.ui.swing.util.UIUtil.setHighQualityRendering;
-import static megamek.client.ui.swing.util.UIUtil.uiGray;
+import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.common.util.CollectionUtil.theElement;
 import static megamek.common.util.CollectionUtil.union;
 
@@ -62,11 +59,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
@@ -169,7 +162,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList"));
 
     /* Unit Table */
-    private JTable mekTable;
+    private MekTable mekTable;
     public JScrollPane scrMekTable;
     private MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
     private MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
@@ -3038,9 +3031,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Sets the row height of the MekTable according to compact mode and GUI scale
      */
     private void setTableRowHeights() {
-        int rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTABLE_ROWHEIGHT_FULL;
-        mekTable.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
-        rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTREE_ROWHEIGHT_FULL;
+        mekTable.setRowHeights();
+        int rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTREE_ROWHEIGHT_FULL;
         mekForceTree.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
     }
 
@@ -3054,7 +3046,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String headerText = mekModel.getColumnName(i);
             // Add info about the current sorting
             if (activeSorter.getColumnIndex() == i) {
-                headerText += "&nbsp;&nbsp;&nbsp;" + guiScaledFontHTML(uiGray());
+                headerText += "&nbsp;&nbsp;&nbsp;" + colorHTML(uiGray());
                 if (activeSorter.getSortingDirection() == MekTableSorter.Sorting.ASCENDING) {
                     headerText += "\u25B4 ";
                 } else {
@@ -3419,10 +3411,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     private class MekTable extends JTable {
-        private static final long serialVersionUID = -4054214297803021212L;
 
         public MekTable(MekTableModel mekModel) {
             super(mekModel);
+            mekModel.addTableModelListener(e -> setRowHeights());
+            setRowHeights();
+        }
+
+        @Override
+        public void columnMarginChanged(ChangeEvent e) {
+            setRowHeights();
+            super.columnMarginChanged(e);
+        }
+
+        private void setRowHeights() {
+            int rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTABLE_ROWHEIGHT_FULL;
+            setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         }
 
         /**

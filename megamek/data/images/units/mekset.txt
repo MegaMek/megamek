@@ -5969,6 +5969,7 @@ chassis "Behemoth" "dropships/Behemoth.png"   #Original wont go, see bottom
 chassis "Behemoth C" "dropships/Behemoth.png"
 chassis "Black Eagle" "dropships/Black Eagle.png"
 chassis "Broadsword" "dropships/Broadsword.png"
+chassis "Castrum Pocket WarShip" "dropships/CastrumAssaultDropship.png"
 chassis "Claymore" "dropships/Claymore.png"
 exact "Claymore Interceptor" "dropships/Claymore Interceptor.png"
 exact "Claymore V3" "dropships/Claymore V3.png"
